@@ -1,0 +1,30 @@
+.main-comment-list {
+
+    .text-container {
+        width: 0px;
+        flex: 1 1 0%;
+
+    }
+
+    .title {
+        font-size: 18px;
+        font-weight: bold;
+        align-self: flex-start;
+        text-align: left;
+
+    }
+
+    .description {
+        flex: 1;
+        text-overflow: ellipsis;
+        text-align: left;
+
+    }
+
+    .thumbnail {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+    }
+
+}
