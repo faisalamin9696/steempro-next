@@ -18,9 +18,9 @@ export default function CommentListLayout(props: CommentProps) {
         className={`w-full card card-compact 
         items-center flex-col p-4 gap-1 dark:bg-default-900/30 bg-default-900/5`}>
 
-        <CommentHeader {...props} comment={comment} className='w-full' />
+        <CommentHeader {...props} compact comment={comment} className='w-full' />
 
-        <Card isPressable={!isReply}
+        <Card isPressable={!isReply} radius='none'
             onClick={() => onReplyClick && onReplyClick(comment)} shadow='none'
             className='bg-transparent main-comment-list w-full'>
             <div className="flex items-center gap-2 w-full py-0">

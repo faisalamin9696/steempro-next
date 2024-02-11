@@ -1,67 +1,65 @@
 import React from "react";
-import { Avatar, AvatarGroup, Button, Card, CardBody, CardFooter, CardHeader } from "@nextui-org/react";
-import { useQuery } from "@tanstack/react-query";
-import { addProfileHandler } from "@/libs/redux/reducers/ProfileReducer";
-import { useAppDispatch } from "@/libs/constants/AppFunctions";
-import { getAuthorExt } from "@/libs/steem/sds";
+import { Avatar, AvatarGroup, Button, Card, CardFooter, CardHeader } from "@nextui-org/react";
+import { fetchSds } from "@/libs/constants/AppFunctions";
 import SAvatar from "./SAvatar";
 import { abbreviateNumber } from "@/libs/utils/helper";
 import clsx from "clsx";
 import { SlUserFollowing } from "react-icons/sl";
+import useSWR from "swr";
+import { useSession } from "next-auth/react";
+import { getResizedAvatar } from "@/libs/utils/image";
+import STooltip from "./STooltip";
+import LoadingCard from "./LoadingCard";
+
 
 interface Props {
-    comment: Feed | Post;
+    username: string;
     compact?: boolean;
 }
 
 
 export const UserCard = (props: Props) => {
-    const { comment, compact } = props;
-    const [isFollowed, setIsFollowed] = React.useState(comment.observer_follows_author === 1);
-    const dispatch = useAppDispatch();
-    const queryKey = [`profile-${comment.author}`];
+    const { username, compact } = props;
+    // const [isFollowed, setIsFollowed] = React.useState(comment.observer_follows_author === 1);
+    const { data: session } = useSession();
+    const URL = `/accounts_api/getAccountExt/${username}/${session?.user?.name || 'null'}`;
+    const { data, isLoading } = useSWR(URL, fetchSds<AccountExt>);
+    const URL_2 = `/followers_api/getKnownFollowers/${username}/${session?.user?.name || 'null'}`
+    const { data: knownPeople, isLoading: isKnownLoading } = useSWR(compact ? null : URL_2, fetchSds<string[]>)
+    const posting_json_metadata = JSON.parse(String(data?.posting_json_metadata || '{}'));
 
-    const { data, isLoading, isSuccess } = useQuery({
-        queryKey,
-        queryFn: () => getAuthorExt(comment.author),
-    });
-
-    if (isSuccess) {
-        dispatch(addProfileHandler(data));
+    if (isLoading) {
+        return <LoadingCard />
     }
-
-
     return (
-        <Card shadow="none" className="max-w-[300px] border-none bg-transparent">
-            <CardHeader className="justify-between space-x-2">
-                <div className="flex gap-3">
-                    <SAvatar {...props} username={comment.author} />
+        <div
+            className="relative flex flex-col card-content border-none 
+            bg-transparent items-start gap-4 p-2 w-full">
+            <div className="flex flex-row justify-between gap-2 w-full">
+                <div className="flex gap-2">
+                    <SAvatar {...props} username={username} />
                     <div className="flex flex-col items-start justify-center">
-                        <h4 className="text-small font-semibold leading-none text-default-600">{data?.posting_json_metadata?.profile?.name}</h4>
+                        <h4 className="text-small font-semibold leading-none text-default-600">{posting_json_metadata?.profile?.name}</h4>
                         {/* <Link prefetch={false} href={authorLink}>{comment.author}</Link> */}
 
-                        <h5 className="text-small tracking-tight text-default-500">@{comment.author}</h5>
+                        <h5 className={clsx("text-small tracking-tight text-default-500")}>@{username}</h5>
                     </div>
                 </div>
                 <Button
-                    className={isFollowed ? "bg-transparent text-foreground border-default-200" : ""}
-                    color="secondary"
+                    disabled={isLoading}
+                    color={"secondary"}
                     radius="full"
-                    size="sm"
-                    variant={isFollowed ? "bordered" : "solid"}
-                    onPress={() => setIsFollowed(!isFollowed)}
+                    size='sm'
+                    className="text-tiny  p-0 py-0"
+                    variant={data?.observer_follows_author ? "bordered" : "solid"}
+                    onPress={() => { }}
                 >
-                    {isFollowed ? "Unfollow" : "Follow"}
+                    {data?.observer_follows_author ? "Unfollow" : "Follow"}
                 </Button>
 
-            </CardHeader>
-            {/* <CardBody className="px-3 py-0">
-                <p className=" line-clamp-2 text-tiny pl-px text-default-500">
-                    {data?.posting_json_metadata?.profile.about}
-                  
-                </p>
-            </CardBody> */}
-            <CardFooter className="gap-3 py-0">
+            </div>
+
+            <div className="flex flex-row gap-2" >
                 <div className="flex gap-1">
                     <p className="font-semibold text-default-600 text-small">{abbreviateNumber(data?.count_following)}</p>
                     <p className=" text-default-500 text-small">{'Followings'}</p>
@@ -73,9 +71,9 @@ export const UserCard = (props: Props) => {
 
 
 
-            </CardFooter>
+            </div>
 
-            <CardFooter>
+            {!compact && <div>
 
                 <div className="">
                     <div className="flex gap-2 items-center text-gray-800 dark:text-gray-300 mb-4">
@@ -84,24 +82,26 @@ export const UserCard = (props: Props) => {
                         <span className={clsx(compact && 'text-tiny')}>
                             <strong
                                 className={clsx(
-                                    "text-black dark:text-white")}>12</strong> Followers you know</span>
+                                    "text-black dark:text-white")}>{knownPeople?.length}</strong> Followers you know</span>
                     </div>
                     <div className="flex px-2">
                         <AvatarGroup isBordered size="sm">
-                            <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026024d" />
-                            <Avatar src="https://i.pravatar.cc/150?u=a04258a2462d826712d" />
-                            <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026704d" />
-                            <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026302d" />
-                            <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026702d" />
-                            <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026708c" />
+                            {knownPeople?.map((people) => {
+                                return (<STooltip content={people}>
+                                    <Avatar src={getResizedAvatar(people)} />
+                                </STooltip>)
+
+
+                            })}
+
                         </AvatarGroup>
                     </div>
                 </div>
-            </CardFooter>
+            </div>}
 
 
 
-        </Card>
+        </div >
     );
 };
 

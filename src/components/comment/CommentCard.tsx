@@ -54,7 +54,7 @@ export default function CommentCard(props: Props) {
         isMobile ? <CommentBlogLayout {...props} comment={commentInfo} onReplyClick={handlePostClick} /> :
             settings.feedStyle === 'list' ?
                 <CommentListLayout {...props} comment={commentInfo} onReplyClick={handlePostClick} /> :
-                settings.feedStyle === 'grid' ? <CommentGridLayout comment={comment} /> :
+                settings.feedStyle === 'grid' ? <CommentGridLayout comment={comment} onReplyClick={handlePostClick} /> :
                     settings.feedStyle === 'blogs' ? <CommentBlogLayout {...props} comment={commentInfo} onReplyClick={handlePostClick} /> :
                         <CommentListLayout {...props} comment={commentInfo} onReplyClick={handlePostClick} />
         , [settings.feedStyle, isMobile]);

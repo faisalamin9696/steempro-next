@@ -1,16 +1,24 @@
-// ::-webkit-scrollbar {
-//     width: auto;
-//     height: auto
-// }
+#container {
+    display: flex;
+    max-width: 1280px;
+    width: 100%;
+    margin: auto;
+}
 
-// ::-webkit-scrollbar-button {
-//     background: #ccc
-// }
+#left,
+#right {
+    flex: 0 0 250px;
+    /* Adjust the width of left and right divs as needed */
+    position: sticky;
+    top: 70px;
+    height: 100vh;
+    overflow-y: auto;
+    padding-bottom: 72px;
+    /* Optional: Add background color */
+}
 
-// ::-webkit-scrollbar-track-piece {
-//     background: red
-// }
-
-// ::-webkit-scrollbar-thumb {
-//     background: #eee
-// }
+#center {
+    flex: 1;
+    max-width: 1280px;
+    overflow-y: auto;
+}

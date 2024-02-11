@@ -7,6 +7,8 @@ import { addProfileHandler } from '@/libs/redux/reducers/ProfileReducer';
 import SAvatar from '@/components/SAvatar';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import UserCoverCard from '@/components/UserCoverCard';
+import { abbreviateNumber } from '@/libs/utils/helper';
+import Reputation from '@/components/Reputation';
 
 interface Props {
     data: Community;
@@ -54,7 +56,7 @@ export default function CommunityHeader(props: Props) {
                             </svg>
                         </div>
                         <div className="stat-title text-white">{'Subscribers'}</div>
-                        <div className="stat-value text-secondary">{data?.count_subs}</div>
+                        <div className="stat-value text-secondary">{abbreviateNumber(data?.count_subs)}</div>
                         <div className="stat-desc"></div>
                     </div>
                 </div>
@@ -65,7 +67,10 @@ export default function CommunityHeader(props: Props) {
                             badge={data?.account_reputation} />
                     </div>
                     <div className="stat-value text-white text-xl sm:text-3xl">{data?.title}</div>
-                    <div className="stat-title text-gray-200">@{community}</div>
+                    <div className="stat-title flex flex-row items-center  text-gray-200 gap-2">
+                        <p> @{community}</p>
+                        <Reputation reputation={data.account_reputation} />
+                    </div>
                     <p className=" text-xs text-slate-300 lg:line-clamp-2">{data?.about}</p>
                 </div>
 

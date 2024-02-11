@@ -10,6 +10,8 @@ import { getSettings } from '@/libs/utils/user';
 import { Card, CardFooter } from '@nextui-org/react';
 import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import { usePathname, useRouter } from 'next/navigation';
+import usePathnameClient from '@/libs/utils/usePathnameClient';
 const DynamicPostReplies = dynamic(() => import('../_components/PostReplies'))
 
 
@@ -19,7 +21,8 @@ type Props = {
 
 export default function PostPage(props: Props) {
     const { data } = props;
-
+    const pathname = usePathname();
+    const { category } = usePathnameClient();
     // const { category, username: author, permlink } = getPathnameClient(null, location.pathname);
     const dispatch = useAppDispatch();
     // const queryKey = [`post-${author}-${permlink}`];
@@ -28,23 +31,29 @@ export default function PostPage(props: Props) {
 
 
     useEffect(() => {
+        if (!category) {
+            window.history.pushState({}, '', `/${data.category}/@${data.author}/${data.permlink}`)
+        }
         dispatch(addCommentHandler(data));
     }, []);
 
-    return (<div className='flex-col gap-4'>
+    return (<div key={pathname}
+        className='flex-col gap-4 bg-white dark:bg-white/5
+    backdrop-blur-md rounded-lg p-4'>
         {commentInfo ?
-            <div className='card w-full dark:bg-default-900/30 
-        card-compact bg-default-900/5 shadow-sm'>
-                <div className="p-4 space-y-4 flex-col">
-                    <>
-                        <CommentHeader size='md' comment={commentInfo} className='w-full' />
-                    </>
-                    <h2 className="text-xl font-bold text-black dark:text-white">{commentInfo.title}</h2>
+            <div className='card w-full card-compact shadow-sm '>
 
-                </div>
                 <div className='flex flex-col px-1 items-center'>
                     <Card shadow='none'
-                        className='w-full gap-4 px-2 max-w-[640px]'>
+                        className='w-full gap-4 max-w-[640px] bg-transparent '>
+
+                        <div className="space-y-4 flex-col">
+                            <>
+                                <CommentHeader size='md' comment={commentInfo} className='w-full' />
+                            </>
+                            <h2 className="text-xl font-bold text-black dark:text-white">{commentInfo.title}</h2>
+
+                        </div>
 
                         <MarkdownViewer text={commentInfo.body} />
 

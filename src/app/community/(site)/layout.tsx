@@ -26,7 +26,6 @@ export default async function Layout({
 
             <CommunityHeader data={data} />
             <MainWrapper
-                startContent={start}
                 endContent={end}>
                 {children}
             </MainWrapper>

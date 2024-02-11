@@ -54,7 +54,7 @@ export default function PostReplies(props: Props) {
     return (
         <div className='p-1'>
 
-            <div className='card card-compact mt-4 flex flex-col py-4 gap-4  dark:bg-black/80'>
+            <div className='card card-compact mt-4 flex flex-col py-4 gap-4'>
 
                 {repliesMutation?.data ? null :
                     <Button color='default' variant='flat' className='self-center' onPress={handleLoadComments}

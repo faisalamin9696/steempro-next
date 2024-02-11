@@ -24,10 +24,14 @@ export function middleware(request: NextRequest) {
     if (splitted_path.length === 3 && usernameURLRegex.test(second_param)) {
         return NextResponse.rewrite(new URL('/post', request.nextUrl), { headers: request.headers });
     }
+    else if (splitted_path.length === 2 && usernameURLRegex.test(first_param) && !valid_categories.includes(second_param)) {
+        return NextResponse.rewrite(new URL('/post', request.nextUrl), { headers: request.headers });
+    }
     // Check if the URL matches the pattern for a profile
     else if (request.nextUrl.pathname.startsWith('/@')) {
         return NextResponse.rewrite(new URL(`/profile`, request.nextUrl), { headers: request.headers });
     }
+
     // Check if the URL matches the pattern for a community
     else if (validateCommunity(second_param) && valid_categories.includes(first_param)) {
         return NextResponse.rewrite(new URL(`/community`, request.nextUrl), { headers: request.headers });

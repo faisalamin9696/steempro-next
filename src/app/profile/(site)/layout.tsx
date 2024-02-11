@@ -17,14 +17,14 @@ export default async function Layout({
     start: React.ReactNode;
     end: React.ReactNode;
 }>) {
-    // const { username } = usePathnameServer();
-    // const session = await getServerSession();
-    // const data = await getAuthorExt(username, session?.user?.name || 'null');
+    const { username } = usePathnameServer();
+    const session = await getServerSession();
+    const data = await getAuthorExt(username, session?.user?.name || 'null');
 
     return (
         <main className="main flex flex-col">
 
-            <ProfileHeader data={empty_profile('faisalamin')} />
+            <ProfileHeader data={data} />
 
             <MainWrapper
                 endContent={end}>
@@ -35,19 +35,19 @@ export default async function Layout({
 }
 
 
-// export async function generateMetadata(parent: ResolvingMetadata) {
-//     const { username } = usePathnameServer();
-//     const session = await getServerSession();
+export async function generateMetadata(parent: ResolvingMetadata) {
+    const { username } = usePathnameServer();
+    const session = await getServerSession();
 
-//     const previousImages = (await parent)?.openGraph?.images || [];
-//     const result = await getAuthorExt(username, session?.user?.name || 'null');
-//     const { name, about, website } = result?.posting_json_metadata?.profile ?? {};
-//     return {
-//         title: (name ? `${name} (@${username})` : username) ?? `(@${username})`,
-//         description: result.posting_json_metadata.profile.about ?? '',
-//         openGraph: {
-//             images: [getResizedAvatar(username), ...previousImages]
-//         }
-//     }
+    const previousImages = (await parent)?.openGraph?.images || [];
+    const result = await getAuthorExt(username, session?.user?.name || 'null');
+    const { name, about, website } = result?.posting_json_metadata?.profile ?? {};
+    return {
+        title: (name ? `${name} (@${username})` : username) ?? `(@${username})`,
+        description: result.posting_json_metadata.profile.about ?? '',
+        openGraph: {
+            images: [getResizedAvatar(username), ...previousImages]
+        }
+    }
 
-// }
+}

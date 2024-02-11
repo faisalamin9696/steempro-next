@@ -13,7 +13,7 @@ import { getSettings, getCredentials, saveSessionKey, validatePassword, saveCred
 import { useLogin } from "./useLogin";
 import { toast } from "sonner";
 import { signIn } from 'next-auth/react'
-import { encryptPrivateKey } from "@/libs/utils/encryption";
+import { getAuth, signInAnonymously } from "firebase/auth";
 
 interface Props {
     open: boolean;
@@ -156,14 +156,24 @@ export default function AuthModal(props: Props) {
                     })
 
                     if (response?.ok) {
-                        const auth = saveCredentials(username, key, password);
-                        saveSessionKey(password);
-                        dispatch(saveLoginHandler({ ...account, login: true, encKey: auth?.key }));
-                        onLoginSuccess && onLoginSuccess({ username, key: auth?.key ?? '' });
-                        handleOnClose();
-                        clearAll();
-                        toast.success(`Login successsful with private ${keyType.type} key`);
-                        return
+                        const firebaseAuth = getAuth();
+
+                        signInAnonymously(firebaseAuth)
+                            .then(() => {
+                                const auth = saveCredentials(username, key, password);
+                                saveSessionKey(password);
+                                dispatch(saveLoginHandler({ ...account, login: true, encKey: auth?.key }));
+                                onLoginSuccess && onLoginSuccess({ username, key: auth?.key ?? '' });
+                                handleOnClose();
+                                clearAll();
+                                toast.success(`Login successsful with private ${keyType.type} key`);
+                            })
+                            .catch((error) => {
+                                const errorCode = error.code;
+                                const errorMessage = error.message;
+                                toast.error(errorMessage)
+                            });
+
                     }
                     toast.error(response?.error);
 

@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { getPostThumbnail, getResizedAvatar } from '@/libs/utils/image';
 import Link from 'next/link';
 import TimeAgoWrapper from '../../TimeAgoWrapper';
-import { Popover, PopoverContent, PopoverTrigger, User } from '@nextui-org/react';
+import { Button, Card, Popover, PopoverContent, PopoverTrigger, User } from '@nextui-org/react';
 import { useSession } from 'next-auth/react';
 import Reputation from '@/components/Reputation';
 import dynamic from 'next/dynamic';
@@ -15,14 +15,19 @@ import STag from '@/components/STag';
 const DynamicUserCard = dynamic(() => import('../../UserCard'));
 import './style.scss'
 import { FaClock } from 'react-icons/fa';
+import { CommentProps } from '../CommentCard';
+import clsx from 'clsx';
+import { validateCommunity } from '@/libs/utils/helper';
+import { FaEllipsisVertical } from 'react-icons/fa6';
 type Props = {
     comment: Feed | Post;
     isReply?: boolean;
 }
 
 
-export default function CommentGridLayout(props: Props) {
-    const { comment } = props;
+export default function CommentGridLayout(props: CommentProps) {
+    const { comment, onReplyClick, isReply } = props;
+
     const thumbnail = getPostThumbnail(comment.json_images);
     const { data: session } = useSession();
     const isSelf = comment.author === session?.user?.name;
@@ -51,26 +56,29 @@ export default function CommentGridLayout(props: Props) {
                     />
                 }
 
-                <div
+                {/* <div
                     className="hover:bg-transparent transition duration-300 absolute bottom-0 top-0 right-0 left-0 bg-gray-900 opacity-25">
-                </div>
+                </div> */}
 
-                <p className="rounded-full border  bg-background/50   hover:bg-transparent border-default-900/50 backdrop-blur-sm
-                 absolute top-0 right-0  px-4 py-2 
-                text-default-900 mt-3 mr-3  transition duration-500 ease-in-out">
-                    <STag className='text-tiny' tag={comment.community || comment.category} />
-                    {/* <Link href={`/trending/${comment.category}`} className="hover:underline">{comment.community || comment.category}</Link> */}
+                <p className="rounded-full border bg-background/80
+                border-default-900/50 backdrop-blur-lg
+                 absolute top-0 right-0  px-2 py-1 text-center items-center
+                text-default-900 m-2  transition duration-500 ease-in-out">
+                    <STag className='text-tiny' content={comment.community || (validateCommunity(comment.category) ? comment.category :
+                        `#${comment.category}`)} tag={comment.category} />                    {/* <Link href={`/trending/${comment.category}`} className="hover:underline">{comment.community || comment.category}</Link> */}
                 </p>
             </div>
             <div className="flex flex-1 flex-col justify-between p-4">
                 <div className="flex-1">
 
-                    <a href="#" className="block">
-                        <p className="text-xl font-semibold text-default-900">{comment.title}</p>
-                        <p className="mt-3 text-base text-default-900/60"><BodyShort body={comment.body} className=' line-clamp-2' /></p>
-                    </a>
+                    <Card isPressable={!isReply} radius='none'
+                        onClick={() => onReplyClick && onReplyClick(comment)} shadow='none'
+                        className={clsx(!thumbnail && 'mt-8', 'bg-transparent  w-full text-start')}>
+                        <p className="text-md font-semibold text-default-900">{comment.title}</p>
+                        <p className="mt-3 text-sm text-default-900/60"><BodyShort body={comment.body} className=' line-clamp-2' /></p>
+                    </Card>
                 </div>
-                <div className=" mt-4 gap-6 flex flex-col items-start">
+                <div className=" mt-4 gap-6 flex flex-row items-center justify-between">
 
                     <Popover showArrow placement="bottom">
                         <PopoverTrigger>
@@ -111,7 +119,7 @@ export default function CommentGridLayout(props: Props) {
 
                                 </div>}
                                 avatarProps={{
-                                    className: 'cursor-pointer dark:bg-default-900/30 bg-default-900/5',
+                                    className: '',
                                     src: getResizedAvatar(comment.author),
                                     // as: 'a',
                                     // onClick: () => {
@@ -123,9 +131,12 @@ export default function CommentGridLayout(props: Props) {
                             />
                         </PopoverTrigger>
                         <PopoverContent className="p-1">
-                            <DynamicUserCard {...props} comment={comment} />
+                            <DynamicUserCard username={comment.author} />
                         </PopoverContent>
                     </Popover>
+                    {/* <Button size='sm' variant='light' radius='full' isIconOnly>
+                        <FaEllipsisVertical className='text-lg' />
+                    </Button> */}
 
                 </div>
 

@@ -31,7 +31,7 @@ export default function CommunityPage() {
                 fullWidth={isMobile}
                 color={'secondary'} radius="full"
                 className='justify-center transition-all delay-500'
-                defaultSelectedKey={category ?? 'friends'}
+                defaultSelectedKey={category ?? 'trendings'}
                 onSelectionChange={(key) => {
                     history.pushState({}, '', `/${key}/${community}`);
                 }}

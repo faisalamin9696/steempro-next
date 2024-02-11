@@ -56,7 +56,7 @@ export const getCoverImageUrl = (meta: any) => {
 };
 
 
-export const getPostThumbnail = (json_images: string) => {
+export const getPostThumbnail = (json_images?: string) => {
     if (!json_images) {
         return null;
     }

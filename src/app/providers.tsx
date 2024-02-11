@@ -15,6 +15,10 @@ import { ThemeProvider } from 'next-themes'
 import LoadingCard from '@/components/LoadingCard';
 import { Toaster } from 'sonner';
 import { SessionProvider } from 'next-auth/react';
+import { SWRConfig } from 'swr';
+import { fetchSds } from '@/libs/constants/AppFunctions';
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
 
 
 export function Providers({ children }:
@@ -22,6 +26,28 @@ export function Providers({ children }:
 
     const route = useRouter();
     const [isMounted, setIsMounted] = useState(false);
+
+    const firebaseConfig = {
+        apiKey: process.env.NEXT_PUBLIC_F_API_KEY,
+        authDomain: process.env.NEXT_PUBLIC_F_AUTH_DOMAIN,
+        projectId: process.env.NEXT_PUBLIC_F_PROJECT_ID,
+        storageBucket: process.env.NEXT_PUBLIC_F_STORAGE_BUCKET,
+        messagingSenderId: process.env.NEXT_PUBLIC_F_SENDER_ID,
+        appId: process.env.NEXT_PUBLIC_F_APP_ID,
+        measurementId: process.env.NEXT_PUBLIC_F_MEASUREMENT_ID
+    };
+
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    useEffect(() => {
+        const analytics = getAnalytics(app);
+        analytics.app.automaticDataCollectionEnabled = true
+
+    }, [])
+
+
 
     const client = new QueryClient({
         //Query client configurations go here...
@@ -58,10 +84,18 @@ export function Providers({ children }:
                 <ThemeProvider attribute="class"  >
                     <NextUIProvider navigate={route.push}>
                         {isMounted ? <SessionProvider>
-                            <LoginDialogProvider>
-                                <AppNavbar />
-                                {children}
-                            </LoginDialogProvider>
+                            <SWRConfig
+                                value={{
+                                    refreshInterval: 10 * 60 * 1000,
+                                    fetcher: fetchSds,
+                                    revalidateOnFocus: false
+                                }}
+                            >
+                                <LoginDialogProvider>
+                                    <AppNavbar />
+                                    {children}
+                                </LoginDialogProvider>
+                            </SWRConfig>
                         </SessionProvider> : <LoadingCard />}
                     </NextUIProvider>
                 </ThemeProvider>

@@ -14,6 +14,8 @@ import FeedPatternSwitch from '@/components/FeedPatternSwitch';
 import { useAppSelector } from '@/libs/constants/AppFunctions';
 import { getSettings } from '@/libs/utils/user';
 import clsx from 'clsx';
+import ProfilePostsMainTab from '../(tabs)/postsMain/page';
+import ProfileCommunitiesTab from '../(tabs)/communities/page';
 
 export default function ProfilePage() {
     let { username, category } = usePathnameClient();
@@ -22,10 +24,8 @@ export default function ProfilePage() {
 
     const profileTabs = [
         { title: 'Blogs', key: 'blogs', children: <ProfileBlogsTab /> },
-        { title: 'Friends', key: 'friends', children: <ProfileFriendsTab /> },
-        { title: 'Posts', key: 'posts', children: <ProfilePostsTab /> },
-        { title: 'Comments', key: 'comments', children: <ProfileCommentsTab /> },
-        { title: 'Replies', key: 'replies', children: <ProfileRepliesTab /> },
+        { title: 'Posts', key: 'posts', children: <ProfilePostsMainTab /> },
+        { title: 'Communities', key: 'communities', children: <ProfileCommunitiesTab /> },
         { title: 'Wallet', key: 'wallet', children: <ProfileWalletTab /> },
 
     ]
@@ -37,9 +37,11 @@ export default function ProfilePage() {
                 disableAnimation
                 disableCursorAnimation
                 fullWidth={isMobile}
-                color={'secondary'} radius="full"
+                color={'secondary'}
+                radius="full"
+                hidden={true}
                 className='justify-center transition-all delay-500'
-                defaultSelectedKey={category ?? 'friends'}
+                defaultSelectedKey={['comments', 'replies', 'friends'].includes(category) ? 'posts' : category}
                 onSelectionChange={(key) => {
                     history.pushState({}, '', `/@${username}/${key}`);
                 }}
@@ -49,7 +51,7 @@ export default function ProfilePage() {
                 }}
 
             >
-                {profileTabs.map((tab) => <Tab key={tab.key}
+                {profileTabs.map((tab) => <Tab hidden key={tab.key}
                     title={tab.title}
                 >
                     {tab.children}

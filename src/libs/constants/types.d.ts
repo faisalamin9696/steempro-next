@@ -542,3 +542,9 @@ type User = {
 
 type ValidCategories = 'created' | 'trending' | 'payout' | 'important' | 'about';
 
+type Role = {
+  created: number;
+  account: string;
+  title: string;
+  role: string;
+}

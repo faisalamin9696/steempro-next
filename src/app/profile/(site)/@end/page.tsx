@@ -1,53 +1,58 @@
 "use client"
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import UserCard from '@/components/UserCard'
-import { empty_comment } from '@/libs/constants/Placeholders'
 import { Button, Card } from '@nextui-org/react'
 import { IoIosRefresh } from "react-icons/io";
-
-const cards = [
-  { id: 1, content: 'Card 1' },
-  { id: 2, content: 'Card 2' },
-  { id: 3, content: 'Card 3' },
-]
-
+import { filterRecommendations } from '@/libs/constants/AppFunctions'
+import usePathnameClient from '@/libs/utils/usePathnameClient'
 
 export default function ProfileEnd() {
-  return (
-    <div className="flex flex-col">
 
-      <div
-        className="flex items-center gap-2
+  const { category } = usePathnameClient();
+
+
+  const [recomendations, setRecomendations] = useState<string[]>([]);
+  const followingList = ['faisalamin']
+
+
+  useEffect(() => {
+    setRecomendations(filterRecommendations(followingList));
+  }, []);
+
+
+  function handlePeopleRefresh() {
+    setRecomendations(filterRecommendations(followingList));
+  }
+
+  return (
+    <div className="flex flex-col pb-60 ">
+      <div className='sticky top-0 z-10 backdrop-blur-lg'>
+        <div
+          className="flex items-center gap-2
          text-default-900 text-lg font-bold mb-4 z-10">
-        <p>Intresting People</p>
-        <Button radius='full'
-          color='default'
-          size='sm'
-          isIconOnly>
-          <IoIosRefresh className='text-lg' />
-        </Button>
+          <p>{'Intresting People'}</p>
+          <Button radius='full'
+            color='default'
+            size='sm'
+            onPress={handlePeopleRefresh}
+            isIconOnly>
+            <IoIosRefresh
+              className='text-lg' />
+          </Button>
+        </div>
       </div>
 
-      <div className='flex flex-col gap-6 '>
-        <Card className='border border-gray-100/10 shadow-md shadow-secondary-900 bg-transparent backdrop-blur-md'>
-          <UserCard compact comment={empty_comment('steemchiller', '')} />
-        </Card>
 
-        <Card>
-          <UserCard compact comment={empty_comment('donekim', '')} />
-        </Card>
-        <Card>
-          <UserCard compact comment={empty_comment('justyy', '')} />
-        </Card>
-        <Card>
-          <UserCard compact comment={empty_comment('rme', '')} />
-        </Card>
-
-
-
+      <div className='flex flex-col gap-2 px-1 pb-1'>
+        {recomendations?.map(people => {
+          return <Card className='border compact border-gray-100/10 shadow-md shadow-gray-400 dark:shadow-default-500 bg-transparent backdrop-blur-md'>
+            <UserCard compact username={people} />
+          </Card>
+        })}
       </div>
     </div>
+
 
   )
 }

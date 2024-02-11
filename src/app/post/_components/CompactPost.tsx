@@ -1,0 +1,70 @@
+import CommentCover from '@/components/comment/component/CommentCover'
+import { Card } from '@nextui-org/react'
+import React from 'react'
+import { getPostThumbnail } from '@/libs/utils/image'
+import BodyShort from '@/components/body/BodyShort'
+import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator'
+
+
+type Props = {
+    comment: Feed;
+}
+export default function CompactPost(props: Props) {
+    const { comment } = props;
+    // const URL = `/posts_api/getPost/${authPerm}`
+    // const { data, isLoading, error, isValidating } = useSWR(URL, fetchSds<Post>)
+    const thumbnail = getPostThumbnail(comment?.json_images);
+
+
+    function handlePostClick() {
+        location.href = `/${comment.category}/@${comment.author}/${comment.permlink}`;
+        // router.push(`/${comment.category}/@${comment.author}/${comment.permlink}#`,
+        //     { scroll: false });
+        // router.refresh();
+    }
+
+    return (
+        <div className="card card-compact rounded-lg overflow-hidden shadow-lg flex flex-col bg-white dark:bg-white/5">
+            <div className="relative">
+
+
+                <CommentCover src={thumbnail} />
+
+                <div
+                    className="rounded-lg hover:bg-transparent transition duration-300 absolute bottom-0 top-0 right-0 left-0 bg-gray-900 opacity-25">
+                </div>
+                {/* 
+    <Link href={`/trending/${'hive-144064'}`}
+      className="border rounded-full text-tiny absolute top-0 right-0
+         px-2 py-1 m-3
+          backdrop-blur-lg">
+      Beauty of Creativity
+    </Link> */}
+            </div>
+            <Card isPressable onPress={handlePostClick}
+                shadow='none' radius='none' className=" text-start p-0 bg-transparent px-4 py-2 mb-auto">
+                <p
+                    className="font-medium text-md mb-2">
+                    {comment?.title}</p>
+                <p className="text-default-900/50 text-tiny line-clamp-2">
+                    <BodyShort body={comment?.body} />
+                </p>
+            </Card>
+            <div className="px-4 py-2 flex flex-row items-center justify-between">
+                <span className="py-1 text-xs font-regular  mr-1 flex flex-row items-center">
+
+                    <span className="ml-1 text-default-900/80">{readingTime('', comment?.word_count).text}</span>
+                </span>
+
+                <span className="py-1 text-xs font-regular gap-1 text-default-900/80 mr-1 flex flex-row items-center">
+                    <svg className="h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z">
+                        </path>
+                    </svg>
+                    {comment?.children && <div className="flex text-default-900/80 gap-1">{comment?.children}</div>
+                    }                </span>
+            </div>
+        </div>
+    )
+}

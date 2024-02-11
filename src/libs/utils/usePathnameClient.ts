@@ -41,6 +41,13 @@ const usePathnameClient = (): Params => {
         params.username = splitted_path[1]?.replace('@', '') ?? '';
         params.permlink = splitted_path[2] ?? '';
     }
+
+
+    if (splitted_path.length === 2 && usernameURLRegex.test(first_param) && !valid_categories.includes(second_param)) {
+        params.username = splitted_path[0]?.replace('@', '') ?? '';
+        params.permlink = splitted_path[1] ?? '';
+    }
+
     // Check if the URL matches the pattern for a profile
     else if (pathname.startsWith('/@')) {
         params.username = splitted_path[0]?.replace('@', '') ?? '';

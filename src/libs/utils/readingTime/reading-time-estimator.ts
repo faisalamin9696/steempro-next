@@ -65,15 +65,19 @@ const getLocale = (minutes: number, locale: SupportedLanguages = 'en'): string =
  */
 export const readingTime = (
     data: string,
-    wordsPerMinute = 300,
+    words?: number,
+    wordsPerMinute = 238,
     language: SupportedLanguages = 'en',
 ): ReadingTime => {
-    const words = getNumberOfWords(data);
-    const minutes = Math.round(words / wordsPerMinute);
+    let noOfWords = getNumberOfWords(data);
+    if (words) {
+        noOfWords = words;
+    }
+    const minutes = Math.round(noOfWords / wordsPerMinute);
 
     return {
         minutes,
-        words,
+        words: noOfWords,
         text: `${isLessThanAMinute(minutes) ? '' : `${minutes} `}${getLocale(
             minutes,
             language,

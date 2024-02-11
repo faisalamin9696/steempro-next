@@ -203,7 +203,7 @@ export const empty_settings = (): Setting => {
   return {
     lang: { code: 'en', title: 'English' },
     nsfw: 'Always hide',
-    feedStyle: 'blogs',
+    feedStyle: 'grid',
     rpc: AppStrings.rpc_servers[0],
     theme: 'system'
   };

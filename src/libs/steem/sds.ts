@@ -17,7 +17,7 @@ export const getActiveFeed = async (
         const R_API = `/feeds_api/getActivePostsBy${category}/${observer}/${bodyLength}/${limit}/${offset}`;
         console.log(R_API);
 
-        const response = await fetchSds(R_API);
+        const response = await fetchSds<any>(R_API);
         // if the response is successful, parse the JSON and check if it's valid
         if (response) {
             return response as Feed[];
@@ -48,7 +48,7 @@ export const getActiveTagFeed = async (
         const R_API = `/feeds_api/getActivePostsByTag${category}/${observer}/${bodyLength}/${limit}/${offset}`;
         console.log(R_API);
 
-        const response = await fetchSds(R_API);
+        const response = await fetchSds<any>(R_API);
         // if the response is successful, parse the JSON and check if it's valid
         if (response) {
             return response as Feed[];
@@ -79,7 +79,7 @@ export const getActiveCommunityFeed = async (
         const R_API = `/feeds_api/getActiveCommunityPostsBy${category}/${community}/${observer}/${bodyLength}/${limit}/${offset} `;
         console.log(R_API);
 
-        const response = await fetchSds(R_API);
+        const response = await fetchSds<any>(R_API);
         // if the response is successful, parse the JSON and check if it's valid
         if (response) {
             return response as Feed[];
@@ -115,7 +115,7 @@ export const getAuthorFeed = async (
         const R_API = `/feeds_api/get${feedType ?? 'PostsByAuthor'}/${author}/${observer}/${bodyLength}/${limit}/${offset}`;
         console.log(R_API);
 
-        const response = await fetchSds(R_API);
+        const response = await fetchSds<any>(R_API);
         // if the response is successful, parse the JSON and check if it's valid
         if (response) {
             return response as Feed[];
@@ -143,7 +143,7 @@ export const getPinnedFeed = async (
         const R_API = `/communities_api/getCommunityPinnedPosts/${community}/${observer}/${bodyLength}`;
         console.log(R_API);
 
-        const response = await fetchSds(R_API);
+        const response = await fetchSds<any>(R_API);
         // if the response is successful, parse the JSON and check if it's valid
         if (response) {
             return response as Feed[];
@@ -171,10 +171,10 @@ export const getAuthorExt = async (
         const R_API = `/accounts_api/getAccountExt/${account}/${observer}`;
         console.log(R_API);
 
-        const response = await fetchSds(R_API);
+        const response = await fetchSds<any>(R_API);
         // if the response is successful, parse the JSON and check if it's valid
-        if (response) {
-            const posting_json_metadata = JSON.parse(response?.posting_json_metadata ?? '{}');
+        if (response && response?.['posting_json_metadata']) {
+            const posting_json_metadata = JSON.parse(response?.['posting_json_metadata'] ?? '{}');
 
             return { ...response, posting_json_metadata } as AccountExt;
         } else {
@@ -201,7 +201,7 @@ export const getCommunity = async (
         const R_API = `/communities_api/getCommunity/${community}/${observer}`;
         console.log(R_API);
 
-        const response = await fetchSds(R_API);
+        const response = await fetchSds<any>(R_API);
         // if the response is successful, parse the JSON and check if it's valid
         if (response) {
 
@@ -232,7 +232,7 @@ export const getAuthorCommunities = async (
         const R_API = `/communities_api/getCommunitiesBySubscriber/${subscriber}/${observer}/${limit}/${offset}`;
         console.log(R_API);
 
-        const response = await fetchSds(R_API);
+        const response = await fetchSds<any>(R_API);
         // if the response is successful, parse the JSON and check if it's valid
         if (response) {
             return response as Community[];
@@ -261,7 +261,7 @@ export const getPost = async (
         const R_API = `/posts_api/getPost/${author}/${permlink}/${withVotes}/${observer}`;
         console.log(R_API);
 
-        const response = await fetchSds(R_API);
+        const response = await fetchSds<any>(R_API);
         // if the response is successful, parse the JSON and check if it's valid
         if (response) {
             return response as Post;
@@ -314,7 +314,7 @@ export const getSteemGlobal = async (): Promise<SteemProps> => {
     try {
         const R_API = `/steem_requests_api/getSteemProps`;
         console.log(R_API);
-        const response = await fetchSds(R_API);
+        const response = await fetchSds<any>(R_API);
         if (response) {
 
             return response;
@@ -338,7 +338,7 @@ export const getPostReplies = async (
     try {
         const R_API = `/posts_api/getPostReplies/${author}/${permlink}/${withVotes}/${observer}`;
         console.log(R_API);
-        const response = await fetchSds(R_API);
+        const response = await fetchSds<any>(R_API);
         if (response) {
             return response as Post[];
         } else {

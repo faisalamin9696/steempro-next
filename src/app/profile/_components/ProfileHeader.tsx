@@ -10,6 +10,8 @@ import { getResizedAvatar } from '@/libs/utils/image';
 import ProfileStart from '../(site)/@start/page';
 import { proxifyImageUrl } from '@/libs/utils/ProxifyUrl';
 import dynamic from 'next/dynamic';
+import SAvatar from '@/components/SAvatar';
+import Reputation from '@/components/Reputation';
 const DynamicCover = dynamic(() => import('@/components/UserCoverCard'))
 interface Props {
     data: AccountExt;
@@ -57,7 +59,8 @@ export default function ProfileHeader(props: Props) {
 
                 <div className="stat">
                     <div className="stat-figure text-secondary">
-                        <Avatar src={getResizedAvatar(data.name)} size='lg' />
+                        <SAvatar {...props} username={data.name} xl size={'lg'} quality='medium' sizeNumber={60}
+                            badge={data?.reputation} />
                         {/* <Avatar {...props}
 
                             src={data.name} xl size={'lg'} quality='medium' sizeNumber={60}
@@ -65,7 +68,11 @@ export default function ProfileHeader(props: Props) {
                     </div>
                     <div className="stat-value text-default-700 text-xl sm:text-3xl">{profileInfo?.posting_json_metadata?.profile?.name}</div>
                     <div className="stat-title text-default-600 flex space-x-2 items-center">
-                        <p>{data.name}</p>
+                        <div className="stat-title flex flex-row items-center  text-gray-200 gap-2">
+                            <p>@{data.name}</p>
+                            <Reputation reputation={data.reputation} />
+                        </div>
+
                         <div className='block md:hidden'>
                             <Popover placement={'bottom'} color="primary" >
                                 <PopoverTrigger>

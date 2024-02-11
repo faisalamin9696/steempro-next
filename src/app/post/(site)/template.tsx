@@ -1,10 +1,12 @@
+
 import MainWrapper from "@/components/wrapper/MainWrapper";
-import { getAuthorExt, getPost } from "@/libs/steem/sds";
-import { getResizedAvatar } from "@/libs/utils/image";
+import { getPost } from "@/libs/steem/sds";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
 import PostPage from "./page";
 import { ResolvingMetadata } from "next";
 import { getServerSession } from "next-auth";
+import PostEnd from "./@end/page";
+import PostStart from "./@start/page";
 
 
 export default async function Layout({
@@ -20,13 +22,13 @@ export default async function Layout({
     const session = await getServerSession();
 
     const data = await getPost(username, permlink, session?.user?.name || 'null');
-
+    const tag = data.community ? JSON.parse(data.json_metadata)?.['tags'][0] : data.category
 
     return (
-        <main className="main">
+        <main className="main" key={permlink}>
             <MainWrapper
-                startContent={start}
-                endContent={end}>
+                startContent={<PostStart />}
+                endContent={<PostEnd tag={tag} />}>
                 <PostPage data={data} />
             </MainWrapper>
         </main>

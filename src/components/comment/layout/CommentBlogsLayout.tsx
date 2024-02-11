@@ -20,7 +20,8 @@ export default function CommentBlogLayout(props: CommentProps) {
 
 
         </div>
-        <Card isPressable={!isReply} onClick={() => onReplyClick && onReplyClick(comment)}
+        <Card isPressable={!isReply} radius='none'
+            onClick={() => onReplyClick && onReplyClick(comment)}
             shadow='none'
             className='w-full bg-transparent gap-4 px-4'>
 

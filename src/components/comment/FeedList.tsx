@@ -16,7 +16,7 @@ type Props = {
 
 export default function FeedList(props: Props) {
     const { endPoint } = props;
-    const { data, error, isLoading, mutate, isValidating } = useSWR(endPoint, fetchSds);
+    const { data, error, isLoading, mutate, isValidating } = useSWR(endPoint, fetchSds<Feed[]>);
     const [rows, setRows] = useState<Feed[]>([]);
     const [loadingMore, setLoadingMore] = useState(false);
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
@@ -39,11 +39,13 @@ export default function FeedList(props: Props) {
 
 
     async function handleEndReached() {
-        setLoadingMore(true);
-        await awaitTimeout(2.5);
-        const newRows = loadMoreRows(data, rows);
-        setRows([...rows, ...newRows!])
-        setLoadingMore(false);
+        if (data) {
+            setLoadingMore(true);
+            await awaitTimeout(2.5);
+            const newRows = loadMoreRows(data, rows);
+            setRows([...rows, ...newRows!])
+            setLoadingMore(false);
+        }
     }
 
 
