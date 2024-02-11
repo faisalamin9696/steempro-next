@@ -32,7 +32,7 @@ export default function SubmitPage() {
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
 
-    const rpm = readingTime(markdown, 200, settings.lang.code);
+    const rpm = readingTime(markdown, 200);
     const [reward, setReward] = React.useState(rewardTypes[1]);
     const [beneficiaries, setBeneficiaries] = React.useState<Beneficiary[]>([]);
     const [community, setCommunity] = useState<Community>();
