@@ -16,9 +16,6 @@ import LoadingCard from '@/components/LoadingCard';
 import { SessionProvider } from 'next-auth/react';
 import { SWRConfig } from 'swr';
 import { fetchSds } from '@/libs/constants/AppFunctions';
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { firebaseConfig } from '@/libs/firebase.config';
 
 
 export function Providers({ children }:
@@ -26,16 +23,6 @@ export function Providers({ children }:
 
     const route = useRouter();
     const [isMounted, setIsMounted] = useState(false);
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-
-    useEffect(() => {
-        const analytics = getAnalytics(app);
-        analytics.app.automaticDataCollectionEnabled = true
-
-    }, [])
-
 
 
     const client = new QueryClient({

@@ -6,6 +6,10 @@ import type { NextRequest } from 'next/server'
 const valid_categories = ['trending', 'created',
     'payout', 'important', 'about']
 
+const valid_tabs = ['blogs', 'posts', 'friends',
+    'comments', 'replies', 'wallet', 'communities']
+
+
 // Define username URL regex
 const usernameURLRegex = /@([^/]+)/;
 
@@ -24,7 +28,9 @@ export function middleware(request: NextRequest) {
     if (splitted_path.length === 3 && usernameURLRegex.test(second_param)) {
         return NextResponse.rewrite(new URL('/post', request.nextUrl), { headers: request.headers });
     }
-    else if (splitted_path.length === 2 && usernameURLRegex.test(first_param) && !valid_categories.includes(second_param)) {
+
+    // check if the post without category
+    else if (splitted_path.length === 2 && usernameURLRegex.test(first_param) && !valid_tabs.includes(second_param)) {
         return NextResponse.rewrite(new URL('/post', request.nextUrl), { headers: request.headers });
     }
     // Check if the URL matches the pattern for a profile

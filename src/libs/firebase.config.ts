@@ -1,9 +1,9 @@
 export const firebaseConfig = {
-    apiKey: process.env.NEXT_PUBLIC_VERCEL_F_API_KEY,
-    authDomain: process.env.NEXT_PUBLIC_VERCEL_F_AUTH_DOMAIN,
-    projectId: process.env.NEXT_PUBLIC_VERCEL_F_PROJECT_ID,
-    storageBucket: process.env.NEXT_PUBLIC_VERCEL_F_STORAGE_BUCKET,
-    messagingSenderId: process.env.NEXT_PUBLIC_VERCEL_F_SENDER_ID,
-    appId: process.env.NEXT_PUBLIC_VERCEL_F_APP_ID,
-    measurementId: process.env.NEXT_PUBLIC_VERCEL_F_MEASUREMENT_ID
+    apiKey: "AIzaSyAdgqQmd86Yvkj765holthdvErQ_2hwSNo",
+    authDomain: "steempromobile.firebaseapp.com",
+    projectId: "steempromobile",
+    storageBucket: "steempromobile.appspot.com",
+    messagingSenderId: "419396556045",
+    appId: "1:419396556045:web:f1dd5a2ee8d62146938c44",
+    measurementId: "G-T818KWMWED"
 };

@@ -5,6 +5,9 @@ import './markdown.scss';
 import { Providers } from "./providers";
 import { Toaster } from "sonner";
 import clsx from "clsx";
+import { initializeApp } from "firebase/app";
+import { firebaseConfig } from "@/libs/firebase.config";
+
 // import 'react-toastify/dist/ReactToastify.css';
 // import { ToastContainer } from 'react-toastify';
 
@@ -27,6 +30,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  initializeApp(firebaseConfig);
+
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body className={clsx(inter.className,)}>
