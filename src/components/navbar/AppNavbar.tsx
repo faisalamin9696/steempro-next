@@ -76,14 +76,19 @@ export default function AppNavbar() {
                             blurDataURL={'/logo-default.png'}
                             priority
                             height={40}
-                            width={150} />
+                            width={150}
+                            style={{ width: 'auto' }}
+
+                        />
                         <Image priority className='hidden max-sm:block'
                             placeholder='blur'
                             blurDataURL={'/logo192.png'}
                             src={'/logo192.png'}
                             alt='logo'
                             height={40}
-                            width={40} />
+                            width={40}
+                            style={{ width: 'auto' }}
+                        />
 
                     </Link>
 
