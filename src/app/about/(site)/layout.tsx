@@ -1,9 +1,4 @@
 import MainWrapper from "@/components/wrapper/MainWrapper";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-    title: 'Submit',
-}
 
 
 export default async function Layout({
@@ -11,9 +6,8 @@ export default async function Layout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-
     return (
-        <main className="main">
+        <main className="main flex flex-col">
             <MainWrapper>
                 {children}
             </MainWrapper>

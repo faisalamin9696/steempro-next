@@ -19,6 +19,18 @@ export function getCredentials(password?: string):
 }
 
 
+export const parsePostMeta = (metaData: string) => {
+    const metadata = JSON.parse(metaData || '{}');
+    const postTags = metadata?.tags;
+    return {
+        image: metadata?.image || undefined,
+        users: metadata?.users || [],
+        tags: typeof postTags === 'string' ? [postTags] : postTags || [],
+        app: metadata?.app || '',
+        format: metadata?.format || '',
+    };
+};
+
 export function getAllCredentials():
     User[] {
     const accounts = secureLocalStorage.getItem('accounts') ?? '';

@@ -35,6 +35,9 @@ export function middleware(request: NextRequest) {
     }
     // Check if the URL matches the pattern for a profile
     else if (request.nextUrl.pathname.startsWith('/@')) {
+        if (third_param === 'edit') {
+            return NextResponse.rewrite(new URL(`/submit`, request.nextUrl), { headers: request.headers });
+        }
         return NextResponse.rewrite(new URL(`/profile`, request.nextUrl), { headers: request.headers });
     }
 
@@ -43,7 +46,7 @@ export function middleware(request: NextRequest) {
         return NextResponse.rewrite(new URL(`/community`, request.nextUrl), { headers: request.headers });
     }
     // Check if the URL matches the pattern for a category
-    else if (valid_categories.includes(first_param)) {
+    else if (valid_categories.filter(item => item !== 'about').includes(first_param)) {
         return NextResponse.rewrite(new URL('/category', request.nextUrl), { headers: request.headers });
     }
 }

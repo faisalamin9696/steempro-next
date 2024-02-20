@@ -182,7 +182,7 @@ type AccountExt = {
   posting_weight_threshold: number;
   memo_key: string;
   login: boolean | null | undefined;
-  communities: CommunitiesType[] | null | undefined;
+  communities?: Community[];
   last_fetch: number;
   encKey: string;
   // notification: {
@@ -387,7 +387,7 @@ type PostingContent = {
   body: string;
   parent_author: string;
   parent_permlink: string;
-  json_metadata: string;
+  json_metadata: any;
   permlink: string;
 };
 

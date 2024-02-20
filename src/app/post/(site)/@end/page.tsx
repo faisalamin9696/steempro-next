@@ -3,7 +3,7 @@
 import { Button } from '@nextui-org/react'
 import React, { useState } from 'react'
 import { IoIosRefresh } from 'react-icons/io'
-import CompactPost from '../../_components/CompactPost'
+import CompactPost from '../../../../components/CompactPost'
 import useSWR from 'swr'
 import { awaitTimeout, fetchSds } from '@/libs/constants/AppFunctions'
 import LoadingCard from '@/components/LoadingCard'
@@ -54,7 +54,7 @@ export default function PostEnd(props: Props) {
         <div className='flex flex-col gap-4'>
           {data?.map((comment) => {
             return (
-              <CompactPost comment={comment} />
+              <CompactPost key={comment.permlink} comment={comment} />
             )
           })}
         </div>}

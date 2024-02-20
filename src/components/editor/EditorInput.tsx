@@ -388,7 +388,7 @@ const EditorInput = (props: EditorProps) => {
                                     ref={postInput}
                                     label={<EditorToolbar onSelect={insertCode}
                                         className={'mb-4'} />}
-
+                                    radius='sm'
                                     variant='flat'
                                     placeholder={'Write something...'}
                                     disableAnimation

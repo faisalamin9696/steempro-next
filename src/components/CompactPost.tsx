@@ -4,6 +4,7 @@ import React from 'react'
 import { getPostThumbnail } from '@/libs/utils/image'
 import BodyShort from '@/components/body/BodyShort'
 import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator'
+import ViewCountCard from './ViewCountCard'
 
 
 type Props = {
@@ -28,7 +29,7 @@ export default function CompactPost(props: Props) {
             <div className="relative">
 
 
-                <CommentCover src={thumbnail} />
+                <CommentCover thumbnail src={thumbnail} />
 
                 <div
                     className="rounded-lg hover:bg-transparent transition duration-300 absolute bottom-0 top-0 right-0 left-0 bg-gray-900 opacity-25">
@@ -56,14 +57,22 @@ export default function CompactPost(props: Props) {
                     <span className="ml-1 text-default-900/80">{readingTime('', comment?.word_count).text}</span>
                 </span>
 
-                <span className="py-1 text-xs font-regular gap-1 text-default-900/80 mr-1 flex flex-row items-center">
-                    <svg className="h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z">
-                        </path>
-                    </svg>
-                    {comment?.children && <div className="flex text-default-900/80 gap-1">{comment?.children}</div>
-                    }                </span>
+                <div className=' flex items-center gap-2'>
+
+                    <p className='text-tiny font-light '>
+                        <ViewCountCard comment={comment} />
+                    </p>
+
+                    <span className="py-1 text-xs font-regular gap-1 text-default-900/80 mr-1 flex flex-row items-center">
+                        <svg className="h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z">
+                            </path>
+                        </svg>
+                        {comment?.children && <div className="flex text-default-900/80 gap-1">{comment?.children}</div>}
+                    </span>
+                </div>
+
             </div>
         </div>
     )

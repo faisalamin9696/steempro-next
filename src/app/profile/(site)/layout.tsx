@@ -27,6 +27,7 @@ export default async function Layout({
             <ProfileHeader data={data} />
 
             <MainWrapper
+                // startContent={start}
                 endContent={end}>
                 {children}
             </MainWrapper>

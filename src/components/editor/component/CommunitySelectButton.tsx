@@ -1,70 +1,72 @@
+'use client';
 
 import { Select, SelectItem } from '@nextui-org/react';
-import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { Image } from '@nextui-org/react';
-import { useAppSelector } from '@/libs/constants/AppFunctions';
-import { Minute } from '@/libs/constants/AppConstants';
-import { getAuthorCommunities } from '@/libs/steem/sds';
+import { fetchSds, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { getResizedAvatar } from '@/libs/utils/image';
+import useSWR from 'swr';
+import { useSession } from 'next-auth/react';
+import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 
 interface Props {
     community?: Community;
     onSelectCommunity: (community: Community) => void;
+    onlyCommunity?: boolean;
+
 
 }
-function myBlog(username: string): Community {
-
-    return {
-        account: username,
-        title: 'My Blogs', about: '',
-        id: 0,
-        type: 0,
-        account_reputation: 0,
-        created: 0,
-        rank: 0,
-        sum_pending: 0,
-        count_pending: 0,
-        count_authors: 0,
-        count_subs: 0,
-        lang: '',
-        description: '',
-        flag_text: '',
-        is_nsfw: 0,
-        settings: undefined,
-        observer_subscribed: 0,
-        observer_role: '',
-        observer_title: ''
-    }
-
-}
-
 export default function CommunitySelectButton(props: Props) {
-    const { community, onSelectCommunity } = props;
+    const { community, onSelectCommunity, onlyCommunity } = props;
     const loginInfo = useAppSelector(state => state.loginReducer.value);
-    const queryKey = [`communities-${loginInfo.name}`];
-    const [communities, setCommunities] = useState<Community[]>([]);
 
+    const { data: session } = useSession();
+    const URL = `/communities_api/getCommunitiesBySubscriber/${session?.user?.name}`;
+    const { data, isLoading } = useSWR(onlyCommunity ? undefined :
+        session?.user?.name ? URL : undefined, fetchSds<Community[]>)
+    const dispatch = useAppDispatch();
 
-    const { data, isLoading, isSuccess } = useQuery({
-        gcTime: 10 * Minute, // 10 minutes
-        enabled: !!loginInfo.name,
-        queryKey,
-        queryFn: () => getAuthorCommunities(loginInfo.name, loginInfo.name)
-
-    });
 
     useEffect(() => {
-        if (isSuccess) {
-            setCommunities([myBlog(loginInfo.name)].concat(data));
+        if (data) {
+            dispatch(saveLoginHandler({ ...loginInfo, communities: data }));
         }
 
+    }, [data])
 
-    }, [isSuccess]);
+    if (onlyCommunity) {
 
+        return community && <Select
+            label={'Select community'}
+            className="max-w-xs"
+            labelPlacement='outside'
+            isDisabled={onlyCommunity}
+            startContent={community ? <Image
+                loading='lazy'
+                className='avatar rounded-full object-contain'
+                style={{ width: 24, height: 24 }}
+                src={getResizedAvatar(community?.account)} alt={''} /> : null}
+            size={'sm'}
+            selectedKeys={[community.account]}
+
+            classNames={{
+                label: 'text-default-500 text-sm',
+                selectorIcon: 'text-default-500',
+            }}
+        >
+            <SelectItem key={community?.account}
+                value={community.title || community.account}>
+                {community.title || community.account}
+            </SelectItem>
+
+        </Select>
+
+
+    }
     return (
         <div>
-            <Select
+            {<Select
+                isDisabled={onlyCommunity}
                 // clearButtonProps={{
                 //     onPress: () => {
                 //         setCommunity(undefined)
@@ -72,37 +74,38 @@ export default function CommunitySelectButton(props: Props) {
                 // }}
                 startContent={community ? <Image
                     loading='lazy'
-                    className='avatar rounded-full'
-                    style={{ width: 26, height: 26 }}
+                    className='avatar rounded-full object-contain'
+                    style={{ width: 24, height: 24 }}
                     src={getResizedAvatar(community?.account)} alt={''} /> : null}
                 size={'sm'}
-                // width={40}
-                // selectedKeys={community ? [community.account] : undefined}
+                selectedKeys={community ? [community.account] : undefined}
                 selectionMode='single'
                 onChange={e => {
-                    onSelectCommunity(communities.filter(community => community.account === e.target.value)[0]);
+                    if (loginInfo.communities)
+                        onSelectCommunity(loginInfo.communities.filter(community => community.account === e.target.value)[0]);
                 }}
+                // defaultSelectedKeys={[(community?.account || '')]}
                 isLoading={isLoading}
                 label={'Select community'}
                 className="max-w-xs"
                 labelPlacement='outside'
                 classNames={{ label: 'text-default-500 text-sm', selectorIcon: 'text-default-500' }}
-
-
             >
-                {communities.map((community) => (
-                    <SelectItem key={community.account}
-                        textValue={community.title}
-                        value={JSON.stringify(community)}>
+                {(loginInfo.communities ?? []).map((item) => (
+                    <SelectItem key={item.account}
+                        textValue={item.title}
+                        value={JSON.stringify(item)}>
                         <div className="flex gap-2 items-center flex-row">
                             <Image className='avatar rounded-full'
-                                src={getResizedAvatar(community.account)} width={30} height={30} alt={''} />
-                            <div className="text-small ">{community.title}</div>
+                                src={getResizedAvatar(item.account)} width={30} height={30} alt={''} />
+                            <div className="text-small ">{item.title}</div>
                         </div>
                     </SelectItem>
                 ))}
 
             </Select>
+
+            }
         </div>
     )
 }

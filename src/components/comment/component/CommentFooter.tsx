@@ -207,35 +207,7 @@ export default function CommentFooter(props: CommentProps) {
 
         </Card >
 
-        {isReply ? <div className='flex gap-1  self-end opacity-70'>
-
-            <button type="button"
-                onClick={() => { onReplyClick && onReplyClick(comment) }}
-                data-te-ripple-init
-                data-te-ripple-color="light"
-                className="px-2  text-xs text-center text-default-900 align-middle transition-all rounded-lg select-none hover:bg-default-600/40 active:bg-default-600/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
-                Reply
-            </button>
-            <button
-                onClick={() => { onEditClick && onEditClick(comment) }}
-
-                className="px-2 text-xs  text-center text-default-900 align-middle transition-all rounded-lg select-none hover:bg-default-600/40 active:bg-default-600/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
-                Edit
-            </button>
-            <button
-                onClick={() => { onDeleteClick && onDeleteClick(comment) }}
-
-                className="px-2 text-xs text-center text-default-900 align-middle transition-all rounded-lg select-none hover:bg-default-600/40 active:bg-default-600/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
-                Delete
-            </button>
-            <button
-                onClick={() => { onMuteClick && onMuteClick(comment) }}
-                className="px-2  text-xs text-center text-default-900 align-middle transition-all rounded-lg select-none hover:bg-default-600/40 active:bg-default-600/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
-                Mute
-            </button>
-
-
-        </div > : null}
+    
 
     </div >
 }

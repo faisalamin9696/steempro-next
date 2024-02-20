@@ -12,11 +12,13 @@ interface Props {
     onSelectBeneficiary?: (bene: Beneficiary) => void;
     beneficiaries: Beneficiary[];
     onRemove?: (bene: Beneficiary) => void,
+    disabled?: boolean;
+
 }
 
 
 export default function BeneficiaryButton(props: Props) {
-    const { onSelectBeneficiary, beneficiaries, onRemove } = props;
+    const { onSelectBeneficiary, beneficiaries, onRemove, disabled } = props;
     const [username, setUsername] = useState('');
     const [weight, setWeight] = useState('');
     const [benePopup, setBenePopup] = useState(false);
@@ -64,21 +66,26 @@ export default function BeneficiaryButton(props: Props) {
     function handleRemveBeneficiary(bene: Beneficiary) {
         onRemove && onRemove(bene);
     }
+
+    if (disabled)  return null
+    
     return (<div>
-        <Popover isOpen={benePopup} onOpenChange={(open) => setBenePopup(open)}
+        <Popover isOpen={benePopup}
+            onOpenChange={(open) => setBenePopup(open)}
             placement={'top-start'} className=' ' classNames={{
                 content: ''
             }}>
-            <PopoverTrigger >
+            <PopoverTrigger  >
 
-                <Button size='sm' color='default'
+                <Button size='sm'
+                    color='default'
                     startContent={<FaUsersCog className='text-lg' />}
                     className=''
                     radius='lg' variant='shadow'>
                     {'Bene'}: {beneficiaries?.length ?? 0}
                 </Button>
             </PopoverTrigger>
-            <PopoverContent >
+            <PopoverContent>
                 <div className="px-1 py-2">
                     <div className='flex justify-between gap-2 max-sm:flex-col'>
                         <div className='space-y-1'>

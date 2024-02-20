@@ -8,10 +8,13 @@ import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { addCommentHandler } from '@/libs/redux/reducers/CommentReducer';
 import { getSettings } from '@/libs/utils/user';
 import { Card, CardFooter } from '@nextui-org/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { usePathname, useRouter } from 'next/navigation';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
+import { updatePostView } from '@/libs/firebase/firebaseApp';
+import { getAuth } from 'firebase/auth';
+import SubmitPage from '@/app/submit/(site)/page';
 const DynamicPostReplies = dynamic(() => import('../_components/PostReplies'))
 
 
@@ -27,19 +30,40 @@ export default function PostPage(props: Props) {
     const dispatch = useAppDispatch();
     // const queryKey = [`post-${author}-${permlink}`];
     const commentInfo = useAppSelector(state => state.commentReducer.values)[`${data.author}/${data.permlink}`] ?? data;
-    const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
+    const [editMode, setEditMode] = useState(false);
+    const toggleEditMode = () => setEditMode(!editMode)
 
 
     useEffect(() => {
+
+
         if (!category) {
             window.history.pushState({}, '', `/${data.category}/@${data.author}/${data.permlink}`)
         }
         dispatch(addCommentHandler(data));
+
     }, []);
+
+
+    useEffect(() => {
+
+        // count view after 1 second
+        const timeout = setTimeout(() => {
+            updatePostView(data);
+        }, 5000);
+
+        return () => clearTimeout(timeout);
+    }, []);
+
+
+    if (editMode) {
+        return <SubmitPage oldPost={data}
+            handleUpdateCancel={toggleEditMode} handleUpdateSuccess={toggleEditMode} />
+    }
 
     return (<div key={pathname}
         className='flex-col gap-4 bg-white dark:bg-white/5
-    backdrop-blur-md rounded-lg p-4'>
+    backdrop-blur-md rounded-lg p-4 w-full'>
         {commentInfo ?
             <div className='card w-full card-compact shadow-sm '>
 
@@ -49,7 +73,9 @@ export default function PostPage(props: Props) {
 
                         <div className="space-y-4 flex-col">
                             <>
-                                <CommentHeader size='md' comment={commentInfo} className='w-full' />
+                                <CommentHeader size='md'
+                                    handleEdit={toggleEditMode}
+                                    comment={commentInfo} className='w-full' />
                             </>
                             <h2 className="text-xl font-bold text-black dark:text-white">{commentInfo.title}</h2>
 

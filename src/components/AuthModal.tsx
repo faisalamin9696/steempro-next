@@ -138,7 +138,6 @@ export default function AuthModal(props: Props) {
         //     })
         // });
 
-        // console.log(1122, response)
 
 
 
@@ -162,7 +161,10 @@ export default function AuthModal(props: Props) {
                             .then(() => {
                                 const auth = saveCredentials(username, key, password);
                                 saveSessionKey(password);
-                                dispatch(saveLoginHandler({ ...account, login: true, encKey: auth?.key }));
+                                dispatch(saveLoginHandler({
+                                    ...account, login: true,
+                                    encKey: auth?.key
+                                }));
                                 onLoginSuccess && onLoginSuccess({ username, key: auth?.key ?? '' });
                                 handleOnClose();
                                 clearAll();

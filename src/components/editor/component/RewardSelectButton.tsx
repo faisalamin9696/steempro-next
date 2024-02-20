@@ -11,13 +11,17 @@ export const rewardTypes: Payout[] = [{ title: 'Decline Payout', shortTitle: 'De
 interface Props {
     onSelectReward?: (reward: Payout) => void;
     selectedValue: Payout;
+    disabled?: boolean;
 
 }
 
 export default function RewardSelectButton(props: Props) {
-    const { onSelectReward, selectedValue } = props;
+    const { onSelectReward, selectedValue, disabled } = props;
 
     const [rewardPopup, setRewardPopup] = useState(false);
+
+
+    if (disabled) return null
 
     return (<div>
         <Popover isOpen={rewardPopup} onOpenChange={(open) => setRewardPopup(open)}
@@ -25,8 +29,10 @@ export default function RewardSelectButton(props: Props) {
                 content: 'bg-teal-600'
             }}>
             <PopoverTrigger >
+                <Button size='sm'
+                    isDisabled={disabled}
 
-                <Button size='sm' startContent={<FaDollarSign className='text-lg' />}
+                    startContent={<FaDollarSign className='text-lg' />}
                     className='!text-white  bg-teal-600'
 
                     radius='lg' variant='shadow'>

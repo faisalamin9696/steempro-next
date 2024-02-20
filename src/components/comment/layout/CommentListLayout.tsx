@@ -15,10 +15,10 @@ export default function CommentListLayout(props: CommentProps) {
     const thumbnail = getPostThumbnail(comment.json_images);
 
     return <div
-        className={`w-full card card-compact 
-        items-center flex-col p-4 gap-1 dark:bg-default-900/30 bg-default-900/5`}>
+        className={`w-full card card-compact shadow-md
+        items-center flex-col p-4 gap-1 bg-white/60 dark:bg-white/10`}>
 
-        <CommentHeader {...props} compact comment={comment} className='w-full' />
+        <CommentHeader compact comment={comment} className='w-full' />
 
         <Card isPressable={!isReply} radius='none'
             onClick={() => onReplyClick && onReplyClick(comment)} shadow='none'

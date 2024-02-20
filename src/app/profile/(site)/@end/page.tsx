@@ -32,7 +32,7 @@ export default function ProfileEnd() {
           className="flex items-center gap-2
          text-default-900 text-lg font-bold mb-4 z-10">
           <p>{'Intresting People'}</p>
-          <Button radius='full'
+          <Button radius='full' variant='light'
             color='default'
             size='sm'
             onPress={handlePeopleRefresh}

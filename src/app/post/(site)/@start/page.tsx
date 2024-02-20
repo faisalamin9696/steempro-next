@@ -1,10 +1,9 @@
 "use client"
 
-import { Button, Divider } from '@nextui-org/react'
-import React, { useEffect } from 'react'
+import { Button } from '@nextui-org/react'
+import React from 'react'
 import { IoIosRefresh } from 'react-icons/io'
-import CompactPost from '../../_components/CompactPost'
-import { fetchSds, getAnnouncements } from '@/libs/constants/AppFunctions'
+import { getAnnouncements } from '@/libs/firebase/firebaseApp'
 import useSWR from 'swr'
 import ErrorCard from '@/components/ErrorCard'
 import Link from 'next/link'
@@ -44,7 +43,7 @@ export default function PostStart() {
       {isLoading || isValidating ? <LoadingCard /> :
         <div className='flex flex-col gap-4'>
           {annoucements?.map(annoucement => {
-            return (<div className='bg-white dark:bg-white/5 text-sm px-2 py-1'>
+            return (<div key={annoucement.authPerm} className='bg-white dark:bg-white/5 text-sm px-2 py-1'>
               <Link className=' text-blue-400 hover:underline'
                 href={annoucement.authPerm}>{annoucement.title}</Link>
               <p className='opacity-75 text-tiny'>

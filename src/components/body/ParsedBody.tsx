@@ -9,7 +9,7 @@ export function ParsedBody({ body }: { body: string }): JSX.Element {
     const options = {
         replace(domNode) {
             if (domNode?.attribs && domNode?.name === 'img') {
-                return <CommentCover lg {...domNode?.attribs} />
+                return <CommentCover thumbnail {...domNode?.attribs} />
 
             }
             if (domNode?.attribs && domNode?.name === 'a') {
@@ -23,8 +23,7 @@ export function ParsedBody({ body }: { body: string }): JSX.Element {
 
                 // Render the table content using domToReact
                 return <div className='markdown-body table-scrollable'>
-                    <table className={`w-full text-sm text-left rtl:text-right
-                     text-gray-500 dark:text-gray-400 shadow-md sm:rounded-lg`}>
+                    <table className={`w-full text-sm text-left rtl:text-right shadow-md sm:rounded-lg`}>
                         {domToReact(domNode.children)}
                     </table>
 

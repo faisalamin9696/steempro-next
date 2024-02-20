@@ -24,20 +24,28 @@ const LoginDialogContext = createContext<LoginDialogContextType>({
     credentials: undefined,
 });
 
-export const LoginDialogProvider = ({ children }: { children: React.ReactNode }) => {
+export const LoginDialogProvider = ({ children, data }:
+    { children: React.ReactNode, data?: AccountExt }) => {
     const { data: session, status } = useSession();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const [isDialogOpen, setDialogOpen] = useState(false);
     const [isAuthorized, setIsAuthorized] = useState(false);
     const dispatch = useAppDispatch();
 
+
     useEffect(() => {
-        if (session?.user?.name) {
-            dispatch(saveLoginHandler({ ...empty_profile(session?.user.name), ...loginInfo, login: true }));
-        } else {
-            dispatch(logoutHandler());
+        if (data) {
+            dispatch(saveLoginHandler(data));
         }
-    }, [status]);
+    }, []);
+
+    // useEffect(() => {
+    //     if (session?.user?.name) {
+    //         dispatch(saveLoginHandler({ ...loginInfo, ...loginInfo, login: true }));
+    //     } else {
+    //         dispatch(logoutHandler());
+    //     }
+    // }, [status]);
 
     const isLoggedIn = useMemo(() => status === 'authenticated', [session]);
     const isLocked = isLoggedIn && !sessionKey;
@@ -61,7 +69,7 @@ export const LoginDialogProvider = ({ children }: { children: React.ReactNode })
         closeAuthentication,
         isAuthorized,
         isLoggedIn,
-        credentials: session?.user as User,
+        credentials: { username: session?.user?.name, key: '' } as User,
     };
 
     return (

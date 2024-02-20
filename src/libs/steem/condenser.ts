@@ -141,6 +141,7 @@ export const publishContent = async (
     key: string,
     voteWeight = null,
 ) => {
+    console.log(1122, 777, postingContent)
     const keyData = getKeyType(postingContent.author, key);
 
     if (keyData && PrivKey.atLeast(keyData.type, 'POSTING')) {
@@ -154,7 +155,7 @@ export const publishContent = async (
                     permlink: postingContent.permlink,
                     title: postingContent.title,
                     body: postingContent.body,
-                    json_metadata: postingContent.json_metadata,
+                    json_metadata: JSON.stringify(postingContent.json_metadata),
                 },
             ],
         ];
@@ -163,6 +164,7 @@ export const publishContent = async (
             const e = ['comment_options', options];
             opArray.push(e);
         }
+
 
         // if (voteWeight) {
         //   const e = [

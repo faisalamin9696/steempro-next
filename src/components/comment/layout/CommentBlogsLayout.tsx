@@ -13,7 +13,8 @@ export default function CommentBlogLayout(props: CommentProps) {
 
     const thumbnail = getPostThumbnail(comment.json_images);
 
-    return <div className='w-full card card-compact flex-col gap-4 dark:bg-default-900/30 bg-default-900/5'>
+    return <div className='w-full card card-compact flex-col gap-4 
+    bg-white/60 dark:bg-white/10'>
 
         <div className='p-4'>
             <CommentHeader {...props} comment={comment} className='w-full' />
@@ -27,7 +28,7 @@ export default function CommentBlogLayout(props: CommentProps) {
 
             <h2 className="card-content font-bold text-lg text-start ">{comment.title}</h2>
 
-            {isReply ? null : <CommentCover src={thumbnail} />}
+            {isReply ? null : <CommentCover thumbnail src={thumbnail} />}
 
 
             <p className='card-content line-clamp-2 overflow-hidden text-start w-full h-full'>

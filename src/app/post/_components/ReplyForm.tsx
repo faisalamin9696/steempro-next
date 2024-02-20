@@ -1,13 +1,13 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Reply from './Reply';
 import BodyShort from '../../../components/body/BodyShort';
 import { FiCornerLeftUp } from 'react-icons/fi';
 
 import { useLogin } from '../../../components/useLogin';
 import moment from 'moment';
-import { Accordion, AccordionItem, Card, User } from '@nextui-org/react';
+import { Accordion, AccordionItem, Button, Card, Popover, PopoverContent, PopoverTrigger, User } from '@nextui-org/react';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { awaitTimeout, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator';
@@ -25,6 +25,10 @@ import PublishButton from '@/components/editor/component/PublishButton';
 import { getResizedAvatar } from '@/libs/utils/image';
 import { createPatch, extractMetadata, generateReplyPermlink, makeJsonMetadata, makeJsonMetadataReply, validateCommentBody } from '@/libs/utils/editor';
 import { checkPromotionText, getCredentials, getSessionKey, getSettings } from '@/libs/utils/user';
+import secureLocalStorage from 'react-secure-storage';
+import { useSession } from 'next-auth/react';
+import { Role } from '@/libs/utils/community';
+import { allowDelete } from '@/libs/utils/StateFunctions';
 
 interface Props {
     comment: Post;
@@ -44,13 +48,27 @@ export default function ReplyForm(props: Props) {
     const [isPosting, setPosting] = useState(false);
     const { authenticateUser, isAuthorized } = useLogin();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
-    const isEdit = false;
     const dispatch = useAppDispatch();
     const queryKey = [`post-${rootInfo.author}-${rootInfo.permlink}`];
     const queryClient = useQueryClient();
+    const [showEdit, setShowEdit] = useState(false);
+    const [deletePopup, setDeletePopup] = useState(false);
+    const { data: session } = useSession();
+
+    const username = session?.user?.name;
+
+    const isSelf = comment.author === username;
+
+    const canMute = username && Role.atLeast(comment.observer_role, 'mod');
+    const canDelete = !comment.children && isSelf && allowDelete(comment);
+    const canEdit = isSelf;
+    const allowReply = Role.canComment(comment.community, comment.observer_role);
+    const canReply = allowReply && comment['depth'] < 255;
+
 
 
     const toggleReply = () => setShowReply(!showReply);
+    const toggleEdit = () => setShowEdit(!showEdit);
 
 
     const getReplies = permlink => {
@@ -59,23 +77,64 @@ export default function ReplyForm(props: Props) {
 
     const replies = getReplies(commentInfo.permlink);
 
-    function handleAllClear() {
-        setMarkdown('');
-    }
-
 
     function clearForm() {
+        setMarkdown('');
+
 
     }
 
 
+    function handleClear() {
+        secureLocalStorage.removeItem('comment_draft');
+        setMarkdown('');
+
+    }
+
+    useEffect(() => {
+
+        if (showEdit || showReply) {
+            document.getElementById('editorDiv')?.scrollIntoView({ behavior: 'smooth' });
+
+        }
+        if (showEdit) {
+            setMarkdown(commentInfo.body);
+        }
+        if (showReply) {
+            const draft = (secureLocalStorage.getItem('comment_draft') || '') as string;
+            setMarkdown(draft || '');
+        }
+
+    }, [showEdit, showReply]);
+
+
+    function saveDraft() {
+        if (showReply)
+            secureLocalStorage.setItem('comment_draft', markdown);
+
+    }
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            saveDraft();
+        }, 1000);
+
+        return () => clearTimeout(timeout);
+
+    }, [markdown]);
+
+
+
+    function handleDelete() {
+
+    }
 
     function handleOnPublished(postData: PostingContent) {
         const time = moment().unix();
 
         let newComment: Post;
         // if the update then use the old data
-        if (isEdit) {
+        if (showEdit) {
             newComment = {
                 ...postData,
                 ...commentInfo,
@@ -117,7 +176,7 @@ export default function ReplyForm(props: Props) {
             }
         }
 
-        if (!isEdit) {
+        if (!showEdit) {
             queryClient.setQueryData(queryKey, { ...rootInfo, children: rootInfo?.children + 1 })
 
             // update the redux state for the post
@@ -134,7 +193,7 @@ export default function ReplyForm(props: Props) {
 
         }
         clearForm();
-        toast.success(isEdit ? 'Updated' : 'Sent');
+        toast.success(showEdit ? 'Updated' : 'Sent');
     }
     const postingMutation = useMutation({
         mutationKey: [`publish-reply`],
@@ -157,7 +216,7 @@ export default function ReplyForm(props: Props) {
     async function handlePublish() {
 
         if (!markdown) {
-            toast.info('Post can not be empty');
+            toast.info('Comment can not be empty');
             return
         }
 
@@ -188,7 +247,7 @@ export default function ReplyForm(props: Props) {
                     body: markdown,
                     parent_author: commentInfo.author,
                     parent_permlink: commentInfo.permlink,
-                    json_metadata: JSON.stringify(makeJsonMetadataReply()),
+                    json_metadata: makeJsonMetadataReply(),
                     permlink: permlink
 
                 }
@@ -201,7 +260,7 @@ export default function ReplyForm(props: Props) {
                 const cbody = markdown.replace(/[\x00-\x09\x0B-\x0C\x0E-\x1F\x7F-\x9F]/g, "");
 
                 // check if post is edit
-                if (isEdit) {
+                if (showEdit) {
                     const oldComment = commentInfo;
                     let newBody = cbody;
                     if (!checkPromotionText(newBody))
@@ -249,48 +308,141 @@ export default function ReplyForm(props: Props) {
                     title={<div> <CommentHeader comment={commentInfo} isReply />
                     </div>} >
                     <div className='flex flex-col gap-2'>
+
+
                         <MarkdownViewer text={commentInfo.body} />
 
-                        <CommentFooter comment={commentInfo}
-                            isReply onReplyClick={undefined}
-                            className={'dark:bg-default-900/30 bg-default-900/5'} />
+                        <div className='flex gap-1  self-end opacity-70'>
 
-                        {showReply ? <div className='flex flex-col mt-2 gap-2'>
-                            <EditorInput
+                            {canReply &&
+                                <Button size='sm'
+                                    onPress={() => { toggleReply() }}
+                                    variant='light'
+                                    isDisabled={showReply || showEdit}
+                                    className='text-tiny min-w-0 min-h-0'>
+                                    Reply
 
-                                value={markdown}
-                                onChange={setMarkdown}
-                                onImageUpload={() => { }}
-                                onImageInvalid={() => { }}
-                                rows={5} />
+                                </Button>}
 
-                            <div className='flex justify-between'>
-                                <ClearFormButton 
-                                    onClearPress={undefined} />
+                            {canEdit &&
+                                <Button size='sm'
+                                    onPress={() => { toggleEdit() }}
+                                    variant='light'
+                                    isDisabled={showReply || showEdit}
+                                    className='text-tiny min-w-0 min-h-0'>
+                                    Edit
 
-                                <PublishButton 
-                                    disabled={isPosting}
-                                    onPress={undefined}
-                                    isLoading={isPosting}
-                                    tooltip='' buttonText='Send' />
+                                </Button>}
 
 
-                            </div>
+                            {canDelete && < div >
+                                <Popover isOpen={deletePopup}
+                                    onOpenChange={(open) => setDeletePopup(open)}
+                                    placement={'top-start'} color='primary'>
+                                    <PopoverTrigger >
+                                        <Button size='sm'
+                                            variant='light'
+                                            isDisabled={showReply || showEdit}
+                                            className='text-tiny min-w-0 min-h-0'>
+                                            Delete
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent >
+                                        <div className="px-1 py-2">
+                                            <div className="text-small font-bold">{'Confirmation'}</div>
+                                            <div className="text-tiny flex">
+                                                {'Do you really want to delete?'}
+                                            </div>
 
-                            <div className='space-y-1 w-full overflow-auto p-1 m-1 mt-4'>
+                                            <div className="text-tiny flex mt-2 space-x-2">
+                                                <Button onPress={() => setDeletePopup(false)}
+                                                    size='sm' color='default' variant='faded'>No</Button>
+                                                <Button size='sm' color='danger' variant='solid'
+                                                    onPress={() => {
+                                                        setDeletePopup(false);
+                                                        handleDelete();
+                                                    }}>YES</Button>
 
-                                <div className=' items-center flex justify-between'>
-                                    <p className='float-left text-sm text-default-900/70 font-semibold'>Preview</p>
+                                            </div>
+                                        </div>
+                                    </PopoverContent>
+                                </Popover>
 
-                                    <p className='float-right text-sm font-extralight text-default-900/60'>{rpm?.words} words, {rpm?.text}</p>
+                            </div>}
+
+
+                            {canMute &&
+                                <Button size='sm'
+                                    onPress={() => { { } }}
+                                    variant='light'
+                                    isDisabled={showReply || showEdit}
+                                    className='text-tiny min-w-0 min-h-0'>
+                                    Mute
+
+                                </Button>
+                            }
+
+
+
+                        </div >
+
+
+
+
+
+                        {(showReply || showEdit) ?
+                            <div id='editorDiv' className='flex flex-col mt-2 gap-2'>
+                                <EditorInput
+                                    value={markdown}
+                                    onChange={setMarkdown}
+                                    onImageUpload={() => { }}
+                                    onImageInvalid={() => { }}
+                                    rows={5} />
+
+                                <div className='flex justify-between'>
+                                    <ClearFormButton
+                                        onClearPress={handleClear} />
+
+                                    <div className='flex gap-2 '>
+
+                                        {<Button radius='full'
+                                            size='sm'
+                                            onPress={() => {
+                                                if (showReply)
+                                                    toggleReply();
+                                                else toggleEdit();
+
+                                            }}>
+                                            Cancel
+                                        </Button>}
+
+                                        <PublishButton
+                                            disabled={isPosting}
+                                            onPress={undefined}
+                                            isLoading={isPosting}
+                                            tooltip=''
+                                            buttonText={showEdit ? 'Update' : 'Send'} />
+                                    </div>
+
+
+
 
                                 </div>
-                                {markdown ? <Card shadow='sm' className='p-2 lg:shadow-none space-y-2'>
-                                    <MarkdownViewer text={markdown} />
-                                </Card> : null}
-                            </div>
 
-                        </div> : null}
+                                <div className='space-y-1 w-full overflow-auto p-1 m-1 mt-4'>
+
+                                    <div className=' items-center flex justify-between'>
+                                        <p className='float-left text-sm text-default-900/70 font-semibold'>Preview</p>
+
+                                        <p className='float-right text-sm font-extralight text-default-900/60'>{rpm?.words} words, {rpm?.text}</p>
+
+                                    </div>
+                                    {markdown ? <Card shadow='sm' className='p-2 lg:shadow-none space-y-2'>
+                                        <MarkdownViewer text={markdown} />
+                                    </Card> : null}
+                                </div>
+
+                            </div> : null}
                         {replies?.map((item: Post) => (
                             <div className=' mt-6 ' style={{
                                 // marginLeft: ((2 * (comment.depth - rootComment.depth)) / 2) + 'rem'

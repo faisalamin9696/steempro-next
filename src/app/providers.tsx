@@ -16,13 +16,35 @@ import LoadingCard from '@/components/LoadingCard';
 import { SessionProvider } from 'next-auth/react';
 import { SWRConfig } from 'swr';
 import { fetchSds } from '@/libs/constants/AppFunctions';
+import { firebaseConfig } from '@/libs/firebase/firebase.config';
+import { initializeApp } from "firebase/app";
+import {
+    signInAnonymously, getAuth
+} from "firebase/auth";
 
+type Props = {
+    children: React.ReactNode;
+    data?: AccountExt
+}
+export function Providers(props: Props) {
+    const { children, data } = props;
 
-export function Providers({ children }:
-    { children: React.ReactNode }) {
+    initializeApp(firebaseConfig);
 
     const route = useRouter();
     const [isMounted, setIsMounted] = useState(false);
+    const auth = getAuth();
+
+
+    useEffect(() => {
+        try {
+            if (!auth.currentUser)
+                signInAnonymously(auth);
+        } catch (error) {
+            // failed silently
+        }
+
+    }, [])
 
 
     const client = new QueryClient({
@@ -67,7 +89,7 @@ export function Providers({ children }:
                                     revalidateOnFocus: false
                                 }}
                             >
-                                <LoginDialogProvider>
+                                <LoginDialogProvider data={data}>
                                     <AppNavbar />
                                     {children}
                                 </LoginDialogProvider>

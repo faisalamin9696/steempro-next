@@ -5,11 +5,8 @@ import './markdown.scss';
 import { Providers } from "./providers";
 import { Toaster } from "sonner";
 import clsx from "clsx";
-import { initializeApp } from "firebase/app";
-import { firebaseConfig } from "@/libs/firebase.config";
-
-// import 'react-toastify/dist/ReactToastify.css';
-// import { ToastContainer } from 'react-toastify';
+import { getAuthorExt } from "@/libs/steem/sds";
+import { getServerSession } from "next-auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,18 +22,24 @@ export const metadata: Metadata = {
   }
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
 
-  initializeApp(firebaseConfig);
+
+  const session = await getServerSession();
+  let data;
+  if (session?.user?.name)
+    data = await getAuthorExt(session?.user?.name)
+
+
 
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body className={clsx(inter.className,)}>
-        <Providers>
+        <Providers data={data}>
           {children}
           <Toaster richColors />
         </Providers>

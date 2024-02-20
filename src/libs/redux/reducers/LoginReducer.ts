@@ -17,8 +17,7 @@ const loginReducer = createSlice({
     initialState: initialstate,
     reducers: {
         saveLoginHandler: (state: LoginState, actions) => {
-            if (state.value?.login !== actions.payload?.login)
-                state.value = actions.payload
+            state.value = actions.payload
         },
         logoutHandler: (state: LoginState) => {
             state.value = empty_profile('');

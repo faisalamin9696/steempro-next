@@ -63,7 +63,8 @@ export default function CommunityHeader(props: Props) {
 
                 <div className="stat">
                     <div className="stat-figure text-secondary">
-                        <SAvatar {...props} username={community} xl size={'lg'} quality='medium' sizeNumber={60}
+                        <SAvatar username={community} size={'lg'}
+                            quality='medium'
                             badge={data?.account_reputation} />
                     </div>
                     <div className="stat-value text-white text-xl sm:text-3xl">{data?.title}</div>

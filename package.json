@@ -45,6 +45,7 @@
     "speakingurl": "^14.0.1",
     "striptags": "^3.2.0",
     "swr": "^2.2.4",
+    "vanilla-tilt": "^1.8.1",
     "xmldom": "^0.6.0"
   },
   "devDependencies": {

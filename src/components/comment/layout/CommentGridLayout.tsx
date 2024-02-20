@@ -3,13 +3,11 @@ import React from 'react'
 import BodyShort from '../../body/BodyShort';
 import Image from 'next/image';
 import { getPostThumbnail, getResizedAvatar } from '@/libs/utils/image';
-import Link from 'next/link';
 import TimeAgoWrapper from '../../TimeAgoWrapper';
-import { Button, Card, Popover, PopoverContent, PopoverTrigger, User } from '@nextui-org/react';
+import { Card, Popover, PopoverContent, PopoverTrigger, User } from '@nextui-org/react';
 import { useSession } from 'next-auth/react';
 import Reputation from '@/components/Reputation';
 import dynamic from 'next/dynamic';
-import STooltip from '@/components/STooltip';
 import CommentFooter from '../component/CommentFooter';
 import STag from '@/components/STag';
 const DynamicUserCard = dynamic(() => import('../../UserCard'));
@@ -18,7 +16,6 @@ import { FaClock } from 'react-icons/fa';
 import { CommentProps } from '../CommentCard';
 import clsx from 'clsx';
 import { validateCommunity } from '@/libs/utils/helper';
-import { FaEllipsisVertical } from 'react-icons/fa6';
 type Props = {
     comment: Feed | Post;
     isReply?: boolean;
@@ -33,16 +30,19 @@ export default function CommentGridLayout(props: CommentProps) {
     const isSelf = comment.author === session?.user?.name;
     const json_metadata = JSON.parse(comment?.json_metadata ?? '{}') as { tags?: string[], image?: string[], app?: string, format?: string }
 
+    const imageWidth = 200;
+    const imageHeight = 172;
+
     return (
-        <div className={`grid-footer w-full card card-compact h-full dark:bg-default-900/30 
-        bg-default-900/5 pb-2 flex flex-col overflow-hidden rounded-lg shadow-lg`}>
+        <div className={`grid-footer w-full card card-compact h-full bg-white/60 dark:bg-white/10 
+        pb-2 flex flex-col overflow-hidden rounded-lg shadow-lg`}>
 
             <div className="flex-shrink-0 relative">
-                {thumbnail &&
+                {thumbnail ?
                     <Image
                         src={thumbnail}
-                        width={200}
-                        height={220}
+                        width={imageWidth}
+                        height={imageHeight}
                         alt={''}
                         sizes="(max-width: 768px) 100vw,
                         (max-width: 1200px) 50vw,
@@ -50,30 +50,33 @@ export default function CommentGridLayout(props: CommentProps) {
                         style={{
                             width: '100%',
                             objectFit: 'cover',
-                            maxHeight: 220
+                            minHeight: imageHeight,
+                            maxHeight: imageHeight,
                         }}
 
-                    />
+                    /> :
+                    <div className={` h-[${imageHeight}px] bg-foreground/30 rounded-lg w-full`} />
                 }
 
                 {/* <div
                     className="hover:bg-transparent transition duration-300 absolute bottom-0 top-0 right-0 left-0 bg-gray-900 opacity-25">
                 </div> */}
 
-                <p className="rounded-full border bg-background/80
-                border-default-900/50 backdrop-blur-lg
-                 absolute top-0 right-0  px-2 py-1 text-center items-center
-                text-default-900 m-2  transition duration-500 ease-in-out">
-                    <STag className='text-tiny' content={comment.community || (validateCommunity(comment.category) ? comment.category :
-                        `#${comment.category}`)} tag={comment.category} />                    {/* <Link href={`/trending/${comment.category}`} className="hover:underline">{comment.community || comment.category}</Link> */}
-                </p>
+
+                <STag className='text-tiny rounded-full border bg-background/90 backdrop-blur-lg p-1
+                 absolute m-2 top-0 right-0'
+                    content={comment.community ||
+                        (validateCommunity(comment.category) ? comment.category :
+                            `#${comment.category}`)} tag={comment.category} />
+
             </div>
             <div className="flex flex-1 flex-col justify-between p-4">
                 <div className="flex-1">
 
                     <Card isPressable={!isReply} radius='none'
-                        onClick={() => onReplyClick && onReplyClick(comment)} shadow='none'
-                        className={clsx(!thumbnail && 'mt-8', 'bg-transparent  w-full text-start')}>
+                        onClick={() => onReplyClick && onReplyClick(comment)}
+                        shadow='none'
+                        className={clsx('bg-transparent  w-full text-start')}>
                         <p className="text-md font-semibold text-default-900">{comment.title}</p>
                         <p className="mt-3 text-sm text-default-900/60"><BodyShort body={comment.body} className=' line-clamp-2' /></p>
                     </Card>
@@ -104,18 +107,15 @@ export default function CommentGridLayout(props: CommentProps) {
 
 
 
-                                    <div className='time-div flex space-x-1'>
+                                    {comment.author_title && <div className='flex space-x-1 text-tiny rounded-full 
+                                    border hover:bg-transparent border-default-900/50 px-1  '>
 
-                                        <p className='text-tiny rounded-full border
-                                          hover:bg-transparent border-default-900/50  
-                                         backdrop-blur-lg px-1 py-[2px]
-                                     text-default-900 transition duration-500 ease-in-out 
-                                         text-default-900/55 inline-block'>
-                                            {comment.author_title}</p>
+                                        {comment.author_title}
+
                                         {/* {json_metadata?.app && <STooltip content={`${'Posted using'} ${json_metadata?.app}`}>
                                             <p>● {json_metadata?.app?.split('/')?.[0]}</p>
                                         </STooltip>} */}
-                                    </div>
+                                    </div>}
 
                                 </div>}
                                 avatarProps={{
@@ -154,7 +154,7 @@ export default function CommentGridLayout(props: CommentProps) {
 
                 <span className="py-1 text-xs font-regular text-default-900 mr-1 flex flex-row items-center">
                     <svg className="h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
                             d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z">
                         </path>
                     </svg>
