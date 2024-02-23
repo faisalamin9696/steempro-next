@@ -33,8 +33,8 @@ type Props = {
     handleUpdateCancel?: () => void
 }
 
-export default function SubmitPage(props: Props) {
-    const { oldPost, handleUpdateSuccess, handleUpdateCancel } = props;
+export default function SubmitPage(props?: Props) {
+    const { oldPost, handleUpdateSuccess, handleUpdateCancel } = props ?? {};
     const isEdit = !!oldPost?.permlink;
 
     const draft = secureLocalStorage.getItem('post_draft') as {
