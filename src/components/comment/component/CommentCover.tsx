@@ -25,6 +25,7 @@ export default function CommentCover(props: Props) {
         (src) ?
 
             noCard ? <Image
+                priority
                 className={clsx(isFetching && 'bg-background/50',
                     className)}
                 alt={alt || "image"}
@@ -49,6 +50,7 @@ export default function CommentCover(props: Props) {
                         className)}>
                     {thumbnail ?
                         <Image
+                            priority
                             loading='eager'
                             alt={alt || "image"}
                             src={src}
@@ -67,6 +69,7 @@ export default function CommentCover(props: Props) {
                         />
                         :
                         <Image
+                            priority
                             src={src}
                             loading='eager'
                             width={sm ? 130 : 200}
