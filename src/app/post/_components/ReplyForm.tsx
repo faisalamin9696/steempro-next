@@ -43,7 +43,7 @@ export default function ReplyForm(props: Props) {
     const postReplies = useAppSelector(state => state.repliesReducer.values)[`${rootInfo.author}/${rootInfo.permlink}`] ?? [];
     const [showReply, setShowReply] = useState(false);
     const [markdown, setMarkdown] = useState('');
-    const rpm = readingTime(markdown, 200);
+    const rpm = readingTime(markdown);
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const [isPosting, setPosting] = useState(false);
     const { authenticateUser, isAuthorized } = useLogin();
@@ -59,12 +59,12 @@ export default function ReplyForm(props: Props) {
 
     const isSelf = comment.author === username;
 
+
     const canMute = username && Role.atLeast(comment.observer_role, 'mod');
     const canDelete = !comment.children && isSelf && allowDelete(comment);
     const canEdit = isSelf;
     const allowReply = Role.canComment(comment.community, comment.observer_role);
     const canReply = allowReply && comment['depth'] < 255;
-
 
 
     const toggleReply = () => setShowReply(!showReply);
@@ -135,11 +135,16 @@ export default function ReplyForm(props: Props) {
         let newComment: Post;
         // if the update then use the old data
         if (showEdit) {
+            let body = markdown;
+
+            if (!checkPromotionText(body))
+                body = body + '\n\n' + AppStrings.promotion_text;
+
             newComment = {
                 ...postData,
                 ...commentInfo,
                 last_update: time,
-                body: postData.body,
+                body: body,
             }
         } else {
             newComment = {
@@ -172,11 +177,15 @@ export default function ReplyForm(props: Props) {
                 replies: [],
                 votes: [],
                 downvote_count: 0,
-                cashout_time: moment().add(5, 'days').unix()
+                cashout_time: moment().add(7, 'days').unix()
             }
         }
 
-        if (!showEdit) {
+
+        if (showEdit) {
+            dispatch(addCommentHandler({ ...newComment }));
+
+        } else {
             queryClient.setQueryData(queryKey, { ...rootInfo, children: rootInfo?.children + 1 })
 
             // update the redux state for the post
@@ -192,7 +201,15 @@ export default function ReplyForm(props: Props) {
             }));
 
         }
+
         clearForm();
+        if (showEdit)
+            setShowEdit(false);
+        if (showReply)
+            setShowReply(false);
+
+        setPosting(false);
+
         toast.success(showEdit ? 'Updated' : 'Sent');
     }
     const postingMutation = useMutation({
@@ -282,7 +299,8 @@ export default function ReplyForm(props: Props) {
                 const credentials = getCredentials(getSessionKey());
 
                 if (credentials) {
-                    postingMutation.mutate({ postData, options: null, key: credentials.key });
+                    handleOnPublished(postData);
+                    // postingMutation.mutate({ postData, options: null, key: credentials.key });
                 } else {
                     setPosting(false);
                     toast.error('Invalid credentials');
@@ -418,7 +436,7 @@ export default function ReplyForm(props: Props) {
 
                                         <PublishButton
                                             disabled={isPosting}
-                                            onPress={undefined}
+                                            onPress={handlePublish}
                                             isLoading={isPosting}
                                             tooltip=''
                                             buttonText={showEdit ? 'Update' : 'Send'} />
@@ -434,7 +452,7 @@ export default function ReplyForm(props: Props) {
                                     <div className=' items-center flex justify-between'>
                                         <p className='float-left text-sm text-default-900/70 font-semibold'>Preview</p>
 
-                                        <p className='float-right text-sm font-extralight text-default-900/60'>{rpm?.words} words, {rpm?.text}</p>
+                                        <p className='float-right text-sm font-light text-default-900/60'>{rpm?.words} words, {rpm?.text}</p>
 
                                     </div>
                                     {markdown ? <Card shadow='sm' className='p-2 lg:shadow-none space-y-2'>

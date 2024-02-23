@@ -6,6 +6,7 @@ import { getAuthorExt } from "@/libs/steem/sds";
 import { getResizedAvatar } from "@/libs/utils/image";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
 import { getServerSession } from 'next-auth';
+import ProfileEnd from "./@end/page";
 
 
 export default async function Layout({

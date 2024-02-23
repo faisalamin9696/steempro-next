@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 import { nextui } from "@nextui-org/react";
 
+const defaultTheme = require('tailwindcss/defaultTheme')
 
 const config: Config = {
   content: [
@@ -23,12 +24,18 @@ const config: Config = {
         black: '#000000'
       }
     },
+    screens: {
+      '1md': '920px',
+      ...defaultTheme.screens,
+
+    }
 
   },
   darkMode: "class",
   plugins: [
     require('tailwind-scrollbar'),
     require("daisyui"),
+    require('@tailwindcss/typography'),
     nextui({
       themes: {
         light: {
@@ -40,6 +47,7 @@ const config: Config = {
               DEFAULT: "#006FEE",
             },
           },
+
         },
 
         "dark": {
@@ -64,7 +72,7 @@ const config: Config = {
             focus: "#F182F6"
           }
 
-        }
+        },
       }
     })
   ],

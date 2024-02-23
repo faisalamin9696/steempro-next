@@ -1,9 +1,8 @@
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Popover, PopoverContent, PopoverTrigger, User } from '@nextui-org/react'
 import clsx, { ClassValue } from 'clsx'
-import { FaClockRotateLeft, FaDeleteLeft, FaEllipsis, FaEllipsisVertical } from "react-icons/fa6";
+import { FaEllipsis } from "react-icons/fa6";
 import { useAppSelector } from '@/libs/constants/AppFunctions';
 import Reputation from '@/components/Reputation';
-import IconButton from '@/components/IconButton';
 import { getResizedAvatar } from '@/libs/utils/image';
 import TimeAgoWrapper from '@/components/TimeAgoWrapper';
 import { validateCommunity } from '@/libs/utils/helper';
@@ -12,17 +11,19 @@ import STag from '@/components/STag';
 
 import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
-import STooltip from '@/components/STooltip';
-import { FaEdit, FaEye, FaHistory, FaOptinMonster } from 'react-icons/fa';
 import { Key } from 'react';
 import { MdDelete } from 'react-icons/md';
 import { GrAnnounce } from "react-icons/gr";
 import ViewCountCard from '@/components/ViewCountCard';
 import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator';
-import { usePathname, useRouter } from 'next/navigation';
-import { query } from 'firebase/firestore';
+import { useRouter } from 'next/navigation';
 import { Role } from '@/libs/utils/community';
 import { allowDelete } from '@/libs/utils/StateFunctions';
+import { MdOutlineDoNotDisturb } from "react-icons/md";
+import { RiEdit2Fill } from "react-icons/ri";
+import { LuHistory } from "react-icons/lu";
+import { toast } from 'sonner';
+import { BsClipboard2Minus } from "react-icons/bs";
 
 const DynamicUserCard = dynamic(() => import('../../UserCard'));
 
@@ -37,7 +38,6 @@ interface Props {
 export default function CommentHeader(props: Props) {
 
     const { comment, className, isReply, compact, handleEdit } = props;
-    const json_metadata = JSON.parse(comment?.json_metadata ?? '{}') as { tags?: string[], image?: string[], app?: string, format?: string }
     const { data: session } = useSession();
     const username = session?.user?.name;
     const isSelf = comment.author === username;
@@ -52,10 +52,40 @@ export default function CommentHeader(props: Props) {
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const router = useRouter();
 
+
+    const menuItems = [
+        { show: canEdit, key: "edit", name: "Edit", icon: RiEdit2Fill },
+        { show: true, key: "history", name: "Edit History", icon: LuHistory },
+        { show: false, key: "promote", name: "Promote", icon: GrAnnounce },
+        { show: true, key: "copy", name: "Copy Link", icon: BsClipboard2Minus },
+        { show: canMute, key: "mute", name: "Mute", icon: MdOutlineDoNotDisturb, color: 'warning' },
+        { show: canDelete, key: "delete", name: "Delete", icon: MdDelete, color: 'danger' },
+
+    ]
+    const renderedItems = menuItems
+        .filter(item => item.show)
+        .map(item => <DropdownItem key={item.key}
+            color={item.color as any || 'default'}
+            startContent={<item.icon className={'text-lg'} />}>{item.name}</DropdownItem>);
+
     function handleMenuActions(key: Key) {
+        switch (key) {
+            case 'edit':
+                handleEdit && handleEdit();
+                break;
+
+            case 'copy':
+                navigator.clipboard.writeText(window.location.href);
+                toast.success('Copied');
+                break;
+
+
+        }
+
 
         if (key === 'edit') {
-            handleEdit && handleEdit();
+
+
             // router.push(
             //     `/@${comment.author}/${comment.permlink}/edit`
             // );
@@ -90,23 +120,8 @@ export default function CommentHeader(props: Props) {
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu
-                                    onAction={handleMenuActions}>
-                                    {<DropdownItem className={clsx(`gap-4`)}
-                                        hidden={!canEdit}
-                                        key={'edit'}
-                                        startContent={<FaEdit className='text-lg' />} >Edit</DropdownItem>}
-                                    <DropdownItem className='gap-4' key="history"
-                                        startContent={<FaHistory className='text-lg' />}>Edit History</DropdownItem>
-                                    <DropdownItem className='gap-4' key="promote"
-                                        startContent={<GrAnnounce className='text-lg' />}>Promote</DropdownItem>
-
-                                    <DropdownItem hidden={!canMute}
-                                        key="delete" className="gap-4 text-danger" color="danger"
-                                        startContent={<MdDelete className='text-lg' />}>Mute</DropdownItem>
-                                        
-                                    <DropdownItem hidden={!canDelete}
-                                        key="delete" className="gap-4 text-danger" color="danger"
-                                        startContent={<MdDelete className='text-lg' />}>Delete</DropdownItem>
+                                    onAction={handleMenuActions} hideEmptyContent>
+                                    {renderedItems}
                                 </DropdownMenu>
                             </Dropdown>
                             : null}
@@ -118,10 +133,10 @@ export default function CommentHeader(props: Props) {
                                 <p className='flex-none'>
                                     {comment.author_role}
                                 </p>
-                                <p className='flex-none dark:bg-default-900/30 text-tiny font-extralight px-1 rounded-lg'>{comment.author_title}</p>
+                                <p className='flex-none dark:bg-default-900/30 text-tiny font-light px-1 rounded-lg'>{comment.author_title}</p>
                             </div> : null}
 
-                        <div className='time-div flex sm:gap-2 max-sm:flex-col'>
+                        <div className={clsx(`time-div flex`, compact ? 'gap-0' : 'max-sm:flex-col sm:gap-2')}>
                             <TimeAgoWrapper lang={settings.lang.code} created={comment.created * 1000} lastUpdate={comment.last_update * 1000} />
 
                             {!isReply && <div className='flex gap-1  sm:items-center'>
@@ -154,7 +169,7 @@ export default function CommentHeader(props: Props) {
             </PopoverContent>
         </Popover>
 
-        {<div className='absolute top-0 text-tiny right-0 items-center px-1'>
+        {!isReply && !compact && <div className='absolute top-0 text-tiny right-0 items-center px-1'>
             <div className='flex flex-col items-end gap-2'>
 
                 <div className='flex gap-2'>

@@ -1,13 +1,11 @@
 "use client"
 
-import React, { MutableRefObject, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { BsInfoCircleFill } from 'react-icons/bs';
-import { Avatar, Button, Card, Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
+import { Button, Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { addProfileHandler } from '@/libs/redux/reducers/ProfileReducer';
 import { getSettings } from '@/libs/utils/user';
-import { getResizedAvatar } from '@/libs/utils/image';
-import ProfileStart from '../(site)/@start/page';
 import { proxifyImageUrl } from '@/libs/utils/ProxifyUrl';
 import dynamic from 'next/dynamic';
 import SAvatar from '@/components/SAvatar';
@@ -16,6 +14,7 @@ import VanillaTilt from "vanilla-tilt";
 import { useMobile } from '@/libs/utils/useMobile';
 import './style.scss'
 import { abbreviateNumber } from '@/libs/utils/helper';
+import ProfileInfoCard from '../../../components/ProfileInfoCard';
 
 const DynamicCover = dynamic(() => import('@/components/UserCoverCard'))
 interface Props {
@@ -88,13 +87,15 @@ export default function ProfileHeader(props: Props) {
                                 <Reputation reputation={data.reputation} />
                             </div>
 
-                            <div className='block md:hidden'>
-                                <Popover placement={'bottom'} color="primary" >
+                            <div className=''>
+                                <Popover placement={'bottom'} color="default" >
                                     <PopoverTrigger>
-                                        <Button isIconOnly radius='full' size='sm' variant='light'><BsInfoCircleFill className='text-xl' /></Button>
+                                        <Button isIconOnly radius='full' size='sm' variant='light'>
+                                            <BsInfoCircleFill className='text-xl' />
+                                        </Button>
                                     </PopoverTrigger>
                                     <PopoverContent>
-                                        <ProfileStart />
+                                        <ProfileInfoCard data={data} />
                                     </PopoverContent>
                                 </Popover>
                             </div>

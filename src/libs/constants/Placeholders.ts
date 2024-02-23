@@ -75,11 +75,7 @@ export const empty_profile = (name: string): AccountExt => {
     reset_account: '',
     proxy: '',
     json_metadata: '',
-    posting_json_metadata: {
-      profile: {
-        name
-      }
-    },
+    posting_json_metadata: '{}',
     created: 0,
     last_action: 0,
     last_comment: 0,

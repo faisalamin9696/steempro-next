@@ -100,12 +100,7 @@ type AccountExt = {
   reset_account: string;
   proxy: string;
   json_metadata: string;
-  posting_json_metadata: {
-    profile: {
-      name?: string, cover_image?: string, location?: string,
-      website?: string, about?: string
-    }
-  };
+  posting_json_metadata: string;
   created: number;
   last_action: number;
   last_comment: number;
@@ -547,4 +542,49 @@ type Role = {
   account: string;
   title: string;
   role: string;
+}
+
+type Club = {
+  powered_up: number;
+  transfer_in: number;
+  transfer_out: number;
+}
+
+type Transfer = {
+  time: number;
+  from: string;
+  to: string;
+  amount: number;
+  unit: string;
+  memo: string;
+
+}
+
+type RewardSum = {
+  author_reward: { sbd: number, steem: number, vests: number; };
+  comment_benefactor_reward: { sbd: number, steem: number, vests: number; };
+  curation_reward: { vests: number };
+  liquidity_reward: { steem: number }
+  producer_reward: { vests: number }
+  interest: { sbd: number }
+}
+type Stats = {
+  account: AccountExt;
+  steem_props: SteemProps;
+  rewards_sums: any;
+  transfers_in: Transfer;
+  transfers_out: Transfer;
+  delegations_in: Delegation;
+  delegations_out: Delegation;
+  vesting_in: Transfer;
+  vesting_out: Transfer;
+  cancelled_orders: any;
+  created_orders: any;
+  filled_orders: any;
+  filled_conversions: any;
+  filled_savings_withdrawals: any;
+  filled_withdrawals: any;
+
+
+
 }

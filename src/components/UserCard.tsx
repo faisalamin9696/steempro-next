@@ -26,7 +26,7 @@ export const UserCard = (props: Props) => {
     const { data, isLoading } = useSWR(URL, fetchSds<AccountExt>);
     const URL_2 = `/followers_api/getKnownFollowers/${username}/${session?.user?.name || 'null'}`
     const { data: knownPeople, isLoading: isKnownLoading } = useSWR(compact ? null : URL_2, fetchSds<string[]>)
-    const posting_json_metadata = JSON.parse(String(data?.posting_json_metadata || '{}'));
+    const posting_json_metadata = JSON.parse(data?.posting_json_metadata || '{}');
 
     if (isLoading) {
         return <LoadingCard />
@@ -37,7 +37,7 @@ export const UserCard = (props: Props) => {
             bg-transparent items-start gap-4 p-2 w-full">
             <div className="flex flex-row justify-between gap-2 w-full">
                 <div className="flex gap-2">
-                    <SAvatar {...props} username={username} />
+                    <SAvatar username={username} />
                     <div className="flex flex-col items-start justify-center">
                         <h4 className="text-small font-semibold leading-none text-default-600">{posting_json_metadata?.profile?.name}</h4>
                         {/* <Link prefetch={false} href={authorLink}>{comment.author}</Link> */}

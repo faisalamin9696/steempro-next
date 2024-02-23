@@ -21,6 +21,10 @@ export default function SAvatar(props: Props) {
         <Badge content={typeof (badge) === 'number' ? badge.toFixed(0) : badge}
             className={clsx(badge ? '' : 'hidden')} color='primary' shape="circle">
             <Image
+                onError={(e) => {
+                    e.currentTarget.src = '/image-placeholder.png'
+
+                }}
                 alt=""
                 height={imageSize}
                 width={imageSize}

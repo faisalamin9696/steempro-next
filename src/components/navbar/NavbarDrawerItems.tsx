@@ -13,6 +13,7 @@ import { signOut, useSession } from 'next-auth/react';
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import secureLocalStorage from 'react-secure-storage';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
+import { useRouter } from 'next/navigation';
 
 const navigation = [
     { name: 'Chat', href: '/profile/blogs', value: 'chat', current: false, icon: <FaRocketchat className={'icon'} /> },
@@ -38,8 +39,9 @@ export default function NavbarDrawerItems() {
     const { data: session } = useSession();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const dispatch = useAppDispatch();
+    const posting_json_metadata = JSON.parse(loginInfo?.posting_json_metadata || '{}')
 
-
+    const router = useRouter();
 
     function handleItemClick() {
         document.getElementById('app-drawer')?.click();
@@ -70,7 +72,8 @@ export default function NavbarDrawerItems() {
             <div className="drawer-side z-10">
                 <label htmlFor="app-drawer" className="drawer-overlay"></label>
 
-                <div className="flex flex-col h-full menu p-4 w-[300px] bg-background">
+                <div className="flex flex-col h-full menu 
+                p-4 w-[300px] bg-background gap-4">
                     {session?.user?.name ?
                         <div className='flex items-center space-x-3 mt-4 '>
 
@@ -81,27 +84,40 @@ export default function NavbarDrawerItems() {
                                     {/* <Reputation reputation={loginInfo?.reputation} /> */}
                                 </div>
 
-                                <h4>{loginInfo.posting_json_metadata?.profile?.name}</h4>
+                                <h4>{posting_json_metadata?.profile?.name}</h4>
 
 
                             </div>
                         </div> : null}
 
 
-                    <NavbarMenuItem>
+                    <div className='flex flex-col gap-2'>
+
+                        <Button
+                            onPress={() => {
+                                router.push('/about')
+                            }}
+                            color='default'
+                            size="sm"  >
+                            About
+                        </Button>
+
                         <Button
                             onPress={handleLogout}
-                            className="w-full"
                             color='danger'
-                            size="lg"  >
+                            size="sm"  >
                             Logout
                         </Button>
-                    </NavbarMenuItem>
+
+                    </div>
+
+
+                    <ThemeSwitch
+                        className='absolute bottom-0 flex-row-reverse p-4 gap-4' />
 
                 </div>
 
-                <ThemeSwitch
-                    className='absolute bottom-0 flex-row-reverse p-4 gap-4' />
+
 
             </div>
 

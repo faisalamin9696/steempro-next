@@ -12,6 +12,8 @@ interface Params {
 
 // Define valid categories
 const valid_categories = ['trending', 'created', 'payout', 'important', 'about']
+const valid_tabs = ['blogs', 'posts', 'friends',
+    'comments', 'replies', 'wallet', 'communities']
 
 // Define username URL regex
 const usernameURLRegex = /@([^/]+)/;
@@ -31,6 +33,7 @@ const usePathnameClient = (): Params => {
     // Split the pathname into parts
     const splitted_path = pathname.split('/');
 
+
     // remove the first empty element
     splitted_path.shift();
     const [first_param, second_param, third_param] = splitted_path;
@@ -43,7 +46,8 @@ const usePathnameClient = (): Params => {
     }
 
 
-    if (splitted_path.length === 2 && usernameURLRegex.test(first_param) && !valid_categories.includes(second_param)) {
+    // check if the post without category
+    if (splitted_path.length === 2 && usernameURLRegex.test(first_param) && !valid_tabs.includes(second_param)) {
         params.username = splitted_path[0]?.replace('@', '') ?? '';
         params.permlink = splitted_path[1] ?? '';
     }

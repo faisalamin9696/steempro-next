@@ -1,7 +1,8 @@
-import { Link } from '@nextui-org/react';
+import { Button, Link } from '@nextui-org/react';
 import parse, { domToReact } from 'html-react-parser';
 import React from 'react';
 import CommentCover from '../comment/component/CommentCover';
+import './style.scss';
 // import { Image } from '@nextui-org/react'
 
 export function ParsedBody({ body }: { body: string }): JSX.Element {
@@ -9,7 +10,15 @@ export function ParsedBody({ body }: { body: string }): JSX.Element {
     const options = {
         replace(domNode) {
             if (domNode?.attribs && domNode?.name === 'img') {
-                return <CommentCover thumbnail {...domNode?.attribs} />
+                return <div className='img-container relative'>
+                    <CommentCover
+                        noCard {...domNode?.attribs} />
+
+                    <Button size='sm'
+                        className='open-button absolute top-0 right-0'>
+                        Open
+                    </Button>
+                </div>
 
             }
             if (domNode?.attribs && domNode?.name === 'a') {

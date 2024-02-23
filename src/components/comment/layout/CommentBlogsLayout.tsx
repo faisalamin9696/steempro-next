@@ -17,7 +17,7 @@ export default function CommentBlogLayout(props: CommentProps) {
     bg-white/60 dark:bg-white/10'>
 
         <div className='p-4'>
-            <CommentHeader {...props} comment={comment} className='w-full' />
+            <CommentHeader comment={comment} compact className='w-full' />
 
 
         </div>

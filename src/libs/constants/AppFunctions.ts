@@ -10,16 +10,25 @@ export function sdsWrapper(api: string): string {
 
 export async function fetchSds<T>(api: string): Promise<T> {
     const response = await fetch(sdsWrapper(api), { keepalive: true });
-    if (response.ok) {
-        const result = await response.json();
-        if (validateSds(result)) {
-            const parsed = mapSds(result) as T; // Assuming mapSds returns the correct type
-            return parsed;
-        } else {
-            throw new Error(result.error!);
-        }
+
+
+    // If the status code is not in the range 200-299,
+    // we still try to parse and throw it.
+    if (!response.ok) {
+        const error: any = new Error('An error occurred while fetching the data.')
+        // Attach extra info to the error object.
+        error.info = await response.json()
+        error.status = response.status
+        throw error
+    }
+
+    const result = await response.json();
+
+    if (validateSds(result)) {
+        const parsed = mapSds(result) as T; // Assuming mapSds returns the correct type
+        return parsed;
     } else {
-        throw new Error(`HTTP error: ${response.status}`);
+        throw new Error(result.error!);
     }
 }
 
@@ -29,7 +38,7 @@ export function validateSds(result: any) {
 }
 
 export function mapSds(response: any) {
-    const result = response.result;
+    const result = response?.result || response;
     if (!result) {
         return response;
     }

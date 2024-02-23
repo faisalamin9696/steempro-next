@@ -1,20 +1,16 @@
 "use client"
 
 import React, { useEffect, useState } from 'react'
-import UserCard from '@/components/UserCard'
 import { Button, Card } from '@nextui-org/react'
-import { IoIosRefresh } from "react-icons/io";
 import { filterRecommendations } from '@/libs/constants/AppFunctions'
-import usePathnameClient from '@/libs/utils/usePathnameClient'
+import UserCard from '@/components/UserCard'
+import { IoIosRefresh } from 'react-icons/io'
+
 
 export default function ProfileEnd() {
 
-  const { category } = usePathnameClient();
-
-
   const [recomendations, setRecomendations] = useState<string[]>([]);
   const followingList = ['faisalamin']
-
 
   useEffect(() => {
     setRecomendations(filterRecommendations(followingList));
@@ -25,8 +21,11 @@ export default function ProfileEnd() {
     setRecomendations(filterRecommendations(followingList));
   }
 
+
+
   return (
     <div className="flex flex-col pb-60 ">
+
       <div className='sticky top-0 z-10 backdrop-blur-lg'>
         <div
           className="flex items-center gap-2
@@ -56,3 +55,6 @@ export default function ProfileEnd() {
 
   )
 }
+
+
+

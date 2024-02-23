@@ -10,7 +10,7 @@ import PublishButton from '../../../components/editor/component/PublishButton';
 import { useLogin } from '../../../components/useLogin';
 import { Input, Card, Chip, Button } from '@nextui-org/react';
 import { useMutation } from '@tanstack/react-query';
-import { checkPromotionText, getCredentials, getSessionKey, getSettings } from '@/libs/utils/user';
+import { checkPromotionText, getCredentials, getSessionKey } from '@/libs/utils/user';
 import { awaitTimeout, useAppSelector } from '@/libs/constants/AppFunctions';
 import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator';
 import { publishContent } from '@/libs/steem/condenser';
@@ -23,16 +23,16 @@ import { getPost } from '@/libs/steem/sds';
 import EditorInput from '@/components/editor/EditorInput';
 import './style.scss'
 import secureLocalStorage from 'react-secure-storage';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import clsx from 'clsx';
 
 type Props = {
     oldPost?: Post;
-    handleUpdateSuccess?: () => void;
+    handleUpdateSuccess?: (post: Post) => void;
     handleUpdateCancel?: () => void
-
 }
+
 export default function SubmitPage(props: Props) {
     const { oldPost, handleUpdateSuccess, handleUpdateCancel } = props;
     const isEdit = !!oldPost?.permlink;
@@ -125,7 +125,11 @@ export default function SubmitPage(props: Props) {
             publishContent(postData, options, key),
         onSuccess(data, variables) {
             if (isEdit) {
-                handleUpdateSuccess && handleUpdateSuccess();
+                let body = markdown;
+
+                if (!checkPromotionText(body))
+                    body = body + '\n\n' + AppStrings.promotion_text;
+                handleUpdateSuccess && handleUpdateSuccess({ ...oldPost, ...variables.postData, body: body });
                 toast.success('Updated');
                 return
 
@@ -301,11 +305,11 @@ export default function SubmitPage(props: Props) {
 
 
 
-    return (<div className={clsx(`editor-main flex flex-col flex-1 gap-6 items-center `,
-        !oldPost && 'lg:justify-evenly lg:items-start lg:flex-row')} >
+    return (<div className={clsx(`editor-main flex flex-col flex-1 gap-6 items-center w-full`,
+        !oldPost && '1md:justify-evenly 1md:items-start 1md:flex-row')} >
 
-        <div className={clsx(`flex flex-col w-full gap-2 `,
-            !oldPost && 'lg:float-start lg:sticky lg:self-start lg:top-[70px]')}>
+        <div className={clsx(`flex flex-col w-full 1md:w-[50%] gap-2 `,
+            !oldPost && '1md:float-start 1md:sticky 1md:self-start 1md:top-[70px]')}>
 
             <CommunitySelectButton
                 community={community}
@@ -394,12 +398,12 @@ export default function SubmitPage(props: Props) {
         </div>
 
 
-        <div className='flex flex-col w-full max-w-[640px] mb-10 gap-2'>
+        <div className='flex flex-col w-full 1md:w-[50%] max-w-[640px] mb-10 gap-2'>
 
             <div className=' items-center flex justify-between'>
                 <p className='float-left text-default-900/70 font-bold'>{'Preview'}</p>
 
-                <p className='float-right text-sm font-extralight text-default-900'>{rpm?.words} words, {rpm?.text}</p>
+                <p className='float-right text-sm font-light text-default-900'>{rpm?.words} words, {rpm?.text}</p>
 
             </div>
             {markdown ? <Card shadow='none'

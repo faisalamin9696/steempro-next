@@ -58,12 +58,17 @@ export default function PostPage(props: Props) {
 
     if (editMode) {
         return <SubmitPage oldPost={data}
-            handleUpdateCancel={toggleEditMode} handleUpdateSuccess={toggleEditMode} />
+            handleUpdateCancel={toggleEditMode}
+            handleUpdateSuccess={(post) => {
+                dispatch(addCommentHandler(post));
+                toggleEditMode();
+
+            }} />
     }
 
     return (<div key={pathname}
         className='flex-col gap-4 bg-white dark:bg-white/5
-    backdrop-blur-md rounded-lg p-4 w-full'>
+    backdrop-blur-md rounded-lg p-4 w-full mb-10'>
         {commentInfo ?
             <div className='card w-full card-compact shadow-sm '>
 
@@ -85,7 +90,8 @@ export default function PostPage(props: Props) {
 
 
                         <CardFooter className='w-full'>
-                            <CommentFooter comment={commentInfo} className={'w-full'} />
+                            <CommentFooter comment={commentInfo}
+                                className={'w-full'} />
                         </CardFooter>
                     </Card>
                 </div>

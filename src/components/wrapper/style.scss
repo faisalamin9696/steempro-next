@@ -1,24 +1,43 @@
-#container {
+.container {
     display: flex;
     max-width: 1280px;
     width: 100%;
     margin: auto;
 }
 
-#left,
-#right {
+.left,
+.right {
     flex: 0 0 250px;
     /* Adjust the width of left and right divs as needed */
     position: sticky;
     top: 70px;
     // height: 100vh;
     overflow-y: auto;
+    overflow-x: hidden;
     padding-bottom: 72px;
-    /* Optional: Add background color */
+    align-self: flex-start;
 }
 
-#center {
+.center {
     flex: 1;
     max-width: 1280px;
     overflow-y: auto;
 }
+
+// .container {
+//     max-width: 1280px;
+//     margin: 0 auto;
+//     display: flex;
+// }
+
+// .left, .right {
+//     width: 25%;
+//     padding: 20px;
+//     box-sizing: border-box;
+// }
+
+// .center {
+//     flex: 1;
+//     padding: 20px;
+//     box-sizing: border-box;
+// }

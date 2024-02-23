@@ -21,6 +21,7 @@ import { initializeApp } from "firebase/app";
 import {
     signInAnonymously, getAuth
 } from "firebase/auth";
+import { toast } from 'sonner';
 
 type Props = {
     children: React.ReactNode;
@@ -86,8 +87,19 @@ export function Providers(props: Props) {
                                 value={{
                                     refreshInterval: 10 * 60 * 1000,
                                     fetcher: fetchSds,
-                                    revalidateOnFocus: false
+                                    revalidateOnFocus: false,
+                                    errorRetryCount: 3,
+                                    onError: (error, key) => {
+                                        if (error.status !== 403 && error.status !== 404) {
+                                            toast.error(error);
+                                        }
+                                    },
+                                    dedupingInterval: 10000,
+                                    loadingTimeout: 20000,
+                                    revalidateOnMount: false
                                 }}
+
+
                             >
                                 <LoginDialogProvider data={data}>
                                     <AppNavbar />

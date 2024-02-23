@@ -8,30 +8,34 @@ interface Props {
     fullScreen?: boolean;
     endClassName?: ClassValue | undefined;
     startClassName?: ClassValue | undefined;
+    className?: string;
 
 
 
 }
 
 export default function MainWrapper(props: Props) {
-    const { children, startContent, endContent, endClassName, startClassName } = props;
+    const { children, className, startContent, endContent, endClassName, startClassName } = props;
     return (
-        <div id="container" className='gap-4 px-4 pt-4 max-sm:px-2 max-sm:pt-2'>
-            {startContent && <div id="left"
-                className={clsx(`hidden rounded-lg scrollbar-thin xl:block`, startClassName)}>
+        <div className="container gap-4 px-4 pt-4 max-sm:px-2 max-sm:pt-2">
+
+            {startContent && <div
+                className={clsx(`left hidden rounded-lg scrollbar-thin xl:block`, startClassName)}>
                 <div>{startContent}</div>
             </div>
             }
-            {children}
-            {endContent && <div id="right"
-                className={clsx(endClassName, `rounded-lg scrollbar-thin 
+            <div className={clsx('center', className)}>
+                {children}
+            </div>
+
+
+            {endContent && <div
+                className={clsx(endClassName, `right rounded-lg scrollbar-thin 
                 hidden lg:block `,)}>
                 <div>
                     {endContent}
                 </div>
             </div>}
-
-        </div>
-        
+        </div >
     )
 }

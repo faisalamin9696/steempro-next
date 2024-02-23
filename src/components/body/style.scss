@@ -1,0 +1,47 @@
+.img-container {
+    // box-shadow: 0 0 10px rgba(255, 246, 246, 0.788);
+    visibility: visible;
+    -webkit-animation: fadeIn 1s;
+    animation: fadeIn 1s;
+
+    &:hover {
+
+        .open-button {
+            transform: translateY(0px);
+            opacity: 1;
+        }
+
+    }
+
+    .open-button {
+
+        transition: all 0.3s ease-in-out;
+
+        @media (min-width: 720px) {
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+    }
+}
+
+@-webkit-keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

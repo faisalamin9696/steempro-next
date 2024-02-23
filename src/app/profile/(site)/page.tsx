@@ -4,11 +4,7 @@ import { Tab, Tabs } from '@nextui-org/react'
 import React from 'react'
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import { useMobile } from '@/libs/utils/useMobile';
-import ProfileFriendsTab from '../(tabs)/friends/page';
 import ProfileBlogsTab from '../(tabs)/blogs/page';
-import ProfilePostsTab from '../(tabs)/posts/page';
-import ProfileCommentsTab from '../(tabs)/comments/page';
-import ProfileRepliesTab from '../(tabs)/replies/page';
 import ProfileWalletTab from '../(tabs)/wallet/page';
 import FeedPatternSwitch from '@/components/FeedPatternSwitch';
 import { useAppSelector } from '@/libs/constants/AppFunctions';

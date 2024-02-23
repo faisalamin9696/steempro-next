@@ -1,4 +1,5 @@
-import { fetchSds } from "../constants/AppFunctions";
+import moment from "moment";
+import { fetchSds, mapSds } from "../constants/AppFunctions";
 
 
 export const getActiveFeed = async (
@@ -173,10 +174,9 @@ export const getAuthorExt = async (
 
         const response = await fetchSds<any>(R_API);
         // if the response is successful, parse the JSON and check if it's valid
-        if (response && response?.['posting_json_metadata']) {
-            const posting_json_metadata = JSON.parse(response?.['posting_json_metadata'] ?? '{}');
+        if (response) {
 
-            return { ...response, posting_json_metadata } as AccountExt;
+            return response as AccountExt;
         } else {
             throw new Error(response);
         }
@@ -319,7 +319,7 @@ export const getSteemGlobal = async (): Promise<SteemProps> => {
 
             return response;
         } else {
-            throw new Error(response.error!);
+            throw new Error(response);
         }
     }
     catch (error: any) {
@@ -342,11 +342,67 @@ export const getPostReplies = async (
         if (response) {
             return response as Post[];
         } else {
-            throw new Error(response.error!);
+            throw new Error(response);
         }
     }
     catch (error: any) {
         console.error('Failed to fetch global variables:', error);
+        throw new Error(error);
+    }
+};
+
+
+export const getClubStatus = async (username: string) => {
+    const date_from = moment().subtract(1, "months").unix();
+    const date_to = moment().unix();
+    const R_API = `/stats_api/getClubStats/${username}/${date_from}-${date_to}`;
+    // console.log(R_API);
+    try {
+        const response = await fetchSds<Stats>(R_API);
+
+
+        if (response) {
+
+
+            const trx_out = mapSds(response.transfers_out) as Transfer[];
+            const trx_in = mapSds(response.transfers_out) as Transfer[];
+            const vests_in = mapSds(response.vesting_in) as Transfer[];
+            const vests_out = mapSds(response.vesting_out) as Transfer[];
+
+
+
+            let total_trx_out = trx_out.reduce((total, transaction) => {
+                return total + transaction.amount;
+            }, 0);
+
+            let total_trx_in = trx_in.reduce((total, transaction) => {
+                return total + transaction.amount;
+            }, 0);
+
+            let total_trx_vests_in = vests_in.reduce((total, transaction) => {
+                return total + transaction.amount;
+            }, 0);
+
+            let total_trx_vests_out = vests_out.reduce((total, transaction) => {
+                return total + transaction.amount;
+            }, 0);
+
+            console.log(1122, total_trx_vests_in, total_trx_vests_out, total_trx_out, total_trx_in)
+            const trx_steem_in = total_trx_vests_in - total_trx_vests_out;
+
+            const grand_total = trx_steem_in + total_trx_out + total_trx_vests_out;
+
+            const powered_up = (total_trx_vests_out / grand_total) * 100;
+            const transfer_in = (trx_steem_in / grand_total) * 100;
+            const transfer_out = (total_trx_out / grand_total) * 100;
+
+            return { powered_up, transfer_in, transfer_out } satisfies Club;
+        } else {
+            throw new Error(response);
+        }
+    }
+    catch (error: any) {
+        console.error('Failed to fetch club data:', error);
         throw new Error(error);
     }
 };

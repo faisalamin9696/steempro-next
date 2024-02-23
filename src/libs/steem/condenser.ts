@@ -141,7 +141,6 @@ export const publishContent = async (
     key: string,
     voteWeight = null,
 ) => {
-    console.log(1122, 777, postingContent)
     const keyData = getKeyType(postingContent.author, key);
 
     if (keyData && PrivKey.atLeast(keyData.type, 'POSTING')) {
