@@ -36,7 +36,7 @@ type Props = {
 
 }
 
-export default function SubmitPage(props?: Props) {
+export default function SubmitPage(props: Props) {
     const { oldPost, handleUpdateSuccess, handleUpdateCancel } = props?.params || {};
     const isEdit = !!oldPost?.permlink;
 
