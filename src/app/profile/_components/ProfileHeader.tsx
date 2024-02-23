@@ -27,6 +27,7 @@ export default function ProfileHeader(props: Props) {
     const dispatch = useAppDispatch();
     const cardRef = useRef<HTMLElement | undefined | any>();
     const isMobile = useMobile();
+    const posting_json_metadata = JSON.parse(profileInfo?.posting_json_metadata || '{}');
 
     useEffect(() => {
         if (data) {
@@ -38,7 +39,7 @@ export default function ProfileHeader(props: Props) {
 
     }, []);
 
-    const cover_picture = proxifyImageUrl(profileInfo?.posting_json_metadata?.profile?.cover_image ?? '');
+    const cover_picture = proxifyImageUrl(posting_json_metadata?.profile?.cover_image ?? '');
     return (<div className='w-full p-1 relative '>
         <div className='card flex items-center w-full relative  shadow-none' >
 
@@ -80,7 +81,7 @@ export default function ProfileHeader(props: Props) {
                             src={data.name} xl size={'lg'} quality='medium' sizeNumber={60}
                             badge={profileInfo?.reputation} /> */}
                         </div>
-                        <div className="stat-value text-default-800 text-xl sm:text-3xl">{profileInfo?.posting_json_metadata?.profile?.name}</div>
+                        <div className="stat-value text-default-800 text-xl sm:text-3xl">{posting_json_metadata?.profile?.name}</div>
                         <div className="stat-title flex space-x-2 items-center">
                             <div className="stat-title flex flex-row items-center text-default-900 gap-2">
                                 <p>@{data.name}</p>
@@ -100,7 +101,7 @@ export default function ProfileHeader(props: Props) {
                                 </Popover>
                             </div>
                         </div>
-                        <div className="stat-desc text-default-900 line-clamp-1 max-w-xs">{profileInfo?.posting_json_metadata?.profile?.about}</div>
+                        <div className="stat-desc text-default-900 line-clamp-1 max-w-xs">{posting_json_metadata?.profile?.about}</div>
                     </div>
 
                 </div>

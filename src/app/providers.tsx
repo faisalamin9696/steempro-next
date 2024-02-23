@@ -96,7 +96,7 @@ export function Providers(props: Props) {
                                     },
                                     dedupingInterval: 10000,
                                     loadingTimeout: 20000,
-                                    revalidateOnMount: false
+                                    // revalidateOnMount: false
                                 }}
 
 

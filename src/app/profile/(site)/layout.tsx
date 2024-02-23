@@ -43,7 +43,8 @@ export async function generateMetadata(parent: ResolvingMetadata) {
 
     const previousImages = (await parent)?.openGraph?.images || [];
     const result = await getAuthorExt(username, session?.user?.name || 'null');
-    const { name, about, website } = JSON.parse(result.posting_json_metadata || '{}');
+    const { name, about, website } = JSON.parse(result.posting_json_metadata || '{}')?.profile;
+
     return {
         title: (name ? `${name} (@${username})` : username) ?? `(@${username})`,
         description: about ?? '',
