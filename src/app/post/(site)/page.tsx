@@ -57,13 +57,14 @@ export default function PostPage(props: Props) {
 
 
     if (editMode) {
-        return <SubmitPage oldPost={data}
-            handleUpdateCancel={toggleEditMode}
-            handleUpdateSuccess={(post) => {
+        return <SubmitPage params={{
+            oldPost: data,
+            handleUpdateCancel: toggleEditMode,
+            handleUpdateSuccess: (post) => {
                 dispatch(addCommentHandler(post));
                 toggleEditMode();
-
-            }} />
+            }
+        }} />
     }
 
     return (<div key={pathname}

@@ -28,13 +28,16 @@ import { useSession } from 'next-auth/react';
 import clsx from 'clsx';
 
 type Props = {
-    oldPost?: Post;
-    handleUpdateSuccess?: (post: Post) => void;
-    handleUpdateCancel?: () => void
+    params?: {
+        oldPost?: Post;
+        handleUpdateSuccess?: (post: Post) => void;
+        handleUpdateCancel?: () => void
+    }
+
 }
 
 export default function SubmitPage(props?: Props) {
-    const { oldPost, handleUpdateSuccess, handleUpdateCancel } = props ?? {};
+    const { oldPost, handleUpdateSuccess, handleUpdateCancel } = props?.params || {};
     const isEdit = !!oldPost?.permlink;
 
     const draft = secureLocalStorage.getItem('post_draft') as {
