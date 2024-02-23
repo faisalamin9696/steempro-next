@@ -3,7 +3,7 @@ import MainWrapper from "@/components/wrapper/MainWrapper";
 import { getPost } from "@/libs/steem/sds";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
 import PostPage from "./page";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import PostStart from "./@start/page";
 import ProfileInfoCard from "@/components/ProfileInfoCard";
 

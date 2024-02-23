@@ -25,7 +25,7 @@ export default function CommentCover(props: Props) {
         (src) ?
 
             noCard ? <Image
-                className={clsx(isFetching && 'animate-pulse bg-white/20',
+                className={clsx(isFetching && 'bg-background/50',
                     className)}
                 alt={alt || "image"}
                 src={src}
@@ -44,7 +44,7 @@ export default function CommentCover(props: Props) {
             /> :
 
                 <Card
-                    className={clsx(isFetching && 'animate-pulse bg-white/20',
+                    className={clsx(isFetching ? 'bg-background/50' : 'bg-transparent',
                         className)}>
                     {thumbnail ?
                         <Image

@@ -12,7 +12,9 @@ export function ParsedBody({ body }: { body: string }): JSX.Element {
             if (domNode?.attribs && domNode?.name === 'img') {
                 return <div className='img-container relative'>
                     <CommentCover
-                        noCard {...domNode?.attribs} />
+                        src={domNode?.attribs?.src}
+                        alt={domNode?.attribs?.alt}
+                        noCard/>
 
                     <Button size='sm'
                         className='open-button absolute top-0 right-0'>

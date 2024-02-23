@@ -3,7 +3,6 @@ import { getAuth, signInAnonymously } from "firebase/auth";
 import {
     getFirestore, doc, getDoc, setDoc, arrayUnion
 } from "firebase/firestore";
-import { getServerSession } from "next-auth";
 
 
 export async function getFirestoreDocument(collection, id) {

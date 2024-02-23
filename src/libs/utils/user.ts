@@ -3,6 +3,7 @@
 import { decryptPrivateKey, encryptPrivateKey } from "./encryption";
 import secureLocalStorage from "react-secure-storage";
 import { empty_settings } from "../constants/Placeholders";
+import CryptoJS from 'crypto-js';
 
 export function getCredentials(password?: string):
     User | undefined {
@@ -181,9 +182,7 @@ export const calculatePowerUsage = (Wp: number): number => {
 // };
 
 
-export let sessionAppPass = crypto
-    .getRandomValues(new BigUint64Array(1))[0]
-    .toString(36);
+export let sessionAppPass = CryptoJS.lib.WordArray.random(36).toString();
 
 export let sessionKey = '';
 

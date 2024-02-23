@@ -10,7 +10,6 @@ export default function UserCoverCard(
             {src && <Image
                 className='rounded-lg'
                 fill
-                loading='lazy'
                 src={src}
                 alt="thumbnail"
                 sizes="(max-width: 768px,200px),80vw"

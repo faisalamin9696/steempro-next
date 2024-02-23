@@ -4,7 +4,7 @@ import { getResizedAvatar } from "@/libs/utils/image";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
 import CommunityHeader from "../_components/CommunityHeader";
 import { ResolvingMetadata } from "next";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 
 
 export default async function Layout({

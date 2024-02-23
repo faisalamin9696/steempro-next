@@ -5,7 +5,7 @@ import { empty_profile } from "@/libs/constants/Placeholders";
 import { getAuthorExt } from "@/libs/steem/sds";
 import { getResizedAvatar } from "@/libs/utils/image";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
-import { getServerSession } from 'next-auth';
+import { getServerSession } from "next-auth/next";
 import ProfileEnd from "./@end/page";
 
 

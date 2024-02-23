@@ -154,30 +154,30 @@ export default function AuthModal(props: Props) {
                         redirect: false
                     })
 
-                    if (response?.ok) {
-                        const firebaseAuth = getAuth();
-
-                        signInAnonymously(firebaseAuth)
-                            .then(() => {
-                                const auth = saveCredentials(username, key, password);
-                                saveSessionKey(password);
-                                dispatch(saveLoginHandler({
-                                    ...account, login: true,
-                                    encKey: auth?.key
-                                }));
-                                onLoginSuccess && onLoginSuccess({ username, key: auth?.key ?? '' });
-                                handleOnClose();
-                                clearAll();
-                                toast.success(`Login successsful with private ${keyType.type} key`);
-                            })
-                            .catch((error) => {
-                                const errorCode = error.code;
-                                const errorMessage = error.message;
-                                toast.error(errorMessage)
-                            });
-
+                    if (!response?.ok) {
+                        toast.error(response?.error);
+                        return
                     }
-                    toast.error(response?.error);
+                    const firebaseAuth = getAuth();
+
+                    signInAnonymously(firebaseAuth)
+                        .then(() => {
+                            const auth = saveCredentials(username, key, password);
+                            saveSessionKey(password);
+                            dispatch(saveLoginHandler({
+                                ...account, login: true,
+                                encKey: auth?.key
+                            }));
+                            onLoginSuccess && onLoginSuccess({ username, key: auth?.key ?? '' });
+                            handleOnClose();
+                            clearAll();
+                            toast.success(`Login successsful with private ${keyType.type} key`);
+                        })
+                        .catch((error) => {
+                            // const errorCode = error.code;
+                            // const errorMessage = error.message;
+                            toast.error(String(error))
+                        });
 
 
 

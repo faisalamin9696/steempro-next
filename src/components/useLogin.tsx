@@ -1,10 +1,9 @@
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
-import { empty_profile } from '@/libs/constants/Placeholders';
-import { logoutHandler, saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
-import { getCredentials, sessionKey } from '@/libs/utils/user';
+import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
+import { sessionKey } from '@/libs/utils/user';
 import React, { useState, useEffect, createContext, useContext, useMemo } from 'react';
 import AuthModal from './AuthModal';
-import { SessionProvider, useSession } from "next-auth/react"
+import { useSession } from "next-auth/react"
 
 interface LoginDialogContextType {
     isDialogOpen: boolean;

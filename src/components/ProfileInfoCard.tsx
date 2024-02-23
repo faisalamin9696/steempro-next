@@ -3,7 +3,6 @@
 import React, { } from 'react'
 import { Avatar, AvatarGroup, Button } from '@nextui-org/react'
 import { fetchSds, useAppSelector } from '@/libs/constants/AppFunctions'
-import usePathnameClient from '@/libs/utils/usePathnameClient'
 import { useSession } from 'next-auth/react';
 import LoadingCard from '@/components/LoadingCard';
 import useSWR from 'swr';
@@ -15,8 +14,6 @@ import { abbreviateNumber } from '@/libs/utils/helper';
 import { getResizedAvatar } from '@/libs/utils/image';
 import TimeAgoWrapper from '@/components/TimeAgoWrapper'
 import { getClubStatus, getVoteData } from '@/libs/steem/sds'
-import { RiUserFollowFill, RiUserFollowLine, RiUserUnfollowFill } from "react-icons/ri";
-import { TiUserAdd, TiUserDelete } from "react-icons/ti";
 
 
 const getClubString = (clubData?: Club) => {
