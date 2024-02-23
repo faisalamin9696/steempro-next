@@ -7,6 +7,8 @@ import { Toaster } from "sonner";
 import clsx from "clsx";
 import { getAuthorExt } from "@/libs/steem/sds";
 import { getServerSession } from "next-auth";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/react"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -43,6 +45,8 @@ export default async function RootLayout({
           {children}
           <Toaster richColors />
         </Providers>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
