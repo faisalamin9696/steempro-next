@@ -29,6 +29,7 @@ export default function CommentCover(props: Props) {
                     className)}
                 alt={alt || "image"}
                 src={src}
+                loading='lazy'
                 height={640}
                 width={640}
                 quality={60}
@@ -48,6 +49,7 @@ export default function CommentCover(props: Props) {
                         className)}>
                     {thumbnail ?
                         <Image
+                            loading='lazy'
                             alt={alt || "image"}
                             src={src}
                             height={640}
@@ -66,6 +68,7 @@ export default function CommentCover(props: Props) {
                         :
                         <Image
                             src={src}
+                            loading='lazy'
                             width={sm ? 130 : 200}
                             height={sm ? 70 : 160}
                             alt={alt || "image"}
