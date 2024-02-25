@@ -247,7 +247,7 @@ export default function ReplyForm(props: Props) {
         authenticateUser();
 
 
-        if (isAuthorized) {
+        if (isAuthorized()) {
             setPosting(true);
 
             await awaitTimeout(1);
@@ -299,8 +299,8 @@ export default function ReplyForm(props: Props) {
                 const credentials = getCredentials(getSessionKey());
 
                 if (credentials) {
-                    handleOnPublished(postData);
-                    // postingMutation.mutate({ postData, options: null, key: credentials.key });
+                    // handleOnPublished(postData);
+                    postingMutation.mutate({ postData, options: null, key: credentials.key });
                 } else {
                     setPosting(false);
                     toast.error('Invalid credentials');

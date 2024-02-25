@@ -1,95 +1,89 @@
-import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
-import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
-import { sessionKey } from '@/libs/utils/user';
-import React, { useState, useEffect, createContext, useContext, useMemo } from 'react';
+import { useSession } from 'next-auth/react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import AuthModal from './AuthModal';
-import { useSession } from "next-auth/react"
+import { sessionKey } from '@/libs/utils/user';
+import { useAppDispatch } from '@/libs/constants/AppFunctions';
+import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 
-interface LoginDialogContextType {
-    isDialogOpen: boolean;
-    authenticateUser: () => void;
-    closeAuthentication: () => void;
-    isAuthorized: boolean;
-    isLoggedIn: boolean;
+// Define the type for your context value
+type AuthContextType = {
     credentials?: User;
+    authenticateUser: (isNew?: boolean) => void;
+    isAuthorized: () => boolean;
+    isLogin: () => boolean;
+};
+
+// Create the context with an initial value
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// Create a custom hook to access the context
+export const useLogin = () => {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useLogin must be used within a AuthProvider');
+    }
+    return context;
+};
+
+
+type Props = {
+    data?: AccountExt;
+    children: React.ReactNode;
 }
-
-const LoginDialogContext = createContext<LoginDialogContextType>({
-    isDialogOpen: false,
-    authenticateUser: () => { },
-    closeAuthentication: () => { },
-    isAuthorized: false,
-    isLoggedIn: false,
-    credentials: undefined,
-});
-
-export const LoginDialogProvider = ({ children, data }:
-    { children: React.ReactNode, data?: AccountExt }) => {
+// Create a provider component
+export const AuthProvider = (props: Props) => {
+    const { data, children } = props;
     const { data: session, status } = useSession();
-    const loginInfo = useAppSelector(state => state.loginReducer.value);
-    const [isDialogOpen, setDialogOpen] = useState(false);
-    const [isAuthorized, setIsAuthorized] = useState(false);
+    const [openAuth, setOpenAuth] = useState(false);
+    const [credentials, setCredentials] = useState<User>();
+    const [isNew, setIsNew] = useState(false);
     const dispatch = useAppDispatch();
-
-
+    
     useEffect(() => {
         if (data) {
             dispatch(saveLoginHandler(data));
         }
-    }, []);
+    }, [])
 
-    // useEffect(() => {
-    //     if (session?.user?.name) {
-    //         dispatch(saveLoginHandler({ ...loginInfo, ...loginInfo, login: true }));
-    //     } else {
-    //         dispatch(logoutHandler());
-    //     }
-    // }, [status]);
 
-    const isLoggedIn = useMemo(() => status === 'authenticated', [session]);
-    const isLocked = isLoggedIn && !sessionKey;
+    function isLogin() {
+        return (status === 'authenticated' || (status === 'loading' && !!sessionKey))
+    }
 
-    const authenticateUser = () => {
-        if (!isLoggedIn || !sessionKey) setDialogOpen(true);
-        else onSuccess(session?.user as User);
-    };
+    function isAuthorized() {
+        return isLogin() && !!sessionKey
+    }
 
-    const closeAuthentication = () => {
-        setDialogOpen(false);
-    };
 
-    const onSuccess = (user?: User) => {
-        setIsAuthorized(true);
-    };
+    function authenticateUser(isNew?: boolean) {
+        if (isNew) {
+            setIsNew(true);
+            setOpenAuth(true);
+        }
 
-    const contextValue: LoginDialogContextType = {
-        isDialogOpen,
-        authenticateUser,
-        closeAuthentication,
-        isAuthorized,
-        isLoggedIn,
-        credentials: { username: session?.user?.name, key: '' } as User,
-    };
+        if (!isLogin() || (isLogin() && !sessionKey)) {
+            setOpenAuth(true);
+            return
+        }
+    }
+
 
     return (
-        <LoginDialogContext.Provider value={contextValue}>
+        <AuthContext.Provider
+            value={{ authenticateUser, credentials, isAuthorized, isLogin }}>
             {children}
-            {isDialogOpen && (
+
+            {openAuth && (
                 <AuthModal
-                    open={isDialogOpen}
-                    onClose={closeAuthentication}
-                    onLoginSuccess={() => onSuccess(session?.user as User)}
-                    isLocked={isLocked}
+                    isNew={isNew}
+                    open={openAuth}
+                    onClose={() => setOpenAuth(false)}
+                    onLoginSuccess={(user) => {
+                        setCredentials(user);
+                        setIsNew(false);
+                    }}
                 />
             )}
-        </LoginDialogContext.Provider>
+        </AuthContext.Provider>
     );
-};
-
-export const useLogin = (): LoginDialogContextType => {
-    const context = useContext(LoginDialogContext);
-    if (!context) {
-        throw new Error('useLogin must be used within a LoginDialogProvider');
-    }
-    return context;
 };

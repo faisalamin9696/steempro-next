@@ -26,6 +26,8 @@ import secureLocalStorage from 'react-secure-storage';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import clsx from 'clsx';
+import CommentOptionWrapper from '@/components/wrapper/CommentOptionWrapper';
+import { useMobile } from '@/libs/utils/useMobile';
 
 type Props = {
     params?: {
@@ -39,6 +41,7 @@ type Props = {
 export default function SubmitPage(props: Props) {
     const { oldPost, handleUpdateSuccess, handleUpdateCancel } = props?.params || {};
     const isEdit = !!oldPost?.permlink;
+    const isMobile = useMobile();
 
     const draft = secureLocalStorage.getItem('post_draft') as {
         title: string,
@@ -190,7 +193,7 @@ export default function SubmitPage(props: Props) {
         authenticateUser();
 
 
-        if (isAuthorized) {
+        if (isAuthorized()) {
             setPosting(true);
 
             await awaitTimeout(1);
@@ -199,22 +202,23 @@ export default function SubmitPage(props: Props) {
                 let permlink = generatePermlink(title);
                 let simplePost;
                 if (!isEdit) {
-                    try {
-                        if (session?.user?.name)
+                    if (session?.user?.name)
+                        try {
                             simplePost = await getPost(session.user.name, permlink);
-                        else {
-                            setPosting(false);
-                            toast.info('Login failed');
-                            return
+                        } catch (e) {
+                            // silent ignore
                         }
-
-                    } catch (e) {
-
+                    else {
+                        setPosting(false);
+                        toast.info('Something went wrong!');
+                        return
                     }
+
+
                     // check if the permlink already exist
 
                     // if exist create new permlink
-                    if (simplePost && simplePost.permlink === permlink) {
+                    if (simplePost && simplePost?.permlink === permlink) {
                         permlink = generatePermlink(title, true);
                     }
                 }
@@ -289,7 +293,6 @@ export default function SubmitPage(props: Props) {
                 const credentials = getCredentials(getSessionKey());
 
                 if (credentials) {
-
                     postingMutation.mutate({ postData, options, key: credentials.key });
                 } else {
                     setPosting(false);
@@ -308,11 +311,11 @@ export default function SubmitPage(props: Props) {
 
 
 
-    return (<div className={clsx(`editor-main flex flex-col flex-1 gap-6 items-center w-full`,
+    return (<div className={clsx(`editor-main flex flex-col flex-1 gap-4 items-center w-full`,
         !oldPost && '1md:justify-evenly 1md:items-start 1md:flex-row')} >
 
         <div className={clsx(`flex flex-col w-full 1md:w-[50%] gap-2 `,
-            !oldPost && '1md:float-start 1md:sticky 1md:self-start 1md:top-[70px]')}>
+            !oldPost && '1md:float-start 1md:sticky 1md:self-start 1md:top-[70px] px-1')}>
 
             <CommunitySelectButton
                 community={community}
@@ -351,12 +354,12 @@ export default function SubmitPage(props: Props) {
             }, [markdown])}
 
 
-            <div className='flex gap-2 relative items-center  max-sm:items-start'>
-                <div className='flex gap-2 max-sm:flex-col'>
+            <div className='flex gap-2 relativeitems-center flex-row'>
 
-                    <div className='gap-2 flex'>
-                        <ClearFormButton onClearPress={clearForm} />
+                <div className='gap-2 flex'>
+                    <ClearFormButton onClearPress={clearForm} />
 
+                    <CommentOptionWrapper advance={isMobile}>
                         <BeneficiaryButton
                             disabled={isEdit}
                             onSelectBeneficiary={bene => {
@@ -374,7 +377,9 @@ export default function SubmitPage(props: Props) {
                                 setReward(reward);
                             }} />
 
-                    </div>
+                    </CommentOptionWrapper>
+
+
 
                 </div>
 

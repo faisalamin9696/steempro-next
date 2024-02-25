@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 import { persistQueryClient } from '@tanstack/react-query-persist-client'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import { compress, decompress } from 'lz-string';
-import { LoginDialogProvider } from "@/components/useLogin";
+import { AuthProvider } from "@/components/useLogin";
 import AppNavbar from '@/components/navbar/AppNavbar';
 import { ThemeProvider } from 'next-themes'
 import LoadingCard from '@/components/LoadingCard';
@@ -32,7 +32,7 @@ export function Providers(props: Props) {
 
     initializeApp(firebaseConfig);
 
-    const route = useRouter();
+    const router = useRouter();
     const [isMounted, setIsMounted] = useState(false);
     const auth = getAuth();
 
@@ -41,6 +41,8 @@ export function Providers(props: Props) {
         try {
             if (!auth.currentUser)
                 signInAnonymously(auth);
+
+        
         } catch (error) {
             // failed silently
         }
@@ -81,7 +83,7 @@ export function Providers(props: Props) {
         <ReduxProvider store={store}>
             <QueryClientProvider client={client}>
                 <ThemeProvider attribute="class"  >
-                    <NextUIProvider navigate={route.push}>
+                    <NextUIProvider navigate={router.push}>
                         {isMounted ? <SessionProvider>
                             <SWRConfig
                                 value={{
@@ -101,10 +103,10 @@ export function Providers(props: Props) {
 
 
                             >
-                                <LoginDialogProvider data={data}>
+                                <AuthProvider data={data}>
                                     <AppNavbar />
                                     {children}
-                                </LoginDialogProvider>
+                                </AuthProvider>
                             </SWRConfig>
                         </SessionProvider> : <LoadingCard />}
                     </NextUIProvider>

@@ -1,13 +1,14 @@
 import STooltip from "./STooltip";
 
-export default function Reputation({ reputation, decimal }: {
+export default function Reputation({ reputation, decimal, sm }: {
     reputation: string | number,
     decimal?: number;
+    sm?: boolean;
 }) {
-    return (<div className='!normal-case  !mt-0 rounded-md
-    py-0 px-1 text-sm  bg-background  max-sm:text-xs'>
+    return (<div className='!normal-case rounded-md
+   py-[1px] px-[3px] text-sm  bg-background  max-sm:text-xs'>
         <STooltip content={`${'Reputation score'}: ` + reputation} >
-            <p>{Number(reputation)?.toFixed(decimal ?? 0)} </p>
+            <p className={sm ? ' text-xs' : ''}>{Number(reputation)?.toFixed(decimal ?? 0)} </p>
         </STooltip>
     </div>
     )

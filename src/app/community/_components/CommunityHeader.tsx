@@ -4,11 +4,11 @@ import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { useAppDispatch } from '@/libs/constants/AppFunctions';
 import { addProfileHandler } from '@/libs/redux/reducers/ProfileReducer';
-import SAvatar from '@/components/SAvatar';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import UserCoverCard from '@/components/UserCoverCard';
 import { abbreviateNumber } from '@/libs/utils/helper';
 import Reputation from '@/components/Reputation';
+import BadgeAvatar from '@/components/BadgeAvatar';
 
 interface Props {
     data: Community;
@@ -63,7 +63,7 @@ export default function CommunityHeader(props: Props) {
 
                 <div className="stat">
                     <div className="stat-figure text-secondary">
-                        <SAvatar username={community} size={'lg'}
+                        <BadgeAvatar username={community} size={'lg'}
                             quality='medium'
                             badge={data?.account_reputation} />
                     </div>

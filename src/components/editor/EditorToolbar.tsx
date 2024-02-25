@@ -77,7 +77,7 @@ const EditorToolbar = (props: ToolbarProps) => {
     return (
         <div className={clsx(className)} >
 
-            <div className="items-center space-x-1 flex overflow-auto scroll-smooth w-full">
+            <div className="items-center space-x-1 flex overflow-auto">
                 <Tooltip content={('Headings')}>
                     <div>{HeadingItem}
                     </div>

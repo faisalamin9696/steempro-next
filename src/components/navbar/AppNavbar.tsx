@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import './header.scss';
 import { Button, Input, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle, Popover, PopoverContent, PopoverTrigger, User } from "@nextui-org/react";
 import IconButton from '../IconButton';
@@ -6,24 +6,45 @@ import { MdNotifications, MdSearch } from 'react-icons/md';
 import { LuPencilLine } from "react-icons/lu";
 import { useLogin } from '../useLogin';
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
-import { getSettings, logoutSession } from '@/libs/utils/user';
+import { getCredentials, getSettings, logoutSession } from '@/libs/utils/user';
 import { logoutHandler } from '@/libs/redux/reducers/LoginReducer';
 import { getResizedAvatar } from '@/libs/utils/image';
 import Image from 'next/image';
-import { useSession } from 'next-auth/react';
-import ThemeSwitch from '../ThemeSwitch';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
+import AccountsModal from '../AccountsModal';
 const NavbarDrawerItems = dynamic(() => import('./NavbarDrawerItems'))
 
 
 export default function AppNavbar() {
 
-    const { credentials, authenticateUser, isLoggedIn } = useLogin()
+    const { authenticateUser, isLogin } = useLogin();
     const dispatch = useAppDispatch();
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const { data: session, status } = useSession();
+    const router = useRouter();
+    const [isPopOpen, setIsPopOpen] = React.useState(false);
+    const [isAccOpen, setIsAccOpen] = React.useState(false);
 
+
+
+    // validate the local storage auth
+    useMemo(() => {
+        const credentials = getCredentials();
+        if (status === 'authenticated') {
+            if (!credentials?.username) signOut();
+        }
+
+        if (status === 'unauthenticated' && credentials?.username) {
+            signIn('credentials', {
+                username: credentials.username,
+                redirect: false
+            });
+
+        }
+    }, [status]);
 
     function handleLogout() {
         logoutSession();
@@ -34,57 +55,15 @@ export default function AppNavbar() {
         authenticateUser();
     }
 
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    const menuItems = [
-        "Profile",
-        "Dashboard",
-        "Activity",
-        "Analytics",
-        "System",
-        "Deployments",
-        "My Settings",
-        "Team Settings",
-        "Help & Feedback",
-        "Log Out",
-    ];
-
-    // const queryKey = [`profile-${credentials?.username}`];
-    // const userQuery = useQuery({
-    //     enabled: !!credentials?.username,
-    //     queryKey,
-    //     gcTime: 10 * Minute, // 10 minutes
-    //     queryFn: () => getAuthorExt(credentials?.username ?? ''),
-    //     retry: 0,
-    //     refetchInterval: 10 * Minute// 5 minutes
-    // });
-
-    // if (userQuery.isSuccess) {
-    //     dispatch(saveLoginHandler({ ...userQuery.data, login: true }));
-
-    // }
-
-    // const queryKeyGlobals = [`globals`];
-    // const globalsQuery = useQuery({
-    //     queryKey: queryKeyGlobals,
-    //     gcTime: 10 * Minute, // 10 minutes
-    //     queryFn: () => getSteemGlobal(),
-    //     refetchInterval: 10 * Minute// 5 minutes
-    // });
-
-    // if (globalsQuery.isSuccess) {
-    //     dispatch(addSteemGlobals(globalsQuery.data));
-
-    // }
 
     return (
-        <Navbar onMenuOpenChange={setIsMenuOpen}
+        <Navbar
             className='shadow-xl w-full h-16  !px-0 !p-0'
             shouldHideOnScroll>
 
-            <NavbarContent justify='start' className=' z-10'>
-                <NavbarDrawerItems />
-            </NavbarContent>
+
+            <NavbarDrawerItems />
             {/* 
             <NavbarMenuToggle
                 draggable
@@ -95,7 +74,7 @@ export default function AppNavbar() {
             </NavbarMenuToggle> */}
             <NavbarBrand className="justify-center absolute right-0 left-0 z-0">
 
-                <Link href={'/'}>
+                <Link href={'/'} className=''>
                     <Image
                         className='hidden sm:block'
                         src={'/logo-default.png'}
@@ -108,6 +87,8 @@ export default function AppNavbar() {
                         style={{ width: 'auto' }}
 
                     />
+                </Link>
+                <Link href={'/'}>
                     <Image priority className='hidden max-sm:block'
                         placeholder='blur'
                         blurDataURL={'/logo192.png'}
@@ -115,6 +96,7 @@ export default function AppNavbar() {
                         alt='logo'
                         height={40}
                         width={40}
+
                         style={{ width: 'auto' }}
                     />
 
@@ -141,13 +123,19 @@ export default function AppNavbar() {
                         type="search"
                     />
 
-                    <button className="hidden max-lg:block">
-                        <IconButton as={'div'} onClick={undefined} IconType={MdSearch} />
-                    </button>
+                    <Button radius='full' isIconOnly size='sm' variant='light'
+                        onPress={() => {
+                            authenticateUser();
+                        }}>
+                        <MdSearch className='text-xl text-default-600' />
+                    </Button>
 
-                    <button className="">
-                        <IconButton as={Link} href='/submit' onClick={undefined} IconType={LuPencilLine} />
-                    </button>
+
+                    <Button radius='full' onPress={() => router.push('/submit')} isIconOnly size='sm' variant='light'>
+                        <LuPencilLine className='text-xl text-default-600' />
+                    </Button>
+
+
                     <button className="max-sm:hidden ">
                         <div className="relative">
                             <IconButton as={'div'} onClick={undefined} IconType={MdNotifications} />
@@ -155,26 +143,28 @@ export default function AppNavbar() {
                         </div>
                     </button>
 
-                    {isLoggedIn ? <Popover placement="top" color='default'>
-                        <PopoverTrigger>
-                            <User
-                                as="button"
-                                name=""
-                                className="transition-transform"
-                                avatarProps={{
-                                    src: getResizedAvatar(session?.user?.name ?? '')
-                                }}
-                            />
-                        </PopoverTrigger>
-                        <PopoverContent>
-                            <ul tabIndex={0} className="menu menu-sm ">
-                                <li><a>'Switch Account</a></li>
-                                <li><a>{'Notifications'}</a></li>
-                                <li><a onClick={handleLogout}>{'Logout'}</a></li>
-
-                            </ul>
-                        </PopoverContent>
-                    </Popover>
+                    {isLogin() ?
+                        <Popover placement="top" color='default' shouldCloseOnBlur={false}
+                            isOpen={isPopOpen} onOpenChange={(open) => setIsPopOpen(open)}>
+                            <PopoverTrigger>
+                                <User
+                                    as="button"
+                                    name=""
+                                    className="transition-transform"
+                                    avatarProps={{
+                                        src: getResizedAvatar(session?.user?.name ?? '')
+                                    }}
+                                />
+                            </PopoverTrigger>
+                            <PopoverContent>
+                                <ul tabIndex={0} className="menu menu-sm" onClick={() => {
+                                    if (isPopOpen) setIsPopOpen(false);
+                                }}>
+                                    <li><a onClick={() => setIsAccOpen(true)}>Switch Account</a></li>
+                                    <li><a>{'Notifications'}</a></li>
+                                </ul>
+                            </PopoverContent>
+                        </Popover>
                         :
                         <Button size='sm' variant='ghost'
                             onPress={handleLogin}
@@ -182,34 +172,14 @@ export default function AppNavbar() {
                             isLoading={status === 'loading'}
                             isIconOnly={status === 'loading'}
                             radius={status === 'loading' ? 'full' : 'sm'}
-                        >{(isLoggedIn) ? '' : 'Login'}</Button>
+                        >{(isLogin()) ? '' : 'Login'}</Button>
                     }
 
                 </div>
             </NavbarContent>
-
-            <NavbarMenu>
-
-                {menuItems.map((item, index) => (
-                    <NavbarMenuItem key={`${item}-${index}`}>
-                        <Link
-                            color={
-                                index === 2 ? "primary" : index === menuItems.length - 1 ? "danger" : "foreground"
-                            }
-                            className="w-full"
-                            href="#"
-                            size="lg"
-                        >
-                            {item}
-                        </Link>
-                    </NavbarMenuItem>
-                ))}
-
-                <NavbarMenuItem className='flex gap-2'>
-                    <p>Theme</p>
-                    <ThemeSwitch />
-                </NavbarMenuItem>
-            </NavbarMenu>
+            {isAccOpen &&
+                <AccountsModal isOpen={isAccOpen} onOpenChange={setIsAccOpen} />
+            }
         </Navbar>
 
 

@@ -1,5 +1,3 @@
-'use client';
-
 import { decryptPrivateKey, encryptPrivateKey } from "./encryption";
 import secureLocalStorage from "react-secure-storage";
 import { empty_settings } from "../constants/Placeholders";
@@ -7,16 +5,26 @@ import CryptoJS from 'crypto-js';
 
 export function getCredentials(password?: string):
     User | undefined {
-    const user = secureLocalStorage.getItem('auth') ?? '';
-    if (user) {
-        const credentials = (user ?? {}) as User
+    const credentials = secureLocalStorage.getItem('auth') as User;
+    try {
         if (credentials) {
-            const privateKey = password ? decryptPrivateKey(credentials.key, password) : credentials.key;
+            const privateKey = password ?
+                decryptPrivateKey(credentials.key, password) : credentials.key;
             if (privateKey) {
-                return { username: credentials.username, key: privateKey }
+                return {
+                    username: credentials.username,
+                    key: privateKey,
+                    type: credentials.type,
+                    memo: ''
+                }
             }
+            return credentials;
         }
     }
+    catch {
+        return undefined
+    }
+
 }
 
 
@@ -45,37 +53,70 @@ export function getAllCredentials():
 }
 
 
-function addToCurrent(username: string, encKey: string) {
-    secureLocalStorage.setItem('auth', { username: username, key: encKey });
+export function addToCurrent(username: string,
+    encKey: string,
+    keyType: Keys) {
+    const isMemo = keyType === 'MEMO';
+    let credentials: User | undefined;
+    if (keyType === 'MEMO')
+        credentials = getCredentials();
+
+    secureLocalStorage.setItem('auth',
+        {
+            username: username,
+            key: isMemo && credentials ? credentials.key : encKey,
+            type: keyType,
+            memo: isMemo ? encKey : ''
+        });
 
 }
 
-function addToAccounts(username: string, encKey: string) {
+function addToAccounts(username: string, encKey: string, keyType: Keys) {
     const accounts = (secureLocalStorage.getItem('accounts') ?? []) as User[];
-    if (accounts?.length <= 0 || accounts.some(account => account.username !== username))
-        secureLocalStorage.setItem('accounts', accounts.concat(accounts.concat({ username: username, key: encKey })));
+    const index = accounts.findIndex(account => account.username === username);
+    const isMemo = keyType === 'MEMO';
+
+    const updatedAccounts = index !== -1
+        ? [
+            ...accounts.slice(0, index),
+            Object.assign({}, accounts[index], {
+                key: isMemo ? accounts[index].key : encKey,
+                type: keyType,
+                memo: isMemo ? encKey : ''
+            }),
+            ...accounts.slice(index + 1)
+        ]
+        : accounts.concat({
+            username: username,
+            key: encKey,
+            type: keyType,
+            memo: isMemo ? encKey : ''
+        });
+
+    secureLocalStorage.setItem('accounts', updatedAccounts);
 }
 
 
 export function saveCredentials(username: string,
-    privateKey: string, password: string,
-    current?: boolean):
+    privateKey: string,
+    password: string,
+    keyType: Keys,
+    current?: boolean,
+):
     User | undefined {
 
     const encryptedKey = encryptPrivateKey(privateKey, password);
     if (encryptedKey) {
-        const isAuthExist = secureLocalStorage.getItem('auth');
-        if (current) {
-            addToCurrent(username, encryptedKey);
-            addToAccounts(username, encryptedKey);
-            return { username: username, key: encryptedKey }
+        const existAuth = secureLocalStorage.getItem('auth') as User;
+        if (!existAuth || current || (existAuth?.username === username)) {
+            addToCurrent(username, encryptedKey, keyType);
         }
-        else {
-            if (!isAuthExist) {
-                addToCurrent(username, encryptedKey);
-            }
-            addToAccounts(username, encryptedKey);
-            return { username: username, key: encryptedKey }
+        addToAccounts(username, encryptedKey, keyType);
+        return {
+            username: username,
+            key: encryptedKey,
+            type: keyType,
+            memo: ''
         }
     };
 
@@ -116,8 +157,8 @@ export function updateSettings(settings: Setting) {
 export class PrivKey {
     static LEVELS = ['MEMO', 'POSTING', 'ACTIVE', 'OWNER', 'MASTER'];
 
-    static level = (type: string): number => {
-        const level = PrivKey.LEVELS.indexOf(type);
+    static level = (type: Keys): number => {
+        const level = PrivKey.LEVELS.indexOf(String(type));
         if (level === -1) {
             throw new Error('Invalid type: ' + type);
         }
@@ -125,8 +166,8 @@ export class PrivKey {
         return level;
     };
     static atLeast = (
-        type: 'MEMO' | 'POSTING' | 'ACTIVE' | 'OWNER' | 'MASTER',
-        target: 'MEMO' | 'POSTING' | 'ACTIVE' | 'OWNER' | 'MASTER',
+        type: Keys,
+        target: Keys,
     ): boolean => {
         const roleLevel = PrivKey.level(type);
         const targetLevel = PrivKey.level(target);
@@ -150,37 +191,6 @@ export const calculatePowerUsage = (Wp: number): number => {
     const Pu = (Wp + 0.0049) / 50;
     return Pu;
 };
-
-// function generateRandomString(length: number = 16): string {
-//     const getRandomChar = (characters: string): string => characters.charAt(Math.floor(Math.random() * characters.length));
-
-//     const randomUppercase = getRandomChar('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
-//     const randomLowercase = getRandomChar('abcdefghijklmnopqrstuvwxyz');
-//     const randomDigit = getRandomChar('0123456789');
-//     const randomSpecialChar = getRandomChar('!@#$%^&*()_+{}[]:;<>,.?~\\/-');
-
-//     const remainingChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+{}[]:;<>,.?~\\/-';
-//     const randomString = randomUppercase + randomLowercase + randomDigit + randomSpecialChar +
-//         Array.from({ length: length - 4 }, () => getRandomChar(remainingChars)).join('');
-
-//     return randomString;
-// }
-
-
-// const getSessionId = () => {
-//     let sessionId = secureLocalStorage.getItem('sessionId') as string;
-
-//     if (!sessionId) {
-//         sessionId = crypto
-//             .getRandomValues(new BigUint64Array(1))[0]
-//             .toString(36);
-
-//         secureLocalStorage.setItem('sessionId', sessionId);
-//     }
-
-//     return sessionId;
-// };
-
 
 export let sessionAppPass = CryptoJS.lib.WordArray.random(36).toString();
 

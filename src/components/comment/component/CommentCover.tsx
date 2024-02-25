@@ -33,15 +33,14 @@ export default function CommentCover(props: Props) {
                 loading='eager'
                 height={640}
                 width={640}
-                quality={60}
-                sizes={`(max-width: 768px) 100vw,
-                (max-width: 1200px) 50vw,
-                33vw`}
+                // sizes={`(max-width: 768px) 100vw,
+                // (max-width: 1200px) 50vw,
+                // 33vw`}
                 onLoad={onLoadCompleted}
                 onError={onLoadCompleted}
                 style={{
-                    width: '100%',
-                    objectFit: 'contain',
+                    height: 'auto',
+                    objectFit: 'contain'
                 }}
             /> :
 
@@ -51,35 +50,35 @@ export default function CommentCover(props: Props) {
                     {thumbnail ?
                         <Image
                             priority
-                            loading='eager'
                             alt={alt || "image"}
                             src={src}
                             height={640}
                             width={640}
                             quality={60}
-                            sizes={`(max-width: 768px) 100vw,
-                        (max-width: 1200px) 50vw,
-                        33vw`}
+                        //     sizes={`(max-width: 768px) 100vw,
+                        // (max-width: 1200px) 50vw,
+                        // 33vw`}
                             onLoad={onLoadCompleted}
                             onError={onLoadCompleted}
                             style={{
-                                width: 'auto',
+                                width: '100%',
                                 objectFit: 'contain',
+                                height: 'auto',
+
                             }}
                         />
                         :
                         <Image
                             priority
                             src={src}
-                            loading='eager'
                             width={sm ? 130 : 200}
                             height={sm ? 70 : 160}
                             alt={alt || "image"}
                             onLoad={onLoadCompleted}
                             onError={onLoadCompleted}
-                            sizes={`(max-width: 768px) 100vw,
-                       (max-width: 1200px) 50vw,
-                       33vw`}
+                    //         sizes={`(max-width: 768px) 100vw,
+                    //    (max-width: 1200px) 50vw,
+                    //    33vw`}
                             style={{
                                 width: sm ? '130px' : undefined,
                                 height: sm ? '70px' : undefined,

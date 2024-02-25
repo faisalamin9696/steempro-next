@@ -8,13 +8,13 @@ import { addProfileHandler } from '@/libs/redux/reducers/ProfileReducer';
 import { getSettings } from '@/libs/utils/user';
 import { proxifyImageUrl } from '@/libs/utils/ProxifyUrl';
 import dynamic from 'next/dynamic';
-import SAvatar from '@/components/SAvatar';
 import Reputation from '@/components/Reputation';
 import VanillaTilt from "vanilla-tilt";
 import { useMobile } from '@/libs/utils/useMobile';
 import './style.scss'
 import { abbreviateNumber } from '@/libs/utils/helper';
 import ProfileInfoCard from '../../../components/ProfileInfoCard';
+import BadgeAvatar from '@/components/BadgeAvatar';
 
 const DynamicCover = dynamic(() => import('@/components/UserCoverCard'))
 interface Props {
@@ -74,7 +74,7 @@ export default function ProfileHeader(props: Props) {
 
                     <div className="profile-card stat">
                         <div className="stat-figure text-secondary">
-                            <SAvatar {...props} username={data.name} size={'lg'} quality='medium'
+                            <BadgeAvatar {...props} username={data.name} size={'lg'} quality='medium'
                                 badge={data?.reputation} />
                             {/* <Avatar {...props}
 

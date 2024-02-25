@@ -36,7 +36,7 @@ export default function CommentFooter(props: CommentProps) {
 
     function handleOnVote(open: boolean, downvote?: boolean) {
         authenticateUser();
-        if (isAuthorized) {
+        if (isAuthorized()) {
             if (downvote)
                 setDownvotePopup(open);
             else

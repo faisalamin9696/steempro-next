@@ -85,9 +85,7 @@ export function getKeyType(account: AccountExt, key: string) {
         // idr interface dalna
         let keyType: string = '';
         if (key[0] !== '5') {
-            const privPostingKey = PrivateKey.fromLogin(
-                typeof account === 'string' ? account : account.name,
-                key,
+            const privPostingKey = PrivateKey.fromLogin(account.name, key,
                 'posting',
             ).toString();
             const isvalid = wifIsValid(
@@ -125,7 +123,7 @@ export function getKeyType(account: AccountExt, key: string) {
         return keyType
             ? {
                 account: account.name,
-                type: keyType as 'POSTING' | 'ACTIVE' | 'OWNER' | 'MASTER' | 'MEMO',
+                type: keyType as Keys,
             }
             : '';
     } catch (e: any) {

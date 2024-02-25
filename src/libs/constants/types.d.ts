@@ -533,6 +533,8 @@ type Beneficiary = {
 type User = {
   username: string;
   key: string;
+  type: Keys;
+  memo: string
 }
 
 type ValidCategories = 'created' | 'trending' | 'payout' | 'important' | 'about';
@@ -588,3 +590,5 @@ type Stats = {
 
 
 }
+
+type Keys = 'POSTING' | 'ACTIVE' | 'OWNER' | 'MASTER' | 'MEMO'

@@ -1,10 +1,18 @@
-import { useState, useEffect, useRef } from 'react';
+"use client";
+
+import { useState, useEffect, useRef, useCallback, Ref, MutableRefObject } from 'react';
 import EditorToolbar from './EditorToolbar';
-import Dropzone from 'react-dropzone';
+import Dropzone, { DropzoneRef, useDropzone } from 'react-dropzone';
 import { Textarea } from "@nextui-org/react";
 import clsx from 'clsx';
 import { KeyboardEvent } from "react";
 import { MAXIMUM_UPLOAD_SIZE, isValidImage } from '@/libs/utils/image';
+import { toast } from 'sonner';
+import { toBase64 } from '@/libs/utils/helper';
+import { signImage, uploadImage } from '@/libs/steem/condenser';
+import { useLogin } from '../useLogin';
+import { getCredentials, getSessionKey } from '@/libs/utils/user';
+import { awaitTimeout } from '@/libs/constants/AppFunctions';
 
 interface EditorProps {
     value: string,
@@ -18,8 +26,10 @@ interface EditorProps {
 }
 
 
+let imagesToUpload: { file: any; temporaryTag: string; }[] = [];
+
 const EditorInput = (props: EditorProps) => {
-    const {
+    let {
         value,
         onImageUpload,
         onImageInvalid,
@@ -27,6 +37,8 @@ const EditorInput = (props: EditorProps) => {
         inputClass,
         rows,
     } = props;
+
+    const { authenticateUser, credentials, isAuthorized } = useLogin();
     const [imageState, setImageState] = useState(
         {
             imageUploading: false,
@@ -34,19 +46,109 @@ const EditorInput = (props: EditorProps) => {
         }
     );
     const postInput = useRef<any>(null);
-
     const { dropzoneActive } = imageState;
-    const postBodyRef = useRef<HTMLDivElement | null>(null);
+    const postBodyRef = useRef<HTMLDivElement>(null);
+    let [imagesUploadCount, setImagesUploadCount] = useState(0);
+
+
+
+    const onDrop = useCallback((acceptedFiles: any[], rejectedFiles: any[]) => {
+
+
+        if (!acceptedFiles.length) {
+            if (rejectedFiles.length) {
+                toast.info('Please insert only image files.');
+            }
+            return;
+        }
+        if (acceptedFiles.length > MAXIMUM_UPLOAD_SIZE) {
+            toast.info(`Please upload up to maximum ${MAXIMUM_UPLOAD_SIZE} images.`)
+            // console.log('onPick too many files to upload');
+            return;
+        }
+
+
+        authenticateUser();
+
+        if (isAuthorized()) {
+            for (let fi = 0; fi < acceptedFiles.length; fi += 1) {
+                const acceptedFile = acceptedFiles[fi];
+                const imageToUpload = {
+                    file: acceptedFile,
+                    temporaryTag: '',
+                };
+
+                if (!imageToUpload.file.type.includes('image')) {
+                    toast.info('Please insert only image files.');
+                    return
+                }
+
+                imagesToUpload.push(imageToUpload);
+
+                if (fi === acceptedFiles.length - 1) {
+                    insertPlaceHolders();
+                    uploadNextImage();
+                }
+            }
+
+
+        }
+
+    }, []);
+
+    const { getRootProps, getInputProps } = useDropzone({
+        onDrop, noClick: true, accept: {
+            'image/jpeg': [],
+            'image/png': [],
+            'image/svg+xml': [],
+            'image/webp': [],
+            'image/gif': []
+
+
+        }
+    });
 
     useEffect(() => {
         if (postInput) {
             postInput?.current?.addEventListener('paste', handlePastedImage);
         }
-    });
+
+        return () => postInput?.current?.removeEventListener('paste');
+    }, []);
 
 
-    function setValue(value: string, start?: number, end?: number) {
-        onChange(value);
+    function handlePastedImage(e: any) {
+        if (e.clipboardData && e.clipboardData.items) {
+            const items = e.clipboardData.items;
+            Array.from(items).forEach((item: any) => {
+                if (item.kind === 'file' && /^image\//.test(item.type)) {
+                    e.preventDefault();
+
+                    const blob = item.getAsFile();
+
+                    if (!isValidImage(blob)) {
+                        onImageInvalid();
+                        return;
+                    };
+
+                    authenticateUser();
+
+                    if (isAuthorized()) {
+                        imagesToUpload.push({
+                            file: blob,
+                            temporaryTag: '',
+                        });
+
+                        insertPlaceHolders();
+                        uploadNextImage();
+                    }
+                }
+            });
+        }
+    }
+
+    function setValue(newValue: string, start?: number, end?: number) {
+        onChange(newValue);
         if (start && end) {
             setTimeout(() => {
                 postInput?.current?.setSelectionRange(start, end);
@@ -54,11 +156,9 @@ const EditorInput = (props: EditorProps) => {
         }
     }
 
+
     function insertAtCursor(before: string, after: string, deltaStart = 0, deltaEnd = 0) {
         if (!postInput) return;
-
-        const { value } = props;
-
         const startPos = postInput?.current?.selectionStart;
         const endPos = postInput?.current?.selectionEnd;
         const newValue =
@@ -70,30 +170,6 @@ const EditorInput = (props: EditorProps) => {
 
         setValue(newValue, startPos + deltaStart, endPos + deltaEnd);
     }
-
-    function disableAndInsertImage(image: any, imageName = 'image') {
-        setImageState({
-            ...imageState,
-            imageUploading: false,
-        });
-        insertImage(image, imageName);
-    }
-
-    function insertImage(image: any, imageName = 'image') {
-        if (!postInput) return;
-
-        const { value } = props;
-
-        const startPos = postInput?.current?.selectionStart;
-        const endPos = postInput?.current?.selectionEnd;
-        const imageText = `![${imageName}](${image})\n`;
-        const newValue = `${value.substring(0, startPos)}${imageText}${value.substring(
-            endPos,
-            value.length,
-        )}`;
-        setValue(newValue, startPos + imageText.length, startPos + imageText.length);
-    }
-
 
     const shortcutHandler = {
         h1: () => insertCode('h1'),
@@ -112,7 +188,6 @@ const EditorInput = (props: EditorProps) => {
         justify: () => insertCode('justify'),
         center: () => insertCode('center'),
     };
-
 
     function hotKeyHandler(e: KeyboardEvent<HTMLDivElement>) {
         // allow only Alt key
@@ -182,8 +257,6 @@ const EditorInput = (props: EditorProps) => {
         }
     }
 
-
-
     function insertCode(type: string) {
 
         if (!postInput) return;
@@ -218,7 +291,10 @@ const EditorInput = (props: EditorProps) => {
                 insertAtCursor('[', '](url)', 1, 1);
                 break;
             case 'image':
-                handleImageChange(null);
+                authenticateUser();
+                if (isAuthorized()) {
+                    document.getElementById('dropzone')?.click();
+                }
                 // insertAtCursor('![', '](url)', 2, 2);
                 break;
             case 'snip':
@@ -238,183 +314,180 @@ const EditorInput = (props: EditorProps) => {
 
     }
 
-
-    function handlePastedImage(e: any) {
-        if (e.clipboardData && e.clipboardData.items) {
-            const items = e.clipboardData.items;
-            Array.from(items).forEach((item: any) => {
-                if (item.kind === 'file') {
-                    e.preventDefault();
-
-                    const blob = item.getAsFile();
-
-                    if (!isValidImage(blob)) {
-                        onImageInvalid();
-                        return;
-                    };
-
-                    setImageState({
-                        ...imageState,
-                        imageUploading: true,
-                    });
-
-                    onImageUpload(blob, disableAndInsertImage, () =>
-                        setImageState({
-                            ...imageState,
-                            imageUploading: false,
-                        })
-
-                    );
-                }
-            });
-        }
-    }
-
-    function handleImageChange(e: any) {
-        if (e.target.files && e.target.files[0]) {
-            if (!isValidImage(e.target.files[0])) {
-                onImageInvalid();
-                return;
-            }
-
-            setImageState({
-                ...imageState,
-                imageUploading: true,
-            });
-
-
-            onImageUpload(e.target.files[0], disableAndInsertImage, () =>
-                setImageState({
-                    ...imageState,
-                    imageUploading: false,
-                })
-            );
-            e.target.value = '';
-        }
-    }
-
-    function handleDrop(files: any[]) {
-        if (files.length === 0) {
-            setImageState({
-                ...imageState,
-                dropzoneActive: false,
-            });
-            return;
-        }
-
-        setImageState({
-            imageUploading: true,
-            dropzoneActive: false,
-        });
-
-        let callbacksCount = 0;
-        Array.from(files).forEach(item => {
-            onImageUpload(
-                item,
-                (image: any, imageName: string) => {
-                    callbacksCount += 1;
-                    insertImage(image, imageName);
-                    if (callbacksCount === files?.length) {
-
-                        setImageState({
-                            ...imageState,
-                            imageUploading: false,
-                        });
-
-                    }
-                },
-                () => {
-                    setImageState({
-                        ...imageState,
-                        imageUploading: false,
-                    });
-
-
-                },
-            );
-        });
-    }
-
-
-    function handleDragEnter() {
-        setImageState({
-            ...imageState,
-            dropzoneActive: true,
-        });
-    }
-
-    function handleDragLeave() {
-        setImageState({
-            ...imageState,
-            dropzoneActive: false,
-        });
-    }
-
     function handleChange(text: string) {
         setValue(text);
     }
 
+
+    function insertImage(responseData: { url: string, isPlaceholder?: boolean, imgMd?: string }) {
+        if (!postInput) return;
+
+        const startPos = postInput?.current?.selectionStart;
+        const endPos = postInput?.current?.selectionEnd;
+        const oldValue = postInput.current?.value || '';
+
+        if (responseData.url) {
+            if (responseData.isPlaceholder) {
+
+                const newValue = `${oldValue.substring(0, startPos)}${responseData.url}${oldValue.substring(
+                    endPos,
+                    oldValue.length,
+                )}`;
+
+                setValue(newValue, startPos + responseData.url.length, startPos + responseData.url.length);
+            } else {
+                if (responseData.imgMd) {
+                    const newValue = oldValue.replace(responseData.url, responseData.imgMd);
+                    setValue(newValue, startPos + responseData.imgMd.length, startPos + responseData.imgMd.length);
+
+                }
+
+            }
+
+        }
+    }
+
+
+
+
+    const insertPlaceHolders = () => {
+
+        let placeholder = '';
+        for (let ii = 0; ii < imagesToUpload.length; ii += 1) {
+            const imageToUpload: any = imagesToUpload[ii];
+            if (imageToUpload.temporaryTag === '') {
+                imagesUploadCount++;
+                imageToUpload.temporaryTag = `![Uploading image #${imagesUploadCount
+                    }...]()`;
+                placeholder += `\n${imageToUpload.temporaryTag}\n`;
+            }
+
+        }
+        // Insert the temporary tag where the cursor currently is
+        insertImage({ url: placeholder, isPlaceholder: true });
+
+        setImagesUploadCount(imagesUploadCount)
+
+
+    };
+
+
+    const uploadNextImage = () => {
+        if (imagesToUpload.length) {
+            const nextImage = imagesToUpload.pop();
+            // this.upload(nextImage);
+            _uploadImage(nextImage)
+        }
+    };
+
+
+
+
+
+    // upload images
+    const _uploadImage = async (image) => {
+
+
+        const credentials = getCredentials(getSessionKey());
+        if (credentials)
+
+            toast.promise(
+                async () => {
+                    // Testing
+                    // await awaitTimeout(5);
+                    // return true
+                    const data = await toBase64(image.file);
+                    let sign = await signImage(data, credentials.key);
+                    const result = await uploadImage(image.file, credentials?.username, sign);
+                    return result;
+                }, {
+                loading: 'Uploading...',
+                success: (res: any) => {
+                    // Testing
+                    // const url = `https://cdn.steemitimages.com/DQmdyoAZ8pJGUSsqPjuKqYU4LBXeP75h8awmh964PVaE7zc/IMG_0.9163441659792777.jpeg`
+                    // const Image_name = image.file.name;
+                    // const imageMd = `![${Image_name}](${url})`;
+                    // insertImage({ url: image.temporaryTag, isPlaceholder: false, imgMd: imageMd })
+                    // // Replace temporary image MD tag with the real one
+                    // uploadNextImage();
+                    // return `Uploaded`;
+
+                    if (res.data && res.data.url) {
+                        res.data.hash = res.data.url.split('/').pop();
+                        const imageMd = `![](${res.data.url})`;
+                        insertImage({ url: image.temporaryTag, isPlaceholder: false, imgMd: imageMd })
+                        uploadNextImage();
+                        return `Uploaded`;
+                    } else {
+                        return `Failed`;
+
+                    }
+                },
+                error: (error) => {
+                    if (error.toString().includes('code 413')) {
+                        // console.log('Large file size')
+                        return ('Large file size');
+
+                    } else if (error.toString().includes('code 429')) {
+                        // console.log('Limit exceed')
+                        return ('Limit exceed')
+                    } else if (error.toString().includes('code 400')) {
+                        // console.log('Invalid Image', error)
+                        return ('Invalid Image')
+                    } else {
+                        return ('Failed: ' + String(error))
+                    }
+
+                },
+                finally() {
+                    uploadNextImage();
+                },
+            });
+    }
+
     return (
-        <div>
-            <Dropzone onDrop={handleDrop}
-
-                noClick
-                // accept="image/*"
-                maxSize={MAXIMUM_UPLOAD_SIZE}
-                onDropRejected={onImageInvalid}
-                onDragEnter={handleDragEnter}
-                onDragLeave={handleDragLeave}
+        <div  {...getRootProps()} >
 
 
-            >
-                {({ getRootProps, getInputProps }) => (
-                    <section>
-                        <div  >
-                            {dropzoneActive && (
-                                <div className="EditorInput__dropzone">
-                                    <div>
-                                        <i className="iconfont icon-picture" />
-                                        <p>Drop your images here</p>
-                                    </div>
-                                </div>
-                            )}
+            <div className="body-input"
+                onKeyDown={hotKeyHandler}
+                ref={postBodyRef}>
 
+                <Textarea
 
-                            <div className="body-input"
-                                onKeyDown={hotKeyHandler}
-                                ref={postBodyRef}>
+                    ref={postInput}
+                    label={<EditorToolbar
+                        onSelect={insertCode}
+                        className={' mb-4'} />}
+                    radius='sm'
+                    variant='flat'
+                    placeholder={'Write something...'}
+                    disableAnimation
+                    disableAutosize
+                    className='text-default-900 '
+                    fullWidth
+                    height={'100%'}
+                    classNames={{
+                        mainWrapper: '',
+                        base: clsx("h-full ", inputClass),
+                        input: clsx("resize-y", inputClass),
+                        label: 'md-toolbar'
+                    }}
+                    value={value}
+                    onValueChange={handleChange}
+                    isMultiline
+                    rows={rows ?? 10}
 
-                                <Textarea
-                                    ref={postInput}
-                                    label={<EditorToolbar onSelect={insertCode}
-                                        className={'mb-4'} />}
-                                    radius='sm'
-                                    variant='flat'
-                                    placeholder={'Write something...'}
-                                    disableAnimation
-                                    disableAutosize
-                                    className='text-default-900 '
-                                    fullWidth
-                                    height={'100%'}
-                                    classNames={{
-                                        mainWrapper: '',
-                                        base: clsx("h-full ", inputClass),
-                                        input: clsx("resize-y", inputClass),
-                                        label: 'md-toolbar'
-                                    }}
-                                    value={value}
-                                    onValueChange={handleChange}
-                                    isMultiline
-                                    rows={rows ?? 10}
+                />
+            </div>
+            <input style={{ width: 0, height: 0 }} {...getInputProps()} name="images"
+                hidden aria-hidden
+                id="dropzone" accept="image/png, image/gif, image/jpeg, image/jpg"
+            // onChange={onFileChange}
 
-                                />
-                            </div>
-                        </div>
-                    </section>
-                )}
-            </Dropzone>
+            />
 
-        </div>
+        </div >
     );
 }
 

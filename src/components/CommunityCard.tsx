@@ -1,6 +1,5 @@
 import React from "react";
-import { Button, Card, CardFooter, CardHeader, User } from "@nextui-org/react";
-import SAvatar from "./SAvatar";
+import { Button, User } from "@nextui-org/react";
 import { abbreviateNumber } from "@/libs/utils/helper";
 import Reputation from "./Reputation";
 import { FaClock, FaEllipsis } from "react-icons/fa6";

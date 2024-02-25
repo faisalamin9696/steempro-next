@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
     Input, Button, Modal, ModalContent,
-    useDisclosure, Avatar, Spinner, ModalHeader, ModalBody
+    useDisclosure, Avatar, Spinner, ModalHeader, ModalBody, Checkbox
 } from "@nextui-org/react";
 import { useAppSelector, useAppDispatch, awaitTimeout } from "@/libs/constants/AppFunctions";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
@@ -9,25 +9,23 @@ import { getKeyType } from "@/libs/steem/condenser";
 import { getAuthorExt } from "@/libs/steem/sds";
 import { validate_account_name } from "@/libs/utils/ChainValidation";
 import { getResizedAvatar } from "@/libs/utils/image";
-import { getSettings, getCredentials, saveSessionKey, validatePassword, saveCredentials } from "@/libs/utils/user";
+import { getSettings, getCredentials, saveSessionKey, validatePassword, saveCredentials, sessionKey } from "@/libs/utils/user";
 import { useLogin } from "./useLogin";
 import { toast } from "sonner";
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { getAuth, signInAnonymously } from "firebase/auth";
 
 interface Props {
     open: boolean;
     onClose: () => void;
     onLoginSuccess?: (auth: User) => void;
-    isLocked?: boolean | null;
+    isNew?: boolean;
 
 }
 
 
 export default function AuthModal(props: Props) {
-    let { open, onLoginSuccess, isLocked } = props;
-
-    const loginInfo = useAppSelector(state => state.loginReducer.value);
+    let { open, onLoginSuccess, isNew } = props;
     const [isShow, setIsShow] = useState(true);
     const { isOpen, onClose } = useDisclosure();
     const [loading, setLoading] = useState(false);
@@ -38,8 +36,10 @@ export default function AuthModal(props: Props) {
     const dispatch = useAppDispatch();
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const [avatar, setAvatar] = useState('');
-    const { credentials } = useLogin();
+    const { data: session, status } = useSession();
+    const [isCurrent, setIsCurrent] = React.useState(false);
 
+    const isLocked = status === 'authenticated' && !sessionKey;
 
     useEffect(() => {
         const timeOut = setTimeout(() => {
@@ -82,10 +82,11 @@ export default function AuthModal(props: Props) {
         await awaitTimeout(3);
 
         const credentials = getCredentials(password);
+
         if (credentials?.key) {
-            saveSessionKey(password);
+            const enc = saveSessionKey(password);
             toast.success('Unlocked');
-            onLoginSuccess && onLoginSuccess(credentials);
+            onLoginSuccess && onLoginSuccess({ ...credentials, key: enc });
             handleOnClose();
             clearAll();
 
@@ -96,6 +97,13 @@ export default function AuthModal(props: Props) {
         }
         setLoading(false);
 
+
+    }
+
+    function onComplete(error?: string | null) {
+        setLoading(false);
+        if (error)
+            toast.error(error);
 
     }
     async function handleLogin() {
@@ -125,74 +133,113 @@ export default function AuthModal(props: Props) {
             toast.info('Weak password. Please use a combination of uppercase and lowercase letters, numbers, and special characters');
             return
         }
+
         setLoading(true);
         await awaitTimeout(3);
-
-        // const response = await fetch('/api/auth/register', {
-        //     method: 'POST',
-        //     body: JSON.stringify({
-        //         username,
-        //         password,
-        //         password2,
-        //         key
-        //     })
-        // });
-
-
-
-
-
-        // setLoading(false);
-
         try {
             const account = await getAuthorExt(username);
             if (account) {
                 const keyType = getKeyType(account, key);
+
                 if (keyType) {
-                    const response = await signIn('credentials', {
-                        username,
-                        redirect: false
-                    })
 
-                    if (!response?.ok) {
-                        toast.error(response?.error);
-                        return
+                    if (!isNew) {
+                        const firebaseAuth = getAuth();
+
+                        signInAnonymously(firebaseAuth)
+                            .then(async () => {
+
+                                const auth = saveCredentials(username,
+                                    key, password, keyType.type);
+
+                                if (!auth) {
+                                    onComplete('Something went wrong!');
+                                    return
+                                }
+
+                                const response = await signIn('credentials', {
+                                    username,
+                                    redirect: false
+                                })
+
+                                if (!response?.ok) {
+                                    onComplete(response?.error);
+                                    return
+                                }
+                                saveSessionKey(password);
+                                dispatch(saveLoginHandler({
+                                    ...account, login: true,
+                                    encKey: auth?.key
+                                }));
+                                onLoginSuccess && onLoginSuccess({
+                                    username,
+                                    key: auth?.key ?? '',
+                                    type: keyType.type,
+                                    memo: auth?.memo || ''
+                                });
+                                handleOnClose();
+                                clearAll();
+                                toast.success(`Login successsful with private ${keyType.type} key`);
+                                onComplete();
+                            })
+                            .catch((error) => {
+                                onComplete(String(error));
+
+                            });
                     }
-                    const firebaseAuth = getAuth();
+                    else {
+                        const auth = saveCredentials(username,
+                            key, password, keyType.type, isCurrent);
+                        if (auth) {
+                            if (isCurrent) {
 
-                    signInAnonymously(firebaseAuth)
-                        .then(() => {
-                            const auth = saveCredentials(username, key, password);
-                            saveSessionKey(password);
-                            dispatch(saveLoginHandler({
-                                ...account, login: true,
-                                encKey: auth?.key
-                            }));
-                            onLoginSuccess && onLoginSuccess({ username, key: auth?.key ?? '' });
+                                const response = await signIn('credentials', {
+                                    username,
+                                    redirect: false
+                                })
+
+                                if (!response?.ok) {
+                                    onComplete(response?.error);
+                                    return
+                                }
+                                saveSessionKey(password);
+                                dispatch(saveLoginHandler({
+                                    ...account, login: true,
+                                    encKey: auth?.key
+                                }));
+                                onLoginSuccess && onLoginSuccess({
+                                    username,
+                                    key: auth?.key ?? '',
+                                    type: keyType.type,
+                                    memo: auth?.memo || ''
+                                });
+                                toast.success(`Login successsful with private ${keyType.type} key`);
+
+                            } else toast.success(`${auth?.username} added successfully`);
+
                             handleOnClose();
                             clearAll();
-                            toast.success(`Login successsful with private ${keyType.type} key`);
-                        })
-                        .catch((error) => {
-                            // const errorCode = error.code;
-                            // const errorMessage = error.message;
-                            toast.error(String(error))
-                        });
+                            onComplete();
+
+                        }
+                        else {
+                            onComplete('Something went wrong!');
+                        }
+
+
+                    }
+
+
 
 
 
                 } else {
-                    toast.error(`Invalid credentials`);
-
+                    onComplete(`Invalid credentials`);
                 }
 
             }
         } catch (e) {
-            console.log('Error', e)
-            toast.error(String(e));
-        } finally {
-            setLoading(false);
-
+            onComplete(String(e));
         }
 
     }
@@ -238,16 +285,17 @@ export default function AuthModal(props: Props) {
                                     {isShow ?
                                         <Spinner className=" self-center m-auto" />
                                         :
-                                        isLocked ?
+                                        (isLocked && !isNew) ?
                                             <form className="flex flex-col gap-4">
 
                                                 <p className="text-md font-bold flex items-center space-x-2">
-                                                    <p>Hi, {loginInfo.name || credentials?.username}</p>
+                                                    <p>Hi, {session?.user?.name}</p>
                                                     <Avatar
-                                                        src={getResizedAvatar(loginInfo.name || credentials?.username || '')}
+                                                        src={getResizedAvatar(session?.user?.name || '')}
                                                         size="sm" /></p>
 
                                                 <Input
+                                                    size="sm"
                                                     autoFocus
                                                     value={password}
                                                     isRequired
@@ -271,7 +319,9 @@ export default function AuthModal(props: Props) {
                                             </form>
                                             :
                                             <form className="flex flex-col gap-4">
-                                                <Input isRequired label="Username"
+                                                <Input isRequired
+                                                    size="sm"
+                                                    label="Username"
                                                     autoFocus
                                                     value={username}
                                                     endContent={<Avatar
@@ -283,6 +333,7 @@ export default function AuthModal(props: Props) {
                                                     placeholder="Enter your username"
                                                     type='text' />
                                                 <Input
+                                                    size="sm"
                                                     value={key}
                                                     onValueChange={setKey}
                                                     isDisabled={loading}
@@ -293,27 +344,38 @@ export default function AuthModal(props: Props) {
                                                     type="password"
                                                 />
 
-                                                <Input
-                                                    value={password}
-                                                    isRequired
-                                                    isDisabled={loading}
+                                                <div className="flex flex-row gap-2 items-center">
+                                                    <Input
+                                                        size="sm"
+                                                        value={password}
+                                                        isRequired
+                                                        isDisabled={loading}
 
-                                                    onValueChange={setPassword}
+                                                        onValueChange={setPassword}
 
-                                                    label="Encryption password"
-                                                    placeholder="Enter password to encrypt key"
-                                                    type="password"
-                                                />
+                                                        label="Encryption password"
+                                                        placeholder="Enter enc. password"
+                                                        type="password"
+                                                    />
 
-                                                <Input
-                                                    value={password2}
-                                                    onValueChange={setPassword2}
-                                                    isRequired
-                                                    isDisabled={loading}
-                                                    label="Confirm encryption password"
-                                                    placeholder="Re-enter encryption password"
-                                                    type="password"
-                                                />
+                                                    <Input
+                                                        size="sm"
+                                                        value={password2}
+                                                        onValueChange={setPassword2}
+                                                        isRequired
+                                                        isDisabled={loading}
+                                                        label="Confirm password"
+                                                        placeholder="Re-enter password"
+                                                        type="password"
+                                                    />
+                                                </div>
+
+                                                {isNew &&
+                                                    <Checkbox isSelected={isCurrent}
+                                                        onValueChange={setIsCurrent}>
+                                                        set as default
+                                                    </Checkbox>}
+
                                                 {/* <p className="text-center text-small">
            Need to create an account?{" "}
            <Link
@@ -326,7 +388,7 @@ export default function AuthModal(props: Props) {
                                                         isLoading={loading}
                                                         onPress={handleLogin}
                                                         disabled={loading}>
-                                                        Login
+                                                        {isNew ? 'Add account' : 'Login'}
                                                     </Button>
                                                 </div>
                                             </form>

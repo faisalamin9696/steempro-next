@@ -9,30 +9,30 @@ interface Props {
     username: string,
     quality?: 'small' | 'large' | 'medium',
     onClick?: () => void;
-    badge?: string | number;
     border?: boolean;
     className?: string;
-    size?: 'sm' | 'lg' | 'xl';
+    size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 }
 export default function SAvatar(props: Props) {
-    const { username, size, quality, onClick, badge, border, className } = props;
-    const imageSize = size === 'xl' ? 160 : size === 'lg' ? 100 : 50;
-    return (<STooltip content={badge ? `${'Reputation score'}: ${badge}` : username}>
-        <Badge content={typeof (badge) === 'number' ? badge.toFixed(0) : badge}
-            className={clsx(badge ? '' : 'hidden')} color='primary' shape="circle">
-            <Image
-                onError={(e) => {
-                    e.currentTarget.src = '/image-placeholder.png'
+    const { username, size, quality, onClick, border, className } = props;
+    const imageSize = size === 'xl' ? 160 :
+        size === 'lg' ? 100 :
+            size === 'md' ? 70 :
+                size === 'sm' ? 50 :
+                    size === 'xs' ? 40 : 60;
+                    
+    return (<Image
+        title={username}
+        onError={(e) => {
+            e.currentTarget.src = '/image-placeholder.png'
 
-                }}
-                alt=""
-                height={imageSize}
-                width={imageSize}
-                onClick={onClick}
-                src={`${getResizedAvatar(username, quality ?? 'small')}`}
-                className={clsx(' shadow-lg rounded-full', border && 'border', className)}
-            />
-        </Badge>
-    </STooltip >
+        }}
+        alt=""
+        height={imageSize}
+        width={imageSize}
+        onClick={onClick}
+        src={`${getResizedAvatar(username, quality ?? 'small')}`}
+        className={clsx(' shadow-lg rounded-full', border && 'border', className)}
+    />
     )
 }

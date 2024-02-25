@@ -387,7 +387,6 @@ export const getClubStatus = async (username: string) => {
                 return total + transaction.amount;
             }, 0);
 
-            console.log(1122, total_trx_vests_in, total_trx_vests_out, total_trx_out, total_trx_in)
             const trx_steem_in = total_trx_vests_in - total_trx_vests_out;
 
             const grand_total = trx_steem_in + total_trx_out + total_trx_vests_out;

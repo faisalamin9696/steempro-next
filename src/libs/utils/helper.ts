@@ -28,3 +28,22 @@ export function abbreviateNumber(number?: number, floatFixes = 0): string {
     // format number and add suffix
     return scaled.toFixed(floatFixes) + suffix;
 }
+
+
+
+export const toBase64 = (file) =>
+    new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            resolve(
+                reader?.result?.toString().replace(/^data:image\/?[A-z]*;base64,/, "")
+            );
+        };
+        reader.onerror = (error) => reject(error);
+    });
+export const count_words = (text: string) => {
+    if (text) {
+        return text.match(/\S+/g)?.length;
+    } else return 0;
+};

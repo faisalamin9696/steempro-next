@@ -33,7 +33,7 @@ export default function RewardSelectButton(props: Props) {
                     isDisabled={disabled}
 
                     startContent={<FaDollarSign className='text-lg' />}
-                    className='!text-white  bg-teal-600'
+                    className='text-white  bg-teal-600'
 
                     radius='lg' variant='shadow'>
                     {'Reward'}: {selectedValue.shortTitle}
