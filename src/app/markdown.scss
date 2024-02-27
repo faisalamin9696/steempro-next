@@ -22,7 +22,18 @@
       position: sticky;
       top: 0px;
 
-      @apply backdrop-blur-[1px]
+      @apply backdrop-blur-[1px] bg-gray-200 dark:bg-gray-800
+    }
+
+    td {
+      padding: 4px;
+    }
+
+    tbody {
+      tr {
+        @apply hover:bg-gray-200 dark:hover:bg-gray-600 odd:bg-white odd:dark:bg-gray-900 even:bg-gray-100 even:dark:bg-gray-800 border-b dark:border-gray-700;
+      }
+
     }
 
   }
@@ -45,7 +56,10 @@
   }
 
 
+
 }
+
+
 
 // // .markdown-body {
 

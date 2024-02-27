@@ -24,7 +24,7 @@ export default function MainWrapper(props: Props) {
                 <div>{startContent}</div>
             </div>
             }
-            <div className={clsx('center', className)}>
+            <div className={clsx('center-div', className)}>
                 {children}
             </div>
 

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useRef } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import { BsInfoCircleFill } from 'react-icons/bs';
 import { Button, Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
@@ -15,12 +15,12 @@ import './style.scss'
 import { abbreviateNumber } from '@/libs/utils/helper';
 import ProfileInfoCard from '../../../components/ProfileInfoCard';
 import BadgeAvatar from '@/components/BadgeAvatar';
+import UserCoverCard from '@/components/UserCoverCard';
 
-const DynamicCover = dynamic(() => import('@/components/UserCoverCard'))
 interface Props {
     data: AccountExt;
 }
-export default function ProfileHeader(props: Props) {
+export default memo(function ProfileHeader(props: Props) {
     const { data } = props;
     const profileInfo = useAppSelector(state => state.profileReducer.value)[data.name] ?? data;
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
@@ -43,7 +43,7 @@ export default function ProfileHeader(props: Props) {
     return (<div className='w-full p-1 relative '>
         <div className='card flex items-center w-full relative  shadow-none' >
 
-            <DynamicCover src={cover_picture} />
+            <UserCoverCard src={cover_picture} />
 
 
             <div ref={cardRef} data-tilt-speed="600" data-tilt data-tilt-max="5"
@@ -110,3 +110,4 @@ export default function ProfileHeader(props: Props) {
     </div>
     )
 }
+)

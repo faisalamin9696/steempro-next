@@ -27,6 +27,7 @@ const AboutItem = (props: Props): JSX.Element => {
 
 
     return (<Card ref={itemCard}
+        isBlurred
         className="card column bg-transparent  grid row-auto"
         data-tilt-speed="600" data-tilt data-tilt-max="5"
         data-tilt-perspective="600" data-tilt-glare

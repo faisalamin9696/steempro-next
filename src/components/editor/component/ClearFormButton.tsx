@@ -1,12 +1,12 @@
 import STooltip from '@/components/STooltip';
 import { Popover, PopoverTrigger, Button, PopoverContent } from '@nextui-org/react'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { MdDelete } from 'react-icons/md'
 
 interface Props {
     onClearPress?: () => void;
 }
-export default function ClearFormButton(props: Props) {
+export default memo(function ClearFormButton(props: Props) {
     const { onClearPress } = props;
 
     const [clearPopup, setClearPopup] = useState(false);
@@ -47,4 +47,4 @@ export default function ClearFormButton(props: Props) {
         </div>
     </STooltip>
     )
-}
+})

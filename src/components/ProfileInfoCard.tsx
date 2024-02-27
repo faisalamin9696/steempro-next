@@ -1,6 +1,6 @@
 "use client"
 
-import React, { } from 'react'
+import React, { memo } from 'react'
 import { Avatar, AvatarGroup, Button } from '@nextui-org/react'
 import { fetchSds, useAppSelector } from '@/libs/constants/AppFunctions'
 import { useSession } from 'next-auth/react';
@@ -39,7 +39,7 @@ type Props = {
         { data: AccountExt }
     );
 
-export default function ProfileInfoCard(props: Props) {
+export default memo(function ProfileInfoCard(props: Props) {
 
     const { username, profile, data: accountExt } = props;
     const { data: session } = useSession();
@@ -198,3 +198,4 @@ export default function ProfileInfoCard(props: Props) {
     );
 
 }
+)

@@ -20,7 +20,9 @@ export default function SAvatar(props: Props) {
             size === 'md' ? 70 :
                 size === 'sm' ? 50 :
                     size === 'xs' ? 40 : 60;
-                    
+
+
+    if (!username) return <></>
     return (<Image
         title={username}
         onError={(e) => {

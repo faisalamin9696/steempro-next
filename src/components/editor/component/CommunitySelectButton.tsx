@@ -1,22 +1,24 @@
 'use client';
 
-import { Select, SelectItem } from '@nextui-org/react';
-import { useEffect } from 'react';
+import { Avatar, Button, Select, SelectItem } from '@nextui-org/react';
+import { memo, useEffect } from 'react';
 import { Image } from '@nextui-org/react';
 import { fetchSds, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { getResizedAvatar } from '@/libs/utils/image';
 import useSWR from 'swr';
 import { useSession } from 'next-auth/react';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
+import { IoCloseOutline } from "react-icons/io5";
+import { empty_community } from '@/libs/constants/Placeholders';
 
 interface Props {
     community?: Community;
-    onSelectCommunity: (community: Community) => void;
+    onSelectCommunity: (community?: Community) => void;
     onlyCommunity?: boolean;
 
 
 }
-export default function CommunitySelectButton(props: Props) {
+export default memo(function CommunitySelectButton(props: Props) {
     const { community, onSelectCommunity, onlyCommunity } = props;
     const loginInfo = useAppSelector(state => state.loginReducer.value);
 
@@ -26,86 +28,97 @@ export default function CommunitySelectButton(props: Props) {
         session?.user?.name ? URL : undefined, fetchSds<Community[]>)
     const dispatch = useAppDispatch();
 
+    const commmunities = onlyCommunity && community ? [{ ...community }] :
+        loginInfo.communities ?? []
+
 
     useEffect(() => {
         if (data) {
             dispatch(saveLoginHandler({ ...loginInfo, communities: data }));
         }
 
-    }, [data])
+    }, [data]);
 
-    if (onlyCommunity) {
+    const handleSelectionChange = (e) => {
+        if (e.target.value) {
+            const value = JSON.parse(e.target.value);
+            onSelectCommunity(empty_community(value?.account, value?.title));
+        }
 
-        return community && <Select
-            label={'Select community'}
-            className="max-w-xs"
-            labelPlacement='outside'
-            isDisabled={onlyCommunity}
-            startContent={community ? <Image
-                loading='lazy'
-                className='avatar rounded-full object-contain'
-                style={{ width: 24, height: 24 }}
-                src={getResizedAvatar(community?.account)} alt={''} /> : null}
-            size={'sm'}
-            selectedKeys={[community.account]}
-
-            classNames={{
-                label: 'text-default-500 text-sm',
-                selectorIcon: 'text-default-500',
-            }}
-        >
-            <SelectItem key={community?.account}
-                value={community.title || community.account}>
-                {community.title || community.account}
-            </SelectItem>
-
-        </Select>
-
-
-    }
+    };
     return (
-        <div>
-            {<Select
-                isDisabled={onlyCommunity}
-                // clearButtonProps={{
-                //     onPress: () => {
-                //         setCommunity(undefined)
-                //     }
-                // }}
-                startContent={community ? <Image
-                    loading='lazy'
-                    className='avatar rounded-full object-contain'
-                    style={{ width: 24, height: 24 }}
-                    src={getResizedAvatar(community?.account)} alt={''} /> : null}
-                size={'sm'}
-                selectedKeys={community ? [community.account] : undefined}
-                selectionMode='single'
-                onChange={e => {
-                    if (loginInfo.communities)
-                        onSelectCommunity(loginInfo.communities.filter(community => community.account === e.target.value)[0]);
-                }}
-                // defaultSelectedKeys={[(community?.account || '')]}
-                isLoading={isLoading}
-                label={'Select community'}
-                className="max-w-xs"
-                labelPlacement='outside'
-                classNames={{ label: 'text-default-500 text-sm', selectorIcon: 'text-default-500' }}
-            >
-                {(loginInfo.communities ?? []).map((item) => (
-                    <SelectItem key={item.account}
-                        textValue={item.title}
-                        value={JSON.stringify(item)}>
-                        <div className="flex gap-2 items-center flex-row">
-                            <Image className='avatar rounded-full'
-                                src={getResizedAvatar(item.account)} width={30} height={30} alt={''} />
-                            <div className="text-small ">{item.title}</div>
-                        </div>
-                    </SelectItem>
-                ))}
+        <div className='flex flex-row gap-2 items-center'>
+            <div className='w-60'>
+                <Select
+                    selectedKeys={
+                        community ? [JSON.stringify({
+                            account: community.account,
+                            title: community.title
+                        })] : []}
+                    size='sm'
+                    isDisabled={onlyCommunity}
+                    items={commmunities}
+                    isLoading={isLoading}
+                    placeholder='Select Community'
+                    className='text-default-500 text-sm'
+                    classNames={{
+                        // trigger:'min-h-0 h-10',
+                        selectorIcon: 'text-default-500'
+                    }}
+                    renderValue={(items) => {
+                        return items.map((item) => {
+                            return <div key={item.key} className="flex gap-2 items-center">
+                                <Image
+                                    loading='lazy'
+                                    className='avatar rounded-full object-contain'
+                                    style={{ width: 28, height: 28 }}
+                                    src={getResizedAvatar(item.data?.account)} alt={item.data?.account} />
+                                <div className="flex flex-col">
+                                    <span className="text-small">{item.data?.title}</span>
+                                    <span className="text-tiny text-default-400">{item.data?.account}</span>
+                                </div>
+                            </div>
+                        })
+                    }}
 
-            </Select>
+                    onChange={handleSelectionChange}
 
-            }
-        </div>
+
+                >
+                    {(item) => (
+                        <SelectItem key={JSON.stringify({ account: item.account, title: item.title })}
+                            onSelect={() => {
+
+                            }}
+                            textValue={JSON.stringify(item)}
+                            value={item.title}>
+                            <div className="flex gap-2 items-center">
+                                <Image
+                                    loading='lazy'
+                                    className='avatar rounded-full object-contain'
+                                    style={{ width: 28, height: 28 }}
+                                    src={getResizedAvatar(item.account)} alt={item.account} />
+                                <div className="flex flex-col">
+                                    <span className="text-small">{item.title}</span>
+                                    <span className="text-tiny text-default-400">{item.account}</span>
+                                </div>
+                            </div>
+
+
+                        </SelectItem>
+                    )}
+
+
+                </Select>
+            </div>
+            {!onlyCommunity && community && <Button size='sm' isIconOnly
+                className='text-default-500'
+                radius='full' variant='light'
+                onPress={() => onSelectCommunity(undefined)}>
+                <IoCloseOutline className='text-xl' />
+            </Button>}
+
+        </div >
     )
 }
+)

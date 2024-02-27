@@ -1,13 +1,6 @@
-import STooltip from "@/components/STooltip";
 import { Button } from "@nextui-org/react";
+import { memo } from "react";
 import { IconType } from "react-icons";
-
-const ToolbarTip = (description: string, shortcut: string) => (
-    <span>
-        {description + ` (${shortcut})`}
-    </span>
-);
-
 
 interface ToolbarItemProps {
     tooltip: { description: string, shortcut: string };
@@ -15,15 +8,14 @@ interface ToolbarItemProps {
     IconType: IconType,
     size?: 'sm' | 'md' | 'lg';
 }
-export const ToolbarItem = (props: ToolbarItemProps) => {
+export const ToolbarItem = memo((props: ToolbarItemProps) => {
     const { tooltip, onSelect, IconType, size } = props
+    const { description, shortcut } = tooltip;
 
-    return <STooltip
-        content={ToolbarTip(tooltip.description, tooltip.shortcut)}
-    >
-        <Button size={size ?? 'sm'} isIconOnly className='border-none' onClick={() =>
+    return <Button size={size ?? 'sm'}
+        title={description + ` (${shortcut})`}
+        isIconOnly className='border-none' onClick={() =>
             onSelect && onSelect('b')}>
-            <IconType className='text-lg rounded-none' />
-        </Button>
-    </STooltip>
-}
+        <IconType className='text-lg rounded-none' />
+    </Button>
+})

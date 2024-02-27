@@ -1,6 +1,6 @@
 import CommentCover from '@/components/comment/component/CommentCover'
 import { Card } from '@nextui-org/react'
-import React from 'react'
+import React, { memo } from 'react'
 import { getPostThumbnail } from '@/libs/utils/image'
 import BodyShort from '@/components/body/BodyShort'
 import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator'
@@ -10,7 +10,7 @@ import ViewCountCard from './ViewCountCard'
 type Props = {
     comment: Feed;
 }
-export default function CompactPost(props: Props) {
+export default memo(function CompactPost(props: Props) {
     const { comment } = props;
     // const URL = `/posts_api/getPost/${authPerm}`
     // const { data, isLoading, error, isValidating } = useSWR(URL, fetchSds<Post>)
@@ -77,3 +77,4 @@ export default function CompactPost(props: Props) {
         </div>
     )
 }
+)

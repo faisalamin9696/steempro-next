@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import Reply from './Reply';
 import BodyShort from '../../../components/body/BodyShort';
 import { FiCornerLeftUp } from 'react-icons/fi';
@@ -18,7 +18,6 @@ import { publishContent } from '@/libs/steem/condenser';
 import { AppStrings } from '@/libs/constants/AppStrings';
 import CommentHeader from '@/components/comment/component/CommentHeader';
 import MarkdownViewer from '@/components/body/MarkdownViewer';
-import CommentFooter from '@/components/comment/component/CommentFooter';
 import EditorInput from '@/components/editor/EditorInput';
 import ClearFormButton from '@/components/editor/component/ClearFormButton';
 import PublishButton from '@/components/editor/component/PublishButton';
@@ -35,7 +34,7 @@ interface Props {
     rootComment: Post | Feed;
 }
 
-export default function ReplyForm(props: Props) {
+export default memo(function ReplyForm(props: Props) {
     const { comment, rootComment } = props;
     const commentInfo = (useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment) as Post;
     const rootInfo = (useAppSelector(state => state.commentReducer.values)[`${comment.root_author}/${comment.root_permlink}`]) as Post;
@@ -325,7 +324,7 @@ export default function ReplyForm(props: Props) {
                     key={commentInfo.permlink}
                     title={<div> <CommentHeader comment={commentInfo} isReply />
                     </div>} >
-                    <div className='flex flex-col gap-2'>
+                    <div className='flex flex-col gap-2 p-1'>
 
 
                         <MarkdownViewer text={commentInfo.body} />
@@ -405,9 +404,6 @@ export default function ReplyForm(props: Props) {
                         </div >
 
 
-
-
-
                         {(showReply || showEdit) ?
                             <div id='editorDiv' className='flex flex-col mt-2 gap-2'>
                                 <EditorInput
@@ -447,7 +443,7 @@ export default function ReplyForm(props: Props) {
 
                                 </div>
 
-                                <div className='space-y-1 w-full overflow-auto p-1 m-1 mt-4'>
+                                <div className='space-y-1 w-full overflow-auto m-1 mt-4'>
 
                                     <div className=' items-center flex justify-between'>
                                         <p className='float-left text-sm text-default-900/70 font-semibold'>Preview</p>
@@ -455,7 +451,7 @@ export default function ReplyForm(props: Props) {
                                         <p className='float-right text-sm font-light text-default-900/60'>{rpm?.words} words, {rpm?.text}</p>
 
                                     </div>
-                                    {markdown ? <Card shadow='sm' className='p-2 lg:shadow-none space-y-2'>
+                                    {markdown ? <Card isBlurred shadow='sm' className=' p-2 lg:shadow-none space-y-2'>
                                         <MarkdownViewer text={markdown} />
                                     </Card> : null}
                                 </div>
@@ -509,3 +505,4 @@ export default function ReplyForm(props: Props) {
 
     )
 }
+)

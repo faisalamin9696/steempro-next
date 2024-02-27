@@ -19,9 +19,20 @@ export default function AccountsModal(props: Props) {
 
     const { authenticateUser, isAuthorized } = useLogin();
     useEffect(() => {
-        setAccounts(getAllCredentials());
         const credentials = getCredentials();
-        if (credentials?.username) setDefaultAcc(credentials.username);
+        if (credentials?.username) {
+            setDefaultAcc(credentials.username);
+            const allCredentials = getAllCredentials();
+            
+            // Find the index of the object with the username
+            const index = allCredentials.findIndex(account => account.username === (credentials.username));
+            if (index !== -1) {
+                const activeAccount = allCredentials.splice(index, 1)[0];
+                allCredentials.unshift(activeAccount);
+            }
+
+            setAccounts(allCredentials);
+        }
         const timeOut = setTimeout(() => {
             setIsShow(false);
         }, 1000);

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react'
+import React, { memo, useState } from 'react'
 import { Remarkable } from 'remarkable';
 import { ParsedBody } from './ParsedBody';
 import YoutubePreview from '../YoutubePreview';
@@ -35,7 +35,7 @@ interface Props {
     isProxifyImages?: boolean
 
 };
-function MarkdownViewer(props: Props) {
+export default memo(function MarkdownViewer(props: Props) {
     const {
         allowDangerousHTML = false,
         breaks = true,
@@ -227,7 +227,7 @@ function MarkdownViewer(props: Props) {
     }
 
 
-    return (<div className={'markdown-body'}>
+    return (<div className={'markdown-body  w-full'}>
         {sections}
         {noImageActive &&
             allowNoImage && (
@@ -247,6 +247,5 @@ function MarkdownViewer(props: Props) {
     </div>
 
     )
-}
+})
 
-export default React.memo(MarkdownViewer)

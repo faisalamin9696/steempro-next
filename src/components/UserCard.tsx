@@ -1,5 +1,5 @@
-import React from "react";
-import { Avatar, AvatarGroup, Button, Card, CardFooter, CardHeader } from "@nextui-org/react";
+import React, { memo } from "react";
+import { Avatar, AvatarGroup, Button } from "@nextui-org/react";
 import { fetchSds } from "@/libs/constants/AppFunctions";
 import SAvatar from "./SAvatar";
 import { abbreviateNumber } from "@/libs/utils/helper";
@@ -18,7 +18,7 @@ interface Props {
 }
 
 
-export const UserCard = (props: Props) => {
+export const UserCard = memo((props: Props) => {
     const { username, compact } = props;
     // const [isFollowed, setIsFollowed] = React.useState(comment.observer_follows_author === 1);
     const { data: session } = useSession();
@@ -37,7 +37,7 @@ export const UserCard = (props: Props) => {
             bg-transparent items-start gap-4 p-2 w-full">
             <div className="flex flex-row justify-between gap-2 w-full">
                 <div className="flex gap-2">
-                    <SAvatar username={username} size="sm"/>
+                    <SAvatar username={username} size="xs" />
                     <div className="flex flex-col items-start justify-center">
                         <h4 className="text-small font-semibold leading-none text-default-600">{posting_json_metadata?.profile?.name}</h4>
                         {/* <Link prefetch={false} href={authorLink}>{comment.author}</Link> */}
@@ -103,6 +103,6 @@ export const UserCard = (props: Props) => {
 
         </div >
     );
-};
+});
 
-export default UserCard
+export default UserCard;

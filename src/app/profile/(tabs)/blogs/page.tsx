@@ -1,12 +1,12 @@
 "use client"
 
+import FeedList from '@/components/comment/FeedList';
 // import FeedList from '@/components/comment/FeedList';
 import { isDev } from '@/libs/constants/AppConstants';
 import { FeedTypes } from '@/libs/steem/sds';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import dynamic from 'next/dynamic';
 import React from 'react'
-const DynamicFeedList = dynamic(() => import('@/components/comment/FeedList'));
 
 export default function ProfileBlogsTab() {
     const { username } = usePathnameClient();
@@ -24,7 +24,7 @@ export default function ProfileBlogsTab() {
     return (
         <div >
             <div className='flex flex-col space-y-2'>
-                <DynamicFeedList endPoint={getEndPoint('AccountBlog')} />
+                <FeedList endPoint={getEndPoint('AccountBlog')} />
             </div>
 
         </div>

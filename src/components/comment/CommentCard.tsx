@@ -1,19 +1,12 @@
 "use client"
 
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import './style.scss';
-import CommentFooter from './component/CommentFooter';
 
-import { Card } from '@nextui-org/react';
-import CommentHeader from './component/CommentHeader';
-import CommentCover from './component/CommentCover';
 import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/libs/constants/AppFunctions';
 import { useMobile } from '@/libs/utils/useMobile';
 import { getSettings } from '@/libs/utils/user';
-import MarkdownViewer from '@/components/body/MarkdownViewer';
-import BodyShort from '@/components/body/BodyShort';
-import { getCoverImageUrl, getPostThumbnail } from '@/libs/utils/image';
 import { ClassValue } from 'clsx';
 import CommentListLayout from './layout/CommentListLayout';
 import CommentBlogLayout from './layout/CommentBlogsLayout';
@@ -38,7 +31,7 @@ export type CommentProps = {
     onPublishClick?: (comment: Feed | Post) => void;
 }
 
-export default function CommentCard(props: Props) {
+export default memo(function CommentCard(props: Props) {
     const { comment } = props;
     const commentInfo = useAppSelector(state => state.commentReducer.values)[`${comment?.author}/${comment?.permlink}`] ?? comment;
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
@@ -50,14 +43,13 @@ export default function CommentCard(props: Props) {
             { scroll: false });
     }
 
-    const commentLayout = useMemo(() =>
+    const commentLayout =
         isMobile ? <CommentBlogLayout {...props} comment={commentInfo} onReplyClick={handlePostClick} /> :
             settings.feedStyle === 'list' ?
                 <CommentListLayout {...props} comment={commentInfo} onReplyClick={handlePostClick} /> :
                 settings.feedStyle === 'grid' ? <CommentGridLayout comment={comment} onReplyClick={handlePostClick} /> :
                     settings.feedStyle === 'blogs' ? <CommentBlogLayout {...props} comment={commentInfo} onReplyClick={handlePostClick} /> :
                         <CommentListLayout {...props} comment={commentInfo} onReplyClick={handlePostClick} />
-        , [settings.feedStyle, isMobile]);
 
 
     return (<div className='mb-2' key={comment.link_id}>
@@ -66,4 +58,4 @@ export default function CommentCard(props: Props) {
 
     )
 }
-
+)

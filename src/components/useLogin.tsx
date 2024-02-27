@@ -1,7 +1,7 @@
 import { useSession } from 'next-auth/react';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import AuthModal from './AuthModal';
-import { sessionKey } from '@/libs/utils/user';
+import { getCredentials, sessionKey } from '@/libs/utils/user';
 import { useAppDispatch } from '@/libs/constants/AppFunctions';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 
@@ -38,11 +38,12 @@ export const AuthProvider = (props: Props) => {
     const [credentials, setCredentials] = useState<User>();
     const [isNew, setIsNew] = useState(false);
     const dispatch = useAppDispatch();
-    
+
     useEffect(() => {
         if (data) {
             dispatch(saveLoginHandler(data));
         }
+        setCredentials(getCredentials());
     }, [])
 
 

@@ -52,15 +52,15 @@ export default function SubmitPage(props: Props) {
 
     const [title, setTitle] = useState(draft?.title || '');
     const [tags, setTags] = useState(draft?.tags || '');
-    const [markdown, setMarkdown] = useState(draft?.markdown || '');
+    const [markdown, setMarkdown] = useState(isEdit ? oldPost?.body : draft?.markdown || '');
 
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const { data: session } = useSession();
 
     const rpm = readingTime(markdown);
     const [reward, setReward] = React.useState(rewardTypes[1]);
-    const [beneficiaries, setBeneficiaries] = React.useState<Beneficiary[]>(draft?.beneficiaries || []);
-    const [community, setCommunity] = useState<Community>(draft?.community);
+    const [beneficiaries, setBeneficiaries] = React.useState<Beneficiary[]>(isEdit ? [] : draft?.beneficiaries || []);
+    const [community, setCommunity] = useState<Community | undefined>(isEdit ? undefined : draft?.community);
     const [isPosting, setPosting] = useState(false);
     // const [openAuth, setOpenAuth] = useState(false);
     const { authenticateUser, isAuthorized } = useLogin();
@@ -311,11 +311,11 @@ export default function SubmitPage(props: Props) {
 
 
 
-    return (<div className={clsx(`editor-main flex flex-col flex-1 gap-4 items-center w-full`,
-        !oldPost && '1md:justify-evenly 1md:items-start 1md:flex-row')} >
+    return (<div className={clsx(`editor-main flex flex-col flex-1 gap-4 items-center w-full `,
+        !oldPost && '1md:justify-evenly 1md:items-start 1md:flex-row ')} >
 
-        <div className={clsx(`flex flex-col w-full 1md:w-[50%] gap-2 `,
-            !oldPost && '1md:float-start 1md:sticky 1md:self-start 1md:top-[70px] px-1')}>
+        <div className={clsx(`flex flex-col w-full  gap-2`,
+            !oldPost && '1md:w-[50%] 1md:float-start 1md:sticky 1md:self-start 1md:top-[70px] px-1')}>
 
             <CommunitySelectButton
                 community={community}
@@ -344,14 +344,12 @@ export default function SubmitPage(props: Props) {
 
                 placeholder={'Tags here...'} maxLength={255} />
 
-            {useMemo(() => {
-                return <EditorInput value={markdown}
-                    onChange={setMarkdown}
-                    inputClass=' h-full'
-                    onImageUpload={() => { }}
-                    onImageInvalid={() => { }} />
+            <EditorInput value={markdown}
+                onChange={setMarkdown}
+                inputClass=' h-full'
+                onImageUpload={() => { }}
+                onImageInvalid={() => { }} />
 
-            }, [markdown])}
 
 
             <div className='flex gap-2 relativeitems-center flex-row'>
@@ -406,7 +404,7 @@ export default function SubmitPage(props: Props) {
         </div>
 
 
-        <div className='flex flex-col w-full 1md:w-[50%] max-w-[640px] mb-10 gap-2'>
+        <div className={clsx(isEdit ? '' : '1md:w-[50%] ', 'flex flex-col w-full max-w-[640px] mb-10 gap-2')}>
 
             <div className=' items-center flex justify-between'>
                 <p className='float-left text-default-900/70 font-bold'>{'Preview'}</p>
@@ -421,7 +419,9 @@ export default function SubmitPage(props: Props) {
                         return <Chip key={tag}>{tag}</Chip>
                     })}
                 </div>
-                <MarkdownViewer text={markdown} />
+                <div className='flex flex-col items-center'>
+                    <MarkdownViewer text={markdown} />
+                </div>
             </Card> : null}
         </div>
     </div>

@@ -1,5 +1,5 @@
 import { Button, Card, CardFooter, Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
-import React from 'react'
+import React, { memo } from 'react'
 import { IoChevronUpCircleSharp, IoChevronDownCircleOutline, IoChevronUpCircleOutline, IoChevronDownCircleSharp } from 'react-icons/io5';
 import { MdComment } from 'react-icons/md';
 import { PiCurrencyCircleDollarFill } from 'react-icons/pi';
@@ -19,7 +19,7 @@ import IconButton from '@/components/IconButton';
 import { CommentProps } from '../CommentCard';
 
 
-export default function CommentFooter(props: CommentProps) {
+export default memo(function CommentFooter(props: CommentProps) {
     const { comment, className, isReply, onReplyClick, onEditClick,
         onDeleteClick, onMuteClick, compact, onPinClick, onPublishClick } = props;
 
@@ -207,7 +207,7 @@ export default function CommentFooter(props: CommentProps) {
 
         </Card >
 
-    
+
 
     </div >
-}
+})

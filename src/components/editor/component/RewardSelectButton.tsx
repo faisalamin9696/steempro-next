@@ -1,5 +1,5 @@
 import { Popover, PopoverTrigger, Button, PopoverContent, RadioGroup, Radio } from '@nextui-org/react'
-import React, { useState } from 'react'
+import React, { memo, useState } from 'react'
 import { FaDollarSign } from 'react-icons/fa'
 
 
@@ -15,7 +15,7 @@ interface Props {
 
 }
 
-export default function RewardSelectButton(props: Props) {
+export default memo(function RewardSelectButton(props: Props) {
     const { onSelectReward, selectedValue, disabled } = props;
 
     const [rewardPopup, setRewardPopup] = useState(false);
@@ -69,4 +69,4 @@ export default function RewardSelectButton(props: Props) {
         </Popover>
     </div>
     )
-}
+})

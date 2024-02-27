@@ -11,7 +11,7 @@ import STag from '@/components/STag';
 
 import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
-import { Key } from 'react';
+import { Key, memo } from 'react';
 import { MdDelete } from 'react-icons/md';
 import { GrAnnounce } from "react-icons/gr";
 import ViewCountCard from '@/components/ViewCountCard';
@@ -35,7 +35,7 @@ interface Props {
     compact?: boolean,
     handleEdit?: () => void;
 }
-export default function CommentHeader(props: Props) {
+export default memo(function CommentHeader(props: Props) {
 
     const { comment, className, isReply, compact, handleEdit } = props;
     const { data: session } = useSession();
@@ -195,4 +195,4 @@ export default function CommentHeader(props: Props) {
 
     </div>
     )
-}
+})

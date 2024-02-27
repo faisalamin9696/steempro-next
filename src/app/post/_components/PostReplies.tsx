@@ -5,7 +5,7 @@ import { addRepliesHandler } from '@/libs/redux/reducers/RepliesReducer';
 import { getPostReplies } from '@/libs/steem/sds';
 import { Button, Card } from '@nextui-org/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroller';
 import Reply from './Reply';
 import MarkdownViewer from '@/components/body/MarkdownViewer';
@@ -28,7 +28,7 @@ interface Props {
     onReplyClick?: () => {}
 }
 
-export default function PostReplies(props: Props) {
+export default memo(function PostReplies(props: Props) {
     const { comment, onReplyClick } = props;
 
     const commentInfo = (useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment) as Post;
@@ -333,4 +333,4 @@ export default function PostReplies(props: Props) {
 
         </div>
     )
-}
+})

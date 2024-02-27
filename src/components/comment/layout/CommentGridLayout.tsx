@@ -26,16 +26,17 @@ export default function CommentGridLayout(props: CommentProps) {
     const { comment, onReplyClick, isReply } = props;
 
     const thumbnail = getPostThumbnail(comment.json_images);
+    console.log(1122, thumbnail)
     const { data: session } = useSession();
     const isSelf = comment.author === session?.user?.name;
     const json_metadata = JSON.parse(comment?.json_metadata ?? '{}') as { tags?: string[], image?: string[], app?: string, format?: string }
 
     const imageWidth = 200;
-    const imageHeight = 172;
+    const imageHeight = 176;
 
     return (
-        <div className={`grid-footer w-full card card-compact h-full bg-white/60 dark:bg-white/10 
-        pb-2 flex flex-col overflow-hidden rounded-lg shadow-lg`}>
+        <Card className={`grid-footer w-full card card-compact h-full bg-white/60
+         dark:bg-white/10  pb-2 flex flex-col overflow-hidden rounded-lg shadow-lg`}>
 
             <div className="flex-shrink-0 relative">
                 {thumbnail ?
@@ -55,7 +56,8 @@ export default function CommentGridLayout(props: CommentProps) {
                         }}
 
                     /> :
-                    <div className={` h-[${imageHeight}px] bg-foreground/30 rounded-lg w-full`} />
+                    <div className={`h-44 
+                    bg-foreground/30  w-full`} />
                 }
 
                 {/* <div
@@ -164,7 +166,7 @@ export default function CommentGridLayout(props: CommentProps) {
             <div className='px-2'>
                 <CommentFooter compact className='rounded-lg' comment={comment} />
             </div>
-        </div>
+        </Card>
 
     )
 }

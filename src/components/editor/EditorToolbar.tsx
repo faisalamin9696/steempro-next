@@ -1,4 +1,4 @@
-import { FaQuoteLeft, FaItalic, FaBold, FaLink, FaHeading, FaCode } from 'react-icons/fa';
+import { FaQuoteLeft, FaItalic, FaBold, FaLink, FaHeading, FaCode, FaTable } from 'react-icons/fa';
 import { Button, Kbd, Tooltip } from '@nextui-org/react';
 import { LuHeading1, LuHeading2, LuHeading3, LuHeading4 } from 'react-icons/lu';
 
@@ -108,6 +108,12 @@ const EditorToolbar = (props: ToolbarProps) => {
                     shortcut: `${masterKey + 'C'}`
                 }} onSelect={() => { onSelect('code') }}
                     IconType={FaCode} />
+
+                <ToolbarItem tooltip={{
+                    description: 'Table',
+                    shortcut: `${masterKey + 'T'}`
+                }} onSelect={() => { onSelect('table') }}
+                    IconType={FaTable} />
 
                 <div className='h-4 w-[1px] bg-default-900/20' />
 

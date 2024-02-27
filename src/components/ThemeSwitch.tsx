@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { Switch } from "@nextui-org/react";
 import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs';
 import { getSettings, updateSettings } from "@/libs/utils/user";
@@ -6,7 +6,7 @@ import { updateSettingsHandler } from "@/libs/redux/reducers/SettingsReducer";
 import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import { useTheme } from "next-themes";
 
-export default function ThemeSwitch({ className }: { className?: string }) {
+export default memo(function ThemeSwitch({ className }: { className?: string }) {
 
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const { theme, setTheme, systemTheme } = useTheme();
@@ -69,4 +69,4 @@ export default function ThemeSwitch({ className }: { className?: string }) {
             }
         />
     );
-}
+})

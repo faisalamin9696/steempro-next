@@ -12,8 +12,9 @@ interface Params {
 
 // Define valid categories
 const valid_categories = ['trending', 'created', 'payout', 'important', 'about']
+
 const valid_tabs = ['blogs', 'posts', 'friends',
-    'comments', 'replies', 'wallet', 'communities']
+    'comments', 'replies', 'wallet', 'communities', 'settings']
 
 // Define username URL regex
 const usernameURLRegex = /@([^/]+)/;

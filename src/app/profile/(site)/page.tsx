@@ -12,6 +12,7 @@ import { getSettings } from '@/libs/utils/user';
 import clsx from 'clsx';
 import ProfilePostsMainTab from '../(tabs)/postsMain/page';
 import ProfileCommunitiesTab from '../(tabs)/communities/page';
+import ProfileSettingsTab from '../(tabs)/settings/page';
 
 export default function ProfilePage() {
     let { username, category } = usePathnameClient();
@@ -23,6 +24,8 @@ export default function ProfilePage() {
         { title: 'Posts', key: 'posts', children: <ProfilePostsMainTab /> },
         { title: 'Communities', key: 'communities', children: <ProfileCommunitiesTab /> },
         { title: 'Wallet', key: 'wallet', children: <ProfileWalletTab /> },
+        { title: 'Settings', key: 'settings', children: <ProfileSettingsTab /> },
+
 
     ]
 

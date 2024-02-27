@@ -1,6 +1,6 @@
 
 import { Avatar, Button, Card, Input, Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { FaUsersCog } from 'react-icons/fa'
 import { MdAdd, MdClose } from 'react-icons/md';
 import IconButton from '../../IconButton';
@@ -17,7 +17,7 @@ interface Props {
 }
 
 
-export default function BeneficiaryButton(props: Props) {
+export default memo(function BeneficiaryButton(props: Props) {
     const { onSelectBeneficiary, beneficiaries, onRemove, disabled } = props;
     const [username, setUsername] = useState('');
     const [weight, setWeight] = useState('');
@@ -67,8 +67,8 @@ export default function BeneficiaryButton(props: Props) {
         onRemove && onRemove(bene);
     }
 
-    if (disabled)  return null
-    
+    if (disabled) return null
+
     return (<div>
         <Popover isOpen={benePopup}
             onOpenChange={(open) => setBenePopup(open)}
@@ -172,4 +172,4 @@ export default function BeneficiaryButton(props: Props) {
     </div>
 
     )
-}
+})

@@ -1,9 +1,9 @@
 import { addToCurrent, saveSessionKey } from '@/libs/utils/user';
 import { Card, CardBody, Chip, Button } from '@nextui-org/react';
-import React, { useState } from 'react'
+import React, { memo, useState } from 'react'
 import SAvatar from './SAvatar';
 import { useLogin } from './useLogin';
-import { awaitTimeout, useAppDispatch } from '@/libs/constants/AppFunctions';
+import { useAppDispatch } from '@/libs/constants/AppFunctions';
 import { getAuthorExt } from '@/libs/steem/sds';
 import { getAuth, signInAnonymously } from 'firebase/auth';
 import { signIn } from 'next-auth/react';
@@ -16,7 +16,7 @@ type Props = {
     handleSwitchSuccess?: () => void;
 }
 
-export default function AccountItemCard(props: Props) {
+export default memo(function AccountItemCard(props: Props) {
     const { defaultAccount, user, handleSwitchSuccess } = props;
     const { authenticateUser, isAuthorized } = useLogin();
     const dispatch = useAppDispatch();
@@ -106,3 +106,4 @@ export default function AccountItemCard(props: Props) {
     </Card>
 
 }
+)

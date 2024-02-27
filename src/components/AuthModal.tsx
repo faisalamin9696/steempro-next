@@ -278,7 +278,7 @@ export default function AuthModal(props: Props) {
                     {(onClose) => (
                         <>
                             {isShow ? null : <ModalHeader className="flex flex-col gap-1">
-                                {isLocked ? 'Locked' : 'Log in'}
+                                {(isLocked && !isNew) ? 'Locked' : 'Log in'}
                             </ModalHeader>}
                             <ModalBody>
                                 <div className="flex flex-col w-full">

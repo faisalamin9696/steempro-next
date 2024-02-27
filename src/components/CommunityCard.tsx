@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, User } from "@nextui-org/react";
+import { Button, Card, User } from "@nextui-org/react";
 import { abbreviateNumber } from "@/libs/utils/helper";
 import Reputation from "./Reputation";
 import { FaClock, FaEllipsis } from "react-icons/fa6";
@@ -32,13 +32,13 @@ export const CommunityCard = (props: Props) => {
     }
 
     return (
-        <div
-            className="relative flex flex-col card-content border-none 
-            bg-transparent items-start gap-4 p-4 w-full">
+        <Card isBlurred isPressable={compact} onPress={handleExplore}
+            className="relative flex flex-col items-start gap-2 p-4 w-full">
 
-            {<Button onPress={handleExplore}
-                size="sm" color="primary" radius="full"
-                className="top-5 right-5 absolute">Explore</Button>}
+            {!compact &&
+                <Button onPress={handleExplore}
+                    size="sm" color="primary" radius="full"
+                    className="top-5 right-5 absolute">Explore</Button>}
 
             <User
 
@@ -52,14 +52,14 @@ export const CommunityCard = (props: Props) => {
 
                     <div className="flex gap-2 items-center">
                         {<p>{community.account}</p>}
-                        <Reputation {...props} reputation={community.account_reputation} />
+                        {/* <Reputation {...props} reputation={community.account_reputation} /> */}
 
                     </div>
 
                 </div>}
                 description={<div className='flex flex-col'>
 
-                    {community.observer_role && community.observer_title ?
+                    {!compact && community.observer_role && community.observer_title ?
                         <div className='flex space-x-2 items-center'>
                             <p className='flex-none'>
                                 {community.observer_role}
@@ -87,10 +87,10 @@ export const CommunityCard = (props: Props) => {
             <div className="flex flex-row gap-4">
                 <div className="flex gap-1">
                     <p className="font-semibold text-default-600 text-small">{abbreviateNumber(community.count_subs)}</p>
-                    <p className=" text-default-500 text-small">{'Subscribers'}</p>
+                    <p className=" text-default-500 text-small">{compact ? 'Subs' : 'Subscribers'}</p>
                 </div>
                 <div className="flex gap-1">
-                    <p className="font-semibold text-default-600 text-small">{abbreviateNumber(community.count_pending)}</p>
+                    <p className="font-semibold text-default-600 text-small">${abbreviateNumber(community.count_pending)}</p>
                     <p className="text-default-500 text-small">{'Pending Reward'}</p>
                 </div>
             </div>
@@ -103,7 +103,7 @@ export const CommunityCard = (props: Props) => {
                 </span>
             </span>
 
-        </div >
+        </Card >
     );
 };
 

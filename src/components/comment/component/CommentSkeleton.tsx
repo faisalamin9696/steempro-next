@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { memo } from 'react'
 
 type Props = {
     compact?: boolean;
 }
-export default function CommentSkeleton(props: Props) {
+export default memo(function CommentSkeleton(props: Props) {
     const { compact } = props;
     return (
         <div role="status" className="max-full p-4 space-y-4 border border-gray-200 divide-y divide-gray-200 rounded shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700">
@@ -46,4 +46,4 @@ export default function CommentSkeleton(props: Props) {
             {/* <span className="sr-only">Loading...</span> */}
         </div>
     )
-}
+})

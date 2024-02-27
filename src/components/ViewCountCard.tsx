@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { FaEye } from 'react-icons/fa';
 import useSWR from 'swr';
 import STooltip from './STooltip';
@@ -19,7 +19,7 @@ type Props = {
     );
 
 
-export default function ViewCountCard(props: Props) {
+export default memo(function ViewCountCard(props: Props) {
     let authPerm;
     if (!props.authPerm)
         authPerm = `${props.author || props.comment?.author}/${props.permlink || props.comment?.permlink}`;
@@ -42,3 +42,4 @@ export default function ViewCountCard(props: Props) {
     </div>
     )
 }
+)

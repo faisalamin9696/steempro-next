@@ -3,11 +3,14 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 // Define valid categories
-const valid_categories = ['trending', 'created',
-    'payout', 'important', 'about']
 
 const valid_tabs = ['blogs', 'posts', 'friends',
-    'comments', 'replies', 'wallet', 'communities']
+    'comments', 'replies', 'wallet', 'communities', 'settings'];
+
+const basic_categories = ['trending', 'created',
+    'payout'];
+
+const valid_categories = basic_categories.concat(['important', 'about']);
 
 
 // Define username URL regex
@@ -22,7 +25,11 @@ export function middleware(request: NextRequest) {
 
     // remove the first empty element
     splitted_path.shift();
-    const [first_param, second_param, third_param] = splitted_path;
+    let [first_param, second_param, third_param] = splitted_path;
+
+    first_param = first_param?.toLowerCase();
+    second_param = second_param?.toLowerCase();
+
 
     // Check if the URL matches the pattern for a post
     if (splitted_path.length === 3 && usernameURLRegex.test(second_param)) {
@@ -35,9 +42,6 @@ export function middleware(request: NextRequest) {
     }
     // Check if the URL matches the pattern for a profile
     else if (request.nextUrl.pathname.startsWith('/@')) {
-        if (third_param === 'edit') {
-            return NextResponse.rewrite(new URL(`/submit`, request.nextUrl), { headers: request.headers });
-        }
         return NextResponse.rewrite(new URL(`/profile`, request.nextUrl), { headers: request.headers });
     }
 
@@ -47,6 +51,10 @@ export function middleware(request: NextRequest) {
     }
     // Check if the URL matches the pattern for a category
     else if (valid_categories.filter(item => item !== 'about').includes(first_param)) {
+
+        if (basic_categories.includes(first_param)) {
+            return NextResponse.rewrite(new URL('/', request.nextUrl), { headers: request.headers });
+        }
         return NextResponse.rewrite(new URL('/category', request.nextUrl), { headers: request.headers });
     }
 }

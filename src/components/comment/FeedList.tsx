@@ -1,6 +1,6 @@
 import { awaitTimeout, fetchSds, useAppSelector } from '@/libs/constants/AppFunctions';
 import { notFound } from 'next/navigation';
-import React, { useMemo, useState } from 'react'
+import React, { memo, useMemo, useState } from 'react'
 import useSWR from 'swr';
 import { Button } from '@nextui-org/react';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -12,15 +12,18 @@ import { useMobile } from '@/libs/utils/useMobile';
 
 type Props = {
     endPoint: string;
+    gridClassName?: string;
 }
 
-export default function FeedList(props: Props) {
-    const { endPoint } = props;
+export default memo(function FeedList(props: Props) {
+    const { endPoint, gridClassName } = props;
     const { data, error, isLoading, mutate, isValidating } = useSWR(endPoint, fetchSds<Feed[]>);
     const [rows, setRows] = useState<Feed[]>([]);
     const [loadingMore, setLoadingMore] = useState(false);
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const isMobile = useMobile();
+
+    const isGridStyle = settings.feedStyle === 'grid' && !isMobile;
 
 
     useMemo(() => {
@@ -83,8 +86,8 @@ export default function FeedList(props: Props) {
                     <b>Yay! You have seen it all</b>
                 </p>
             }>
-            <div className={clsx(settings.feedStyle === 'grid' &&
-                !isMobile && "grid gap-6 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2")}>
+            <div className={clsx(isGridStyle && ("grid gap-6 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2"),
+                isGridStyle && gridClassName)}>
                 {rows?.map((comment) => {
                     return <CommentCard key={comment.link_id} comment={comment} />
                 })}
@@ -92,3 +95,4 @@ export default function FeedList(props: Props) {
         </InfiniteScroll >
     )
 }
+)

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, Ref, MutableRefObject } from 'react';
+import { useState, useRef, useCallback, memo, useEffect } from 'react';
 import EditorToolbar from './EditorToolbar';
-import Dropzone, { DropzoneRef, useDropzone } from 'react-dropzone';
+import { useDropzone } from 'react-dropzone';
 import { Textarea } from "@nextui-org/react";
 import clsx from 'clsx';
 import { KeyboardEvent } from "react";
@@ -12,7 +12,14 @@ import { toBase64 } from '@/libs/utils/helper';
 import { signImage, uploadImage } from '@/libs/steem/condenser';
 import { useLogin } from '../useLogin';
 import { getCredentials, getSessionKey } from '@/libs/utils/user';
-import { awaitTimeout } from '@/libs/constants/AppFunctions';
+import { filesize } from 'filesize';
+import { FaCloudUploadAlt } from "react-icons/fa";
+
+const tableTemplete = `|	Column 1	|	Column 2	|	Column 3	|
+|	------------	|	------------	|	------------	|
+|	     Text     	|	     Text     	|	     Text     	|`;
+
+const MAX_FILE_TO_UPLOAD = 10;
 
 interface EditorProps {
     value: string,
@@ -28,7 +35,7 @@ interface EditorProps {
 
 let imagesToUpload: { file: any; temporaryTag: string; }[] = [];
 
-const EditorInput = (props: EditorProps) => {
+export default memo(function EditorInput(props: EditorProps) {
     let {
         value,
         onImageUpload,
@@ -61,8 +68,9 @@ const EditorInput = (props: EditorProps) => {
             }
             return;
         }
-        if (acceptedFiles.length > MAXIMUM_UPLOAD_SIZE) {
-            toast.info(`Please upload up to maximum ${MAXIMUM_UPLOAD_SIZE} images.`)
+
+        if (acceptedFiles.length > MAX_FILE_TO_UPLOAD) {
+            toast.info(`Please upload up to maximum ${MAX_FILE_TO_UPLOAD} images.`)
             // console.log('onPick too many files to upload');
             return;
         }
@@ -96,7 +104,7 @@ const EditorInput = (props: EditorProps) => {
 
     }, []);
 
-    const { getRootProps, getInputProps } = useDropzone({
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop, noClick: true, accept: {
             'image/jpeg': [],
             'image/png': [],
@@ -182,6 +190,7 @@ const EditorInput = (props: EditorProps) => {
         italic: () => insertCode('i'),
         quote: () => insertCode('q'),
         code: () => insertCode('code'),
+        table: () => insertCode('table'),
         link: () => insertCode('link'),
         image: () => insertCode('image'),
         snip: () => insertCode('snip'),
@@ -221,7 +230,9 @@ const EditorInput = (props: EditorProps) => {
             case "c":
                 shortcutHandler.code();
                 break;
-
+            case "t":
+                shortcutHandler.table();
+                break;
             case "link":
                 shortcutHandler.link();
                 break;
@@ -237,21 +248,9 @@ const EditorInput = (props: EditorProps) => {
             case "e":
                 shortcutHandler.center();
                 break;
-            // case "t":
-            //     detectEvent("table");
-            //     break;
-            // case "k":
-            //     detectEvent("link");
-            //     break;
-            // case "c":
-            //     detectEvent("codeBlock");
-            //     break;
-            // case "d":
-            //     detectEvent("image");
-            //     break;
-            // case "m":
-            //     detectEvent("blockquote");
-            //     break;
+            case "d":
+                shortcutHandler.image();
+                break;
             default:
                 return;
         }
@@ -284,7 +283,10 @@ const EditorInput = (props: EditorProps) => {
             case 'q':
                 insertAtCursor('> ', '', 2, 2);
                 break;
-            case 'code':
+            case 'table':
+                insertAtCursor(tableTemplete, '', tableTemplete.length, tableTemplete.length);
+                break;
+            case 'table':
                 insertAtCursor('<code>', '</code>', 1, 1);
                 break;
             case 'link':
@@ -302,11 +304,11 @@ const EditorInput = (props: EditorProps) => {
                 break;
 
             case 'justify':
-                insertAtCursor('<div class="text-justify">\n\n', '\n</div>', 2, 2);
+                insertAtCursor('<div className="text-justify">\n\n', '\n</div>', 2, 2);
                 break;
 
             case 'center':
-                insertAtCursor('<center>\n', '\n</center>', 2, 2);
+                insertAtCursor('<center>\n', '\n</center>', 9, 9);
                 break;
             default:
                 break;
@@ -338,7 +340,7 @@ const EditorInput = (props: EditorProps) => {
             } else {
                 if (responseData.imgMd) {
                     const newValue = oldValue.replace(responseData.url, responseData.imgMd);
-                    setValue(newValue, startPos + responseData.imgMd.length, startPos + responseData.imgMd.length);
+                    setValue(newValue);
 
                 }
 
@@ -346,9 +348,6 @@ const EditorInput = (props: EditorProps) => {
 
         }
     }
-
-
-
 
     const insertPlaceHolders = () => {
 
@@ -379,10 +378,6 @@ const EditorInput = (props: EditorProps) => {
             _uploadImage(nextImage)
         }
     };
-
-
-
-
 
     // upload images
     const _uploadImage = async (image) => {
@@ -449,9 +444,25 @@ const EditorInput = (props: EditorProps) => {
         <div  {...getRootProps()} >
 
 
-            <div className="body-input"
+            <div className="body-input relative"
                 onKeyDown={hotKeyHandler}
                 ref={postBodyRef}>
+
+
+                {(isDragActive) &&
+                    <div className="flex flex-row justify-center w-full absolute z-[1] h-full backdrop-blur-sm bg-foreground/10">
+                        <div className='text-center self-center'>
+
+                            <FaCloudUploadAlt className='mx-auto text-5xl' />
+
+                            <h3 className="mt-2 text-sm font-medium text-default-600">
+                                <span>Drag and drop to upload</span>
+                            </h3>
+                            <p className="mt-1 text-xs text-default-400">
+                                PNG, JPG, GIF up to {filesize(MAXIMUM_UPLOAD_SIZE)}
+                            </p>
+                        </div>
+                    </div>}
 
                 <Textarea
 
@@ -489,6 +500,7 @@ const EditorInput = (props: EditorProps) => {
 
         </div >
     );
-}
+});
 
-export default EditorInput
+
+

@@ -1,7 +1,7 @@
 import { Card } from "@nextui-org/react";
 import clsx from "clsx";
 import Image from "next/image";
-import { useState } from "react";
+import { memo, useState } from "react";
 
 interface Props {
     sm?: boolean;
@@ -12,7 +12,7 @@ interface Props {
     noCard?: boolean;
     alt?: string;
 }
-export default function CommentCover(props: Props) {
+export default memo(function CommentCover(props: Props) {
     let { sm, src, thumbnail, className, noCard, alt } = props;
     const [isFetching, setIsFetching] = useState(true);
 
@@ -55,9 +55,9 @@ export default function CommentCover(props: Props) {
                             height={640}
                             width={640}
                             quality={60}
-                        //     sizes={`(max-width: 768px) 100vw,
-                        // (max-width: 1200px) 50vw,
-                        // 33vw`}
+                            //     sizes={`(max-width: 768px) 100vw,
+                            // (max-width: 1200px) 50vw,
+                            // 33vw`}
                             onLoad={onLoadCompleted}
                             onError={onLoadCompleted}
                             style={{
@@ -76,9 +76,9 @@ export default function CommentCover(props: Props) {
                             alt={alt || "image"}
                             onLoad={onLoadCompleted}
                             onError={onLoadCompleted}
-                    //         sizes={`(max-width: 768px) 100vw,
-                    //    (max-width: 1200px) 50vw,
-                    //    33vw`}
+                            //         sizes={`(max-width: 768px) 100vw,
+                            //    (max-width: 1200px) 50vw,
+                            //    33vw`}
                             style={{
                                 width: sm ? '130px' : undefined,
                                 height: sm ? '70px' : undefined,
@@ -93,4 +93,4 @@ export default function CommentCover(props: Props) {
                 </Card>
             : null
     )
-}
+})
