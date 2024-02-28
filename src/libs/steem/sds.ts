@@ -98,7 +98,7 @@ export const getActiveCommunityFeed = async (
 export type FeedTypes = 'PostsByAuthor' | 'AccountFriendsFeed' | 'CommentsByAuthor' |
     'CommentsByParentAuthor' | 'ActiveCommunityPostsByTrending'
     | 'CommunityPostsByCreated' | 'CommunityPinnedPosts' | 'AccountBlog' | 'ActivePostsByTrending' |
-    'ActivePostsByCreated' | 'ActivePostsByPayout';
+    'ActivePostsByCreated' | 'ActivePostsByPayout' | 'AccountCommunitiesFeedByCreated';
 
 export const getAuthorFeed = async (
     author: string,

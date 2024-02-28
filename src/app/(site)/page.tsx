@@ -11,19 +11,25 @@ import clsx from 'clsx';
 import HomeTrendingsTab from './(tabs)/trendings/page';
 import HomeCreatedTab from './(tabs)/created/page';
 import HomePayoutTab from './(tabs)/payout/page';
+import { useSession } from 'next-auth/react';
+import { useLogin } from '@/components/useLogin';
+import HomeCommunitiesTab from './(tabs)/communities/page';
 
 
-export default function HomePage() {
+export default function HomePage({ isLogin }: { isLogin?: boolean }) {
   let { username, category } = usePathnameClient();
-  const isMobile = useMobile();
   const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
 
-  const profileTabs = [
+  let homeTabs = [
     { title: 'Trendings', key: 'trending', children: <HomeTrendingsTab /> },
     { title: 'New', key: 'created', children: <HomeCreatedTab /> },
     { title: 'Payout', key: 'payout', children: <HomePayoutTab /> },
 
   ]
+
+  if (isLogin)
+    homeTabs.push({ title: 'Communities', key: 'communities', children: <HomeCommunitiesTab /> })
+
 
   return (
     <div className={clsx('relative items-center flex-row w-full')}>
@@ -31,24 +37,22 @@ export default function HomePage() {
         size='sm'
         disableAnimation
         disableCursorAnimation
-        fullWidth={isMobile}
         color={'secondary'}
         radius="full"
         hidden={true}
-        className='justify-center transition-all delay-500'
-        defaultSelectedKey={category ?? 'trending'}
+        className='justify-center'
+        defaultSelectedKey={(isLogin && category === 'communities') ? 'communities' : category ?? 'trending'}
         onSelectionChange={(key) => {
           history.pushState({}, '', `/${key}`);
         }}
         classNames={{
           tabList: "max-sm:gap-0 bg-default-300",
-          tab: "max-sm:max-w-prose max-sm:px-2 max-sm:h-5",
+          tab: "max-sm:px-2 max-sm:h-5",
         }}
 
       >
-        {profileTabs.map((tab) => <Tab hidden key={tab.key}
-          title={tab.title}
-        >
+        {homeTabs.map((tab) => <Tab hidden key={tab.key}
+          title={tab.title} >
           {tab.children}
         </Tab>)}
       </Tabs>

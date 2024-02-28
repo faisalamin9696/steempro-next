@@ -1,9 +1,10 @@
+"use client";
 
 import React from 'react'
 import BodyShort from '../../body/BodyShort';
 import Image from 'next/image';
 import { getPostThumbnail, getResizedAvatar } from '@/libs/utils/image';
-import TimeAgoWrapper from '../../TimeAgoWrapper';
+import TimeAgoWrapper from '../../wrapper/TimeAgoWrapper';
 import { Card, Popover, PopoverContent, PopoverTrigger, User } from '@nextui-org/react';
 import { useSession } from 'next-auth/react';
 import Reputation from '@/components/Reputation';
@@ -16,29 +17,36 @@ import { FaClock } from 'react-icons/fa';
 import { CommentProps } from '../CommentCard';
 import clsx from 'clsx';
 import { validateCommunity } from '@/libs/utils/helper';
-type Props = {
-    comment: Feed | Post;
-    isReply?: boolean;
-}
+import { useRouter } from 'next/navigation';
+import STooltip from '@/components/STooltip';
+import usePathnameClient from '@/libs/utils/usePathnameClient';
 
 
 export default function CommentGridLayout(props: CommentProps) {
     const { comment, onReplyClick, isReply } = props;
-
     const thumbnail = getPostThumbnail(comment.json_images);
-    console.log(1122, thumbnail)
+    const { username: pathUsername } = usePathnameClient();
     const { data: session } = useSession();
     const isSelf = comment.author === session?.user?.name;
-    const json_metadata = JSON.parse(comment?.json_metadata ?? '{}') as { tags?: string[], image?: string[], app?: string, format?: string }
+    // const json_metadata = JSON.parse(comment?.json_metadata ?? '{}') as { tags?: string[], image?: string[], app?: string, format?: string }
+    const authorLink = `/@${comment.author}`;
+    const router = useRouter();
 
     const imageWidth = 200;
     const imageHeight = 176;
 
+    function handleProfileClick() {
+        if (pathUsername !== comment.author) {
+            router.push(authorLink);
+            router.refresh();
+        }
+
+    }
     return (
         <Card className={`grid-footer w-full card card-compact h-full bg-white/60
-         dark:bg-white/10  pb-2 flex flex-col overflow-hidden rounded-lg shadow-lg`}>
+         dark:bg-white/10  pb-2 flex flex-col overflow-hidden rounded-lg shadow-lg `}>
 
-            <div className="flex-shrink-0 relative">
+            <div className="flex-shrink-0 relative ">
                 {thumbnail ?
                     <Image
                         src={thumbnail}
@@ -55,7 +63,8 @@ export default function CommentGridLayout(props: CommentProps) {
                             maxHeight: imageHeight,
                         }}
 
-                    /> :
+                    />
+                    :
                     <div className={`h-44 
                     bg-foreground/30  w-full`} />
                 }
@@ -85,7 +94,46 @@ export default function CommentGridLayout(props: CommentProps) {
                 </div>
                 <div className=" mt-4 gap-6 flex flex-row items-center justify-between">
 
-                    <Popover showArrow placement="bottom">
+                    <User
+                        classNames={{
+                            description: 'mt-1 text-default-900/60 dark:text-gray-200 text-sm',
+                            name: 'text-default-800'
+                        }}
+                        name={<div className='flex items-center space-x-2'>
+                            {isSelf ? <p>{comment.author}</p> :
+                                <div>{comment.author}</div>
+                            }
+                            <Reputation {...props} reputation={comment.author_reputation} />
+                            {comment.author_role && comment.author_title ?
+                                <div className='flex space-x-2 items-center'>
+                                    <p className='flex-none'>
+                                        {comment.author_role}
+                                    </p>
+                                </div> : null}
+
+                        </div>}
+                        description={<div className='flex flex-col'>
+                            {comment.author_title && <div className='flex space-x-1 text-tiny rounded-full 
+                                    border hover:bg-transparent border-default-900/50 px-1  '>
+                                {comment.author_title}
+
+                                {/* {json_metadata?.app && <STooltip content={`${'Posted using'} ${json_metadata?.app}`}>
+                                            <p>● {json_metadata?.app?.split('/')?.[0]}</p>
+                                        </STooltip>} */}
+                            </div>}
+
+                        </div>}
+                        avatarProps={{
+                            className: 'cursor-pointer',
+                            src: getResizedAvatar(comment.author),
+                            as: 'a',
+                            onClick: handleProfileClick,
+
+
+                        }}
+                    />
+
+                    {/* <Popover showArrow placement="bottom">
                         <PopoverTrigger>
                             <User
                                 classNames={{
@@ -114,19 +162,19 @@ export default function CommentGridLayout(props: CommentProps) {
 
                                         {comment.author_title}
 
-                                        {/* {json_metadata?.app && <STooltip content={`${'Posted using'} ${json_metadata?.app}`}>
+                                        {json_metadata?.app && <STooltip content={`${'Posted using'} ${json_metadata?.app}`}>
                                             <p>● {json_metadata?.app?.split('/')?.[0]}</p>
-                                        </STooltip>} */}
+                                        </STooltip>}
                                     </div>}
 
                                 </div>}
                                 avatarProps={{
-                                    className: '',
+                                    className: 'cursor-pointer',
                                     src: getResizedAvatar(comment.author),
-                                    // as: 'a',
-                                    // onClick: () => {
-                                    //     navigation.push(authorLink);
-                                    // },
+                                    as: 'a',
+                                    onClick: () => {
+                                        router.push(authorLink);
+                                    },
 
 
                                 }}
@@ -135,7 +183,7 @@ export default function CommentGridLayout(props: CommentProps) {
                         <PopoverContent className="p-1">
                             <DynamicUserCard username={comment.author} />
                         </PopoverContent>
-                    </Popover>
+                    </Popover> */}
                     {/* <Button size='sm' variant='light' radius='full' isIconOnly>
                         <FaEllipsisVertical className='text-lg' />
                     </Button> */}
@@ -164,7 +212,9 @@ export default function CommentGridLayout(props: CommentProps) {
                 </span>
             </div>
             <div className='px-2'>
-                <CommentFooter compact className='rounded-lg' comment={comment} />
+                <CommentFooter compact
+                    className='rounded-lg'
+                    comment={comment} />
             </div>
         </Card>
 

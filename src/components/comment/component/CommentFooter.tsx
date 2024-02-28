@@ -120,15 +120,18 @@ export default memo(function CommentFooter(props: CommentProps) {
 
 
 
-    return <div className='flex flex-col p-1 gap-2 w-full'>
-        <Card shadow='none' className={clsx(`transition duration-700 ease-in-out 
+    return <div className={clsx('flex flex-col p-1 gap-2 w-full')}>
+        < Card shadow='none' className={
+            clsx(`transition duration-700 ease-in-out 
         items-center dark:bg-base-300/60 shadow-md`,
-            className)}>
+                className)
+        } >
 
-            <CardFooter className="p-0 !px-1 flex card-content items-center justify-between">
-                <div className={clsx('flex', compact ? 'gap-2' : 'gap-4')}>
-                    <div className='flex items-center space-x-2'>
-                        <div className='flex space-x-1 items-center'>
+            <CardFooter className={clsx("flex card-content items-center justify-between"
+                , compact ? 'p-1' : 'p-2')}>
+                <div className={clsx('flex', compact ? 'gap-3' : 'gap-4')}>
+                    <div className='flex items-center gap-3'>
+                        <div className='flex gap-1 items-center'>
 
                             <Popover placement='top-start' backdrop='opaque'
                                 shouldCloseOnBlur={true}
@@ -138,9 +141,11 @@ export default memo(function CommentFooter(props: CommentProps) {
                                 <PopoverTrigger>
                                     <Button variant='ghost' size='sm'
                                         className='border-0 
-                                        rounded-full text-2xl'
+                                        rounded-full text-xl min-w-0 w-6 h-6'
                                         isLoading={comment?.status === 'upvoting'} isIconOnly>
-                                        {(comment.observer_vote && comment.observer_vote_percent > 0) ? <IoChevronUpCircleSharp /> : <IoChevronUpCircleOutline />}
+                                        {(comment.observer_vote && comment.observer_vote_percent > 0) ?
+                                            <IoChevronUpCircleSharp className={clsx('text-default-600', compact ? 'text-md' : 'text-xl')} /> :
+                                            <IoChevronUpCircleOutline className={clsx('text-default-600', compact ? 'text-md' : 'text-xl')} />}
                                     </Button>
                                 </PopoverTrigger>
                                 <PopoverContent className="p-1">
@@ -152,22 +157,21 @@ export default memo(function CommentFooter(props: CommentProps) {
                             {comment.upvote_count ? <p className={clsx(compact && 'text-tiny')} >{comment.upvote_count}</p> : null}
                         </div>
 
-
-
-
-                        <div className='flex space-x-1 items-center'>
+                        <div className='flex gap-1 items-center'>
                             <Popover placement='top-start' backdrop='opaque'
                                 shouldCloseOnBlur={true}
                                 isOpen={downvotePopup}
-                                onOpenChange={(open) => handleOnVote(open, true)}
-                            >
+                                onOpenChange={(open) => handleOnVote(open, true)} >
                                 <PopoverTrigger>
-                                    <Button variant='ghost' size='sm' className='border-0 rounded-full text-2xl '
+                                    <Button variant='ghost' size='sm'
+                                        className='border-0 rounded-full text-xl min-w-0 w-6 h-6 '
                                         isLoading={comment?.status === 'downvoting'} isIconOnly>
-                                        {(comment.observer_vote && comment.observer_vote_percent < 0) ? <IoChevronDownCircleSharp /> : <IoChevronDownCircleOutline />}
+                                        {(comment.observer_vote && comment.observer_vote_percent < 0) ?
+                                            <IoChevronDownCircleSharp className={clsx('text-default-600', compact ? 'text-md' : 'text-xl')} />
+                                            : <IoChevronDownCircleOutline className={clsx('text-default-600', compact ? 'text-md' : 'text-xl')} />}
                                     </Button>
                                 </PopoverTrigger>
-                                <PopoverContent className="p-1">
+                                <PopoverContent >
                                     <VotingModal {...props}
                                         isOpen={downvotePopup}
                                         downvote onConfirm={castVote} />
@@ -176,30 +180,29 @@ export default memo(function CommentFooter(props: CommentProps) {
                             {comment.downvote_count ? <p className={clsx(compact && 'text-tiny')}>{comment.downvote_count}</p> : null}
                         </div>
 
-
-
-
                     </div>
 
-                    <div className='flex items-center space-x-2'>
-                        {!compact && comment.children ? <div className='flex space-x-1 items-center'>
-                            <IconButton IconType={MdComment} tooltip='Comment' />
-                            <p>{comment.children}</p>
+                    <div className='flex items-center gap-2'>
+                        {!compact && comment.children ?
+                            <div className='flex items-center gap-1'>
+                                <MdComment className={clsx('text-default-600', compact ? 'text-md' : 'text-xl')} />
+                                <p className={clsx(compact && 'text-tiny', 'text-start')}>{comment.children}</p>
 
-                        </div> : null}
+
+                            </div> : null}
 
                         {!isReply && comment.resteem_count ?
-                            <div className='flex space-x-1 items-center'>
-                                <IconButton IconType={SlLoop} tooltip='Reblog' />
-                                <p className={clsx(compact && 'text-tiny')}>{comment.resteem_count}</p>
+                            <div className='flex items-center gap-1'>
+                                <SlLoop className={clsx('text-default-600', compact ? 'text-md' : 'text-xl')} />
+                                <p className={clsx(compact && 'text-tiny', 'text-start')}>{comment.resteem_count}</p>
 
                             </div> : null}
                     </div>
                 </div>
 
                 <div className='pr-1 '>
-                    {comment.payout ? <div className='flex space-x-0 items-center'>
-                        <IconButton IconType={PiCurrencyCircleDollarFill} />
+                    {comment.payout ? <div className='flex flex-row items-center gap-1'>
+                        <PiCurrencyCircleDollarFill className={clsx('text-default-600', compact ? 'text-md' : 'text-xl')} />
                         <p className={clsx(compact && 'text-tiny')}> {comment.payout?.toFixed(3)}</p>
                     </div> : null}
                 </div>

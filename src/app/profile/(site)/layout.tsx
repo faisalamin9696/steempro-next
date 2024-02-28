@@ -7,6 +7,7 @@ import { getResizedAvatar } from "@/libs/utils/image";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
 import { getServerSession } from "next-auth/next";
 import ProfileEnd from "./@end/page";
+import { revalidatePath } from "next/cache";
 
 
 export default async function Layout({
@@ -22,6 +23,7 @@ export default async function Layout({
     const session = await getServerSession();
     const data = await getAuthorExt(username, session?.user?.name || 'null');
 
+    revalidatePath('/@faisalamin/blogs', 'layout')
     return (
         <main className="main flex flex-col">
 
@@ -43,7 +45,7 @@ export async function generateMetadata(parent: ResolvingMetadata) {
 
     const previousImages = (await parent)?.openGraph?.images || [];
     const result = await getAuthorExt(username, session?.user?.name || 'null');
-    const { name, about, website } = JSON.parse(result.posting_json_metadata || '{}')?.profile;
+    const { name, about, website } = JSON.parse(result.posting_json_metadata || '{}')?.profile ?? {};
 
     return {
         title: (name ? `${name} (@${username})` : username) ?? `(@${username})`,

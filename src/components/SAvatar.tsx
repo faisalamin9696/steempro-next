@@ -23,18 +23,20 @@ export default function SAvatar(props: Props) {
 
 
     if (!username) return <></>
-    return (<Image
-        title={username}
-        onError={(e) => {
-            e.currentTarget.src = '/image-placeholder.png'
+    return (<div>
+        <Image
+            title={username}
+            onError={(e) => {
+                e.currentTarget.src = '/image-placeholder.png'
 
-        }}
-        alt=""
-        height={imageSize}
-        width={imageSize}
-        onClick={onClick}
-        src={`${getResizedAvatar(username, quality ?? 'small')}`}
-        className={clsx(' shadow-lg rounded-full', border && 'border', className)}
-    />
+            }}
+            alt=""
+            height={imageSize}
+            width={imageSize}
+            onClick={onClick}
+            src={`${getResizedAvatar(username, quality ?? 'small')}`}
+            className={clsx(' shadow-lg rounded-full', border && 'border', className)}
+        />
+    </div>
     )
 }

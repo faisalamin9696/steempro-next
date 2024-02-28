@@ -17,7 +17,7 @@ interface Props {
 export default function MainWrapper(props: Props) {
     const { children, className, startContent, endContent, endClassName, startClassName } = props;
     return (
-        <div className="container gap-4 px-4 pt-4 max-sm:px-2 max-sm:pt-2">
+        <div className="main-container gap-4 px-4 pt-4 max-sm:px-2 max-sm:pt-2">
 
             {startContent && <div
                 className={clsx(`left hidden rounded-lg scrollbar-thin xl:block`, startClassName)}>

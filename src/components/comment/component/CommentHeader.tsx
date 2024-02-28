@@ -4,7 +4,7 @@ import { FaEllipsis } from "react-icons/fa6";
 import { useAppSelector } from '@/libs/constants/AppFunctions';
 import Reputation from '@/components/Reputation';
 import { getResizedAvatar } from '@/libs/utils/image';
-import TimeAgoWrapper from '@/components/TimeAgoWrapper';
+import TimeAgoWrapper from '@/components/wrapper/TimeAgoWrapper';
 import { validateCommunity } from '@/libs/utils/helper';
 import { getSettings } from '@/libs/utils/user';
 import STag from '@/components/STag';
@@ -24,6 +24,7 @@ import { RiEdit2Fill } from "react-icons/ri";
 import { LuHistory } from "react-icons/lu";
 import { toast } from 'sonner';
 import { BsClipboard2Minus } from "react-icons/bs";
+import usePathnameClient from '@/libs/utils/usePathnameClient';
 
 const DynamicUserCard = dynamic(() => import('../../UserCard'));
 
@@ -41,6 +42,7 @@ export default memo(function CommentHeader(props: Props) {
     const { data: session } = useSession();
     const username = session?.user?.name;
     const isSelf = comment.author === username;
+    const { username: pathUsername } = usePathnameClient();
 
     const canMute = username && Role.atLeast(comment.observer_role, 'mod');
     const canDelete = !comment.children && isSelf && allowDelete(comment);
@@ -48,13 +50,22 @@ export default memo(function CommentHeader(props: Props) {
     const allowReply = Role.canComment(comment.community, comment.observer_role);
     const canReply = isReply && allowReply && comment['depth'] < 255;
 
-    const authorLink = `/@${comment.author}/posts`;
+    const authorLink = `/@${comment.author}`;
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const router = useRouter();
 
 
+    function handleProfileClick() {
+        if (pathUsername !== comment.author) {
+            router.push(authorLink);
+            router.refresh();
+        }
+
+    }
+
     const menuItems = [
         { show: canEdit, key: "edit", name: "Edit", icon: RiEdit2Fill },
+        { show: true, key: "role", name: "Edit Role/Title", icon: LuHistory },
         { show: true, key: "history", name: "Edit History", icon: LuHistory },
         { show: false, key: "promote", name: "Promote", icon: GrAnnounce },
         { show: true, key: "copy", name: "Copy Link", icon: BsClipboard2Minus },
@@ -97,8 +108,67 @@ export default memo(function CommentHeader(props: Props) {
 
     return (<div className={clsx('main-comment-list flex card-content w-auto relative items-center', className)}>
 
+        <User
 
-        <Popover showArrow placement="bottom">
+            classNames={{
+                description: 'mt-1 text-default-900/60 dark:text-gray-200 text-sm',
+                name: 'text-default-800'
+            }}
+            name={<div className='flex items-center gap-1'>
+                {isSelf ? <p>{comment.author}</p> :
+                    <div>{comment.author}</div>
+                }
+                <Reputation reputation={comment.author_reputation} />
+
+                {(!isReply && !compact) ?
+                    <Dropdown>
+                        <DropdownTrigger>
+                            <Button size='sm' radius='full' isIconOnly variant='light'>
+                                <FaEllipsis className='text-lg' />
+                            </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu
+                            onAction={handleMenuActions} hideEmptyContent>
+                            {renderedItems}
+                        </DropdownMenu>
+                    </Dropdown>
+                    : null}
+            </div>}
+            description={<div className='flex flex-col'>
+
+                {comment.author_role && comment.author_title ?
+                    <div className='flex gap-2 items-center'>
+                        <p className='flex-none'>
+                            {comment.author_role}
+                        </p>
+                        <p className='flex-none dark:bg-default-900/30 text-tiny font-light px-1 rounded-lg'>{comment.author_title}</p>
+                    </div> : null}
+
+                <div className={clsx(`time-div flex`, compact ? 'gap-0' : 'max-sm:flex-col sm:gap-2')}>
+                    <TimeAgoWrapper lang={settings.lang.code} created={comment.created * 1000} lastUpdate={comment.last_update * 1000} />
+
+                    {!isReply && <div className='flex gap-1  sm:items-center'>
+                        <p>in</p>
+
+                        <STag className='text-md font-bold '
+                            content={comment.community || (validateCommunity(comment.category) ? comment.category :
+                                `#${comment.category}`)} tag={comment.category} />
+
+                    </div>}
+                </div>
+
+            </div>}
+            avatarProps={{
+                className: 'cursor-pointer',
+                src: getResizedAvatar(comment.author),
+                as: 'a',
+                onClick: handleProfileClick
+
+
+            }}
+        />
+
+        {/* <Popover showArrow placement="bottom">
             <PopoverTrigger>
                 <User
 
@@ -145,9 +215,7 @@ export default memo(function CommentHeader(props: Props) {
                                 <STag className='text-md font-bold '
                                     content={comment.community || (validateCommunity(comment.category) ? comment.category :
                                         `#${comment.category}`)} tag={comment.category} />
-                                {/* {json_metadata?.app && <STooltip content={`${'Posted using'} ${json_metadata?.app}`}>
-                                <p>● {json_metadata?.app?.split('/')?.[0]}</p>
-                            </STooltip>} */}
+                               
                             </div>}
                         </div>
 
@@ -155,10 +223,10 @@ export default memo(function CommentHeader(props: Props) {
                     avatarProps={{
                         className: 'cursor-pointer',
                         src: getResizedAvatar(comment.author),
-                        // as: 'a',
-                        // onClick: () => {
-                        //     navigation.push(authorLink);
-                        // },
+                        as: 'a',
+                        onClick: () => {
+                            router.push(authorLink);
+                        },
 
 
                     }}
@@ -167,7 +235,7 @@ export default memo(function CommentHeader(props: Props) {
             <PopoverContent className="p-1">
                 <DynamicUserCard username={comment.author} />
             </PopoverContent>
-        </Popover>
+        </Popover> */}
 
         {!isReply && !compact && <div className='absolute top-0 text-tiny right-0 items-center px-1'>
             <div className='flex flex-col items-end gap-2'>

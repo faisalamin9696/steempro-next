@@ -35,7 +35,6 @@ export default function ProfilePage() {
                 size='sm'
                 disableAnimation
                 disableCursorAnimation
-                fullWidth={isMobile}
                 color={'secondary'}
                 radius="full"
                 hidden={true}

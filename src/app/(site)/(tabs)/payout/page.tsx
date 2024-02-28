@@ -26,7 +26,7 @@ export default function HomePayoutTab() {
     return (
         <div >
             <div className='flex flex-col space-y-2'>
-                <FeedList gridClassName='md:grid-cols-1'
+                <FeedList className='md:grid-cols-1'
                     endPoint={getEndPoint('ActivePostsByPayout')} />
             </div>
 

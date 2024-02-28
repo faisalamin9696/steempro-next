@@ -3,7 +3,7 @@ import { Button, Card, User } from "@nextui-org/react";
 import { abbreviateNumber } from "@/libs/utils/helper";
 import Reputation from "./Reputation";
 import { FaClock, FaEllipsis } from "react-icons/fa6";
-import TimeAgoWrapper from "./TimeAgoWrapper";
+import TimeAgoWrapper from "./wrapper/TimeAgoWrapper";
 import { getResizedAvatar } from "@/libs/utils/image";
 import { useRouter } from "next/navigation";
 

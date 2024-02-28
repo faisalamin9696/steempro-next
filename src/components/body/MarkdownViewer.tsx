@@ -7,6 +7,7 @@ import CryptoJS from 'crypto-js';
 import SanitizeConfig, { noImageText } from './SanitizeConfig';
 import HtmlReady from './htmlReady';
 import sanitize from 'sanitize-html';
+import { replaceOldDomains } from '@/libs/utils/Links';
 
 const remarkable = new Remarkable({
     html: true, // remarkable renders first then sanitize runs...
@@ -82,6 +83,8 @@ export default memo(function MarkdownViewer(props: Props) {
     if (!(renderedText.indexOf('<html>') !== 0)) {
         renderedText = '<html>' + renderedText + '</html>';
     }
+
+    renderedText = replaceOldDomains(renderedText);
 
     if (renderedText)
         renderedText = HtmlReady(renderedText, {

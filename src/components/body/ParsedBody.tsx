@@ -3,10 +3,17 @@ import parse, { domToReact } from 'html-react-parser';
 import React from 'react';
 import CommentCover from '../comment/component/CommentCover';
 import './style.scss';
-// import { Image } from '@nextui-org/react'
+import { MdOpenInNew } from "react-icons/md";
+import { proxifyImageUrl } from '@/libs/utils/ProxifyUrl';
+import { getProxyImageURL } from '@/libs/utils/image';
 
 export function ParsedBody({ body }: { body: string }): JSX.Element {
 
+
+    function handleOpenImage(url?: string) {
+        if (url && window)
+            window.open(getProxyImageURL(proxifyImageUrl(url, false), 'large'), '_blank')?.focus()
+    }
     const options = {
         replace(domNode) {
             if (domNode?.attribs && domNode?.name === 'img') {
@@ -14,18 +21,25 @@ export function ParsedBody({ body }: { body: string }): JSX.Element {
                     <CommentCover
                         src={domNode?.attribs?.src}
                         alt={domNode?.attribs?.alt}
-                        noCard/>
+                        noCard />
 
                     <Button size='sm'
+                        isIconOnly
+                        title='Open image'
+                        variant='flat'
+                        onPress={() => handleOpenImage(domNode?.attribs?.src)}
+                        radius='full'
                         className='open-button absolute top-0 right-0'>
-                        Open
+                        <MdOpenInNew className='text-xl' />
                     </Button>
                 </div>
 
             }
             if (domNode?.attribs && domNode?.name === 'a') {
                 return <Link
-                    {...domNode?.attribs}>
+                    {...domNode?.attribs}
+
+                >
                     {domToReact(domNode.children)}</Link>
 
             }
@@ -38,9 +52,7 @@ export function ParsedBody({ body }: { body: string }): JSX.Element {
                         {domToReact(domNode.children)}
                     </table>
 
-                    <script>
 
-                    </script>
                 </div>;
             }
 

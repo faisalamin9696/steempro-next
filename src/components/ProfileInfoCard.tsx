@@ -12,7 +12,7 @@ import SAvatar from '@/components/SAvatar';
 import STooltip from '@/components/STooltip';
 import { abbreviateNumber } from '@/libs/utils/helper';
 import { getResizedAvatar } from '@/libs/utils/image';
-import TimeAgoWrapper from '@/components/TimeAgoWrapper'
+import TimeAgoWrapper from '@/components/wrapper/TimeAgoWrapper'
 import { getClubStatus, getVoteData } from '@/libs/steem/sds'
 
 
@@ -80,7 +80,7 @@ export default memo(function ProfileInfoCard(props: Props) {
         bg-transparent items-start gap-4 p-2 w-full bg-white dark:bg-white/5">
             <div className="flex flex-row justify-between gap-2 w-full">
                 <div className="flex gap-2">
-                    <SAvatar username={username || data?.name || ''} />
+                    <SAvatar size='sm' username={username || data?.name || ''} />
                     <div className="flex flex-col items-start justify-center">
                         <h4 className="text-small font-semibold leading-none text-default-600">{posting_json_metadata?.profile?.name}</h4>
                         {/* <Link prefetch={false} href={authorLink}>{comment.author}</Link> */}

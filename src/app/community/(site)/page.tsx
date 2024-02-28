@@ -28,7 +28,6 @@ export default function CommunityPage() {
                 size='sm'
                 disableAnimation
                 disableCursorAnimation
-                fullWidth={isMobile}
                 color={'secondary'} radius="full"
                 className='justify-center transition-all delay-500'
                 defaultSelectedKey={category ?? 'trendings'}

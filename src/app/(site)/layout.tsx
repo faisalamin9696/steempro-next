@@ -1,5 +1,7 @@
 import MainWrapper from '@/components/wrapper/MainWrapper';
+import { getServerSession } from 'next-auth';
 import React from 'react'
+import HomePage from './page';
 
 export default async function Layout({
     children,
@@ -11,14 +13,16 @@ export default async function Layout({
     end: React.ReactNode,
 
 }>) {
+    const session = await getServerSession();
+
     return (
 
+
         <MainWrapper
-         
+
             startContent={start}
-            startClassName={'md:block !static'}
-        >
-            {children}
+            startClassName={'md:block !static'} >
+            <HomePage isLogin={!!session?.user?.name} />
         </MainWrapper>
     )
 }

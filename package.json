@@ -47,6 +47,7 @@
     "striptags": "^3.2.0",
     "swr": "^2.2.4",
     "tronweb": "^5.3.2",
+    "use-mobile-detect-hook": "^1.0.5",
     "vanilla-tilt": "^1.8.1",
     "xmldom": "^0.6.0"
   },

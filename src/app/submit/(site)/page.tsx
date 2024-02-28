@@ -404,7 +404,7 @@ export default function SubmitPage(props: Props) {
         </div>
 
 
-        <div className={clsx(isEdit ? '' : '1md:w-[50%] ', 'flex flex-col w-full max-w-[640px] mb-10 gap-2')}>
+        <div className={clsx(isEdit ? '' : '1md:w-[50%] ', 'flex flex-col w-full mb-10 gap-2')}>
 
             <div className=' items-center flex justify-between'>
                 <p className='float-left text-default-900/70 font-bold'>{'Preview'}</p>

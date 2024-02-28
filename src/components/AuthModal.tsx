@@ -82,6 +82,7 @@ export default function AuthModal(props: Props) {
         await awaitTimeout(3);
 
         const credentials = getCredentials(password);
+        
 
         if (credentials?.key) {
             const enc = saveSessionKey(password);

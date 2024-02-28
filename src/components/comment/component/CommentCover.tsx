@@ -25,12 +25,11 @@ export default memo(function CommentCover(props: Props) {
         (src) ?
 
             noCard ? <Image
-                priority
+
                 className={clsx(isFetching && 'bg-background/50',
                     className)}
                 alt={alt || "image"}
                 src={src}
-                loading='eager'
                 height={640}
                 width={640}
                 // sizes={`(max-width: 768px) 100vw,
@@ -39,8 +38,9 @@ export default memo(function CommentCover(props: Props) {
                 onLoad={onLoadCompleted}
                 onError={onLoadCompleted}
                 style={{
+                    width: '100%',
                     height: 'auto',
-                    objectFit: 'contain'
+                    objectFit: 'contain',
                 }}
             /> :
 
@@ -49,27 +49,23 @@ export default memo(function CommentCover(props: Props) {
                         className)}>
                     {thumbnail ?
                         <Image
-                            priority
                             alt={alt || "image"}
                             src={src}
                             height={640}
                             width={640}
                             quality={60}
-                            //     sizes={`(max-width: 768px) 100vw,
-                            // (max-width: 1200px) 50vw,
-                            // 33vw`}
+
                             onLoad={onLoadCompleted}
                             onError={onLoadCompleted}
                             style={{
                                 width: '100%',
-                                objectFit: 'contain',
+                                objectFit: 'cover',
                                 height: 'auto',
 
                             }}
                         />
                         :
                         <Image
-                            priority
                             src={src}
                             width={sm ? 130 : 200}
                             height={sm ? 70 : 160}

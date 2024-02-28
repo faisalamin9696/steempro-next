@@ -5,6 +5,7 @@ import { getPostThumbnail } from '@/libs/utils/image'
 import BodyShort from '@/components/body/BodyShort'
 import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator'
 import ViewCountCard from './ViewCountCard'
+import { useRouter } from 'next/navigation'
 
 
 type Props = {
@@ -15,13 +16,12 @@ export default memo(function CompactPost(props: Props) {
     // const URL = `/posts_api/getPost/${authPerm}`
     // const { data, isLoading, error, isValidating } = useSWR(URL, fetchSds<Post>)
     const thumbnail = getPostThumbnail(comment?.json_images);
+    const router = useRouter();
 
 
     function handlePostClick() {
-        location.href = `/${comment.category}/@${comment.author}/${comment.permlink}`;
-        // router.push(`/${comment.category}/@${comment.author}/${comment.permlink}#`,
-        //     { scroll: false });
-        // router.refresh();
+        router.push(`/${comment.category}/@${comment.author}/${comment.permlink}`);
+        router.refresh();
     }
 
     return (
@@ -29,7 +29,7 @@ export default memo(function CompactPost(props: Props) {
             <div className="relative">
 
 
-                <CommentCover thumbnail src={thumbnail} />
+                <CommentCover className='max-h-40' thumbnail src={thumbnail} />
 
                 <div
                     className="rounded-lg hover:bg-transparent transition duration-300 absolute bottom-0 top-0 right-0 left-0 bg-gray-900 opacity-25">
@@ -43,7 +43,7 @@ export default memo(function CompactPost(props: Props) {
     </Link> */}
             </div>
             <Card isPressable onPress={handlePostClick}
-                shadow='none' radius='none' className=" text-start p-0 bg-transparent px-4 py-2 mb-auto">
+                shadow='none' radius='none' className=" text-start p-0 bg-transparent px-2 py-2 mb-auto">
                 <p
                     className="font-medium text-md mb-2">
                     {comment?.title}</p>
@@ -51,7 +51,7 @@ export default memo(function CompactPost(props: Props) {
                     <BodyShort body={comment?.body} />
                 </p>
             </Card>
-            <div className="px-4 py-2 flex flex-row items-center justify-between">
+            <div className="px-2 py-2 flex flex-row items-center justify-between">
                 <span className="py-1 text-xs font-regular  mr-1 flex flex-row items-center">
 
                     <span className="ml-1 text-default-900/80">{readingTime('', comment?.word_count).text}</span>

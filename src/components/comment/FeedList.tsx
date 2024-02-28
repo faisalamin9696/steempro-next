@@ -12,17 +12,16 @@ import { useMobile } from '@/libs/utils/useMobile';
 
 type Props = {
     endPoint: string;
-    gridClassName?: string;
+    className?: string;
 }
 
 export default memo(function FeedList(props: Props) {
-    const { endPoint, gridClassName } = props;
+    const { endPoint, className } = props;
     const { data, error, isLoading, mutate, isValidating } = useSWR(endPoint, fetchSds<Feed[]>);
     const [rows, setRows] = useState<Feed[]>([]);
     const [loadingMore, setLoadingMore] = useState(false);
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const isMobile = useMobile();
-
     const isGridStyle = settings.feedStyle === 'grid' && !isMobile;
 
 
@@ -86,8 +85,7 @@ export default memo(function FeedList(props: Props) {
                     <b>Yay! You have seen it all</b>
                 </p>
             }>
-            <div className={clsx(isGridStyle && ("grid gap-6 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2"),
-                isGridStyle && gridClassName)}>
+            <div className={clsx(isGridStyle && (className ? className : "gap-6 grid xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2"))}>
                 {rows?.map((comment) => {
                     return <CommentCard key={comment.link_id} comment={comment} />
                 })}

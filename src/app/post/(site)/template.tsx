@@ -25,7 +25,8 @@ export default async function LayoutTemplate({
     return (
         <main className="main" key={permlink}>
             <MainWrapper
-                endClassName={'md:block'}
+                endClassName={'1md:block !overflow-hidden'}
+                startClassName=' h-screen'
                 startContent={<PostStart />}
                 endContent={<ProfileInfoCard profile username={username} />}>
                 <PostPage data={data} />

@@ -36,14 +36,26 @@ export function decryptPrivateKey(encryptedPrivateKey: string, password: string)
         iterations: 1000
     });
 
-    // Decrypt the key
-    const decryptedKey = CryptoJS.AES.decrypt(encryptedKey, key128Bits, { iv });
+    try {
+        // Decrypt the key
+        const decryptedKey = CryptoJS.AES.decrypt(encryptedKey, key128Bits, { iv });
 
-    // Convert the decrypted key to a string
-    const privateKey = decryptedKey.toString(CryptoJS.enc.Utf8);
+        // Convert the decrypted key to a string
+        const privateKey = decryptedKey.toString(CryptoJS.enc.Utf8);
 
-    return privateKey;
+        // Check if the decrypted key is empty
+        if (!privateKey) {
+            throw new Error('Decryption failed: Invalid password');
+        }
+
+        return privateKey;
+    } catch (error) {
+        // Handle decryption errors (invalid password)
+        console.error('Decryption failed:', error);
+        return ''; // or throw an error
+    }
 }
+
 // // Usage example:
 // const privateKey = "your_private_key";
 // const password = "your_password";

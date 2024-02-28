@@ -3,7 +3,14 @@ import { validateCommunity } from './helper';
 
 
 // Define valid categories
-const valid_categories = ['trending', 'created', 'payout', 'important', 'about']
+
+const valid_tabs = ['blogs', 'posts', 'friends',
+    'comments', 'replies', 'wallet', 'communities', 'settings'];
+
+const basic_categories = ['trending', 'created',
+    'payout', 'communities'];
+
+const valid_categories = basic_categories.concat(['important', 'about']);
 
 // Define username URL regex
 const usernameURLRegex = /@([^/]+)/;

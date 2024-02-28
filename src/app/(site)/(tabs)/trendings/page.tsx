@@ -1,18 +1,13 @@
 "use client"
 
 import FeedList from '@/components/comment/FeedList';
-// import FeedList from '@/components/comment/FeedList';
 import { isDev } from '@/libs/constants/AppConstants';
 import { FeedTypes } from '@/libs/steem/sds';
-import usePathnameClient from '@/libs/utils/usePathnameClient';
 import { useSession } from 'next-auth/react';
-import dynamic from 'next/dynamic';
 import React from 'react'
 
 export default function HomeTrendingsTab() {
     const { data: session } = useSession();
-    const { username } = usePathnameClient();
-
 
     function getEndPoint(feedType: FeedTypes,
         bodyLength = 250,
@@ -26,7 +21,7 @@ export default function HomeTrendingsTab() {
     return (
         <div >
             <div className='flex flex-col space-y-2'>
-                <FeedList gridClassName='md:grid-cols-1'
+                <FeedList className='grid grid-cols-1 gap-6 1md:grid-cols-2 xl:grid-cols-3'
                     endPoint={getEndPoint('ActivePostsByTrending')} />
             </div>
 

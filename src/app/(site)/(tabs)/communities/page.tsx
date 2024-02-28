@@ -9,7 +9,7 @@ import { useSession } from 'next-auth/react';
 import dynamic from 'next/dynamic';
 import React from 'react'
 
-export default function HomeCreatedTab() {
+export default function HomeCommunitiesTab() {
     const { data: session } = useSession();
     const { username } = usePathnameClient();
 
@@ -19,7 +19,7 @@ export default function HomeCreatedTab() {
         limit = 1000,
         offset = 0) {
         const URL = `${isDev ? 'test' : ''}/feeds_api/get${feedType ??
-            'PostsByAuthor'}/${session?.user?.name ?? 'null'}/${bodyLength}/${limit}/${offset}`;
+            'AccountCommunitiesFeedByCreated'}/${session?.user?.name ?? 'null'}/${session?.user?.name ?? 'null'}/${bodyLength}/${limit}/${offset}`;
         return URL.trim();
     }
 
@@ -27,7 +27,7 @@ export default function HomeCreatedTab() {
         <div >
             <div className='flex flex-col space-y-2'>
                 <FeedList className='md:grid-cols-1'
-                    endPoint={getEndPoint('ActivePostsByCreated')} />
+                    endPoint={getEndPoint('AccountCommunitiesFeedByCreated')} />
             </div>
 
         </div>

@@ -75,7 +75,7 @@ export default function PostPage(props: Props) {
 
                 <div className='flex flex-col px-1 items-center'>
                     <Card shadow='none'
-                        className='w-full gap-4 max-w-[640px] bg-transparent'>
+                        className='w-full gap-4 bg-transparent'>
 
                         <div className="space-y-4 flex-col">
                             <>
@@ -86,7 +86,7 @@ export default function PostPage(props: Props) {
                             <h2 className="text-xl font-bold text-black dark:text-white">{commentInfo.title}</h2>
 
                         </div>
-                        <div className='self-center'>
+                        <div className='flex flex-col items-center'>
 
                             <MarkdownViewer text={commentInfo.body} />
                         </div>

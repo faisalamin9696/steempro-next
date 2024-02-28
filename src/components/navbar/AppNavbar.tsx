@@ -17,6 +17,19 @@ import AccountsModal from '../AccountsModal';
 const NavbarDrawerItems = dynamic(() => import('./NavbarDrawerItems'))
 
 
+const menuItems = [
+    "Profile",
+    "Dashboard",
+    "Activity",
+    "Analytics",
+    "System",
+    "Deployments",
+    "My Settings",
+    "Team Settings",
+    "Help & Feedback",
+    "Log Out",
+];
+
 export default function AppNavbar() {
 
     const { authenticateUser, isLogin } = useLogin();
@@ -27,6 +40,7 @@ export default function AppNavbar() {
     const router = useRouter();
     const [isPopOpen, setIsPopOpen] = React.useState(false);
     const [isAccOpen, setIsAccOpen] = React.useState(false);
+    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
 
 
@@ -60,19 +74,23 @@ export default function AppNavbar() {
     return (
         <Navbar
             className='shadow-xl w-full h-16  !px-0 !p-0'
-            shouldHideOnScroll>
+            shouldHideOnScroll={!isMenuOpen}
+            isMenuOpen={isMenuOpen}
 
+            onMenuOpenChange={setIsMenuOpen}>
 
-            <NavbarDrawerItems />
-            {/* 
-            <NavbarMenuToggle
-                draggable
-                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-                className=" z-10"
-            >
-                <NavbarDrawerItems />
-            </NavbarMenuToggle> */}
-            <NavbarBrand className="justify-center absolute right-0 left-0 z-0">
+            <NavbarContent justify="start" className=' !grow-0'>
+                <NavbarMenuToggle />
+            </NavbarContent>
+
+            <NavbarMenu >
+                <NavbarDrawerItems onItemClick={() => {
+                    setIsMenuOpen(!isMenuOpen)
+                }} />
+            </NavbarMenu>
+
+            <NavbarBrand
+                className="justify-center absolute right-0 left-0 z-[-10]">
 
                 <Link href={'/'} className=''>
                     <Image
@@ -109,7 +127,7 @@ export default function AppNavbar() {
 
                     <Input
                         radius='full'
-                        className='hidden lg:block'
+                        className='hidden 1md:block'
                         classNames={{
                             base: "max-w-full sm:max-w-[10rem] h-8",
                             mainWrapper: "h-full ",
@@ -123,11 +141,13 @@ export default function AppNavbar() {
                         type="search"
                     />
 
-                    <Button radius='full' isIconOnly size='sm' variant='light'
+                    <Button radius='full'
+                        className='1md:hidden '
+                        isIconOnly size='sm' variant='light'
                         onPress={() => {
                             authenticateUser();
                         }}>
-                        <MdSearch className='text-xl text-default-600' />
+                        <MdSearch className='text-xl text-default-600 ' />
                     </Button>
 
 

@@ -1,21 +1,8 @@
-import { useState, useEffect, useMemo } from 'react';
+import useMobileDetect from 'use-mobile-detect-hook';
+
 
 export const useMobile = (): boolean => {
-  const [windowWidth, setWindowWidth] = useState<number>(720);
+  const detectMobile = useMobileDetect();
 
-  useEffect(() => {
-    const handleResize = (): void => {
-      setWindowWidth(window.innerWidth);
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []); // Empty dependency array ensures that the effect runs only once on mount
-
-  const _isMobile = useMemo(() => windowWidth < 570, [windowWidth]);
-
-  return _isMobile;
+  return detectMobile.isMobile();
 };

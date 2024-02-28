@@ -18,7 +18,7 @@ export function getCredentials(password?: string):
                     memo: ''
                 }
             }
-            return credentials;
+            return { ...credentials, key: privateKey };
         }
     }
     catch {

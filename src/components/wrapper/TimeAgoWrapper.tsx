@@ -1,5 +1,4 @@
 import moment from 'moment';
-import STooltip from './STooltip';
 import { getTimeFromNow } from '@/libs/utils/time';
 import clsx from 'clsx';
 
@@ -40,14 +39,13 @@ export default function TimeAgoWrapper(props: Props) {
         <div>
             <span>
                 <div className={clsx('flex space-x-1')}>
-                    <STooltip content={moment(created).locale(lang || 'en').format('lll') ?? getTimeFromNow(created, withoutUtc ?? false)} >
-                        <p className={className}>{getTimeFromNow(created, withoutUtc ?? false)?.toLowerCase()}</p>
-                    </STooltip>
+                    <p className={className} title={moment(created).locale(lang || 'en').format('lll') ?? getTimeFromNow(created, withoutUtc ?? false)}>
+                        {getTimeFromNow(created, withoutUtc ?? false)?.toLowerCase()}
+                    </p>
 
                     {lastUpdate && (created !== lastUpdate) ?
-                        <STooltip content={moment(lastUpdate).locale(lang || 'en').format('lll') ?? getTimeFromNow(lastUpdate, withoutUtc ?? false)} >
-                            <p className={className}>(edited)</p>
-                        </STooltip>
+                        <p title={moment(lastUpdate).locale(lang || 'en').format('lll') ?? getTimeFromNow(lastUpdate, withoutUtc ?? false)}
+                            className={className}>(edited)</p>
                         : null}
 
 
