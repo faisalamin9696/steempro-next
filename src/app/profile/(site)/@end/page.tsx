@@ -15,9 +15,10 @@ export default function ProfileEnd() {
   const { data: session } = useSession();
 
   const [recomendations, setRecomendations] = useState<string[]>([]);
-  const followingList = [username].concat([session?.user?.name || ''])
+  let followingList = [username].concat([session?.user?.name || ''])
 
   useEffect(() => {
+    followingList = [username].concat([session?.user?.name || '']);
     setRecomendations(filterRecommendations(followingList));
   }, []);
 

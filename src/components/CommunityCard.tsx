@@ -32,8 +32,8 @@ export const CommunityCard = memo((props: Props) => {
     }
 
     return (
-        <Card isBlurred isPressable={compact} onPress={handleExplore}
-            className="relative flex flex-col items-start gap-2 p-4 w-full bg-foreground/10">
+        <Card isPressable={compact} onPress={handleExplore}
+            className="relative flex flex-col items-start gap-2 p-4 w-full bg-white dark:bg-white/5">
 
             {!compact &&
                 <Button onPress={handleExplore}

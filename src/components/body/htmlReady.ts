@@ -501,13 +501,12 @@ function dtubeId(data: any) {
 }
 
 function ipfsPrefix(url) {
-    if (false) {
-        // Convert //ipfs/xxx  or /ipfs/xxx  into  https://steemit.com/ipfs/xxxxx
-        if (/^\/?\/ipfs\//.test(url)) {
-            const slash = url.charAt(1) === '/' ? 1 : 0;
-            url = url.substring(slash + '/ipfs/'.length); // start with only 1 /
-            return '' + '/' + url;
-        }
+    // Convert //ipfs/xxx  or /ipfs/xxx  into  https://steemit.com/ipfs/xxxxx
+    if (/^\/?\/ipfs\//.test(url)) {
+        const slash = url.charAt(1) === '/' ? 1 : 0;
+        url = url.substring(slash + '/ipfs/'.length); // start with only 1 /
+        return '' + '/' + url;
     }
+
     return url;
 }
