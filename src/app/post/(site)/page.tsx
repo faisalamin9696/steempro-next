@@ -10,7 +10,7 @@ import { getSettings } from '@/libs/utils/user';
 import { Card, CardFooter } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import { updatePostView } from '@/libs/firebase/firebaseApp';
 import { getAuth } from 'firebase/auth';

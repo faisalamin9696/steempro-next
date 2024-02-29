@@ -16,7 +16,7 @@ import { MdDelete } from 'react-icons/md';
 import { GrAnnounce } from "react-icons/gr";
 import ViewCountCard from '@/components/ViewCountCard';
 import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next13-progressbar';
 import { Role } from '@/libs/utils/community';
 import { allowDelete } from '@/libs/utils/StateFunctions';
 import { MdOutlineDoNotDisturb } from "react-icons/md";

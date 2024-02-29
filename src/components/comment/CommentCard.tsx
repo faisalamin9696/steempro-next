@@ -3,7 +3,7 @@
 import { memo, useMemo } from 'react';
 import './style.scss';
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next13-progressbar';
 import { useAppSelector } from '@/libs/constants/AppFunctions';
 import  useMobile  from '@/libs/utils/useMobile';
 import { getSettings } from '@/libs/utils/user';

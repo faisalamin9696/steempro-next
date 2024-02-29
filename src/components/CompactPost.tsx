@@ -5,7 +5,7 @@ import { getPostThumbnail } from '@/libs/utils/image'
 import BodyShort from '@/components/body/BodyShort'
 import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator'
 import ViewCountCard from './ViewCountCard'
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next13-progressbar';
 
 
 type Props = {

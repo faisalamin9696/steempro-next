@@ -3,7 +3,7 @@
 import { store } from '@/libs/redux/store';
 import { NextUIProvider } from '@nextui-org/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next13-progressbar';
 import { Provider as ReduxProvider } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { persistQueryClient } from '@tanstack/react-query-persist-client'
@@ -22,6 +22,8 @@ import {
     signInAnonymously, getAuth
 } from "firebase/auth";
 import { toast } from 'sonner';
+import { Next13ProgressBar } from 'next13-progressbar';
+
 
 type Props = {
     children: React.ReactNode;
@@ -42,7 +44,7 @@ export function Providers(props: Props) {
             if (!auth.currentUser)
                 signInAnonymously(auth);
 
-        
+
         } catch (error) {
             // failed silently
         }
@@ -79,7 +81,7 @@ export function Providers(props: Props) {
     useEffect(() => {
         setIsMounted(true);
     }, []);
-    return (
+    return (<>
         <ReduxProvider store={store}>
             <QueryClientProvider client={client}>
                 <ThemeProvider attribute="class"  >
@@ -113,5 +115,10 @@ export function Providers(props: Props) {
                 </ThemeProvider>
             </QueryClientProvider>
         </ReduxProvider>
+        <Next13ProgressBar height="4px"
+            color="#ED4D5E"
+            options={{ showSpinner: false }} showOnShallow />
+
+    </>
     )
 }

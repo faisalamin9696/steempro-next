@@ -11,7 +11,7 @@ import { getResizedAvatar } from "@/libs/utils/image";
 import STooltip from "./STooltip";
 import LoadingCard from "./LoadingCard";
 import FollowButton from "./FollowButton";
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next13-progressbar';
 import { addProfileHandler } from "@/libs/redux/reducers/ProfileReducer";
 
 

@@ -12,7 +12,7 @@ import { getResizedAvatar } from '@/libs/utils/image';
 import Image from 'next/image';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next13-progressbar';
 import AccountsModal from '../AccountsModal';
 const NavbarDrawerItems = dynamic(() => import('./NavbarDrawerItems'))
 

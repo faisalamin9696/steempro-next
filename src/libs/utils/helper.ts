@@ -7,30 +7,40 @@ export const validateCommunity = (tag?: string): boolean => {
 
 }
 
-export function abbreviateNumber(number?: number, floatFixes = 0): string {
-    if (!number)
-        return '0'
-    var SI_SYMBOL = ['', 'k', 'M', 'G', 'T', 'P', 'E'];
 
-    // what tier? (determines SI symbol)
-    var tier = (Math.log10(Math.abs(number)) / 3) | 0;
+export function abbreviateNumber(number?: number, decimalPlaces = 1): string | number {
+    if (number === 0 || !number) return '0';
 
-    // if zero, we don't need a suffix
-    if (tier === 0 || tier === -1) return number?.toFixed(floatFixes);
+    const SI_SYMBOL = ['', 'K', 'M', 'B', 'T', 'Q'];
 
-    // get suffix and determine scale
-    var suffix = SI_SYMBOL[tier];
-    var scale = Math.pow(10, tier * 3);
 
-    // scale the number
-    var scaled = number / scale;
+    const tier = Math.log10(Math.abs(number)) / 3 | 0;
 
-    // format number and add suffix
-    return scaled.toFixed(floatFixes) + suffix;
+    if (tier === 0) return number.toFixed(0);
+
+
+
+
+    const suffix = SI_SYMBOL[tier];
+    const scale = Math.pow(10, tier * 3);
+
+    const scaled = number / scale;
+
+    const decimalPart = String(scaled).substring(scaled.toString().indexOf('.') + 1);
+    if (parseFloat(decimalPart) === 0) {
+        decimalPlaces = 0;
+    }
+
+
+
+    let formattedNumber = scaled.toFixed(decimalPlaces);
+
+
+    // Remove decimal part if it's zero
+
+
+    return formattedNumber + suffix;
 }
-
-
-
 export const toBase64 = (file) =>
     new Promise((resolve, reject) => {
         const reader = new FileReader();

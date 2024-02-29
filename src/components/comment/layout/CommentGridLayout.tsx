@@ -5,7 +5,7 @@ import BodyShort from '../../body/BodyShort';
 import Image from 'next/image';
 import { getPostThumbnail, getResizedAvatar } from '@/libs/utils/image';
 import TimeAgoWrapper from '../../wrapper/TimeAgoWrapper';
-import { Card, Popover, PopoverContent, PopoverTrigger, User } from '@nextui-org/react';
+import { Card, User } from '@nextui-org/react';
 import { useSession } from 'next-auth/react';
 import Reputation from '@/components/Reputation';
 import dynamic from 'next/dynamic';
@@ -17,8 +17,7 @@ import { FaClock } from 'react-icons/fa';
 import { CommentProps } from '../CommentCard';
 import clsx from 'clsx';
 import { validateCommunity } from '@/libs/utils/helper';
-import { useRouter } from 'next/navigation';
-import STooltip from '@/components/STooltip';
+import { useRouter } from 'next13-progressbar';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import { useAppSelector } from '@/libs/constants/AppFunctions';
 
@@ -77,7 +76,7 @@ export default function CommentGridLayout(props: CommentProps) {
                 </div> */}
 
 
-                <STag className='text-tiny rounded-full border bg-background/90 backdrop-blur-lg p-1
+                <STag className='text-tiny rounded-full border bg-background/90 backdrop-blur-lg py-1 px-2
                  absolute m-2 top-0 right-0'
                     content={commentInfo.community ||
                         (validateCommunity(commentInfo.category) ? commentInfo.category :

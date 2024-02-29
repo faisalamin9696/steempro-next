@@ -9,13 +9,14 @@ import { signOut } from 'next-auth/react';
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import secureLocalStorage from 'react-secure-storage';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { abbreviateNumber } from '@/libs/utils/helper';
 import { IoLogOut } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
 import { useLogin } from '../useLogin';
 import { empty_profile } from '@/libs/constants/Placeholders';
 import Reputation from '../Reputation';
+import { useRouter } from 'next13-progressbar';
 
 
 

@@ -5,7 +5,7 @@ import Reputation from "./Reputation";
 import { FaClock, FaEllipsis } from "react-icons/fa6";
 import TimeAgoWrapper from "./wrapper/TimeAgoWrapper";
 import { getResizedAvatar } from "@/libs/utils/image";
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next13-progressbar';
 
 
 interface Props {
