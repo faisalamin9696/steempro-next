@@ -82,7 +82,7 @@ export default function AuthModal(props: Props) {
         await awaitTimeout(3);
 
         const credentials = getCredentials(password);
-        
+
 
         if (credentials?.key) {
             const enc = saveSessionKey(password);
@@ -250,6 +250,14 @@ export default function AuthModal(props: Props) {
             <Modal placement='center'
                 scrollBehavior='inside'
                 size='md'
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    if (isLocked && !isNew) {
+                        handleUnlock();
+                        return
+                    }
+                    handleLogin();
+                }}
                 backdrop={'opaque'}
                 isOpen={open}
                 isDismissable={!loading}

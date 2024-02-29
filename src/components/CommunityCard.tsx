@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { Button, Card, User } from "@nextui-org/react";
 import { abbreviateNumber } from "@/libs/utils/helper";
 import Reputation from "./Reputation";
@@ -14,7 +14,7 @@ interface Props {
 }
 
 
-export const CommunityCard = (props: Props) => {
+export const CommunityCard = memo((props: Props) => {
     const { community, compact } = props;
     // // const [isFollowed, setIsFollowed] = React.useState(comment.observer_follows_author === 1);
     // const { data: session } = useSession();
@@ -33,7 +33,7 @@ export const CommunityCard = (props: Props) => {
 
     return (
         <Card isBlurred isPressable={compact} onPress={handleExplore}
-            className="relative flex flex-col items-start gap-2 p-4 w-full">
+            className="relative flex flex-col items-start gap-2 p-4 w-full bg-foreground/10">
 
             {!compact &&
                 <Button onPress={handleExplore}
@@ -105,6 +105,6 @@ export const CommunityCard = (props: Props) => {
 
         </Card >
     );
-};
+});
 
 export default CommunityCard

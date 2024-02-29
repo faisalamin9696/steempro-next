@@ -46,9 +46,7 @@ type Feed = {
   | 'member'
   | 'mod'
   | 'admin'
-  | 'owner'
-  | ''
-  | string;
+  | 'owner' ;
   observer_title: string;
   observer_vote: 0 | 1 | number;
   observer_vote_percent: number;

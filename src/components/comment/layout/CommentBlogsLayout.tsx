@@ -5,24 +5,25 @@ import { getPostThumbnail } from "@/libs/utils/image";
 import CommentCover from "../component/CommentCover";
 import BodyShort from "@/components/body/BodyShort";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
-import { useMemo } from "react";
 import CommentFooter from "../component/CommentFooter";
+import { useAppSelector } from "@/libs/constants/AppFunctions";
 
 export default function CommentBlogLayout(props: CommentProps) {
     const { comment, onReplyClick, isReply } = props;
+    const commentInfo = useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment;
 
-    const thumbnail = getPostThumbnail(comment.json_images);
+    const thumbnail = getPostThumbnail(commentInfo.json_images);
 
     return <div className='w-full card card-compact flex-col gap-4 
     bg-white/60 dark:bg-white/10'>
 
         <div className='p-4'>
-            <CommentHeader comment={comment} compact className='w-full' />
+            <CommentHeader comment={commentInfo} compact className='w-full' />
 
 
         </div>
         <Card isPressable={!isReply} radius='none'
-            onClick={() => onReplyClick && onReplyClick(comment)}
+            onClick={() => onReplyClick && onReplyClick(commentInfo)}
             shadow='none'
             className='w-full bg-transparent gap-4 px-4'>
 
@@ -33,17 +34,16 @@ export default function CommentBlogLayout(props: CommentProps) {
 
             <p className='card-content line-clamp-2 overflow-hidden text-start w-full h-full'>
 
-                {useMemo(() => {
-                    return isReply ? <MarkdownViewer text={comment?.body} /> :
-                        <BodyShort body={comment.body} />
-                }, [comment.body])}
+                {isReply ? <MarkdownViewer text={commentInfo?.body} /> :
+                    <BodyShort body={commentInfo.body} />
+                }
 
 
             </p>
 
         </Card>
 
-        <CommentFooter comment={comment} compact
+        <CommentFooter comment={commentInfo} compact
             className='w-full' />
 
     </div>

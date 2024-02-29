@@ -20,23 +20,26 @@ import { validateCommunity } from '@/libs/utils/helper';
 import { useRouter } from 'next/navigation';
 import STooltip from '@/components/STooltip';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
+import { useAppSelector } from '@/libs/constants/AppFunctions';
 
 
 export default function CommentGridLayout(props: CommentProps) {
     const { comment, onReplyClick, isReply } = props;
-    const thumbnail = getPostThumbnail(comment.json_images);
+    const commentInfo = useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment;
+
+    const thumbnail = getPostThumbnail(commentInfo.json_images);
     const { username: pathUsername } = usePathnameClient();
     const { data: session } = useSession();
-    const isSelf = comment.author === session?.user?.name;
+    const isSelf = commentInfo.author === session?.user?.name;
     // const json_metadata = JSON.parse(comment?.json_metadata ?? '{}') as { tags?: string[], image?: string[], app?: string, format?: string }
-    const authorLink = `/@${comment.author}`;
+    const authorLink = `/@${commentInfo.author}`;
     const router = useRouter();
 
     const imageWidth = 200;
     const imageHeight = 176;
 
     function handleProfileClick() {
-        if (pathUsername !== comment.author) {
+        if (pathUsername !== commentInfo.author) {
             router.push(authorLink);
             router.refresh();
         }
@@ -76,20 +79,20 @@ export default function CommentGridLayout(props: CommentProps) {
 
                 <STag className='text-tiny rounded-full border bg-background/90 backdrop-blur-lg p-1
                  absolute m-2 top-0 right-0'
-                    content={comment.community ||
-                        (validateCommunity(comment.category) ? comment.category :
-                            `#${comment.category}`)} tag={comment.category} />
+                    content={commentInfo.community ||
+                        (validateCommunity(commentInfo.category) ? commentInfo.category :
+                            `#${commentInfo.category}`)} tag={commentInfo.category} />
 
             </div>
             <div className="flex flex-1 flex-col justify-between p-4">
                 <div className="flex-1">
 
                     <Card isPressable={!isReply} radius='none'
-                        onClick={() => onReplyClick && onReplyClick(comment)}
+                        onClick={() => onReplyClick && onReplyClick(commentInfo)}
                         shadow='none'
                         className={clsx('bg-transparent  w-full text-start')}>
-                        <p className="text-md font-semibold text-default-900">{comment.title}</p>
-                        <p className="mt-3 text-sm text-default-900/60"><BodyShort body={comment.body} className=' line-clamp-2' /></p>
+                        <p className="text-md font-semibold text-default-900">{commentInfo.title}</p>
+                        <p className="mt-3 text-sm text-default-900/60"><BodyShort body={commentInfo.body} className=' line-clamp-2' /></p>
                     </Card>
                 </div>
                 <div className=" mt-4 gap-6 flex flex-row items-center justify-between">
@@ -100,22 +103,22 @@ export default function CommentGridLayout(props: CommentProps) {
                             name: 'text-default-800'
                         }}
                         name={<div className='flex items-center space-x-2'>
-                            {isSelf ? <p>{comment.author}</p> :
-                                <div>{comment.author}</div>
+                            {isSelf ? <p>{commentInfo.author}</p> :
+                                <div>{commentInfo.author}</div>
                             }
-                            <Reputation {...props} reputation={comment.author_reputation} />
-                            {comment.author_role && comment.author_title ?
+                            <Reputation {...props} reputation={commentInfo.author_reputation} />
+                            {commentInfo.author_role && commentInfo.author_title ?
                                 <div className='flex space-x-2 items-center'>
                                     <p className='flex-none'>
-                                        {comment.author_role}
+                                        {commentInfo.author_role}
                                     </p>
                                 </div> : null}
 
                         </div>}
                         description={<div className='flex flex-col'>
-                            {comment.author_title && <div className='flex space-x-1 text-tiny rounded-full 
+                            {commentInfo.author_title && <div className='flex space-x-1 text-tiny rounded-full 
                                     border hover:bg-transparent border-default-900/50 px-1  '>
-                                {comment.author_title}
+                                {commentInfo.author_title}
 
                                 {/* {json_metadata?.app && <STooltip content={`${'Posted using'} ${json_metadata?.app}`}>
                                             <p>● {json_metadata?.app?.split('/')?.[0]}</p>
@@ -125,7 +128,7 @@ export default function CommentGridLayout(props: CommentProps) {
                         </div>}
                         avatarProps={{
                             className: 'cursor-pointer',
-                            src: getResizedAvatar(comment.author),
+                            src: getResizedAvatar(commentInfo.author),
                             as: 'a',
                             onClick: handleProfileClick,
 
@@ -197,7 +200,7 @@ export default function CommentGridLayout(props: CommentProps) {
 
                     <FaClock className=' text-sm' />
                     <span className="ml-1">
-                        <TimeAgoWrapper lang={'en'} created={comment.created * 1000} lastUpdate={comment.last_update * 1000} />
+                        <TimeAgoWrapper lang={'en'} created={commentInfo.created * 1000} lastUpdate={commentInfo.last_update * 1000} />
 
                     </span>
                 </span>
@@ -208,13 +211,13 @@ export default function CommentGridLayout(props: CommentProps) {
                             d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z">
                         </path>
                     </svg>
-                    <span className="ml-1">{comment.children} Comments</span>
+                    <span className="ml-1">{commentInfo.children} Comments</span>
                 </span>
             </div>
             <div className='px-2'>
                 <CommentFooter compact
                     className='rounded-lg'
-                    comment={comment} />
+                    comment={commentInfo} />
             </div>
         </Card>
 

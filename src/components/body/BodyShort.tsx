@@ -27,11 +27,9 @@ const BodyShort = (props: BodyShortProps): JSX.Element => {
 
     /* eslint-disable react/no-danger */
     return (
-        <div
-            className={props.className}
-            dangerouslySetInnerHTML={{ __html: textEllipsis(body, props?.length || 250) }
-            }
-        />
+        <div className={props.className}>
+            <div dangerouslySetInnerHTML={{ __html: textEllipsis(body, props?.length || 250) }} />
+        </div>
     )
 };
 

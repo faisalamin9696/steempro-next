@@ -21,7 +21,7 @@ export default async function Layout({
         <MainWrapper
 
             startContent={start}
-            startClassName={'md:block !static'} >
+            startClassName={'md:block !static scrollbar-default'} >
             <HomePage isLogin={!!session?.user?.name} />
         </MainWrapper>
     )

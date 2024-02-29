@@ -56,7 +56,6 @@ export default memo(function CommentFooter(props: CommentProps) {
         if (downvotePopup) setDownvotePopup(false);
 
         dispatch(addCommentHandler({ ...comment, status: downvote ? 'downvoting' : 'upvoting' }));
-        await awaitTimeout(1);
 
         try {
             const credentials = getCredentials(getSessionKey());

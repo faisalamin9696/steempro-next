@@ -89,40 +89,45 @@ export default function AppNavbar() {
                 }} />
             </NavbarMenu>
 
-            <NavbarBrand
-                className="justify-center absolute right-0 left-0 z-[-10]">
+            <NavbarContent justify='center'>
+                <NavbarBrand
+                    className="">
 
-                <Link href={'/'} className=''>
-                    <Image
-                        className='hidden sm:block'
-                        src={'/logo-default.png'}
-                        alt='logo'
-                        placeholder='blur'
-                        blurDataURL={'/logo-default.png'}
-                        priority
-                        height={40}
-                        width={150}
-                        style={{ width: 'auto' }}
+                    <Link href={'/'} className=''>
+                        <Image
+                            className='hidden sm:block'
+                            src={'/logo-default.png'}
+                            alt='logo'
+                            placeholder='blur'
+                            blurDataURL={'/logo-default.png'}
+                            priority
+                            height={40}
+                            width={150}
+                            style={{  height: 'auto' }}
 
-                    />
-                </Link>
-                <Link href={'/'}>
-                    <Image priority className='hidden max-sm:block'
-                        placeholder='blur'
-                        blurDataURL={'/logo192.png'}
-                        src={'/logo192.png'}
-                        alt='logo'
-                        height={40}
-                        width={40}
+                        />
+                    </Link>
+                    <Link href={'/'}>
+                        <Image priority className='hidden max-sm:block'
+                            placeholder='blur'
+                            blurDataURL={'/logo192.png'}
+                            src={'/logo192.png'}
+                            alt='logo'
+                            height={40}
+                            width={40}
 
-                        style={{ width: 'auto' }}
-                    />
+                            style={{ width: 'auto', height: 'auto' }}
+                        />
 
-                </Link>
-            </NavbarBrand>
+                    </Link>
+                </NavbarBrand>
+            </NavbarContent>
 
 
-            <NavbarContent as="div" className="items-center" justify="end">
+
+
+
+            <NavbarContent as="div" className="items-center z-0 " justify="end">
                 <div className="flex flex-row gap-2 items-center">
 
                     <Input

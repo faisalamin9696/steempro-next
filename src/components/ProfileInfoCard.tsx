@@ -1,8 +1,8 @@
 "use client"
 
-import React, { memo } from 'react'
+import React, { memo, useEffect } from 'react'
 import { Avatar, AvatarGroup, Button } from '@nextui-org/react'
-import { fetchSds, useAppSelector } from '@/libs/constants/AppFunctions'
+import { fetchSds, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions'
 import { useSession } from 'next-auth/react';
 import LoadingCard from '@/components/LoadingCard';
 import useSWR from 'swr';
@@ -14,6 +14,9 @@ import { abbreviateNumber } from '@/libs/utils/helper';
 import { getResizedAvatar } from '@/libs/utils/image';
 import TimeAgoWrapper from '@/components/wrapper/TimeAgoWrapper'
 import { getClubStatus, getVoteData } from '@/libs/steem/sds'
+import FollowButton from './FollowButton';
+import { useRouter } from 'next/navigation';
+import { addProfileHandler } from '@/libs/redux/reducers/ProfileReducer';
 
 
 const getClubString = (clubData?: Club) => {
@@ -49,15 +52,27 @@ export default memo(function ProfileInfoCard(props: Props) {
     if (accountExt)
         data = accountExt;
 
-    const { data: clubData } = useSWR(username || data?.name, getClubStatus);
+    const profileInfo = useAppSelector(state => state.profileReducer.value)[username ?? data?.name ?? ''] ?? data;
 
-    const posting_json_metadata = JSON.parse(data?.posting_json_metadata || '{}')
+    const { data: clubData } = useSWR(username || profileInfo?.name, getClubStatus);
 
-    const URL_2 = `/followers_api/getKnownFollowers/${username || data?.name}/${session?.user?.name || 'null'}`
+    const posting_json_metadata = JSON.parse(profileInfo?.posting_json_metadata || '{}')
+
+    const URL_2 = `/followers_api/getKnownFollowers/${username || profileInfo?.name}/${session?.user?.name || 'null'}`
     const { data: knownPeople, isLoading: isKnownLoading } =
         useSWR(session?.user?.name ? URL_2 : undefined, fetchSds<string[]>)
     const steemProps = useAppSelector(state => state.steemGlobalsReducer).value;
-    const voteData = data && getVoteData(data, steemProps)
+    const voteData = profileInfo && getVoteData(profileInfo, steemProps);
+    const router = useRouter();
+    const dispatch = useAppDispatch();
+
+
+    useEffect(() => {
+        if (data) {
+            dispatch(addProfileHandler(data));
+        }
+
+    }, []);
 
     if (isLoading) {
         return <LoadingCard />
@@ -66,10 +81,10 @@ export default memo(function ProfileInfoCard(props: Props) {
 
     const detailItems = [
         { title: 'Vote Value', desc: `$${voteData?.full_vote?.toFixed(3)}` },
-        { title: 'VP', desc: `${data?.upvote_mana_percent}%` },
-        { title: 'Self Voting', desc: `${data?.selfvote_rate}%` },
-        { title: 'CSI', desc: `${data?.voting_csi}%` },
-        { title: 'RC', desc: `${data?.rc_mana_percent}%` },
+        { title: 'VP', desc: `${profileInfo?.upvote_mana_percent}%` },
+        { title: 'Self Voting', profileInfo: `${profileInfo?.selfvote_rate}%` },
+        { title: 'CSI', desc: `${profileInfo?.voting_csi}%` },
+        { title: 'RC', desc: `${profileInfo?.rc_mana_percent}%` },
         { title: 'Club', desc: getClubString(clubData) }
     ]
 
@@ -80,21 +95,29 @@ export default memo(function ProfileInfoCard(props: Props) {
         bg-transparent items-start gap-4 p-2 w-full bg-white dark:bg-white/5">
             <div className="flex flex-row justify-between gap-2 w-full">
                 <div className="flex gap-2">
-                    <SAvatar size='sm' username={username || data?.name || ''} />
+                    <SAvatar
+                        className='cursor-pointer'
+                        onClick={() => {
+                            if (username || profileInfo?.name)
+                                router.push(`/@${username || profileInfo?.name}`)
+                        }} size='sm' username={username || profileInfo?.name || ''} />
                     <div className="flex flex-col items-start justify-center">
                         <h4 className="text-small font-semibold leading-none text-default-600">{posting_json_metadata?.profile?.name}</h4>
                         {/* <Link prefetch={false} href={authorLink}>{comment.author}</Link> */}
 
-                        <h5 className={clsx("text-small tracking-tight text-default-500")}>@{username || data?.name}</h5>
+                        <h5 className={clsx("text-small tracking-tight text-default-500")}>@{username || profileInfo?.name}</h5>
 
                         <div className='flex text-sm gap-2 text-default-600 items-center'>
                             <p className='text-default-500'>Joined</p>
-                            <TimeAgoWrapper className='text-tiny' created={(data?.created || 0) * 1000} />
+                            <TimeAgoWrapper className='text-tiny' created={(profileInfo?.created || 0) * 1000} />
                         </div>
 
                     </div>
                 </div>
-                <Button
+
+
+                {profileInfo && <FollowButton account={profileInfo} />}
+                {/* <Button
                     disabled={isLoading}
                     color={data?.observer_follows_author ? 'warning' : "secondary"}
                     radius="full"
@@ -107,7 +130,7 @@ export default memo(function ProfileInfoCard(props: Props) {
                 >
                     {data?.observer_follows_author ? 'Unfollow' : 'Follow'}
 
-                </Button>
+                </Button> */}
 
             </div>
 
@@ -116,12 +139,12 @@ export default memo(function ProfileInfoCard(props: Props) {
             <div className="flex flex-row gap-2" >
                 <div className="flex gap-1">
                     <p className="font-semibold text-default-600 text-small">
-                        {abbreviateNumber(profile ? data?.count_followers : data?.count_root_posts)}</p>
+                        {abbreviateNumber(profile ? profileInfo?.count_followers : profileInfo?.count_root_posts)}</p>
                     <p className=" text-default-500 text-small">{profile ? 'Followers' : 'Posts'}</p>
                 </div>
                 <div className="flex gap-1">
                     <p className="font-semibold text-default-600 text-small">
-                        {abbreviateNumber(profile ? data?.count_following : data?.count_comments)}</p>
+                        {abbreviateNumber(profile ? profileInfo?.count_following : profileInfo?.count_comments)}</p>
                     <p className="text-default-500 text-small">{profile ? 'Following' : 'Comments'}</p>
                 </div>
 

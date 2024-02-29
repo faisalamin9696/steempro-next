@@ -97,7 +97,7 @@ export default function VotingModal(props: Props) {
     return (isOpen ? <Card shadow="none" className={clsx(" w-full border bg-transparent",
         downvote ? 'border-red-600' : ' border-green-600')}>
         <CardHeader className="justify-between space-x-2 w-full">
-            (<>
+            <>
                 <Slider
                     size="sm"
                     label={<div>
@@ -155,22 +155,6 @@ export default function VotingModal(props: Props) {
                             label: "80%",
                         },
                     ]}
-                    // classNames={{
-                    //     base: "max-w-md gap-3",
-                    //     track: clsx(downvote ? 'border-s-danger-100' : "border-s-success-100"),
-                    //     filler: clsx("bg-gradient-to-r from-success-100 to-success-500",
-                    //         downvote ? 'from-danger-100 to-danger-500' : ''
-                    //     )
-                    // }}
-                    // renderThumb={(props) => (
-                    //     <div
-                    //         {...props}
-                    //         className="group p-1 top-1/2 bg-background border-small border-default-200 dark:border-default-400/50 shadow-medium rounded-full cursor-grab data-[dragging=true]:cursor-grabbing"
-                    //     >
-                    //         <span className={clsx("transition-transform bg-gradient-to-br shadow-small  rounded-full w-5 h-5 block group-data-[dragging=true]:scale-80",
-                    //             downvote ? 'from-danger-100 to-danger-500' : 'from-success-100 to-success-500')} />
-                    //     </div>
-                    // )}
 
                     endContent={downvote ?
                         <IconButton onClick={castVote} className='ms-2' IconType={IoChevronDownCircleSharp} />
@@ -178,13 +162,10 @@ export default function VotingModal(props: Props) {
                         <IconButton onClick={castVote} className='ms-2' IconType={IoChevronUpCircleSharp} />}
 
                 />
-            </>)
+            </>
 
         </CardHeader>
-        {/* <CardBody className="px-3 py-0">
-
-        </CardBody> */}
-
+      
         <CardFooter className="gap-3">
             <ItemCard title={'VP'} tooltip={`${'Voting power'}:
              ${downvote ? loginInfo?.downvote_mana_percent?.toFixed(1) : loginInfo?.upvote_mana_percent?.toFixed(1)}%`}

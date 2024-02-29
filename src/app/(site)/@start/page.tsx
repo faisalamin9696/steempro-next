@@ -63,7 +63,7 @@ export default function HomeStart() {
                                 return (<div key={annoucement.authPerm} className='bg-white dark:bg-white/5 text-sm px-2 py-1'>
                                     <Link className=' text-blue-400 hover:underline'
                                         href={annoucement.authPerm}>{annoucement.title}</Link>
-                                    <p className='opacity-75 text-tiny'>
+                                    <p className='opacity-75 text-sm line-clamp-3'>
                                         {annoucement.description}
                                     </p>
 
