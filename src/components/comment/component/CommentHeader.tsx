@@ -11,7 +11,7 @@ import STag from '@/components/STag';
 
 import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
-import { Key, memo } from 'react';
+import { Key, memo, useState } from 'react';
 import { MdDelete } from 'react-icons/md';
 import { GrAnnounce } from "react-icons/gr";
 import ViewCountCard from '@/components/ViewCountCard';
@@ -25,6 +25,8 @@ import { LuHistory } from "react-icons/lu";
 import { toast } from 'sonner';
 import { BsClipboard2Minus } from "react-icons/bs";
 import usePathnameClient from '@/libs/utils/usePathnameClient';
+import EditRoleModal from '@/components/EditRoleModal';
+import { FaInfoCircle } from 'react-icons/fa';
 
 const DynamicUserCard = dynamic(() => import('../../UserCard'));
 
@@ -43,30 +45,27 @@ export default memo(function CommentHeader(props: Props) {
     const username = session?.user?.name;
     const isSelf = comment.author === username;
     const { username: pathUsername } = usePathnameClient();
-
     const canMute = username && Role.atLeast(comment.observer_role, 'mod');
     const canDelete = !comment.children && isSelf && allowDelete(comment);
     const canEdit = isSelf;
     const allowReply = Role.canComment(comment.community, comment.observer_role);
     const canReply = isReply && allowReply && comment['depth'] < 255;
-
     const authorLink = `/@${comment.author}`;
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const router = useRouter();
-
+    const [isRoleOpen, setIsRoleOpen] = useState(false);
 
     function handleProfileClick() {
         if (pathUsername !== comment.author) {
             router.push(authorLink);
             router.refresh();
         }
-
     }
 
     const menuItems = [
         { show: canEdit, key: "edit", name: "Edit", icon: RiEdit2Fill },
-        { show: true, key: "role", name: "Edit Role/Title", icon: LuHistory },
-        { show: true, key: "history", name: "Edit History", icon: LuHistory },
+        { show: Role.atLeast(comment?.observer_role, 'mod'), key: "role", name: "Edit Role/Title", icon: LuHistory },
+        { show: false, key: "history", name: "Edit History", icon: LuHistory },
         { show: false, key: "promote", name: "Promote", icon: GrAnnounce },
         { show: true, key: "copy", name: "Copy Link", icon: BsClipboard2Minus },
         { show: canMute, key: "mute", name: "Mute", icon: MdOutlineDoNotDisturb, color: 'warning' },
@@ -89,27 +88,37 @@ export default memo(function CommentHeader(props: Props) {
                 navigator.clipboard.writeText(window.location.href);
                 toast.success('Copied');
                 break;
-
-
-        }
-
-
-        if (key === 'edit') {
-
-
-            // router.push(
-            //     `/@${comment.author}/${comment.permlink}/edit`
-            // );
-
-
+            case 'role':
+                setIsRoleOpen(!isRoleOpen);
+                break;
         }
 
     }
 
+    const ExtraInformation = ({ className }: { className?: string }) => {
+        return <div className={clsx('flex flex-col items-end gap-2', className)}>
+
+            <div className='flex gap-2'>
+
+                <p className='text-tiny font-light '>
+                    {comment.word_count} words,
+                </p>
+
+
+                <p className='text-tiny font-light '>
+                    {readingTime('', comment.word_count).text}
+                </p>
+
+            </div>
+
+            <ViewCountCard comment={comment} className='shadow-sm shadow-foreground/30  rounded-full bg-white dark:border-none dark:bg-foreground/10 text-tiny px-2 py-[1px] font-light ' />
+
+        </div>
+
+    }
     return (<div className={clsx('main-comment-list flex card-content w-auto relative items-center', className)}>
 
         <User
-
             classNames={{
                 description: 'mt-1 text-default-900/60 dark:text-gray-200 text-sm',
                 name: 'text-default-800'
@@ -167,6 +176,24 @@ export default memo(function CommentHeader(props: Props) {
 
             }}
         />
+        {!isReply && !compact &&
+            <div className='absolute top-0 text-tiny right-0 items-center px-1'>
+                <Popover className='hidden max-sm:block' placement="bottom" showArrow offset={10}>
+                    <PopoverTrigger className='absolute top-0 text-tiny right-0 items-center px-1'>
+                        <Button isIconOnly radius='full'
+                            className='hidden max-sm:block'
+                            size='sm' variant='light'
+                            color="default">
+                            <FaInfoCircle className='text-lg' />
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                        <ExtraInformation />
+                    </PopoverContent>
+                </Popover>
+                <ExtraInformation className='block max-sm:hidden' />
+            </div>}
+
 
         {/* <Popover showArrow placement="bottom">
             <PopoverTrigger>
@@ -237,30 +264,10 @@ export default memo(function CommentHeader(props: Props) {
             </PopoverContent>
         </Popover> */}
 
-        {!isReply && !compact && <div className='absolute top-0 text-tiny right-0 items-center px-1'>
-            <div className='flex flex-col items-end gap-2'>
-
-                <div className='flex gap-2'>
-
-                    <p className='text-tiny font-light '>
-                        {comment.word_count} words,
-                    </p>
 
 
-                    <p className='text-tiny font-light '>
-                        {readingTime('', comment.word_count).text}
-                    </p>
-
-                </div>
-
-
-
-                <ViewCountCard comment={comment} className='shadow-sm shadow-foreground/30  rounded-full bg-white dark:border-none dark:bg-foreground/10 text-tiny px-2 py-[1px] font-light ' />
-
-            </div>
-        </div>}
-
-
+        {isRoleOpen && <EditRoleModal comment={comment} isOpen={isRoleOpen}
+            onOpenChange={setIsRoleOpen} />}
     </div>
     )
 })

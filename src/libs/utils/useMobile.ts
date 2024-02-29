@@ -1,8 +1,21 @@
-import useMobileDetect from 'use-mobile-detect-hook';
+import { useState, useEffect } from 'react';
 
+function useMobile(): boolean {
+  const [isMobile, setIsMobile] = useState<boolean>(false);
 
-export const useMobile = (): boolean => {
-  const detectMobile = useMobileDetect();
+  useEffect(() => {
+    const handleResize = () => {
+      const mobileWidth = 768; // You can adjust this value according to your needs
+      setIsMobile(window.innerWidth < mobileWidth);
+    };
 
-  return detectMobile.isMobile();
-};
+    handleResize(); // Initial check
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return isMobile;
+}
+
+export default useMobile;

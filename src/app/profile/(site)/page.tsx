@@ -3,7 +3,7 @@
 import { Tab, Tabs } from '@nextui-org/react'
 import React from 'react'
 import usePathnameClient from '@/libs/utils/usePathnameClient';
-import { useMobile } from '@/libs/utils/useMobile';
+import  useMobile  from '@/libs/utils/useMobile';
 import ProfileBlogsTab from '../(tabs)/blogs/page';
 import ProfileWalletTab from '../(tabs)/wallet/page';
 import FeedPatternSwitch from '@/components/FeedPatternSwitch';

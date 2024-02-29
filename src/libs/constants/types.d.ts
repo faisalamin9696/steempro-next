@@ -10,9 +10,7 @@ type Feed = {
   | 'member'
   | 'mod'
   | 'admin'
-  | 'owner'
-  | ''
-  | string;
+  | 'owner';
   author_title: string;
   author: string;
   permlink: string;

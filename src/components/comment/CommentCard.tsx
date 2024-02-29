@@ -5,7 +5,7 @@ import './style.scss';
 
 import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/libs/constants/AppFunctions';
-import { useMobile } from '@/libs/utils/useMobile';
+import  useMobile  from '@/libs/utils/useMobile';
 import { getSettings } from '@/libs/utils/user';
 import { ClassValue } from 'clsx';
 import CommentListLayout from './layout/CommentListLayout';

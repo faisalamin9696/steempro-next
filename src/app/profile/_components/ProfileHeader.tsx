@@ -10,7 +10,7 @@ import { proxifyImageUrl } from '@/libs/utils/ProxifyUrl';
 import dynamic from 'next/dynamic';
 import Reputation from '@/components/Reputation';
 import VanillaTilt from "vanilla-tilt";
-import { useMobile } from '@/libs/utils/useMobile';
+import useMobile  from '@/libs/utils/useMobile';
 import './style.scss'
 import { abbreviateNumber } from '@/libs/utils/helper';
 import ProfileInfoCard from '../../../components/ProfileInfoCard';

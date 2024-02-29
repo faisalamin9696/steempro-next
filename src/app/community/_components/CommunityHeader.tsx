@@ -12,7 +12,7 @@ import BadgeAvatar from '@/components/BadgeAvatar';
 import ProfileInfoCard from '@/components/ProfileInfoCard';
 import { Popover, PopoverTrigger, Button, PopoverContent } from '@nextui-org/react';
 import { BsInfoCircleFill } from 'react-icons/bs';
-import { useMobile } from '@/libs/utils/useMobile';
+import  useMobile  from '@/libs/utils/useMobile';
 import VanillaTilt from 'vanilla-tilt';
 
 interface Props {

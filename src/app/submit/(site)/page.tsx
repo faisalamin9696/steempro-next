@@ -27,7 +27,7 @@ import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import clsx from 'clsx';
 import CommentOptionWrapper from '@/components/wrapper/CommentOptionWrapper';
-import { useMobile } from '@/libs/utils/useMobile';
+import useMobile from '@/libs/utils/useMobile';
 
 type Props = {
     params?: {

@@ -3,7 +3,6 @@
 import { Tab, Tabs } from '@nextui-org/react'
 import React from 'react'
 import usePathnameClient from '@/libs/utils/usePathnameClient';
-import { useMobile } from '@/libs/utils/useMobile';
 import FeedPatternSwitch from '@/components/FeedPatternSwitch';
 import { useAppSelector } from '@/libs/constants/AppFunctions';
 import { getSettings } from '@/libs/utils/user';
@@ -11,8 +10,6 @@ import clsx from 'clsx';
 import HomeTrendingsTab from './(tabs)/trendings/page';
 import HomeCreatedTab from './(tabs)/created/page';
 import HomePayoutTab from './(tabs)/payout/page';
-import { useSession } from 'next-auth/react';
-import { useLogin } from '@/components/useLogin';
 import HomeCommunitiesTab from './(tabs)/communities/page';
 
 

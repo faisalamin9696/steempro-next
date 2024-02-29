@@ -8,7 +8,7 @@ import CommentCard from './CommentCard';
 import CommentSkeleton from './component/CommentSkeleton';
 import { getSettings } from '@/libs/utils/user';
 import clsx from 'clsx';
-import { useMobile } from '@/libs/utils/useMobile';
+import  useMobile  from '@/libs/utils/useMobile';
 
 type Props = {
     endPoint: string;

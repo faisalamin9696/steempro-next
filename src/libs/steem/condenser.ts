@@ -383,3 +383,250 @@ export const pinPost = async (
 };
 
 
+export const setUserTitle = async (
+    account: AccountExt,
+    key: string,
+    data: { communityId: string; account: string; title: string },
+) => {
+    const keyData = getKeyType(account, key);
+
+    if (keyData && PrivKey.atLeast(keyData.type, 'POSTING')) {
+        const privateKey = PrivateKey.fromString(key);
+        const action = 'setUserTitle';
+        const json = [
+            action,
+            {
+                community: data.communityId,
+                account: data.account,
+                title: data.title,
+            },
+        ];
+        const custom_json = {
+            id: 'community',
+            json: JSON.stringify(json),
+            required_auths: [],
+            required_posting_auths: [keyData.account],
+        };
+        const opArray: any = [['custom_json', custom_json]];
+
+        return new Promise((resolve, reject) => {
+            client.broadcast
+                .sendOperations(opArray, privateKey)
+                .then(result => {
+                    resolve(result);
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        });
+    }
+
+    return Promise.reject(
+        new Error(
+            'Check private key permission! Required private posting key or above.',
+        ),
+    );
+};
+
+export const setUserRole = async (
+    account: AccountExt,
+    key: string,
+    data: {
+        communityId: string;
+        account: string;
+        role: 'muted' | 'guest' | 'member' | 'mod' | 'admin' | 'owner';
+    },
+) => {
+    const keyData = getKeyType(account, key);
+
+    if (keyData && PrivKey.atLeast(keyData.type, 'POSTING')) {
+        const privateKey = PrivateKey.fromString(key);
+        const action = 'setRole';
+        const json = [
+            action,
+            {
+                community: data.communityId,
+                account: data.account,
+                role: data.role,
+            },
+        ];
+        const custom_json = {
+            id: 'community',
+            json: JSON.stringify(json),
+            required_auths: [],
+            required_posting_auths: [keyData.account],
+        };
+        const opArray: any = [['custom_json', custom_json]];
+
+        return new Promise((resolve, reject) => {
+            client.broadcast
+                .sendOperations(opArray, privateKey)
+                .then(result => {
+                    resolve(result);
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        });
+    }
+
+    return Promise.reject(
+        new Error(
+            'Check private key permission! Required private posting key or above.',
+        ),
+    );
+};
+
+export const setUserRoleTitle = async (
+    account: AccountExt,
+    key: string,
+    data: {
+        communityId: string;
+        account: string;
+        title: string;
+        role: 'muted' | 'guest' | 'member' | 'mod' | 'admin' | 'owner';
+    },
+) => {
+    const keyData = getKeyType(account, key);
+
+    if (keyData && PrivKey.atLeast(keyData.type, 'POSTING')) {
+        const privateKey = PrivateKey.fromString(key);
+        const action1 = 'setRole';
+        const action2 = 'setUserTitle';
+
+        const json1 = [
+            action1,
+            {
+                community: data.communityId,
+                account: data.account,
+                role: data.role,
+            },
+        ];
+
+        const json2 = [
+            action2,
+            {
+                community: data.communityId,
+                account: data.account,
+                title: data.title,
+            },
+        ];
+        const custom_json1 = {
+            id: 'community',
+            json: JSON.stringify(json1),
+            required_auths: [],
+            required_posting_auths: [keyData.account],
+        };
+        const custom_json2 = {
+            id: 'community',
+            json: JSON.stringify(json2),
+            required_auths: [],
+            required_posting_auths: [keyData.account],
+        };
+
+        const opArray: any = [['custom_json', custom_json1, custom_json2]];
+
+        return new Promise((resolve, reject) => {
+            client.broadcast
+                .sendOperations(opArray, privateKey)
+                .then(result => {
+                    resolve(result);
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        });
+    }
+
+    return Promise.reject(
+        new Error(
+            'Check private key permission! Required private posting key or above.',
+        ),
+    );
+};
+
+export const followUser = async (
+    account: AccountExt,
+    key: string,
+    data: { follower: string; following: string },
+) => {
+    const keyData = getKeyType(account, key);
+
+    if (keyData && PrivKey.atLeast(keyData.type, 'POSTING')) {
+        const privateKey = PrivateKey.fromString(key);
+        const json = {
+            id: 'follow',
+            json: JSON.stringify([
+                'follow',
+                {
+                    follower: `${data.follower}`,
+                    following: `${data.following}`,
+                    what: ['blog'],
+                },
+            ]),
+            required_auths: [],
+            required_posting_auths: [`${data.follower}`],
+        };
+        const opArray: any = [['custom_json', json]];
+
+        return new Promise((resolve, reject) => {
+            client.broadcast
+                .sendOperations(opArray, privateKey)
+                .then(result => {
+                    resolve(result);
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        });
+    }
+
+    return Promise.reject(
+        new Error(
+            'Check private key permission! Required private posting key or above.',
+        ),
+    );
+};
+
+export const unfollowUser = async (
+    account: AccountExt,
+    key: string,
+    data: { follower: string; following: string },
+) => {
+    const keyData = getKeyType(account, key);
+
+    if (keyData && PrivKey.atLeast(keyData.type, 'POSTING')) {
+        const privateKey = PrivateKey.fromString(key);
+
+        const json = {
+            id: 'follow',
+            json: JSON.stringify([
+                'follow',
+                {
+                    follower: `${data.follower}`,
+                    following: `${data.following}`,
+                    what: [],
+                },
+            ]),
+            required_auths: [],
+            required_posting_auths: [`${data.follower}`],
+        };
+        const opArray: any = [['custom_json', json]];
+        return new Promise((resolve, reject) => {
+            client.broadcast
+                .sendOperations(opArray, privateKey)
+                .then(result => {
+                    resolve(result);
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        });
+    }
+
+    return Promise.reject(
+        new Error(
+            'Check private key permission! Required private posting key or above.',
+        ),
+    );
+};
