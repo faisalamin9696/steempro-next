@@ -5,16 +5,19 @@ import { Button, Card } from '@nextui-org/react'
 import { filterRecommendations, mapSds } from '@/libs/constants/AppFunctions'
 import UserCard from '@/components/UserCard'
 import { IoIosRefresh } from 'react-icons/io'
+import usePathnameClient from '@/libs/utils/usePathnameClient'
+import { useSession } from 'next-auth/react'
 
 
 export default function ProfileEnd() {
+  const { username } = usePathnameClient();
+  const { data: session } = useSession();
 
   const [recomendations, setRecomendations] = useState<string[]>([]);
-  const followingList = ['faisalamin']
-
-
+  let followingList = [username].concat([session?.user?.name || ''])
 
   useEffect(() => {
+    followingList = [username].concat([session?.user?.name || '']);
     setRecomendations(filterRecommendations(followingList));
   }, []);
 

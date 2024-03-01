@@ -2,8 +2,9 @@ import { useSession } from 'next-auth/react';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import AuthModal from './AuthModal';
 import { getCredentials, sessionKey } from '@/libs/utils/user';
-import { useAppDispatch } from '@/libs/constants/AppFunctions';
+import { fetchSds, useAppDispatch } from '@/libs/constants/AppFunctions';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
+import useSWR from 'swr';
 
 // Define the type for your context value
 type AuthContextType = {
@@ -38,6 +39,12 @@ export const AuthProvider = (props: Props) => {
     const [credentials, setCredentials] = useState<User>();
     const [isNew, setIsNew] = useState(false);
     const dispatch = useAppDispatch();
+
+    const URL = `/accounts_api/getAccountExt/${session?.user?.name}/${session?.user?.name}`
+    const { data: accountExt } = useSWR(!!session?.user?.name && !data ? URL : undefined, fetchSds);
+    if (!data && accountExt) {
+        dispatch(saveLoginHandler(accountExt));
+    }
 
     useEffect(() => {
         if (data) {

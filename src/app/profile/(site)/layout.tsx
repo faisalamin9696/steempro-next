@@ -23,7 +23,6 @@ export default async function Layout({
     const session = await getServerSession();
     const data = await getAuthorExt(username, session?.user?.name || 'null');
 
-    revalidatePath('/@faisalamin/blogs', 'layout')
     return (
         <main className="main flex flex-col">
 

@@ -36,8 +36,14 @@ export default async function RootLayout({
   const session = await getServerSession();
   let data;
 
-  // if (session?.user?.name)
-  //   data = await getAuthorExt(session?.user?.name)
+  try {
+
+    if (session?.user?.name)
+      data = await getAuthorExt(session?.user?.name)
+
+  } catch {
+    // silent ignore
+  }
 
   return (
     <html lang="en" suppressHydrationWarning={true}>

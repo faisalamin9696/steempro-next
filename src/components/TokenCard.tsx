@@ -22,27 +22,28 @@ export const TokenCard = (props: TokenCardProps) => {
 
     }
 
-    return <Card shadow='sm' key={tokenKey}>
+    return <Card isBlurred shadow='sm' key={tokenKey}>
         <CardBody className=' justify-between flex flex-row max-lg:flex-col  gap-4'>
             <div className='flex flex-col items-start gap-2 max-lg:flex-col w-full'>
                 <div className='flex flex-row justify-between items-center  w-full'>
-                    <div className="flex flex-row space-x-1 items-center" >
-                        <p className=' font-bold'>{title}</p>
+                    <div className="flex flex-row gap-1 items-center" >
+                        <p className='text-sm font-semibold'>{title}</p>
 
                         <Button radius="full" isIconOnly size="sm" variant="light">
                             <BsInfoCircle onClick={handleInfo}
-                                className="text-lg" />
+                                className="text-sm" />
                         </Button>
                     </div>
 
                     <div className='flex flex-row gap-2 items-center'>
                         <div>
-                            <p>{endContent}</p>
+                            <p className="text-sm">{endContent}</p>
                         </div>
 
-                        {symbol && <p>{symbol}</p>}
+                        {symbol && <p className="text-sm">{symbol}</p>}
 
                         {actionContent ? <Dropdown
+                            size="sm"
                             // showArrow
                             classNames={{
                                 // base: "before:bg-default-200", // change arrow background
