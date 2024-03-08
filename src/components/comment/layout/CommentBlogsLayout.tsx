@@ -43,7 +43,7 @@ export default function CommentBlogLayout(props: CommentProps) {
 
         </Card>
 
-        <CommentFooter comment={commentInfo} compact
+        <CommentFooter comment={commentInfo} 
             className='w-full' />
 
     </div>

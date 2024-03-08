@@ -5,12 +5,13 @@ import './style.scss';
 
 import { useRouter } from 'next13-progressbar';
 import { useAppSelector } from '@/libs/constants/AppFunctions';
-import  useMobile  from '@/libs/utils/useMobile';
+import useMobile from '@/libs/utils/useMobile';
 import { getSettings } from '@/libs/utils/user';
 import { ClassValue } from 'clsx';
 import CommentListLayout from './layout/CommentListLayout';
 import CommentBlogLayout from './layout/CommentBlogsLayout';
 import CommentGridLayout from './layout/CommentGridLayout';
+import { pushWithCtrl } from '@/libs/utils/helper';
 
 type Props = {
     comment: Feed | Post;
@@ -38,9 +39,9 @@ export default memo(function CommentCard(props: Props) {
     const isMobile = useMobile();
     const router = useRouter();
 
-    function handlePostClick() {
-        router.push(`/${commentInfo.category}/@${commentInfo.author}/${commentInfo.permlink}`,
-            { scroll: false });
+    function handlePostClick(event) {
+        const targetUrl = `/${commentInfo.category}/@${commentInfo.author}/${commentInfo.permlink}`;
+        pushWithCtrl(event, router, targetUrl, true);
     }
 
     const commentLayout =

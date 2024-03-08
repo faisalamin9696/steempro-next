@@ -1,11 +1,12 @@
 import React, { memo } from "react";
 import { Button, Card, User } from "@nextui-org/react";
-import { abbreviateNumber } from "@/libs/utils/helper";
+import { abbreviateNumber, pushWithCtrl } from "@/libs/utils/helper";
 import Reputation from "./Reputation";
 import { FaClock, FaEllipsis } from "react-icons/fa6";
 import TimeAgoWrapper from "./wrapper/TimeAgoWrapper";
 import { getResizedAvatar } from "@/libs/utils/image";
 import { useRouter } from 'next13-progressbar';
+import { FaRegClock } from "react-icons/fa";
 
 
 interface Props {
@@ -26,9 +27,9 @@ export const CommunityCard = memo((props: Props) => {
     // const posting_json_metadata = JSON.parse(String(data?.posting_json_metadata || '{}'));
 
     const router = useRouter();
-    function handleExplore() {
-        router.push(`/trending/${community.account}`)
-
+    function handleExplore(event) {
+        const targetUrl = `/trending/${community.account}`;
+        pushWithCtrl(event, router, targetUrl);
     }
 
     return (
@@ -50,8 +51,10 @@ export const CommunityCard = memo((props: Props) => {
 
                     <h2>{community.title}</h2>
 
-                    <div className="flex gap-2 items-center">
-                        {<p>{community.account}</p>}
+                    <div className="flex gap-2 items-center text-xs">
+                        {<p>{community.account} </p>}
+                        •
+                        <TimeAgoWrapper lang={'en'} created={community.created * 1000} />
                         {/* <Reputation {...props} reputation={community.account_reputation} /> */}
 
                     </div>
@@ -86,22 +89,14 @@ export const CommunityCard = memo((props: Props) => {
             />
             <div className="flex flex-row gap-4">
                 <div className="flex gap-1">
-                    <p className="font-semibold text-default-600 text-small">{abbreviateNumber(community.count_subs)}</p>
-                    <p className=" text-default-500 text-small">{compact ? 'Subs' : 'Subscribers'}</p>
+                    <p className="font-semibold text-default-600 text-tiny">{abbreviateNumber(community.count_subs)}</p>
+                    <p className=" text-default-500 text-tiny">{compact ? 'Subs' : 'Subscribers'}</p>
                 </div>
                 <div className="flex gap-1">
-                    <p className="font-semibold text-default-600 text-small">${abbreviateNumber(community.count_pending)}</p>
-                    <p className="text-default-500 text-small">{'Pending Reward'}</p>
+                    <p className="font-semibold text-default-600 text-tiny">${abbreviateNumber(community.count_pending)}</p>
+                    <p className="text-default-500 text-tiny">{'Pending Reward'}</p>
                 </div>
             </div>
-
-            <span className="py-1 text-xs font-regular text-default-900 mr-1 flex flex-row items-center">
-
-                <FaClock className=' text-sm' />
-                <span className="ml-1">
-                    <span className="ml-1 flex gap-2">Created <TimeAgoWrapper lang={'en'} created={community.created * 1000} /></span>
-                </span>
-            </span>
 
         </Card >
     );

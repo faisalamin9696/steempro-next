@@ -1,3 +1,6 @@
+import { NavigateOptions } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { useRouter } from "next13-progressbar";
+
 export const validateCommunity = (tag?: string): boolean => {
     if (!tag)
         return false;
@@ -57,3 +60,24 @@ export const count_words = (text: string) => {
         return text.match(/\S+/g)?.length;
     } else return 0;
 };
+
+
+export function pushWithCtrl(event, router: {
+    push: (href: string, options?: NavigateOptions) => void | Promise<boolean>;
+    replace: (href: string, options?: NavigateOptions) => void | Promise<boolean>;
+    back(): void;
+    forward(): void;
+    refresh(): void;
+    prefetch(href: string, options?: undefined): void;
+}, targetUrl: string, shouldRefresh?: boolean) {
+
+    const ctrlPressed = event.ctrlKey;
+    if (ctrlPressed) {
+        window.open(targetUrl, '_blank');
+        return
+    }
+    router.push(targetUrl);
+    if (shouldRefresh)
+        router.refresh();
+
+}

@@ -2,7 +2,7 @@ import React, { memo, useEffect } from "react";
 import { Avatar, AvatarGroup } from "@nextui-org/react";
 import { fetchSds, useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import SAvatar from "./SAvatar";
-import { abbreviateNumber } from "@/libs/utils/helper";
+import { abbreviateNumber, pushWithCtrl } from "@/libs/utils/helper";
 import clsx from "clsx";
 import { SlUserFollowing } from "react-icons/sl";
 import useSWR from "swr";
@@ -54,10 +54,12 @@ export const UserCard = memo((props: Props) => {
             <div className="flex flex-row justify-between gap-2 w-full">
                 <div className="flex gap-2">
                     <SAvatar className='cursor-pointer'
-                        onClick={() => {
-                            if (username)
-                                router.push(`/@${username}`);
-                            router.refresh();
+                        onClick={(event) => {
+                            if (!username)
+                                return
+                            const targetUrl = `/@${username}`;
+                            pushWithCtrl(event, router, targetUrl, true);
+
                         }}
                         username={username} size="xs" />
                     <div className="flex flex-col items-start justify-center">

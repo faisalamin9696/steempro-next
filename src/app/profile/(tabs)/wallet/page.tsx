@@ -4,6 +4,7 @@ import { TokenCard } from '@/components/TokenCard';
 import { fetchSds, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import { addProfileHandler } from '@/libs/redux/reducers/ProfileReducer';
+import { vestToSteem } from '@/libs/steem/sds';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import { getCredentials } from '@/libs/utils/user';
 import { Button, DropdownItem, DropdownMenu, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react'
@@ -51,6 +52,7 @@ export default function ProfileWalletTab() {
   const { data: session } = useSession();
   const loginInfo = useAppSelector(state => state.loginReducer.value);
   const isSelf = loginInfo.name === username;
+  const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
 
   let [key, setKey] = useState<SteemTokens>();
   function handleInfo(tokenKey: SteemTokens) {
@@ -63,7 +65,6 @@ export default function ProfileWalletTab() {
 
   const URL = `/accounts_api/getAccountExt/${username}/${session?.user?.name || 'null'}`
   let { data } = useSWR(!isSelf ? URL : undefined, fetchSds<AccountExt>);
-  console.log(1122, data)
 
 
   if (!isSelf && data) {
@@ -74,13 +75,13 @@ export default function ProfileWalletTab() {
 
 
   return (
-    <div className='flex flex-col gap-4'>
+    <div className=' gap-4 grid grid-cols-1 md:grid-cols-2'>
       {data && <>
         <TokenCard tokenKey='steem' symbol={tokens.steem.symbol}
           description={tokens.steem.description}
           title={tokens.steem.title}
           endContent={<div className='flex gap-2'>
-            <p>{data.balance_steem}</p>
+            <p>{data.balance_steem?.toLocaleString()}</p>
           </div>}
 
           actionContent={<DropdownMenu>
@@ -98,7 +99,7 @@ export default function ProfileWalletTab() {
           title={tokens.steem_power.title}
 
           endContent={<div>
-            <p>{data.vests_own}</p>
+            <p>{vestToSteem(data.vests_own, globalData.steem_per_share)?.toLocaleString()}</p>
           </div>}
 
           actionContent={<DropdownMenu>
@@ -116,7 +117,7 @@ export default function ProfileWalletTab() {
           title={tokens.steem_dollar.title}
 
           endContent={<div>
-            <p>${data.balance_sbd}</p>
+            <p>${data.balance_sbd?.toLocaleString()}</p>
           </div>}
 
           actionContent={<DropdownMenu>
@@ -133,8 +134,8 @@ export default function ProfileWalletTab() {
           description={tokens.saving.description}
           title={tokens.saving.title}
           endContent={<div className='flex flex-col items-end max-md:items-center'>
-            <p>${data.savings_steem} STEEM</p>
-            <p>${data.savings_sbd}</p>
+            <p>${data.savings_steem?.toLocaleString()} STEEM</p>
+            <p>${data.savings_sbd?.toLocaleString()}</p>
           </div>}
           handleInfoClick={handleInfo}
 

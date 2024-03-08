@@ -16,7 +16,7 @@ import './style.scss'
 import { FaClock } from 'react-icons/fa';
 import { CommentProps } from '../CommentCard';
 import clsx from 'clsx';
-import { validateCommunity } from '@/libs/utils/helper';
+import { pushWithCtrl, validateCommunity } from '@/libs/utils/helper';
 import { useRouter } from 'next13-progressbar';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import { useAppSelector } from '@/libs/constants/AppFunctions';
@@ -37,10 +37,11 @@ export default function CommentGridLayout(props: CommentProps) {
     const imageWidth = 200;
     const imageHeight = 176;
 
-    function handleProfileClick() {
-        if (pathUsername !== commentInfo.author) {
-            router.push(authorLink);
-            router.refresh();
+    function handleProfileClick(event) {
+        if (pathUsername !== comment.author) {
+            const targetUrl = authorLink;
+            pushWithCtrl(event, router, targetUrl, true);
+
         }
 
     }

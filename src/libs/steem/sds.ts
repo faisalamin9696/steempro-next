@@ -253,7 +253,7 @@ export const getPost = async (
     author: string,
     permlink: string,
     observer: string = 'null',
-    withVotes: boolean = true,
+    withVotes: boolean = false,
 ): Promise<Post> => {
     try {
         if (!author) {
@@ -403,6 +403,92 @@ export const getClubStatus = async (username: string) => {
     }
     catch (error: any) {
         console.error('Failed to fetch club data:', error);
+        throw new Error(error);
+    }
+};
+
+export const vestToSteem = (rewards_vests: number | string, steem_per_share): number => {
+    if (typeof (rewards_vests) === 'string')
+        return (parseFloat(rewards_vests.split(' ')[0]) * steem_per_share)
+    else
+        return (rewards_vests * steem_per_share);
+};
+
+export const steemToVest = (steem: number, steem_per_share: number): number => {
+    return steem / steem_per_share;
+};
+
+export const getAccountHistory = async (USERNAME: string): Promise<AccountHistory[]> => {
+    try {
+        const start_date = moment().subtract(30, 'days').unix();
+        const end_date = moment().unix();
+        const filters = `withdraw_vesting,cancel_transfer_from_savings,claim_reward_balance,fill_convert_request,fill_order,fill_transfer_from_savings,fill_vesting_withdraw,
+  transfer,transfer_from_savings,transfer_to_savings,transfer_to_vesting`
+
+        const R_API = `/account_history_api/getHistoryByOpTypesTime/${USERNAME}/${filters}/${start_date}-${end_date}`;
+        console.log(R_API);
+        const response = await fetchSds<any>(R_API);
+        if (response) {
+            return response as AccountHistory[];
+        } else {
+            throw new Error(response);
+        }
+    } catch (error: any) {
+        console.error('Failed to fetch post:', error);
+        throw new Error(error);
+    }
+};
+
+export const getIncomingDelegations = async (
+    AUTHOR: string,
+): Promise<Delegation[]> => {
+    try {
+        const R_API = `/delegations_api/getIncomingDelegations/${AUTHOR}`;
+        console.log(R_API);
+        const response = await fetchSds<any>(R_API);
+        if (response) {
+            return response as Delegation[];
+        } else {
+            throw new Error(response);
+        }
+    } catch (error: any) {
+        console.error('Failed to fetch post:', error);
+        throw new Error(error);
+    }
+};
+
+export const getOutgoingDelegations = async (
+    AUTHOR: string,
+): Promise<Delegation[]> => {
+    try {
+        const R_API = `/delegations_api/getOutgoingDelegations/${AUTHOR}`;
+        console.log(R_API);
+        const response = await fetchSds<any>(R_API);
+        if (response) {
+            return response as Delegation[];
+        } else {
+            throw new Error(response);
+        }
+    } catch (error: any) {
+        console.error('Failed to fetch post:', error);
+        throw new Error(error);
+    }
+};
+
+export const getExpiringDelegations = async (
+    AUTHOR: string,
+): Promise<DelegationExpiring[]> => {
+    try {
+        const R_API = `/delegations_api/getExpiringDelegations/${AUTHOR}`;
+        console.log(R_API);
+        const response = await fetchSds<any>(R_API);
+        if (response) {
+            return response as DelegationExpiring[];
+        } else {
+            throw new Error(response);
+        }
+    } catch (error: any) {
+        console.error('Failed to fetch post:', error);
         throw new Error(error);
     }
 };

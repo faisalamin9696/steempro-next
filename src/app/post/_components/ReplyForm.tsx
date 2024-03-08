@@ -28,6 +28,7 @@ import secureLocalStorage from 'react-secure-storage';
 import { useSession } from 'next-auth/react';
 import { Role } from '@/libs/utils/community';
 import { allowDelete } from '@/libs/utils/StateFunctions';
+import CommentFooter from '@/components/comment/component/CommentFooter';
 
 interface Props {
     comment: Post;
@@ -93,7 +94,7 @@ export default memo(function ReplyForm(props: Props) {
     useEffect(() => {
 
         if (showEdit || showReply) {
-            document.getElementById('editorDiv')?.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById(`editorDiv-${comment.link_id}`)?.scrollIntoView({ behavior: 'smooth' });
 
         }
         if (showEdit) {
@@ -322,141 +323,144 @@ export default memo(function ReplyForm(props: Props) {
                 selectedKeys={selectedKeys} >
                 <AccordionItem
                     key={commentInfo.permlink}
-                    title={<div> <CommentHeader comment={commentInfo} isReply />
+                    title={<div> <CommentHeader isDetail comment={commentInfo} isReply />
                     </div>} >
                     <div className='flex flex-col gap-2 p-1'>
 
 
                         <MarkdownViewer text={commentInfo.body} />
 
-                        <div className='flex gap-1  self-end opacity-70'>
+                        <div className='flex gap-1  self-end opacity-70 items-center justify-around  w-full'>
 
-                            {canReply &&
-                                <Button size='sm'
-                                    onPress={() => { toggleReply() }}
-                                    variant='light'
-                                    isDisabled={showReply || showEdit}
-                                    className='text-tiny min-w-0 min-h-0'>
-                                    Reply
+                            <CommentFooter isReply comment={comment} />
+                            <>
+                                {canReply &&
+                                    <Button size='sm'
+                                        onPress={() => { toggleReply() }}
+                                        variant='light'
+                                        isDisabled={showReply || showEdit}
+                                        className='text-tiny min-w-0 min-h-0'>
+                                        Reply
 
-                                </Button>}
+                                    </Button>}
 
-                            {canEdit &&
-                                <Button size='sm'
-                                    onPress={() => { toggleEdit() }}
-                                    variant='light'
-                                    isDisabled={showReply || showEdit}
-                                    className='text-tiny min-w-0 min-h-0'>
-                                    Edit
+                                {canEdit &&
+                                    <Button size='sm'
+                                        onPress={() => { toggleEdit() }}
+                                        variant='light'
+                                        isDisabled={showReply || showEdit}
+                                        className='text-tiny min-w-0 min-h-0'>
+                                        Edit
 
-                                </Button>}
+                                    </Button>}
 
 
-                            {canDelete && < div >
-                                <Popover isOpen={deletePopup}
-                                    onOpenChange={(open) => setDeletePopup(open)}
-                                    placement={'top-start'} color='primary'>
-                                    <PopoverTrigger >
-                                        <Button size='sm'
-                                            variant='light'
-                                            isDisabled={showReply || showEdit}
-                                            className='text-tiny min-w-0 min-h-0'>
-                                            Delete
-                                        </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent >
-                                        <div className="px-1 py-2">
-                                            <div className="text-small font-bold">{'Confirmation'}</div>
-                                            <div className="text-tiny flex">
-                                                {'Do you really want to delete?'}
+                                {canDelete && < div >
+                                    <Popover isOpen={deletePopup}
+                                        onOpenChange={(open) => setDeletePopup(open)}
+                                        placement={'top-start'} color='primary'>
+                                        <PopoverTrigger >
+                                            <Button size='sm'
+                                                variant='light'
+                                                isDisabled={showReply || showEdit}
+                                                className='text-tiny min-w-0 min-h-0'>
+                                                Delete
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent >
+                                            <div className="px-1 py-2">
+                                                <div className="text-small font-bold">{'Confirmation'}</div>
+                                                <div className="text-tiny flex">
+                                                    {'Do you really want to delete?'}
+                                                </div>
+
+                                                <div className="text-tiny flex mt-2 space-x-2">
+                                                    <Button onPress={() => setDeletePopup(false)}
+                                                        size='sm' color='default' variant='faded'>No</Button>
+                                                    <Button size='sm' color='danger' variant='solid'
+                                                        onPress={() => {
+                                                            setDeletePopup(false);
+                                                            handleDelete();
+                                                        }}>YES</Button>
+
+                                                </div>
                                             </div>
+                                        </PopoverContent>
+                                    </Popover>
 
-                                            <div className="text-tiny flex mt-2 space-x-2">
-                                                <Button onPress={() => setDeletePopup(false)}
-                                                    size='sm' color='default' variant='faded'>No</Button>
-                                                <Button size='sm' color='danger' variant='solid'
-                                                    onPress={() => {
-                                                        setDeletePopup(false);
-                                                        handleDelete();
-                                                    }}>YES</Button>
-
-                                            </div>
-                                        </div>
-                                    </PopoverContent>
-                                </Popover>
-
-                            </div>}
+                                </div>}
 
 
-                            {canMute &&
-                                <Button size='sm'
-                                    onPress={() => { { } }}
-                                    variant='light'
-                                    isDisabled={showReply || showEdit}
-                                    className='text-tiny min-w-0 min-h-0'>
-                                    Mute
+                                {canMute &&
+                                    <Button size='sm'
+                                        onPress={() => { { } }}
+                                        variant='light'
+                                        isDisabled={showReply || showEdit}
+                                        className='text-tiny min-w-0 min-h-0'>
+                                        Mute
 
-                                </Button>
-                            }
+                                    </Button>
+                                }
 
-
+                            </>
 
                         </div >
 
+                        <div id={`editorDiv-${comment.link_id}`}>
+                            {(showReply || showEdit) ?
+                                <div className='flex flex-col mt-2 gap-2'>
+                                    <EditorInput
+                                        value={markdown}
+                                        onChange={setMarkdown}
+                                        onImageUpload={() => { }}
+                                        onImageInvalid={() => { }}
+                                        rows={5} />
 
-                        {(showReply || showEdit) ?
-                            <div id='editorDiv' className='flex flex-col mt-2 gap-2'>
-                                <EditorInput
-                                    value={markdown}
-                                    onChange={setMarkdown}
-                                    onImageUpload={() => { }}
-                                    onImageInvalid={() => { }}
-                                    rows={5} />
+                                    <div className='flex justify-between'>
+                                        <ClearFormButton
+                                            onClearPress={handleClear} />
 
-                                <div className='flex justify-between'>
-                                    <ClearFormButton
-                                        onClearPress={handleClear} />
+                                        <div className='flex gap-2 '>
 
-                                    <div className='flex gap-2 '>
+                                            {<Button radius='full'
+                                                size='sm'
+                                                onPress={() => {
+                                                    if (showReply)
+                                                        toggleReply();
+                                                    else toggleEdit();
 
-                                        {<Button radius='full'
-                                            size='sm'
-                                            onPress={() => {
-                                                if (showReply)
-                                                    toggleReply();
-                                                else toggleEdit();
+                                                }}>
+                                                Cancel
+                                            </Button>}
 
-                                            }}>
-                                            Cancel
-                                        </Button>}
-
-                                        <PublishButton
-                                            disabled={isPosting}
-                                            onPress={handlePublish}
-                                            isLoading={isPosting}
-                                            tooltip=''
-                                            buttonText={showEdit ? 'Update' : 'Send'} />
-                                    </div>
-
-
+                                            <PublishButton
+                                                disabled={isPosting}
+                                                onPress={handlePublish}
+                                                isLoading={isPosting}
+                                                tooltip=''
+                                                buttonText={showEdit ? 'Update' : 'Send'} />
+                                        </div>
 
 
-                                </div>
 
-                                <div className='space-y-1 w-full overflow-auto m-1 mt-4'>
-
-                                    <div className=' items-center flex justify-between'>
-                                        <p className='float-left text-sm text-default-900/70 font-semibold'>Preview</p>
-
-                                        <p className='float-right text-sm font-light text-default-900/60'>{rpm?.words} words, {rpm?.text}</p>
 
                                     </div>
-                                    {markdown ? <Card isBlurred shadow='sm' className=' p-2 lg:shadow-none space-y-2'>
-                                        <MarkdownViewer text={markdown} />
-                                    </Card> : null}
-                                </div>
 
-                            </div> : null}
+                                    <div className='space-y-1 w-full overflow-auto m-1 mt-4'>
+
+                                        <div className=' items-center flex justify-between'>
+                                            <p className='float-left text-sm text-default-900/70 font-semibold'>Preview</p>
+
+                                            <p className='float-right text-sm font-light text-default-900/60'>{rpm?.words} words, {rpm?.text}</p>
+
+                                        </div>
+                                        {markdown ? <Card isBlurred shadow='sm' className=' p-2 lg:shadow-none space-y-2'>
+                                            <MarkdownViewer text={markdown} />
+                                        </Card> : null}
+                                    </div>
+
+                                </div> : null}
+                        </div>
                         {replies?.map((item: Post) => (
                             <div className=' mt-6 ' style={{
                                 // marginLeft: ((2 * (comment.depth - rootComment.depth)) / 2) + 'rem'

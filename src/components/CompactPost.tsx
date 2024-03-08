@@ -1,3 +1,5 @@
+'use client';
+
 import CommentCover from '@/components/comment/component/CommentCover'
 import { Card } from '@nextui-org/react'
 import React, { memo } from 'react'
@@ -6,22 +8,28 @@ import BodyShort from '@/components/body/BodyShort'
 import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator'
 import ViewCountCard from './ViewCountCard'
 import { useRouter } from 'next13-progressbar';
+import { useAppSelector } from '@/libs/constants/AppFunctions'
+import { pushWithCtrl } from '@/libs/utils/helper';
 
 
 type Props = {
     comment: Feed;
 }
+
 export default memo(function CompactPost(props: Props) {
     const { comment } = props;
+    const commentInfo = useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment;
+
     // const URL = `/posts_api/getPost/${authPerm}`
     // const { data, isLoading, error, isValidating } = useSWR(URL, fetchSds<Post>)
-    const thumbnail = getPostThumbnail(comment?.json_images);
+    const thumbnail = getPostThumbnail(commentInfo?.json_images);
     const router = useRouter();
 
 
-    function handlePostClick() {
-        router.push(`/${comment.category}/@${comment.author}/${comment.permlink}`);
-        router.refresh();
+    function handlePostClick(event) {
+        const targetUrl = `/${commentInfo.category}/@${commentInfo.author}/${commentInfo.permlink}`;
+        pushWithCtrl(event, router, targetUrl, true);
+
     }
 
     return (
@@ -42,25 +50,26 @@ export default memo(function CompactPost(props: Props) {
       Beauty of Creativity
     </Link> */}
             </div>
-            <Card isPressable onPress={handlePostClick}
+            <Card isPressable
+                onPress={handlePostClick}
                 shadow='none' radius='none' className=" text-start p-0 bg-transparent px-2 py-2 mb-auto">
                 <p
                     className="font-medium text-md mb-2">
-                    {comment?.title}</p>
+                    {commentInfo?.title}</p>
                 <p className="text-default-900/50 text-tiny line-clamp-2">
-                    <BodyShort body={comment?.body} />
+                    <BodyShort body={commentInfo?.body} />
                 </p>
             </Card>
             <div className="px-2 py-2 flex flex-row items-center justify-between">
                 <span className="py-1 text-xs font-regular  mr-1 flex flex-row items-center">
 
-                    <span className="ml-1 text-default-900/80">{readingTime('', comment?.word_count).text}</span>
+                    <span className="ml-1 text-default-900/80">{readingTime('', commentInfo?.word_count).text}</span>
                 </span>
 
                 <div className=' flex items-center gap-2'>
 
                     <p className='text-tiny font-light '>
-                        <ViewCountCard comment={comment} />
+                        <ViewCountCard comment={commentInfo} />
                     </p>
 
                     <span className="py-1 text-xs font-regular gap-1 text-default-900/80 mr-1 flex flex-row items-center">
@@ -69,7 +78,7 @@ export default memo(function CompactPost(props: Props) {
                                 d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z">
                             </path>
                         </svg>
-                        {comment?.children && <div className="flex text-default-900/80 gap-1">{comment?.children}</div>}
+                        {commentInfo?.children && <div className="flex text-default-900/80 gap-1">{commentInfo?.children}</div>}
                     </span>
                 </div>
 

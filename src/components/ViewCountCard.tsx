@@ -12,6 +12,7 @@ type Props = {
     authPerm?: string;
     comment?: Post | Feed;
     className?: string;
+    compact?: boolean;
 } & (
         { author: string; permlink: string } |
         { authPerm: string } |
@@ -35,8 +36,10 @@ export default memo(function ViewCountCard(props: Props) {
     return (<div className={clsx(data && props.className)}>
         <STooltip content={`${data} unique views`}>
             <div className='flex flex-row gap-2 items-center'>
-                <FaEye className='text-lg opacity-90' />
-                <p className='text-md font-semibold'>{abbreviateNumber(data)}</p>
+                <FaEye className={props.compact ? 'text-md' : 'text-lg opacity-90'} />
+                <p className={props.compact ? 'text-tiny font-light' : 'text-sm font-semibold'}>
+                    {abbreviateNumber(data)}
+                </p>
             </div>
         </STooltip>
     </div>

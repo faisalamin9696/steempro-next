@@ -1,4 +1,4 @@
-import { Button, Card, CardFooter, Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
+import { Button, Card, CardFooter, Popover, PopoverContent, PopoverTrigger, useDisclosure } from '@nextui-org/react';
 import React, { memo } from 'react'
 import { IoChevronUpCircleSharp, IoChevronDownCircleOutline, IoChevronUpCircleOutline, IoChevronDownCircleSharp } from 'react-icons/io5';
 import { MdComment } from 'react-icons/md';
@@ -17,7 +17,7 @@ import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import VotingModal from '@/components/VotingModal';
 import IconButton from '@/components/IconButton';
 import { CommentProps } from '../CommentCard';
-import { BiDownvote, BiUpvote } from "react-icons/bi";
+import { BiDownvote, BiSolidDownvote, BiSolidUpvote, BiUpvote } from "react-icons/bi";
 import { abbreviateNumber } from '@/libs/utils/helper';
 import { FaRegCommentAlt } from "react-icons/fa";
 
@@ -28,25 +28,22 @@ export default memo(function CommentFooter(props: CommentProps) {
         onDeleteClick, onMuteClick, compact, onPinClick, onPublishClick } = props;
 
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
+    const { isOpen: isUpvoteOpen, onOpenChange: onUpvoteChange, onClose: onUpvoteClose } = useDisclosure();
+    const { isOpen: isDownvoteOpen, onOpenChange: onDownvoteChange, onClose: onDownvoteClose } = useDisclosure();
 
     const { authenticateUser, isAuthorized } = useLogin();
     const dispatch = useAppDispatch();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
-    const [upvotePopup, setUpvotePopup] = React.useState(false);
-    const [downvotePopup, setDownvotePopup] = React.useState(false);
+    const isUpvoted = comment.observer_vote === 1 && comment.observer_vote_percent > 0;
+    const isDownvoted = comment.observer_vote === 1 && comment.observer_vote_percent < 0;
+    const isVoting = comment.status === 'upvoting' || comment.status === 'downvoting';
 
 
 
 
     function handleOnVote(open: boolean, downvote?: boolean) {
-        authenticateUser();
-        if (isAuthorized()) {
-            if (downvote)
-                setDownvotePopup(open);
-            else
-                setUpvotePopup(open);
 
-        }
+
     }
 
 
@@ -55,12 +52,9 @@ export default memo(function CommentFooter(props: CommentProps) {
             weight = -weight;
         }
 
-        // check and closing the popups
-        if (upvotePopup) setUpvotePopup(false);
-        if (downvotePopup) setDownvotePopup(false);
-
         dispatch(addCommentHandler({ ...comment, status: downvote ? 'downvoting' : 'upvoting' }));
 
+        await awaitTimeout(0.25);
         try {
             const credentials = getCredentials(getSessionKey());
             if (credentials?.key) {
@@ -115,6 +109,12 @@ export default memo(function CommentFooter(props: CommentProps) {
             const upvote_per = !downvote ? loginInfo.upvote_mana_percent - calculatePowerUsage(weight) : loginInfo.upvote_mana_percent;
             dispatch(saveLoginHandler({ ...loginInfo, upvote_mana_percent: upvote_per, downvote_mana_percent: downvote_per }))
 
+            if (variables.weight < 0) {
+                onDownvoteClose();
+                return
+            }
+            onUpvoteClose();
+
 
 
         },
@@ -122,157 +122,141 @@ export default memo(function CommentFooter(props: CommentProps) {
     });
 
 
+    const CustomCard = ({ children, className, title }: {
+        children: React.ReactNode,
+        className?: string,
+        title?: string
+    }) => {
+        return <Card title={title}
+            className={clsx(`dark:bg-foreground/10 flex flex-row items-center gap-1 rounded-full`,
+                className)}>
+            {children}
+        </Card>
 
-    return <div className={clsx('flex flex-col p-1 gap-2 w-full')}>
-        < Card shadow='none' className={
-            clsx(`transition bg-transparent`,
-                className)
-        } >
+    }
 
-            <CardFooter className={clsx("flex card-content items-center justify-between"
-                , compact ? 'p-1' : 'p-2')}>
-                <div className={clsx('flex', compact ? 'gap-3' : 'gap-4')}>
-                    <div className='flex flex-row items-center gap-1'>
-
-                        <Card className='flex flex-row  px-[2px]  items-center bg-foreground/10 rounded-full'>
-                            <Popover placement='top-start' backdrop='opaque'
-                                shouldCloseOnBlur={true}
-                                isOpen={upvotePopup}
-                                onOpenChange={handleOnVote}
-                            >
-                                <PopoverTrigger>
-                                    <Button radius='full' isIconOnly size='sm' variant='light'>
-                                        <BiUpvote className='text-lg' />
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="p-1">
-                                    <VotingModal {...props}
-                                        isOpen={true}
-                                        onConfirm={castVote} />
-                                </PopoverContent>
-                            </Popover>
+    return <div className={clsx('flex flex-col p-1 gap-1 w-full')}>
 
 
-                            {!!comment.upvote_count && <div className='text-tiny'>
-                                {abbreviateNumber(comment.upvote_count)}
-                            </div>}
+        <div className={clsx("flex flex-row max-sm:flex-col items-center max-sm:items-start gap-2",
+            !isReply && 'justify-between')}>
+            <div className={clsx('flex', compact ? 'gap-3' : 'gap-4')}>
+                <div className='flex flex-row items-center gap-2'>
+                    <CustomCard>
+                        <Popover placement='top-start'
+                            backdrop='opaque'
+                            onOpenChange={() => {
+                                if (!isAuthorized()) {
+                                    authenticateUser();
+                                    return false
+                                }
+                            }}
+                            shouldCloseOnBlur={true}>
+                            <PopoverTrigger>
+                                <Button radius='full'
+                                    title='Upvote'
+                                    variant='light'
+                                    isDisabled={isVoting}
+                                    isLoading={comment.status === 'upvoting'}
+                                    isIconOnly size='sm'
+                                    className={clsx(isUpvoted && 'text-success-400')}
+                                >
+                                    {isUpvoted ?
+                                        <BiSolidUpvote className={('text-lg')} /> :
+                                        <BiUpvote className='text-lg' />}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="p-1">
+                                <VotingModal {...props}
+                                    onConfirm={castVote} />
+                            </PopoverContent>
+                        </Popover>
 
 
-                            <Popover placement='top-start' backdrop='opaque'
-                                shouldCloseOnBlur={true}
-                                isOpen={downvotePopup}
-                                onOpenChange={(open) => handleOnVote(open, true)}
-                            >
-                                <PopoverTrigger>
-                                    <Button isIconOnly size='sm' variant='flat'
-                                        radius='full'>
-                                        <BiDownvote className='text-lg' />
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="p-1">
-                                    <VotingModal {...props}
-                                        isOpen={downvotePopup}
-                                        onConfirm={castVote} />
-                                </PopoverContent>
-                            </Popover>
+                        {!!comment.upvote_count && <div className='text-tiny'>
+                            {abbreviateNumber(comment.upvote_count)}
+                        </div>}
 
-                            {/* {!!comment.downvote_count && <div className='text-tiny pr-2'>
+
+                        <Popover placement='top-start' backdrop='opaque'
+                            shouldCloseOnBlur={true}
+                        >
+                            <PopoverTrigger>
+                                <Button isIconOnly size='sm'
+                                    variant='light'
+                                    title='Downvote'
+                                    isDisabled={isVoting}
+                                    isLoading={comment.status === 'downvoting'}
+                                    className={clsx(isDownvoted && 'text-danger-400')}
+                                    radius='full'>
+                                    {isDownvoted ?
+                                        <BiSolidDownvote className='text-lg' /> :
+                                        <BiDownvote className='text-lg' />}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="p-1">
+                                <VotingModal {...props}
+                                    downvote
+                                    onConfirm={castVote} />
+                            </PopoverContent>
+                        </Popover>
+
+                        {/* {!!comment.downvote_count && <div className='text-tiny pr-2'>
                                 {abbreviateNumber(comment.downvote_count)}
                             </div>} */}
+                    </CustomCard>
 
-                        </Card>
+                    {!compact && !!comment.children && <CustomCard className='px-3'
+                        title={`${comment.children} Comments`}>
 
-
-                        {!compact && !!comment.children && <Card className='flex flex-row  px-[2px]  items-center bg-foreground/10 rounded-full'>
-                            <Popover placement='top-start' backdrop='opaque'
-                                shouldCloseOnBlur={true}
-                                isOpen={upvotePopup}
-                                onOpenChange={handleOnVote}
-                            >
-                                <PopoverTrigger>
-                                    <Button radius='full' isIconOnly size='sm' variant='light'>
-                                        <FaRegCommentAlt className='text-lg' />
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="p-1">
-                                    <VotingModal {...props}
-                                        isOpen={true}
-                                        onConfirm={castVote} />
-                                </PopoverContent>
-                            </Popover>
+                        <Button radius='full' isIconOnly size='sm'
+                            variant='light'>
+                            <FaRegCommentAlt className='text-lg' />
+                        </Button>
 
 
-                            {!!comment.children && <div className='text-tiny pr-2'>
-                                {abbreviateNumber(comment.children)}
-                            </div>}
 
-                        </Card>}
+                        {<div className='text-tiny'>
+                            {abbreviateNumber(comment.children)}
+                        </div>}
+                    </CustomCard>
+                    }
 
-                        {!isReply && !!comment.resteem_count && <Card className='flex flex-row  px-[2px]  items-center bg-foreground/10 rounded-full'>
-                            <Popover placement='top-start' backdrop='opaque'
-                                shouldCloseOnBlur={true}
-                                isOpen={upvotePopup}
-                                onOpenChange={handleOnVote}
-                            >
-                                <PopoverTrigger>
-                                    <Button radius='full' isIconOnly size='sm' variant='light'>
-                                        <SlLoop className='text-lg' />
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="p-1">
-                                    <VotingModal {...props}
-                                        isOpen={true}
-                                        onConfirm={castVote} />
-                                </PopoverContent>
-                            </Popover>
+                    {!isReply && !!comment.resteem_count &&
+                        <CustomCard className='px-3' title={`${comment.resteem_count} Reblogs`}>
 
+                            <Button variant='light' radius='full' isIconOnly size='sm'>
+                                <SlLoop className='text-lg' />
+                            </Button>
 
-                            {!!comment.resteem_count && <div className='text-tiny pr-2'>
+                            <div className='text-tiny'>
                                 {abbreviateNumber(comment.resteem_count)}
-                            </div>}
-
-                        </Card>}
-
-                    </div>
+                            </div>
+                        </CustomCard>}
 
                 </div>
 
-                <div className='pr-1 '>
-                    {!!comment.payout && <div className='flex flex-row items-center gap-1'>
-                        <Card className='flex flex-row py-[1px] px-[2px] items-center bg-foreground/10 rounded-full'>
-                            <Popover placement='top-start' backdrop='opaque'
-                                shouldCloseOnBlur={true}
-                                isOpen={upvotePopup}
-                                onOpenChange={handleOnVote}
-                            >
-                                <PopoverTrigger>
-                                    <Button radius='full' isIconOnly size='sm' variant='light'>
-                                        <PiCurrencyCircleDollarFill className='text-lg' />
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="p-1">
-                                    <VotingModal {...props}
-                                        isOpen={true}
-                                        onConfirm={castVote} />
-                                </PopoverContent>
-                            </Popover>
+            </div>
+
+            {!!comment.payout && <CustomCard
+                className='pr-2'
+                title={`$${comment.payout?.toString()} Payout`}>
+
+                <Button radius='full'
+                    isIconOnly size='sm' variant='light'>
+                    <PiCurrencyCircleDollarFill className='text-lg' />
+                </Button>
 
 
-                            {!!comment.children && <div className='text-tiny pr-2'>
-                                {comment.payout?.toFixed(3)}
-                            </div>}
-
-                        </Card>
-
-                    </div>}
+                <div className='text-tiny'>
+                    {comment.payout?.toFixed(2)}
                 </div>
-            </CardFooter >
+
+            </CustomCard>
+            }
 
 
-
-        </Card >
-
-
+        </div >
 
     </div >
 })

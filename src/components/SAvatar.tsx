@@ -8,7 +8,7 @@ import Image from "next/image";
 interface Props {
     username: string,
     quality?: 'small' | 'large' | 'medium',
-    onClick?: () => void;
+    onClick?: (event) => void;
     border?: boolean;
     className?: string;
     size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -19,7 +19,7 @@ export default function SAvatar(props: Props) {
         size === 'lg' ? 100 :
             size === 'md' ? 70 :
                 size === 'sm' ? 50 :
-                    size === 'xs' ? 40 : 60;
+                    size === 'xs' ? 25 : 60;
 
 
     if (!username) return <></>

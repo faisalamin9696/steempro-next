@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import { Switch } from "@nextui-org/react";
 import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs';
 import { getSettings, updateSettings } from "@/libs/utils/user";
@@ -12,8 +12,7 @@ export default memo(function ThemeSwitch({ className }: { className?: string }) 
     const { theme, setTheme, systemTheme } = useTheme();
     const [isSelected, setIsSelected] = useState(false);
     const dispatch = useAppDispatch();
-
-    useEffect(() => {
+    useMemo(() => {
         if (settings.theme === 'system' && systemTheme === 'light') {
             setIsSelected(true);
         } else {

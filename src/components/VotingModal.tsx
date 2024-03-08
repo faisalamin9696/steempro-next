@@ -8,7 +8,6 @@ import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { getVoteData } from '@/libs/steem/sds';
 
 interface Props {
-    isOpen: boolean;
     comment: Feed | Post,
     downvote?: boolean;
     onConfirm?: (weight: number, downvote?: boolean) => void;
@@ -25,7 +24,7 @@ const ItemCard = ({ tooltip, title, value }: { tooltip: string, title: string, v
 }
 
 export default function VotingModal(props: Props) {
-    const { isOpen, comment, downvote, onConfirm } = props;
+    const { comment, downvote, onConfirm } = props;
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const commentInfo = useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment
 
@@ -94,22 +93,26 @@ export default function VotingModal(props: Props) {
     // })
 
 
-    return (isOpen ? <Card shadow="none" className={clsx(" w-full border bg-transparent",
-        downvote ? 'border-red-600' : ' border-green-600')}>
+    return (<Card shadow="none" className={clsx(" w-full border bg-transparent",
+        downvote ? 'border-red-600' : ' border-primary-600')}>
         <CardHeader className="justify-between space-x-2 w-full">
             <>
                 <Slider
-                    size="sm"
+                    size="md"
                     label={<div>
                         {'Weight'}
                     </div>}
-                    color={downvote ? 'danger' : "success"}
+                    // color={downvote ? 'danger' : "success"}
                     step={1}
                     showTooltip={true}
                     defaultValue={100}
                     maxValue={100}
+                    radius='lg'
+                    color={downvote ? 'danger' : 'primary'}
                     minValue={1}
                     value={value}
+                    showOutline={true}
+                    className="max-w-md"
                     onChange={handleValueChange}
                     renderValue={({ children, ...props }) => (
                         <output {...props}>
@@ -165,7 +168,7 @@ export default function VotingModal(props: Props) {
             </>
 
         </CardHeader>
-      
+
         <CardFooter className="gap-3">
             <ItemCard title={'VP'} tooltip={`${'Voting power'}:
              ${downvote ? loginInfo?.downvote_mana_percent?.toFixed(1) : loginInfo?.upvote_mana_percent?.toFixed(1)}%`}
@@ -182,7 +185,7 @@ export default function VotingModal(props: Props) {
                 value={`${voteData?.full_vote?.toFixed(3)}$`} />
 
         </CardFooter>
-    </Card> : null
+    </Card>
 
     )
 }

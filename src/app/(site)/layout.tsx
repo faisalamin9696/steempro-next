@@ -2,6 +2,7 @@ import MainWrapper from '@/components/wrapper/MainWrapper';
 import { getServerSession } from 'next-auth';
 import React from 'react'
 import HomePage from './page';
+import HomeCarousel from '@/components/carousal/HomeCarousal';
 
 export default async function Layout({
     children,
@@ -21,8 +22,12 @@ export default async function Layout({
         <MainWrapper
 
             startContent={start}
-            startClassName={'md:block !static scrollbar-default'} >
-            <HomePage isLogin={!!session?.user?.name} />
+            startClassName={' max-h-screen md:block !static'} >
+            <div className=' flex flex-col'>
+                <HomeCarousel  />
+
+                <HomePage isLogin={!!session?.user?.name} />
+            </div>
         </MainWrapper>
     )
 }

@@ -40,8 +40,10 @@ export const AuthProvider = (props: Props) => {
     const [isNew, setIsNew] = useState(false);
     const dispatch = useAppDispatch();
 
-    const URL = `/accounts_api/getAccountExt/${session?.user?.name}/${session?.user?.name}`
-    const { data: accountExt } = useSWR(!!session?.user?.name && !data ? URL : undefined, fetchSds);
+    const URL = `/accounts_api/getAccountExt/${session?.user?.name}/${session?.user?.name}`;
+    const { data: accountExt } = useSWR(session?.user?.name && !data ? undefined : undefined, fetchSds<AccountExt>);
+
+
     if (!data && accountExt) {
         dispatch(saveLoginHandler(accountExt));
     }

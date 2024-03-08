@@ -49,6 +49,12 @@
 
 body {
   background: rgb(var(--background));
+
+}
+
+html {
+  background: rgb(var(--background));
+
 }
 
 @layer utilities {

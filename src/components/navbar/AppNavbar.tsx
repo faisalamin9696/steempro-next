@@ -1,6 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react'
+'use client';
+
+import React, { useMemo } from 'react'
 import './header.scss';
-import { Button, Input, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle, Popover, PopoverContent, PopoverTrigger, User } from "@nextui-org/react";
+import { Button, Input, Link, Navbar, NavbarBrand, NavbarContent, Popover, PopoverContent, PopoverTrigger, User } from "@nextui-org/react";
 import IconButton from '../IconButton';
 import { MdNotifications, MdSearch } from 'react-icons/md';
 import { LuPencilLine } from "react-icons/lu";
@@ -14,6 +16,8 @@ import { signIn, signOut, useSession } from 'next-auth/react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next13-progressbar';
 import AccountsModal from '../AccountsModal';
+import AppDrawer from './AppDrawer';
+import { pushWithCtrl } from '@/libs/utils/helper';
 const NavbarDrawerItems = dynamic(() => import('./NavbarDrawerItems'))
 
 
@@ -40,7 +44,7 @@ export default function AppNavbar() {
     const router = useRouter();
     const [isPopOpen, setIsPopOpen] = React.useState(false);
     const [isAccOpen, setIsAccOpen] = React.useState(false);
-    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+    const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
 
 
 
@@ -74,57 +78,46 @@ export default function AppNavbar() {
     return (
         <Navbar
             className='shadow-xl w-full h-16  !px-0 !p-0'
-            shouldHideOnScroll={!isMenuOpen}
-            isMenuOpen={isMenuOpen}
-
-            onMenuOpenChange={setIsMenuOpen}>
+            shouldHideOnScroll>
 
             <NavbarContent justify="start" className=' !grow-0'>
-                <NavbarMenuToggle />
-            </NavbarContent>
-
-            <NavbarMenu >
-                <NavbarDrawerItems onItemClick={() => {
-                    setIsMenuOpen(!isMenuOpen)
-                }} />
-            </NavbarMenu>
-
-            <NavbarContent justify='center'>
-                <NavbarBrand
-                    className="">
-
-                    <Link href={'/'} className=''>
-                        <Image
-                            className='hidden sm:block'
-                            src={'/logo-default.png'}
-                            alt='logo'
-                            placeholder='blur'
-                            blurDataURL={'/logo-default.png'}
-                            priority
-                            height={40}
-                            width={150}
-                            style={{  height: 'auto' }}
-
-                        />
-                    </Link>
-                    <Link href={'/'}>
-                        <Image priority className='hidden max-sm:block'
-                            placeholder='blur'
-                            blurDataURL={'/logo192.png'}
-                            src={'/logo192.png'}
-                            alt='logo'
-                            height={40}
-                            width={40}
-
-                            style={{ width: 'auto', height: 'auto' }}
-                        />
-
-                    </Link>
-                </NavbarBrand>
+                <AppDrawer />
             </NavbarContent>
 
 
 
+
+            <NavbarBrand
+                className="">
+
+                <Link href={'/'} className=''>
+                    <Image
+                        className='hidden sm:block'
+                        src={'/logo-default.png'}
+                        alt='logo'
+                        placeholder='blur'
+                        blurDataURL={'/logo-default.png'}
+                        priority
+                        height={40}
+                        width={150}
+                        style={{ height: 'auto' }}
+
+                    />
+                </Link>
+                <Link href={'/'}>
+                    <Image priority className='hidden max-sm:block'
+                        placeholder='blur'
+                        blurDataURL={'/logo192.png'}
+                        src={'/logo192.png'}
+                        alt='logo'
+                        height={40}
+                        width={40}
+
+                        style={{ width: 'auto', height: 'auto' }}
+                    />
+
+                </Link>
+            </NavbarBrand>
 
 
             <NavbarContent as="div" className="items-center z-0 " justify="end">
@@ -156,7 +149,12 @@ export default function AppNavbar() {
                     </Button>
 
 
-                    <Button radius='full' onPress={() => router.push('/submit')} isIconOnly size='sm' variant='light'>
+                    <Button radius='full' onPress={(event) => {
+                        const targetUrl = '/submit';
+                        pushWithCtrl(event, router, targetUrl);
+                    }}
+
+                        isIconOnly size='sm' variant='light'>
                         <LuPencilLine className='text-xl text-default-600' />
                     </Button>
 

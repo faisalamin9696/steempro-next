@@ -52,6 +52,7 @@ export default async function RootLayout({
       <link rel="preconnect " href={AppStrings.sds_base_url} />
 
       <body className={clsx()}>
+
         <Providers data={data}>
           {children}
           <Toaster richColors />

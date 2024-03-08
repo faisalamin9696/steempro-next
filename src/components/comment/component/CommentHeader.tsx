@@ -5,7 +5,7 @@ import { useAppSelector } from '@/libs/constants/AppFunctions';
 import Reputation from '@/components/Reputation';
 import { getResizedAvatar } from '@/libs/utils/image';
 import TimeAgoWrapper from '@/components/wrapper/TimeAgoWrapper';
-import { validateCommunity } from '@/libs/utils/helper';
+import { pushWithCtrl, validateCommunity } from '@/libs/utils/helper';
 import { getSettings } from '@/libs/utils/user';
 import STag from '@/components/STag';
 
@@ -28,7 +28,6 @@ import usePathnameClient from '@/libs/utils/usePathnameClient';
 import EditRoleModal from '@/components/EditRoleModal';
 import { FaInfoCircle } from 'react-icons/fa';
 
-const DynamicUserCard = dynamic(() => import('../../UserCard'));
 
 interface Props {
     comment: Post | Feed;
@@ -37,10 +36,11 @@ interface Props {
     isReply?: boolean;
     compact?: boolean,
     handleEdit?: () => void;
+    isDetail?: boolean;
 }
 export default memo(function CommentHeader(props: Props) {
 
-    const { comment, className, isReply, compact, handleEdit } = props;
+    const { comment, className, isReply, compact, handleEdit, isDetail } = props;
     const { data: session } = useSession();
     const username = session?.user?.name;
     const isSelf = comment.author === username;
@@ -55,10 +55,11 @@ export default memo(function CommentHeader(props: Props) {
     const router = useRouter();
     const [isRoleOpen, setIsRoleOpen] = useState(false);
 
-    function handleProfileClick() {
+    function handleProfileClick(event) {
         if (pathUsername !== comment.author) {
-            router.push(authorLink);
-            router.refresh();
+            const targetUrl = authorLink;
+            pushWithCtrl(event, router, targetUrl, true);
+
         }
     }
 
@@ -145,7 +146,7 @@ export default memo(function CommentHeader(props: Props) {
             </div>}
             description={<div className='flex flex-col'>
 
-                {comment.author_role && comment.author_title ?
+                {isDetail && comment.author_role && comment.author_title ?
                     <div className='flex gap-2 items-center'>
                         <p className='flex-none'>
                             {comment.author_role}
@@ -157,7 +158,7 @@ export default memo(function CommentHeader(props: Props) {
                     <TimeAgoWrapper lang={settings.lang.code} created={comment.created * 1000} lastUpdate={comment.last_update * 1000} />
 
                     {!isReply && <div className='flex gap-1  sm:items-center'>
-                        <p>in</p>
+                        <p className={compact ? 'ml-1' : ''}>in</p>
 
                         <STag className='text-md font-bold '
                             content={comment.community || (validateCommunity(comment.category) ? comment.category :

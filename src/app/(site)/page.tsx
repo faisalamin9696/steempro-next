@@ -1,6 +1,6 @@
 "use client";
 
-import { Tab, Tabs } from '@nextui-org/react'
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Tab, Tabs } from '@nextui-org/react'
 import React from 'react'
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import FeedPatternSwitch from '@/components/FeedPatternSwitch';
@@ -11,6 +11,7 @@ import HomeTrendingsTab from './(tabs)/trendings/page';
 import HomeCreatedTab from './(tabs)/created/page';
 import HomePayoutTab from './(tabs)/payout/page';
 import HomeCommunitiesTab from './(tabs)/communities/page';
+import HomeCarousel from '@/components/carousal/HomeCarousal';
 
 
 export default function HomePage({ isLogin }: { isLogin?: boolean }) {
@@ -36,7 +37,6 @@ export default function HomePage({ isLogin }: { isLogin?: boolean }) {
         disableCursorAnimation
         color={'secondary'}
         radius="full"
-        hidden={true}
         className='justify-center'
         defaultSelectedKey={(isLogin && category === 'communities') ? 'communities' : category ?? 'trending'}
         onSelectionChange={(key) => {
@@ -45,6 +45,8 @@ export default function HomePage({ isLogin }: { isLogin?: boolean }) {
         classNames={{
           tabList: "max-sm:gap-0 bg-default-300",
           tab: "max-sm:px-2 max-sm:h-5",
+          base: ''
+
         }}
 
       >

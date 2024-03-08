@@ -37,7 +37,7 @@ export default function HomeStart() {
     }
 
     return (
-        <div className="flex flex-col rounded-lg gap-4 max-h-screen">
+        <div className="flex flex-col rounded-lg gap-4">
             <div>
                 <div
                     className="flex items-center gap-2

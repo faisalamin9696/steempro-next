@@ -79,7 +79,7 @@ export default function PostPage(props: Props) {
 
                         <div className="space-y-4 flex-col">
                             <>
-                                <CommentHeader size='md'
+                                <CommentHeader isDetail size='md'
                                     handleEdit={toggleEditMode}
                                     comment={commentInfo} className='w-full' />
                             </>
@@ -91,7 +91,7 @@ export default function PostPage(props: Props) {
                             <MarkdownViewer text={commentInfo.body} />
                         </div>
 
-                        <CardFooter className='w-full'>
+                        <CardFooter className='w-full p-0'>
                             <CommentFooter comment={commentInfo}
                                 className={'w-full'} />
                         </CardFooter>

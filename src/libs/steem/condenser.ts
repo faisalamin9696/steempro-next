@@ -630,3 +630,396 @@ export const unfollowUser = async (
         ),
     );
 };
+
+export const subscribeCommunity = async (
+    account: AccountExt,
+    key: string,
+    data: { communityId: string; subscribe: boolean },
+) => {
+    const keyData = getKeyType(account, key);
+
+    if (keyData && PrivKey.atLeast(keyData.type, 'POSTING')) {
+        const privateKey = PrivateKey.fromString(key);
+        const json = [
+            data.subscribe ? 'subscribe' : 'unsubscribe',
+            { community: data.communityId },
+        ];
+        const custom_json = {
+            id: 'community',
+            json: JSON.stringify(json),
+            required_auths: [],
+            required_posting_auths: [keyData.account],
+        };
+        const opArray: any = [['custom_json', custom_json]];
+
+        return new Promise((resolve, reject) => {
+            client.broadcast
+                .sendOperations(opArray, privateKey)
+                .then(result => {
+                    resolve(result);
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        });
+    }
+
+    return Promise.reject(
+        new Error(
+            'Check private key permission! Required private posting key or above.',
+        ),
+    );
+};
+
+export const voteForWitness = async (
+    account: AccountExt,
+    key: string,
+    DATA: { from: string; witness: string; approved: boolean },
+) => {
+    const keyData = getKeyType(account, key);
+
+    if (keyData && PrivKey.atLeast(keyData.type, 'ACTIVE')) {
+        const privateKey = PrivateKey.fromString(key);
+
+        const args: any = [
+            [
+                'account_witness_vote',
+                {
+                    account: keyData.account,
+                    witness: DATA.witness,
+                    approve: DATA.approved,
+                },
+            ],
+        ];
+        return new Promise((resolve, reject) => {
+            client.broadcast
+                .sendOperations(args, privateKey)
+                .then(result => {
+                    resolve(result);
+                })
+                .catch(err => {
+                    reject(err);
+                    console.log('PowerUp error', err);
+                });
+        });
+    }
+
+    return Promise.reject(
+        new Error(
+            'Check private key permission! Required private active key or above.',
+        ),
+    );
+};
+
+export const claimRewardBalance = async (
+    account: AccountExt,
+    key: string,
+    rewardSteem,
+    rewardSbd,
+    rewardVests,
+) => {
+    const keyData = getKeyType(account, key);
+    if (keyData && PrivKey.atLeast(keyData.type, 'POSTING')) {
+        const privateKey = PrivateKey.fromString(key);
+
+        const opArray: any = [
+            [
+                'claim_reward_balance',
+                {
+                    account: keyData.account,
+                    reward_steem: rewardSteem,
+                    reward_sbd: rewardSbd,
+                    reward_vests: rewardVests,
+                },
+            ],
+        ];
+
+        return new Promise((resolve, reject) => {
+            client.broadcast
+                .sendOperations(opArray, privateKey)
+                .then(result => {
+                    resolve(result);
+                })
+                .catch(err => {
+                    console.log('Claim Error', err);
+                    reject(err);
+                });
+        });
+    }
+
+    return Promise.reject(
+        new Error(
+            'Check private key permission! Required private posting key or above.',
+        ),
+    );
+};
+
+export const transferToVesting = async (
+    account: AccountExt,
+    key: string,
+    DATA: { from: string; to: string; amount: number; asset: string },
+) => {
+    const keyData = getKeyType(account, key);
+
+    if (keyData && PrivKey.atLeast(keyData.type, 'ACTIVE')) {
+        const privateKey = PrivateKey.fromString(key);
+
+        const transferAmount = DATA.amount.toFixed(3).toString() + ' ' + DATA.asset;
+
+        const args: any = [
+            [
+                'transfer_to_vesting',
+                {
+                    from: keyData.account,
+                    to: DATA.to,
+                    amount: transferAmount,
+                },
+            ],
+        ];
+        return new Promise((resolve, reject) => {
+            client.broadcast
+                .sendOperations(args, privateKey)
+                .then(result => {
+                    resolve(result);
+                })
+                .catch(err => {
+                    reject(err);
+                    console.log('PowerUp error', err);
+                });
+        });
+    }
+
+    return Promise.reject(
+        new Error(
+            'Check private key permission! Required private active key or above.',
+        ),
+    );
+};
+
+export const delegateVestingShares = async (
+    account: AccountExt,
+    key: string,
+    DATA: { delegatee: string; amount: number; asset: string },
+) => {
+    const keyData = getKeyType(account, key);
+
+    if (keyData && PrivKey.atLeast(keyData.type, 'ACTIVE')) {
+        const privateKey = PrivateKey.fromString(key);
+
+        const transferAmount = DATA.amount.toFixed(6).toString() + ' ' + DATA.asset;
+
+        return new Promise((resolve, reject) => {
+            client.broadcast
+                .delegateVestingShares(
+                    {
+                        delegator: keyData.account,
+                        delegatee: DATA.delegatee,
+                        vesting_shares: transferAmount,
+                    },
+                    privateKey,
+                )
+                .then(result => {
+                    resolve(result);
+                })
+                .catch(err => {
+                    reject(err);
+                    console.log('PowerUp error', err);
+                });
+        });
+    }
+
+    return Promise.reject(
+        new Error(
+            'Check private key permission! Required private active key or above.',
+        ),
+    );
+};
+
+export const reblogPost = async (
+    account: AccountExt,
+    key: string,
+    data: { author: string; permlink: string },
+) => {
+    const keyData = getKeyType(account, key);
+
+    if (keyData && PrivKey.atLeast(keyData.type, 'POSTING')) {
+        const privateKey = PrivateKey.fromString(key);
+        const follower = keyData.account;
+
+        const json = {
+            id: 'follow',
+            json: JSON.stringify([
+                'reblog',
+                {
+                    account: follower,
+                    author: data.author,
+                    permlink: data.permlink,
+                },
+            ]),
+            required_auths: [],
+            required_posting_auths: [follower],
+        };
+
+        const opArray: any = [['custom_json', json]];
+
+        return new Promise((resolve, reject) => {
+            client.broadcast
+                .sendOperations(opArray, privateKey)
+                .then(result => {
+                    resolve(result);
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        });
+    }
+
+    return Promise.reject(
+        new Error(
+            'Check private key permission! Required private posting key or above.',
+        ),
+    );
+};
+
+export const updateProfile = async (
+    account: AccountExt,
+    key: string,
+    params: {
+        name: string;
+        about: string;
+        profile_image: string;
+        website: string;
+        location: string;
+        cover_image: string;
+        version?: number;
+    },
+) => {
+    const keyData = getKeyType(account, key);
+    if (keyData && PrivKey.atLeast(keyData.type, 'POSTING')) {
+        const privateKey = PrivateKey.fromString(key);
+        params.version = 2;
+
+        const opArray: any = [
+            [
+                'account_update2',
+                {
+                    account: keyData.account,
+                    json_metadata: '',
+                    posting_json_metadata: JSON.stringify({ profile: params }),
+                    extensions: [],
+                },
+            ],
+        ];
+
+        return new Promise((resolve, reject) => {
+            client.broadcast
+                .sendOperations(opArray, privateKey)
+                .then(result => {
+                    resolve(result);
+                })
+                .catch(error => {
+                    // if (error && get(error, 'jse_info.code') === 4030100) {
+                    //   error.message = getDsteemDateErrorMessage(error);
+                    // }
+                    reject(error);
+                });
+        });
+    }
+
+    return Promise.reject(
+        new Error(
+            'Check private key permission! Required private posting key or above.',
+        ),
+    );
+};
+
+export async function transferAsset(from: AccountExt, privateKey: string, asset: string,
+    options: Transfer) {
+    const keyData = getKeyType(from, privateKey);
+
+    if (keyData && PrivKey.atLeast(keyData.type, 'ACTIVE')) {
+        const key = PrivateKey.fromString(privateKey);
+        const from = keyData.account;
+
+        let { amount, to, memo } = options;
+        if (typeof amount === 'string') {
+            amount = parseFloat(amount);
+        }
+        const transferAmount = amount.toFixed(3).toString() + ' ' + asset;
+
+        const transferOp: any = [
+            'transfer',
+            {
+                from,
+                to,
+                amount: transferAmount,
+                memo,
+            },
+        ];
+
+        return new Promise((resolve, reject) => {
+            client.broadcast
+                .sendOperations([transferOp], key)
+                .then(result => {
+                    resolve(result);
+                })
+                .catch(err => {
+                    reject(err);
+                    console.log('Transfer error', err);
+                });
+        });
+    }
+    return Promise.reject(
+        new Error(
+            'Check private key permission! Required posting active key or above.',
+        ),
+    );
+}
+
+
+export const transferToSavings = (from: AccountExt, privateKey: string, asset: string,
+    options: Transfer) => {
+    const keyData = getKeyType(from, privateKey);
+
+    if (keyData && PrivKey.atLeast(keyData.type, 'ACTIVE')) {
+        const key = PrivateKey.fromString(privateKey);
+        let { amount, to, memo } = options;
+
+        if (typeof amount === 'string') {
+            amount = parseFloat(amount);
+        }
+
+        const from = keyData.account;
+        const transferAmount = amount.toFixed(3).toString() + ' ' + asset;
+
+        const args: any = [
+            [
+                'transfer_to_savings',
+                {
+                    from,
+                    to,
+                    amount: transferAmount,
+                    memo,
+                },
+            ],
+        ];
+
+        return new Promise((resolve, reject) => {
+            client.broadcast
+                .sendOperations(args, key)
+                .then(result => {
+                    resolve(result);
+                })
+                .catch(err => {
+                    reject(err);
+                    console.log('Transfer error', err);
+                });
+        });
+    }
+    return Promise.reject(
+        new Error(
+            'Check private key permission! Required posting active key or above.',
+        ),
+    );
+};
+

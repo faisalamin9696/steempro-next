@@ -28,9 +28,9 @@ export async function getAnnouncements(): Promise<{ title: string, description: 
 }
 
 
-export async function getPromotions() {
+export async function getPromotions(): Promise<string[]> {
     const { result, error } = await getFirestoreDocument('App', 'promoted_posts');
-    return result || [];
+    return result?.['posts'] || [];
 }
 
 

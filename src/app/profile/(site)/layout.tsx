@@ -29,7 +29,7 @@ export default async function Layout({
             <ProfileHeader data={data} />
 
             <MainWrapper
-                endClassName='scrollbar-default'
+                endClassName=''
                 // startContent={start}
                 endContent={end}>
                 {children}

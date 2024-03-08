@@ -46,7 +46,7 @@ type Feed = {
   | 'member'
   | 'mod'
   | 'admin'
-  | 'owner' ;
+  | 'owner';
   observer_title: string;
   observer_vote: 0 | 1 | number;
   observer_vote_percent: number;
@@ -56,7 +56,10 @@ type Feed = {
   replies: Post[];
   // undefined for Feed API
   depth: number;
-  status?: 'upvoting' | 'downvoting' | 'resteeming' | 'idle'
+  status?: 'upvoting' | 'downvoting' | 'resteeming' | 'idle';
+  max_accepted_payout: number;
+  percent_steem_dollars: number
+
 };
 
 type Post = Feed & {
@@ -70,8 +73,6 @@ type Post = Feed & {
   curator_payout_value: number
   pending_payout_value: number
   total_vote_weight: number
-  max_accepted_payout: number
-  percent_steem_dollars: number
   allow_curation_rewards: number
   allow_replies: number
   allow_votes: number

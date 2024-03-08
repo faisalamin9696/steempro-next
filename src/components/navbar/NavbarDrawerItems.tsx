@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import secureLocalStorage from 'react-secure-storage';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import { usePathname } from 'next/navigation';
-import { abbreviateNumber } from '@/libs/utils/helper';
+import { abbreviateNumber, pushWithCtrl } from '@/libs/utils/helper';
 import { IoLogOut } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
 import { useLogin } from '../useLogin';
@@ -82,9 +82,10 @@ export default function NavbarDrawerItems(props: Props) {
         <div className='flex flex-col gap-2 h-full text-default-600 '>
             {isLogin() && <Button className='w-full justify-start text-inherit '
                 variant='light'
-                onPress={() => {
+                onPress={(event) => {
                     handleItemClick();
-                    router.push('/@faisalamin');
+                    if (credentials?.username)
+                        pushWithCtrl(event, router, `/@${credentials.username}`)
                 }}
                 startContent={<FaUserCircle className='text-xl' />}>
                 Profile
@@ -155,9 +156,6 @@ export default function NavbarDrawerItems(props: Props) {
 
 
         </div>
-        <ThemeSwitch
-            className='flex-row-reverse pb-4' />
-
 
 
     </div>

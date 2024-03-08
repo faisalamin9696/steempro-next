@@ -3,6 +3,7 @@
     max-width: 1280px;
     width: 100%;
     margin: auto;
+
 }
 
 .left,
@@ -12,13 +13,28 @@
     position: sticky;
     top: 70px;
     // height: 100vh;
-    overflow-y: scroll;
-    overflow-x: hidden;
     padding-bottom: 72px;
     align-self: flex-start;
+    scroll-behavior: auto;
+    overflow-y: auto;
+    flex-shrink: 0;
+    scrollbar-color: transparent transparent;
+    scrollbar-width: thin;
+
+    &:hover {
+        scrollbar-color: initial;
+        scrollbar-width: thin;
+        --scrollbar-background: red;
+    }
 }
 
-.center-div {
+// .left:hover {
+//     overflow-y: auto;
+
+// }
+
+
+.left .center-div {
     flex: 1;
     max-width: 1280px;
     width: 100%;
