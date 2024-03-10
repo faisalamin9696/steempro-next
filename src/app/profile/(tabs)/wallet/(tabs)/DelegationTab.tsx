@@ -143,12 +143,12 @@ export default function DelegationTab() {
                 const canEdit = delegation['status'] === 'outgoing' && delegation.from === loginInfo.name;
                 const canRemove = delegation['status'] === 'incoming' && delegation.from === loginInfo.name;
                 return (
-                    <div className="flex flex-row items-start gap-2">
+                    <div className="flex flex-row items-start gap-1">
                         <Dropdown>
                             <DropdownTrigger>
-                                <Button isIconOnly size="sm" variant="light" radius="full">
+                                <div className="p-1 cursor-pointer">
                                     <BiDotsVerticalRounded className="text-default-300 text-xl" />
-                                </Button>
+                                </div>
                             </DropdownTrigger>
                             <DropdownMenu disabledKeys={!(canEdit || canRemove) ? ['edit', 'delete'] : []}>
                                 <DropdownItem key={'edit'}>Edit</DropdownItem>
@@ -354,7 +354,7 @@ export default function DelegationTab() {
         () => ({
             wrapper: ["max-h-[382px]", "max-w-3xl"],
             th: ["bg-transparent", "text-default-500", "border-b", "border-divider"],
-            td: [
+            td: ["pl-0",
                 // changing the rows border radius
                 // first
                 "group-data-[first=true]:first:before:rounded-none",
@@ -383,8 +383,6 @@ export default function DelegationTab() {
             onSortChange={setSortDescriptor}
             isCompact
             isStriped
-            showDragButtons
-            draggable
 
         >
             <TableHeader columns={headerColumns}>
