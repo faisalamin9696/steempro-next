@@ -47,7 +47,7 @@
     "sonner": "^1.4.3",
     "speakingurl": "^14.0.1",
     "striptags": "^3.2.0",
-    "styled-components": "^6.1.8",
+    "styled-components": "^5.0.0",
     "swr": "^2.2.4",
     "tronweb": "^5.3.2",
     "vanilla-tilt": "^1.8.1",
