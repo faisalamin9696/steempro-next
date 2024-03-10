@@ -5,9 +5,10 @@ import { getCredentials, sessionKey } from '@/libs/utils/user';
 import { fetchSds, useAppDispatch } from '@/libs/constants/AppFunctions';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import useSWR from 'swr';
+import { saveSteemGlobals } from '@/libs/redux/reducers/SteemGlobalReducer';
 
 // Define the type for your context value
-type AuthContextType = {
+interface AuthContextType {
     credentials?: User;
     authenticateUser: (isNew?: boolean) => void;
     isAuthorized: () => boolean;
@@ -27,13 +28,14 @@ export const useLogin = () => {
 };
 
 
-type Props = {
+interface Props {
     data?: AccountExt;
     children: React.ReactNode;
+    globalData: SteemProps;
 }
 // Create a provider component
 export const AuthProvider = (props: Props) => {
-    const { data, children } = props;
+    const { data, children, globalData } = props;
     const { data: session, status } = useSession();
     const [openAuth, setOpenAuth] = useState(false);
     const [credentials, setCredentials] = useState<User>();
@@ -41,7 +43,7 @@ export const AuthProvider = (props: Props) => {
     const dispatch = useAppDispatch();
 
     const URL = `/accounts_api/getAccountExt/${session?.user?.name}/${session?.user?.name}`;
-    const { data: accountExt } = useSWR(session?.user?.name && !data ? undefined : undefined, fetchSds<AccountExt>);
+    const { data: accountExt } = useSWR(session?.user?.name && !data ? URL : undefined, fetchSds<AccountExt>);
 
 
     if (!data && accountExt) {
@@ -51,6 +53,9 @@ export const AuthProvider = (props: Props) => {
     useEffect(() => {
         if (data) {
             dispatch(saveLoginHandler(data));
+        }
+        if (globalData) {
+            dispatch(saveSteemGlobals(globalData));
         }
         setCredentials(getCredentials());
     }, [])

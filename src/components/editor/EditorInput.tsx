@@ -104,7 +104,7 @@ export default memo(function EditorInput(props: EditorProps) {
 
     }, []);
 
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
         onDrop, noClick: true, accept: {
             'image/jpeg': [],
             'image/png': [],
@@ -113,7 +113,7 @@ export default memo(function EditorInput(props: EditorProps) {
             'image/gif': []
 
 
-        }
+        },
     });
 
     useEffect(() => {
@@ -295,7 +295,7 @@ export default memo(function EditorInput(props: EditorProps) {
             case 'image':
                 authenticateUser();
                 if (isAuthorized()) {
-                    document.getElementById('dropzone')?.click();
+                    open();
                 }
                 // insertAtCursor('![', '](url)', 2, 2);
                 break;
@@ -408,8 +408,9 @@ export default memo(function EditorInput(props: EditorProps) {
                     // return `Uploaded`;
 
                     if (res.data && res.data.url) {
+                        const Image_name: string = image.file.name;
                         res.data.hash = res.data.url.split('/').pop();
-                        const imageMd = `![](${res.data.url})`;
+                        const imageMd = `![${Image_name?.substring(0, 20) || ''}](${res.data.url})`;
                         insertImage({ url: image.temporaryTag, isPlaceholder: false, imgMd: imageMd })
                         uploadNextImage();
                         return `Uploaded`;

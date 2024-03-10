@@ -2,7 +2,7 @@ import { Button, Popover, PopoverContent, PopoverTrigger } from '@nextui-org/rea
 import React from 'react'
 import { MdSettings } from 'react-icons/md'
 
-type Props = {
+interface Props {
     children: React.ReactNode;
     advance?: boolean;
 }

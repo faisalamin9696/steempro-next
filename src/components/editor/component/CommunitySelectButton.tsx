@@ -50,6 +50,7 @@ export default memo(function CommunitySelectButton(props: Props) {
         <div className='flex flex-row gap-2 items-center'>
             <div className='w-60'>
                 <Select
+                    aria-label="Select community"
                     selectedKeys={
                         community ? [JSON.stringify({
                             account: community.account,
@@ -87,9 +88,7 @@ export default memo(function CommunitySelectButton(props: Props) {
                 >
                     {(item) => (
                         <SelectItem key={JSON.stringify({ account: item.account, title: item.title })}
-                            onSelect={() => {
 
-                            }}
                             textValue={JSON.stringify(item)}
                             value={item.title}>
                             <div className="flex gap-2 items-center">

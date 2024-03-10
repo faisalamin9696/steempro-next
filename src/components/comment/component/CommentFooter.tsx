@@ -1,5 +1,5 @@
 import { Button, Card, CardFooter, Popover, PopoverContent, PopoverTrigger, useDisclosure } from '@nextui-org/react';
-import React, { memo } from 'react'
+import React, { memo, useState } from 'react'
 import { IoChevronUpCircleSharp, IoChevronDownCircleOutline, IoChevronUpCircleOutline, IoChevronDownCircleSharp } from 'react-icons/io5';
 import { MdComment } from 'react-icons/md';
 import { PiCurrencyCircleDollarFill } from 'react-icons/pi';
@@ -22,6 +22,7 @@ import { abbreviateNumber } from '@/libs/utils/helper';
 import { FaRegCommentAlt } from "react-icons/fa";
 
 import { ImLoop } from "react-icons/im";
+import { RewardBreakdownCard } from '@/components/comment/RewardBreakdownCard';
 
 export default memo(function CommentFooter(props: CommentProps) {
     const { comment, className, isReply, onReplyClick, onEditClick,
@@ -37,6 +38,7 @@ export default memo(function CommentFooter(props: CommentProps) {
     const isUpvoted = comment.observer_vote === 1 && comment.observer_vote_percent > 0;
     const isDownvoted = comment.observer_vote === 1 && comment.observer_vote_percent < 0;
     const isVoting = comment.status === 'upvoting' || comment.status === 'downvoting';
+    const [breakdownModal, setBreakdownModal] = useState(false);
 
 
 
@@ -122,12 +124,13 @@ export default memo(function CommentFooter(props: CommentProps) {
     });
 
 
-    const CustomCard = ({ children, className, title }: {
+    const CustomCard = ({ children, className, title, onPress }: {
         children: React.ReactNode,
         className?: string,
-        title?: string
+        title?: string,
+        onPress?: (event) => void
     }) => {
-        return <Card title={title}
+        return <Card title={title} isPressable={!!onPress} onPress={onPress}
             className={clsx(`dark:bg-foreground/10 flex flex-row items-center gap-1 rounded-full`,
                 className)}>
             {children}
@@ -238,14 +241,21 @@ export default memo(function CommentFooter(props: CommentProps) {
 
             </div>
 
-            {!!comment.payout && <CustomCard
+            {!!comment.payout && <CustomCard onPress={() => setBreakdownModal(!breakdownModal)}
                 className='pr-2'
-                title={`$${comment.payout?.toString()} Payout`}>
+                title={`$${comment.payout?.toLocaleString()} Payout`}>
 
-                <Button radius='full'
-                    isIconOnly size='sm' variant='light'>
-                    <PiCurrencyCircleDollarFill className='text-lg' />
-                </Button>
+                <Popover placement="right" onOpenChange={setBreakdownModal} isOpen={breakdownModal}>
+                    <PopoverTrigger>
+                        <Button radius='full' isDisabled
+                            isIconOnly size='sm' variant='light'>
+                            <PiCurrencyCircleDollarFill className='text-lg' />
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                        <RewardBreakdownCard comment={comment} />
+                    </PopoverContent>
+                </Popover>
 
 
                 <div className='text-tiny'>
@@ -253,6 +263,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                 </div>
 
             </CustomCard>
+
             }
 
 

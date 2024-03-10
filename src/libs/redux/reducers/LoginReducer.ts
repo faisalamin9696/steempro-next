@@ -2,7 +2,7 @@ import { empty_profile } from "@/libs/constants/Placeholders";
 import { createSlice } from "@reduxjs/toolkit";
 
 
-type LoginState = {
+interface LoginState {
     value: AccountExt
 };
 

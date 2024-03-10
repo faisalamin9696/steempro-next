@@ -23,12 +23,12 @@ export const TokenCard = (props: TokenCardProps) => {
     }
 
     return <Card  shadow='sm' key={tokenKey}
-    className="p-10 dark:bg-foreground/10">
+    className="px-2 py-10 dark:bg-foreground/10">
         <CardBody className=' justify-between flex flex-row max-lg:flex-col  gap-4'>
             <div className='flex flex-col items-start gap-2 max-lg:flex-col w-full'>
                 <div className='flex flex-row justify-between items-center  w-full'>
                     <div className="flex flex-row gap-1 items-center" >
-                        <p className='text-lg font-normal'>{title}</p>
+                        <p className='text-md font-bold'>{title}</p>
 
                         <Button radius="full" isIconOnly size="sm" variant="light" onPress={handleInfo}>
                             <BsInfoCircle

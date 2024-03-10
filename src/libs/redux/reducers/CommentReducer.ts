@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 
-type CommentState = {
+interface CommentState {
     values: Post | Feed | {}
 };
 

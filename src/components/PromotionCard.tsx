@@ -13,10 +13,8 @@ import { pushWithCtrl } from '@/libs/utils/helper';
 import SAvatar from './SAvatar';
 import TimeAgoWrapper from './wrapper/TimeAgoWrapper';
 
-type Props = {
+interface Props {
     authPerm: string;
-
-
 }
 
 export default memo(function PromotionCard(props: Props) {

@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 import { useLogin } from './useLogin';
 import { getCredentials, getSessionKey } from '@/libs/utils/user';
 
-type Props = {
+interface Props {
     comment: Post | Feed;
     isOpen: boolean;
     onOpenChange?: (isOpen: boolean) => void;
@@ -158,8 +158,6 @@ export default function EditRoleModal(props: Props) {
                         <ModalHeader className="flex flex-col gap-1">Update Title, Role</ModalHeader>
                         <ModalBody>
                             <div className='flex flex-col gap-2'>
-
-                                <p>{role}</p>
                                 <Input
                                     maxLength={32}
                                     label='Title'
@@ -169,6 +167,7 @@ export default function EditRoleModal(props: Props) {
 
                                 {!(Role.level(comment.observer_role) <= Role.level(comment.author_role))
                                     && <Select
+                                        aria-label="Select role"
                                         items={items}
                                         label="Role"
                                         className="max-w-xs"

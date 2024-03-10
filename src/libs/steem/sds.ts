@@ -440,10 +440,10 @@ export const getAccountHistory = async (USERNAME: string): Promise<AccountHistor
 };
 
 export const getIncomingDelegations = async (
-    AUTHOR: string,
+    username: string,
 ): Promise<Delegation[]> => {
     try {
-        const R_API = `/delegations_api/getIncomingDelegations/${AUTHOR}`;
+        const R_API = `/delegations_api/getIncomingDelegations/${username}`;
         console.log(R_API);
         const response = await fetchSds<any>(R_API);
         if (response) {
@@ -458,10 +458,10 @@ export const getIncomingDelegations = async (
 };
 
 export const getOutgoingDelegations = async (
-    AUTHOR: string,
+    username: string,
 ): Promise<Delegation[]> => {
     try {
-        const R_API = `/delegations_api/getOutgoingDelegations/${AUTHOR}`;
+        const R_API = `/delegations_api/getOutgoingDelegations/${username}`;
         console.log(R_API);
         const response = await fetchSds<any>(R_API);
         if (response) {
@@ -476,10 +476,10 @@ export const getOutgoingDelegations = async (
 };
 
 export const getExpiringDelegations = async (
-    AUTHOR: string,
+    username: string,
 ): Promise<DelegationExpiring[]> => {
     try {
-        const R_API = `/delegations_api/getExpiringDelegations/${AUTHOR}`;
+        const R_API = `/delegations_api/getExpiringDelegations/${username}`;
         console.log(R_API);
         const response = await fetchSds<any>(R_API);
         if (response) {

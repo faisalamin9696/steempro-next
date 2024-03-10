@@ -1,17 +1,9 @@
 "use client"
 
-import { Button } from '@nextui-org/react'
-import React, { useState } from 'react'
-import { IoIosRefresh } from 'react-icons/io'
-import CompactPost from '../../../../components/CompactPost'
-import useSWR from 'swr'
-import { awaitTimeout, fetchSds } from '@/libs/constants/AppFunctions'
-import LoadingCard from '@/components/LoadingCard'
-import { Accordion, AccordionItem } from "@nextui-org/react";
-import UserCard from '@/components/UserCard'
+import React from 'react'
 import ProfileEnd from '@/app/profile/(site)/@end/page'
 
-type Props = {
+interface Props {
   username: string;
 }
 export default function PostEnd2(props: Props) {
@@ -38,7 +30,7 @@ export default function PostEnd2(props: Props) {
   return (
     <div className="flex flex-col rounded-lg pb-32">
 
-      <ProfileEnd  />
+      <ProfileEnd />
       {/* 
       <Accordion defaultExpandedKeys={['end']}>
         <AccordionItem

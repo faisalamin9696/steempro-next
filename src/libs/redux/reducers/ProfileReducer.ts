@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 
-type ProfileState = {
+interface ProfileState {
     value: AccountExt | {}
 };
 

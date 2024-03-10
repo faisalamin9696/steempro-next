@@ -13,18 +13,18 @@ import CommentBlogLayout from './layout/CommentBlogsLayout';
 import CommentGridLayout from './layout/CommentGridLayout';
 import { pushWithCtrl } from '@/libs/utils/helper';
 
-type Props = {
+interface Props {
     comment: Feed | Post;
     isReply?: boolean;
 }
 
 
-export type CommentProps = {
+export interface CommentProps {
     comment: Feed | Post;
     className?: ClassValue;
     isReply?: boolean;
     compact?: boolean;
-    onReplyClick?: (comment: Feed | Post) => void;
+    onReplyClick?: (event) => void;
     onEditClick?: (comment: Feed | Post) => void;
     onDeleteClick?: (comment: Feed | Post) => void;
     onMuteClick?: (comment: Feed | Post) => void;

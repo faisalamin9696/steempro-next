@@ -4,7 +4,7 @@ import './markdown.scss';
 import { Providers } from "./providers";
 import { Toaster } from "sonner";
 import clsx from "clsx";
-import { getAuthorExt } from "@/libs/steem/sds";
+import { getAuthorExt, getSteemGlobal } from "@/libs/steem/sds";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react"
 import { getServerSession } from "next-auth/next";
@@ -36,14 +36,13 @@ export default async function RootLayout({
   const session = await getServerSession();
   let data;
 
-  try {
+  let globalData;
+  globalData =  await getSteemGlobal();
 
-    if (session?.user?.name)
-      data = await getAuthorExt(session?.user?.name)
+  if (session?.user?.name)
+    data = await getAuthorExt(session?.user?.name)
 
-  } catch {
-    // silent ignore
-  }
+
 
   return (
     <html lang="en" suppressHydrationWarning={true}>
@@ -53,7 +52,7 @@ export default async function RootLayout({
 
       <body className={clsx()}>
 
-        <Providers data={data}>
+        <Providers data={data} globalData={globalData}>
           {children}
           <Toaster richColors />
         </Providers>

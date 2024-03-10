@@ -10,7 +10,7 @@ import { signIn } from 'next-auth/react';
 import { toast } from 'sonner';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 
-type Props = {
+interface Props {
     user: User;
     defaultAccount?: string;
     handleSwitchSuccess?: () => void;

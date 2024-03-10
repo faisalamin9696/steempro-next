@@ -757,21 +757,21 @@ export const claimRewardBalance = async (
 export const transferToVesting = async (
     account: AccountExt,
     key: string,
-    DATA: { from: string; to: string; amount: number; asset: string },
+    options: { to: string, amount: number },
 ) => {
     const keyData = getKeyType(account, key);
 
     if (keyData && PrivKey.atLeast(keyData.type, 'ACTIVE')) {
         const privateKey = PrivateKey.fromString(key);
 
-        const transferAmount = DATA.amount.toFixed(3).toString() + ' ' + DATA.asset;
+        const transferAmount = options.amount.toFixed(3).toString() + ' ' + 'STEEM';
 
         const args: any = [
             [
                 'transfer_to_vesting',
                 {
                     from: keyData.account,
-                    to: DATA.to,
+                    to: options.to,
                     amount: transferAmount,
                 },
             ],
@@ -799,21 +799,21 @@ export const transferToVesting = async (
 export const delegateVestingShares = async (
     account: AccountExt,
     key: string,
-    DATA: { delegatee: string; amount: number; asset: string },
+    options: { delegatee: string; amount: number },
 ) => {
     const keyData = getKeyType(account, key);
 
     if (keyData && PrivKey.atLeast(keyData.type, 'ACTIVE')) {
         const privateKey = PrivateKey.fromString(key);
 
-        const transferAmount = DATA.amount.toFixed(6).toString() + ' ' + DATA.asset;
+        const transferAmount = options.amount.toFixed(6).toString() + ' ' + 'VESTS';
 
         return new Promise((resolve, reject) => {
             client.broadcast
                 .delegateVestingShares(
                     {
                         delegator: keyData.account,
-                        delegatee: DATA.delegatee,
+                        delegatee: options.delegatee,
                         vesting_shares: transferAmount,
                     },
                     privateKey,
@@ -933,19 +933,16 @@ export const updateProfile = async (
     );
 };
 
-export async function transferAsset(from: AccountExt, privateKey: string, asset: string,
+export async function transferAsset(account: AccountExt, privateKey: string,
     options: Transfer) {
-    const keyData = getKeyType(from, privateKey);
+    const keyData = getKeyType(account, privateKey);
 
     if (keyData && PrivKey.atLeast(keyData.type, 'ACTIVE')) {
         const key = PrivateKey.fromString(privateKey);
-        const from = keyData.account;
 
-        let { amount, to, memo } = options;
-        if (typeof amount === 'string') {
-            amount = parseFloat(amount);
-        }
-        const transferAmount = amount.toFixed(3).toString() + ' ' + asset;
+        let { from, amount, to, memo, unit } = options;
+
+        const transferAmount = amount.toFixed(3).toString() + ' ' + unit;
 
         const transferOp: any = [
             'transfer',
@@ -977,20 +974,19 @@ export async function transferAsset(from: AccountExt, privateKey: string, asset:
 }
 
 
-export const transferToSavings = (from: AccountExt, privateKey: string, asset: string,
+export const transferToSavings = (account: AccountExt, privateKey: string,
     options: Transfer) => {
-    const keyData = getKeyType(from, privateKey);
+    const keyData = getKeyType(account, privateKey);
 
     if (keyData && PrivKey.atLeast(keyData.type, 'ACTIVE')) {
         const key = PrivateKey.fromString(privateKey);
-        let { amount, to, memo } = options;
+        let { amount, to, memo, from, unit } = options;
 
         if (typeof amount === 'string') {
             amount = parseFloat(amount);
         }
 
-        const from = keyData.account;
-        const transferAmount = amount.toFixed(3).toString() + ' ' + asset;
+        const transferAmount = amount.toFixed(3).toString() + ' ' + unit;
 
         const args: any = [
             [

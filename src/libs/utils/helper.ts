@@ -81,3 +81,8 @@ export function pushWithCtrl(event, router: {
         router.refresh();
 
 }
+
+
+export function isNumeric(value: string): boolean {
+    return /^-?\d*\.?\d+$/.test(value);
+}

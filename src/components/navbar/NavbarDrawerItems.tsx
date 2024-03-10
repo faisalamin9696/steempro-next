@@ -20,7 +20,7 @@ import { useRouter } from 'next13-progressbar';
 
 
 
-type Props = {
+interface Props {
     onItemClick?: () => void;
 }
 export default function NavbarDrawerItems(props: Props) {
@@ -45,6 +45,7 @@ export default function NavbarDrawerItems(props: Props) {
 
 
     return (<div className="flex flex-col gap-4 w-fit h-full">
+
         {isLogin() ?
             <div className='flex flex-col gap-4 py-6 rounded-bl-xl '>
                 <div className='flex flex-row gap-2 items-center'>

@@ -1,6 +1,6 @@
 import React, { memo } from 'react'
 
-type Props = {
+interface Props {
     compact?: boolean;
 }
 export default memo(function CommentSkeleton(props: Props) {

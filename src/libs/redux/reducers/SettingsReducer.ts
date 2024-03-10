@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-type SettingsState = {
+interface SettingsState {
     value: Setting | undefined
 };
 

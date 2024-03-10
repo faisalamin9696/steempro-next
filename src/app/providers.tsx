@@ -25,9 +25,10 @@ import { toast } from 'sonner';
 import { Next13ProgressBar } from 'next13-progressbar';
 
 
-type Props = {
+interface Props {
     children: React.ReactNode;
-    data?: AccountExt
+    data?: AccountExt,
+    globalData: SteemProps;
 }
 export function Providers(props: Props) {
     const { children, data } = props;
@@ -105,7 +106,7 @@ export function Providers(props: Props) {
 
 
                             >
-                                <AuthProvider data={data}>
+                                <AuthProvider {...props}>
                                     <AppNavbar />
                                     {children}
                                 </AuthProvider>

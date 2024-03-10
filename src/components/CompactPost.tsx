@@ -12,7 +12,7 @@ import { useAppSelector } from '@/libs/constants/AppFunctions'
 import { pushWithCtrl } from '@/libs/utils/helper';
 
 
-type Props = {
+interface Props {
     comment: Feed;
 }
 

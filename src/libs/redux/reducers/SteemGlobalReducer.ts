@@ -10,7 +10,7 @@ const initialstate: GlobalState = {
         last_irreversible_block: 73069921,
         head_block: 73069936,
         head_block_time: 1679410980,
-        current_witness: 'protoss20',
+        current_witness: 'faisalamin',
         total_vesting_fund_steem: 171841966.354,
         total_vesting_shares: 304755682423.4238,
         steem_per_share: 0.000563867964618441,
@@ -53,7 +53,7 @@ const steemGlobalsReducer = createSlice({
     name: 'steemGlobals',
     initialState: initialstate,
     reducers: {
-        addSteemGlobals: (state: GlobalState, actions) => {
+        saveSteemGlobals: (state: GlobalState, actions) => {
             state.value = actions.payload
         },
 
@@ -61,5 +61,5 @@ const steemGlobalsReducer = createSlice({
 });
 
 
-export const { addSteemGlobals } = steemGlobalsReducer.actions;
+export const { saveSteemGlobals } = steemGlobalsReducer.actions;
 export const SteemGlobalsReducer = steemGlobalsReducer.reducer;

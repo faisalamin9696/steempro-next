@@ -1,9 +1,10 @@
 import { useEffect, useRef } from "react";
 import './style.scss'
 import VanillaTilt from "vanilla-tilt";
-import  useMobile  from "@/libs/utils/useMobile";
+import useMobile from "@/libs/utils/useMobile";
 import { Button, Card, CardBody } from "@nextui-org/react";
 import SAvatar from "@/components/SAvatar";
+import TransferModal from "@/components/TransferModal";
 
 interface Props {
     username: string;
@@ -33,6 +34,7 @@ const AboutItem = (props: Props): JSX.Element => {
         data-tilt-perspective="600" data-tilt-glare
         data-tilt-max-glare={0.5}>
         <CardBody className="card items-center flex-col">
+
 
             <SAvatar size="xl"
                 username={username}

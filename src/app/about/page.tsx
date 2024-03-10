@@ -12,10 +12,8 @@ import MainWrapper from '@/components/wrapper/MainWrapper';
 
 export default function AboutPage() {
 
-
     return (
         <MainWrapper>
-
             <div className='flex flex-col gap-6'>
                 <div className="about-section">
                     <h1>About Us</h1>

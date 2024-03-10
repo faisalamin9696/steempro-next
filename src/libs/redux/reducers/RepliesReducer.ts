@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-type InfoState = {
+interface InfoState {
     values: {}
 };
 

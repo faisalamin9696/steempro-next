@@ -247,8 +247,9 @@ export default function AuthModal(props: Props) {
 
     return (
         <>
-            <Modal placement='center'
+            <Modal
                 scrollBehavior='inside'
+                placement='top-center'
                 size='md'
                 onSubmit={(e) => {
                     e.preventDefault();

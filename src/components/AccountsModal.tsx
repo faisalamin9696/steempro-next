@@ -6,7 +6,7 @@ import { useLogin } from './useLogin';
 import AccountItemCard from './AccountItemCard';
 
 
-type Props = {
+interface Props  {
     isOpen: boolean;
     onOpenChange: (isOpen: boolean) => void;
 }

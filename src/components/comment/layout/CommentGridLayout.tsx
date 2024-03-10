@@ -88,7 +88,7 @@ export default function CommentGridLayout(props: CommentProps) {
                 <div className="flex-1">
 
                     <Card isPressable={!isReply} radius='none'
-                        onClick={() => onReplyClick && onReplyClick(commentInfo)}
+                        onClick={onReplyClick}
                         shadow='none'
                         className={clsx('bg-transparent  w-full text-start')}>
                         <p className="text-md font-semibold text-default-900">{commentInfo.title}</p>

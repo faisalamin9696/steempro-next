@@ -5,11 +5,11 @@ import NavbarDrawerItems from './NavbarDrawerItems'
 import { Button, ButtonGroup } from '@nextui-org/react';
 import { RxHamburgerMenu } from "react-icons/rx";
 import ThemeSwitch from '../ThemeSwitch';
+import { IoClose } from 'react-icons/io5';
+import { FaArrowCircleLeft } from 'react-icons/fa';
 
-type Props = {
 
-}
-export default memo(function AppDrawer(props: Props) {
+export default memo(function AppDrawer() {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleDrawer = () => {
@@ -41,7 +41,15 @@ export default memo(function AppDrawer(props: Props) {
                     }`}  >
                 <div className='p-4 justify-between h-full flex flex-col'>
                     <NavbarDrawerItems />
-                    <ThemeSwitch />
+                    <div className='flex justify-between'>
+
+                        <ThemeSwitch />
+                        <Button variant='light' isIconOnly onPress={toggleDrawer}
+                            radius='full' size='sm'>
+                            <FaArrowCircleLeft className='text-xl' />
+                        </Button>
+                    </div>
+
                 </div>
             </div>
         </div>

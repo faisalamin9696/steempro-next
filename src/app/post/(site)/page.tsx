@@ -18,7 +18,7 @@ import SubmitPage from '@/app/submit/(site)/page';
 const DynamicPostReplies = dynamic(() => import('../_components/PostReplies'))
 
 
-type Props = {
+interface Props {
     data: Post;
 }
 

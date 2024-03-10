@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import RewardSelectButton, { rewardTypes } from '../../../components/editor/component/RewardSelectButton';
 import CommunitySelectButton from '../../../components/editor/component/CommunitySelectButton';
 import ClearFormButton from '../../../components/editor/component/ClearFormButton';
@@ -29,7 +29,7 @@ import clsx from 'clsx';
 import CommentOptionWrapper from '@/components/wrapper/CommentOptionWrapper';
 import useMobile from '@/libs/utils/useMobile';
 
-type Props = {
+interface Props {
     params?: {
         oldPost?: Post;
         handleUpdateSuccess?: (post: Post) => void;
@@ -112,6 +112,7 @@ export default function SubmitPage(props: Props) {
         setTags('');
         setBeneficiaries([]);
         setReward(rewardTypes[1]);
+        setCommunity(undefined);
     }
 
 

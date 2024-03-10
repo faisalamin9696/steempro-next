@@ -18,7 +18,7 @@ export default function SAvatar(props: Props) {
     const imageSize = size === 'xl' ? 160 :
         size === 'lg' ? 100 :
             size === 'md' ? 70 :
-                size === 'sm' ? 50 :
+                size === 'sm' ? 45 :
                     size === 'xs' ? 25 : 60;
 
 
