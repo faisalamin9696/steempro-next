@@ -15,6 +15,7 @@ import usePathnameClient from '@/libs/utils/usePathnameClient';
 import { updatePostView } from '@/libs/firebase/firebaseApp';
 import { getAuth } from 'firebase/auth';
 import SubmitPage from '@/app/submit/(site)/page';
+import clsx from 'clsx';
 const DynamicPostReplies = dynamic(() => import('../_components/PostReplies'))
 
 
@@ -29,16 +30,14 @@ export default function PostPage(props: Props) {
     // const { category, username: author, permlink } = getPathnameClient(null, location.pathname);
     const dispatch = useAppDispatch();
     // const queryKey = [`post-${author}-${permlink}`];
-    const commentInfo = useAppSelector(state => state.commentReducer.values)[`${data.author}/${data.permlink}`] ?? data;
+    const commentInfo: Post = useAppSelector(state => state.commentReducer.values)[`${data.author}/${data.permlink}`] ?? data;
     const [editMode, setEditMode] = useState(false);
     const toggleEditMode = () => setEditMode(!editMode)
 
 
     useEffect(() => {
-
-
         if (!category) {
-            window.history.pushState({}, '', `/${data.category}/@${data.author}/${data.permlink}`)
+            window.history.replaceState({}, '', `/${data.category}/@${data.author}/${data.permlink}`)
         }
         dispatch(addCommentHandler(data));
 
@@ -49,7 +48,8 @@ export default function PostPage(props: Props) {
 
         // count view after 1 second
         const timeout = setTimeout(() => {
-            updatePostView(data);
+            if (commentInfo.depth === 0)
+                updatePostView(data);
         }, 5000);
 
         return () => clearTimeout(timeout);
@@ -65,6 +65,10 @@ export default function PostPage(props: Props) {
                 toggleEditMode();
             }
         }} />
+    }
+
+    if (commentInfo && !commentInfo.link_id) {
+        return <p>post/comment not found</p>
     }
 
     return (<div key={pathname}
@@ -86,7 +90,7 @@ export default function PostPage(props: Props) {
                             <h2 className="text-xl font-bold text-black dark:text-white">{commentInfo.title}</h2>
 
                         </div>
-                        <div className='flex flex-col items-center'>
+                        <div className={clsx(commentInfo.is_muted && ' opacity-80', 'flex flex-col items-center')}>
 
                             <MarkdownViewer text={commentInfo.body} />
                         </div>

@@ -10,11 +10,12 @@ interface Props {
 export default memo(function Reply(props: Props) {
     const { comment } = props;
 
-    const commentInfo = useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment;
+    const commentInfo: Post = useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment;
 
     return (
         <div className='flex-col w-full'>
-            <ReplyForm {...props} comment={commentInfo} />
+
+            {!commentInfo.link_id ? null : <ReplyForm {...props} comment={commentInfo} />}
         </div>
     )
 })

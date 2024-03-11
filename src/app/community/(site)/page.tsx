@@ -3,7 +3,7 @@
 import { Tab, Tabs } from '@nextui-org/react'
 import React from 'react'
 import usePathnameClient from '@/libs/utils/usePathnameClient';
-import useMobile  from '@/libs/utils/useMobile';
+import useMobile from '@/libs/utils/useMobile';
 import FeedPatternSwitch from '@/components/FeedPatternSwitch';
 import CommunityImportantTab from '../(tabs)/important/page';
 import CommunityTrendingsTab from '../(tabs)/trendings/page';
@@ -32,7 +32,10 @@ export default function CommunityPage() {
                 className='justify-center transition-all delay-500'
                 defaultSelectedKey={category ?? 'trendings'}
                 onSelectionChange={(key) => {
-                    history.pushState({}, '', `/${key}/${community}`);
+                    if (!category)
+                        history.replaceState({}, '', `/${key}/${community}`);
+                    else
+                        history.pushState({}, '', `/${key}/${community}`);
                 }}
                 classNames={{
                     tabList: "max-sm:gap-0 bg-default-300",

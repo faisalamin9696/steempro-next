@@ -36,8 +36,12 @@ export default function ProfilePostsMainTab() {
                 color={'secondary'} radius="full"
                 className='justify-center transition-all delay-500'
                 defaultSelectedKey={category}
+                selectedKey={category}
                 onSelectionChange={(key) => {
-                    history.pushState({}, '', `/@${username}/${key}`);
+                    if (!category)
+                        history.replaceState({}, '', `/@${username}/${key}`);
+                    else
+                        history.pushState({}, '', `/@${username}/${key}`);
                 }}
                 classNames={{
                     tabList: "max-sm:gap-0 bg-transparent p-0",

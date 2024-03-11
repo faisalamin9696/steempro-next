@@ -51,11 +51,18 @@ export default function BalanceTab() {
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const isSelf = loginInfo.name === username;
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
-    const [transferModal, setTransferModal] = useState({
+    const [transferModal, setTransferModal] = useState<{
+        isOpen: boolean,
+        savings?: boolean,
+        powerup?: boolean,
+        delegation?: boolean,
+        asset: string,
+    }>({
         isOpen: false,
         savings: false,
         powerup: false,
-        asset: 'STEEM'
+        delegation: undefined,
+        asset: 'STEEM',
     });
 
 
@@ -85,20 +92,24 @@ export default function BalanceTab() {
 
         switch (String(key)) {
             case 'transfer-steem':
-                setTransferModal({ isOpen: true, savings: false, powerup: false, asset: 'STEEM' });
+                setTransferModal({ isOpen: true, asset: 'STEEM' });
                 break;
             case 'transfer-sbd':
-                setTransferModal({ isOpen: true, savings: false, powerup: false, asset: 'SBD' });
+                setTransferModal({ isOpen: true, asset: 'SBD' });
 
                 break;
             case 'savings-steem':
-                setTransferModal({ isOpen: true, savings: true, powerup: false, asset: 'STEEM' });
+                setTransferModal({ isOpen: true, savings: true, asset: 'STEEM' });
                 break;
             case 'savings-sbd':
-                setTransferModal({ isOpen: true, savings: true, powerup: false, asset: 'SBD' });
+                setTransferModal({ isOpen: true, savings: true, asset: 'SBD' });
                 break;
             case 'power-up':
-                setTransferModal({ isOpen: true, savings: false, powerup: true, asset: 'STEEM' });
+                setTransferModal({ isOpen: true, powerup: true, asset: 'STEEM' });
+                break;
+
+            case 'delegation':
+                setTransferModal({ isOpen: true, delegation: true, asset: 'VESTS' });
                 break;
         }
 
@@ -134,8 +145,8 @@ export default function BalanceTab() {
                         <p>{vestToSteem(data.vests_own, globalData.steem_per_share)?.toLocaleString()}</p>
                     </div>}
 
-                    actionContent={<DropdownMenu>
-                        <DropdownItem key="delegate">Delegate</DropdownItem>
+                    actionContent={<DropdownMenu onAction={handleAction}>
+                        <DropdownItem key="delegation">Delegate</DropdownItem>
                         <DropdownItem key="power-down">Power Down</DropdownItem>
                     </DropdownMenu>
                     }
@@ -182,8 +193,11 @@ export default function BalanceTab() {
                 asset={transferModal.asset as any}
                 powewrup={transferModal.powerup}
                 savings={transferModal.savings}
+                delegation={transferModal.delegation}
+                delegatee={isSelf ? undefined : username}
                 isOpen={transferModal.isOpen}
-                onOpenChange={(isOpen) => setTransferModal({ ...transferModal, isOpen: isOpen })} />}
+                onOpenChange={(isOpen) => setTransferModal({ ...transferModal, isOpen: isOpen })}
+            />}
 
             {isOpen && <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>

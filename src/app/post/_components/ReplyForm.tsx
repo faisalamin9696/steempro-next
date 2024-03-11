@@ -14,7 +14,7 @@ import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator';
 import { addCommentHandler } from '@/libs/redux/reducers/CommentReducer';
 import { addRepliesHandler } from '@/libs/redux/reducers/RepliesReducer';
 import { toast } from 'sonner';
-import { publishContent } from '@/libs/steem/condenser';
+import { deleteComment, mutePost, publishContent } from '@/libs/steem/condenser';
 import { AppStrings } from '@/libs/constants/AppStrings';
 import CommentHeader from '@/components/comment/component/CommentHeader';
 import MarkdownViewer from '@/components/body/MarkdownViewer';
@@ -29,6 +29,8 @@ import { useSession } from 'next-auth/react';
 import { Role } from '@/libs/utils/community';
 import { allowDelete } from '@/libs/utils/StateFunctions';
 import CommentFooter from '@/components/comment/component/CommentFooter';
+import MuteDeleteModal from '@/components/MuteDeleteModal';
+import clsx from 'clsx';
 
 interface Props {
     comment: Post;
@@ -37,8 +39,8 @@ interface Props {
 
 export default memo(function ReplyForm(props: Props) {
     const { comment, rootComment } = props;
-    const commentInfo = (useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment) as Post;
-    const rootInfo = (useAppSelector(state => state.commentReducer.values)[`${comment.root_author}/${comment.root_permlink}`]) as Post;
+    const commentInfo: Post = (useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment) as Post;
+    const rootInfo = (useAppSelector(state => state.commentReducer.values)[`${commentInfo.root_author}/${commentInfo.root_permlink}`]) as Post;
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([commentInfo.depth === 1 ? commentInfo.permlink : 'null']));
     const postReplies = useAppSelector(state => state.repliesReducer.values)[`${rootInfo.author}/${rootInfo.permlink}`] ?? [];
     const [showReply, setShowReply] = useState(false);
@@ -53,18 +55,25 @@ export default memo(function ReplyForm(props: Props) {
     const queryClient = useQueryClient();
     const [showEdit, setShowEdit] = useState(false);
     const [deletePopup, setDeletePopup] = useState(false);
+    const [confirmationModal, setConfirmationModal] = useState<{
+        isOpen: boolean, muteNote?: string
+    }>({
+        isOpen: false,
+        muteNote: ''
+    });
+
     const { data: session } = useSession();
 
     const username = session?.user?.name;
 
-    const isSelf = comment.author === username;
+    const isSelf = commentInfo.author === username;
 
 
-    const canMute = username && Role.atLeast(comment.observer_role, 'mod');
-    const canDelete = !comment.children && isSelf && allowDelete(comment);
+    const canMute = username && Role.atLeast(commentInfo.observer_role, 'mod');
+    const canDelete = !commentInfo.children && isSelf && allowDelete(comment);
     const canEdit = isSelf;
-    const allowReply = Role.canComment(comment.community, comment.observer_role);
-    const canReply = allowReply && comment['depth'] < 255;
+    const allowReply = Role.canComment(commentInfo.community, commentInfo.observer_role);
+    const canReply = allowReply && commentInfo.depth < 255;
 
 
     const toggleReply = () => setShowReply(!showReply);
@@ -94,7 +103,7 @@ export default memo(function ReplyForm(props: Props) {
     useEffect(() => {
 
         if (showEdit || showReply) {
-            document.getElementById(`editorDiv-${comment.link_id}`)?.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById(`editorDiv-${commentInfo.author + '-' + commentInfo.permlink}`)?.scrollIntoView({ behavior: 'smooth' });
 
         }
         if (showEdit) {
@@ -125,9 +134,70 @@ export default memo(function ReplyForm(props: Props) {
 
 
 
-    function handleDelete() {
+    const deleteMutation = useMutation({
+        mutationFn: (key: string) => deleteComment(loginInfo, key, { author: commentInfo.author, permlink: commentInfo.permlink }),
+        onSettled(data, error, variables, context) {
+            if (error) {
+                toast.error(error.message);
+                return;
+            }
+            dispatch(addCommentHandler({ ...commentInfo, link_id: undefined }));
+            dispatch(addCommentHandler({ ...rootInfo, children: rootInfo.children - 1 }));
 
+            toast.success(`Deleted`);
+
+        },
+    });
+
+
+    const unmuteMutation = useMutation({
+        mutationFn: (key: string) => mutePost(loginInfo, key, false, {
+            community: commentInfo.category, account: commentInfo.author, permlink: commentInfo.permlink,
+        }),
+        onSettled(data, error, variables, context) {
+            if (error) {
+                toast.error(error.message);
+                return;
+            }
+            dispatch(addCommentHandler({ ...commentInfo, is_muted: 0 }));
+            toast.success(`Unmuted`);
+
+        },
+    });
+
+
+
+
+
+    function handleDelete() {
+        authenticateUser();
+        if (!isAuthorized())
+            return
+
+        const credentials = getCredentials(getSessionKey());
+        if (!credentials?.key) {
+            toast.error('Invalid credentials');
+            return
+        }
+        deleteMutation.mutate(credentials.key);
     }
+
+    function handleMute() {
+        authenticateUser();
+        if (!isAuthorized())
+            return
+        const credentials = getCredentials(getSessionKey());
+        if (!credentials?.key) {
+            toast.error('Invalid credentials');
+            return
+        }
+        if (commentInfo.is_muted === 1) {
+            unmuteMutation.mutate(credentials.key);
+            return
+        }
+        setConfirmationModal({ ...confirmationModal, isOpen: true });
+    }
+
 
     function handleOnPublished(postData: PostingContent) {
         const time = moment().unix();
@@ -209,7 +279,6 @@ export default memo(function ReplyForm(props: Props) {
             setShowReply(false);
 
         setPosting(false);
-
         toast.success(showEdit ? 'Updated' : 'Sent');
     }
     const postingMutation = useMutation({
@@ -325,10 +394,11 @@ export default memo(function ReplyForm(props: Props) {
                     key={commentInfo.permlink}
                     title={<div> <CommentHeader isDetail comment={commentInfo} isReply />
                     </div>} >
-                    <div className='flex flex-col gap-2 p-1'>
+                    <div className='flex flex-col gap-2 p-1 '>
 
-
-                        <MarkdownViewer text={commentInfo.body} />
+                        <div className={clsx(commentInfo.is_muted === 1 && 'opacity-60')}>
+                            <MarkdownViewer text={commentInfo.body} className='!max-w-none' />
+                        </div>
 
                         <div className='flex gap-1  self-end opacity-70 items-center justify-around  w-full'>
 
@@ -351,7 +421,6 @@ export default memo(function ReplyForm(props: Props) {
                                         isDisabled={showReply || showEdit}
                                         className='text-tiny min-w-0 min-h-0'>
                                         Edit
-
                                     </Button>}
 
 
@@ -362,7 +431,8 @@ export default memo(function ReplyForm(props: Props) {
                                         <PopoverTrigger >
                                             <Button size='sm'
                                                 variant='light'
-                                                isDisabled={showReply || showEdit}
+                                                isLoading={deleteMutation.isPending}
+                                                isDisabled={deleteMutation.isPending || showReply || showEdit}
                                                 className='text-tiny min-w-0 min-h-0'>
                                                 Delete
                                             </Button>
@@ -393,11 +463,12 @@ export default memo(function ReplyForm(props: Props) {
 
                                 {canMute &&
                                     <Button size='sm'
-                                        onPress={() => { { } }}
+                                        isLoading={unmuteMutation.isPending}
+                                        onPress={() => { handleMute() }}
                                         variant='light'
-                                        isDisabled={showReply || showEdit}
+                                        isDisabled={unmuteMutation.isPending || showReply || showEdit}
                                         className='text-tiny min-w-0 min-h-0'>
-                                        Mute
+                                        {commentInfo.is_muted ? 'Unmute' : 'Mute'}
 
                                     </Button>
                                 }
@@ -406,7 +477,7 @@ export default memo(function ReplyForm(props: Props) {
 
                         </div >
 
-                        <div id={`editorDiv-${comment.link_id}`}>
+                        <div id={`editorDiv-${commentInfo.author + '-' + commentInfo.permlink}`}>
                             {(showReply || showEdit) ?
                                 <div className='flex flex-col mt-2 gap-2'>
                                     <EditorInput
@@ -454,7 +525,7 @@ export default memo(function ReplyForm(props: Props) {
                                             <p className='float-right text-sm font-light text-default-900/60'>{rpm?.words} words, {rpm?.text}</p>
 
                                         </div>
-                                        {markdown ? <Card isBlurred shadow='sm' className=' p-2 lg:shadow-none space-y-2'>
+                                        {markdown ? <Card isBlurred shadow='sm' className={'p-2 lg:shadow-none space-y-2'}>
                                             <MarkdownViewer text={markdown} />
                                         </Card> : null}
                                     </div>
@@ -463,7 +534,6 @@ export default memo(function ReplyForm(props: Props) {
                         </div>
                         {replies?.map((item: Post) => (
                             <div className=' mt-6 ' style={{
-                                // marginLeft: ((2 * (comment.depth - rootComment.depth)) / 2) + 'rem'
 
                             }} key={item.link_id}>
                                 <div className='text-inherit flex flex-col items-start'>
@@ -503,7 +573,15 @@ export default memo(function ReplyForm(props: Props) {
                 </AccordionItem >
             </Accordion >
 
-
+            {
+                confirmationModal.isOpen && <MuteDeleteModal
+                    comment={commentInfo}
+                    isOpen={confirmationModal.isOpen} onOpenChange={(isOpen) => setConfirmationModal({ ...confirmationModal, isOpen: isOpen })}
+                    mute={true}
+                    muteNote={confirmationModal.muteNote}
+                    onNoteChange={(value) => { setConfirmationModal({ ...confirmationModal, muteNote: value }); }}
+                />
+            }
 
         </div >
 

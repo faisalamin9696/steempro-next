@@ -1,12 +1,12 @@
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Popover, PopoverContent, PopoverTrigger, User } from '@nextui-org/react'
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Popover, PopoverContent, PopoverTrigger, Textarea, User } from '@nextui-org/react'
 import clsx, { ClassValue } from 'clsx'
 import { FaEllipsis } from "react-icons/fa6";
-import { useAppSelector } from '@/libs/constants/AppFunctions';
+import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import Reputation from '@/components/Reputation';
 import { getResizedAvatar } from '@/libs/utils/image';
 import TimeAgoWrapper from '@/components/wrapper/TimeAgoWrapper';
 import { pushWithCtrl, validateCommunity } from '@/libs/utils/helper';
-import { getSettings } from '@/libs/utils/user';
+import { getCredentials, getSessionKey, getSettings } from '@/libs/utils/user';
 import STag from '@/components/STag';
 
 import dynamic from 'next/dynamic';
@@ -27,6 +27,11 @@ import { BsClipboard2Minus } from "react-icons/bs";
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import EditRoleModal from '@/components/EditRoleModal';
 import { FaInfoCircle } from 'react-icons/fa';
+import MuteDeleteModal from '@/components/MuteDeleteModal';
+import { useMutation } from '@tanstack/react-query';
+import { deleteComment, mutePost } from '@/libs/steem/condenser';
+import { addCommentHandler } from '@/libs/redux/reducers/CommentReducer';
+import { useLogin } from '@/components/useLogin';
 
 
 interface Props {
@@ -41,6 +46,8 @@ interface Props {
 export default memo(function CommentHeader(props: Props) {
 
     const { comment, className, isReply, compact, handleEdit, isDetail } = props;
+    const loginInfo = useAppSelector(state => state.loginReducer.value);
+    const dispatch = useAppDispatch();
     const { data: session } = useSession();
     const username = session?.user?.name;
     const isSelf = comment.author === username;
@@ -54,6 +61,16 @@ export default memo(function CommentHeader(props: Props) {
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const router = useRouter();
     const [isRoleOpen, setIsRoleOpen] = useState(false);
+    const { authenticateUser, isAuthorized } = useLogin();
+
+    const [confirmationModal, setConfirmationModal] = useState<{
+        isOpen: boolean, mute?: boolean, muteNote?: string
+    }>({
+        isOpen: false,
+        mute: false,
+        muteNote: ''
+    });
+
 
     function handleProfileClick(event) {
         if (pathUsername !== comment.author) {
@@ -79,6 +96,23 @@ export default memo(function CommentHeader(props: Props) {
             color={item.color as any || 'default'}
             startContent={<item.icon className={'text-lg'} />}>{item.name}</DropdownItem>);
 
+    const unmuteMutation = useMutation({
+        mutationFn: (key: string) => mutePost(loginInfo, key, false, {
+            community: comment.category, account: comment.author, permlink: comment.permlink,
+        }),
+        onSettled(data, error, variables, context) {
+            if (error) {
+                toast.error(error.message);
+                return;
+            }
+            dispatch(addCommentHandler({ ...comment, is_muted: 0 }));
+            toast.success(`Unmuted`);
+
+        },
+    });
+
+
+
     function handleMenuActions(key: Key) {
         switch (key) {
             case 'edit':
@@ -91,6 +125,25 @@ export default memo(function CommentHeader(props: Props) {
                 break;
             case 'role':
                 setIsRoleOpen(!isRoleOpen);
+                break;
+            case 'delete':
+                setConfirmationModal({ isOpen: true });
+                break;
+
+            case 'mute':
+                authenticateUser();
+                if (!isAuthorized())
+                    return
+                const credentials = getCredentials(getSessionKey());
+                if (!credentials?.key) {
+                    toast.error('Invalid credentials');
+                    return
+                }
+                if (comment.is_muted === 1) {
+                    unmuteMutation.mutate(credentials.key);
+                    return
+                }
+                setConfirmationModal({ isOpen: true, mute: true });
                 break;
         }
 
@@ -177,7 +230,7 @@ export default memo(function CommentHeader(props: Props) {
 
             }}
         />
-        {!isReply && !compact &&
+        {!isReply && !compact && comment.depth === 0 &&
             <div className='absolute top-0 text-tiny right-0 items-center px-1'>
                 <Popover className='hidden max-sm:block' placement="bottom" showArrow offset={10}>
                     <PopoverTrigger className='absolute top-0 text-tiny right-0 items-center px-1'>
@@ -269,6 +322,15 @@ export default memo(function CommentHeader(props: Props) {
 
         {isRoleOpen && <EditRoleModal comment={comment} isOpen={isRoleOpen}
             onOpenChange={setIsRoleOpen} />}
+
+        {confirmationModal.isOpen && <MuteDeleteModal
+            comment={comment}
+            isOpen={confirmationModal.isOpen} onOpenChange={(isOpen) => setConfirmationModal({ ...confirmationModal, isOpen: isOpen })}
+            mute={confirmationModal.mute}
+            muteNote={confirmationModal.muteNote}
+            onNoteChange={(value) => { setConfirmationModal({ ...confirmationModal, muteNote: value }); }}
+        />
+        }
     </div>
     )
 })

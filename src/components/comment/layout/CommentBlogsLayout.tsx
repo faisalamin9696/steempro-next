@@ -7,6 +7,7 @@ import BodyShort from "@/components/body/BodyShort";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
 import CommentFooter from "../component/CommentFooter";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
+import clsx from "clsx";
 
 export default function CommentBlogLayout(props: CommentProps) {
     const { comment, onReplyClick, isReply } = props;
@@ -25,9 +26,9 @@ export default function CommentBlogLayout(props: CommentProps) {
         <Card isPressable={!isReply} radius='none'
             onClick={onReplyClick}
             shadow='none'
-            className='w-full bg-transparent gap-4 px-4'>
+            className={clsx(commentInfo.is_muted && ' opacity-80', 'w-full bg-transparent gap-4 px-4')}>
 
-            <h2 className="card-content font-bold text-lg text-start ">{comment.title}</h2>
+            <h2 className="card-content font-bold text-lg text-start ">{commentInfo.title}</h2>
 
             {isReply ? null : <CommentCover thumbnail src={thumbnail} />}
 
@@ -43,7 +44,7 @@ export default function CommentBlogLayout(props: CommentProps) {
 
         </Card>
 
-        <CommentFooter comment={commentInfo} 
+        <CommentFooter comment={commentInfo}
             className='w-full' />
 
     </div>

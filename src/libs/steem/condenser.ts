@@ -246,7 +246,7 @@ export const mutePost = async (
         community: string;
         account: string;
         permlink: string;
-        notes: string;
+        notes?: string;
     },
 ) => {
     const keyData = getKeyType(account, key);

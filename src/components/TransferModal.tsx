@@ -6,27 +6,33 @@ import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { useLogin } from "./useLogin";
 import { useMutation } from "@tanstack/react-query";
-import { transferAsset, transferToSavings, transferToVesting } from "@/libs/steem/condenser";
+import { delegateVestingShares, transferAsset, transferToSavings, transferToVesting } from "@/libs/steem/condenser";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import moment from "moment";
 import { steemToVest, vestToSteem } from "@/libs/steem/sds";
 import { isNumeric } from "@/libs/utils/helper";
+import clsx from "clsx";
 
 type AssetTypes = 'STEEM' | 'SBD' | 'VESTS';
 
-interface Props {
+type Props = {
     isOpen?: boolean;
     asset: AssetTypes;
     onOpenChange?: (isOpen: boolean) => void;
     savings?: boolean;
     powewrup?: boolean;
-}
+    delegation?: boolean;
+    delegatee?: string
+} & (
+        { delegation: boolean; delegatee: string } |
+        { isOpen: boolean; onOpenChange: (isOpen: boolean) => void; }
+    );
 
 
 
 const TransferModal = (props: Props): JSX.Element => {
-    const { savings, powewrup } = props;
+    const { savings, powewrup, delegation, delegatee } = props;
     const [asset, setAsset] = useState(props.asset);
     const [basic, setBasic] = useState(savings || powewrup);
     const loginInfo = useAppSelector(state => state.loginReducer.value);
@@ -40,12 +46,15 @@ const TransferModal = (props: Props): JSX.Element => {
     const { authenticateUser, isAuthorized } = useLogin();
 
     let [from, setFrom] = useState(session?.user?.name || '');
-    let [to, setTo] = useState((savings || powewrup) ? session?.user?.name || '' : '');
+    let [to, setTo] = useState(delegation ? (delegatee || '') : (savings || powewrup) ? session?.user?.name || '' : '');
     let [amount, setAmount] = useState('');
     let [memo, setMemo] = useState('');
     const [toImage, setToImage] = useState('');
 
-    const availableBalance = asset === 'STEEM' ? loginInfo.balance_steem : loginInfo.balance_sbd;
+    const availableBalance = asset === 'VESTS' ?
+        vestToSteem(loginInfo.vests_own, globalData.steem_per_share) : asset === 'STEEM' ? loginInfo.balance_steem
+            : loginInfo.balance_sbd;
+
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -56,7 +65,7 @@ const TransferModal = (props: Props): JSX.Element => {
     }, [to]);
 
 
-    const transferMutate = useMutation({
+    const transferMutation = useMutation({
 
         mutationFn: (data: { key: string, options: Transfer }) =>
             transferAsset(loginInfo, data.key, data.options),
@@ -76,7 +85,7 @@ const TransferModal = (props: Props): JSX.Element => {
         },
     });
 
-    const savingsMutate = useMutation({
+    const savingsMutation = useMutation({
 
         mutationFn: (data: { key: string, options: Transfer }) =>
             transferToSavings(loginInfo, data.key, data.options),
@@ -96,7 +105,7 @@ const TransferModal = (props: Props): JSX.Element => {
         },
     });
 
-    const vestingMutate = useMutation({
+    const vestingMutation = useMutation({
 
         mutationFn: (data: { key: string, options: Transfer }) =>
             transferToVesting(loginInfo, data.key, data.options),
@@ -116,6 +125,29 @@ const TransferModal = (props: Props): JSX.Element => {
 
         },
     });
+
+    const delegateMutation = useMutation({
+
+        mutationFn: (data: {
+            key: string, options: {
+                delegatee: string;
+                amount: number;
+            }
+        }) =>
+            delegateVestingShares(loginInfo, data.key, data.options),
+        onSettled(data, error, variables, context) {
+            if (error) {
+                toast.error(error.message);
+                return;
+            }
+            dispatch(saveLoginHandler({ ...loginInfo, balance_sbd: loginInfo.balance_sbd - Number(variables.options.amount) }))
+
+
+            toast.success(`${amount} SP delegated to ${to}`)
+
+        },
+    });
+
 
     async function handleTransfer() {
         from = from.trim().toLowerCase();
@@ -154,37 +186,48 @@ const TransferModal = (props: Props): JSX.Element => {
         }
 
         if (savings)
-            savingsMutate.mutate({
+            savingsMutation.mutate({
                 key: credentials.key, options: {
                     from,
-                    to, amount: Number(amount),
+                    to,
+                    amount: Number(amount),
                     memo, unit: asset, time: moment.now()
                 }
             });
 
 
         if (powewrup)
-            vestingMutate.mutate({
+            vestingMutation.mutate({
                 key: credentials.key, options: {
                     from,
-                    to, amount: Number(amount),
+                    to,
+                    amount: Number(amount),
                     memo, unit: asset, time: moment.now()
                 }
             });
 
         if (!savings && !powewrup)
-            transferMutate.mutate({
+            transferMutation.mutate({
                 key: credentials.key, options: {
                     from,
-                    to, amount: Number(amount),
+                    to,
+                    amount: Number(amount),
                     memo, unit: asset, time: moment.now()
+                }
+            });
+
+        if (delegation)
+            delegateMutation.mutate({
+                key: credentials.key, options: {
+                    delegatee: to,
+                    amount: Number(amount),
                 }
             });
 
     }
 
 
-    const isPending = transferMutate.isPending || savingsMutate.isPending || vestingMutate.isPending;
+    const isPending = transferMutation.isPending || savingsMutation.isPending || vestingMutation.isPending;
 
     return (<Modal isOpen={props.isOpen || isOpen}
         placement='top-center'
@@ -194,7 +237,7 @@ const TransferModal = (props: Props): JSX.Element => {
         <ModalContent>
             {(onClose) => (
                 <>
-                    <ModalHeader className="flex flex-col gap-1">{powewrup ? 'Convert to STEEM POWER' : `Transfer to ${savings ? 'Savings' : 'Account'}`}</ModalHeader>
+                    <ModalHeader className="flex flex-col gap-1">{delegation ? 'Delegate to Account' : powewrup ? 'Convert to STEEM POWER' : `Transfer to ${savings ? 'Savings' : 'Account'}`}</ModalHeader>
                     <ModalBody className=" flex flex-col gap-6">
 
                         <div className="flex gap-2 items-center">
@@ -205,7 +248,7 @@ const TransferModal = (props: Props): JSX.Element => {
                                 endContent={<SAvatar size="xs" username={from} />}
 
                             />
-                            {!basic &&
+                            {(!basic || delegation) &&
                                 <Input isRequired label="To" size="sm" value={to} onValueChange={setTo}
                                     endContent={<SAvatar size="xs" username={toImage} />} />
                             }
@@ -216,6 +259,9 @@ const TransferModal = (props: Props): JSX.Element => {
                             isRequired
                             label="Amount" size="sm"
                             value={amount} onValueChange={setAmount}
+                            type="number"
+                            min={0}
+                            step={0.001}
                             endContent={<Select
                                 aria-label="Select asset"
                                 variant='flat'
@@ -223,27 +269,35 @@ const TransferModal = (props: Props): JSX.Element => {
                                     setAsset(key.target.value as AssetTypes)
                                 }}
                                 selectedKeys={[asset]}
-                                isDisabled={powewrup}
+                                isDisabled={powewrup || delegation}
                                 size="sm"
+
                                 placeholder="Asset"
-                                className=" max-w-unit-24 "
+                                className=" max-w-[100px]"
+                                selectorIcon={delegation && <></>}
+
+                                classNames={{ value: 'text-tiny', innerWrapper: delegation ? ('w-15') : ' w-10' }}
+
                             >
-                                <SelectItem key={'STEEM'} value={'STEEM'}>
+                                <SelectItem className="text-xs" key={'STEEM'} value={'STEEM'}>
                                     {'STEEM'}
                                 </SelectItem>
                                 <SelectItem key={'SBD'} value={'SBD'}>
                                     {'SBD'}
                                 </SelectItem>
+                                <SelectItem key={'VESTS'} className={clsx(delegation ? 'block' : "hidden")} value={'VESTS'}>
+                                    {'STEEM POWER'}
+                                </SelectItem>
                             </Select>}
                             description={<div className="ps-1 flex flex-row gap-4 items-center">
                                 <p>Available balance: </p>
-                                <button className=" underline" onClick={() => {
-                                    setAmount(availableBalance?.toString())
-                                }}>{availableBalance} {asset}</button>
+                                <button className=" font-mono" onClick={() => {
+                                    setAmount(availableBalance?.toFixed(3)?.toString())
+                                }}>{availableBalance?.toLocaleString()} {delegation ? 'SP' : asset}</button>
                             </div>}
                         />
 
-                        {!savings && !powewrup && <Textarea
+                        {!savings && !powewrup && !delegation && <Textarea
                             spellCheck={false}
                             value={memo}
                             onValueChange={setMemo}
@@ -272,7 +326,7 @@ const TransferModal = (props: Props): JSX.Element => {
                         <Button color="primary" onPress={handleTransfer}
                             isLoading={isPending}
                             isDisabled={!confirmCheck || isPending}>
-                            {powewrup ? 'Power Up' : 'Transfer'}
+                            {delegation ? 'Delegate' : powewrup ? 'Power Up' : 'Transfer'}
                         </Button>
                     </ModalFooter>
                 </>

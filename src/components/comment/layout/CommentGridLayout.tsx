@@ -38,7 +38,7 @@ export default function CommentGridLayout(props: CommentProps) {
     const imageHeight = 176;
 
     function handleProfileClick(event) {
-        if (pathUsername !== comment.author) {
+        if (pathUsername !== commentInfo.author) {
             const targetUrl = authorLink;
             pushWithCtrl(event, router, targetUrl, true);
 
@@ -49,7 +49,7 @@ export default function CommentGridLayout(props: CommentProps) {
         <Card className={`grid-footer w-full card card-compact h-full bg-white/60
          dark:bg-white/10  pb-2 flex flex-col overflow-hidden rounded-lg shadow-lg `}>
 
-            <div className="flex-shrink-0 relative ">
+            <div className={clsx(commentInfo.is_muted && ' opacity-80', "flex-shrink-0 relative ")}>
                 {thumbnail ?
                     <Image
                         src={thumbnail}
@@ -85,7 +85,7 @@ export default function CommentGridLayout(props: CommentProps) {
 
             </div>
             <div className="flex flex-1 flex-col justify-between p-4">
-                <div className="flex-1">
+                <div className={clsx(commentInfo.is_muted && ' opacity-80', "flex-1")}>
 
                     <Card isPressable={!isReply} radius='none'
                         onClick={onReplyClick}

@@ -204,3 +204,4 @@ export const empty_settings = (): Setting => {
     theme: 'system'
   };
 };
+

@@ -492,3 +492,90 @@ export const getExpiringDelegations = async (
         throw new Error(error);
     }
 };
+
+
+export const getTronInformation = async (
+    USERNAME: string,
+): Promise<SteemTron> => {
+    try {
+
+        const R_API = `https://steemitwallet.com/api/v1/tron/tron_user?username=${USERNAME}`;
+        console.log(R_API);
+
+        const response = (await fetch(R_API));
+
+        if (response.ok) {
+            const result = await response.json();
+            const trxInfo = result.result;
+            const trxResponse = await fetch(`https://api.trongrid.io/v1/accounts/${trxInfo.tron_addr}`)
+            const trxResult = await trxResponse.json();
+            const trx_balance = (trxResult?.data?.[0]?.balance ?? 0) / 1000000;
+            // await tronWeb.trx.getBalance(trxInfo.tron_addr);
+
+            return { ...trxInfo, trx_balance: trx_balance ?? 0 } as SteemTron;
+
+        } else {
+            throw new Error(`HTTP error: ${response.status}`);
+        }
+    } catch (error: any) {
+        console.error('Failed to fetch post:', error);
+        throw new Error(error);
+    }
+};
+
+
+export const getNotifications = async (
+    username: string,
+    filter: any,
+    offset: number = 0,
+): Promise<SDSNotification[]> => {
+    try {
+
+        const R_API = `/notifications_api/getFilteredNotificationsByStatus/${username}/all/${filter}/50/${offset}`;
+
+        console.log(R_API);
+
+        const response = await fetchSds<any>(R_API);
+
+        if (response.ok) {
+            return response as SDSNotification[]
+        } else {
+            throw new Error(`HTTP error: ${response.status}`);
+        }
+    } catch (error: any) {
+        console.error('Failed to fetch post:', error);
+        // throw new Error(error);
+        throw new Error(`Error: ${error}`);
+    }
+};
+
+
+export const getUnreadNotifications = async (
+    username: string,
+    settings: FirebaseNotificationSettings,
+    offset: number = 0,
+): Promise<number> => {
+    try {
+
+        const filter = `{"mention":{"exclude":${!settings.mention.status}, "minSP":${settings.mention.minSp},"minReputation":${settings.mention.minRep}},
+      "vote":{"exclude":${!settings.vote.status}, "minVoteAmount":${settings.vote.minVote},"minReputation":${settings.vote.minRep},"minSP":${settings.vote.minSp}},
+      "follow":{"exclude":${!settings.follow.status}, "minSP":${settings.follow.minSp},"minReputation":${settings.follow.minRep}},
+      "resteem":{"exclude":${!settings.resteem.status}, "minSP":${settings.resteem.minSp},"minReputation":${settings.resteem.minRep}},
+     "reply":{"exclude":${!settings.reply.status}, "minSP":${settings.reply.minSp},"minReputation":${settings.reply.minRep}}}`;
+
+        const R_API = `/notifications_api/getFilteredUnreadCount/${username}/${filter}`;
+
+        console.log(R_API);
+        const response = await fetchSds<any>(R_API);
+
+        if (response.ok) {
+            return response.result as number;
+        } else {
+            throw new Error(`HTTP error: ${response.status}`);
+        }
+    } catch (error: any) {
+        console.error('Failed to fetch post:', error);
+        // throw new Error(error);
+        throw new Error(`Error: ${error}`);
+    }
+};

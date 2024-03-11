@@ -8,6 +8,7 @@ import usePathnameServer from "@/libs/utils/usePathnameServer";
 import { getServerSession } from "next-auth/next";
 import ProfileEnd from "./@end/page";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
 
 export default async function Layout({
@@ -23,15 +24,15 @@ export default async function Layout({
     const session = await getServerSession();
     const data = await getAuthorExt(username, session?.user?.name || 'null');
 
+
     return (
         <main className="main flex flex-col">
 
             <ProfileHeader data={data} />
 
             <MainWrapper
-                endClassName=''
-                // startContent={start}
-                endContent={end}>
+                endContent={end}
+                >
                 {children}
             </MainWrapper>
         </main>

@@ -40,7 +40,10 @@ export default function HomePage({ isLogin }: { isLogin?: boolean }) {
         className='justify-center'
         defaultSelectedKey={(isLogin && category === 'communities') ? 'communities' : category ?? 'trending'}
         onSelectionChange={(key) => {
-          history.pushState({}, '', `/${key}`);
+          if (!category)
+            history.replaceState({}, '', `/${key}`);
+          else
+            history.pushState({}, '', `/${key}`);
         }}
         classNames={{
           tabList: "max-sm:gap-0 bg-default-300",

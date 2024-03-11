@@ -7,6 +7,7 @@ import BodyShort from "@/components/body/BodyShort";
 import CommentCover from "../component/CommentCover";
 import { getPostThumbnail } from "@/libs/utils/image";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
+import clsx from "clsx";
 
 
 export default function CommentListLayout(props: CommentProps) {
@@ -23,7 +24,7 @@ export default function CommentListLayout(props: CommentProps) {
 
         <Card isPressable={!isReply} radius='none'
             onClick={onReplyClick} shadow='none'
-            className='bg-transparent main-comment-list w-full'>
+            className={clsx(commentInfo.is_muted && ' opacity-80', 'bg-transparent main-comment-list w-full')}>
             <div className="flex items-center gap-2 w-full py-0">
                 <div className="pl-1 text-container space-y-2">
                     <div className=" text-start font-bold text-md">{commentInfo.title}</div>

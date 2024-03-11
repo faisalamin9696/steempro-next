@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     Table,
     TableHeader,
@@ -26,6 +26,9 @@ import { vestToSteem } from "@/libs/steem/sds";
 import SAvatar from "@/components/SAvatar";
 import TimeAgoWrapper from "@/components/wrapper/TimeAgoWrapper";
 import { BiDotsVerticalRounded } from "react-icons/bi";
+import TransferModal from "@/components/TransferModal";
+import { useSession } from "next-auth/react";
+import LoadingCard from "@/components/LoadingCard";
 
 const statusColorMap = {
     incoming: "success",
@@ -58,12 +61,20 @@ export default function DelegationTab() {
     const URL_INCOMING = `/delegations_api/getIncomingDelegations/${username}`;
     const URL_EXPIRING = `/delegations_api/getExpiringDelegations/${username}`;
 
-    const { data: outgoingData } = useSWR(URL_OUTGOING, fetchSds<Delegation[]>);
-    const { data: incomingData } = useSWR(URL_INCOMING, fetchSds<Delegation[]>);
-    const { data: expiringData } = useSWR(URL_EXPIRING, fetchSds<Delegation[]>);
+    const { data: outgoingData, isLoading: isLoading1 } = useSWR(URL_OUTGOING, fetchSds<Delegation[]>);
+    const { data: incomingData, isLoading: isLoading2 } = useSWR(URL_INCOMING, fetchSds<Delegation[]>);
+    const { data: expiringData, isLoading: isLoading3 } = useSWR(URL_EXPIRING, fetchSds<Delegation[]>);
+
+    const isPending = isLoading1 || isLoading2 || isLoading3;
+
+
 
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
+    const isSelf = loginInfo.name === username;
+
+
+    const [transferModal, setTransferModal] = useState(false);
 
     const outgoingRows = outgoingData?.map((item) => {
         return { ...item, status: 'outgoing' }
@@ -86,7 +97,7 @@ export default function DelegationTab() {
     const [rowsPerPage, setRowsPerPage] = React.useState<any>(5);
     const [sortDescriptor, setSortDescriptor] = React.useState<any>({
         column: "vests",
-        direction: "ascending",
+        direction: "descending",
     });
     const [page, setPage] = React.useState(1);
 
@@ -290,7 +301,7 @@ export default function DelegationTab() {
                                 ))}
                             </DropdownMenu>
                         </Dropdown> */}
-                        <Button size="sm"
+                        <Button size="sm" onPress={() => setTransferModal(!transferModal)}
                             color="primary" endContent={<FaPlus />}>
                             Add New
                         </Button>
@@ -369,40 +380,52 @@ export default function DelegationTab() {
         [],
     );
 
-    return (
-        <Table
-            aria-label="Delegation table"
-            isHeaderSticky
-            removeWrapper
-            bottomContent={bottomContent}
-            bottomContentPlacement="outside"
-            classNames={classNames}
-            // sortDescriptor={sortDescriptor}
-            topContent={topContent}
-            topContentPlacement="outside"
-            onSortChange={setSortDescriptor}
-            isCompact
-            isStriped
+    if (isPending)
+        return <LoadingCard />
 
-        >
-            <TableHeader columns={headerColumns}>
-                {(column) => (
-                    <TableColumn
-                        key={column.uid}
-                        align={column.uid === "actions" ? "center" : "start"}
-                        allowsSorting={column.sortable}
-                    >
-                        {column.name}
-                    </TableColumn>
-                )}
-            </TableHeader>
-            <TableBody emptyContent={"No data found"} items={sortedItems}>
-                {(item) => (
-                    <TableRow key={`${item.from}-${item.to}`}>
-                        {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-                    </TableRow>
-                )}
-            </TableBody>
-        </Table>
+    return (
+        <div>
+            <Table
+                aria-label="Delegation table"
+                isHeaderSticky
+                removeWrapper
+                bottomContent={bottomContent}
+                bottomContentPlacement="outside"
+                classNames={classNames}
+                sortDescriptor={sortDescriptor}
+                topContent={topContent}
+                topContentPlacement="outside"
+                onSortChange={setSortDescriptor}
+                isCompact
+                isStriped
+
+            >
+                <TableHeader columns={headerColumns}>
+                    {(column) => (
+                        <TableColumn
+                            key={column.uid}
+                            align={column.uid === "actions" ? "center" : "start"}
+                            allowsSorting={column.sortable}
+                        >
+                            {column.name}
+                        </TableColumn>
+                    )}
+                </TableHeader>
+                <TableBody emptyContent={"No data found"} items={sortedItems}>
+                    {(item) => (
+                        <TableRow key={`${item.from}-${item.to}`}>
+                            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+
+            {transferModal && <TransferModal
+                asset={'VESTS'}
+                isOpen={transferModal}
+                delegation delegatee={isSelf ? undefined : username}
+                onOpenChange={setTransferModal}
+            />}
+        </div>
     );
 }

@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react'
 import './header.scss';
-import { Button, Input, Link, Navbar, NavbarBrand, NavbarContent, Popover, PopoverContent, PopoverTrigger, User } from "@nextui-org/react";
+import { Badge, Button, Input, Link, Navbar, NavbarBrand, NavbarContent, Popover, PopoverContent, PopoverTrigger, User } from "@nextui-org/react";
 import IconButton from '../IconButton';
 import { MdNotifications, MdSearch } from 'react-icons/md';
 import { LuPencilLine } from "react-icons/lu";
@@ -18,6 +18,7 @@ import { useRouter } from 'next13-progressbar';
 import AccountsModal from '../AccountsModal';
 import AppDrawer from './AppDrawer';
 import { pushWithCtrl } from '@/libs/utils/helper';
+import NotificationsCard from '../NotificationsCard';
 const NavbarDrawerItems = dynamic(() => import('./NavbarDrawerItems'))
 
 
@@ -44,7 +45,7 @@ export default function AppNavbar() {
     const router = useRouter();
     const [isPopOpen, setIsPopOpen] = React.useState(false);
     const [isAccOpen, setIsAccOpen] = React.useState(false);
-    const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
+    const [notificationPopup, setNotificationPopup] = React.useState(false);
 
 
 
@@ -121,7 +122,7 @@ export default function AppNavbar() {
 
 
             <NavbarContent as="div" className="items-center z-0 " justify="end">
-                <div className="flex flex-row gap-2 items-center">
+                <div className="flex flex-row gap-4 items-center">
 
                     <Input
                         radius='full'
@@ -158,13 +159,31 @@ export default function AppNavbar() {
                         <LuPencilLine className='text-xl text-default-600' />
                     </Button>
 
+                    <Popover placement="right" className='max-sm:hidden' isOpen={notificationPopup}
+                        onOpenChange={setNotificationPopup}>
+                        <PopoverTrigger>
+                            <Badge content="99+"
+                                shape="circle" color="primary" size='sm'>
+                                <Button
+                                    size='sm'
+                                    radius="full"
+                                    isIconOnly
+                                    onPress={() => { setNotificationPopup(!notificationPopup) }}
+                                    aria-label="more than 99 notifications"
+                                    variant="light"
+                                >
+                                    <MdNotifications size={24} />
+                                </Button>
+                            </Badge>
 
-                    <button className="max-sm:hidden ">
-                        <div className="relative">
-                            <IconButton as={'div'} onClick={undefined} IconType={MdNotifications} />
-                            <span className="absolute top-0 right-0 badge badge-xs badge-info indicator-item"></span>
-                        </div>
-                    </button>
+                        </PopoverTrigger>
+                        <PopoverContent>
+                            <NotificationsCard username={session?.user?.name} />
+                        </PopoverContent>
+                    </Popover>
+
+
+
 
                     {isLogin() ?
                         <Popover placement="top" color='default' shouldCloseOnBlur={false}

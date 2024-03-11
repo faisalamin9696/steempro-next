@@ -30,8 +30,6 @@ export function middleware(request: NextRequest) {
     first_param = first_param?.toLowerCase();
     second_param = second_param?.toLowerCase();
 
-
-    // Check if the URL matches the pattern for a post
     if (splitted_path.length === 3 && usernameURLRegex.test(second_param)) {
         return NextResponse.rewrite(new URL('/post', request.nextUrl), { headers: request.headers });
     }

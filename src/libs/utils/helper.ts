@@ -71,7 +71,7 @@ export function pushWithCtrl(event, router: {
     prefetch(href: string, options?: undefined): void;
 }, targetUrl: string, shouldRefresh?: boolean) {
 
-    const ctrlPressed = event.ctrlKey;
+    const ctrlPressed = event?.ctrlKey || false;
     if (ctrlPressed) {
         window.open(targetUrl, '_blank');
         return

@@ -31,7 +31,7 @@ interface Props {
 export default memo(function PostReplies(props: Props) {
     const { comment, onReplyClick } = props;
 
-    const commentInfo = (useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment) as Post;
+    const commentInfo: Post = (useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment) as Post;
     const postReplies = useAppSelector(state => state.repliesReducer.values)[`${commentInfo.author}/${commentInfo.permlink}`] ?? [];
     const loginInfo = useAppSelector(state => state.loginReducer.value);
 
@@ -68,7 +68,7 @@ export default memo(function PostReplies(props: Props) {
 
     useEffect(() => {
         if (showReply) {
-            document.getElementById('editorDiv')?.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById(`editorDiv-${commentInfo.author + '-' + commentInfo.permlink}`)?.scrollIntoView({ behavior: 'smooth' });
         }
 
     }, [showReply]);
@@ -158,6 +158,7 @@ export default memo(function PostReplies(props: Props) {
 
 
         clearForm();
+        toggleReply();
         toast.success('Sent');
         setPosting(false);
     }
@@ -196,49 +197,47 @@ export default memo(function PostReplies(props: Props) {
 
 
         authenticateUser();
-
-
-        if (isAuthorized()) {
-            setPosting(true);
-
-            await awaitTimeout(1);
-            try {
-
-
-                // generating the permlink for the comment author
-                let permlink = generateReplyPermlink(commentInfo.author);
-
-
-                const postData: PostingContent = {
-                    author: loginInfo,
-                    title: '',
-                    body: markdown,
-                    parent_author: commentInfo.author,
-                    parent_permlink: commentInfo.permlink,
-                    json_metadata: makeJsonMetadataReply(),
-                    permlink: permlink
-
-                }
-
-                // checkin if the promotion text already exist
-                if (!checkPromotionText(markdown))
-                    postData.body = postData.body + '\n\n' + AppStrings.promotion_text;
-
-                const credentials = getCredentials(getSessionKey());
-
-                if (credentials) {
-                    postingMutation.mutate({ postData, options: null, key: credentials.key });
-                } else {
-                    setPosting(false);
-                    toast.error('Invalid credentials');
-                }
-
-
-            } catch (e) {
-                toast.error(String(e));
-                setPosting(false);
-            }
+        if (!isAuthorized())
+            return
+        const credentials = getCredentials(getSessionKey());
+        if (!credentials?.key) {
+            toast.error('Invalid credentials');
+            return
         }
+
+        setPosting(true);
+        await awaitTimeout(0.5);
+
+        try {
+
+
+            // generating the permlink for the comment author
+            let permlink = generateReplyPermlink(commentInfo.author);
+
+            const postData: PostingContent = {
+                author: loginInfo,
+                title: '',
+                body: markdown,
+                parent_author: commentInfo.author,
+                parent_permlink: commentInfo.permlink,
+                json_metadata: makeJsonMetadataReply(),
+                permlink: permlink
+
+            }
+
+            // checkin if the promotion text already exist
+            if (!checkPromotionText(markdown))
+                postData.body = postData.body + '\n\n' + AppStrings.promotion_text;
+
+            postingMutation.mutate({ postData, options: null, key: credentials.key });
+
+
+
+        } catch (e) {
+            toast.error(String(e));
+            setPosting(false);
+        }
+
 
     }
 
@@ -248,11 +247,11 @@ export default memo(function PostReplies(props: Props) {
 
             <div className='card card-compact mt-4 flex flex-col py-4 gap-4'>
 
-                {repliesMutation?.data ? null :
+                {repliesMutation.isSuccess ? null :
                     <Button color='default' variant='flat' className='self-center' onPress={handleLoadComments}
                         isLoading={isLoading}>Load comments</Button>}
 
-                {repliesMutation?.data?.length === 0 ?
+                {(repliesMutation.isSuccess && commentInfo.children === 0) ?
                     <div className='flex flex-1 self-center items-center gap-1'>
                         <p>Be the first to</p>
                         <Button size='sm' variant='light'
@@ -263,7 +262,7 @@ export default memo(function PostReplies(props: Props) {
                     </div> : null}
 
                 {showReply &&
-                    <div id='editorDiv' className='flex flex-col mt-2 gap-2'>
+                    <div id={`editorDiv-${commentInfo.author + '-' + commentInfo.permlink}`} className='flex flex-col mt-2 gap-2'>
                         <EditorInput
                             value={markdown}
                             onChange={setMarkdown}
@@ -325,7 +324,10 @@ export default memo(function PostReplies(props: Props) {
                     }
                 >
                     {rootReplies?.map((reply: Post) => {
-                        return <Reply comment={reply} rootComment={comment} />
+                        return (!reply.link_id) ? null :
+                            < Reply key={reply.link_id}
+                                comment={reply}
+                                rootComment={comment} />
                     })}
                 </InfiniteScroll>
 

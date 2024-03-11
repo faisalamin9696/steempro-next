@@ -27,7 +27,7 @@ export default memo(function FeedList(props: Props) {
 
     useMemo(() => {
         if (data) {
-            setRows(data.slice(0, 7));
+            setRows(data.slice(0, 8));
         }
 
     }, [data])
@@ -85,9 +85,11 @@ export default memo(function FeedList(props: Props) {
                     <b>Yay! You have seen it all</b>
                 </p>
             }>
-            <div className={clsx(isGridStyle && (className ? className : "gap-6 grid xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2"))}>
+            <div className={clsx(isGridStyle && (className ? className : "gap-6 grid  1md:grid-cols-3 md:grid-cols-2"))}>
                 {rows?.map((comment) => {
-                    return <CommentCard key={comment.link_id} comment={comment} />
+
+                    return (!comment.link_id) ? null :
+                        <CommentCard key={comment.link_id} comment={comment} />
                 })}
             </div>
         </InfiniteScroll >

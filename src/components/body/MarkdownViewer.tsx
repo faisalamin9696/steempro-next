@@ -8,6 +8,7 @@ import SanitizeConfig, { noImageText } from './SanitizeConfig';
 import HtmlReady from './htmlReady';
 import sanitize from 'sanitize-html';
 import { replaceOldDomains } from '@/libs/utils/Links';
+import clsx from 'clsx';
 
 const remarkable = new Remarkable({
     html: true, // remarkable renders first then sanitize runs...
@@ -40,7 +41,7 @@ export default memo(function MarkdownViewer(props: Props) {
     const {
         allowDangerousHTML = false,
         breaks = true,
-        className = '',
+        className,
         hideImages = false,
         isProxifyImages, noImage, highQualityPost
     } = props;
@@ -103,7 +104,7 @@ export default memo(function MarkdownViewer(props: Props) {
             renderedText,
             SanitizeConfig({
                 large: large,
-                highQualityPost: false,
+                highQualityPost: true,
                 noImage: noImage && allowNoImage,
             })
         );
@@ -230,7 +231,7 @@ export default memo(function MarkdownViewer(props: Props) {
     }
 
 
-    return (<div className={'markdown-body  w-full'}>
+    return (<div className={clsx('markdown-body  w-full', className)}>
         {sections}
         {noImageActive &&
             allowNoImage && (

@@ -8,6 +8,35 @@ export const appLink = 'https://www.steempro.com';
 export const isDev = false;
 
 
+export const defaultNotificationFilters = {
+    'status': true,
+    'vote': {
+        'status': true,
+        'minRep': 25,
+        'minSp': 15,
+        'minVote': 0.001
+    },
+    'reply': {
+        'status': true,
+        'minRep': 25,
+        'minSp': 15
+    },
+    'follow': {
+        'status': true,
+        'minRep': 25,
+        'minSp': 0
+    },
+    'mention': {
+        'status': true,
+        'minRep': 25,
+        'minSp': 15
+    },
+    'resteem': {
+        'status': true,
+        'minRep': 25,
+        'minSp': 15
+    }
+};
 
 export const intrestingList = [
     'faisalamin',
