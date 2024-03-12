@@ -50,7 +50,7 @@ export async function generateMetadata(parent: ResolvingMetadata) {
         title: (name ? `${name} (@${username})` : username) ?? `(@${username})`,
         description: about ?? '',
         openGraph: {
-            images: [getResizedAvatar(username), ...previousImages]
+            images: [getResizedAvatar(username, 'medium')]
         }
     }
 
