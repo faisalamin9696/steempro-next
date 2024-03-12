@@ -1,29 +1,37 @@
 "use client";
 
-import { Tab, Tabs } from '@nextui-org/react'
+import { Accordion, AccordionItem, Tab, Tabs } from '@nextui-org/react'
 import React from 'react'
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import FeedPatternSwitch from '@/components/FeedPatternSwitch';
 import CommunityImportantTab from '../(tabs)/important/page';
 import CommunityTrendingsTab from '../(tabs)/trendings/page';
 import CommunityCreatedPage from '../(tabs)/created/page';
-import CommunityAboutTab from '../(tabs)/about/page';
 import { useDeviceInfo } from '@/libs/utils/useDeviceInfo';
+import MarkdownViewer from '@/components/body/MarkdownViewer';
+import { FaClipboardQuestion } from 'react-icons/fa6';
+import { MdDescription } from 'react-icons/md';
+import { PiUserListBold } from 'react-icons/pi';
+import CommunityRoles from '../_components/CommunityRoles';
+import { CommunityAboutContent } from '../_components/CommunityAboutContent';
 interface Props {
     data: Community;
 
 }
+
+
 
 export default function CommunityPage(props: Props) {
     const { data } = props;
     let { community, category } = usePathnameClient();
     const { isMobile } = useDeviceInfo();
 
+
     const profileTabs = [
         { title: 'Important', key: 'important', children: <CommunityImportantTab /> },
         { title: 'Trending', key: 'trending', children: <CommunityTrendingsTab /> },
         { title: 'New', key: 'created', children: <CommunityCreatedPage /> },
-        { title: 'About', key: 'about', children: <CommunityAboutTab data={data} /> },
+        { title: 'About', key: 'about', children: <CommunityAboutContent community={data} /> },
 
     ]
 

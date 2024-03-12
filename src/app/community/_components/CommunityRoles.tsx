@@ -12,21 +12,24 @@ import { FaSearch } from 'react-icons/fa';
 import { IoIosRefresh } from 'react-icons/io'
 import InfiniteScroll from 'react-infinite-scroll-component';
 import useSWR from 'swr';
+import { twMerge } from 'tailwind-merge';
 
 interface Props {
     large?: boolean;
+    roles?: Role[];
+    stickyHeader?: boolean;
 }
 export default function CommunityRoles(props: Props) {
-    const { large } = props;
+    const { large, roles, stickyHeader } = props;
 
     let { community } = usePathnameClient();
     community = 'hive-144064'
 
     const URL = `/communities_api/getCommunityRoles/${community}`;
     const [query, setQuery] = useState('');
-    const { data, isLoading, error, mutate, isValidating } = useSWR(URL, fetchSds<Role[]>);
+    const { data, isLoading, error, mutate, isValidating } = useSWR(!roles && URL, fetchSds<Role[]>);
     const [filteredData, setFilteredData] = useState<Role[]>([]);
-    const [rows, setRows] = useState<Role[]>([]);
+    const [rows, setRows] = useState<Role[]>(roles ?? []);
     const [loadingMore, setLoadingMore] = useState(false);
 
 
@@ -89,8 +92,8 @@ export default function CommunityRoles(props: Props) {
     }
 
     return (
-        <div className="flex flex-col gap-2">
-            <div className='gap-2'>
+        <div className="flex flex-col gap-2 max-h-[500px] pb-10 overflow-auto" >
+            <div className={twMerge('gap-2', stickyHeader && 'sticky top-0 z-10 backdrop-blur-sm')}>
                 <div
                     className="flex items-center gap-2
              text-default-900 text-lg font-bold mb-4 z-10">

@@ -232,7 +232,8 @@ type Community = {
   observer_subscribed: number;
   observer_role: string;
   observer_title: string;
-  status: 'joining' | 'leaving' | 'idle' = 'idle'
+  status: 'joining' | 'leaving' | 'idle' = 'idle';
+  roles: any
 };
 
 type AccountHistory = {
