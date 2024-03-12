@@ -3,22 +3,27 @@
 import { Tab, Tabs } from '@nextui-org/react'
 import React from 'react'
 import usePathnameClient from '@/libs/utils/usePathnameClient';
-import useMobile from '@/libs/utils/useMobile';
 import FeedPatternSwitch from '@/components/FeedPatternSwitch';
 import CommunityImportantTab from '../(tabs)/important/page';
 import CommunityTrendingsTab from '../(tabs)/trendings/page';
 import CommunityCreatedPage from '../(tabs)/created/page';
 import CommunityAboutTab from '../(tabs)/about/page';
+import { useDeviceInfo } from '@/libs/utils/useDeviceInfo';
+interface Props {
+    data: Community;
 
-export default function CommunityPage() {
+}
+
+export default function CommunityPage(props: Props) {
+    const { data } = props;
     let { community, category } = usePathnameClient();
-    const isMobile = useMobile();
+    const { isMobile } = useDeviceInfo();
 
     const profileTabs = [
         { title: 'Important', key: 'important', children: <CommunityImportantTab /> },
         { title: 'Trending', key: 'trending', children: <CommunityTrendingsTab /> },
         { title: 'New', key: 'created', children: <CommunityCreatedPage /> },
-        { title: 'About', key: 'about', children: <CommunityAboutTab /> },
+        { title: 'About', key: 'about', children: <CommunityAboutTab data={data} /> },
 
     ]
 
@@ -38,7 +43,7 @@ export default function CommunityPage() {
                         history.pushState({}, '', `/${key}/${community}`);
                 }}
                 classNames={{
-                    tabList: "max-sm:gap-0 bg-default-300",
+                    tabList: "max-sm:gap-0 main-tab-list",
                     tab: "max-sm:max-w-prose max-sm:px-2 max-sm:h-5",
                 }}
 

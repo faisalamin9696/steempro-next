@@ -113,7 +113,7 @@ export class EntryPayoutDetail extends Component<DetailProps> {
                         <span className="value">
                             {beneficiary.map((x: any, i) => (
                                 <Fragment key={i}>
-                                    {x.account}: {(x.weight / 100).toFixed(0)}% <br />
+                                    {x[0]}: {(x[1] / 100).toFixed(0)}% <br />
                                 </Fragment>
                             ))}
                         </span>
@@ -158,7 +158,6 @@ export const RewardBreakdownCard = (props: Props) => {
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
     const URL = `/posts_api/getPost/${comment.author}/${comment.permlink}/${false}`;
 
-    console.log(1122, 'globals', globalData)
     const { data, isLoading } = useSWR(URL, fetchSds<Post>);
 
     if (isLoading) {

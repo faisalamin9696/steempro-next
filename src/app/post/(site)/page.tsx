@@ -16,6 +16,7 @@ import { updatePostView } from '@/libs/firebase/firebaseApp';
 import { getAuth } from 'firebase/auth';
 import SubmitPage from '@/app/submit/(site)/page';
 import clsx from 'clsx';
+import { useRouter } from 'next13-progressbar';
 const DynamicPostReplies = dynamic(() => import('../_components/PostReplies'))
 
 
@@ -33,6 +34,13 @@ export default function PostPage(props: Props) {
     const commentInfo: Post = useAppSelector(state => state.commentReducer.values)[`${data.author}/${data.permlink}`] ?? data;
     const [editMode, setEditMode] = useState(false);
     const toggleEditMode = () => setEditMode(!editMode)
+
+    const router = useRouter();
+
+    useEffect(() => {
+        router.refresh();
+    }, [pathname]);
+
 
 
     useEffect(() => {

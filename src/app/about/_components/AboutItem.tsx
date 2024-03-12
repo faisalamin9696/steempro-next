@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 import './style.scss'
 import VanillaTilt from "vanilla-tilt";
-import useMobile from "@/libs/utils/useMobile";
 import { Button, Card, CardBody } from "@nextui-org/react";
 import SAvatar from "@/components/SAvatar";
 import TransferModal from "@/components/TransferModal";
+import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 
 interface Props {
     username: string;
@@ -19,7 +19,7 @@ const AboutItem = (props: Props): JSX.Element => {
     const { username, firstHeading, secondHeading, imageSize, imageQuality } = props;
 
     const itemCard = useRef(null);
-    const isMobile = useMobile();
+    const { isMobile } = useDeviceInfo();
 
     useEffect(() => {
         if (!isMobile && itemCard && itemCard.current)

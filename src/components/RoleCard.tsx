@@ -2,6 +2,8 @@ import React from "react";
 import { Input, User } from "@nextui-org/react";
 import { getResizedAvatar } from "@/libs/utils/image";
 import clsx from "clsx";
+import { pushWithCtrl } from "@/libs/utils/helper";
+import { useRouter } from "next13-progressbar";
 
 
 interface Props {
@@ -20,7 +22,7 @@ export const RoleCard = (props: Props) => {
     // const { data: knownPeople, isLoading: isKnownLoading } = useSWR(compact ? null : URL_2, fetchSds<string[]>)
 
     // const posting_json_metadata = JSON.parse(String(data?.posting_json_metadata || '{}'));
-
+    const router = useRouter();
 
 
     return (
@@ -50,12 +52,12 @@ export const RoleCard = (props: Props) => {
                     <p className='dark:bg-default-900/30 text-xs px-1 rounded-lg'>{role.title}</p>
                 </div>}
                 avatarProps={{
-                    className: '',
+                    className: ' cursor-pointer',
                     src: getResizedAvatar(role.account),
-                    // as: 'a',
-                    // onClick: () => {
-                    //     navigation.push(authorLink);
-                    // },
+                    as: 'a',
+                    onClick: (e) => {
+                        pushWithCtrl(e, router, `/@${role.account}/posts`);
+                    },
 
                 }}
             />

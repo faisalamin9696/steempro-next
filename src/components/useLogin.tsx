@@ -2,10 +2,11 @@ import { useSession } from 'next-auth/react';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import AuthModal from './AuthModal';
 import { getCredentials, sessionKey } from '@/libs/utils/user';
-import { fetchSds, useAppDispatch } from '@/libs/constants/AppFunctions';
+import { fetchSds, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import useSWR from 'swr';
 import { saveSteemGlobals } from '@/libs/redux/reducers/SteemGlobalReducer';
+import { defaultNotificationFilters } from '@/libs/constants/AppConstants';
 
 // Define the type for your context value
 interface AuthContextType {
@@ -28,37 +29,52 @@ export const useLogin = () => {
 };
 
 
+const defFilter = defaultNotificationFilters;
+
+const filter = {
+    "mention": { "exclude": defFilter.mention.status, "minSP": defFilter.mention.minSp, "minReputation": defFilter.mention.minRep },
+    "vote": { "exclude": defFilter.vote.status, "minVoteAmount": defFilter.vote.minVote, "minReputation": defFilter.vote.minRep, "minSP": defFilter.vote.minSp },
+    "follow": { "exclude": defFilter.follow.status, "minSP": defFilter.follow.minSp, "minReputation": defFilter.follow.minRep },
+    "resteem": { "exclude": defFilter.resteem.status, "minSP": defFilter.resteem.minSp, "minReputation": defFilter.resteem.minRep },
+    "reply": { "exclude": defFilter.reply.status, "minSP": defFilter.reply.minSp, "minReputation": defFilter.reply.minRep }
+};
 interface Props {
-    data?: AccountExt;
+    data: AccountExt;
     children: React.ReactNode;
     globalData: SteemProps;
 }
 // Create a provider component
 export const AuthProvider = (props: Props) => {
-    const { data, children, globalData } = props;
+    let { data, children, globalData } = props;
     const { data: session, status } = useSession();
     const [openAuth, setOpenAuth] = useState(false);
     const [credentials, setCredentials] = useState<User>();
     const [isNew, setIsNew] = useState(false);
     const dispatch = useAppDispatch();
 
-    const URL = `/accounts_api/getAccountExt/${session?.user?.name}/${session?.user?.name}`;
-    const { data: accountExt } = useSWR(session?.user?.name && !data ? URL : undefined, fetchSds<AccountExt>);
-
-
-    if (!data && accountExt) {
-        dispatch(saveLoginHandler(accountExt));
-    }
+    const URL = `/notifications_api/getFilteredUnreadCount/${session?.user?.name}/${JSON.stringify(filter)}`;
+    const { data: unreadCount } = useSWR(session?.user?.name && URL, fetchSds<number>);
 
     useEffect(() => {
-        if (data) {
+        if (unreadCount) {
+            data = { ...data, unread_count: unreadCount ?? 0 }
             dispatch(saveLoginHandler(data));
         }
+    }, [unreadCount])
+
+
+    useEffect(() => {
+        if (data)
+            dispatch(saveLoginHandler(data));
+
+
         if (globalData) {
             dispatch(saveSteemGlobals(globalData));
         }
         setCredentials(getCredentials());
     }, [])
+
+
 
 
     function isLogin() {

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { AppStrings } from '../constants/AppStrings';
-import { Client, cryptoUtils, PrivateKey } from '@hiveio/dhive';
+import { Client, cryptoUtils, Operation, PrivateKey } from '@hiveio/dhive';
 import { PrivKey } from '../utils/user';
 import { toast } from 'sonner';
 global.Buffer = global.Buffer || require('buffer').Buffer;
@@ -634,7 +634,7 @@ export const unfollowUser = async (
 export const subscribeCommunity = async (
     account: AccountExt,
     key: string,
-    data: { communityId: string; subscribe: boolean },
+    data: { community: string; subscribe: boolean },
 ) => {
     const keyData = getKeyType(account, key);
 
@@ -642,7 +642,7 @@ export const subscribeCommunity = async (
         const privateKey = PrivateKey.fromString(key);
         const json = [
             data.subscribe ? 'subscribe' : 'unsubscribe',
-            { community: data.communityId },
+            { community: data.community },
         ];
         const custom_json = {
             id: 'community',
@@ -1019,3 +1019,49 @@ export const transferToSavings = (account: AccountExt, privateKey: string,
     );
 };
 
+
+export const markasRead = async (
+    account: AccountExt,
+    key: string,
+) => {
+    const keyData = getKeyType(account, key);
+    if (keyData && PrivKey.atLeast(keyData.type, 'POSTING')) {
+        let date = new Date().toISOString().slice(0, 19);
+
+        const params = {
+            id: 'notify',
+            required_auths: [],
+            required_posting_auths: [account.name],
+            json: JSON.stringify(['setLastRead', { date }]),
+        };
+        const params1 = {
+            id: 'steempro_notify',
+            required_auths: [],
+            required_posting_auths: [account.name],
+            json: JSON.stringify(['setLastRead', { date }]),
+        };
+
+        const opArray: Operation[] = [
+            ['custom_json', params],
+            ['custom_json', params1],
+        ];
+
+        const privateKey = PrivateKey.fromString(key);
+        return new Promise((resolve, reject) => {
+            client.broadcast
+                .sendOperations(opArray, privateKey)
+                .then(async (result) => {
+                    resolve(result);
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        });
+    }
+
+    return Promise.reject(
+        new Error(
+            'Check private key permission! Required private posting key or above.',
+        ),
+    );
+};

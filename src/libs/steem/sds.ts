@@ -552,16 +552,9 @@ export const getNotifications = async (
 
 export const getUnreadNotifications = async (
     username: string,
-    settings: FirebaseNotificationSettings,
-    offset: number = 0,
+    filter,
 ): Promise<number> => {
     try {
-
-        const filter = `{"mention":{"exclude":${!settings.mention.status}, "minSP":${settings.mention.minSp},"minReputation":${settings.mention.minRep}},
-      "vote":{"exclude":${!settings.vote.status}, "minVoteAmount":${settings.vote.minVote},"minReputation":${settings.vote.minRep},"minSP":${settings.vote.minSp}},
-      "follow":{"exclude":${!settings.follow.status}, "minSP":${settings.follow.minSp},"minReputation":${settings.follow.minRep}},
-      "resteem":{"exclude":${!settings.resteem.status}, "minSP":${settings.resteem.minSp},"minReputation":${settings.resteem.minRep}},
-     "reply":{"exclude":${!settings.reply.status}, "minSP":${settings.reply.minSp},"minReputation":${settings.reply.minRep}}}`;
 
         const R_API = `/notifications_api/getFilteredUnreadCount/${username}/${filter}`;
 

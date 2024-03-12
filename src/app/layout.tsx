@@ -37,7 +37,7 @@ export default async function RootLayout({
   let data;
 
   let globalData;
-  globalData =  await getSteemGlobal();
+  globalData = await getSteemGlobal();
 
   if (session?.user?.name)
     data = await getAuthorExt(session?.user?.name)

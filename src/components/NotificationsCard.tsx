@@ -2,7 +2,7 @@
 
 import { capitalize } from '@/app/profile/(tabs)/wallet/(tabs)/DelegationTab';
 import { defaultNotificationFilters } from '@/libs/constants/AppConstants';
-import { fetchSds, useAppSelector } from '@/libs/constants/AppFunctions';
+import { awaitTimeout, fetchSds, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { getNotifications, vestToSteem } from '@/libs/steem/sds';
 import { Button, Chip, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Pagination, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import React, { useEffect, useState } from 'react'
@@ -17,6 +17,12 @@ import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useRouter } from 'next13-progressbar';
 import { pushWithCtrl, validateCommunity } from '@/libs/utils/helper';
+import { IoCheckmarkDone } from "react-icons/io5";
+import { markasRead } from '@/libs/steem/condenser';
+import { useLogin } from './useLogin';
+import { getCredentials, getSessionKey } from '@/libs/utils/user';
+import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
+import { IoMdSettings } from "react-icons/io";
 
 interface Props {
     username?: string | null;
@@ -35,8 +41,8 @@ const INITIAL_VISIBLE_COLUMNS = ["account", 'time', "type"];
 
 const columns = [
     { name: "ACCOUNT", uid: "account", sortable: true },
-    { name: "Time", uid: "time", sortable: true },
-    { name: "Type", uid: "type", sortable: true },
+    { name: "TIME", uid: "time", sortable: false },
+    { name: "TYPE", uid: "type", sortable: true },
 ];
 
 const typeOptions = [
@@ -48,6 +54,15 @@ const typeOptions = [
 ];
 
 let offset = 0;
+const defFilter = defaultNotificationFilters;
+
+const filter = {
+    "mention": { "exclude": defFilter.mention.status, "minSP": defFilter.mention.minSp, "minReputation": defFilter.mention.minRep },
+    "vote": { "exclude": defFilter.vote.status, "minVoteAmount": defFilter.vote.minVote, "minReputation": defFilter.vote.minRep, "minSP": defFilter.vote.minSp },
+    "follow": { "exclude": defFilter.follow.status, "minSP": defFilter.follow.minSp, "minReputation": defFilter.follow.minRep },
+    "resteem": { "exclude": defFilter.resteem.status, "minSP": defFilter.resteem.minSp, "minReputation": defFilter.resteem.minRep },
+    "reply": { "exclude": defFilter.reply.status, "minSP": defFilter.reply.minSp, "minReputation": defFilter.reply.minRep }
+};
 
 export default function NotificationsCard(props: Props) {
     const { username } = props;
@@ -56,17 +71,10 @@ export default function NotificationsCard(props: Props) {
         return null
     // let [offset, setOffset] = useState(20);
 
-    const defFilter = defaultNotificationFilters;
 
-    const filter = `{"mention":{"exclude":${!defFilter.mention.status}, "minSP":${defFilter.mention.minSp},"minReputation":${defFilter.mention.minRep}},
-    "vote":{"exclude":${!defFilter.vote.status}, "minVoteAmount":${defFilter.vote.minVote},"minReputation":${defFilter.vote.minRep},"minSP":${defFilter.vote.minSp}},
-    "follow":{"exclude":${!defFilter.follow.status}, "minSP":${defFilter.follow.minSp},"minReputation":${defFilter.follow.minRep}},
-    "resteem":{"exclude":${!defFilter.resteem.status}, "minSP":${defFilter.resteem.minSp},"minReputation":${defFilter.resteem.minRep}},
-   "reply":{"exclude":${!defFilter.reply.status}, "minSP":${defFilter.reply.minSp},"minReputation":${defFilter.reply.minRep}}}`;
-
-    const URL = `/notifications_api/getFilteredNotificationsByStatus/${username}/all/${filter}/25`;
+    const URL = `/notifications_api/getFilteredNotificationsByStatus/${username}/all/${JSON.stringify(filter)}/20`;
     function URL_OFFSET(offset: number) {
-        return `/notifications_api/getFilteredNotificationsByStatus/${username}/all/${filter}/25/${offset}`;
+        return `/notifications_api/getFilteredNotificationsByStatus/${username}/all/${JSON.stringify(filter)}/20/${offset}`;
     }
 
     const { data, isLoading, mutate } = useSWR(URL, fetchSds<SDSNotification[]>);
@@ -75,13 +83,23 @@ export default function NotificationsCard(props: Props) {
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
     const isSelf = loginInfo.name === username;
     const router = useRouter();
+    const { authenticateUser, isAuthorized } = useLogin();
+    const dispatch = useAppDispatch();
 
     const [allRows, setAllRows] = useState<SDSNotification[]>([]);
     useEffect(() => {
-        if (data)
-            setAllRows(data);
+        if (data) {
+            const unreadCount = data.filter(obj => obj.is_read === 0).length;
+            if (unreadCount >= 0) {
+                dispatch(saveLoginHandler({ ...loginInfo, unread_count: unreadCount }));
+            }
 
-    }, [data])
+            setAllRows(data);
+        }
+
+    }, [data]);
+
+
 
     const loadMoreMutation = useMutation({
         mutationFn: (offset: number) => fetchSds<SDSNotification[]>(URL_OFFSET(offset)),
@@ -90,13 +108,40 @@ export default function NotificationsCard(props: Props) {
                 toast.error(error.message);
                 return
             }
-            if (data) {
-                setAllRows((prev) => [...prev, ...data])
-            }
-
+            if (data)
+                setAllRows((prev) => [...prev, ...data]);
         }
     });
 
+
+
+    const markMutation = useMutation({
+        mutationFn: (key: string) => markasRead(loginInfo, key),
+        onSettled(data, error, variables, context) {
+            if (error) {
+                toast.error(error.message);
+                return
+            }
+            setAllRows((prev) => prev.map(notification => !notification.is_read ? ({ ...notification, is_read: 1 }) : notification));
+            dispatch(saveLoginHandler({ ...loginInfo, unread_count: undefined }));
+            toast.success('Marked as read');
+        }
+    });
+    async function handleMarkRead() {
+        authenticateUser();
+        if (!isAuthorized()) {
+            return
+        };
+        const credentials = getCredentials(getSessionKey());
+
+        if (!credentials?.key) {
+            toast.error('Invalid credentials');
+            return
+        }
+
+        markMutation.mutate(credentials.key);
+
+    }
 
     const [filterValue, setFilterValue] = React.useState<any>("");
     const [visibleColumns, setVisibleColumns] = React.useState<any>(new Set(INITIAL_VISIBLE_COLUMNS));
@@ -154,9 +199,15 @@ export default function NotificationsCard(props: Props) {
 
         switch (columnKey) {
             case "account":
-                return (<div className="flex gap-2">
-                    <SAvatar size="xs" username={notification.account} />
-                    <p>{notification.account}</p>
+                return (<div className='flex flex-row items-center'>
+                    {!notification.is_read && <Chip size='sm'
+                        className="border-none gap-1 text-default-600 p-0 w-6 h-6"
+                        variant='dot' color='default' />}
+
+                    <div className="flex gap-2">
+                        <SAvatar size="xs" username={notification.account} />
+                        <p>{notification.account}</p>
+                    </div>
                 </div>
 
 
@@ -199,6 +250,8 @@ export default function NotificationsCard(props: Props) {
         setFilterValue("")
     }, [])
 
+
+
     const topContent = React.useMemo(() => {
         return (
             <div className="flex flex-col gap-4">
@@ -213,14 +266,16 @@ export default function NotificationsCard(props: Props) {
                         onValueChange={onSearchChange}
                     />
                     <div className="flex gap-3">
-                        <Dropdown>
+                        <Dropdown  >
                             <DropdownTrigger className="hidden sm:flex">
-                                <Button size="sm" endContent={<FaChevronDown className="text-small" />} variant="flat">
-                                    Types
+                                <Button size="sm" variant="flat" isIconOnly>
+                                    <IoMdSettings className='text-lg' />
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu
+
                                 disallowEmptySelection
+                                emptyContent={<></>}
                                 aria-label="Table Columns"
                                 closeOnSelect={false}
                                 selectedKeys={statusFilter}
@@ -256,8 +311,11 @@ export default function NotificationsCard(props: Props) {
                                 ))}
                             </DropdownMenu>
                         </Dropdown> */}
-                        <Button size="sm" onPress={() => { }}
-                            color="primary" endContent={<FaPlus />}>
+                        <Button size="sm" onPress={handleMarkRead}
+                            isLoading={markMutation.isPending}
+                            isDisabled={markMutation.isPending || !loginInfo.unread_count}
+                            color="primary" endContent={<IoCheckmarkDone
+                                className='text-lg' />}>
                             Mark as read
                         </Button>
                     </div>
@@ -272,6 +330,8 @@ export default function NotificationsCard(props: Props) {
         allRows.length,
         onSearchChange,
         hasSearchFilter,
+        markMutation.isPending,
+        loginInfo.unread_count
     ]);
 
 
@@ -333,8 +393,8 @@ export default function NotificationsCard(props: Props) {
                             <Button size='sm' isDisabled={isLoading || loadMoreMutation.isPending}
                                 isLoading={loadMoreMutation.isPending}
                                 radius='full'
-                                variant="flat" onPress={() => {
-                                    offset += 25;
+                                variant='shadow' onPress={() => {
+                                    offset += 20;
                                     loadMoreMutation.mutate(offset);
                                 }}>
                                 {isLoading && <Spinner size="sm" />}

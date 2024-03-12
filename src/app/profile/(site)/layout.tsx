@@ -1,14 +1,10 @@
 import MainWrapper from "@/components/wrapper/MainWrapper";
-import type { Metadata, ResolvingMetadata } from "next";
-import ProfileHeader from "../_components/ProfileHeader";
-import { empty_profile } from "@/libs/constants/Placeholders";
+import type { ResolvingMetadata } from "next";
 import { getAuthorExt } from "@/libs/steem/sds";
 import { getResizedAvatar } from "@/libs/utils/image";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
 import { getServerSession } from "next-auth/next";
-import ProfileEnd from "./@end/page";
-import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
+import AccountHeader from "@/components/AccountHeader";
 
 
 export default async function Layout({
@@ -28,11 +24,13 @@ export default async function Layout({
     return (
         <main className="main flex flex-col">
 
-            <ProfileHeader data={data} />
+            <AccountHeader account={data} />
 
             <MainWrapper
+                endClassName='max-h-screen lg:hidden xl:block'
+
                 endContent={end}
-                >
+            >
                 {children}
             </MainWrapper>
         </main>

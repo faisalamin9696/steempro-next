@@ -16,15 +16,16 @@ import './style.scss'
 import { FaClock } from 'react-icons/fa';
 import { CommentProps } from '../CommentCard';
 import clsx from 'clsx';
-import { pushWithCtrl, validateCommunity } from '@/libs/utils/helper';
+import { abbreviateNumber, pushWithCtrl, validateCommunity } from '@/libs/utils/helper';
 import { useRouter } from 'next13-progressbar';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import { useAppSelector } from '@/libs/constants/AppFunctions';
+import { SlLoop } from 'react-icons/sl';
 
 
 export default function CommentGridLayout(props: CommentProps) {
     const { comment, onReplyClick, isReply } = props;
-    const commentInfo = useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment;
+    const commentInfo: Feed | Post = useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment;
 
     const thumbnail = getPostThumbnail(commentInfo.json_images);
     const { username: pathUsername } = usePathnameClient();
@@ -116,14 +117,7 @@ export default function CommentGridLayout(props: CommentProps) {
 
                         </div>}
                         description={<div className='flex flex-col'>
-                            {commentInfo.author_title && <div className='flex space-x-1 text-tiny rounded-full 
-                                    border hover:bg-transparent border-default-900/50 px-1  '>
-                                {commentInfo.author_title}
-
-                                {/* {json_metadata?.app && <STooltip content={`${'Posted using'} ${json_metadata?.app}`}>
-                                            <p>● {json_metadata?.app?.split('/')?.[0]}</p>
-                                        </STooltip>} */}
-                            </div>}
+                            <TimeAgoWrapper lang={'en'} created={commentInfo.created * 1000} lastUpdate={commentInfo.last_update * 1000} />
 
                         </div>}
                         avatarProps={{
@@ -196,13 +190,8 @@ export default function CommentGridLayout(props: CommentProps) {
             </div>
 
             <div className="px-4 flex flex-row items-center justify-between">
-                <span className="py-1 text-xs font-regular text-default-900 mr-1 flex flex-row items-center">
-
-                    <FaClock className=' text-sm' />
-                    <span className="ml-1">
-                        <TimeAgoWrapper lang={'en'} created={commentInfo.created * 1000} lastUpdate={commentInfo.last_update * 1000} />
-
-                    </span>
+                <span title={commentInfo.upvote_count + ' Upvotes'} className="py-1 text-xs font-regular text-default-900 mr-1 flex flex-row items-center">
+                    {abbreviateNumber(commentInfo.upvote_count)} Upvotes
                 </span>
 
                 <span className="py-1 text-xs font-regular text-default-900 mr-1 flex flex-row items-center">

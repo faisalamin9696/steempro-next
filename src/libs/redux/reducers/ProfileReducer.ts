@@ -12,7 +12,7 @@ const initialstate: ProfileState = {
 };
 
 const profileReducer = createSlice({
-    name: 'profile',
+    name: 'profiles',
     initialState: initialstate,
     reducers: {
         addProfileHandler: (state: ProfileState, actions) => {

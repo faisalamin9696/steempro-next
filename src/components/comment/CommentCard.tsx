@@ -1,17 +1,17 @@
 "use client"
 
-import { memo, useMemo } from 'react';
+import { memo } from 'react';
 import './style.scss';
 
 import { useRouter } from 'next13-progressbar';
 import { useAppSelector } from '@/libs/constants/AppFunctions';
-import useMobile from '@/libs/utils/useMobile';
 import { getSettings } from '@/libs/utils/user';
 import { ClassValue } from 'clsx';
 import CommentListLayout from './layout/CommentListLayout';
 import CommentBlogLayout from './layout/CommentBlogsLayout';
 import CommentGridLayout from './layout/CommentGridLayout';
 import { pushWithCtrl } from '@/libs/utils/helper';
+import { useDeviceInfo } from '@/libs/utils/useDeviceInfo';
 
 interface Props {
     comment: Feed | Post;
@@ -36,7 +36,7 @@ export default memo(function CommentCard(props: Props) {
     const { comment } = props;
     const commentInfo = useAppSelector(state => state.commentReducer.values)[`${comment?.author}/${comment?.permlink}`] ?? comment;
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
-    const isMobile = useMobile();
+    const { isMobile } = useDeviceInfo();
     const router = useRouter();
 
     function handlePostClick(event) {

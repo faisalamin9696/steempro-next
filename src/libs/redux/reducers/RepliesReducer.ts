@@ -10,7 +10,7 @@ export const initialstate: InfoState = {
 };
 
 const repliesReducer = createSlice({
-    name: 'postReplies',
+    name: 'replies',
     initialState: initialstate,
     reducers: {
         addRepliesHandler: (state: InfoState, actions) => {

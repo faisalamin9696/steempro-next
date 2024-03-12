@@ -23,7 +23,7 @@ import { useRouter } from 'next13-progressbar';
 interface Props {
     onItemClick?: () => void;
 }
-export default function NavbarDrawerItems(props: Props) {
+export default function DrawerItems(props: Props) {
     const { onItemClick } = props;
     const dispatch = useAppDispatch();
     const router = useRouter();
@@ -99,9 +99,9 @@ export default function NavbarDrawerItems(props: Props) {
             </Button>
 
             {isLogin() && < Button variant='light'
-                onPress={() => {
+                onPress={(e) => {
                     handleItemClick();
-                    router.push(`@${credentials?.username}/settings`);
+                    pushWithCtrl(e, router, `/@${loginInfo.name}/settings`);
                 }}
                 className='w-full justify-start text-inherit '
                 startContent={<IoMdSettings className='text-xl' />}>
@@ -110,9 +110,9 @@ export default function NavbarDrawerItems(props: Props) {
             }
             <Button variant='light'
                 className='w-full justify-start text-inherit '
-                onPress={() => {
+                onPress={(e) => {
                     handleItemClick();
-                    router.push('/about');
+                    pushWithCtrl(e, router, '/about');
                 }}
                 startContent={<FaInfoCircle className='text-xl' />}>
                 About

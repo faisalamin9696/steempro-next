@@ -120,7 +120,7 @@ export default function EditRoleModal(props: Props) {
             setLoading(true);
             const credentials = getCredentials(getSessionKey());
             if (!credentials?.key) {
-                toast.error('Something went wrong!')
+                toast.error('Invalid credentials')
                 return
             }
 

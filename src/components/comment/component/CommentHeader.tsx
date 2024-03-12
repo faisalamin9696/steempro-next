@@ -73,11 +73,11 @@ export default memo(function CommentHeader(props: Props) {
 
 
     function handleProfileClick(event) {
-        if (pathUsername !== comment.author) {
+        // if (pathUsername !== comment.author) {
             const targetUrl = authorLink;
             pushWithCtrl(event, router, targetUrl, true);
 
-        }
+        // }
     }
 
     const menuItems = [

@@ -9,7 +9,7 @@ import usePathnameClient from '@/libs/utils/usePathnameClient'
 import { useSession } from 'next-auth/react'
 
 
-export default function ProfileEnd() {
+export default function PostEnd() {
   const { username } = usePathnameClient();
   const { data: session } = useSession();
 

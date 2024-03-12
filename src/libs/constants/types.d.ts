@@ -56,7 +56,7 @@ type Feed = {
   replies: Post[];
   // undefined for Feed API
   depth: number;
-  status?: 'upvoting' | 'downvoting' | 'resteeming' | 'idle';
+  status: 'upvoting' | 'downvoting' | 'resteeming' | 'idle' = 'idle';
   max_accepted_payout: number;
   percent_steem_dollars: number
 
@@ -177,6 +177,7 @@ type AccountExt = {
   communities?: Community[];
   last_fetch: number;
   encKey: string;
+  unread_count: number = 0;
   // notification: {
   //   status: boolean;
   //   vote: {
@@ -206,11 +207,13 @@ type AccountExt = {
   //     minSp: number,
   //   },
   // }
+  status: 'following' | 'unfollowing' | 'idle' = 'idle'
+
 };
 
 type Community = {
   id: number;
-  type: number;
+  type: string;
   account: string;
   account_reputation: number;
   created: number;
@@ -229,6 +232,7 @@ type Community = {
   observer_subscribed: number;
   observer_role: string;
   observer_title: string;
+  status: 'joining' | 'leaving' | 'idle' = 'idle'
 };
 
 type AccountHistory = {

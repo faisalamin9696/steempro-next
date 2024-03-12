@@ -42,7 +42,7 @@ export default memo(function AccountItemCard(props: Props) {
                 signInAnonymously(firebaseAuth)
                     .then(async () => {
 
-                        addToCurrent(user.username, user.key, user.type);
+                        addToCurrent(account.name, user.key, user.type);
 
 
                         const response = await signIn('credentials', {

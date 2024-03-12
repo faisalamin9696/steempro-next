@@ -38,9 +38,14 @@ export function validateSds(result: any) {
 }
 
 export function mapSds(response: any) {
-    const result = response?.result || response;
-    if (!result) {
+    if (!response || typeof response !== 'object') {
         return response;
+    }
+
+    const result = response.result !== undefined ? response.result : response;
+
+    if (!result || typeof result !== 'object') {
+        return result;
     }
 
     const { cols, rows } = result;

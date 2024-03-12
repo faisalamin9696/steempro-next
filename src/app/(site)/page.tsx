@@ -46,7 +46,7 @@ export default function HomePage({ isLogin }: { isLogin?: boolean }) {
             history.pushState({}, '', `/${key}`);
         }}
         classNames={{
-          tabList: "max-sm:gap-0 bg-default-300",
+          tabList: "max-sm:gap-0 main-tab-list",
           tab: "max-sm:px-2 max-sm:h-5",
           base: ''
 

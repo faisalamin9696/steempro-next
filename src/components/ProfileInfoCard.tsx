@@ -37,14 +37,17 @@ type Props = {
     username?: string;
     data?: AccountExt;
     profile?: boolean;
+    community?: Community;
+    className?: string;
 } & (
         { username: string } |
-        { data: AccountExt }
+        { data: AccountExt } |
+        { community: Community }
     );
 
 export default memo(function ProfileInfoCard(props: Props) {
 
-    const { username, profile, data: accountExt } = props;
+    const { username, profile, community, data: accountExt } = props;
     const { data: session } = useSession();
     const URL = `/accounts_api/getAccountExt/${username}/${session?.user?.name || 'null'}`;
     let { data, isLoading } = useSWR(accountExt ? undefined : URL, fetchSds<AccountExt>);
@@ -53,6 +56,7 @@ export default memo(function ProfileInfoCard(props: Props) {
         data = accountExt;
 
     const profileInfo = useAppSelector(state => state.profileReducer.value)[username ?? data?.name ?? ''] ?? data;
+    const communityInfo = useAppSelector(state => state.communityReducer.values)[community?.account ?? ''] ?? community;
 
     const { data: clubData } = useSWR(username || profileInfo?.name, getClubStatus);
 
@@ -91,8 +95,8 @@ export default memo(function ProfileInfoCard(props: Props) {
 
     return (
         <div
-            className="relative flex flex-col card-content border-none 
-        bg-transparent items-start gap-4 p-2 w-full bg-white dark:bg-white/5">
+            className={clsx(`relative flex flex-col card-content border-none 
+        bg-transparent items-start gap-4 p-2 w-full bg-white dark:bg-white/5`, props.className)}>
             <div className="flex flex-row justify-between gap-2 w-full">
                 <div className="flex gap-2">
                     <SAvatar
@@ -118,7 +122,7 @@ export default memo(function ProfileInfoCard(props: Props) {
                 </div>
 
 
-                {profileInfo && <FollowButton account={profileInfo} />}
+                {profileInfo && <FollowButton account={profileInfo} community={communityInfo} />}
                 {/* <Button
                     disabled={isLoading}
                     color={data?.observer_follows_author ? 'warning' : "secondary"}

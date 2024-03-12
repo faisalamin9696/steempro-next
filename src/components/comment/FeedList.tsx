@@ -8,7 +8,7 @@ import CommentCard from './CommentCard';
 import CommentSkeleton from './component/CommentSkeleton';
 import { getSettings } from '@/libs/utils/user';
 import clsx from 'clsx';
-import useMobile from '@/libs/utils/useMobile';
+import { useDeviceInfo } from '@/libs/utils/useDeviceInfo';
 
 interface Props {
     endPoint: string;
@@ -21,7 +21,7 @@ export default memo(function FeedList(props: Props) {
     const [rows, setRows] = useState<Feed[]>([]);
     const [loadingMore, setLoadingMore] = useState(false);
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
-    const isMobile = useMobile();
+    const { isMobile } = useDeviceInfo();
     const isGridStyle = settings.feedStyle === 'grid' && !isMobile;
 
 

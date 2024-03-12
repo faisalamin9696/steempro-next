@@ -19,7 +19,7 @@ import AccountsModal from '../AccountsModal';
 import AppDrawer from './AppDrawer';
 import { pushWithCtrl } from '@/libs/utils/helper';
 import NotificationsCard from '../NotificationsCard';
-const NavbarDrawerItems = dynamic(() => import('./NavbarDrawerItems'))
+const NavbarDrawerItems = dynamic(() => import('./DrawerItems'))
 
 
 const menuItems = [
@@ -74,8 +74,6 @@ export default function AppNavbar() {
         authenticateUser();
     }
 
-
-
     return (
         <Navbar
             className='shadow-xl w-full h-16  !px-0 !p-0'
@@ -111,9 +109,8 @@ export default function AppNavbar() {
                         blurDataURL={'/logo192.png'}
                         src={'/logo192.png'}
                         alt='logo'
-                        height={40}
-                        width={40}
-
+                        height={35}
+                        width={35}
                         style={{ width: 'auto', height: 'auto' }}
                     />
 
@@ -122,7 +119,7 @@ export default function AppNavbar() {
 
 
             <NavbarContent as="div" className="items-center z-0 " justify="end">
-                <div className="flex flex-row gap-4 items-center">
+                <div className="flex flex-row gap-2 items-center">
 
                     <Input
                         radius='full'
@@ -158,16 +155,21 @@ export default function AppNavbar() {
                         isIconOnly size='sm' variant='light'>
                         <LuPencilLine className='text-xl text-default-600' />
                     </Button>
-
-                    <Popover placement="right" className='max-sm:hidden' isOpen={notificationPopup}
+                    <Popover style={{
+                        zIndex: 50,
+                    }}
+                        placement="right" isOpen={notificationPopup}
                         onOpenChange={setNotificationPopup}>
-                        <PopoverTrigger>
-                            <Badge content="99+"
+                        <PopoverTrigger >
+                            <Badge className=' max-sm:hidden' content={
+                                loginInfo.unread_count > 99 ?
+                                    '99+' : loginInfo.unread_count > 0 && loginInfo.unread_count}
                                 shape="circle" color="primary" size='sm'>
                                 <Button
                                     size='sm'
                                     radius="full"
                                     isIconOnly
+                                    className='text-default-600 max-sm:hidden'
                                     onPress={() => { setNotificationPopup(!notificationPopup) }}
                                     aria-label="more than 99 notifications"
                                     variant="light"
@@ -186,7 +188,9 @@ export default function AppNavbar() {
 
 
                     {isLogin() ?
-                        <Popover placement="top" color='default' shouldCloseOnBlur={false}
+                        <Popover placement="top" color='default'
+                            classNames={{ base: '!z-[10]' }}
+                            shouldCloseOnBlur={false}
                             isOpen={isPopOpen} onOpenChange={(open) => setIsPopOpen(open)}>
                             <PopoverTrigger>
                                 <User
@@ -203,7 +207,7 @@ export default function AppNavbar() {
                                     if (isPopOpen) setIsPopOpen(false);
                                 }}>
                                     <li><a onClick={() => setIsAccOpen(true)}>Switch Account</a></li>
-                                    <li><a>{'Notifications'}</a></li>
+                                    <li><a onClick={() => setNotificationPopup(!notificationPopup)}>{'Notifications'}</a></li>
                                 </ul>
                             </PopoverContent>
                         </Popover>

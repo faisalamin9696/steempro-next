@@ -3,7 +3,6 @@
 import { Tab, Tabs } from '@nextui-org/react'
 import React from 'react'
 import usePathnameClient from '@/libs/utils/usePathnameClient';
-import useMobile from '@/libs/utils/useMobile';
 import ProfileBlogsTab from '../(tabs)/blogs/page';
 import ProfileWalletTab from '../(tabs)/wallet/page';
 import FeedPatternSwitch from '@/components/FeedPatternSwitch';
@@ -16,7 +15,6 @@ import ProfileSettingsTab from '../(tabs)/settings/page';
 
 export default function ProfilePage() {
     let { username, category } = usePathnameClient();
-    const isMobile = useMobile();
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
 
@@ -30,6 +28,8 @@ export default function ProfilePage() {
 
     if (isSelf)
         profileTabs.push({ title: 'Settings', key: 'settings', children: <ProfileSettingsTab /> })
+
+
 
     return (
         <div className={clsx('relative items-center flex-row w-full')}>
@@ -50,7 +50,7 @@ export default function ProfilePage() {
                         history.pushState({}, '', `/@${username}/${key}`);
                 }}
                 classNames={{
-                    tabList: "max-sm:gap-0 bg-default-300",
+                    tabList: "max-sm:gap-0 main-tab-list",
                     tab: "max-sm:max-w-prose max-sm:px-2 max-sm:h-5",
                 }}
 

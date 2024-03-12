@@ -2,9 +2,11 @@ import MainWrapper from "@/components/wrapper/MainWrapper";
 import { getCommunity } from "@/libs/steem/sds";
 import { getResizedAvatar } from "@/libs/utils/image";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
-import CommunityHeader from "../_components/CommunityHeader";
 import { ResolvingMetadata } from "next";
 import { getServerSession } from "next-auth/next";
+import CommunityPage from "./page";
+import ProfileInfoCard from "@/components/ProfileInfoCard";
+import AccountHeader from "@/components/AccountHeader";
 
 
 export default async function Layout({
@@ -24,10 +26,12 @@ export default async function Layout({
     return (
         <main className="main flex flex-col">
 
-            <CommunityHeader data={data} />
+            <AccountHeader community={data} />
             <MainWrapper
-                endContent={end}>
-                {children}
+                endClassName='max-h-screen'
+                endContent={<ProfileInfoCard community={data} username={data.account} />
+                }>
+                <CommunityPage data={data} />
             </MainWrapper>
         </main>
     );

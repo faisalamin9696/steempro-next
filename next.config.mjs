@@ -3,14 +3,25 @@ const nextConfig = {
     // output: 'export',
     images: {
         remotePatterns: [
+            // {
+            //     protocol: 'https',
+            //     hostname: 'cdn.steemitimages.com',
+            //     port: '',
+            // },
+            // {
+            //     protocol: 'https',
+            //     hostname: 'steemitimages.com',
+            //     port: '',
+            // },
             {
                 protocol: 'https',
-                hostname: 'cdn.steemitimages.com',
+                hostname: '**',
                 port: '',
             },
+
             {
-                protocol: 'https',
-                hostname: 'steemitimages.com',
+                protocol: 'http',
+                hostname: '**',
                 port: '',
             },
         ],

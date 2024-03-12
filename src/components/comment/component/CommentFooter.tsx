@@ -176,7 +176,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                         </Popover>
 
 
-                        {!!comment.upvote_count && <div className='text-tiny'>
+                        {!compact && !!comment.upvote_count && <div className='text-tiny'>
                             {abbreviateNumber(comment.upvote_count)}
                         </div>}
 
@@ -245,7 +245,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                 className='pr-2'
                 title={`$${comment.payout?.toLocaleString()} Payout`}>
 
-                <Popover placement="right" onOpenChange={setBreakdownModal} isOpen={breakdownModal}>
+                <Popover placement='top' onOpenChange={setBreakdownModal} isOpen={breakdownModal}>
                     <PopoverTrigger>
                         <Button radius='full' isDisabled
                             isIconOnly size='sm' variant='light'>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { memo, useEffect, useMemo, useState } from 'react'
-import NavbarDrawerItems from './NavbarDrawerItems'
+import DrawerItems from './DrawerItems'
 import { Button, ButtonGroup } from '@nextui-org/react';
 import { RxHamburgerMenu } from "react-icons/rx";
 import ThemeSwitch from '../ThemeSwitch';
@@ -40,7 +40,7 @@ export default memo(function AppDrawer() {
                 className={`fixed z-50 top-0 left-0 h-screen w-60 bg-background shadow-lg transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"
                     }`}  >
                 <div className='p-4 justify-between h-full flex flex-col'>
-                    <NavbarDrawerItems />
+                    <DrawerItems />
                     <div className='flex justify-between'>
 
                         <ThemeSwitch />

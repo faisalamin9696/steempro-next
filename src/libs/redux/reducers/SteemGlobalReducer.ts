@@ -50,7 +50,7 @@ const initialstate: GlobalState = {
 };
 
 const steemGlobalsReducer = createSlice({
-    name: 'steemGlobals',
+    name: 'globals',
     initialState: initialstate,
     reducers: {
         saveSteemGlobals: (state: GlobalState, actions) => {

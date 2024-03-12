@@ -7,7 +7,7 @@ export default function Reputation({ reputation, decimal, sm }: {
 }) {
     return (<div title={`${'Reputation score'}: ` + reputation}
         className='!normal-case rounded-md
-   py-[1px] px-[3px] text-sm  bg-background  max-sm:text-xs'>
+   py-[1px] px-[3px] text-sm  bg-background  max-sm:text-xs text-default-900'>
         <p className={sm ? ' text-xs' : ''}>{Number(reputation)?.toFixed(decimal ?? 0)} </p>
     </div>
     )

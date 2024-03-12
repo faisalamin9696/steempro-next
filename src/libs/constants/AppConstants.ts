@@ -11,28 +11,28 @@ export const isDev = false;
 export const defaultNotificationFilters = {
     'status': true,
     'vote': {
-        'status': true,
+        'status': false,
         'minRep': 25,
         'minSp': 15,
         'minVote': 0.001
     },
     'reply': {
-        'status': true,
+        'status': false,
         'minRep': 25,
         'minSp': 15
     },
     'follow': {
-        'status': true,
+        'status': false,
         'minRep': 25,
         'minSp': 0
     },
     'mention': {
-        'status': true,
+        'status': false,
         'minRep': 25,
         'minSp': 15
     },
     'resteem': {
-        'status': true,
+        'status': false,
         'minRep': 25,
         'minSp': 15
     }

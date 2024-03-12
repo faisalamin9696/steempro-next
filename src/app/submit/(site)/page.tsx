@@ -27,7 +27,7 @@ import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import clsx from 'clsx';
 import CommentOptionWrapper from '@/components/wrapper/CommentOptionWrapper';
-import useMobile from '@/libs/utils/useMobile';
+import { useDeviceInfo } from '@/libs/utils/useDeviceInfo';
 
 interface Props {
     params?: {
@@ -41,7 +41,7 @@ interface Props {
 export default function SubmitPage(props: Props) {
     const { oldPost, handleUpdateSuccess, handleUpdateCancel } = props?.params || {};
     const isEdit = !!oldPost?.permlink;
-    const isMobile = useMobile();
+    const { isMobile } = useDeviceInfo();
 
     const draft = secureLocalStorage.getItem('post_draft') as {
         title: string,

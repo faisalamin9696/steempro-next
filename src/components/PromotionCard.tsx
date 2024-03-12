@@ -17,7 +17,7 @@ interface Props {
     authPerm: string;
 }
 
-export default memo(function PromotionCard(props: Props) {
+export default function PromotionCard(props: Props) {
     const { authPerm } = props;
     const [author, permlink] = authPerm.split('/');
     const { data: session } = useSession();
@@ -80,4 +80,4 @@ export default memo(function PromotionCard(props: Props) {
 
         </div>
     )
-})
+}

@@ -30,7 +30,7 @@ export default function ProfileEnd() {
 
 
   return (
-    <div className="flex flex-col pb-60 ">
+    <div className="flex flex-col max-w-fit">
 
       <div className='sticky top-0 z-10 backdrop-blur-lg'>
         <div
@@ -51,7 +51,7 @@ export default function ProfileEnd() {
 
       <div className='flex flex-col gap-2 px-1 pb-1'>
         {recomendations?.map(people => {
-          return <Card className='border compact border-gray-100/10 shadow-md shadow-gray-400 dark:shadow-default-500 bg-transparent backdrop-blur-md'>
+          return <Card key={people} className='border compact border-gray-100/10 shadow-md shadow-gray-400 dark:shadow-default-500 bg-transparent backdrop-blur-md'>
             <UserCard compact username={people} />
           </Card>
         })}

@@ -54,7 +54,7 @@ const HomeCarousel = memo(() => {
         >
             {data?.map((authPerm) => (
                 <div className="w-full">
-                    <PromotionCard authPerm={authPerm} />
+                    <PromotionCard key={authPerm} authPerm={authPerm} />
                 </div>
             ))}
         </Carousel>

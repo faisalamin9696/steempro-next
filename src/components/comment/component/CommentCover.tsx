@@ -22,8 +22,7 @@ export default memo(function CommentCover(props: Props) {
     }
 
     return (
-        (src) ?
-
+        src ?
             noCard ? <Image
 
                 className={clsx(isFetching && 'bg-background/50',
