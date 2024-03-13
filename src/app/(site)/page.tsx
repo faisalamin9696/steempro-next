@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Tab, Tabs } from '@nextui-org/react'
+import { Tab, Tabs } from '@nextui-org/react'
 import React from 'react'
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import FeedPatternSwitch from '@/components/FeedPatternSwitch';
@@ -11,7 +11,6 @@ import HomeTrendingsTab from './(tabs)/trendings/page';
 import HomeCreatedTab from './(tabs)/created/page';
 import HomePayoutTab from './(tabs)/payout/page';
 import HomeCommunitiesTab from './(tabs)/communities/page';
-import HomeCarousel from '@/components/carousal/HomeCarousal';
 
 
 export default function HomePage({ isLogin }: { isLogin?: boolean }) {
@@ -31,6 +30,7 @@ export default function HomePage({ isLogin }: { isLogin?: boolean }) {
 
   return (
     <div className={clsx('relative items-center flex-row w-full')}>
+
       <Tabs
         size='sm'
         disableAnimation

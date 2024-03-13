@@ -1,9 +1,7 @@
-import { As, Badge } from "@nextui-org/react";
-import { Avatar as NextAvatar } from "@nextui-org/react";
 import clsx from "clsx";
-import STooltip from "./STooltip";
 import { getResizedAvatar } from "@/libs/utils/image";
 import Image from "next/image";
+import Link from "next/link";
 
 interface Props {
     username: string,
@@ -22,8 +20,9 @@ export default function SAvatar(props: Props) {
                     size === 'xs' ? 25 : 60;
 
 
-    if (!username) return <></>
-    return (<div>
+    if (!username) return null
+
+    return (<Link href={`/@${username}`}>
         <Image
             title={username}
             onError={(e) => {
@@ -37,6 +36,6 @@ export default function SAvatar(props: Props) {
             src={`${getResizedAvatar(username, quality ?? 'small')}`}
             className={clsx(' shadow-lg rounded-full', border && 'border', className)}
         />
-    </div>
+    </Link>
     )
 }

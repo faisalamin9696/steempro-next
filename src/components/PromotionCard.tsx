@@ -1,17 +1,17 @@
 'use client';
 
-import { fetchSds, useAppSelector } from '@/libs/constants/AppFunctions';
+import { fetchSds } from '@/libs/constants/AppFunctions';
 import { useSession } from 'next-auth/react';
-import React, { memo } from 'react'
+import React from 'react'
 import useSWR from 'swr';
 import { getPostThumbnail } from '@/libs/utils/image';
 import { useRouter } from 'next13-progressbar';
 import { Card } from '@nextui-org/react';
 import ViewCountCard from './ViewCountCard';
 import Image from 'next/image';
-import { pushWithCtrl } from '@/libs/utils/helper';
 import SAvatar from './SAvatar';
 import TimeAgoWrapper from './wrapper/TimeAgoWrapper';
+import Link from 'next/link';
 
 interface Props {
     authPerm: string;
@@ -35,10 +35,7 @@ export default function PromotionCard(props: Props) {
     const router = useRouter();
 
 
-    function handlePostClick(event) {
-        const targetUrl = `/${data?.category}/@${data?.author}/${data?.permlink}`;
-        pushWithCtrl(event, router, targetUrl, true);
-    }
+
     return (
         <div className="card card-compact text-white p-0 rounded-xl overflow-hidden shadow-lg flex flex-col h-[210px]">
             {thumbnail && <Image
@@ -56,7 +53,7 @@ export default function PromotionCard(props: Props) {
             <div
                 className="rounded-lg hover:bg-transparent transition duration-300 absolute bottom-0 top-0 right-0 left-0 bg-gray-900 opacity-25">
             </div>
-            <Card isPressable onPress={handlePostClick}
+            <Card as={Link} href={`/${data?.category}/@${data?.author}/${data?.permlink}`}
                 shadow='none' radius='none'
                 className="text-white text-start p-1 bg-transparent px-2  
                 mb-auto absolute bottom-0 self-end left-0 gap-2  ">

@@ -2,9 +2,8 @@
 
 import React, { useMemo } from 'react'
 import './header.scss';
-import { Badge, Button, Input, Link, Navbar, NavbarBrand, NavbarContent, Popover, PopoverContent, PopoverTrigger, User } from "@nextui-org/react";
-import IconButton from '../IconButton';
-import { MdNotifications, MdSearch } from 'react-icons/md';
+import { Badge, Button, Input, Navbar, NavbarBrand, NavbarContent, Popover, PopoverContent, PopoverTrigger, User } from "@nextui-org/react";
+import { MdSearch } from 'react-icons/md';
 import { LuPencilLine } from "react-icons/lu";
 import { useLogin } from '../useLogin';
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
@@ -14,11 +13,11 @@ import { getResizedAvatar } from '@/libs/utils/image';
 import Image from 'next/image';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next13-progressbar';
 import AccountsModal from '../AccountsModal';
 import AppDrawer from './AppDrawer';
-import { pushWithCtrl } from '@/libs/utils/helper';
 import NotificationsCard from '../NotificationsCard';
+import { FaRegBell } from 'react-icons/fa';
+import Link from 'next/link';
 const NavbarDrawerItems = dynamic(() => import('./DrawerItems'))
 
 
@@ -42,7 +41,6 @@ export default function AppNavbar() {
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const { data: session, status } = useSession();
-    const router = useRouter();
     const [isPopOpen, setIsPopOpen] = React.useState(false);
     const [isAccOpen, setIsAccOpen] = React.useState(false);
     const [notificationPopup, setNotificationPopup] = React.useState(false);
@@ -147,10 +145,7 @@ export default function AppNavbar() {
                     </Button>
 
 
-                    <Button radius='full' onPress={(event) => {
-                        const targetUrl = '/submit';
-                        pushWithCtrl(event, router, targetUrl);
-                    }}
+                    <Button radius='full' as={Link} href={'/submit'}
 
                         isIconOnly size='sm' variant='light'>
                         <LuPencilLine className='text-xl text-default-600' />
@@ -161,9 +156,10 @@ export default function AppNavbar() {
                         placement="right" isOpen={notificationPopup}
                         onOpenChange={setNotificationPopup}>
                         <PopoverTrigger >
-                            <Badge className=' max-sm:hidden' content={
-                                loginInfo.unread_count > 99 ?
-                                    '99+' : loginInfo.unread_count > 0 && loginInfo.unread_count}
+                            <Badge className=' max-sm:hidden'
+                                content={
+                                    loginInfo.unread_count > 99 ?
+                                        '99+' : loginInfo.unread_count > 0 && loginInfo.unread_count}
                                 shape="circle" color="primary" size='sm'>
                                 <Button
                                     size='sm'
@@ -174,7 +170,7 @@ export default function AppNavbar() {
                                     aria-label="more than 99 notifications"
                                     variant="light"
                                 >
-                                    <MdNotifications size={24} />
+                                    <FaRegBell className='text-xl text-default-600' />
                                 </Button>
                             </Badge>
 

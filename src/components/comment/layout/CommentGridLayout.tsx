@@ -13,39 +13,25 @@ import CommentFooter from '../component/CommentFooter';
 import STag from '@/components/STag';
 const DynamicUserCard = dynamic(() => import('../../UserCard'));
 import './style.scss'
-import { FaClock } from 'react-icons/fa';
 import { CommentProps } from '../CommentCard';
 import clsx from 'clsx';
-import { abbreviateNumber, pushWithCtrl, validateCommunity } from '@/libs/utils/helper';
-import { useRouter } from 'next13-progressbar';
-import usePathnameClient from '@/libs/utils/usePathnameClient';
+import { abbreviateNumber, validateCommunity } from '@/libs/utils/helper';
 import { useAppSelector } from '@/libs/constants/AppFunctions';
-import { SlLoop } from 'react-icons/sl';
+import Link from 'next/link';
 
 
 export default function CommentGridLayout(props: CommentProps) {
-    const { comment, onReplyClick, isReply } = props;
+    const { comment, isReply } = props;
     const commentInfo: Feed | Post = useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment;
 
     const thumbnail = getPostThumbnail(commentInfo.json_images);
-    const { username: pathUsername } = usePathnameClient();
     const { data: session } = useSession();
     const isSelf = commentInfo.author === session?.user?.name;
     // const json_metadata = JSON.parse(comment?.json_metadata ?? '{}') as { tags?: string[], image?: string[], app?: string, format?: string }
-    const authorLink = `/@${commentInfo.author}`;
-    const router = useRouter();
 
     const imageWidth = 200;
     const imageHeight = 176;
 
-    function handleProfileClick(event) {
-        if (pathUsername !== commentInfo.author) {
-            const targetUrl = authorLink;
-            pushWithCtrl(event, router, targetUrl, true);
-
-        }
-
-    }
     return (
         <Card className={`grid-footer w-full card card-compact h-full bg-white/60
          dark:bg-white/10  pb-2 flex flex-col overflow-hidden rounded-lg shadow-lg `}>
@@ -88,8 +74,7 @@ export default function CommentGridLayout(props: CommentProps) {
             <div className="flex flex-1 flex-col justify-between p-4">
                 <div className={clsx(commentInfo.is_muted && ' opacity-80', "flex-1")}>
 
-                    <Card isPressable={!isReply} radius='none'
-                        onClick={onReplyClick}
+                    <Card radius='none'
                         shadow='none'
                         className={clsx('bg-transparent  w-full text-start')}>
                         <p className="text-md font-semibold text-default-900">{commentInfo.title}</p>
@@ -123,11 +108,9 @@ export default function CommentGridLayout(props: CommentProps) {
                         avatarProps={{
                             className: 'cursor-pointer',
                             src: getResizedAvatar(commentInfo.author),
-                            as: 'a',
-                            onClick: handleProfileClick,
-
-
-                        }}
+                            as: Link,
+                            href: `/@${commentInfo.author}`
+                        } as any}
                     />
 
                     {/* <Popover showArrow placement="bottom">

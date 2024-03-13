@@ -1,12 +1,9 @@
 import React, { memo } from "react";
 import { Button, Card, User } from "@nextui-org/react";
-import { abbreviateNumber, pushWithCtrl } from "@/libs/utils/helper";
-import Reputation from "./Reputation";
-import { FaClock, FaEllipsis } from "react-icons/fa6";
+import { abbreviateNumber } from "@/libs/utils/helper";
 import TimeAgoWrapper from "./wrapper/TimeAgoWrapper";
 import { getResizedAvatar } from "@/libs/utils/image";
-import { useRouter } from 'next13-progressbar';
-import { FaRegClock } from "react-icons/fa";
+import Link from "next/link";
 
 
 interface Props {
@@ -26,18 +23,12 @@ export const CommunityCard = memo((props: Props) => {
 
     // const posting_json_metadata = JSON.parse(String(data?.posting_json_metadata || '{}'));
 
-    const router = useRouter();
-    function handleExplore(event) {
-        const targetUrl = `/trending/${community.account}`;
-        pushWithCtrl(event, router, targetUrl);
-    }
 
     return (
-        <Card isPressable={compact} onPress={handleExplore}
-            className="relative flex flex-col items-start gap-2 p-4 w-full bg-white dark:bg-white/5">
+        <Card className="relative flex flex-col items-start gap-2 p-4 w-full bg-white dark:bg-white/5">
 
             {!compact &&
-                <Button onPress={handleExplore}
+                <Button as={Link} href={`/trending/${community.account}`}
                     size="sm" color="primary" radius="full"
                     className="top-5 right-5 absolute">Explore</Button>}
 

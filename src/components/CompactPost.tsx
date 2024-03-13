@@ -7,9 +7,8 @@ import { getPostThumbnail } from '@/libs/utils/image'
 import BodyShort from '@/components/body/BodyShort'
 import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator'
 import ViewCountCard from './ViewCountCard'
-import { useRouter } from 'next13-progressbar';
 import { useAppSelector } from '@/libs/constants/AppFunctions'
-import { pushWithCtrl } from '@/libs/utils/helper';
+import Link from 'next/link';
 
 
 interface Props {
@@ -23,14 +22,9 @@ export default memo(function CompactPost(props: Props) {
     // const URL = `/posts_api/getPost/${authPerm}`
     // const { data, isLoading, error, isValidating } = useSWR(URL, fetchSds<Post>)
     const thumbnail = getPostThumbnail(commentInfo?.json_images);
-    const router = useRouter();
 
 
-    function handlePostClick(event) {
-        const targetUrl = `/${commentInfo.category}/@${commentInfo.author}/${commentInfo.permlink}`;
-        pushWithCtrl(event, router, targetUrl, true);
-
-    }
+ 
 
     return (
         <div className="card card-compact rounded-lg overflow-hidden shadow-lg flex flex-col bg-white dark:bg-white/5">
@@ -50,8 +44,8 @@ export default memo(function CompactPost(props: Props) {
       Beauty of Creativity
     </Link> */}
             </div>
-            <Card isPressable
-                onPress={handlePostClick}
+            <Card as={Link}
+                href={`/${commentInfo.category}/@${commentInfo.author}/${commentInfo.permlink}`}
                 shadow='none' radius='none' className=" text-start p-0 bg-transparent px-2 py-2 mb-auto">
                 <p
                     className="font-medium text-md mb-2">

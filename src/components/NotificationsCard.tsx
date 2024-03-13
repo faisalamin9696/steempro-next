@@ -2,13 +2,10 @@
 
 import { capitalize } from '@/app/profile/(tabs)/wallet/(tabs)/DelegationTab';
 import { defaultNotificationFilters } from '@/libs/constants/AppConstants';
-import { awaitTimeout, fetchSds, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
-import { getNotifications, vestToSteem } from '@/libs/steem/sds';
-import { Button, Chip, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Pagination, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
+import { fetchSds, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
+import { Button, Chip, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import React, { useEffect, useState } from 'react'
-import { BiDotsVerticalRounded } from 'react-icons/bi';
-import { FaChevronDown, FaPlus, FaSearch } from 'react-icons/fa';
-import { FiCornerDownRight } from 'react-icons/fi';
+import { FaSearch } from 'react-icons/fa';
 import useSWR from 'swr';
 import SAvatar from './SAvatar';
 import TimeAgoWrapper from './wrapper/TimeAgoWrapper';
@@ -16,13 +13,14 @@ import LoadingCard from './LoadingCard';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useRouter } from 'next13-progressbar';
-import { pushWithCtrl, validateCommunity } from '@/libs/utils/helper';
+import { validateCommunity } from '@/libs/utils/helper';
 import { IoCheckmarkDone } from "react-icons/io5";
 import { markasRead } from '@/libs/steem/condenser';
 import { useLogin } from './useLogin';
 import { getCredentials, getSessionKey } from '@/libs/utils/user';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import { IoMdSettings } from "react-icons/io";
+import Link from 'next/link';
 
 interface Props {
     username?: string | null;
@@ -335,10 +333,8 @@ export default function NotificationsCard(props: Props) {
     ]);
 
 
-    const handleOpenNotification = (item: SDSNotification) => {
+    const getTargetUrl = (item: SDSNotification): string => {
         let targetUrl = '';
-
-
         switch (item.type) {
             case "new_community":
             case "set_role":
@@ -362,9 +358,10 @@ export default function NotificationsCard(props: Props) {
                     }
                 }
 
-                pushWithCtrl(null, router, targetUrl, true);
                 break;
         }
+        return targetUrl;
+
     };
 
 
@@ -385,8 +382,6 @@ export default function NotificationsCard(props: Props) {
                 topContent={topContent}
                 topContentPlacement="outside"
                 onSortChange={setSortDescriptor}
-                onRowAction={(key) => handleOpenNotification(JSON.parse(key))}
-
                 bottomContent={
                     allRows.length > 0 && !isLoading ? (
                         <div className="flex w-full justify-center">
@@ -421,7 +416,8 @@ export default function NotificationsCard(props: Props) {
 
 
                         return (
-                            <TableRow key={JSON.stringify(item)} className='cursor-pointer hover:bg-foreground/10'>
+                            <TableRow as={Link} href={getTargetUrl(item)}
+                                key={JSON.stringify(item)} className='cursor-pointer hover:bg-foreground/10'>
                                 {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                             </TableRow>
                         )

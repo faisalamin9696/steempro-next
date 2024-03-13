@@ -1,22 +1,20 @@
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Popover, PopoverContent, PopoverTrigger, Textarea, User } from '@nextui-org/react'
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Popover, PopoverContent, PopoverTrigger, User } from '@nextui-org/react'
 import clsx, { ClassValue } from 'clsx'
 import { FaEllipsis } from "react-icons/fa6";
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import Reputation from '@/components/Reputation';
 import { getResizedAvatar } from '@/libs/utils/image';
 import TimeAgoWrapper from '@/components/wrapper/TimeAgoWrapper';
-import { pushWithCtrl, validateCommunity } from '@/libs/utils/helper';
+import { validateCommunity } from '@/libs/utils/helper';
 import { getCredentials, getSessionKey, getSettings } from '@/libs/utils/user';
 import STag from '@/components/STag';
 
-import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import { Key, memo, useState } from 'react';
 import { MdDelete } from 'react-icons/md';
 import { GrAnnounce } from "react-icons/gr";
 import ViewCountCard from '@/components/ViewCountCard';
 import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator';
-import { useRouter } from 'next13-progressbar';
 import { Role } from '@/libs/utils/community';
 import { allowDelete } from '@/libs/utils/StateFunctions';
 import { MdOutlineDoNotDisturb } from "react-icons/md";
@@ -29,9 +27,10 @@ import EditRoleModal from '@/components/EditRoleModal';
 import { FaInfoCircle } from 'react-icons/fa';
 import MuteDeleteModal from '@/components/MuteDeleteModal';
 import { useMutation } from '@tanstack/react-query';
-import { deleteComment, mutePost } from '@/libs/steem/condenser';
+import { mutePost } from '@/libs/steem/condenser';
 import { addCommentHandler } from '@/libs/redux/reducers/CommentReducer';
 import { useLogin } from '@/components/useLogin';
+import Link from 'next/link';
 
 
 interface Props {
@@ -57,9 +56,7 @@ export default memo(function CommentHeader(props: Props) {
     const canEdit = isSelf;
     const allowReply = Role.canComment(comment.community, comment.observer_role);
     const canReply = isReply && allowReply && comment['depth'] < 255;
-    const authorLink = `/@${comment.author}`;
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
-    const router = useRouter();
     const [isRoleOpen, setIsRoleOpen] = useState(false);
     const { authenticateUser, isAuthorized } = useLogin();
 
@@ -71,14 +68,6 @@ export default memo(function CommentHeader(props: Props) {
         muteNote: ''
     });
 
-
-    function handleProfileClick(event) {
-        // if (pathUsername !== comment.author) {
-            const targetUrl = authorLink;
-            pushWithCtrl(event, router, targetUrl, true);
-
-        // }
-    }
 
     const menuItems = [
         { show: canEdit, key: "edit", name: "Edit", icon: RiEdit2Fill },
@@ -224,11 +213,9 @@ export default memo(function CommentHeader(props: Props) {
             avatarProps={{
                 className: 'cursor-pointer',
                 src: getResizedAvatar(comment.author),
-                as: 'a',
-                onClick: handleProfileClick
-
-
-            }}
+                as: Link,
+                href: `/@${comment.author}`
+            } as any}
         />
         {!isReply && !compact && comment.depth === 0 &&
             <div className='absolute top-0 text-tiny right-0 items-center px-1'>

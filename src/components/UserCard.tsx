@@ -2,7 +2,7 @@ import React, { memo, useEffect } from "react";
 import { Avatar, AvatarGroup } from "@nextui-org/react";
 import { fetchSds, useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import SAvatar from "./SAvatar";
-import { abbreviateNumber, pushWithCtrl } from "@/libs/utils/helper";
+import { abbreviateNumber } from "@/libs/utils/helper";
 import clsx from "clsx";
 import { SlUserFollowing } from "react-icons/sl";
 import useSWR from "swr";
@@ -11,7 +11,6 @@ import { getResizedAvatar } from "@/libs/utils/image";
 import STooltip from "./STooltip";
 import LoadingCard from "./LoadingCard";
 import FollowButton from "./FollowButton";
-import { useRouter } from 'next13-progressbar';
 import { addProfileHandler } from "@/libs/redux/reducers/ProfileReducer";
 
 
@@ -33,7 +32,6 @@ export const UserCard = memo((props: Props) => {
     const URL_2 = `/followers_api/getKnownFollowers/${username}/${session?.user?.name || 'null'}`
     const { data: knownPeople, isLoading: isKnownLoading } = useSWR(compact ? null : URL_2, fetchSds<string[]>)
     const posting_json_metadata = JSON.parse(profileInfo?.posting_json_metadata || '{}');
-    const router = useRouter();
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -54,13 +52,6 @@ export const UserCard = memo((props: Props) => {
             <div className="flex flex-row justify-between gap-2 w-full">
                 <div className="flex gap-2">
                     <SAvatar className='cursor-pointer'
-                        onClick={(event) => {
-                            if (!username)
-                                return
-                            const targetUrl = `/@${username}`;
-                            pushWithCtrl(event, router, targetUrl, true);
-
-                        }}
                         username={username} size="xs" />
                     <div className="flex flex-col items-start justify-center">
                         <h4 className="text-small font-semibold leading-none text-default-600">{posting_json_metadata?.profile?.name}</h4>

@@ -1,22 +1,20 @@
 'use client';
 
-import React, { useEffect, useState } from 'react'
+import React, {  } from 'react'
 import { FaInfoCircle, FaTools, FaUserCircle } from 'react-icons/fa';
 import { Button } from '@nextui-org/react';
-import ThemeSwitch from '../ThemeSwitch';
 import SAvatar from '../SAvatar';
 import { signOut } from 'next-auth/react';
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import secureLocalStorage from 'react-secure-storage';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
-import { usePathname } from 'next/navigation';
-import { abbreviateNumber, pushWithCtrl } from '@/libs/utils/helper';
+import { abbreviateNumber } from '@/libs/utils/helper';
 import { IoLogOut } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
 import { useLogin } from '../useLogin';
 import { empty_profile } from '@/libs/constants/Placeholders';
 import Reputation from '../Reputation';
-import { useRouter } from 'next13-progressbar';
+import Link from 'next/link';
 
 
 
@@ -26,8 +24,6 @@ interface Props {
 export default function DrawerItems(props: Props) {
     const { onItemClick } = props;
     const dispatch = useAppDispatch();
-    const router = useRouter();
-    const pathname = usePathname();
     const { credentials, isLogin } = useLogin();
     const loginInfo = useAppSelector(state => state.loginReducer.value) ?? empty_profile(credentials?.username ?? '');
     const posting_json_metadata = JSON.parse(loginInfo?.posting_json_metadata || '{}')
@@ -49,13 +45,13 @@ export default function DrawerItems(props: Props) {
         {isLogin() ?
             <div className='flex flex-col gap-4 py-6 rounded-bl-xl '>
                 <div className='flex flex-row gap-2 items-center'>
-                    <SAvatar size='sm' username={credentials?.username ?? ''} />
+                    <SAvatar size='sm' username={loginInfo.name ?? ''} />
                     <div className='flex flex-col items-start text-sm text-default-600'>
 
                         <h4>{posting_json_metadata?.profile?.name}</h4>
 
                         <div className='flex gap-2'>
-                            <h4>@{credentials?.username}</h4>
+                            <h4>@{loginInfo.name}</h4>
                             <Reputation sm reputation={79} />
                         </div>
 
@@ -83,11 +79,7 @@ export default function DrawerItems(props: Props) {
         <div className='flex flex-col gap-2 h-full text-default-600 '>
             {isLogin() && <Button className='w-full justify-start text-inherit '
                 variant='light'
-                onPress={(event) => {
-                    handleItemClick();
-                    if (credentials?.username)
-                        pushWithCtrl(event, router, `/@${credentials.username}`)
-                }}
+                as={Link} href={`/@${loginInfo.name}`}
                 startContent={<FaUserCircle className='text-xl' />}>
                 Profile
             </Button>}
@@ -99,10 +91,7 @@ export default function DrawerItems(props: Props) {
             </Button>
 
             {isLogin() && < Button variant='light'
-                onPress={(e) => {
-                    handleItemClick();
-                    pushWithCtrl(e, router, `/@${loginInfo.name}/settings`);
-                }}
+                as={Link} href={`/@${loginInfo.name}/settings`}
                 className='w-full justify-start text-inherit '
                 startContent={<IoMdSettings className='text-xl' />}>
                 Settings
@@ -110,10 +99,7 @@ export default function DrawerItems(props: Props) {
             }
             <Button variant='light'
                 className='w-full justify-start text-inherit '
-                onPress={(e) => {
-                    handleItemClick();
-                    pushWithCtrl(e, router, '/about');
-                }}
+                as={Link} href={'/about'}
                 startContent={<FaInfoCircle className='text-xl' />}>
                 About
             </Button>

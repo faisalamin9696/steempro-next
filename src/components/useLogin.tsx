@@ -1,8 +1,10 @@
+'use client';
+
 import { useSession } from 'next-auth/react';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import AuthModal from './AuthModal';
 import { getCredentials, sessionKey } from '@/libs/utils/user';
-import { fetchSds, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
+import { fetchSds, useAppDispatch } from '@/libs/constants/AppFunctions';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import useSWR from 'swr';
 import { saveSteemGlobals } from '@/libs/redux/reducers/SteemGlobalReducer';

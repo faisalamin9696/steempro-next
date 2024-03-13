@@ -1,6 +1,7 @@
+'use client';
+
 import React from 'react';
 import './style.scss'
-import clsx, { ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge'
 
 interface Props {

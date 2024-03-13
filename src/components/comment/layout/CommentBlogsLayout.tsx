@@ -10,7 +10,7 @@ import { useAppSelector } from "@/libs/constants/AppFunctions";
 import clsx from "clsx";
 
 export default function CommentBlogLayout(props: CommentProps) {
-    const { comment, onReplyClick, isReply } = props;
+    const { comment, isReply } = props;
     const commentInfo = useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment;
 
     const thumbnail = getPostThumbnail(commentInfo.json_images);
@@ -23,8 +23,7 @@ export default function CommentBlogLayout(props: CommentProps) {
 
 
         </div>
-        <Card isPressable={!isReply} radius='none'
-            onClick={onReplyClick}
+        <Card radius='none'
             shadow='none'
             className={clsx(commentInfo.is_muted && ' opacity-80', 'w-full bg-transparent gap-4 px-4')}>
 

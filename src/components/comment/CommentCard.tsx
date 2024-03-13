@@ -3,14 +3,12 @@
 import { memo } from 'react';
 import './style.scss';
 
-import { useRouter } from 'next13-progressbar';
 import { useAppSelector } from '@/libs/constants/AppFunctions';
 import { getSettings } from '@/libs/utils/user';
 import { ClassValue } from 'clsx';
 import CommentListLayout from './layout/CommentListLayout';
 import CommentBlogLayout from './layout/CommentBlogsLayout';
 import CommentGridLayout from './layout/CommentGridLayout';
-import { pushWithCtrl } from '@/libs/utils/helper';
 import { useDeviceInfo } from '@/libs/utils/useDeviceInfo';
 
 interface Props {
@@ -24,7 +22,6 @@ export interface CommentProps {
     className?: ClassValue;
     isReply?: boolean;
     compact?: boolean;
-    onReplyClick?: (event) => void;
     onEditClick?: (comment: Feed | Post) => void;
     onDeleteClick?: (comment: Feed | Post) => void;
     onMuteClick?: (comment: Feed | Post) => void;
@@ -37,26 +34,17 @@ export default memo(function CommentCard(props: Props) {
     const commentInfo = useAppSelector(state => state.commentReducer.values)[`${comment?.author}/${comment?.permlink}`] ?? comment;
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const { isMobile } = useDeviceInfo();
-    const router = useRouter();
 
-    function handlePostClick(event) {
-        const targetUrl = `/${commentInfo.category}/@${commentInfo.author}/${commentInfo.permlink}`;
-        pushWithCtrl(event, router, targetUrl, true);
-    }
 
     const commentLayout =
-        isMobile ? <CommentBlogLayout {...props} comment={commentInfo} onReplyClick={handlePostClick} /> :
+        isMobile ? <CommentBlogLayout {...props} comment={commentInfo} /> :
             settings.feedStyle === 'list' ?
-                <CommentListLayout {...props} comment={commentInfo} onReplyClick={handlePostClick} /> :
-                settings.feedStyle === 'grid' ? <CommentGridLayout comment={comment} onReplyClick={handlePostClick} /> :
-                    settings.feedStyle === 'blogs' ? <CommentBlogLayout {...props} comment={commentInfo} onReplyClick={handlePostClick} /> :
-                        <CommentListLayout {...props} comment={commentInfo} onReplyClick={handlePostClick} />
+                <CommentListLayout {...props} comment={commentInfo} /> :
+                settings.feedStyle === 'grid' ? <CommentGridLayout comment={comment} /> :
+                    settings.feedStyle === 'blogs' ? <CommentBlogLayout {...props} comment={commentInfo} /> :
+                        <CommentListLayout {...props} comment={commentInfo} />
 
 
-    return (<div className='mb-2' key={comment.link_id}>
-        {commentLayout}
-    </div>
-
-    )
+    return (commentLayout)
 }
 )

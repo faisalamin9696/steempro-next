@@ -15,7 +15,6 @@ import { voteComment } from '@/libs/steem/condenser';
 import { getVoteData } from '@/libs/steem/sds';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import VotingModal from '@/components/VotingModal';
-import IconButton from '@/components/IconButton';
 import { CommentProps } from '../CommentCard';
 import { BiDownvote, BiSolidDownvote, BiSolidUpvote, BiUpvote } from "react-icons/bi";
 import { abbreviateNumber } from '@/libs/utils/helper';
@@ -25,7 +24,7 @@ import { ImLoop } from "react-icons/im";
 import { RewardBreakdownCard } from '@/components/comment/RewardBreakdownCard';
 
 export default memo(function CommentFooter(props: CommentProps) {
-    const { comment, className, isReply, onReplyClick, onEditClick,
+    const { comment, className, isReply, onEditClick,
         onDeleteClick, onMuteClick, compact, onPinClick, onPublishClick } = props;
 
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
@@ -40,13 +39,6 @@ export default memo(function CommentFooter(props: CommentProps) {
     const isVoting = comment.status === 'upvoting' || comment.status === 'downvoting';
     const [breakdownModal, setBreakdownModal] = useState(false);
 
-
-
-
-    function handleOnVote(open: boolean, downvote?: boolean) {
-
-
-    }
 
 
     async function castVote(weight: number, downvote?: boolean) {
@@ -141,7 +133,7 @@ export default memo(function CommentFooter(props: CommentProps) {
     return <div className={clsx('flex flex-col p-1 gap-1 w-full')}>
 
 
-        <div className={clsx("flex flex-row max-sm:flex-col items-center max-sm:items-start gap-2",
+        <div className={clsx("flex flex-row max-xs:flex-col items-center max-xs:items-start gap-2",
             !isReply && 'justify-between')}>
             <div className={clsx('flex', compact ? 'gap-3' : 'gap-4')}>
                 <div className='flex flex-row items-center gap-2'>
