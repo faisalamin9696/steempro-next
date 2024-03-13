@@ -1,11 +1,9 @@
 "use client"
 
 import FeedList from '@/components/comment/FeedList';
-// import FeedList from '@/components/comment/FeedList';
 import { isDev } from '@/libs/constants/AppConstants';
 import { FeedTypes } from '@/libs/steem/sds';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
-import dynamic from 'next/dynamic';
 import React from 'react'
 
 export default function ProfileBlogsTab() {

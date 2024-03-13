@@ -4,7 +4,6 @@ import CommunityCard from '@/components/CommunityCard';
 // import FeedList from '@/components/comment/FeedList';
 import { fetchSds } from '@/libs/constants/AppFunctions';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
-import { Card } from '@nextui-org/react';
 import { useSession } from 'next-auth/react';
 import React from 'react'
 import useSWR from 'swr';

@@ -1,20 +1,16 @@
 "use client"
 
-import { useAppSelector } from '@/libs/constants/AppFunctions';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import React from 'react'
 import ProfileCommentsTab from '../comments/page';
 import ProfileRepliesTab from '../replies/page';
 import { Tab, Tabs } from '@nextui-org/react';
-import { getSettings } from '@/libs/utils/user';
 import { clsx } from 'clsx';
 import ProfilePostsTab from '../posts/page';
 import ProfileFriendsTab from '../friends/page';
 
 export default function ProfilePostsMainTab() {
-
     let { username, category } = usePathnameClient();
-    const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
 
     const profileTabs = [
         { title: 'Posts', key: 'posts', children: <ProfilePostsTab /> },

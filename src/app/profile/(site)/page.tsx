@@ -7,7 +7,6 @@ import ProfileBlogsTab from '../(tabs)/blogs/page';
 import ProfileWalletTab from '../(tabs)/wallet/page';
 import FeedPatternSwitch from '@/components/FeedPatternSwitch';
 import { useAppSelector } from '@/libs/constants/AppFunctions';
-import { getSettings } from '@/libs/utils/user';
 import clsx from 'clsx';
 import ProfilePostsMainTab from '../(tabs)/postsMain/page';
 import ProfileCommunitiesTab from '../(tabs)/communities/page';
@@ -15,7 +14,6 @@ import ProfileSettingsTab from '../(tabs)/settings/page';
 
 export default function ProfilePage() {
     let { username, category } = usePathnameClient();
-    const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
 
     const isSelf = username === loginInfo.name;

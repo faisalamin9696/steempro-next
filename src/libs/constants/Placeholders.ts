@@ -63,6 +63,7 @@ export const empty_comment = (author: string, permlink: string): Post => {
     replies: [],
     json_images: '',
     is_author_muted: 0,
+    status: 'idle'
   };
 };
 
@@ -154,7 +155,10 @@ export const empty_profile = (name: string): AccountExt => {
     last_fetch: timenow,
     observer_follows_author: 0,
     observer_ignores_author: 0,
-    encKey: ''
+    encKey: '',
+    status: 'idle',
+    unread_count: 0
+
   };
 };
 
@@ -170,10 +174,10 @@ export const empty_draft = (): PostDraft => {
   };
 };
 
-export const empty_community = (account: string, title: string) => {
+export const empty_community = (account: string, title: string): Community => {
   return {
     id: 0,
-    type: 0,
+    type: 'topic',
     account: account,
     account_reputation: 25,
     created: 0,
@@ -192,6 +196,8 @@ export const empty_community = (account: string, title: string) => {
     observer_subscribed: 0,
     observer_role: '',
     observer_title: '',
+    status: 'idle',
+    roles: []
   };
 };
 
