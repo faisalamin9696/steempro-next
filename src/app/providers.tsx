@@ -27,11 +27,11 @@ import { Next13ProgressBar } from 'next13-progressbar';
 
 interface Props {
     children: React.ReactNode;
-    data?: AccountExt,
+    data: AccountExt,
     globalData: SteemProps;
 }
 export function Providers(props: Props) {
-    const { children, data } = props;
+    const { children } = props;
 
     initializeApp(firebaseConfig);
 

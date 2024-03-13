@@ -36,7 +36,7 @@ export default async function RootLayout({
   const session = await getServerSession();
   let data;
 
-  let globalData;
+  let globalData: SteemProps;
   globalData = await getSteemGlobal();
 
   if (session?.user?.name)
