@@ -30,7 +30,7 @@ export default function ProfilePostsMainTab() {
                 disableAnimation
                 disableCursorAnimation
                 color={'secondary'} radius="full"
-                className='justify-center transition-all delay-500'
+                className='justify-center'
                 defaultSelectedKey={category}
                 selectedKey={category}
                 onSelectionChange={(key) => {

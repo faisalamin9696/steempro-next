@@ -36,11 +36,14 @@ export function ParsedBody({ body }: { body: string }): JSX.Element {
 
             }
             if (domNode?.attribs && domNode?.name === 'a') {
-                return <Link
-                    {...domNode?.attribs}
-
-                >
-                    {domToReact(domNode.children)}</Link>
+                return (
+                    <Link
+                        className=''
+                        {...domNode?.attribs}
+                    >
+                        {domToReact(domNode.children)}
+                    </Link>
+                );
 
             }
 

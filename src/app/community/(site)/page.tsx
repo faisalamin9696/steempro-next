@@ -42,7 +42,7 @@ export default function CommunityPage(props: Props) {
                 disableAnimation
                 disableCursorAnimation
                 color={'secondary'} radius="full"
-                className='justify-center transition-all delay-500'
+                className='justify-center'
                 defaultSelectedKey={category ?? 'trendings'}
                 onSelectionChange={(key) => {
                     if (!category)

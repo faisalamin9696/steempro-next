@@ -77,79 +77,80 @@ const EditorToolbar = (props: ToolbarProps) => {
     return (
         <div className={clsx(className)} >
 
-            <div className="items-center space-x-1 flex overflow-auto">
-                <Tooltip content={('Headings')}>
-                    <div>{HeadingItem}
-                    </div>
-                </Tooltip>
-                <ToolbarItem tooltip={{
-                    description: 'Bold',
-                    shortcut: `${masterKey + 'B'}`
-                }} onSelect={() => { onSelect('b') }}
-                    IconType={FaBold} />
+            <div className="flex flex-row items-center max-sm:flex-col max-sm:items-start w-full gap-1 max-sm:gap-2 overflow-auto">
+                <div className=' flex gap-1 items-center'>
+                    <Tooltip content={('Headings')}>
+                        <div>{HeadingItem}
+                        </div>
+                    </Tooltip>
+                    <ToolbarItem tooltip={{
+                        description: 'Bold',
+                        shortcut: `${masterKey + 'B'}`
+                    }} onSelect={() => { onSelect('b') }}
+                        IconType={FaBold} />
 
 
-                <ToolbarItem tooltip={{
-                    description: 'Italic',
-                    shortcut: `${masterKey + 'i'}`
-                }} onSelect={() => { onSelect('i') }}
-                    IconType={FaItalic} />
+                    <ToolbarItem tooltip={{
+                        description: 'Italic',
+                        shortcut: `${masterKey + 'i'}`
+                    }} onSelect={() => { onSelect('i') }}
+                        IconType={FaItalic} />
+
+                    <ToolbarItem tooltip={{
+                        description: 'Quote',
+                        shortcut: `${masterKey + 'Q'}`
+                    }} onSelect={() => { onSelect('q') }}
+                        IconType={FaQuoteLeft} />
+
+                    <ToolbarItem tooltip={{
+                        description: 'Code',
+                        shortcut: `${masterKey + 'C'}`
+                    }} onSelect={() => { onSelect('code') }}
+                        IconType={FaCode} />
+
+                    <ToolbarItem tooltip={{
+                        description: 'Table',
+                        shortcut: `${masterKey + 'T'}`
+                    }} onSelect={() => { onSelect('table') }}
+                        IconType={FaTable} />
+
+                    <div className='h-4 w-[1px] bg-default-900/20' />
+
+                    <ToolbarItem tooltip={{
+                        description: 'Snippet',
+                        shortcut: `${masterKey + 'S'}`
+                    }} onSelect={() => { onSelect('snip') }}
+                        IconType={MdContentPasteGo} />
+
+                    <ToolbarItem tooltip={{
+                        description: 'Link',
+                        shortcut: `${masterKey + 'Q'}`
+                    }} onSelect={() => { onSelect('link') }}
+                        IconType={FaLink} />
+
+                    <ToolbarItem tooltip={{
+                        description: 'Image',
+                        shortcut: `${masterKey + 'D'}`
+                    }} onSelect={() => { onSelect('image') }}
+                        IconType={BsImage} />
+
+                    <div className='max-sm:hidden h-4 w-[1px] bg-default-900/20' />
+                </div>
+                <div className='flex gap-1 items-center'>
+                    <ToolbarItem tooltip={{
+                        description: 'Justify',
+                        shortcut: `${masterKey + 'J'}`
+                    }} onSelect={() => { onSelect('justify') }}
+                        IconType={BsJustify} />
 
 
+                    <ToolbarItem tooltip={{
+                        description: 'Center',
+                        shortcut: `${masterKey + 'E'}`
+                    }} onSelect={() => { onSelect('center') }}
+                        IconType={BsTextCenter} />
 
-                <ToolbarItem tooltip={{
-                    description: 'Quote',
-                    shortcut: `${masterKey + 'Q'}`
-                }} onSelect={() => { onSelect('q') }}
-                    IconType={FaQuoteLeft} />
-
-                <ToolbarItem tooltip={{
-                    description: 'Code',
-                    shortcut: `${masterKey + 'C'}`
-                }} onSelect={() => { onSelect('code') }}
-                    IconType={FaCode} />
-
-                <ToolbarItem tooltip={{
-                    description: 'Table',
-                    shortcut: `${masterKey + 'T'}`
-                }} onSelect={() => { onSelect('table') }}
-                    IconType={FaTable} />
-
-                <div className='h-4 w-[1px] bg-default-900/20' />
-
-                <ToolbarItem tooltip={{
-                    description: 'Snippet',
-                    shortcut: `${masterKey + 'S'}`
-                }} onSelect={() => { onSelect('snip') }}
-                    IconType={MdContentPasteGo} />
-
-                <ToolbarItem tooltip={{
-                    description: 'Link',
-                    shortcut: `${masterKey + 'Q'}`
-                }} onSelect={() => { onSelect('link') }}
-                    IconType={FaLink} />
-
-                <ToolbarItem tooltip={{
-                    description: 'Image',
-                    shortcut: `${masterKey + 'D'}`
-                }} onSelect={() => { onSelect('image') }}
-                    IconType={BsImage} />
-
-                <div className='h-4 w-[1px] bg-default-900/20' />
-
-                <ToolbarItem tooltip={{
-                    description: 'Justify',
-                    shortcut: `${masterKey + 'J'}`
-                }} onSelect={() => { onSelect('justify') }}
-                    IconType={BsJustify} />
-
-
-                <ToolbarItem tooltip={{
-                    description: 'Center',
-                    shortcut: `${masterKey + 'E'}`
-                }} onSelect={() => { onSelect('center') }}
-                    IconType={BsTextCenter} />
-
+                </div>
 
             </div>
         </div >

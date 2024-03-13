@@ -39,7 +39,7 @@ export default function ProfilePage() {
                 radius="full"
                 hidden={true}
                 selectedKey={['comments', 'replies', 'friends'].includes(category) ? 'posts' : category}
-                className='justify-center transition-all delay-500'
+                className='justify-center'
                 defaultSelectedKey={['comments', 'replies', 'friends'].includes(category) ? 'posts' : category}
                 onSelectionChange={(key) => {
                     if (!category)

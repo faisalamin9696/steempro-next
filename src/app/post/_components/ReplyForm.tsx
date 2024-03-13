@@ -397,7 +397,8 @@ export default memo(function ReplyForm(props: Props) {
                     <div className='flex flex-col gap-2 p-1 '>
 
                         <div className={clsx(commentInfo.is_muted === 1 && 'opacity-60')}>
-                            <MarkdownViewer text={commentInfo.body} className='!max-w-none' />
+                            <MarkdownViewer text={commentInfo.body}
+                                className={``} />
                         </div>
 
                         <div className='flex gap-1  self-end opacity-70 items-center justify-around  w-full'>

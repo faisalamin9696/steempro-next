@@ -9,6 +9,7 @@ import HtmlReady from './htmlReady';
 import sanitize from 'sanitize-html';
 import { replaceOldDomains } from '@/libs/utils/Links';
 import clsx from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 const remarkable = new Remarkable({
     html: true, // remarkable renders first then sanitize runs...
@@ -231,7 +232,7 @@ export default memo(function MarkdownViewer(props: Props) {
     }
 
 
-    return (<div className={clsx('markdown-body  w-full', className)}>
+    return (<div className={twMerge('markdown-body  w-full', className)}>
         {sections}
         {noImageActive &&
             allowNoImage && (

@@ -445,7 +445,7 @@ export default memo(function EditorInput(props: EditorProps) {
         <div  {...getRootProps()} >
 
 
-            <div className="body-input relative"
+            <div className="body-input"
                 onKeyDown={hotKeyHandler}
                 ref={postBodyRef}>
 
@@ -466,7 +466,6 @@ export default memo(function EditorInput(props: EditorProps) {
                     </div>}
 
                 <Textarea
-
                     ref={postInput}
                     label={<EditorToolbar
                         onSelect={insertCode}
@@ -480,7 +479,7 @@ export default memo(function EditorInput(props: EditorProps) {
                     fullWidth
                     height={'100%'}
                     classNames={{
-                        mainWrapper: '',
+                        mainWrapper: 'w-full ',
                         base: clsx("h-full ", inputClass),
                         input: clsx("resize-y", inputClass),
                         label: 'md-toolbar'
@@ -495,7 +494,6 @@ export default memo(function EditorInput(props: EditorProps) {
             <input style={{ width: 0, height: 0 }} {...getInputProps()} name="images"
                 hidden aria-hidden
                 id="dropzone" accept="image/png, image/gif, image/jpeg, image/jpg"
-            // onChange={onFileChange}
 
             />
 
