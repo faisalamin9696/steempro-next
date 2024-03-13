@@ -31,6 +31,7 @@ import { allowDelete } from '@/libs/utils/StateFunctions';
 import CommentFooter from '@/components/comment/component/CommentFooter';
 import MuteDeleteModal from '@/components/MuteDeleteModal';
 import clsx from 'clsx';
+import Link from 'next/link';
 
 interface Props {
     comment: Post;
@@ -41,8 +42,8 @@ export default memo(function ReplyForm(props: Props) {
     const { comment, rootComment } = props;
     const commentInfo: Post = (useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment) as Post;
     const rootInfo = (useAppSelector(state => state.commentReducer.values)[`${commentInfo.root_author}/${commentInfo.root_permlink}`]) as Post;
-    const [selectedKeys, setSelectedKeys] = React.useState(new Set([commentInfo.depth === 1 ? commentInfo.permlink : 'null']));
-    const postReplies = useAppSelector(state => state.repliesReducer.values)[`${rootInfo.author}/${rootInfo.permlink}`] ?? [];
+    const [selectedKeys, setSelectedKeys] = React.useState(new Set([(commentInfo.depth === 1 || !!commentInfo.is_new) ? commentInfo.permlink : 'null']));
+    const postReplies = useAppSelector(state => state.repliesReducer.values)[`${rootInfo?.author}/${rootInfo?.permlink}`] ?? [];
     const [showReply, setShowReply] = useState(false);
     const [markdown, setMarkdown] = useState('');
     const rpm = readingTime(markdown);
@@ -51,7 +52,7 @@ export default memo(function ReplyForm(props: Props) {
     const { authenticateUser, isAuthorized } = useLogin();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const dispatch = useAppDispatch();
-    const queryKey = [`post-${rootInfo.author}-${rootInfo.permlink}`];
+    const queryKey = [`post-${rootInfo?.author}-${rootInfo?.permlink}`];
     const queryClient = useQueryClient();
     const [showEdit, setShowEdit] = useState(false);
     const [deletePopup, setDeletePopup] = useState(false);
@@ -215,6 +216,7 @@ export default memo(function ReplyForm(props: Props) {
                 ...commentInfo,
                 last_update: time,
                 body: body,
+                is_new: 1
             }
         } else {
             newComment = {
@@ -247,7 +249,8 @@ export default memo(function ReplyForm(props: Props) {
                 replies: [],
                 votes: [],
                 downvote_count: 0,
-                cashout_time: moment().add(7, 'days').unix()
+                cashout_time: moment().add(7, 'days').unix(),
+                is_new: 1
             }
         }
 
@@ -259,7 +262,7 @@ export default memo(function ReplyForm(props: Props) {
             queryClient.setQueryData(queryKey, { ...rootInfo, children: rootInfo?.children + 1 })
 
             // update the redux state for the post
-            dispatch(addCommentHandler({ ...rootInfo, children: rootInfo?.children + 1 }));
+            dispatch(addCommentHandler({ ...rootInfo, children: rootInfo?.children + 1, }));
 
             // update the redux state for the current comment
             dispatch(addCommentHandler({ ...commentInfo, children: commentInfo?.children + 1 }));
@@ -279,6 +282,7 @@ export default memo(function ReplyForm(props: Props) {
             setShowReply(false);
 
         setPosting(false);
+        handleClear();
         toast.success(showEdit ? 'Updated' : 'Sent');
     }
     const postingMutation = useMutation({
@@ -388,6 +392,7 @@ export default memo(function ReplyForm(props: Props) {
     return (
         <div >
             <Accordion isCompact
+                expandedKeys={!!commentInfo.is_new ? [commentInfo.permlink] : []}
                 onSelectionChange={(keys) => setSelectedKeys(keys as Set<string>)}
                 selectedKeys={selectedKeys} >
                 <AccordionItem
@@ -396,10 +401,10 @@ export default memo(function ReplyForm(props: Props) {
                     </div>} >
                     <div className='flex flex-col gap-2 p-1 '>
 
-                        <div className={clsx(commentInfo.is_muted === 1 && 'opacity-60')}>
+                        <Card as={Link} href={`/${comment.category}/@${comment.author}/${comment.permlink}`} className={clsx('p-0 shadow-none bg-transparent', commentInfo.is_muted === 1 && 'opacity-60')}>
                             <MarkdownViewer text={commentInfo.body}
                                 className={``} />
-                        </div>
+                        </Card>
 
                         <div className='flex gap-1  self-end opacity-70 items-center justify-around  w-full'>
 
@@ -428,7 +433,7 @@ export default memo(function ReplyForm(props: Props) {
                                 {canDelete && < div >
                                     <Popover isOpen={deletePopup}
                                         onOpenChange={(open) => setDeletePopup(open)}
-                                        placement={'top-start'} color='primary'>
+                                        placement={'top-start'}>
                                         <PopoverTrigger >
                                             <Button size='sm'
                                                 variant='light'
@@ -447,7 +452,7 @@ export default memo(function ReplyForm(props: Props) {
 
                                                 <div className="text-tiny flex mt-2 space-x-2">
                                                     <Button onPress={() => setDeletePopup(false)}
-                                                        size='sm' color='default' variant='faded'>No</Button>
+                                                        size='sm' color='default'>No</Button>
                                                     <Button size='sm' color='danger' variant='solid'
                                                         onPress={() => {
                                                             setDeletePopup(false);
@@ -476,7 +481,7 @@ export default memo(function ReplyForm(props: Props) {
 
                             </>
 
-                        </div >
+                        </div>
 
                         <div id={`editorDiv-${commentInfo.author + '-' + commentInfo.permlink}`}>
                             {(showReply || showEdit) ?

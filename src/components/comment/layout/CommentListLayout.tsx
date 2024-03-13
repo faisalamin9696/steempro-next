@@ -8,6 +8,7 @@ import CommentCover from "../component/CommentCover";
 import { getPostThumbnail } from "@/libs/utils/image";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import clsx from "clsx";
+import Link from "next/link";
 
 
 export default function CommentListLayout(props: CommentProps) {
@@ -15,6 +16,7 @@ export default function CommentListLayout(props: CommentProps) {
     const commentInfo = useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment;
 
     const thumbnail = getPostThumbnail(commentInfo.json_images);
+    const targetUrl = `/${comment.category}/@${comment.author}/${comment.permlink}`;
 
     return <div
         className={`w-full card card-compact shadow-md
@@ -22,7 +24,7 @@ export default function CommentListLayout(props: CommentProps) {
 
         <CommentHeader compact comment={commentInfo} className='w-full' />
 
-        <Card radius='none' shadow='none'
+        <Card as={Link} href={targetUrl} radius='none' shadow='none'
             className={clsx(commentInfo.is_muted && ' opacity-80', 'bg-transparent main-comment-list w-full')}>
             <div className="flex items-center gap-2 w-full py-0">
                 <div className="pl-1 text-container space-y-2">

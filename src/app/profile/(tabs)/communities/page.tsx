@@ -28,7 +28,7 @@ export default function ProfileCommunitiesTab() {
         <div >
             <div className='flex-col grid md:grid-cols-2 gap-6'>
                 {data?.map(community => {
-                    return <div className={`grid-footer w-full card card-compact h-full dark:bg-default-900/30 
+                    return <div key={community.id} className={`grid-footer w-full card card-compact h-full dark:bg-default-900/30 
                     bg-default-900/5 pb-2 flex flex-col overflow-hidden rounded-lg shadow-lg`}>
                         <CommunityCard community={community} />
                     </div>

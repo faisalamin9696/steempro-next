@@ -1,7 +1,7 @@
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Popover, PopoverContent, PopoverTrigger, User } from '@nextui-org/react'
 import clsx, { ClassValue } from 'clsx'
 import { FaEllipsis } from "react-icons/fa6";
-import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
+import { awaitTimeout, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import Reputation from '@/components/Reputation';
 import { getResizedAvatar } from '@/libs/utils/image';
 import TimeAgoWrapper from '@/components/wrapper/TimeAgoWrapper';
@@ -27,10 +27,12 @@ import EditRoleModal from '@/components/EditRoleModal';
 import { FaInfoCircle } from 'react-icons/fa';
 import MuteDeleteModal from '@/components/MuteDeleteModal';
 import { useMutation } from '@tanstack/react-query';
-import { mutePost } from '@/libs/steem/condenser';
+import { mutePost, pinPost } from '@/libs/steem/condenser';
 import { addCommentHandler } from '@/libs/redux/reducers/CommentReducer';
 import { useLogin } from '@/components/useLogin';
 import Link from 'next/link';
+import { BsPinAngleFill } from "react-icons/bs";
+import RoleTitleCard from '@/components/RoleTitleCard';
 
 
 interface Props {
@@ -50,7 +52,6 @@ export default memo(function CommentHeader(props: Props) {
     const { data: session } = useSession();
     const username = session?.user?.name;
     const isSelf = comment.author === username;
-    const { username: pathUsername } = usePathnameClient();
     const canMute = username && Role.atLeast(comment.observer_role, 'mod');
     const canDelete = !comment.children && isSelf && allowDelete(comment);
     const canEdit = isSelf;
@@ -71,12 +72,14 @@ export default memo(function CommentHeader(props: Props) {
 
     const menuItems = [
         { show: canEdit, key: "edit", name: "Edit", icon: RiEdit2Fill },
-        { show: Role.atLeast(comment?.observer_role, 'mod'), key: "role", name: "Edit Role/Title", icon: LuHistory },
-        { show: false, key: "history", name: "Edit History", icon: LuHistory },
-        { show: false, key: "promote", name: "Promote", icon: GrAnnounce },
-        { show: true, key: "copy", name: "Copy Link", icon: BsClipboard2Minus },
-        { show: canMute, key: "mute", name: "Mute", icon: MdOutlineDoNotDisturb, color: 'warning' },
         { show: canDelete, key: "delete", name: "Delete", icon: MdDelete, color: 'danger' },
+        { show: Role.atLeast(comment?.observer_role, 'mod'), key: "role", name: "Edit Role/Title", icon: LuHistory },
+        { show: canMute, key: "mute", name: comment.is_muted ? 'Unmute' : "Mute", icon: MdOutlineDoNotDisturb, color: 'warning' },
+        { show: canMute, key: "pin", name: comment.is_pinned ? 'Unpin' : "Pin", icon: BsPinAngleFill },
+        { show: true, key: "copy", name: "Copy Link", icon: BsClipboard2Minus },
+        { show: false, key: "promote", name: "Promote", icon: GrAnnounce },
+        { show: false, key: "history", name: "Edit History", icon: LuHistory },
+
 
     ]
     const renderedItems = menuItems
@@ -86,7 +89,7 @@ export default memo(function CommentHeader(props: Props) {
             startContent={<item.icon className={'text-lg'} />}>{item.name}</DropdownItem>);
 
     const unmuteMutation = useMutation({
-        mutationFn: (key: string) => mutePost(loginInfo, key, false, {
+        mutationFn: (key: string) => mutePost(loginInfo, key, !!!comment.is_muted, {
             community: comment.category, account: comment.author, permlink: comment.permlink,
         }),
         onSettled(data, error, variables, context) {
@@ -100,9 +103,25 @@ export default memo(function CommentHeader(props: Props) {
         },
     });
 
+    const pinMutation = useMutation({
+        mutationFn: (key: string) => pinPost(loginInfo, key, !!!comment.is_pinned, {
+            community: comment.category, account: comment.author, permlink: comment.permlink,
+        }),
+        onSettled(data, error, variables, context) {
+            if (error) {
+                toast.error(error.message);
+                return;
+            }
+            dispatch(addCommentHandler({ ...comment, is_pinned: comment.is_pinned ? 0 : 1 }));
+            toast.success(!!!comment.is_pinned ? 'Pinned' : 'Unpinned')
+
+        },
+    });
 
 
-    function handleMenuActions(key: Key) {
+    const isPending = pinMutation.isPending || unmuteMutation.isPending;
+
+    async function handleMenuActions(key: Key) {
         switch (key) {
             case 'edit':
                 handleEdit && handleEdit();
@@ -120,6 +139,7 @@ export default memo(function CommentHeader(props: Props) {
                 break;
 
             case 'mute':
+            case 'pin':
                 authenticateUser();
                 if (!isAuthorized())
                     return
@@ -128,12 +148,20 @@ export default memo(function CommentHeader(props: Props) {
                     toast.error('Invalid credentials');
                     return
                 }
-                if (comment.is_muted === 1) {
-                    unmuteMutation.mutate(credentials.key);
+                if (key === 'mute') {// mute option will trigger the modal that's why only mute check
+                    if (comment.is_muted === 1) {
+                        unmuteMutation.mutate(credentials.key);
+                        return
+                    }
+
+                    // trigger for mute
+                    setConfirmationModal({ isOpen: true, mute: true });
                     return
                 }
-                setConfirmationModal({ isOpen: true, mute: true });
+                if (key === 'pin')
+                    pinMutation.mutate(credentials.key);
                 break;
+
         }
 
     }
@@ -163,7 +191,7 @@ export default memo(function CommentHeader(props: Props) {
 
         <User
             classNames={{
-                description: 'mt-1 text-default-900/60 dark:text-gray-200 text-sm',
+                description: 'text-default-900/60 dark:text-gray-200 text-sm',
                 name: 'text-default-800'
             }}
             name={<div className='flex items-center gap-1'>
@@ -172,10 +200,15 @@ export default memo(function CommentHeader(props: Props) {
                 }
                 <Reputation reputation={comment.author_reputation} />
 
+                {!compact && !!comment.is_pinned && <p className='px-1 rounded-sm text-tiny bg-primary-100 dark:bg-primary'>Pinned</p>}
+
                 {(!isReply && !compact) ?
                     <Dropdown>
                         <DropdownTrigger>
-                            <Button size='sm' radius='full' isIconOnly variant='light'>
+                            <Button size='sm' radius='full'
+                                isLoading={isPending}
+                                isDisabled={isPending}
+                                isIconOnly variant='light'>
                                 <FaEllipsis className='text-lg' />
                             </Button>
                         </DropdownTrigger>
@@ -188,19 +221,13 @@ export default memo(function CommentHeader(props: Props) {
             </div>}
             description={<div className='flex flex-col'>
 
-                {isDetail && comment.author_role && comment.author_title ?
-                    <div className='flex gap-2 items-center'>
-                        <p className='flex-none'>
-                            {comment.author_role}
-                        </p>
-                        <p className='flex-none dark:bg-default-900/30 text-tiny font-light px-1 rounded-lg'>{comment.author_title}</p>
-                    </div> : null}
+                {isDetail && <RoleTitleCard comment={comment} />}
 
-                <div className={clsx(`time-div flex`, compact ? 'gap-0' : 'max-sm:flex-col sm:gap-2')}>
+                <div className={clsx(`time-div flex gap-2`,)}>
                     <TimeAgoWrapper lang={settings.lang.code} created={comment.created * 1000} lastUpdate={comment.last_update * 1000} />
 
                     {!isReply && <div className='flex gap-1  sm:items-center'>
-                        <p className={compact ? 'ml-1' : ''}>in</p>
+                        <p className={''}>in</p>
 
                         <STag className='text-md font-bold '
                             content={comment.community || (validateCommunity(comment.category) ? comment.category :
@@ -225,7 +252,7 @@ export default memo(function CommentHeader(props: Props) {
                             className='hidden max-sm:block'
                             size='sm' variant='light'
                             color="default">
-                            <FaInfoCircle className='text-lg' />
+                            <FaInfoCircle className='text-lg text-default-800' />
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent>

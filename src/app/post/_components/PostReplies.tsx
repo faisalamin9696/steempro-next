@@ -156,7 +156,7 @@ export default memo(function PostReplies(props: Props) {
             replies: [newComment].concat(postReplies)
         }));
 
-
+        handleClear();
         clearForm();
         toggleReply();
         toast.success('Sent');

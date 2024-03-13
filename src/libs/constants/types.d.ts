@@ -58,7 +58,8 @@ type Feed = {
   depth: number;
   status: 'upvoting' | 'downvoting' | 'resteeming' | 'idle' = 'idle';
   max_accepted_payout: number;
-  percent_steem_dollars: number
+  percent_steem_dollars: number;
+  is_new: number = 0
 
 };
 

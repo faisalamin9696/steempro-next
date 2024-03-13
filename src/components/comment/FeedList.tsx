@@ -11,7 +11,7 @@ import CommentSkeleton from './component/CommentSkeleton';
 import { getSettings } from '@/libs/utils/user';
 import clsx from 'clsx';
 import { useDeviceInfo } from '@/libs/utils/useDeviceInfo';
-import Link from 'next/link';
+import { twMerge } from 'tailwind-merge';
 
 interface Props {
     endPoint: string;
@@ -87,16 +87,12 @@ export default memo(function FeedList(props: Props) {
                 <b>Yay! You have seen it all</b>
             </p>
         }>
-        <div className={clsx(isGridStyle && (className ? className : "gap-6 grid  1md:grid-cols-3 md:grid-cols-2"))}>
+        <div className={twMerge(isGridStyle &&
+            (className ? className : "gap-6 grid 1lg:grid-cols-3  lg:grid-cols-2 md:grid-cols-2"))}>
 
             {rows?.map((comment) => {
-                const targetUrl = `/${comment.category}/@${comment.author}/${comment.permlink}`;
                 return (!comment.link_id) ? null :
-                    <Link shallow href={targetUrl}>
-                        <CommentCard key={comment.link_id} comment={comment} />
-                    </Link>
-
-
+                    <CommentCard key={comment.link_id} comment={comment} />
             })}
         </div>
     </InfiniteScroll >

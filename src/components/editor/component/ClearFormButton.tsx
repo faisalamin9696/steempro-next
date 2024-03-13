@@ -15,7 +15,9 @@ export default memo(function ClearFormButton(props: Props) {
     return (<STooltip content={'Clear all'}>
 
         <div>
-            <Popover isOpen={clearPopup} onOpenChange={(open) => setClearPopup(open)} placement={'top-start'} color='primary'>
+            <Popover isOpen={clearPopup}
+                onOpenChange={(open) => setClearPopup(open)}
+                placement={'top-start'} >
                 <PopoverTrigger >
                     <Button size='sm' color='danger'
                         isIconOnly startContent={<MdDelete className='text-lg' />}
@@ -32,7 +34,7 @@ export default memo(function ClearFormButton(props: Props) {
 
                         <div className="text-tiny flex mt-2 space-x-2">
                             <Button onPress={() => setClearPopup(false)}
-                                size='sm' color='default' variant='faded'>No</Button>
+                                size='sm' color='default'>No</Button>
                             <Button size='sm' color='danger' variant='solid'
                                 onPress={() => {
                                     setClearPopup(false);

@@ -7,6 +7,9 @@ export const Minute = 1000 * 60;
 export const appLink = 'https://www.steempro.com';
 export const isDev = false;
 
+// in ms
+export const ViewCountTime = 10000;
+
 
 export const defaultNotificationFilters = {
     'status': true,

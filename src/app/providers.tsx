@@ -40,7 +40,10 @@ export function Providers(props: Props) {
     const auth = getAuth();
 
 
+
     useEffect(() => {
+
+       
         try {
             if (!auth.currentUser)
                 signInAnonymously(auth);

@@ -38,7 +38,7 @@ export default function TimeAgoWrapper(props: Props) {
     return (
         <div>
             <span>
-                <div className={clsx('flex space-x-1')}>
+                <div className={clsx('flex space-x-1 text-tiny')}>
                     <p className={className} title={moment(created).locale(lang || 'en').format('lll') ?? getTimeFromNow(created, withoutUtc ?? false)}>
                         {getTimeFromNow(created, withoutUtc ?? false)?.toLowerCase()}
                     </p>

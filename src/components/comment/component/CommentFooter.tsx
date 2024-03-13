@@ -1,17 +1,15 @@
-import { Button, Card, CardFooter, Popover, PopoverContent, PopoverTrigger, useDisclosure } from '@nextui-org/react';
+import { Button, Card, Popover, PopoverContent, PopoverTrigger, useDisclosure } from '@nextui-org/react';
 import React, { memo, useState } from 'react'
-import { IoChevronUpCircleSharp, IoChevronDownCircleOutline, IoChevronUpCircleOutline, IoChevronDownCircleSharp } from 'react-icons/io5';
-import { MdComment } from 'react-icons/md';
 import { PiCurrencyCircleDollarFill } from 'react-icons/pi';
 import { SlLoop } from 'react-icons/sl';
-import clsx, { ClassValue } from 'clsx';
+import clsx from 'clsx';
 import { useMutation } from '@tanstack/react-query';
 import { calculatePowerUsage, getCredentials, getSessionKey } from '@/libs/utils/user';
 import { awaitTimeout, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { useLogin } from '@/components/useLogin';
 import { addCommentHandler } from '@/libs/redux/reducers/CommentReducer';
 import { toast } from 'sonner';
-import { voteComment } from '@/libs/steem/condenser';
+import { reblogPost, voteComment } from '@/libs/steem/condenser';
 import { getVoteData } from '@/libs/steem/sds';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import VotingModal from '@/components/VotingModal';
@@ -20,7 +18,6 @@ import { BiDownvote, BiSolidDownvote, BiSolidUpvote, BiUpvote } from "react-icon
 import { abbreviateNumber } from '@/libs/utils/helper';
 import { FaRegCommentAlt } from "react-icons/fa";
 
-import { ImLoop } from "react-icons/im";
 import { RewardBreakdownCard } from '@/components/comment/RewardBreakdownCard';
 
 export default memo(function CommentFooter(props: CommentProps) {
@@ -38,8 +35,7 @@ export default memo(function CommentFooter(props: CommentProps) {
     const isDownvoted = comment.observer_vote === 1 && comment.observer_vote_percent < 0;
     const isVoting = comment.status === 'upvoting' || comment.status === 'downvoting';
     const [breakdownModal, setBreakdownModal] = useState(false);
-
-
+    const [resteemPopup, setResteemPopup] = useState(false);
 
     async function castVote(weight: number, downvote?: boolean) {
         if (downvote) {
@@ -63,8 +59,6 @@ export default memo(function CommentFooter(props: CommentProps) {
 
 
     }
-
-
 
     const voteMutation = useMutation({
         mutationFn: ({ key, weight }: { key: string, weight: number }) =>
@@ -115,7 +109,34 @@ export default memo(function CommentFooter(props: CommentProps) {
 
     });
 
+    const reblogMutation = useMutation({
+        mutationFn: (key: string) => reblogPost(loginInfo, key, {
+            author: comment.author, permlink: comment.permlink,
+        }),
+        onSettled(data, error, variables, context) {
+            if (error) {
+                toast.error(error.message);
+                return;
+            }
+            dispatch(addCommentHandler({ ...comment, is_pinned: comment.is_pinned ? 0 : 1 }));
+            toast.success(!!!comment.is_pinned ? 'Pinned' : 'Unpinned')
 
+        },
+    });
+
+
+    async function handleResteem() {
+        authenticateUser();
+        if (!isAuthorized())
+            return
+        const credentials = getCredentials(getSessionKey());
+        if (!credentials?.key) {
+            toast.error('Invalid credentials');
+            return
+        }
+
+        reblogMutation.mutate(credentials.key);
+    }
     const CustomCard = ({ children, className, title, onPress }: {
         children: React.ReactNode,
         className?: string,
@@ -168,7 +189,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                         </Popover>
 
 
-                        {!compact && !!comment.upvote_count && <div className='text-tiny'>
+                        {!!comment.upvote_count && <div className='text-tiny'>
                             {abbreviateNumber(comment.upvote_count)}
                         </div>}
 
@@ -218,16 +239,48 @@ export default memo(function CommentFooter(props: CommentProps) {
                     }
 
                     {!isReply && !!comment.resteem_count &&
-                        <CustomCard className='px-3' title={`${comment.resteem_count} Reblogs`}>
+                        <div>
+                            <Popover isOpen={resteemPopup} onOpenChange={setResteemPopup}
+                                placement={'top-start'} >
+                                <PopoverTrigger >
+                                    <Button title='Resteem'
+                                        className='min-w-0 px-3 shadow-lg bg-white dark:bg-foreground/10 flex flex-row items-center gap-2 rounded-full'
+                                        variant='light' radius='full'
+                                        // onPress={handleResteem}
+                                        isDisabled={reblogMutation.isPending}
+                                        isLoading={reblogMutation.isPending}
+                                        size='sm'>
 
-                            <Button variant='light' radius='full' isIconOnly size='sm'>
-                                <SlLoop className='text-lg' />
-                            </Button>
+                                        <SlLoop className='text-lg' />
 
-                            <div className='text-tiny'>
-                                {abbreviateNumber(comment.resteem_count)}
-                            </div>
-                        </CustomCard>}
+                                        {!compact && <div className='text-tiny'>
+                                            {abbreviateNumber(comment.resteem_count)}
+                                        </div>}
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent >
+
+                                    <div className="px-1 py-2">
+                                        <div className="text-small font-bold">{'Confirmation'}</div>
+                                        <div className="text-tiny flex">
+                                            {'Resteem this post?'}
+                                        </div>
+
+                                        <div className="text-tiny flex mt-2 space-x-2">
+                                            <Button onPress={() => setResteemPopup(false)}
+                                                size='sm' color='default'>No</Button>
+                                            <Button size='sm' color='secondary' variant='solid'
+                                                onPress={() => {
+                                                    setResteemPopup(false);
+                                                    handleResteem();
+                                                }}>YES</Button>
+
+                                        </div>
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
+                        </div>
+                    }
 
                 </div>
 

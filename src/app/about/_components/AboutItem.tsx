@@ -44,7 +44,7 @@ const AboutItem = (props: Props): JSX.Element => {
                 <div className="flex flex-col items-center">
                     <h3 className='mt-2 font-bold'>{username}</h3>
                     <p className=" font-light">{firstHeading}</p>
-                    <p className=" mt-2 font-light">  {secondHeading}</p>
+                    <p className=" mt-2 font-extralight text-default-600 "> {secondHeading}</p>
                 </div>
                 <Button
                     className="contact-button"

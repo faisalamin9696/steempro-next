@@ -5,6 +5,7 @@ import { getResizedAvatar } from "@/libs/utils/image";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
 import { getServerSession } from "next-auth/next";
 import AccountHeader from "@/components/AccountHeader";
+import ProfileEnd from "./@end/page";
 
 
 export default async function Layout({
@@ -27,9 +28,9 @@ export default async function Layout({
             <AccountHeader account={data} />
 
             <MainWrapper
-                endClassName='max-h-screen lg:hidden xl:block'
+                endClassName='max-h-screen'
 
-                endContent={end}
+                endContent={<ProfileEnd data={data} />}
             >
                 {children}
             </MainWrapper>

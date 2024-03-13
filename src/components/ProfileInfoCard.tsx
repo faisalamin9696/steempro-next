@@ -138,12 +138,14 @@ export default memo(function ProfileInfoCard(props: Props) {
 
             <div className="flex flex-row gap-2" >
                 <div className="flex gap-1">
-                    <p className="font-semibold text-default-600 text-small">
+                    <p title={profile ? profileInfo?.count_followers : profileInfo?.count_root_posts}
+                        className="font-semibold text-default-600 text-small">
                         {abbreviateNumber(profile ? profileInfo?.count_followers : profileInfo?.count_root_posts)}</p>
                     <p className=" text-default-500 text-small">{profile ? 'Followers' : 'Posts'}</p>
                 </div>
                 <div className="flex gap-1">
-                    <p className="font-semibold text-default-600 text-small">
+                    <p title={profile ? profileInfo?.count_following : profileInfo?.count_comments}
+                        className="font-semibold text-default-600 text-small">
                         {abbreviateNumber(profile ? profileInfo?.count_following : profileInfo?.count_comments)}</p>
                     <p className="text-default-500 text-small">{profile ? 'Following' : 'Comments'}</p>
                 </div>

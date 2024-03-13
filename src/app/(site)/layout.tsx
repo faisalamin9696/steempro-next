@@ -22,7 +22,7 @@ export default async function Layout({
         <MainWrapper
 
             startContent={start}
-            startClassName={' max-h-screen md:block !static'} >
+            startClassName={' max-h-screen md:block !static pr-2'} >
             <div className=' flex flex-col'>
                 <HomeCarousel  />
 

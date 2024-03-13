@@ -19,6 +19,10 @@ import { usePathname } from 'next/navigation';
 import { addProfileHandler } from '@/libs/redux/reducers/ProfileReducer';
 import { addCommunityHandler } from '@/libs/redux/reducers/CommunityReducer';
 import { twMerge } from 'tailwind-merge';
+import { FaRegHeart } from "react-icons/fa";
+import { IoFlashOutline } from "react-icons/io5";
+import { FaRankingStar } from "react-icons/fa6";
+import { PiUserListBold } from 'react-icons/pi';
 
 type Props = (
     {
@@ -77,33 +81,35 @@ export default function AccountHeader(props: Props) {
                 data-tilt-max-glare={0.5}
                 className={`account-header backdrop-blur-sm shadow-md m-auto top-5 absolute mx-2  
             bg-black/20  rounded-xl`} >
-                <div className={twMerge(' flex shadow-md px-0 text-white', isCommunity ? 'max-2md:flex max-2md:flex-col' :
+                <div className={twMerge(' flex shadow-md px-0 text-white dark:text-white/90', isCommunity ? 'max-1md:flex max-1md:flex-col' :
                     'max-[720px]:flex max-[720px]:flex-col')}>
                     <div className='flex '>
                         <div className="stat">
-                            <div className="stat-figure">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            <div className="stat-figure text-2xl max-md:text-xl">
+                                {isCommunity ? <FaRankingStar /> : <FaRegHeart />}
+                                {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg> */}
                             </div>
                             <div className="stat-title text-white/60">{isCommunity ? 'Rank' : 'Followers'}</div>
-                            <div className={twMerge("stat-value", 'max-md:text-medium')}>{abbreviateNumber(isCommunity ? communityInfo.rank : profileInfo.count_followers)}</div>
+                            <div className={twMerge("stat-value", 'max-md:text-lg')}>{abbreviateNumber(isCommunity ? communityInfo.rank : profileInfo.count_followers)}</div>
                             <div className="stat-desc"></div>
                         </div>
 
                         <div className="stat">
-                            <div className="stat-figure text-secondary">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            <div className="stat-figure text-secondary text-2xl max-md:text-xl">
+                                {isCommunity ? <PiUserListBold /> : <IoFlashOutline />}
+                                {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> */}
                             </div>
                             <div className="stat-title text-white/60">{isCommunity ? 'Members' : 'Followings'}</div>
-                            <div className="stat-value text-secondary max-md:text-medium"> {abbreviateNumber(isCommunity ? communityInfo.count_subs : profileInfo.count_following)}</div>
+                            <div className="stat-value text-secondary max-md:text-lg"> {abbreviateNumber(isCommunity ? communityInfo.count_subs : profileInfo.count_following)}</div>
                             <div className="stat-desc"></div>
                         </div>
 
                         {isCommunity && <div className="stat">
-                            <div className="stat-figure text-info">
-                                <FaDollarSign className='text-2xl' />
+                            <div className="stat-figure text-info text-2xl max-md:text-xl">
+                                <FaDollarSign />
                             </div>
                             <div className="stat-title text-white/60">{'Reward'}</div>
-                            <div className="stat-value text-info max-md:text-medium"> {abbreviateNumber(communityInfo.sum_pending)}</div>
+                            <div className="stat-value text-info max-md:text-lg"> {abbreviateNumber(communityInfo.sum_pending)}</div>
                             <div className="stat-desc"></div>
                         </div>}
                     </div>
@@ -120,7 +126,7 @@ export default function AccountHeader(props: Props) {
                         src={communityInfo.name} xl size={'lg'} quality='medium' sizeNumber={60}
                         badge={profileInfo?.reputation} /> */}
                         </div>
-                        <div className="stat-value text-white dark:text-white/80 text-xl sm:text-3xl">{isCommunity ? communityInfo.title : posting_json_metadata?.profile?.name}</div>
+                        <div className="stat-value text-white dark:text-white/90 text-xl sm:text-3xl">{isCommunity ? communityInfo.title : posting_json_metadata?.profile?.name}</div>
                         <div className="stat-title flex space-x-2 items-center">
                             <div className="stat-title flex flex-row items-center text-white/90 gap-2">
                                 <p>@{isCommunity ? communityInfo.account : profileInfo.name}</p>
@@ -131,7 +137,9 @@ export default function AccountHeader(props: Props) {
                                 <Popover placement={'bottom'} color="default"
                                     style={{ zIndex: 50 }} >
                                     <PopoverTrigger>
-                                        <Button isIconOnly radius='full' size='sm' variant='light' className='text-white/80'>
+                                        <Button isIconOnly radius='full'
+                                            size='sm' variant='light'
+                                            className='hidden max-1md:block text-white/80'>
                                             <BsInfoCircleFill className='text-xl' />
                                         </Button>
                                     </PopoverTrigger>

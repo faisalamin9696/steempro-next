@@ -8,12 +8,15 @@ import MarkdownViewer from "@/components/body/MarkdownViewer";
 import CommentFooter from "../component/CommentFooter";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import clsx from "clsx";
+import Link from "next/link";
 
 export default function CommentBlogLayout(props: CommentProps) {
     const { comment, isReply } = props;
     const commentInfo = useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment;
 
     const thumbnail = getPostThumbnail(commentInfo.json_images);
+
+    const targetUrl = `/${comment.category}/@${comment.author}/${comment.permlink}`;
 
     return <div className='w-full card card-compact flex-col gap-4 
     bg-white/60 dark:bg-white/10'>
@@ -23,7 +26,8 @@ export default function CommentBlogLayout(props: CommentProps) {
 
 
         </div>
-        <Card radius='none'
+        <Card radius='none' as={Link}
+            href={targetUrl}
             shadow='none'
             className={clsx(commentInfo.is_muted && ' opacity-80', 'w-full bg-transparent gap-4 px-4')}>
 

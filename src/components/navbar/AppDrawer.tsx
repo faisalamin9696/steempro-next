@@ -1,16 +1,20 @@
 'use client';
 
-import React, { memo, useEffect, useMemo, useState } from 'react'
+import React, { memo, useState } from 'react'
 import DrawerItems from './DrawerItems'
-import { Button, ButtonGroup } from '@nextui-org/react';
+import { Button } from '@nextui-org/react';
 import { RxHamburgerMenu } from "react-icons/rx";
-import ThemeSwitch from '../ThemeSwitch';
-import { IoClose } from 'react-icons/io5';
-import { FaArrowCircleLeft } from 'react-icons/fa';
 
 
-export default memo(function AppDrawer() {
+interface Props {
+    onItemClick?: () => void;
+    onAccountSwitch?: () => void;
+}
+
+export default memo(function AppDrawer(props: Props) {
     const [isOpen, setIsOpen] = useState(false);
+    const { onItemClick, onAccountSwitch } = props;
+
 
     const toggleDrawer = () => {
         const newState = !isOpen;
@@ -39,17 +43,8 @@ export default memo(function AppDrawer() {
             <div
                 className={`fixed z-50 top-0 left-0 h-screen w-60 bg-background shadow-lg transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"
                     }`}  >
-                <div className='p-4 justify-between h-full flex flex-col'>
-                    <DrawerItems />
-                    <div className='flex justify-between'>
-
-                        <ThemeSwitch />
-                        <Button variant='light' isIconOnly onPress={toggleDrawer}
-                            radius='full' size='sm'>
-                            <FaArrowCircleLeft className='text-xl' />
-                        </Button>
-                    </div>
-
+                <div className='p-4  flex flex-col justify-between h-full'>
+                    <DrawerItems onItemClick={toggleDrawer} {...props} />
                 </div>
             </div>
         </div>

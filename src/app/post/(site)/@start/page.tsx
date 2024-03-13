@@ -9,6 +9,9 @@ import CompactPost from '@/components/CompactPost'
 import { fetchSds, awaitTimeout } from '@/libs/constants/AppFunctions'
 import { useSession } from 'next-auth/react'
 import usePathnameClient from '@/libs/utils/usePathnameClient'
+import { MdDescription } from 'react-icons/md'
+import { ImBlog } from "react-icons/im";
+import { GrBlog } from "react-icons/gr";
 
 
 
@@ -36,6 +39,7 @@ export default function PostStart() {
 
       <Accordion defaultExpandedKeys={['end']}>
         <AccordionItem
+          startContent={<GrBlog   className="text-primary text-xl" />}
           key="end" aria-label="posts"
           title={<div
             className="flex items-center gap-2 text-lg font-bold">

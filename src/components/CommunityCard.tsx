@@ -4,6 +4,7 @@ import { abbreviateNumber } from "@/libs/utils/helper";
 import TimeAgoWrapper from "./wrapper/TimeAgoWrapper";
 import { getResizedAvatar } from "@/libs/utils/image";
 import Link from "next/link";
+import clsx from "clsx";
 
 
 interface Props {
@@ -25,7 +26,9 @@ export const CommunityCard = memo((props: Props) => {
 
 
     return (
-        <Card className="relative flex flex-col items-start gap-2 p-4 w-full bg-white dark:bg-white/5">
+        <Card
+            className={clsx(`relative flex flex-col items-start gap-2 w-full bg-white
+             dark:bg-white/5`, compact ? 'p-2' : 'p-4')}>
 
             {!compact &&
                 <Button as={Link} href={`/trending/${community.account}`}
@@ -35,10 +38,10 @@ export const CommunityCard = memo((props: Props) => {
             <User
 
                 classNames={{
-                    description: 'mt-1 text-default-900/60 dark:text-gray-200 text-sm',
+                    description: 'text-default-900/60 dark:text-gray-200 text-sm',
                     name: 'text-default-800'
                 }}
-                name={<div className='flex flex-col items-start gap-2'>
+                name={<div className='flex flex-col items-start gap-1'>
 
                     <h2>{community.title}</h2>
 
@@ -68,7 +71,7 @@ export const CommunityCard = memo((props: Props) => {
 
                 </div>}
                 avatarProps={{
-                    className: '',
+                    className: compact ? 'h-8 w-8' : '',
                     src: getResizedAvatar(community.account),
                     // as: 'a',
                     // onClick: () => {
@@ -85,7 +88,7 @@ export const CommunityCard = memo((props: Props) => {
                 </div>
                 <div className="flex gap-1">
                     <p className="font-semibold text-default-600 text-tiny">${abbreviateNumber(community.count_pending)}</p>
-                    <p className="text-default-500 text-tiny">{'Pending Reward'}</p>
+                    <p className="text-default-500 text-tiny">{compact ? 'Reward' : 'Pending Reward'}</p>
                 </div>
             </div>
 

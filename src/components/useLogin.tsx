@@ -9,6 +9,7 @@ import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import useSWR from 'swr';
 import { saveSteemGlobals } from '@/libs/redux/reducers/SteemGlobalReducer';
 import { defaultNotificationFilters } from '@/libs/constants/AppConstants';
+import { toast } from 'sonner';
 
 // Define the type for your context value
 interface AuthContextType {
@@ -57,6 +58,8 @@ export const AuthProvider = (props: Props) => {
     const URL = `/notifications_api/getFilteredUnreadCount/${session?.user?.name}/${JSON.stringify(filter)}`;
     const { data: unreadCount } = useSWR(session?.user?.name && URL, fetchSds<number>);
 
+
+
     useEffect(() => {
         if (unreadCount) {
             data = { ...data, unread_count: unreadCount ?? 0 }
@@ -66,8 +69,18 @@ export const AuthProvider = (props: Props) => {
 
 
     useEffect(() => {
-        if (data)
+        console.log(1122, 777)
+        if (data) {
             dispatch(saveLoginHandler(data));
+            toast('Vote for witness', {
+                action: {
+                    label: 'Vote',
+
+                    onClick: () => { }
+                }, closeButton: false, duration: 60000
+            });
+
+        }
 
 
         if (globalData) {

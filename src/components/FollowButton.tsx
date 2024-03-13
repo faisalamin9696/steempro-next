@@ -113,7 +113,7 @@ export default function FollowButton(props: Props) {
                 radius="full"
                 size='sm'
                 isLoading={isPending}
-                className={clsx('min-w-0  h-6', isPending && 'animate-pulse')}
+                className={clsx('min-w-0  h-6')}
                 title={community ? isSubscribed ? 'Leave community' : 'Join community' :
                     isFollowing ? 'Unfollow' : 'Follow'}
                 variant={'flat'}

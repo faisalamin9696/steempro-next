@@ -54,7 +54,7 @@ export default async function RootLayout({
 
         <Providers data={data} globalData={globalData}>
           {children}
-          <Toaster richColors />
+          <Toaster richColors closeButton />
         </Providers>
         <Analytics />
         <SpeedInsights />

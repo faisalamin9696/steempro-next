@@ -127,13 +127,15 @@ export default function CommunityRoles(props: Props) {
 
             {(isLoading || isValidating) ? <LoadingCard /> :
                 error ? <ErrorCard message={error.message} /> :
-                    <div className='flex flex-col gap-2'>
+                    <div className='flex flex-col gap-2 '
+                        id="scrollableDiv">
                         <InfiniteScroll
                             className='gap-2  px-1 pb-1'
                             dataLength={filteredData?.length}
                             next={handleEndReached}
                             hasMore={true}
                             loader={<ListLoader />}
+                            scrollableTarget='scrollableDiv'
                             endMessage={
                                 <p style={{ textAlign: "center" }}>
                                     <b>No more data</b>

@@ -78,7 +78,7 @@ export default function AppNavbar() {
             shouldHideOnScroll>
 
             <NavbarContent justify="start" className=' !grow-0'>
-                <AppDrawer />
+                <AppDrawer onAccountSwitch={() => setIsAccOpen(!isAccOpen)} />
             </NavbarContent>
 
 
@@ -202,8 +202,9 @@ export default function AppNavbar() {
                                 <ul tabIndex={0} className="menu menu-sm" onClick={() => {
                                     if (isPopOpen) setIsPopOpen(false);
                                 }}>
-                                    <li><a onClick={() => setIsAccOpen(true)}>Switch Account</a></li>
-                                    <li><a onClick={() => setNotificationPopup(!notificationPopup)}>{'Notifications'}</a></li>
+                                    <li><Link href={`/@${loginInfo.name}`}>Profile</Link></li>
+                                    <li><a onClick={() => setIsAccOpen(!isAccOpen)}>Switch Account</a></li>
+                                    <li className='hidden max-sm:block'><a onClick={() => setNotificationPopup(!notificationPopup)}>{'Notifications'}</a></li>
                                 </ul>
                             </PopoverContent>
                         </Popover>

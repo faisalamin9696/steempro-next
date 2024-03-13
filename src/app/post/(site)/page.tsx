@@ -17,6 +17,8 @@ import { getAuth } from 'firebase/auth';
 import SubmitPage from '@/app/submit/(site)/page';
 import clsx from 'clsx';
 import { useRouter } from 'next13-progressbar';
+import { ViewCountTime } from '@/libs/constants/AppConstants';
+import Link from 'next/link';
 const DynamicPostReplies = dynamic(() => import('../_components/PostReplies'))
 
 
@@ -44,8 +46,8 @@ export default function PostPage(props: Props) {
 
 
     useEffect(() => {
-        if (!category) {
-            window.history.replaceState({}, '', `/${data.category}/@${data.author}/${data.permlink}`)
+        if (!category && data) {
+            window.history.replaceState({}, '', `/${data.category}/@${data?.author}/${data?.permlink}`)
         }
         dispatch(addCommentHandler(data));
 
@@ -54,11 +56,11 @@ export default function PostPage(props: Props) {
 
     useEffect(() => {
 
-        // count view after 1 second
+        // count view after ViewCountTime mili seconds
         const timeout = setTimeout(() => {
             if (commentInfo.depth === 0)
                 updatePostView(data);
-        }, 5000);
+        }, ViewCountTime);
 
         return () => clearTimeout(timeout);
     }, []);
@@ -80,10 +82,23 @@ export default function PostPage(props: Props) {
     }
 
     return (<div key={pathname}
-        className='flex-col gap-4 bg-white dark:bg-white/5
+        className='flex-col bg-white dark:bg-white/5
     backdrop-blur-md rounded-lg p-4 w-full mb-10'>
         {commentInfo ?
-            <div className='card w-full card-compact shadow-sm '>
+            <div className='card w-full card-compact shadow-sm  gap-4'>
+
+                {!!commentInfo.depth &&
+                    <Card className='flex flex-col p-4 gap-2'>
+                        <p className='text-tiny'>You are viewing a single comment's thread from:</p>
+                        <p className='text-medium'>RE: {commentInfo.root_title}</p>
+                        <div className='flex gap-2 items-center'>•
+                            <Link className='text-sm text-default-600 hover:text-blue-500' href={`/@${commentInfo.root_author}/${commentInfo.root_permlink}`}>View the full context</Link>
+                        </div>
+
+                        {commentInfo.depth >= 2 && <div className='flex gap-2 items-center'>•
+                            <Link className='text-sm text-default-600 hover:text-blue-500' href={`/@${commentInfo.parent_author}/${commentInfo.parent_permlink}`}>View the direct parent</Link>
+                        </div>}
+                    </Card>}
 
                 <div className='flex flex-col px-1 items-center'>
                     <Card shadow='none'

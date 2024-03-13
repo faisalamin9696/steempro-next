@@ -24,8 +24,8 @@ export async function generateMetadata(parent: ResolvingMetadata) {
     const thumbnail = getPostThumbnail(result?.json_images);
 
     return {
-        title: (result.title),
-        description: result.body?.substring(0,250) ?? '',
+        title: (result.depth === 0 ? result.title : `RE: ${result.root_title}`),
+        description: result.body?.substring(0, 250) ?? '',
         openGraph: {
             images: [thumbnail, ...previousImages]
         }
