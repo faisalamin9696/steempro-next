@@ -21,7 +21,7 @@ export default function CommentBlogLayout(props: CommentProps) {
     return <div className='w-full card card-compact flex-col gap-4 
     bg-white/60 dark:bg-white/10'>
 
-        <div className='p-4'>
+        <div className='p-2'>
             <CommentHeader comment={commentInfo} compact className='w-full' />
 
 
@@ -29,14 +29,14 @@ export default function CommentBlogLayout(props: CommentProps) {
         <Card radius='none' as={Link}
             href={targetUrl}
             shadow='none'
-            className={clsx(commentInfo.is_muted && ' opacity-80', 'w-full bg-transparent gap-4 px-4')}>
+            className={clsx(commentInfo.is_muted && ' opacity-80', 'w-full bg-transparent gap-4 px-2')}>
 
-            <h2 className="card-content font-bold text-lg text-start ">{commentInfo.title}</h2>
+            <h2 className="card-content font-bold text-lg max-sm:text-medium text-start ">{commentInfo.title}</h2>
 
             {isReply ? null : <CommentCover thumbnail src={thumbnail} />}
 
 
-            <p className='card-content line-clamp-2 overflow-hidden text-start w-full h-full'>
+            <p className='card-content line-clamp-2 overflow-hidden text-start w-full h-full max-sm:text-sm'>
 
                 {isReply ? <MarkdownViewer text={commentInfo?.body} /> :
                     <BodyShort body={commentInfo.body} />
@@ -48,7 +48,7 @@ export default function CommentBlogLayout(props: CommentProps) {
         </Card>
 
         <CommentFooter comment={commentInfo}
-            className='w-full' />
+            className='w-full px-2 py-2' />
 
     </div>
 }

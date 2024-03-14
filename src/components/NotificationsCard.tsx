@@ -27,11 +27,23 @@ interface Props {
 }
 
 const typeColorMap = {
-    vote: "success",
+    reply: 'secondary',
+    reblog: "default",
     follow: "primary",
     mention: "warning",
-    resteem: "default",
-    reply: 'secondary'
+    vote: "success",
+    unmute_post: 'default',
+    pin_post: 'default',
+    unpin_post: 'default',
+    flag_post: 'default',
+    error: 'default',
+    subscribe: 'default',
+    new_community: 'default',
+    set_role: 'default',
+    set_props: 'default',
+    set_label: 'default',
+    mute_post: 'default',
+
 
 };
 
@@ -221,7 +233,7 @@ export default function NotificationsCard(props: Props) {
                 return (
                     <Chip
                         className="capitalize border-none gap-1 text-default-600"
-                        color={typeColorMap[notification.type]}
+                        color={typeColorMap[notification.type] as any}
                         size="sm"
                         variant="dot"
                     >

@@ -119,12 +119,12 @@ export default function BalanceTab() {
     return (
         <div className=' gap-4 grid grid-cols-1 md:grid-cols-2'>
 
-            {data && <>
+            {loginInfo.name && <>
                 <TokenCard tokenKey='steem' symbol={tokens.steem.symbol}
                     description={tokens.steem.description}
                     title={tokens.steem.title}
                     endContent={<div className='flex gap-2'>
-                        <p>{data.balance_steem?.toLocaleString()}</p>
+                        <p>{loginInfo.balance_steem?.toLocaleString()}</p>
                     </div>}
 
                     actionContent={<DropdownMenu onAction={handleAction}>
@@ -142,7 +142,7 @@ export default function BalanceTab() {
                     title={tokens.steem_power.title}
 
                     endContent={<div>
-                        <p>{vestToSteem(data.vests_own, globalData.steem_per_share)?.toLocaleString()}</p>
+                        <p>{vestToSteem(loginInfo.vests_own, globalData.steem_per_share)?.toLocaleString()}</p>
                     </div>}
 
                     actionContent={<DropdownMenu onAction={handleAction}>
@@ -160,7 +160,7 @@ export default function BalanceTab() {
                     title={tokens.steem_dollar.title}
 
                     endContent={<div>
-                        <p>${data.balance_sbd?.toLocaleString()}</p>
+                        <p>${loginInfo.balance_sbd?.toLocaleString()}</p>
                     </div>}
 
                     actionContent={<DropdownMenu
@@ -178,8 +178,8 @@ export default function BalanceTab() {
                     description={tokens.saving.description}
                     title={tokens.saving.title}
                     endContent={<div className='flex flex-col items-end max-md:items-center'>
-                        <p>${data.savings_steem?.toLocaleString()} STEEM</p>
-                        <p>${data.savings_sbd?.toLocaleString()}</p>
+                        <p>${loginInfo.savings_steem?.toLocaleString()} STEEM</p>
+                        <p>${loginInfo.savings_sbd?.toLocaleString()}</p>
                     </div>}
                     handleInfoClick={handleInfo}
 
@@ -194,7 +194,7 @@ export default function BalanceTab() {
                 powewrup={transferModal.powerup}
                 savings={transferModal.savings}
                 delegation={transferModal.delegation}
-                delegatee={isSelf ? undefined : username}
+                delegatee={isSelf ? '' : username}
                 isOpen={transferModal.isOpen}
                 onOpenChange={(isOpen) => setTransferModal({ ...transferModal, isOpen: isOpen })}
             />}

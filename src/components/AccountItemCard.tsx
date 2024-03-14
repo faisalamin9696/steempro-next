@@ -12,9 +12,17 @@ import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 
 interface Props {
     user: User;
-    defaultAccount?: string;
+    defaultAccount?: User;
     handleSwitchSuccess?: () => void;
 }
+
+
+const keysColorMap = {
+    POSTING: "warning",
+    ACTIVE: "success",
+    OWNER: "danger",
+};
+
 
 export default memo(function AccountItemCard(props: Props) {
     const { defaultAccount, user, handleSwitchSuccess } = props;
@@ -73,7 +81,7 @@ export default memo(function AccountItemCard(props: Props) {
         }
     }
 
-    const isDefault = defaultAccount === user.username;
+    const isDefault = (defaultAccount?.username === user.username && defaultAccount?.type === user.type);
 
     return <Card
         className='w-full bg-foreground/10'>
@@ -82,8 +90,9 @@ export default memo(function AccountItemCard(props: Props) {
                 size='xs'
                 username={user.username} />
             <div>
-                <p className='flex flex-row text-sm gap-1'>{user.username}
-                    <Chip title={user.type}>
+                <p className='flex flex-row text-sm gap-1 items-center'>{user.username}
+                    <Chip variant='flat' size='sm' title={user.type} className=' justify-center'
+                        color={keysColorMap[user.type]}>
                         {user.type[0]}
                     </Chip>
                 </p>

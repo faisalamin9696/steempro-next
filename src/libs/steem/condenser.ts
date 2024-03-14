@@ -674,7 +674,7 @@ export const subscribeCommunity = async (
 export const voteForWitness = async (
     account: AccountExt,
     key: string,
-    DATA: { from: string; witness: string; approved: boolean },
+    options: { witness: string; approved: boolean },
 ) => {
     const keyData = getKeyType(account, key);
 
@@ -686,8 +686,8 @@ export const voteForWitness = async (
                 'account_witness_vote',
                 {
                     account: keyData.account,
-                    witness: DATA.witness,
-                    approve: DATA.approved,
+                    witness: options.witness,
+                    approve: options.approved,
                 },
             ],
         ];

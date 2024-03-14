@@ -19,7 +19,7 @@ interface Props {
 
 export default memo(function BeneficiaryButton(props: Props) {
     const { onSelectBeneficiary, beneficiaries, onRemove, disabled } = props;
-    const [username, setUsername] = useState('');
+    let [username, setUsername] = useState('');
     const [weight, setWeight] = useState('');
     const [benePopup, setBenePopup] = useState(false);
 
@@ -29,6 +29,8 @@ export default memo(function BeneficiaryButton(props: Props) {
 
 
     function handleAddBeneficiary() {
+        username = username.trim().toLowerCase();
+
         if (beneficiaries?.length >= 8) {
             toast.info('Can have at most 8 beneficiaries');
             return
@@ -92,7 +94,7 @@ export default memo(function BeneficiaryButton(props: Props) {
                             <p className="flex text-small font-bold">{'Beneficiaries'}</p>
                             <p className='text-default-900/60 text-tiny'>{'Who should receive any rewards?'}</p>
                         </div>
-                        <Card className='pe-2 gap-4 flex-row bg-secondary-800/10
+                        <Card className='pe-2 gap-4 flex-row bg-secondary-800/10 max-sm:self-start
                         items-center rounded-full justify-start' >
                             <Avatar size='sm' src={getResizedAvatar('faisalamin')} />
                             <div className='flex space-x-2 flex-1'>
@@ -105,9 +107,9 @@ export default memo(function BeneficiaryButton(props: Props) {
 
 
                     <div className='my-4 flex gap-2 md:items-center max-sm:items-end'>
-                        <div className=" flex gap-2 md:items-center max-sm:flex-col w-full">
+                        <div className=" flex gap-2 md:items-center w-full">
 
-                            <Input className='md:w-36'
+                            <Input className='w-[30%]'
                                 classNames={{ label: 'text-default-900/80' }} labelPlacement='outside'
                                 label={'Weight'} size="sm" onValueChange={setWeight}
                                 value={weight}
@@ -124,6 +126,7 @@ export default memo(function BeneficiaryButton(props: Props) {
 
 
                             <Input classNames={{ label: 'text-default-900/80' }}
+                                className='w-[70%]'
                                 labelPlacement='outside' label={'Username'} size="sm"
                                 onValueChange={setUsername}
                                 variant="flat" value={username} />

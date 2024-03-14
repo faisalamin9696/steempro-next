@@ -1,6 +1,6 @@
 import { validateCommunity } from '@/libs/utils/helper';
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 // Define valid categories
 
@@ -30,7 +30,15 @@ export function middleware(request: NextRequest) {
     first_param = first_param?.toLowerCase();
     second_param = second_param?.toLowerCase();
 
-    if (splitted_path.length === 3 && usernameURLRegex.test(second_param)) {
+    if (splitted_path.length === 1 && first_param === 'witnesses') {
+        return NextResponse.rewrite(new URL(`/witnesses`, request.nextUrl), { headers: request.headers });
+    } if (splitted_path.length === 1 && first_param === 'submit') {
+        return NextResponse.rewrite(new URL(`/submit`, request.nextUrl), { headers: request.headers });
+    }
+    if (splitted_path.length === 1 && first_param === 'about') {
+        return NextResponse.rewrite(new URL(`/about`, request.nextUrl), { headers: request.headers });
+    }
+    else if (splitted_path.length === 3 && usernameURLRegex.test(second_param)) {
         return NextResponse.rewrite(new URL('/post', request.nextUrl), { headers: request.headers });
     }
 
@@ -42,7 +50,6 @@ export function middleware(request: NextRequest) {
     else if (request.nextUrl.pathname.startsWith('/@')) {
         return NextResponse.rewrite(new URL(`/profile`, request.nextUrl), { headers: request.headers });
     }
-
     // Check if the URL matches the pattern for a community
     else if (validateCommunity(second_param) && valid_categories.includes(first_param)) {
         return NextResponse.rewrite(new URL(`/community`, request.nextUrl), { headers: request.headers });

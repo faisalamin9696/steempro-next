@@ -17,6 +17,7 @@ import Reputation from '../Reputation';
 import Link from 'next/link';
 import ThemeSwitch from '../ThemeSwitch';
 import { PiUserSwitchFill } from "react-icons/pi";
+import { RiUserStarFill } from "react-icons/ri";
 
 
 
@@ -97,13 +98,6 @@ export default function DrawerItems(props: Props) {
                     Switch Account
                 </Button>}
 
-                <Button variant='light'
-                    className='w-full justify-start text-inherit '
-                    onClick={onItemClick}
-                    startContent={<FaTools className='text-xl' />}>
-                    Tools
-                </Button>
-
                 {isLogin() && < Button variant='light'
                     as={Link} href={`/@${loginInfo.name}/settings`}
                     className='w-full justify-start text-inherit '
@@ -112,6 +106,22 @@ export default function DrawerItems(props: Props) {
                     Settings
                 </Button>
                 }
+                <Button variant='light'
+                    className='w-full justify-start text-inherit '
+                    as={Link} href={`/witnesses`}
+                    onClick={onItemClick}
+                    startContent={<RiUserStarFill className='text-xl' />}>
+                    Witnesses
+                </Button>
+
+                <Button variant='light'
+                    className='w-full justify-start text-inherit '
+                    onClick={onItemClick}
+                    startContent={<FaTools className='text-xl' />}>
+                    Tools
+                </Button>
+
+
                 <Button variant='light'
                     className='w-full justify-start text-inherit '
                     as={Link} href={'/about'}

@@ -41,6 +41,7 @@ export const defaultNotificationFilters = {
     }
 };
 
+
 export const intrestingList = [
     'faisalamin',
     'bountyking5',

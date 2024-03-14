@@ -1,5 +1,3 @@
-'use client';
-
 import { awaitTimeout, fetchSds, useAppSelector } from '@/libs/constants/AppFunctions';
 import { notFound } from 'next/navigation';
 import React, { memo, useMemo, useState } from 'react'
@@ -87,8 +85,8 @@ export default memo(function FeedList(props: Props) {
                 <b>Yay! You have seen it all</b>
             </p>
         }>
-        <div className={twMerge(isGridStyle &&
-            (className ? className : "gap-6 grid 1lg:grid-cols-3  lg:grid-cols-2 md:grid-cols-2"))}>
+        <div className={twMerge(isGridStyle ?
+            (className ? className : "gap-6 grid 1lg:grid-cols-3  lg:grid-cols-2 md:grid-cols-2") : 'flex flex-col gap-2')}>
 
             {rows?.map((comment) => {
                 return (!comment.link_id) ? null :

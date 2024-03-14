@@ -19,6 +19,7 @@ import { abbreviateNumber } from '@/libs/utils/helper';
 import { FaRegCommentAlt } from "react-icons/fa";
 
 import { RewardBreakdownCard } from '@/components/comment/RewardBreakdownCard';
+import { twMerge } from 'tailwind-merge';
 
 export default memo(function CommentFooter(props: CommentProps) {
     const { comment, className, isReply, onEditClick,
@@ -151,7 +152,7 @@ export default memo(function CommentFooter(props: CommentProps) {
 
     }
 
-    return <div className={clsx('flex flex-col p-1 gap-1 w-full')}>
+    return <div className={twMerge('flex flex-col p-1 gap-1 w-full', className)}>
 
 
         <div className={clsx("flex flex-row max-xs:flex-col items-center max-xs:items-start gap-2",

@@ -6,26 +6,27 @@ import { useLogin } from './useLogin';
 import AccountItemCard from './AccountItemCard';
 
 
-interface Props  {
+interface Props {
     isOpen: boolean;
     onOpenChange: (isOpen: boolean) => void;
 }
 
+
 export default function AccountsModal(props: Props) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [accounts, setAccounts] = useState<User[]>();
-    const [defaultAcc, setDefaultAcc] = useState('');
+    const [defaultAcc, setDefaultAcc] = useState<User>();
     const [isShow, setIsShow] = useState(true);
 
     const { authenticateUser, isAuthorized } = useLogin();
     useEffect(() => {
         const credentials = getCredentials();
         if (credentials?.username) {
-            setDefaultAcc(credentials.username);
+            setDefaultAcc(credentials);
             const allCredentials = getAllCredentials();
-            
+
             // Find the index of the object with the username
-            const index = allCredentials.findIndex(account => account.username === (credentials.username));
+            const index = allCredentials.findIndex(account => (account.username === credentials.username) && (account.type === credentials.type));
             if (index !== -1) {
                 const activeAccount = allCredentials.splice(index, 1)[0];
                 allCredentials.unshift(activeAccount);

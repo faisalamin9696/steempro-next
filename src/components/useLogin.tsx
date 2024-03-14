@@ -10,6 +10,7 @@ import useSWR from 'swr';
 import { saveSteemGlobals } from '@/libs/redux/reducers/SteemGlobalReducer';
 import { defaultNotificationFilters } from '@/libs/constants/AppConstants';
 import { toast } from 'sonner';
+import { useRouter } from 'next13-progressbar';
 
 // Define the type for your context value
 interface AuthContextType {
@@ -54,6 +55,7 @@ export const AuthProvider = (props: Props) => {
     const [credentials, setCredentials] = useState<User>();
     const [isNew, setIsNew] = useState(false);
     const dispatch = useAppDispatch();
+    const router = useRouter();
 
     const URL = `/notifications_api/getFilteredUnreadCount/${session?.user?.name}/${JSON.stringify(filter)}`;
     const { data: unreadCount } = useSWR(session?.user?.name && URL, fetchSds<number>);
@@ -69,24 +71,28 @@ export const AuthProvider = (props: Props) => {
 
 
     useEffect(() => {
-        console.log(1122, 777)
         if (data) {
             dispatch(saveLoginHandler(data));
-            toast('Vote for witness', {
-                action: {
-                    label: 'Vote',
-
-                    onClick: () => { }
-                }, closeButton: false, duration: 60000
-            });
-
         }
 
+        const timeout = setTimeout(() => {
+            if (data?.witness_votes?.includes('faisalamin')) {
+                toast('Vote for witness (faisalamin)', {
+                    action: {
+                        label: 'Vote',
+
+                        onClick: () => { router.push('/witnesses'); }
+                    }, closeButton: false, duration: 60000
+                });
+            }
+        }, 2000);
 
         if (globalData) {
             dispatch(saveSteemGlobals(globalData));
         }
         setCredentials(getCredentials());
+
+        return () => clearTimeout(timeout);
     }, [])
 
 

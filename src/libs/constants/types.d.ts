@@ -424,6 +424,7 @@ type Delegation = {
   from: string;
   to: string;
   vests: number;
+  status?: any
 };
 
 type Witness = {

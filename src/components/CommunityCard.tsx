@@ -27,6 +27,8 @@ export const CommunityCard = memo((props: Props) => {
 
     return (
         <Card
+            as={Link}
+            href={`/trending/${community.account}`}
             className={clsx(`relative flex flex-col items-start gap-2 w-full bg-white
              dark:bg-white/5`, compact ? 'p-2' : 'p-4')}>
 

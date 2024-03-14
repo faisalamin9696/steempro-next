@@ -377,13 +377,10 @@ export default function SubmitPage(props: Props) {
                             }} />
 
                     </CommentOptionWrapper>
-
-
-
                 </div>
 
                 <div className='flex flex-1 justify-end gap-2 w-full'>
-                    <ScheduleButton disabled={isEdit} onPress={handleSchedule} />
+                    {/* <ScheduleButton disabled={isEdit} onPress={handleSchedule} /> */}
 
                     {isEdit && <Button size='sm'
                         radius='full' onPress={() => {

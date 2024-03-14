@@ -5,7 +5,6 @@ import './style.scss';
 
 import { useAppSelector } from '@/libs/constants/AppFunctions';
 import { getSettings } from '@/libs/utils/user';
-import { ClassValue } from 'clsx';
 import CommentListLayout from './layout/CommentListLayout';
 import CommentBlogLayout from './layout/CommentBlogsLayout';
 import CommentGridLayout from './layout/CommentGridLayout';
@@ -19,7 +18,7 @@ interface Props {
 
 export interface CommentProps {
     comment: Feed | Post;
-    className?: ClassValue;
+    className?: string;
     isReply?: boolean;
     compact?: boolean;
     onEditClick?: (comment: Feed | Post) => void;

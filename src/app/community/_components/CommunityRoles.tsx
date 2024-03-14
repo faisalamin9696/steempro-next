@@ -20,11 +20,9 @@ interface Props {
     stickyHeader?: boolean;
 }
 export default function CommunityRoles(props: Props) {
+    const { community } = usePathnameClient();
     const { large, roles, stickyHeader } = props;
-
-    let { community } = usePathnameClient();
-    community = 'hive-144064'
-
+    
     const URL = `/communities_api/getCommunityRoles/${community}`;
     const [query, setQuery] = useState('');
     const { data, isLoading, error, mutate, isValidating } = useSWR(!roles && URL, fetchSds<Role[]>);

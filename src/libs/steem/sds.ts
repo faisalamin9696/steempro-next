@@ -407,11 +407,9 @@ export const getClubStatus = async (username: string) => {
     }
 };
 
-export const vestToSteem = (rewards_vests: number | string, steem_per_share): number => {
-    if (typeof (rewards_vests) === 'string')
-        return (parseFloat(rewards_vests.split(' ')[0]) * steem_per_share)
-    else
-        return (rewards_vests * steem_per_share);
+export const vestToSteem = (rewards_vests: number = 0, steem_per_share: number): number => {
+
+    return (rewards_vests * steem_per_share);
 };
 
 export const steemToVest = (steem: number, steem_per_share: number): number => {

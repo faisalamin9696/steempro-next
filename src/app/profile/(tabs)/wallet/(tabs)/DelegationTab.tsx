@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Key, useEffect, useState } from "react";
 import {
     Table,
     TableHeader,
@@ -74,7 +74,11 @@ export default function DelegationTab() {
     const isSelf = loginInfo.name === username;
 
 
-    const [transferModal, setTransferModal] = useState(false);
+    const [transferModal, setTransferModal] = useState<
+        {
+            isOpen: boolean, delegatee?: string,
+            oldDelegation?: number, isRemove?: boolean, delegation?: Delegation
+        }>({ isOpen: false });
 
     const outgoingRows = outgoingData?.map((item) => {
         return { ...item, status: 'outgoing' }
@@ -87,9 +91,13 @@ export default function DelegationTab() {
         return { ...item, status: 'expiring' }
     });
 
+    const [allRows, setAllRows] = useState<Delegation[]>([]);
 
-    const allRows = [...(outgoingRows ?? []),
-    ...(incomingRows ?? []), ...(expiringRows ?? [])];
+    useEffect(() => {
+        setAllRows([...(outgoingRows ?? []),
+        ...(incomingRows ?? []), ...(expiringRows ?? [])]);
+    }, [outgoingData, incomingData, expiringData]);
+
 
     const [filterValue, setFilterValue] = React.useState<any>("");
     const [visibleColumns, setVisibleColumns] = React.useState<any>(new Set(INITIAL_VISIBLE_COLUMNS));
@@ -146,6 +154,24 @@ export default function DelegationTab() {
         });
     }, [sortDescriptor, items]);
 
+
+    async function handleMenuActions(key: Key, delegation: Delegation) {
+        switch (key) {
+            case 'edit':
+                setTransferModal({
+                    isOpen: !transferModal.isOpen, delegatee: delegation.to,
+                    oldDelegation: delegation.vests, delegation: delegation
+                });
+                break;
+            case 'remove':
+                setTransferModal({
+                    isOpen: !transferModal.isOpen, delegatee: delegation.to,
+                    oldDelegation: delegation.vests, delegation: delegation, isRemove: true
+                });
+                break;
+        }
+    }
+
     const renderCell = React.useCallback((delegation: Delegation, columnKey) => {
         const cellValue = delegation[columnKey];
 
@@ -157,13 +183,14 @@ export default function DelegationTab() {
                     <div className="flex flex-row items-start gap-1">
                         <Dropdown>
                             <DropdownTrigger>
-                                <div className="p-1 cursor-pointer">
+                                <Button isIconOnly size="sm" variant="light" radius="full">
                                     <BiDotsVerticalRounded className="text-default-300 text-xl" />
-                                </div>
+                                </Button>
                             </DropdownTrigger>
-                            <DropdownMenu disabledKeys={!(canEdit || canRemove) ? ['edit', 'delete'] : []}>
-                                <DropdownItem key={'edit'}>Edit</DropdownItem>
-                                <DropdownItem key={'delete'} color="danger">Delete</DropdownItem>
+                            <DropdownMenu disabledKeys={!(canEdit || canRemove) ? ['edit', 'remove'] : []}
+                                onAction={(keys) => handleMenuActions(keys, delegation)}>
+                                <DropdownItem key={`edit`}>Edit</DropdownItem>
+                                <DropdownItem key={`remove`} color="danger">Remove</DropdownItem>
 
 
                             </DropdownMenu>
@@ -301,7 +328,7 @@ export default function DelegationTab() {
                                 ))}
                             </DropdownMenu>
                         </Dropdown> */}
-                        <Button size="sm" onPress={() => setTransferModal(!transferModal)}
+                        <Button size="sm" onPress={() => setTransferModal({ isOpen: !transferModal.isOpen })}
                             color="primary" endContent={<FaPlus />}>
                             Add New
                         </Button>
@@ -420,11 +447,43 @@ export default function DelegationTab() {
                 </TableBody>
             </Table>
 
-            {transferModal && <TransferModal
+            {transferModal.isOpen && <TransferModal
                 asset={'VESTS'}
-                isOpen={transferModal}
-                delegation delegatee={isSelf ? undefined : username}
-                onOpenChange={setTransferModal}
+                isOpen={transferModal.isOpen}
+                delegation
+                oldDelegation={transferModal.oldDelegation}
+                delegatee={transferModal.delegatee ? transferModal.delegatee :
+                    isSelf ? '' : username}
+                isRemove={transferModal.isRemove}
+                onOpenChange={(isOpen) => setTransferModal({ isOpen: isOpen, delegation: transferModal.delegation })}
+                onDelegationSuccess={(vests) => {
+
+                    if (vests === 0) {
+
+                        // change the status to expiring of removing item
+                        setAllRows(prev => prev.map(item => {
+                            if ((item.from === transferModal.delegation?.from &&
+                                item.to === transferModal.delegation?.to &&
+                                item.status === transferModal.delegation?.status))
+                                return { ...item, status: 'expiring' }
+                            else return item;
+                        }));
+
+
+
+                    } else
+
+                        // update the vevsts of the updating item
+                        setAllRows(prev => prev.map(item => {
+                            if (item.from === transferModal.delegation?.from &&
+                                item.to === transferModal.delegation?.to &&
+                                item.status === transferModal.delegation?.status)
+                                return { ...item, vests: vests }
+                            else return item;
+                        }));
+
+
+                }}
             />}
         </div>
     );

@@ -11,7 +11,7 @@ export const validateCommunity = (tag?: string): boolean => {
 }
 
 
-export function abbreviateNumber(number?: number, decimalPlaces = 1): string | number {
+export function abbreviateNumber(number?: number, decimalPlaces = 1, outputOnlyM: boolean = false): string | number {
     if (number === 0 || !number) return '0';
 
     const SI_SYMBOL = ['', 'K', 'M', 'B', 'T', 'Q'];
@@ -21,6 +21,7 @@ export function abbreviateNumber(number?: number, decimalPlaces = 1): string | n
 
     if (tier === 0) return number.toFixed(0);
 
+    if (tier >= 3 && outputOnlyM) return `${(number / 10 ** (tier * 3)).toFixed(0)}M`;
 
 
 

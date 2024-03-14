@@ -73,7 +73,7 @@ export function addToCurrent(username: string,
 
 function addToAccounts(username: string, encKey: string, keyType: Keys) {
     const accounts = (secureLocalStorage.getItem('accounts') ?? []) as User[];
-    const index = accounts.findIndex(account => account.username === username);
+    const index = accounts.findIndex(account => (account.username === username) && (account.type === keyType));
     const isMemo = keyType === 'MEMO';
 
     const updatedAccounts = index !== -1
