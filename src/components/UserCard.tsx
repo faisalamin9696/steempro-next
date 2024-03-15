@@ -12,6 +12,7 @@ import STooltip from "./STooltip";
 import LoadingCard from "./LoadingCard";
 import FollowButton from "./FollowButton";
 import { addProfileHandler } from "@/libs/redux/reducers/ProfileReducer";
+import Link from "next/link";
 
 
 interface Props {
@@ -94,7 +95,9 @@ export const UserCard = memo((props: Props) => {
                         <AvatarGroup isBordered size="sm">
                             {knownPeople?.map((people) => {
                                 return (<STooltip content={people}>
-                                    <Avatar src={getResizedAvatar(people)} />
+                                    <Link href={`/@${people}/posts`}>
+                                        <Avatar src={getResizedAvatar(people)} />
+                                    </Link>
                                 </STooltip>)
 
 

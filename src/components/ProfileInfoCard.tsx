@@ -17,6 +17,7 @@ import { getClubStatus, getVoteData } from '@/libs/steem/sds'
 import FollowButton from './FollowButton';
 import { useRouter } from 'next13-progressbar';
 import { addProfileHandler } from '@/libs/redux/reducers/ProfileReducer';
+import Link from 'next/link';
 
 
 const getClubString = (clubData?: Club) => {
@@ -51,6 +52,8 @@ export default memo(function ProfileInfoCard(props: Props) {
     const { data: session } = useSession();
     const URL = `/accounts_api/getAccountExt/${username}/${session?.user?.name || 'null'}`;
     let { data, isLoading } = useSWR(accountExt ? undefined : URL, fetchSds<AccountExt>);
+    const loginInfo = useAppSelector(state => state.loginReducer.value);
+    const isSelf = !!loginInfo.name && (loginInfo.name === (username || data?.name));
 
     if (accountExt)
         data = accountExt;
@@ -116,7 +119,7 @@ export default memo(function ProfileInfoCard(props: Props) {
                 </div>
 
 
-                {profileInfo && <FollowButton account={profileInfo} community={communityInfo} />}
+                {!isSelf && profileInfo && <FollowButton account={profileInfo} community={communityInfo} />}
                 {/* <Button
                     disabled={isLoading}
                     color={data?.observer_follows_author ? 'warning' : "secondary"}
@@ -165,7 +168,9 @@ export default memo(function ProfileInfoCard(props: Props) {
                     <AvatarGroup isBordered size="sm">
                         {knownPeople?.map((people) => {
                             return (<STooltip content={people}>
-                                <Avatar src={getResizedAvatar(people)} />
+                                <Link href={`/@${people}/posts`}>
+                                    <Avatar src={getResizedAvatar(people)} />
+                                </Link>
                             </STooltip>)
 
 

@@ -91,7 +91,7 @@ export default function NotificationsCard(props: Props) {
 
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
-    const isSelf = loginInfo.name === username;
+    const isSelf = !!loginInfo.name && (loginInfo.name === (username));
     const router = useRouter();
     const { authenticateUser, isAuthorized } = useLogin();
     const dispatch = useAppDispatch();

@@ -46,7 +46,7 @@ export default function BalanceTab({ data }: { data: AccountExt }) {
     let { username, category } = usePathnameClient();
 
     const loginInfo = useAppSelector(state => state.loginReducer.value);
-    const isSelf = loginInfo.name === username;
+    const isSelf = !!loginInfo.name && (loginInfo.name === (username));
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
     let [key, setKey] = useState<SteemTokens>();
 

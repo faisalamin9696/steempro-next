@@ -70,7 +70,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
 
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
-    const isSelf = loginInfo.name === username;
+    const isSelf = !!loginInfo.name && (loginInfo.name === (username));
     const { authenticateUser, isAuthorized } = useLogin();
 
     const [transferModal, setTransferModal] = useState<

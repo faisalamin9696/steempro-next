@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { getPostThumbnail, getResizedAvatar } from '@/libs/utils/image';
 import TimeAgoWrapper from '../../wrapper/TimeAgoWrapper';
 import { Card, CardBody, User } from '@nextui-org/react';
-import { useSession } from 'next-auth/react';
 import Reputation from '@/components/Reputation';
 import dynamic from 'next/dynamic';
 import CommentFooter from '../component/CommentFooter';
@@ -27,10 +26,9 @@ export default function CommentGridLayout(props: CommentProps) {
     const { comment, isReply } = props;
     const commentInfo: Feed | Post = useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment;
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
-
+    const loginInfo = useAppSelector(state => state.loginReducer.value);
     const thumbnail = getPostThumbnail(commentInfo.json_images);
-    const { data: session } = useSession();
-    const isSelf = commentInfo.author === session?.user?.name;
+    const isSelf = !!loginInfo.name && (loginInfo.name === (commentInfo.author));
     // const json_metadata = JSON.parse(comment?.json_metadata ?? '{}') as { tags?: string[], image?: string[], app?: string, format?: string }
     const targetUrl = `/${comment.category}/@${comment.author}/${comment.permlink}`;
 

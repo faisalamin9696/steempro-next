@@ -4,7 +4,7 @@ import { Tab, Tabs } from '@nextui-org/react'
 import React, { useEffect } from 'react'
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import ProfileBlogsTab from '../(tabs)/blogs/page';
-import ProfileWalletTab from '../(tabs)/wallet/page';
+import ProfileWalletTab from '../(tabs)/wallet/ProfileWalletTab';
 import FeedPatternSwitch from '@/components/FeedPatternSwitch';
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import clsx from 'clsx';
@@ -22,7 +22,7 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const profileInfo = useAppSelector(state => state.profileReducer.value)[data?.name] ?? data;
 
-    const isSelf = loginInfo.name === username;
+    const isSelf = !!loginInfo.name && (loginInfo.name === (username));
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -38,7 +38,7 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
         { title: 'Blogs', key: 'blogs', children: <ProfileBlogsTab /> },
         { title: 'Posts', key: 'posts', children: <ProfilePostsMainTab /> },
         { title: 'Communities', key: 'communities', children: <ProfileCommunitiesTab /> },
-        { title: 'Wallet', key: 'wallet', children: <ProfileWalletTab data={isSelf? loginInfo: profileInfo} /> },
+        { title: 'Wallet', key: 'wallet', children: <ProfileWalletTab data={isSelf ? loginInfo : profileInfo} /> },
     ];
 
     if (isSelf)
@@ -75,7 +75,7 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
                 </Tab>)}
             </Tabs>
 
-            {category !== 'wallet' &&
+            {!(['wallet', 'settings'].includes(category)) &&
                 <div className='absolute  top-0 right-0 max-sm:hidden'>
                     <FeedPatternSwitch />
                 </div>}

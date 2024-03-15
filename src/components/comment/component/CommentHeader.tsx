@@ -51,7 +51,8 @@ export default memo(function CommentHeader(props: Props) {
     const dispatch = useAppDispatch();
     const { data: session } = useSession();
     const username = session?.user?.name;
-    const isSelf = comment.author === username;
+    const isSelf = !!loginInfo.name && (loginInfo.name === ( comment.author));
+
     const canMute = username && Role.atLeast(comment.observer_role, 'mod');
     const canDelete = !comment.children && isSelf && allowDelete(comment);
     const canEdit = isSelf;

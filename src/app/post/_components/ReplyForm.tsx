@@ -62,14 +62,10 @@ export default memo(function ReplyForm(props: Props) {
         muteNote: ''
     });
 
-    const { data: session } = useSession();
-
-    const username = session?.user?.name;
-
-    const isSelf = commentInfo.author === username;
+    const isSelf = !!loginInfo.name && (loginInfo.name === (commentInfo.author));
 
 
-    const canMute = username && Role.atLeast(commentInfo.observer_role, 'mod');
+    const canMute = loginInfo.name && Role.atLeast(commentInfo.observer_role, 'mod');
     const canDelete = !commentInfo.children && isSelf && allowDelete(comment);
     const canEdit = isSelf;
     const allowReply = Role.canComment(commentInfo.community, commentInfo.observer_role);
