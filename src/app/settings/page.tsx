@@ -40,7 +40,7 @@ export default function SettingsPage() {
     const [website, setWebsite] = useState(userWebsite ?? '');
     const [location, setLocation] = useState(userLocation ?? '');
     const settings = getSettings();
-    const isSelf = loginInfo.login && (!username || (loginInfo.name === username));
+    const isSelf = !!loginInfo.name && (!username || (loginInfo.name === username));
 
     const [rpc, setRpc] = useState(settings.rpc);
     const [nsfw, setNsfw] = useState(settings.nsfw);

@@ -65,7 +65,7 @@ export const AuthProvider = (props: Props) => {
     useEffect(() => {
         if (unreadCount) {
             data = { ...data, unread_count: unreadCount ?? 0 }
-            dispatch(saveLoginHandler(data));
+            dispatch(saveLoginHandler({data}));
         }
     }, [unreadCount])
 
