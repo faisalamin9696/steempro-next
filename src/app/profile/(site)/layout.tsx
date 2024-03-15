@@ -6,6 +6,7 @@ import usePathnameServer from "@/libs/utils/usePathnameServer";
 import { getServerSession } from "next-auth/next";
 import AccountHeader from "@/components/AccountHeader";
 import ProfileEnd from "./@end/page";
+import ProfilePage from "./page";
 
 
 export default async function Layout({
@@ -32,7 +33,7 @@ export default async function Layout({
 
                 endContent={<ProfileEnd data={data} />}
             >
-                {children}
+                <ProfilePage data={data} />
             </MainWrapper>
         </main>
     );

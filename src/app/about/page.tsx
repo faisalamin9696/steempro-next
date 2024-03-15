@@ -5,15 +5,12 @@ import { AboutItem } from './_components/AboutItem';
 import './style.scss'
 import MainWrapper from '@/components/wrapper/MainWrapper';
 import { Card } from '@nextui-org/react';
-import ProfileSettingsTab from '../profile/(tabs)/settings/page';
 
 export default function AboutPage() {
 
     return (
         <MainWrapper >
 
-            <ProfileSettingsTab />
-            
             <div className='flex flex-col gap-6'>
 
                 <Card className="dark:bg-white/20 items-center p-6 sm:p-10 rounded-lg flex flex-col gap-2">
@@ -27,7 +24,7 @@ export default function AboutPage() {
                 <div className="flex flex-row max-sm:flex-col gap-6 justify-center p-4">
 
                     <AboutItem username={'faisalamin'}
-                        firstHeading={'Founder'}
+                        firstHeading={'Founder & Developer'}
                         secondHeading={'steempro.official@gmail.com'}
                     />
 

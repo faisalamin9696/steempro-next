@@ -3,18 +3,23 @@ import { AppStrings } from '../constants/AppStrings';
 import { Client, cryptoUtils, Operation, PrivateKey } from '@hiveio/dhive';
 import { PrivKey } from '../utils/user';
 import { toast } from 'sonner';
+import { CurrentSetting } from '../constants/AppConstants';
 global.Buffer = global.Buffer || require('buffer').Buffer;
 
 const DEFAULT_SERVER = AppStrings.rpc_servers[0];
 const IMAGE_API = AppStrings.image_hosting[0];
 
-export let client = new Client(DEFAULT_SERVER, {
+export let client = new Client(CurrentSetting.rpc, {
     timeout: AppStrings.chain_timeout,
     addressPrefix: AppStrings.chain_prefix,
     chainId: AppStrings.chain_id,
     failoverThreshold: 10,
     consoleOnFailover: true,
 });
+
+export function updateClient() {
+    client.address = CurrentSetting.rpc;
+}
 
 // get public wif from private wif
 export const wifToPublic = (privWif: string) => {
@@ -1065,3 +1070,5 @@ export const markasRead = async (
         ),
     );
 };
+
+

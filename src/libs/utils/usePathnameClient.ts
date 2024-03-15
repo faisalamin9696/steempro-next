@@ -39,7 +39,6 @@ const usePathnameClient = (): Params => {
     // Split the pathname into parts
     const splitted_path = pathname.split('/');
 
-
     // remove the first empty element
     splitted_path.shift();
     const [first_param, second_param, third_param] = splitted_path;

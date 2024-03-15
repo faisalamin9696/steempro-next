@@ -86,7 +86,7 @@ export default function page() {
     return filteredDelegations;
   }, [allRows, filterValue]);
 
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
+  const pages = Math.ceil(filteredItems?.length / rowsPerPage);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -266,7 +266,7 @@ export default function page() {
     statusFilter,
     visibleColumns,
     onRowsPerPageChange,
-    allRows.length,
+    allRows?.length,
     onSearchChange,
     hasSearchFilter,
   ]);

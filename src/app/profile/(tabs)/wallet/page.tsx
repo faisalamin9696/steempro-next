@@ -6,17 +6,17 @@ import DelegationTab from './(tabs)/DelegationTab';
 
 
 
-export default function ProfileWalletTab() {
+export default function ProfileWalletTab({ data }: { data: AccountExt }) {
 
 
   return (
     <Tabs aria-label="Options" variant='underlined' size='sm'>
       <Tab key="balance" title="Balance">
-        <BalanceTab />
+        <BalanceTab data={data} />
       </Tab>
 
       <Tab key="delegation" title="Delegation">
-        <DelegationTab />
+        <DelegationTab data={data} />
       </Tab>
 
     </Tabs>

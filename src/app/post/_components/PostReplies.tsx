@@ -139,7 +139,8 @@ export default memo(function PostReplies(props: Props) {
             replies: [],
             votes: [],
             downvote_count: 0,
-            cashout_time: moment().add(7, 'days').unix()
+            cashout_time: moment().add(7, 'days').unix(),
+            is_new: 1
         }
 
         queryClient.setQueryData(queryKey, { ...commentInfo, children: commentInfo?.children + 1 })

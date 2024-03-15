@@ -43,7 +43,7 @@ export function Providers(props: Props) {
 
     useEffect(() => {
 
-       
+
         try {
             if (!auth.currentUser)
                 signInAnonymously(auth);
@@ -62,6 +62,8 @@ export function Providers(props: Props) {
             queries: {
                 retry: 3,
                 refetchOnWindowFocus: false,
+                retryDelay: 5000,
+                refetchOnReconnect: true,
                 gcTime: 1000 * 60 * 60 * 24 * 4, // 4 days
 
             },
@@ -97,11 +99,12 @@ export function Providers(props: Props) {
                                     fetcher: fetchSds,
                                     revalidateOnFocus: false,
                                     errorRetryCount: 3,
-                                    onError: (error, key) => {
-                                        if (error.status !== 403 && error.status !== 404) {
-                                            toast.error(error);
-                                        }
-                                    },
+                                    shouldRetryOnError: true,
+                                    // onError: (error, key) => {
+                                    //     if (error.status !== 403 && error.status !== 404) {
+                                    //         toast.error(error);
+                                    //     }
+                                    // },
                                     dedupingInterval: 10000,
                                     loadingTimeout: 20000,
                                     // revalidateOnMount: false

@@ -97,12 +97,16 @@ const TransferModal = (props: Props): JSX.Element => {
                 toast.error(error.message);
                 return;
             }
-            if (variables.options.unit === 'SBD') {
-                dispatch(saveLoginHandler({ ...loginInfo, balance_sbd: loginInfo.balance_sbd - Number(variables.options.amount) }))
-            } else {
-                dispatch(saveLoginHandler({ ...loginInfo, balance_steem: loginInfo.balance_steem - Number(variables.options.amount) }))
 
-            }
+            // check if self transfer
+            if (variables.options.from !== variables.options.to)
+                if (variables.options.unit === 'SBD') {
+                    dispatch(saveLoginHandler({ ...loginInfo, balance_sbd: loginInfo.balance_sbd - Number(variables.options.amount) }))
+                } else {
+                    dispatch(saveLoginHandler({ ...loginInfo, balance_steem: loginInfo.balance_steem - Number(variables.options.amount) }))
+
+                }
+
             props.onOpenChange(isOpen);
             toast.success(`${amount} ${asset} transfered to ${to}`)
 
@@ -118,10 +122,21 @@ const TransferModal = (props: Props): JSX.Element => {
                 toast.error(error.message);
                 return;
             }
+
+            // substraction in balance and addition in savings
             if (variables.options.unit === 'SBD') {
-                dispatch(saveLoginHandler({ ...loginInfo, savings_sbd: loginInfo.savings_sbd - variables.options.amount }))
+                dispatch(saveLoginHandler({
+                    ...loginInfo,
+                    savings_sbd: loginInfo.savings_sbd + variables.options.amount,
+                    balance_sbd: loginInfo.balance_sbd - variables.options.amount
+                }));
             } else {
-                dispatch(saveLoginHandler({ ...loginInfo, savings_steem: loginInfo.savings_steem - variables.options.amount }))
+                dispatch(saveLoginHandler({
+                    ...loginInfo,
+                    savings_steem: loginInfo.savings_steem + variables.options.amount,
+                    balance_steem: loginInfo.balance_steem - variables.options.amount
+
+                }));
 
             }
             props.onOpenChange(isOpen);
@@ -202,6 +217,17 @@ const TransferModal = (props: Props): JSX.Element => {
             toast.info('Use only 3 digits of precison');
             return
 
+        }
+
+        if (delegation && Number(amount) < 1) {
+            toast.info(' The minimum required delegation amount is 1.000 SP');
+            return
+
+        }
+
+        if (delegation && from === to) {
+            toast.info(' You cannot delegate SP to yourself')
+            return
         }
 
         if (Number(amount) > availableBalance) {

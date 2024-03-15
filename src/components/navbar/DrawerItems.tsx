@@ -98,14 +98,14 @@ export default function DrawerItems(props: Props) {
                     Switch Account
                 </Button>}
 
-                {isLogin() && < Button variant='light'
-                    as={Link} href={`/@${loginInfo.name}/settings`}
+                < Button variant='light'
+                    as={Link} href={`/settings`}
                     className='w-full justify-start text-inherit '
                     onClick={onItemClick}
                     startContent={<IoMdSettings className='text-xl' />}>
                     Settings
                 </Button>
-                }
+
                 <Button variant='light'
                     className='w-full justify-start text-inherit '
                     as={Link} href={`/witnesses`}

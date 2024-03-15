@@ -6,8 +6,9 @@ import './style.scss';
 import { MdOpenInNew } from "react-icons/md";
 import { proxifyImageUrl } from '@/libs/utils/ProxifyUrl';
 import { getProxyImageURL } from '@/libs/utils/image';
+import NsfwOverlay from '../NsfwOverlay';
 
-export function ParsedBody({ body }: { body: string }): JSX.Element {
+export function ParsedBody({ body, isNsfw }: { body: string, isNsfw?: boolean }): JSX.Element {
 
 
     function handleOpenImage(url?: string) {
@@ -19,6 +20,7 @@ export function ParsedBody({ body }: { body: string }): JSX.Element {
             if (domNode?.attribs && domNode?.name === 'img') {
                 return <div className='img-container relative'>
                     <CommentCover
+                        isNsfw={isNsfw}
                         src={domNode?.attribs?.src}
                         alt={domNode?.attribs?.alt}
                         noCard />
@@ -32,6 +34,8 @@ export function ParsedBody({ body }: { body: string }): JSX.Element {
                         className='open-button absolute top-0 right-0'>
                         <MdOpenInNew className='text-xl' />
                     </Button>
+
+                    {/* <NsfwOverlay /> */}
                 </div>
 
             }

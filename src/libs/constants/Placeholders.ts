@@ -63,7 +63,8 @@ export const empty_comment = (author: string, permlink: string): Post => {
     replies: [],
     json_images: '',
     is_author_muted: 0,
-    status: 'idle'
+    status: 'idle',
+    is_new: 1
   };
 };
 
@@ -204,9 +205,9 @@ export const empty_community = (account: string, title: string): Community => {
 export const empty_settings = (): Setting => {
   return {
     lang: { code: 'en', title: 'English' },
-    nsfw: 'Always hide',
+    nsfw: 'Always warn',
     feedStyle: 'grid',
-    rpc: AppStrings.rpc_servers[0],
+    rpc: 'https://api.steemit.com',
     theme: 'system'
   };
 };

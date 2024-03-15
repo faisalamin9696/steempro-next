@@ -18,11 +18,15 @@ import clsx from 'clsx';
 import { abbreviateNumber, validateCommunity } from '@/libs/utils/helper';
 import { useAppSelector } from '@/libs/constants/AppFunctions';
 import Link from 'next/link';
+import { hasNsfwTag } from '@/libs/utils/StateFunctions';
+import NsfwOverlay from '@/components/NsfwOverlay';
+import { getSettings } from '@/libs/utils/user';
 
 
 export default function CommentGridLayout(props: CommentProps) {
     const { comment, isReply } = props;
     const commentInfo: Feed | Post = useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment;
+    const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
 
     const thumbnail = getPostThumbnail(commentInfo.json_images);
     const { data: session } = useSession();
@@ -32,6 +36,7 @@ export default function CommentGridLayout(props: CommentProps) {
 
     const imageWidth = 200;
     const imageHeight = 176;
+    const isNsfw = hasNsfwTag(comment) && (settings.nsfw !== 'Always show');
 
     return (
         <Card className={`grid-footer w-full card card-compact h-full bg-white/60
@@ -41,34 +46,34 @@ export default function CommentGridLayout(props: CommentProps) {
                 <>
                     <div className={clsx(commentInfo.is_muted && ' opacity-80', "flex-shrink-0 relative ")}>
                         {thumbnail ?
-                            <Image
-                                src={thumbnail}
-                                width={imageWidth}
-                                height={imageHeight}
-                                alt={''}
-                                sizes="(max-width: 768px) 100vw,
+                            <div className='relative'>
+                                <Image
+                                    src={thumbnail}
+                                    width={imageWidth}
+                                    height={imageHeight}
+                                    className={isNsfw ? 'blur-[2px]' : ""}
+                                    alt={''}
+                                    sizes="(max-width: 768px) 100vw,
                         (max-width: 1200px) 50vw,
                         33vw"
-                                style={{
-                                    width: '100%',
-                                    objectFit: 'cover',
-                                    minHeight: imageHeight,
-                                    maxHeight: imageHeight,
-                                }}
+                                    style={{
+                                        width: '100%',
+                                        objectFit: 'cover',
+                                        minHeight: imageHeight,
+                                        maxHeight: imageHeight,
+                                    }}
 
-                            />
+                                />
+
+                                {isNsfw && <NsfwOverlay />}
+                            </div>
                             :
-                            <div className={`h-44 
-                    bg-foreground/30  w-full`} />
+                            <div className={`h-44   bg-foreground/30  w-full`} />
                         }
 
-                        {/* <div
-                    className="hover:bg-transparent transition duration-300 absolute bottom-0 top-0 right-0 left-0 bg-gray-900 opacity-25">
-                </div> */}
 
-
-                        <STag className='text-tiny rounded-full border bg-background/90 backdrop-blur-lg py-1 px-2
-                 absolute m-2 top-0 right-0'
+                        <STag className={`text-tiny rounded-full border bg-background/90 backdrop-blur-lg 
+                        py-1 px-2  absolute m-2 top-0 right-0`}
                             content={commentInfo.community ||
                                 (validateCommunity(commentInfo.category) ? commentInfo.category :
                                     `#${commentInfo.category}`)} tag={commentInfo.category} />
@@ -116,61 +121,6 @@ export default function CommentGridLayout(props: CommentProps) {
                         href: `/@${commentInfo.author}`
                     } as any}
                 />
-
-                {/* <Popover showArrow placement="bottom">
-<PopoverTrigger>
-    <User
-        classNames={{
-            description: 'mt-1 text-default-900/60 dark:text-gray-200 text-sm',
-            name: 'text-default-800'
-        }}
-        name={<div className='flex items-center space-x-2'>
-            {isSelf ? <p>{comment.author}</p> :
-                <div>{comment.author}</div>
-            }
-            <Reputation {...props} reputation={comment.author_reputation} />
-            {comment.author_role && comment.author_title ?
-                <div className='flex space-x-2 items-center'>
-                    <p className='flex-none'>
-                        {comment.author_role}
-                    </p>
-                </div> : null}
-
-        </div>}
-        description={<div className='flex flex-col'>
-
-
-
-            {comment.author_title && <div className='flex space-x-1 text-tiny rounded-full 
-            border hover:bg-transparent border-default-900/50 px-1  '>
-
-                {comment.author_title}
-
-                {json_metadata?.app && <STooltip content={`${'Posted using'} ${json_metadata?.app}`}>
-                    <p>● {json_metadata?.app?.split('/')?.[0]}</p>
-                </STooltip>}
-            </div>}
-
-        </div>}
-        avatarProps={{
-            className: 'cursor-pointer',
-            src: getResizedAvatar(comment.author),
-            as: 'a',
-            onClick: () => {
-                router.push(authorLink);
-            },
-
-
-        }}
-    />
-</PopoverTrigger>
-<PopoverContent className="p-1">
-    <DynamicUserCard username={comment.author} />
-</PopoverContent>
-</Popover> */}
-                {/* <Button size='sm' variant='light' radius='full' isIconOnly>
-<FaEllipsisVertical className='text-lg' />
-</Button> */}
 
             </div>
             <div className="px-4 flex flex-row items-center justify-between">

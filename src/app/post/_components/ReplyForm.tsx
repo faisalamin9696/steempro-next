@@ -47,7 +47,6 @@ export default memo(function ReplyForm(props: Props) {
     const [showReply, setShowReply] = useState(false);
     const [markdown, setMarkdown] = useState('');
     const rpm = readingTime(markdown);
-    const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const [isPosting, setPosting] = useState(false);
     const { authenticateUser, isAuthorized } = useLogin();
     const loginInfo = useAppSelector(state => state.loginReducer.value);

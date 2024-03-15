@@ -29,6 +29,7 @@ import { BiDotsVerticalRounded } from "react-icons/bi";
 import TransferModal from "@/components/TransferModal";
 import { useSession } from "next-auth/react";
 import LoadingCard from "@/components/LoadingCard";
+import { useLogin } from "@/components/useLogin";
 
 const statusColorMap = {
     incoming: "success",
@@ -55,7 +56,7 @@ export function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export default function DelegationTab() {
+export default function DelegationTab({ data }: { data: AccountExt }) {
     const { username } = usePathnameClient();
     const URL_OUTGOING = `/delegations_api/getOutgoingDelegations/${username}`;
     const URL_INCOMING = `/delegations_api/getIncomingDelegations/${username}`;
@@ -67,12 +68,10 @@ export default function DelegationTab() {
 
     const isPending = isLoading1 || isLoading2 || isLoading3;
 
-
-
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
     const isSelf = loginInfo.name === username;
-
+    const { authenticateUser, isAuthorized } = useLogin();
 
     const [transferModal, setTransferModal] = useState<
         {
@@ -126,7 +125,7 @@ export default function DelegationTab() {
                 delegation.to.toLowerCase().includes(filterValue.toLowerCase()),
             );
         }
-        if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
+        if (statusFilter !== "all" && Array.from(statusFilter)?.length !== statusOptions.length) {
             filteredDelegations = filteredDelegations.filter((delegation) =>
                 Array.from(statusFilter).includes(delegation.status),
             );
@@ -135,7 +134,7 @@ export default function DelegationTab() {
         return filteredDelegations;
     }, [allRows, filterValue, statusFilter]);
 
-    const pages = Math.ceil(filteredItems.length / rowsPerPage);
+    const pages = Math.ceil(filteredItems?.length / rowsPerPage);
 
     const items = React.useMemo(() => {
         const start = (page - 1) * rowsPerPage;
@@ -328,14 +327,19 @@ export default function DelegationTab() {
                                 ))}
                             </DropdownMenu>
                         </Dropdown> */}
-                        <Button size="sm" onPress={() => setTransferModal({ isOpen: !transferModal.isOpen })}
+                        <Button size="sm" onPress={() => {
+                            authenticateUser();
+                            if (!isAuthorized())
+                                return
+                            setTransferModal({ isOpen: !transferModal.isOpen })
+                        }}
                             color="primary" endContent={<FaPlus />}>
                             Add New
                         </Button>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-default-400 text-small">Total {allRows.length} delegations</span>
+                    <span className="text-default-400 text-small">Total {allRows?.length} delegations</span>
                     <label className="flex items-center text-default-400 text-small">
                         Rows per page:
                         <select

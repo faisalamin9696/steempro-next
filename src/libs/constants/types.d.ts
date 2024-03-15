@@ -372,7 +372,7 @@ type Setting = {
   // languageTo: { title: string; code: string };
   feedStyle: FeedStyle;
   lang: Language,
-  nsfw: NSFW
+  nsfw: NSFW = 'Always warn'
   // pinEnabled: boolean;
   // fingerprintEnabled: boolean;
 };

@@ -9,14 +9,16 @@ import CommentFooter from "../component/CommentFooter";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import clsx from "clsx";
 import Link from "next/link";
+import { hasNsfwTag } from "@/libs/utils/StateFunctions";
+import { getSettings } from "@/libs/utils/user";
 
 export default function CommentBlogLayout(props: CommentProps) {
     const { comment, isReply } = props;
     const commentInfo = useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment;
-
     const thumbnail = getPostThumbnail(commentInfo.json_images);
-
     const targetUrl = `/${comment.category}/@${comment.author}/${comment.permlink}`;
+    const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
+    const isNsfw = hasNsfwTag(comment) && (settings.nsfw !== 'Always show');
 
     return <div className='w-full card card-compact flex-col gap-4 
     bg-white/60 dark:bg-white/10'>
@@ -33,7 +35,7 @@ export default function CommentBlogLayout(props: CommentProps) {
 
             <h2 className="card-content font-bold text-lg max-sm:text-medium text-start ">{commentInfo.title}</h2>
 
-            {isReply ? null : <CommentCover thumbnail src={thumbnail} />}
+            {isReply ? null : <CommentCover isNsfw={isNsfw} thumbnail src={thumbnail} />}
 
 
             <p className='card-content line-clamp-2 overflow-hidden text-start w-full h-full max-sm:text-sm'>

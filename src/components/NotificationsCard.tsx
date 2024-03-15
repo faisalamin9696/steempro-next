@@ -337,7 +337,7 @@ export default function NotificationsCard(props: Props) {
         filterValue,
         statusFilter,
         visibleColumns,
-        allRows.length,
+        allRows?.length,
         onSearchChange,
         hasSearchFilter,
         markMutation.isPending,
@@ -395,7 +395,7 @@ export default function NotificationsCard(props: Props) {
                 topContentPlacement="outside"
                 onSortChange={setSortDescriptor}
                 bottomContent={
-                    allRows.length > 0 && !isLoading ? (
+                    allRows?.length > 0 && !isLoading ? (
                         <div className="flex w-full justify-center">
                             <Button size='sm' isDisabled={isLoading || loadMoreMutation.isPending}
                                 isLoading={loadMoreMutation.isPending}

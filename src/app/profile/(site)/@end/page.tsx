@@ -2,7 +2,6 @@
 
 import React, { } from 'react'
 import usePathnameClient from '@/libs/utils/usePathnameClient'
-import { useSession } from 'next-auth/react'
 import ProfileInfoCard from '@/components/ProfileInfoCard'
 
 
@@ -25,7 +24,7 @@ export default function ProfileEnd({ data }: { data?: AccountExt }) {
 
 
   return (
-    <ProfileInfoCard data={data} username={username} />
+    <ProfileInfoCard key={data?.name || username} data={data} username={username} />
     // <div className="flex flex-col pb-60 ">
 
     //   <div className='sticky top-0 z-10 backdrop-blur-lg'>

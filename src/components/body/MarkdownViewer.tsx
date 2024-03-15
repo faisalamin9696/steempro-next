@@ -36,6 +36,7 @@ interface Props {
     hideImages?: boolean,
     breaks?: boolean,
     isProxifyImages?: boolean
+    isNsfw?: boolean;
 
 };
 export default memo(function MarkdownViewer(props: Props) {
@@ -44,7 +45,9 @@ export default memo(function MarkdownViewer(props: Props) {
         breaks = true,
         className,
         hideImages = false,
-        isProxifyImages, noImage, highQualityPost
+        isProxifyImages, noImage, highQualityPost,
+        isNsfw = false,
+
     } = props;
     let { text } = props;
 
@@ -58,7 +61,7 @@ export default memo(function MarkdownViewer(props: Props) {
     let html = false;
     // See also ReplyEditor isHtmlTest
     const m = text.match(/^<html>([\S\s]*)<\/html>$/);
-    if (m && m.length === 2) {
+    if (m && m?.length === 2) {
         html = true;
         text = m[1];
     } else {
@@ -132,7 +135,7 @@ export default memo(function MarkdownViewer(props: Props) {
         const match = section.match(
             /^([A-Za-z0-9\?\=\_\-\/\.]+) (youtube|vimeo|twitch|dtube|threespeak)\s?(\d+)? ~~~/
         );
-        if (match && match.length >= 3) {
+        if (match && match?.length >= 3) {
 
             const id = match[1];
             const type = match[2];
@@ -227,7 +230,7 @@ export default memo(function MarkdownViewer(props: Props) {
         const hash = CryptoJS.MD5(`index-${idx++}`).toString();
 
         sections.push(
-            <ParsedBody key={hash} body={section} />
+            <ParsedBody key={hash} body={section} isNsfw={isNsfw} />
         );
     }
 
@@ -237,7 +240,7 @@ export default memo(function MarkdownViewer(props: Props) {
         {noImageActive &&
             allowNoImage && (
                 <div
-                    // onClick={this.onAllowNoImage}
+                    onClick={() => setAllowNoImage(false)}
                     className="MarkdownViewer__negative_group"
                 >
                     {'Hidden due to low rating'}

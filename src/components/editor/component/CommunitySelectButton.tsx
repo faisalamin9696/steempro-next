@@ -21,11 +21,13 @@ interface Props {
 export default memo(function CommunitySelectButton(props: Props) {
     const { community, onSelectCommunity, onlyCommunity } = props;
     const loginInfo = useAppSelector(state => state.loginReducer.value);
+    const URL = `/communities_api/getCommunitiesBySubscriber/${loginInfo.name}`;
 
-    const { data: session } = useSession();
-    const URL = `/communities_api/getCommunitiesBySubscriber/${session?.user?.name}`;
     const { data, isLoading } = useSWR(onlyCommunity ? undefined :
-        session?.user?.name ? URL : undefined, fetchSds<Community[]>)
+        loginInfo.name ? URL : undefined, fetchSds<Community[]>, {
+            errorRetryCount: 3, errorRetryInterval: 5000,
+        shouldRetryOnError: true
+    })
     const dispatch = useAppDispatch();
 
     const commmunities = onlyCommunity && community ? [{ ...community }] :

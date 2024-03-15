@@ -19,6 +19,7 @@ import clsx from 'clsx';
 import { useRouter } from 'next13-progressbar';
 import { ViewCountTime } from '@/libs/constants/AppConstants';
 import Link from 'next/link';
+import { hasNsfwTag } from '@/libs/utils/StateFunctions';
 const DynamicPostReplies = dynamic(() => import('../_components/PostReplies'))
 
 
@@ -34,10 +35,11 @@ export default function PostPage(props: Props) {
     const dispatch = useAppDispatch();
     // const queryKey = [`post-${author}-${permlink}`];
     const commentInfo: Post = useAppSelector(state => state.commentReducer.values)[`${data.author}/${data.permlink}`] ?? data;
+    const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const [editMode, setEditMode] = useState(false);
     const toggleEditMode = () => setEditMode(!editMode)
-
     const router = useRouter();
+    const isNsfw = hasNsfwTag(commentInfo) && (settings?.nsfw !== 'Always show');
 
     useEffect(() => {
         router.refresh();
@@ -115,7 +117,10 @@ export default function PostPage(props: Props) {
                         </div>
                         <div className={clsx(commentInfo.is_muted && ' opacity-80', 'flex flex-col items-center')}>
 
-                            <MarkdownViewer text={commentInfo.body} />
+                            <MarkdownViewer
+                                isNsfw={isNsfw}
+                                noImage={!!commentInfo.is_muted}
+                                text={commentInfo.body} />
                         </div>
 
                         <CardFooter className='w-full p-0'>

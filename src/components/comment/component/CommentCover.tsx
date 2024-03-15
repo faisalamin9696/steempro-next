@@ -1,3 +1,4 @@
+import NsfwOverlay from "@/components/NsfwOverlay";
 import { Card } from "@nextui-org/react";
 import clsx from "clsx";
 import Image from "next/image";
@@ -11,29 +12,29 @@ interface Props {
     className?: string;
     noCard?: boolean;
     alt?: string;
+    isNsfw?: boolean;
 }
 export default memo(function CommentCover(props: Props) {
-    let { sm, src, thumbnail, className, noCard, alt } = props;
+    let { sm, src, thumbnail, className, noCard, alt, isNsfw } = props;
     const [isFetching, setIsFetching] = useState(true);
+    const [show, setShow] = useState(!isNsfw);
 
     function onLoadCompleted() {
         if (isFetching)
             setIsFetching(false);
     }
 
-    return (
-        src ?
-            noCard ? <Image
+
+    return (src ?
+        noCard ? <div className="relative">
+            <Image
 
                 className={clsx(isFetching && 'bg-background/50',
-                    className)}
+                    className, show ? '' : 'blur-lg')}
                 alt={alt || "image"}
                 src={src}
                 height={640}
                 width={640}
-                // sizes={`(max-width: 768px) 100vw,
-                // (max-width: 1200px) 50vw,
-                // 33vw`}
                 onLoad={onLoadCompleted}
                 onError={onLoadCompleted}
                 style={{
@@ -41,19 +42,23 @@ export default memo(function CommentCover(props: Props) {
                     height: 'auto',
                     objectFit: 'contain',
                 }}
-            /> :
+            />
+            {!show && <NsfwOverlay onOpen={setShow} />}
 
-                <Card
-                    className={clsx(isFetching ? 'bg-background/50' : 'bg-transparent',
-                        className)}>
-                    {thumbnail ?
+        </div> :
+
+            <Card
+                className={clsx(isFetching ? 'bg-background/50' : 'bg-transparent',
+                    className)}>
+                {thumbnail ?
+                    <div className="relative">
                         <Image
                             alt={alt || "image"}
                             src={src}
                             height={640}
                             width={640}
                             quality={60}
-
+                            className={show ? '' : 'blur-md'}
                             onLoad={onLoadCompleted}
                             onError={onLoadCompleted}
                             style={{
@@ -63,7 +68,10 @@ export default memo(function CommentCover(props: Props) {
 
                             }}
                         />
-                        :
+                        {isNsfw && <NsfwOverlay onOpen={setShow} />}
+                    </div>
+                    :
+                    <div className="relative">
                         <Image
                             src={src}
                             width={sm ? 130 : 200}
@@ -71,6 +79,7 @@ export default memo(function CommentCover(props: Props) {
                             alt={alt || "image"}
                             onLoad={onLoadCompleted}
                             onError={onLoadCompleted}
+                            className={show ? '' : 'blur-md'}
                             //         sizes={`(max-width: 768px) 100vw,
                             //    (max-width: 1200px) 50vw,
                             //    33vw`}
@@ -80,12 +89,14 @@ export default memo(function CommentCover(props: Props) {
                                 objectFit: sm ? 'cover' : undefined,
                             }}
                         />
+                        {!show && <NsfwOverlay onOpen={setShow} />}
+                    </div>
 
-                    }
+                }
 
 
 
-                </Card>
-            : null
+            </Card>
+        : null
     )
 })

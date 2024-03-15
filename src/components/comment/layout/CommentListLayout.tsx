@@ -9,14 +9,17 @@ import { getPostThumbnail } from "@/libs/utils/image";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import clsx from "clsx";
 import Link from "next/link";
+import { hasNsfwTag } from "@/libs/utils/StateFunctions";
+import { getSettings } from "@/libs/utils/user";
 
 
 export default function CommentListLayout(props: CommentProps) {
     const { comment, isReply } = props;
     const commentInfo = useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment;
-
+    const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const thumbnail = getPostThumbnail(commentInfo.json_images);
     const targetUrl = `/${comment.category}/@${comment.author}/${comment.permlink}`;
+    const isNsfw = hasNsfwTag(comment) && (settings?.nsfw !== 'Always show');
 
     return <div
         className={`w-full card card-compact shadow-md
@@ -41,7 +44,7 @@ export default function CommentListLayout(props: CommentProps) {
 
                 </div>
                 <div>
-                    {isReply ? null : <CommentCover sm src={thumbnail} />}
+                    {isReply ? null : <CommentCover isNsfw={(isNsfw)} sm src={thumbnail} />}
                 </div>
 
 

@@ -38,7 +38,6 @@ export default function AppNavbar() {
 
     const { authenticateUser, isLogin } = useLogin();
     const dispatch = useAppDispatch();
-    const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const { data: session, status } = useSession();
     const [isPopOpen, setIsPopOpen] = React.useState(false);

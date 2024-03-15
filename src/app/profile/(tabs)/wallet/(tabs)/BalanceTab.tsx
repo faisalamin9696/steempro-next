@@ -1,13 +1,10 @@
 import { TokenCard } from '@/components/TokenCard';
 import TransferModal from '@/components/TransferModal';
-import { useAppSelector, useAppDispatch, fetchSds } from '@/libs/constants/AppFunctions';
-import { addProfileHandler } from '@/libs/redux/reducers/ProfileReducer';
+import { useAppSelector } from '@/libs/constants/AppFunctions';
 import { vestToSteem } from '@/libs/steem/sds';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import { useDisclosure, DropdownMenu, DropdownItem, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from '@nextui-org/react';
-import { useSession } from 'next-auth/react';
 import React, { Key, useState } from 'react'
-import useSWR from 'swr';
 
 export type SteemTokens = 'steem' | 'steem_power' | 'steem_dollar' | 'saving';
 
@@ -43,14 +40,16 @@ Part of ${username}'s STEEM POWER is currently delegated. Delegation is donated 
 STEEM POWER increases at an APR of approximately 2.77%, subject to blockchain variance. See FAQ for details.`;
 
 
-export default function BalanceTab() {
+export default function BalanceTab({ data }: { data: AccountExt }) {
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     let { username, category } = usePathnameClient();
-    const { data: session } = useSession();
+
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const isSelf = loginInfo.name === username;
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
+    let [key, setKey] = useState<SteemTokens>();
+
     const [transferModal, setTransferModal] = useState<{
         isOpen: boolean,
         savings?: boolean,
@@ -67,24 +66,13 @@ export default function BalanceTab() {
 
 
 
-    let [key, setKey] = useState<SteemTokens>();
     function handleInfo(tokenKey: SteemTokens) {
         key = tokenKey;
         setKey(tokenKey);
         onOpen();
     }
 
-    const dispatch = useAppDispatch();
 
-    const URL = `/accounts_api/getAccountExt/${username}/${session?.user?.name || 'null'}`
-    let { data } = useSWR(!isSelf ? URL : undefined, fetchSds<AccountExt>);
-
-
-    if (!isSelf && data) {
-        dispatch(addProfileHandler(data));
-    }
-
-    if (isSelf) data = loginInfo;
 
 
     function handleAction(key: Key) {
@@ -119,15 +107,15 @@ export default function BalanceTab() {
     return (
         <div className=' gap-4 grid grid-cols-1 md:grid-cols-2'>
 
-            {loginInfo.name && <>
+            {data && <>
                 <TokenCard tokenKey='steem' symbol={tokens.steem.symbol}
                     description={tokens.steem.description}
                     title={tokens.steem.title}
                     endContent={<div className='flex gap-2'>
-                        <p>{loginInfo.balance_steem?.toLocaleString()}</p>
+                        <p>{data.balance_steem?.toLocaleString()}</p>
                     </div>}
 
-                    actionContent={<DropdownMenu onAction={handleAction}>
+                    actionContent={isSelf && <DropdownMenu onAction={handleAction}>
                         <DropdownItem key="transfer-steem">Transfer</DropdownItem>
                         <DropdownItem key="savings-steem">Transfer to Savings</DropdownItem>
                         <DropdownItem key="power-up">Power Up</DropdownItem>
@@ -142,10 +130,10 @@ export default function BalanceTab() {
                     title={tokens.steem_power.title}
 
                     endContent={<div>
-                        <p>{vestToSteem(loginInfo.vests_own, globalData.steem_per_share)?.toLocaleString()}</p>
+                        <p>{vestToSteem(data.vests_own, globalData.steem_per_share)?.toLocaleString()}</p>
                     </div>}
 
-                    actionContent={<DropdownMenu onAction={handleAction}>
+                    actionContent={isSelf && <DropdownMenu onAction={handleAction}>
                         <DropdownItem key="delegation">Delegate</DropdownItem>
                         <DropdownItem key="power-down">Power Down</DropdownItem>
                     </DropdownMenu>
@@ -160,10 +148,10 @@ export default function BalanceTab() {
                     title={tokens.steem_dollar.title}
 
                     endContent={<div>
-                        <p>${loginInfo.balance_sbd?.toLocaleString()}</p>
+                        <p>${data.balance_sbd?.toLocaleString()}</p>
                     </div>}
 
-                    actionContent={<DropdownMenu
+                    actionContent={isSelf &&<DropdownMenu
                         onAction={handleAction}>
                         <DropdownItem key="transfer-sbd">Transfer</DropdownItem>
                         <DropdownItem key="savings-sbd">Transfer to Savings</DropdownItem>
@@ -178,8 +166,8 @@ export default function BalanceTab() {
                     description={tokens.saving.description}
                     title={tokens.saving.title}
                     endContent={<div className='flex flex-col items-end max-md:items-center'>
-                        <p>${loginInfo.savings_steem?.toLocaleString()} STEEM</p>
-                        <p>${loginInfo.savings_sbd?.toLocaleString()}</p>
+                        <p>${data.savings_steem?.toLocaleString()} STEEM</p>
+                        <p>${data.savings_sbd?.toLocaleString()}</p>
                     </div>}
                     handleInfoClick={handleInfo}
 

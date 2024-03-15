@@ -384,61 +384,66 @@ export default memo(function EditorInput(props: EditorProps) {
 
 
         const credentials = getCredentials(getSessionKey());
-        if (credentials)
+        if (!credentials?.key) {
+            toast.error('Invalid credentials');
+            return
+        }
 
-            toast.promise(
-                async () => {
-                    // Testing
-                    // await awaitTimeout(5);
-                    // return true
-                    const data = await toBase64(image.file);
-                    let sign = await signImage(data, credentials.key);
-                    const result = await uploadImage(image.file, credentials?.username, sign);
-                    return result;
-                }, {
-                loading: 'Uploading...',
-                success: (res: any) => {
-                    // Testing
-                    // const url = `https://cdn.steemitimages.com/DQmdyoAZ8pJGUSsqPjuKqYU4LBXeP75h8awmh964PVaE7zc/IMG_0.9163441659792777.jpeg`
-                    // const Image_name = image.file.name;
-                    // const imageMd = `![${Image_name}](${url})`;
-                    // insertImage({ url: image.temporaryTag, isPlaceholder: false, imgMd: imageMd })
-                    // // Replace temporary image MD tag with the real one
-                    // uploadNextImage();
-                    // return `Uploaded`;
 
-                    if (res.data && res.data.url) {
-                        const Image_name: string = image.file.name;
-                        res.data.hash = res.data.url.split('/').pop();
-                        const imageMd = `![${Image_name?.substring(0, 20) || ''}](${res.data.url})`;
-                        insertImage({ url: image.temporaryTag, isPlaceholder: false, imgMd: imageMd })
-                        uploadNextImage();
-                        return `Uploaded`;
-                    } else {
-                        return `Failed`;
+        toast.promise(
+            async () => {
+                // Testing
+                // await awaitTimeout(5);
+                // return true
+                const data = await toBase64(image.file);
+                let sign = await signImage(data, credentials.key);
+                const result = await uploadImage(image.file, credentials?.username, sign);
+                return result;
+            }, {
+            closeButton: false,
+            loading: 'Uploading...',
+            success: (res: any) => {
+                // Testing
+                // const url = `https://cdn.steemitimages.com/DQmdyoAZ8pJGUSsqPjuKqYU4LBXeP75h8awmh964PVaE7zc/IMG_0.9163441659792777.jpeg`
+                // const Image_name = image.file.name;
+                // const imageMd = `![${Image_name}](${url})`;
+                // insertImage({ url: image.temporaryTag, isPlaceholder: false, imgMd: imageMd })
+                // // Replace temporary image MD tag with the real one
+                // uploadNextImage();
+                // return `Uploaded`;
 
-                    }
-                },
-                error: (error) => {
-                    if (error.toString().includes('code 413')) {
-                        // console.log('Large file size')
-                        return ('Large file size');
-
-                    } else if (error.toString().includes('code 429')) {
-                        // console.log('Limit exceed')
-                        return ('Limit exceed')
-                    } else if (error.toString().includes('code 400')) {
-                        // console.log('Invalid Image', error)
-                        return ('Invalid Image')
-                    } else {
-                        return ('Failed: ' + String(error))
-                    }
-
-                },
-                finally() {
+                if (res.data && res.data.url) {
+                    const Image_name: string = image.file.name;
+                    res.data.hash = res.data.url.split('/').pop();
+                    const imageMd = `![${Image_name?.substring(0, 20) || ''}](${res.data.url})`;
+                    insertImage({ url: image.temporaryTag, isPlaceholder: false, imgMd: imageMd })
                     uploadNextImage();
-                },
-            });
+                    return `Uploaded`;
+                } else {
+                    return `Failed`;
+
+                }
+            },
+            error: (error) => {
+                if (error.toString().includes('code 413')) {
+                    // console.log('Large file size')
+                    return ('Large file size');
+
+                } else if (error.toString().includes('code 429')) {
+                    // console.log('Limit exceed')
+                    return ('Limit exceed')
+                } else if (error.toString().includes('code 400')) {
+                    // console.log('Invalid Image', error)
+                    return ('Invalid Image')
+                } else {
+                    return ('Failed: ' + String(error))
+                }
+
+            },
+            finally() {
+                uploadNextImage();
+            },
+        });
     }
 
     return (

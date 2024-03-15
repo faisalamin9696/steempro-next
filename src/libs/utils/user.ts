@@ -2,6 +2,7 @@ import { decryptPrivateKey, encryptPrivateKey } from "./encryption";
 import secureLocalStorage from "react-secure-storage";
 import { empty_settings } from "../constants/Placeholders";
 import CryptoJS from 'crypto-js';
+import { updateCurrentSetting } from "../constants/AppConstants";
 
 export function getCredentials(password?: string):
     User | undefined {
@@ -142,16 +143,22 @@ export function validatePassword(input: string): boolean {
 export function getSettings(): Setting {
     const lsSettings = (secureLocalStorage.getItem('settings') ?? {}) as Setting
     if (Object.keys(lsSettings).length > 0) {
-        return { ...empty_settings(), ...lsSettings }
+        const setting = { ...empty_settings(), ...lsSettings };
+        updateCurrentSetting(setting);
+        return setting;
 
     } else {
+        updateCurrentSetting(empty_settings());
         return empty_settings()
     }
 }
 
-export function updateSettings(settings: Setting) {
+export function updateSettings(setting: Setting) {
     const lsSettings = (secureLocalStorage.getItem('settings') as Setting ?? empty_settings());
-    secureLocalStorage.setItem('settings', { ...lsSettings, ...settings });
+    const newSetting = { ...lsSettings, ...setting }
+    secureLocalStorage.setItem('settings', newSetting);
+    updateCurrentSetting(newSetting);
+    return newSetting
 }
 
 export class PrivKey {

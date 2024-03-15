@@ -15,7 +15,6 @@ import HomeCommunitiesTab from './(tabs)/communities/page';
 
 export default function HomePage({ isLogin }: { isLogin?: boolean }) {
   let { username, category } = usePathnameClient();
-  const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
 
   let homeTabs = [
     { title: 'Trendings', key: 'trending', children: <HomeTrendingsTab /> },
