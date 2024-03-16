@@ -30,6 +30,7 @@ interface EditorProps {
     onImageInvalid: () => void,
     inputClass?: string;
     rows?: number;
+    disabled?: boolean;
 }
 
 
@@ -43,6 +44,7 @@ export default memo(function EditorInput(props: EditorProps) {
         onChange,
         inputClass,
         rows,
+        disabled
     } = props;
 
     const { authenticateUser, credentials, isAuthorized } = useLogin();
@@ -450,13 +452,13 @@ export default memo(function EditorInput(props: EditorProps) {
         <div  {...getRootProps()} >
 
 
-            <div className="body-input"
+            <div className="body-input relative"
                 onKeyDown={hotKeyHandler}
                 ref={postBodyRef}>
 
 
                 {(isDragActive) &&
-                    <div className="flex flex-row justify-center w-full absolute z-[1] h-full backdrop-blur-sm bg-foreground/10">
+                    <div className="flex flex-row justify-center w-full absolute  h-full rounded-lg z-[11] backdrop-blur-[2px] bg-foreground/10">
                         <div className='text-center self-center'>
 
                             <FaCloudUploadAlt className='mx-auto text-5xl' />
@@ -476,6 +478,7 @@ export default memo(function EditorInput(props: EditorProps) {
                         onSelect={insertCode}
                         className={' mb-4'} />}
                     radius='sm'
+                    isDisabled={disabled}
                     variant='flat'
                     placeholder={'Write something...'}
                     disableAnimation

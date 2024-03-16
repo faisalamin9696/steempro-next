@@ -40,13 +40,7 @@ export default function AccountHeader(props: Props) {
     const { isDesktop } = useDeviceInfo();
     const isCommunity = !!community;
     const isAccount = !!account;
-    const router = useRouter();
-    const pathname = usePathname();
     const dispatch = useAppDispatch();
-
-    useEffect(() => {
-        router.refresh();
-    }, [pathname]);
 
 
     const communityInfo = useAppSelector(state => state.communityReducer.values)[community?.account ?? ''] ?? community;

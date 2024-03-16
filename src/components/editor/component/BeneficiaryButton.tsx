@@ -7,6 +7,7 @@ import IconButton from '../../IconButton';
 import { toast } from 'sonner';
 import { validate_account_name } from '@/libs/utils/ChainValidation';
 import { getResizedAvatar } from '@/libs/utils/image';
+import { useAppSelector } from '@/libs/constants/AppFunctions';
 
 interface Props {
     onSelectBeneficiary?: (bene: Beneficiary) => void;
@@ -19,6 +20,7 @@ interface Props {
 
 export default memo(function BeneficiaryButton(props: Props) {
     const { onSelectBeneficiary, beneficiaries, onRemove, disabled } = props;
+    const loginInfo = useAppSelector(state => state.loginReducer.value);
     let [username, setUsername] = useState('');
     const [weight, setWeight] = useState('');
     const [benePopup, setBenePopup] = useState(false);
@@ -63,6 +65,7 @@ export default memo(function BeneficiaryButton(props: Props) {
 
         onSelectBeneficiary && onSelectBeneficiary({ account: username, weight: parseFloat(weight) * 100 })
 
+        setUsername('');
     }
 
     function handleRemveBeneficiary(bene: Beneficiary) {
@@ -96,9 +99,9 @@ export default memo(function BeneficiaryButton(props: Props) {
                         </div>
                         <Card className='pe-2 gap-4 flex-row bg-secondary-800/10 max-sm:self-start
                         items-center rounded-full justify-start' >
-                            <Avatar size='sm' src={getResizedAvatar('faisalamin')} />
+                            <Avatar size='sm' src={getResizedAvatar(loginInfo.name)} />
                             <div className='flex space-x-2 flex-1'>
-                                <p>{'faisalamin'}</p>
+                                <p>{loginInfo.name}</p>
                                 <p className=' font-bold'>{availableBene}%</p>
                             </div>
 

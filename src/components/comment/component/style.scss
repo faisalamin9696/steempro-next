@@ -1,0 +1,25 @@
+.popup {
+    // justify-content: center;
+    visibility: visible;
+    animation: fadeIn 0.2s;
+}
+
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@media(min-width: 47.5rem) {
+    .popup {
+
+        width: 45%;
+
+    }
+
+}

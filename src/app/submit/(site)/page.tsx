@@ -116,13 +116,13 @@ export default function SubmitPage(props: Props) {
     }
 
 
-    async function handleSchedule() {
-        fetch('/api/steem', {
-            method: 'POST',
-            body: JSON.stringify({ name: 'faisalamin' })
-        })
+    // async function handleSchedule() {
+    //     fetch('/api/steem', {
+    //         method: 'POST',
+    //         body: JSON.stringify({ name: 'faisalamin' })
+    //     })
 
-    }
+    // }
 
 
     const postingMutation = useMutation({
@@ -319,6 +319,7 @@ export default function SubmitPage(props: Props) {
             !oldPost && '1md:w-[50%] 1md:float-start 1md:sticky 1md:self-start 1md:top-[70px] px-1')}>
 
             <CommunitySelectButton
+                disabled={isPosting}
                 community={community}
                 onlyCommunity={isEdit}
                 onSelectCommunity={setCommunity} />
@@ -333,6 +334,7 @@ export default function SubmitPage(props: Props) {
                     input: 'font-bold text-md',
                     inputWrapper: 'h-8'
                 }}
+                isDisabled={isPosting}
                 placeholder={'Title'} maxLength={255} />
 
             <Input size='sm' value={tags}
@@ -343,9 +345,13 @@ export default function SubmitPage(props: Props) {
                     inputWrapper: 'h-8'
                 }}
 
-                placeholder={'Tags here...'} maxLength={255} />
+                placeholder={'Tags here...'}
+                isDisabled={isPosting}
+
+                maxLength={255} />
 
             <EditorInput value={markdown}
+                disabled={isPosting}
                 onChange={setMarkdown}
                 inputClass=' h-full'
                 onImageUpload={() => { }}
@@ -356,11 +362,12 @@ export default function SubmitPage(props: Props) {
             <div className='flex gap-2 relativeitems-center flex-row'>
 
                 <div className='gap-2 flex'>
-                    <ClearFormButton onClearPress={clearForm} />
+                    <ClearFormButton onClearPress={clearForm}
+                        disabled={isPosting} />
 
                     <CommentOptionWrapper advance={isMobile}>
                         <BeneficiaryButton
-                            disabled={isEdit}
+                            disabled={isEdit || isPosting}
                             onSelectBeneficiary={bene => {
                                 setBeneficiaries([...beneficiaries, { ...bene, weight: bene.weight }]);
                             }}
@@ -370,7 +377,7 @@ export default function SubmitPage(props: Props) {
                             beneficiaries={beneficiaries}
                         />
                         <RewardSelectButton
-                            disabled={isEdit}
+                            disabled={isEdit || isPosting}
                             selectedValue={reward}
                             onSelectReward={(reward) => {
                                 setReward(reward);

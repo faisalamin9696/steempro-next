@@ -11,10 +11,10 @@ import Link from "next/link";
 import { GrAnnounce } from "react-icons/gr";
 import { IoIosRefresh } from "react-icons/io";
 import useSWR from "swr";
-import { TiGroupOutline } from "react-icons/ti";
 import { HiMiniUserGroup } from "react-icons/hi2";
 import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
+import EmptyList from "@/components/EmptyList";
 
 export default function HomeStart() {
 
@@ -169,14 +169,11 @@ export default function HomeStart() {
                                 className='gap-2  px-1 pb-1'
                                 dataLength={filteredData?.length}
                                 next={handleEndReached}
-                                hasMore={true}
-
+                                hasMore={(filteredData?.length < (allCommunities?.length ?? 0))}
                                 scrollableTarget="scrollableDiv"
                                 loader={<ListLoader />}
                                 endMessage={
-                                    <p style={{ textAlign: "center" }}>
-                                        <b>No more data</b>
-                                    </p>
+                                    <EmptyList />
                                 }>
                                 <div className="flex flex-col gap-2">
                                     {filteredData?.map(community => {

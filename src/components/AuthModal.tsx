@@ -29,7 +29,7 @@ export default function AuthModal(props: Props) {
     const [isShow, setIsShow] = useState(true);
     const { isOpen, onClose } = useDisclosure();
     const [loading, setLoading] = useState(false);
-    const [username, setUsername] = useState('');
+    let [username, setUsername] = useState('');
     const [key, setKey] = useState('');
     const [password, setPassword] = useState('');
     const [password2, setPassword2] = useState('');
@@ -43,6 +43,7 @@ export default function AuthModal(props: Props) {
 
     useEffect(() => {
         const timeOut = setTimeout(() => {
+            username = username.trim().toLowerCase();
             setAvatar(username)
         }, 1000);
 
@@ -108,6 +109,7 @@ export default function AuthModal(props: Props) {
 
     }
     async function handleLogin() {
+        username = username.trim().toLowerCase();
 
         const usernameError = validate_account_name(username);
         if (!username || usernameError) {
@@ -261,6 +263,7 @@ export default function AuthModal(props: Props) {
                 }}
                 backdrop={'opaque'}
                 isOpen={open}
+                closeButton={!loading}
                 isDismissable={!loading}
                 motionProps={{
                     variants: {

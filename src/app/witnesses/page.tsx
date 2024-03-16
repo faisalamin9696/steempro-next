@@ -15,6 +15,7 @@ import { RiLinkM } from "react-icons/ri";
 import Link from 'next/link';
 import { replaceOldDomains } from '@/libs/utils/Links';
 import WitnessVoteButton from '@/components/WitnessVoteButton';
+import { WitnessAccount } from '@/libs/constants/AppConstants';
 
 
 
@@ -43,7 +44,7 @@ export default function page() {
   const [allRows, setAllRows] = useState<Witness[]>([]);
   useEffect(() => {
     if (data) {
-      const index = data?.findIndex(account => account.name === ('faisalamin'));
+      const index = data?.findIndex(account => account.name === (WitnessAccount));
       if (index && index !== -1) {
         const officialCommunity = data?.splice(index, 1)[0];
         if (officialCommunity)

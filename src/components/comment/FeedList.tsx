@@ -7,9 +7,9 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import CommentCard from './CommentCard';
 import CommentSkeleton from './component/CommentSkeleton';
 import { getSettings } from '@/libs/utils/user';
-import clsx from 'clsx';
 import { useDeviceInfo } from '@/libs/utils/useDeviceInfo';
 import { twMerge } from 'tailwind-merge';
+import EmptyList from '../EmptyList';
 
 interface Props {
     endPoint: string;
@@ -78,12 +78,10 @@ export default memo(function FeedList(props: Props) {
         className='gap-2'
         dataLength={rows?.length}
         next={handleEndReached}
-        hasMore={true}
+        hasMore={(rows?.length < (data?.length ?? 0))}
         loader={<ListLoader />}
         endMessage={
-            <p style={{ textAlign: "center" }}>
-                <b>Yay! You have seen it all</b>
-            </p>
+            <EmptyList />
         }>
         <div className={twMerge(isGridStyle ?
             (className ? className : "gap-6 grid 1lg:grid-cols-3  lg:grid-cols-2 md:grid-cols-2") : 'flex flex-col gap-2')}>

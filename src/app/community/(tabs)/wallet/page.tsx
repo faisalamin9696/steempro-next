@@ -19,7 +19,7 @@ const tokens = {
     symbol: undefined,
     title: 'STEEM POWER',
     description: `Influence tokens which give you more control over post payouts and allow you to earn on curation rewards.
-        Part of faisalamin's STEEM POWER is currently delegated. Delegation is donated for influence or to help new users perform actions on Steemit. Your delegation amount can fluctuate.
+        Part of users's STEEM POWER is currently delegated. Delegation is donated for influence or to help new users perform actions on Steemit. Your delegation amount can fluctuate.
         STEEM POWER increases at an APR of approximately 2.77%, subject to blockchain variance. See FAQ for details.`
   },
   steem_dollar: {

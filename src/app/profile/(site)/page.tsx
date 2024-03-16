@@ -13,17 +13,25 @@ import ProfileCommunitiesTab from '../(tabs)/communities/page';
 import ProfileSettingsTab from '../(tabs)/settings/page';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import { addProfileHandler } from '@/libs/redux/reducers/ProfileReducer';
+import { useRouter } from 'next13-progressbar';
+import { usePathname } from 'next/navigation';
 
 export default function ProfilePage({ data }: { data: AccountExt }) {
     let { username, category } = usePathnameClient();
 
-
-
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const profileInfo = useAppSelector(state => state.profileReducer.value)[data?.name] ?? data;
+    const router = useRouter();
+    const pathname = usePathname();
 
     const isSelf = !!loginInfo.name && (loginInfo.name === (username));
     const dispatch = useAppDispatch();
+
+
+    useEffect(() => {
+        router.refresh();
+    }, [pathname]);
+
 
     useEffect(() => {
         if (data)

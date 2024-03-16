@@ -15,22 +15,23 @@ interface Props {
     community?: Community;
     onSelectCommunity: (community?: Community) => void;
     onlyCommunity?: boolean;
+    disabled?: boolean;
 
 
 }
 export default memo(function CommunitySelectButton(props: Props) {
-    const { community, onSelectCommunity, onlyCommunity } = props;
+    const { community, onSelectCommunity, onlyCommunity, disabled } = props;
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const URL = `/communities_api/getCommunitiesBySubscriber/${loginInfo.name}`;
 
     const { data, isLoading } = useSWR(onlyCommunity ? undefined :
-        loginInfo.name ? URL : undefined, fetchSds<Community[]>, {
-            errorRetryCount: 3, errorRetryInterval: 5000,
+        !!loginInfo.name && URL, fetchSds<Community[]>, {
+        errorRetryCount: 3, errorRetryInterval: 5000,
         shouldRetryOnError: true
     })
     const dispatch = useAppDispatch();
 
-    const commmunities = onlyCommunity && community ? [{ ...community }] :
+    const commmunities = (onlyCommunity && community) ? [{ ...community }] :
         loginInfo.communities ?? []
 
 
@@ -52,6 +53,7 @@ export default memo(function CommunitySelectButton(props: Props) {
         <div className='flex flex-row gap-2 items-center'>
             <div className='w-60'>
                 <Select
+
                     aria-label="Select community"
                     selectedKeys={
                         community ? [JSON.stringify({
@@ -59,8 +61,8 @@ export default memo(function CommunitySelectButton(props: Props) {
                             title: community.title
                         })] : []}
                     size='sm'
-                    isDisabled={onlyCommunity}
-                    items={commmunities}
+                    isDisabled={onlyCommunity || disabled}
+                    items={onlyCommunity ? commmunities : ((data || loginInfo?.communities) ?? [])}
                     isLoading={isLoading}
                     placeholder='Select Community'
                     className='text-default-500 text-sm'

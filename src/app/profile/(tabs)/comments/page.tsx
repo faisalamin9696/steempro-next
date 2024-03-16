@@ -1,6 +1,7 @@
 "use client"
 
 import FeedList from '@/components/comment/FeedList';
+import { useAppSelector } from '@/libs/constants/AppFunctions';
 import { FeedTypes } from '@/libs/steem/sds';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import React from 'react'
@@ -8,6 +9,7 @@ import React from 'react'
 
 export default function ProfileCommentsTab() {
     const { username } = usePathnameClient();
+    const loginInfo = useAppSelector(state => state.loginReducer.value);
 
 
     function getEndPoint(feedType: FeedTypes,
@@ -15,7 +17,7 @@ export default function ProfileCommentsTab() {
         limit = 1000,
         offset = 0) {
         const URL = `/feeds_api/get${feedType ??
-            'PostsByAuthor'}/${username}/${username}/${bodyLength}/${limit}/${offset}`;
+            'PostsByAuthor'}/${username}/${loginInfo.name || null}/${bodyLength}/${limit}/${offset}`;
         return URL.trim();
     }
 

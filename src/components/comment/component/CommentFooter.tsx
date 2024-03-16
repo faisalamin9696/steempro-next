@@ -1,4 +1,4 @@
-import { Button, Card, Popover, PopoverContent, PopoverTrigger, useDisclosure } from '@nextui-org/react';
+import { Button, Card, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Popover, PopoverContent, PopoverTrigger, useDisclosure } from '@nextui-org/react';
 import React, { memo, useState } from 'react'
 import { PiCurrencyCircleDollarFill } from 'react-icons/pi';
 import { SlLoop } from 'react-icons/sl';
@@ -20,6 +20,9 @@ import { FaRegCommentAlt } from "react-icons/fa";
 
 import { RewardBreakdownCard } from '@/components/comment/RewardBreakdownCard';
 import { twMerge } from 'tailwind-merge';
+import VotersCard from '@/components/VotersCard';
+import './style.scss'
+import ClickAwayListener from 'react-click-away-listener';
 
 export default memo(function CommentFooter(props: CommentProps) {
     const { comment, className, isReply, onEditClick,
@@ -28,17 +31,32 @@ export default memo(function CommentFooter(props: CommentProps) {
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
     const { isOpen: isUpvoteOpen, onOpenChange: onUpvoteChange, onClose: onUpvoteClose } = useDisclosure();
     const { isOpen: isDownvoteOpen, onOpenChange: onDownvoteChange, onClose: onDownvoteClose } = useDisclosure();
+    const [votersModal, setVotersModal] = useState(false);
 
     const { authenticateUser, isAuthorized } = useLogin();
     const dispatch = useAppDispatch();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
-    const isUpvoted = comment.observer_vote === 1 && comment.observer_vote_percent > 0;
-    const isDownvoted = comment.observer_vote === 1 && comment.observer_vote_percent < 0;
+
+    const isUpvoted = !!comment.observer_vote && comment.observer_vote_percent > 0;
+    const isDownvoted = !!comment.observer_vote && comment.observer_vote_percent < 0;
+    const isResteemd = !!comment.observer_resteem;
+
     const isVoting = comment.status === 'upvoting' || comment.status === 'downvoting';
     const [breakdownModal, setBreakdownModal] = useState(false);
     const [resteemPopup, setResteemPopup] = useState(false);
+    const [upvotePopup, setUpvotePopup] = useState(false);
+    const [downvotePopup, setDownvotePopup] = useState(false);
 
+
+    function closeVotingModal() {
+        if (upvotePopup)
+            setUpvotePopup(false);
+        if (downvotePopup)
+            setDownvotePopup(false);
+    }
     async function castVote(weight: number, downvote?: boolean) {
+        closeVotingModal();
+
         if (downvote) {
             weight = -weight;
         }
@@ -48,11 +66,12 @@ export default memo(function CommentFooter(props: CommentProps) {
         await awaitTimeout(0.25);
         try {
             const credentials = getCredentials(getSessionKey());
-            if (credentials?.key) {
-                await voteMutation.mutateAsync({ key: credentials.key, weight });
-            } else {
+            if (!credentials?.key) {
                 toast.error('Invalid credentials');
+                return
             }
+            voteMutation.mutate({ key: credentials.key, weight });
+
         }
         catch (err) {
             toast.error(String(err));
@@ -110,6 +129,9 @@ export default memo(function CommentFooter(props: CommentProps) {
 
     });
 
+
+
+
     const reblogMutation = useMutation({
         mutationFn: (key: string) => reblogPost(loginInfo, key, {
             author: comment.author, permlink: comment.permlink,
@@ -152,75 +174,69 @@ export default memo(function CommentFooter(props: CommentProps) {
 
     }
 
-    return <div className={twMerge('flex flex-col p-1 gap-1 w-full', className)}>
+    return <div className={twMerge('flex flex-col p-1 gap-1 w-full ', className)}>
 
 
         <div className={clsx("flex flex-row max-xs:flex-col items-center max-xs:items-start gap-2",
             !isReply && 'justify-between')}>
             <div className={clsx('flex', compact ? 'gap-3' : 'gap-4')}>
-                <div className='flex flex-row items-center gap-2'>
-                    <CustomCard>
-                        <Popover placement='top-start'
-                            backdrop='opaque'
-                            onOpenChange={() => {
+                <div className='flex flex-row items-center gap-2 relative  '>
+                    {(upvotePopup || downvotePopup) && <ClickAwayListener onClickAway={closeVotingModal}>
+                        <div className='absolute  animate-appearance-in z-[11] top-[-35px]'>
+                            <VotingModal {...props}
+                                downvote={downvotePopup}
+                                onConfirm={castVote} />
+                        </div>
+                    </ClickAwayListener>
+                    }
+                    <CustomCard >
+
+                        <Button radius='full'
+                            title='Upvote'
+                            variant='light'
+                            onPress={() => {
                                 if (!isAuthorized()) {
                                     authenticateUser();
                                     return false
                                 }
+                                setUpvotePopup(!upvotePopup);
                             }}
-                            shouldCloseOnBlur={true}>
-                            <PopoverTrigger>
-                                <Button radius='full'
-                                    title='Upvote'
-                                    variant='light'
-                                    isDisabled={isVoting}
-                                    isLoading={comment.status === 'upvoting'}
-                                    isIconOnly size='sm'
-                                    className={clsx(isUpvoted && 'text-success-400')}
-                                >
-                                    {isUpvoted ?
-                                        <BiSolidUpvote className={('text-lg')} /> :
-                                        <BiUpvote className='text-lg' />}
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="p-1">
-                                <VotingModal {...props}
-                                    onConfirm={castVote} />
-                            </PopoverContent>
-                        </Popover>
-
-
-                        {!!comment.upvote_count && <div className='text-tiny'>
-                            {abbreviateNumber(comment.upvote_count)}
-                        </div>}
-
-
-                        <Popover placement='top-start' backdrop='opaque'
-                            shouldCloseOnBlur={true}
+                            isDisabled={isVoting}
+                            isLoading={comment.status === 'upvoting'}
+                            isIconOnly size='sm'
+                            className={clsx(isUpvoted && 'text-success-400')}
                         >
-                            <PopoverTrigger>
-                                <Button isIconOnly size='sm'
-                                    variant='light'
-                                    title='Downvote'
-                                    isDisabled={isVoting}
-                                    isLoading={comment.status === 'downvoting'}
-                                    className={clsx(isDownvoted && 'text-danger-400')}
-                                    radius='full'>
-                                    {isDownvoted ?
-                                        <BiSolidDownvote className='text-lg' /> :
-                                        <BiDownvote className='text-lg' />}
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="p-1">
-                                <VotingModal {...props}
-                                    downvote
-                                    onConfirm={castVote} />
-                            </PopoverContent>
-                        </Popover>
+                            {isUpvoted ?
+                                <BiSolidUpvote className={('text-lg')} /> :
+                                <BiUpvote className='text-lg' />}
+                        </Button>
 
-                        {/* {!!comment.downvote_count && <div className='text-tiny pr-2'>
-                                {abbreviateNumber(comment.downvote_count)}
-                            </div>} */}
+
+
+                        {!!comment.upvote_count && <button className='text-tiny'
+                            onClick={() => setVotersModal(!votersModal)}>
+                            {abbreviateNumber(comment.upvote_count)}
+                        </button>}
+
+                        <Button isIconOnly size='sm'
+                            variant='light'
+                            title='Downvote'
+                            isDisabled={isVoting}
+                            isLoading={comment.status === 'downvoting'}
+                            onPress={() => {
+                                if (!isAuthorized()) {
+                                    authenticateUser();
+                                    return false
+                                }
+                                setDownvotePopup(!downvotePopup)
+                            }}
+                            className={clsx(isDownvoted && 'text-danger-400')}
+                            radius='full'>
+                            {isDownvoted ?
+                                <BiSolidDownvote className='text-lg' /> :
+                                <BiDownvote className='text-lg' />}
+                        </Button>
+
                     </CustomCard>
 
                     {!compact && !!comment.children && <CustomCard className='px-3'
@@ -241,15 +257,20 @@ export default memo(function CommentFooter(props: CommentProps) {
 
                     {!isReply && !!comment.resteem_count &&
                         <div>
-                            <Popover isOpen={resteemPopup} onOpenChange={setResteemPopup}
+                            <Popover isOpen={resteemPopup}
+
+                                onOpenChange={setResteemPopup}
                                 placement={'top-start'} >
                                 <PopoverTrigger >
                                     <Button title='Resteem'
-                                        className='min-w-0 px-3 shadow-lg bg-white dark:bg-foreground/10 flex flex-row items-center gap-2 rounded-full'
+                                        className={twMerge('min-w-0 shadow-lg bg-white dark:bg-foreground/10 flex flex-row items-center gap-2 rounded-full',
+                                            ' px-3', compact && 'px-4',
+                                            isResteemd && 'text-success-400')}
                                         variant='light' radius='full'
-                                        // onPress={handleResteem}
-                                        isDisabled={reblogMutation.isPending}
+
+                                        isDisabled={reblogMutation.isPending || isResteemd}
                                         isLoading={reblogMutation.isPending}
+
                                         size='sm'>
 
                                         <SlLoop className='text-lg' />
@@ -273,6 +294,10 @@ export default memo(function CommentFooter(props: CommentProps) {
                                             <Button size='sm' color='secondary' variant='solid'
                                                 onPress={() => {
                                                     setResteemPopup(false);
+                                                    if (isResteemd) {
+                                                        toast.success('Already resteem');
+                                                        return
+                                                    }
                                                     handleResteem();
                                                 }}>YES</Button>
 
@@ -314,6 +339,31 @@ export default memo(function CommentFooter(props: CommentProps) {
 
 
         </div >
+
+        {votersModal && <Modal isOpen={votersModal} onOpenChange={setVotersModal}
+            placement='top-center'
+            scrollBehavior='inside'
+            backdrop='blur'
+            closeButton>
+            <ModalContent>
+                {(onClose) => (
+                    <>
+                        <ModalHeader className="flex flex-col gap-1">Voters</ModalHeader>
+                        <ModalBody>
+                            <VotersCard comment={comment} />
+                        </ModalBody>
+                        {/* <ModalFooter>
+                            <Button color="danger" variant="light" onPress={onClose}>
+                                Close
+                            </Button>
+                            <Button color="primary" onPress={onClose}>
+                                Action
+                            </Button>
+                        </ModalFooter> */}
+                    </>
+                )}
+            </ModalContent>
+        </Modal>}
 
     </div >
 })

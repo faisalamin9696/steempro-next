@@ -36,7 +36,10 @@
     }
 
     td {
+      display: table-cell;
       padding: 4px;
+      vertical-align: inherit;
+      word-break: normal;
     }
 
     tbody {

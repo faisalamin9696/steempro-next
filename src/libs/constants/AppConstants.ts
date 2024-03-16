@@ -11,6 +11,8 @@ export const isDev = false;
 
 export let CurrentSetting: Setting = empty_settings();
 
+export const WitnessAccount = 'faisalamin';
+
 export function updateCurrentSetting(setting: Setting) {
     CurrentSetting = setting;
 }

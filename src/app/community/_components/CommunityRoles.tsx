@@ -1,5 +1,6 @@
 "use client"
 
+import EmptyList from '@/components/EmptyList';
 import ErrorCard from '@/components/ErrorCard';
 import LoadingCard from '@/components/LoadingCard';
 import RoleCard from '@/components/RoleCard';
@@ -22,7 +23,7 @@ interface Props {
 export default function CommunityRoles(props: Props) {
     const { community } = usePathnameClient();
     const { large, roles, stickyHeader } = props;
-    
+
     const URL = `/communities_api/getCommunityRoles/${community}`;
     const [query, setQuery] = useState('');
     const { data, isLoading, error, mutate, isValidating } = useSWR(!roles && URL, fetchSds<Role[]>);
@@ -131,13 +132,11 @@ export default function CommunityRoles(props: Props) {
                             className='gap-2  px-1 pb-1'
                             dataLength={filteredData?.length}
                             next={handleEndReached}
-                            hasMore={true}
+                            hasMore={(filteredData?.length < (data?.length ?? 0))}
                             loader={<ListLoader />}
                             scrollableTarget='scrollableDiv'
                             endMessage={
-                                <p style={{ textAlign: "center" }}>
-                                    <b>No more data</b>
-                                </p>
+                                <EmptyList />
                             }>
                             <div className={clsx('grid grid-cols-1 gap-4', large && 'md:grid-cols-2 lg:grid-cols-3')}>
                                 {filteredData?.map((role) => {

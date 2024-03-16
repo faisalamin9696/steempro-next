@@ -5,9 +5,10 @@ import { MdDelete } from 'react-icons/md'
 
 interface Props {
     onClearPress?: () => void;
+    disabled?: boolean;
 }
 export default memo(function ClearFormButton(props: Props) {
-    const { onClearPress } = props;
+    const { onClearPress, disabled } = props;
 
     const [clearPopup, setClearPopup] = useState(false);
 
@@ -20,6 +21,7 @@ export default memo(function ClearFormButton(props: Props) {
                 placement={'top-start'} >
                 <PopoverTrigger >
                     <Button size='sm' color='danger'
+                        isDisabled={disabled}
                         isIconOnly startContent={<MdDelete className='text-lg' />}
                         className='!text-white'
                         variant='shadow' />

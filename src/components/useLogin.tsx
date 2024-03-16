@@ -8,7 +8,7 @@ import { fetchSds, useAppDispatch } from '@/libs/constants/AppFunctions';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import useSWR from 'swr';
 import { saveSteemGlobals } from '@/libs/redux/reducers/SteemGlobalReducer';
-import { defaultNotificationFilters } from '@/libs/constants/AppConstants';
+import { WitnessAccount, defaultNotificationFilters } from '@/libs/constants/AppConstants';
 import { toast } from 'sonner';
 import { useRouter } from 'next13-progressbar';
 
@@ -53,31 +53,45 @@ export const AuthProvider = (props: Props) => {
     const { data: session, status } = useSession();
     const [openAuth, setOpenAuth] = useState(false);
     const [credentials, setCredentials] = useState<User>();
+    const [loginUser, setLoginUser] = useState(session?.user?.name ?? '');
+
     const [isNew, setIsNew] = useState(false);
     const dispatch = useAppDispatch();
     const router = useRouter();
 
-    const URL = `/notifications_api/getFilteredUnreadCount/${session?.user?.name}/${JSON.stringify(filter)}`;
-    const { data: unreadCount } = useSWR(session?.user?.name && URL, fetchSds<number>);
+    useEffect(() => {
+        if (session?.user?.name && session.user.name !== loginUser) {
+            setLoginUser(session.user.name);
+        }
+
+    }, [session?.user?.name]);
+
+    const URL = `/notifications_api/getFilteredUnreadCount/${loginUser}/${JSON.stringify(filter)}`;
+    const { data: unreadCount } = useSWR(loginUser && URL, fetchSds<number>, {
+        shouldRetryOnError: true,
+        errorRetryCount: 3,
+        errorRetryInterval: 5000,
+        refreshInterval: 300000 // 5 minutes
+    });
 
 
 
     useEffect(() => {
-        if (unreadCount) {
-            data = { ...data, unread_count: unreadCount ?? 0 }
-            dispatch(saveLoginHandler({data}));
-        }
-    }, [unreadCount])
+        data = { ...data, unread_count: unreadCount ?? 0 }
+
+        dispatch(saveLoginHandler(data));
+
+    }, [unreadCount]);
 
 
     useEffect(() => {
-        if (data) {
-            dispatch(saveLoginHandler(data));
-        }
+        // if (data) {
+        //     dispatch(saveLoginHandler(data));
+        // }
 
         const timeout = setTimeout(() => {
-            if (data?.witness_votes?.includes('faisalamin')) {
-                toast('Vote for witness (faisalamin)', {
+            if (data?.witness_votes?.includes(WitnessAccount)) {
+                toast(`Vote for witness (${WitnessAccount})`, {
                     action: {
                         label: 'Vote',
 

@@ -71,6 +71,7 @@ export default function AppNavbar() {
         authenticateUser();
     }
 
+
     return (
         <Navbar
             className='shadow-xl w-full h-16  !px-0 !p-0'

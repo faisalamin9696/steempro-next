@@ -31,10 +31,10 @@ export function ParsedBody({ body, isNsfw }: { body: string, isNsfw?: boolean })
                         variant='flat'
                         onPress={() => handleOpenImage(domNode?.attribs?.src)}
                         radius='full'
-                        className='open-button absolute top-0 right-0'>
+                        className='open-button  absolute top-0 right-0 m-1'>
                         <MdOpenInNew className='text-xl' />
                     </Button>
-
+                
                     {/* <NsfwOverlay /> */}
                 </div>
 

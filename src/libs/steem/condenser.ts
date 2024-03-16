@@ -719,9 +719,9 @@ export const voteForWitness = async (
 export const claimRewardBalance = async (
     account: AccountExt,
     key: string,
-    rewardSteem,
-    rewardSbd,
-    rewardVests,
+    rewardSteem: number,
+    rewardSbd: number,
+    rewardVests: number,
 ) => {
     const keyData = getKeyType(account, key);
     if (keyData && PrivKey.atLeast(keyData.type, 'POSTING')) {
@@ -732,9 +732,9 @@ export const claimRewardBalance = async (
                 'claim_reward_balance',
                 {
                     account: keyData.account,
-                    reward_steem: rewardSteem,
-                    reward_sbd: rewardSbd,
-                    reward_vests: rewardVests,
+                    reward_steem: rewardSteem?.toFixed(3) + ' STEEM',
+                    reward_sbd: rewardSbd?.toFixed(3) + ' SBD',
+                    reward_vests: rewardVests?.toFixed(6) + ' VESTS',
                 },
             ],
         ];

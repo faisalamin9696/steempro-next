@@ -1,7 +1,6 @@
 import React, { memo } from 'react'
 import { FaEye } from 'react-icons/fa';
 import useSWR from 'swr';
-import STooltip from './STooltip';
 import { abbreviateNumber } from '@/libs/utils/helper';
 import { getPostsViews } from '@/libs/firebase/firebaseApp';
 import clsx from 'clsx';
@@ -33,15 +32,13 @@ export default memo(function ViewCountCard(props: Props) {
 
     if (!data || data <= 0) return null
 
-    return (<div className={clsx(data && props.className)}>
-        <STooltip content={`${data} unique views`}>
-            <div className='flex flex-row gap-2 items-center'>
-                <FaEye className={props.compact ? 'text-md' : 'text-lg opacity-90'} />
-                <p className={props.compact ? 'text-tiny font-light' : 'text-sm font-semibold'}>
-                    {abbreviateNumber(data)}
-                </p>
-            </div>
-        </STooltip>
+    return (<div className={clsx(data && props.className)} title={`${data} Unique views`}>
+        <div className='flex flex-row gap-2 items-center'>
+            <FaEye className={props.compact ? 'text-md' : 'text-lg opacity-90'} />
+            <p className={props.compact ? 'text-tiny font-light' : 'text-sm font-semibold'}>
+                {abbreviateNumber(data)}
+            </p>
+        </div>
     </div>
     )
 }

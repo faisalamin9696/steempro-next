@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Key, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Table,
     TableHeader,
@@ -14,24 +14,15 @@ import {
     Dropdown,
     DropdownMenu,
     DropdownItem,
-    Chip,
     Pagination,
-    Tooltip,
 } from "@nextui-org/react";
-import { FaChevronDown, FaPlus, FaSearch } from "react-icons/fa";
+import { FaChevronDown, FaSearch } from "react-icons/fa";
 import useSWR from "swr";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
-import { FiCornerDownRight } from "react-icons/fi";
-import { MdDelete, MdEdit } from "react-icons/md";
-import { vestToSteem } from "@/libs/steem/sds";
 import SAvatar from "@/components/SAvatar";
 import TimeAgoWrapper from "@/components/wrapper/TimeAgoWrapper";
-import { BiDotsVerticalRounded } from "react-icons/bi";
-import TransferModal from "@/components/TransferModal";
-import { useSession } from "next-auth/react";
 import LoadingCard from "@/components/LoadingCard";
-import { useLogin } from "@/components/useLogin";
 
 const statusColorMap = {
     incoming: "success",
@@ -39,73 +30,48 @@ const statusColorMap = {
     outgoing: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["from", 'vests', "status"];
+const INITIAL_VISIBLE_COLUMNS = ["voter", 'rshares'];
 
 const columns = [
-    { name: "ACCOUNT", uid: "from", sortable: true },
-    { name: "AMOUNT", uid: "vests", sortable: true },
-    { name: "STATUS", uid: "status", sortable: true },
-];
+    { name: "VOTER", uid: "voter", sortable: true },
+    { name: "VALUE", uid: "rshares", sortable: false },
+    { name: "PERCENT", uid: "percent", sortable: false },
 
-const statusOptions = [
-    { name: "Incoming", uid: "incoming" },
-    { name: "Expiring", uid: "expiring" },
-    { name: "Outgoing", uid: "outgoing" },
 ];
+// const statusOptions = [
+//     { name: "Incoming", uid: "incoming" },
+//     { name: "Expiring", uid: "expiring" },
+//     { name: "Outgoing", uid: "outgoing" },
+// ];
 
 
 export function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export default function DelegationTab({ data }: { data: AccountExt }) {
-    const { username } = usePathnameClient();
-    const URL_OUTGOING = `/delegations_api/getOutgoingDelegations/${username}`;
-    const URL_INCOMING = `/delegations_api/getIncomingDelegations/${username}`;
-    const URL_EXPIRING = `/delegations_api/getExpiringDelegations/${username}`;
+export default function VotersCard({ comment }: { comment: Feed | Post }) {
+    const URL = `/posts_api/getVotesById/${comment.link_id}`;
 
-    const { data: outgoingData, isLoading: isLoading1 } = useSWR(URL_OUTGOING, fetchSds<Delegation[]>);
-    const { data: incomingData, isLoading: isLoading2 } = useSWR(URL_INCOMING, fetchSds<Delegation[]>);
-    const { data: expiringData, isLoading: isLoading3 } = useSWR(URL_EXPIRING, fetchSds<Delegation[]>);
+    if (!comment.link_id)
+        return null;
 
-    const isPending = isLoading1 || isLoading2 || isLoading3;
-
+    const { data, isLoading } = useSWR(URL, fetchSds<PostVote[]>);
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
-    const isSelf = !!loginInfo.name && (loginInfo.name === (username));
-    const { authenticateUser, isAuthorized } = useLogin();
-
-    const [transferModal, setTransferModal] = useState<
-        {
-            isOpen: boolean, delegatee?: string,
-            oldDelegation?: number, isRemove?: boolean, delegation?: Delegation
-        }>({ isOpen: false });
-
-    const outgoingRows = outgoingData?.map((item) => {
-        return { ...item, status: 'outgoing' }
-    });
-
-    const incomingRows = incomingData?.map((item) => {
-        return { ...item, status: 'incoming' }
-    });
-    const expiringRows = expiringData?.map((item) => {
-        return { ...item, status: 'expiring' }
-    });
-
-    const [allRows, setAllRows] = useState<Delegation[]>([]);
+    const [allRows, setAllRows] = useState<PostVote[]>([]);
 
     useEffect(() => {
-        setAllRows([...(outgoingRows ?? []),
-        ...(incomingRows ?? []), ...(expiringRows ?? [])]);
-    }, [outgoingData, incomingData, expiringData]);
+        if (data)
+            setAllRows(data)
+    }, [data]);
 
 
     const [filterValue, setFilterValue] = React.useState<any>("");
     const [visibleColumns, setVisibleColumns] = React.useState<any>(new Set(INITIAL_VISIBLE_COLUMNS));
     const [statusFilter, setStatusFilter] = React.useState<any>("all");
-    const [rowsPerPage, setRowsPerPage] = React.useState<any>(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState<any>(10);
     const [sortDescriptor, setSortDescriptor] = React.useState<any>({
-        column: "vests",
+        column: "rshares",
         direction: "descending",
     });
     const [page, setPage] = React.useState(1);
@@ -119,21 +85,20 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
     }, [visibleColumns]);
 
     const filteredItems = React.useMemo(() => {
-        let filteredDelegations = [...allRows];
+        let filteredVotes = [...allRows];
 
         if (hasSearchFilter) {
-            filteredDelegations = filteredDelegations.filter((delegation) =>
-                delegation.from.toLowerCase().includes(filterValue.toLowerCase()) ||
-                delegation.to.toLowerCase().includes(filterValue.toLowerCase()),
+            filteredVotes = filteredVotes.filter((votes) =>
+                votes.voter.toLowerCase().includes(filterValue.toLowerCase()),
             );
         }
-        if (statusFilter !== "all" && Array.from(statusFilter)?.length !== statusOptions.length) {
-            filteredDelegations = filteredDelegations.filter((delegation) =>
-                Array.from(statusFilter).includes(delegation.status),
-            );
-        }
+        // if (statusFilter !== "all" && Array.from(statusFilter)?.length !== statusOptions.length) {
+        //     filteredDelegations = filteredDelegations.filter((delegation) =>
+        //         Array.from(statusFilter).includes(delegation.status),
+        //     );
+        // }
 
-        return filteredDelegations;
+        return filteredVotes;
     }, [allRows, filterValue, statusFilter]);
 
     const pages = Math.ceil(filteredItems?.length / rowsPerPage);
@@ -156,84 +121,45 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
     }, [sortDescriptor, items]);
 
 
-    async function handleMenuActions(key: Key, delegation: Delegation) {
-        switch (key) {
-            case 'edit':
-                setTransferModal({
-                    isOpen: !transferModal.isOpen, delegatee: delegation.to,
-                    oldDelegation: delegation.vests, delegation: delegation
-                });
-                break;
-            case 'remove':
-                setTransferModal({
-                    isOpen: !transferModal.isOpen, delegatee: delegation.to,
-                    oldDelegation: delegation.vests, delegation: delegation, isRemove: true
-                });
-                break;
-        }
-    }
 
-    const renderCell = React.useCallback((delegation: Delegation, columnKey) => {
-        const cellValue = delegation[columnKey];
+    const renderCell = React.useCallback((votes: PostVote, columnKey) => {
+        const cellValue = votes[columnKey];
 
         switch (columnKey) {
-            case "from":
-                const canEdit = delegation['status'] === 'outgoing' && delegation.from === loginInfo.name;
-                const canRemove = delegation['status'] === 'incoming' && delegation.from === loginInfo.name;
+            case "voter":
                 return (
                     <div className="flex flex-row items-start gap-1">
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <Button isIconOnly size="sm" variant="light" radius="full">
-                                    <BiDotsVerticalRounded className="text-default-300 text-xl" />
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu disabledKeys={!(canEdit || canRemove) ? ['edit', 'remove'] : []}
-                                onAction={(keys) => handleMenuActions(keys, delegation)}>
-                                <DropdownItem key={`edit`}>Edit</DropdownItem>
-                                <DropdownItem key={`remove`} color="danger">Remove</DropdownItem>
-
-
-                            </DropdownMenu>
-                        </Dropdown>
 
                         <div className="flex flex-col gap-2">
 
 
                             <div className="flex gap-2 items-center">
-                                <SAvatar size="xs" username={delegation.from} />
-                                <p>{delegation.from}</p>
+                                <SAvatar size="xs" username={votes.voter} />
+                                <p>{votes.voter}</p>
                             </div>
-                            <div className="flex flex-row gap-2 items-center ms-2">
-                                <FiCornerDownRight className='text-default-900/50' />
-                                <SAvatar size="xs" username={delegation.to} />
-                                <p>{delegation.to}</p>
-
-                            </div>
-
                         </div>
                     </div>
 
 
                 );
 
-            case "vests":
+            case "rshares":
+                const ratio = (comment?.payout ?? 1) / (comment?.net_rshares ?? 1);
+                const voteAmount = votes.rshares * ratio;
+
+
                 return (
                     <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">{vestToSteem(cellValue, globalData.steem_per_share)?.toLocaleString()} SP</p>
-                        <TimeAgoWrapper className="text-bold text-tiny capitalize text-default-600" created={delegation.time * 1000} />
+                        <p className="text-bold text-small capitalize">${voteAmount.toLocaleString()}</p>
+                        <TimeAgoWrapper className="text-bold text-tiny capitalize text-default-600" created={votes.time * 1000} />
                     </div>
                 );
-            case "status":
+
+            case "percent":
                 return (
-                    <Chip
-                        className="capitalize border-none gap-1 text-default-600"
-                        color={statusColorMap[delegation['status']]}
-                        size="sm"
-                        variant="dot"
-                    >
-                        {cellValue}
-                    </Chip>
+                    <div className="flex flex-col">
+                        <p className="text-bold text-small capitalize">{votes.percent / 100}%</p>
+                    </div>
                 );
 
             default:
@@ -278,7 +204,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                 <div className="flex justify-between gap-3 items-end">
                     <Input size="sm"
                         isClearable
-                        className="w-full sm:max-w-[25%]"
+                        className="w-full sm:max-w-[50%]"
                         placeholder="Search..."
                         startContent={<FaSearch />}
                         value={filterValue}
@@ -286,7 +212,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                         onValueChange={onSearchChange}
                     />
                     <div className="flex gap-3">
-                        <Dropdown>
+                        {/* <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
                                 <Button size="sm" endContent={<FaChevronDown className="text-small" />} variant="flat">
                                     Status
@@ -306,8 +232,8 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                                     </DropdownItem>
                                 ))}
                             </DropdownMenu>
-                        </Dropdown>
-                        {/* <Dropdown>
+                        </Dropdown> */}
+                        <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
                                 <Button size="sm" endContent={<FaChevronDown className="text-small" />} variant="flat">
                                     Columns
@@ -327,9 +253,9 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                                         {capitalize(column.name)}
                                     </DropdownItem>
                                 ))}
-                            </DropdownMenu> 
-                        </Dropdown> */}
-                        <Button size="sm" onPress={() => {
+                            </DropdownMenu>
+                        </Dropdown>
+                        {/* <Button size="sm" onPress={() => {
                             authenticateUser();
                             if (!isAuthorized())
                                 return
@@ -337,22 +263,20 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                         }}
                             color="primary" endContent={<FaPlus />}>
                             Add New
-                        </Button>
+                        </Button> */}
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-default-400 text-small">Total {allRows?.length} delegations</span>
+                    <span className="text-default-400 text-small">Total {allRows?.length} voters</span>
                     <label className="flex items-center text-default-400 text-small">
                         Rows per page:
                         <select
                             className="bg-transparent outline-none text-default-400 text-small"
                             onChange={onRowsPerPageChange}
                         >
-                            <option value="5">5</option>
                             <option value="10">10</option>
+                            <option value="25">25</option>
                             <option value="50">50</option>
-                            <option value="100">100</option>
-                            <option value="250">250</option>
                         </select>
                     </label>
                 </div>
@@ -370,7 +294,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
 
     const bottomContent = React.useMemo(() => {
         return (
-            <div className="py-2 px-2 flex justify-between items-center">
+            <div className="py-2 px-2 flex justify-between items-center self-center">
 
                 <Pagination
                     isCompact
@@ -381,14 +305,14 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                     total={pages}
                     onChange={setPage}
                 />
-                <div className="hidden sm:flex w-[30%] justify-end gap-2">
+                {/* <div className="hidden sm:flex w-[30%] justify-end gap-2">
                     <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onPreviousPage}>
                         Previous
                     </Button>
                     <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onNextPage}>
                         Next
                     </Button>
-                </div>
+                </div> */}
             </div>
         );
     }, [items.length, page, pages, hasSearchFilter]);
@@ -398,7 +322,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
         () => ({
             wrapper: ["max-h-[382px]", "max-w-3xl"],
             th: ["bg-transparent", "text-default-500", "border-b", "border-divider"],
-            td: ["pl-0",
+            td: ["",
                 // changing the rows border radius
                 // first
                 "group-data-[first=true]:first:before:rounded-none",
@@ -413,14 +337,14 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
         [],
     );
 
-    if (isPending)
+    if (isLoading)
         return <LoadingCard />
 
     return (
         <div>
             <Table
-                aria-label="Delegation table"
-                isHeaderSticky
+                aria-label="Voters table"
+                isHeaderSticky={false}
                 removeWrapper
                 bottomContent={bottomContent}
                 bottomContentPlacement="outside"
@@ -446,51 +370,14 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                 </TableHeader>
                 <TableBody emptyContent={"No data found"} items={sortedItems}>
                     {(item) => (
-                        <TableRow key={`${item.from}-${item.to}`}>
+                        <TableRow key={`${item.voter}`}>
                             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                         </TableRow>
                     )}
                 </TableBody>
             </Table>
 
-            {transferModal.isOpen && <TransferModal
-                asset={'VESTS'}
-                isOpen={transferModal.isOpen}
-                delegation
-                oldDelegation={transferModal.oldDelegation}
-                delegatee={transferModal.delegatee ? transferModal.delegatee :
-                    isSelf ? '' : username}
-                isRemove={transferModal.isRemove}
-                onOpenChange={(isOpen) => setTransferModal({ isOpen: isOpen, delegation: transferModal.delegation })}
-                onDelegationSuccess={(vests) => {
 
-                    if (vests === 0) {
-
-                        // change the status to expiring of removing item
-                        setAllRows(prev => prev.map(item => {
-                            if ((item.from === transferModal.delegation?.from &&
-                                item.to === transferModal.delegation?.to &&
-                                item.status === transferModal.delegation?.status))
-                                return { ...item, status: 'expiring' }
-                            else return item;
-                        }));
-
-
-
-                    } else
-
-                        // update the vevsts of the updating item
-                        setAllRows(prev => prev.map(item => {
-                            if (item.from === transferModal.delegation?.from &&
-                                item.to === transferModal.delegation?.to &&
-                                item.status === transferModal.delegation?.status)
-                                return { ...item, vests: vests }
-                            else return item;
-                        }));
-
-
-                }}
-            />}
         </div>
     );
 }

@@ -104,7 +104,7 @@ export default function PostPage(props: Props) {
 
                 <div className='flex flex-col px-1 items-center'>
                     <Card shadow='none'
-                        className='w-full gap-4 bg-transparent'>
+                        className='w-full gap-4 bg-transparent overflow-visible'>
 
                         <div className="space-y-4 flex-col">
                             <>
@@ -123,7 +123,7 @@ export default function PostPage(props: Props) {
                                 text={commentInfo.body} />
                         </div>
 
-                        <CardFooter className='w-full p-0'>
+                        <CardFooter className='w-full p-0  overflow-visible'>
                             <CommentFooter comment={commentInfo}
                                 className={'w-full'} />
                         </CardFooter>

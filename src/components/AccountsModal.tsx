@@ -45,7 +45,7 @@ export default function AccountsModal(props: Props) {
     return (
         <div>
             <Modal
-                placement='top'
+                placement='top-center'
                 isOpen={props.isOpen ?? isOpen}
                 onOpenChange={props.onOpenChange ?? onOpenChange}
                 scrollBehavior={'inside'}

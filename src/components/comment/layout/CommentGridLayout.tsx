@@ -38,7 +38,7 @@ export default function CommentGridLayout(props: CommentProps) {
 
     return (
         <Card className={`grid-footer w-full card card-compact h-full bg-white/60
-         dark:bg-white/10  pb-2 flex flex-col overflow-hidden rounded-lg shadow-lg `}>
+         dark:bg-white/10  pb-2 flex flex-col  rounded-lg shadow-lg overflow-visible`}>
 
             <CardBody className='flex flex-col p-0' as={Link} href={targetUrl}>
                 <>
@@ -121,13 +121,15 @@ export default function CommentGridLayout(props: CommentProps) {
                 />
 
             </div>
-            <div className="px-4 flex flex-row items-center justify-between">
-                <div> {!!commentInfo.resteem_count && <span title={commentInfo.resteem_count + ' Resteem'} className="py-1 text-xs font-regular text-default-900 mr-1 flex flex-row items-center">
+            <div className="px-4 flex flex-row items-center justify-between ">
+                <div> {!!commentInfo.resteem_count && <span title={commentInfo.resteem_count + ' Resteem'}
+                    className="py-1 text-xs font-regular text-default-600 mr-1 flex flex-row items-center">
                     {abbreviateNumber(commentInfo.resteem_count)} Resteem
                 </span>}
                 </div>
 
-                <span title={`${commentInfo.children} Comments`} className="py-1 text-xs font-regular text-default-900 mr-1 flex flex-row items-center">
+                <span title={`${commentInfo.children} Comments`}
+                    className="py-1 text-xs font-regular text-default-600 mr-1 flex flex-row items-center">
                     <svg className="h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
                             d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z">

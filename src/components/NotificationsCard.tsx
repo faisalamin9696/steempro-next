@@ -100,7 +100,7 @@ export default function NotificationsCard(props: Props) {
     useEffect(() => {
         if (data) {
             const unreadCount = data.filter(obj => obj.is_read === 0).length;
-            if (unreadCount >= 0) {
+            if (unreadCount >= 0 && unreadCount > loginInfo.unread_count) {
                 dispatch(saveLoginHandler({ ...loginInfo, unread_count: unreadCount }));
             }
 

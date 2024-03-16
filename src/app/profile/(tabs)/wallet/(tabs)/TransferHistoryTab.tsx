@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Key, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Table,
     TableHeader,
@@ -14,37 +14,25 @@ import {
     Dropdown,
     DropdownMenu,
     DropdownItem,
-    Chip,
     Pagination,
-    Tooltip,
 } from "@nextui-org/react";
-import { FaChevronDown, FaPlus, FaSearch } from "react-icons/fa";
+import { FaChevronDown, FaSearch } from "react-icons/fa";
 import useSWR from "swr";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
-import { FiCornerDownRight } from "react-icons/fi";
-import { MdDelete, MdEdit } from "react-icons/md";
-import { vestToSteem } from "@/libs/steem/sds";
-import SAvatar from "@/components/SAvatar";
 import TimeAgoWrapper from "@/components/wrapper/TimeAgoWrapper";
-import { BiDotsVerticalRounded } from "react-icons/bi";
-import TransferModal from "@/components/TransferModal";
-import { useSession } from "next-auth/react";
 import LoadingCard from "@/components/LoadingCard";
 import { useLogin } from "@/components/useLogin";
+import moment from "moment";
+import { TransferHistoryItem } from "./_components/TransferHistoryItem";
 
-const statusColorMap = {
-    incoming: "success",
-    expiring: "danger",
-    outgoing: "warning",
-};
 
-const INITIAL_VISIBLE_COLUMNS = ["from", 'vests', "status"];
+
+const INITIAL_VISIBLE_COLUMNS = ["op", 'time'];
 
 const columns = [
-    { name: "ACCOUNT", uid: "from", sortable: true },
-    { name: "AMOUNT", uid: "vests", sortable: true },
-    { name: "STATUS", uid: "status", sortable: true },
+    { name: "ACCOUNT", uid: "op", sortable: true },
+    { name: "TIME", uid: "time", sortable: true },
 ];
 
 const statusOptions = [
@@ -58,55 +46,40 @@ export function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export default function DelegationTab({ data }: { data: AccountExt }) {
+
+const start_date = moment().subtract(30, 'days').unix();
+const end_date = moment().unix();
+
+export default function TransferHistoryTab({ data }: { data: AccountExt }) {
     const { username } = usePathnameClient();
-    const URL_OUTGOING = `/delegations_api/getOutgoingDelegations/${username}`;
-    const URL_INCOMING = `/delegations_api/getIncomingDelegations/${username}`;
-    const URL_EXPIRING = `/delegations_api/getExpiringDelegations/${username}`;
 
-    const { data: outgoingData, isLoading: isLoading1 } = useSWR(URL_OUTGOING, fetchSds<Delegation[]>);
-    const { data: incomingData, isLoading: isLoading2 } = useSWR(URL_INCOMING, fetchSds<Delegation[]>);
-    const { data: expiringData, isLoading: isLoading3 } = useSWR(URL_EXPIRING, fetchSds<Delegation[]>);
+    const filters = (`withdraw_vesting,cancel_transfer_from_savings,claim_reward_balance,fill_convert_request,fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_from_savings,transfer_to_savings,transfer_to_vesting`);
 
-    const isPending = isLoading1 || isLoading2 || isLoading3;
+    const URL = `/account_history_api/getHistoryByOpTypesTime/${data.name}/${filters}/${start_date}-${end_date}`;
+    const { data: historyData, isLoading: isLoading } = useSWR(URL, fetchSds<AccountHistory[]>);
 
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
     const isSelf = !!loginInfo.name && (loginInfo.name === (username));
     const { authenticateUser, isAuthorized } = useLogin();
 
-    const [transferModal, setTransferModal] = useState<
-        {
-            isOpen: boolean, delegatee?: string,
-            oldDelegation?: number, isRemove?: boolean, delegation?: Delegation
-        }>({ isOpen: false });
 
-    const outgoingRows = outgoingData?.map((item) => {
-        return { ...item, status: 'outgoing' }
-    });
-
-    const incomingRows = incomingData?.map((item) => {
-        return { ...item, status: 'incoming' }
-    });
-    const expiringRows = expiringData?.map((item) => {
-        return { ...item, status: 'expiring' }
-    });
-
-    const [allRows, setAllRows] = useState<Delegation[]>([]);
+    const [allRows, setAllRows] = useState<AccountHistory[]>([]);
 
     useEffect(() => {
-        setAllRows([...(outgoingRows ?? []),
-        ...(incomingRows ?? []), ...(expiringRows ?? [])]);
-    }, [outgoingData, incomingData, expiringData]);
+        if (historyData)
+            setAllRows(historyData);
+
+    }, [historyData]);
 
 
     const [filterValue, setFilterValue] = React.useState<any>("");
     const [visibleColumns, setVisibleColumns] = React.useState<any>(new Set(INITIAL_VISIBLE_COLUMNS));
     const [statusFilter, setStatusFilter] = React.useState<any>("all");
-    const [rowsPerPage, setRowsPerPage] = React.useState<any>(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState<any>(10);
     const [sortDescriptor, setSortDescriptor] = React.useState<any>({
-        column: "vests",
-        direction: "descending",
+        column: "time",
+        direction: "ascending",
     });
     const [page, setPage] = React.useState(1);
 
@@ -122,16 +95,15 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
         let filteredDelegations = [...allRows];
 
         if (hasSearchFilter) {
-            filteredDelegations = filteredDelegations.filter((delegation) =>
-                delegation.from.toLowerCase().includes(filterValue.toLowerCase()) ||
-                delegation.to.toLowerCase().includes(filterValue.toLowerCase()),
+            filteredDelegations = filteredDelegations.filter((history) =>
+                JSON.stringify(history.op).toLowerCase().includes(filterValue.toLowerCase())
             );
         }
-        if (statusFilter !== "all" && Array.from(statusFilter)?.length !== statusOptions.length) {
-            filteredDelegations = filteredDelegations.filter((delegation) =>
-                Array.from(statusFilter).includes(delegation.status),
-            );
-        }
+        // if (statusFilter !== "all" && Array.from(statusFilter)?.length !== statusOptions.length) {
+        //     filteredDelegations = filteredDelegations.filter((history) =>
+        //         Array.from(statusFilter).includes(history.op[0]),
+        //     );
+        // }
 
         return filteredDelegations;
     }, [allRows, filterValue, statusFilter]);
@@ -156,86 +128,45 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
     }, [sortDescriptor, items]);
 
 
-    async function handleMenuActions(key: Key, delegation: Delegation) {
-        switch (key) {
-            case 'edit':
-                setTransferModal({
-                    isOpen: !transferModal.isOpen, delegatee: delegation.to,
-                    oldDelegation: delegation.vests, delegation: delegation
-                });
-                break;
-            case 'remove':
-                setTransferModal({
-                    isOpen: !transferModal.isOpen, delegatee: delegation.to,
-                    oldDelegation: delegation.vests, delegation: delegation, isRemove: true
-                });
-                break;
-        }
-    }
 
-    const renderCell = React.useCallback((delegation: Delegation, columnKey) => {
-        const cellValue = delegation[columnKey];
+    const renderCell = React.useCallback((history: AccountHistory, columnKey) => {
+        const cellValue = history[columnKey];
+        const opType = history.op[0];
+        const opData = history.op[1];
+
+        const account = opType === 'transfer_to_savings'
 
         switch (columnKey) {
-            case "from":
-                const canEdit = delegation['status'] === 'outgoing' && delegation.from === loginInfo.name;
-                const canRemove = delegation['status'] === 'incoming' && delegation.from === loginInfo.name;
+            case "op":
                 return (
-                    <div className="flex flex-row items-start gap-1">
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <Button isIconOnly size="sm" variant="light" radius="full">
-                                    <BiDotsVerticalRounded className="text-default-300 text-xl" />
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu disabledKeys={!(canEdit || canRemove) ? ['edit', 'remove'] : []}
-                                onAction={(keys) => handleMenuActions(keys, delegation)}>
-                                <DropdownItem key={`edit`}>Edit</DropdownItem>
-                                <DropdownItem key={`remove`} color="danger">Remove</DropdownItem>
+                    <TransferHistoryItem op={history} context={username} />
+                    // <div className="flex flex-row items-start gap-1">
+                    //     <div className="flex flex-col gap-2">
 
 
-                            </DropdownMenu>
-                        </Dropdown>
+                    //         <div className="flex gap-2 items-center">
+                    //             {/* <SAvatar size="xs" username={history.id} /> */}
+                    //             <p>{history.id}</p>
+                    //         </div>
+                    //         {/* <div className="flex flex-row gap-2 items-center ms-2">
+                    //             <FiCornerDownRight className='text-default-900/50' />
+                    //             <SAvatar size="xs" username={history.to} />
+                    //             <p>{history.to}</p>
 
-                        <div className="flex flex-col gap-2">
+                    //         </div> */}
 
-
-                            <div className="flex gap-2 items-center">
-                                <SAvatar size="xs" username={delegation.from} />
-                                <p>{delegation.from}</p>
-                            </div>
-                            <div className="flex flex-row gap-2 items-center ms-2">
-                                <FiCornerDownRight className='text-default-900/50' />
-                                <SAvatar size="xs" username={delegation.to} />
-                                <p>{delegation.to}</p>
-
-                            </div>
-
-                        </div>
-                    </div>
+                    //     </div>
+                    // </div>
 
 
                 );
 
-            case "vests":
+            case "time":
                 return (
                     <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">{vestToSteem(cellValue, globalData.steem_per_share)?.toLocaleString()} SP</p>
-                        <TimeAgoWrapper className="text-bold text-tiny capitalize text-default-600" created={delegation.time * 1000} />
+                        <TimeAgoWrapper className="text-bold text-tiny capitalize text-default-600" created={history.time * 1000} />
                     </div>
                 );
-            case "status":
-                return (
-                    <Chip
-                        className="capitalize border-none gap-1 text-default-600"
-                        color={statusColorMap[delegation['status']]}
-                        size="sm"
-                        variant="dot"
-                    >
-                        {cellValue}
-                    </Chip>
-                );
-
             default:
                 return cellValue;
         }
@@ -329,7 +260,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                                 ))}
                             </DropdownMenu> 
                         </Dropdown> */}
-                        <Button size="sm" onPress={() => {
+                        {/* <Button size="sm" onPress={() => {
                             authenticateUser();
                             if (!isAuthorized())
                                 return
@@ -337,7 +268,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                         }}
                             color="primary" endContent={<FaPlus />}>
                             Add New
-                        </Button>
+                        </Button> */}
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
@@ -348,11 +279,10 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                             className="bg-transparent outline-none text-default-400 text-small"
                             onChange={onRowsPerPageChange}
                         >
-                            <option value="5">5</option>
                             <option value="10">10</option>
+                            <option value="25">25</option>
                             <option value="50">50</option>
                             <option value="100">100</option>
-                            <option value="250">250</option>
                         </select>
                     </label>
                 </div>
@@ -413,7 +343,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
         [],
     );
 
-    if (isPending)
+    if (isLoading)
         return <LoadingCard />
 
     return (
@@ -446,51 +376,14 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                 </TableHeader>
                 <TableBody emptyContent={"No data found"} items={sortedItems}>
                     {(item) => (
-                        <TableRow key={`${item.from}-${item.to}`}>
+                        <TableRow key={`${item.id}`}>
                             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                         </TableRow>
                     )}
                 </TableBody>
             </Table>
 
-            {transferModal.isOpen && <TransferModal
-                asset={'VESTS'}
-                isOpen={transferModal.isOpen}
-                delegation
-                oldDelegation={transferModal.oldDelegation}
-                delegatee={transferModal.delegatee ? transferModal.delegatee :
-                    isSelf ? '' : username}
-                isRemove={transferModal.isRemove}
-                onOpenChange={(isOpen) => setTransferModal({ isOpen: isOpen, delegation: transferModal.delegation })}
-                onDelegationSuccess={(vests) => {
 
-                    if (vests === 0) {
-
-                        // change the status to expiring of removing item
-                        setAllRows(prev => prev.map(item => {
-                            if ((item.from === transferModal.delegation?.from &&
-                                item.to === transferModal.delegation?.to &&
-                                item.status === transferModal.delegation?.status))
-                                return { ...item, status: 'expiring' }
-                            else return item;
-                        }));
-
-
-
-                    } else
-
-                        // update the vevsts of the updating item
-                        setAllRows(prev => prev.map(item => {
-                            if (item.from === transferModal.delegation?.from &&
-                                item.to === transferModal.delegation?.to &&
-                                item.status === transferModal.delegation?.status)
-                                return { ...item, vests: vests }
-                            else return item;
-                        }));
-
-
-                }}
-            />}
         </div>
     );
 }

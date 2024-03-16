@@ -6,7 +6,7 @@ import { getPostReplies } from '@/libs/steem/sds';
 import { Button, Card } from '@nextui-org/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { memo, useEffect, useState } from 'react'
-import InfiniteScroll from 'react-infinite-scroller';
+import InfiniteScroll from "react-infinite-scroll-component";
 import Reply from './Reply';
 import MarkdownViewer from '@/components/body/MarkdownViewer';
 import EditorInput from '@/components/editor/EditorInput';
@@ -22,6 +22,7 @@ import { checkPromotionText, getCredentials, getSessionKey } from '@/libs/utils/
 import { useLogin } from '@/components/useLogin';
 import secureLocalStorage from 'react-secure-storage';
 import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator';
+import EmptyList from '@/components/EmptyList';
 
 interface Props {
     comment: Post | Feed;
@@ -315,13 +316,16 @@ export default memo(function PostReplies(props: Props) {
 
                     </div>}
                 <InfiniteScroll
-                    pageStart={0}
-                    loadMore={handleLoadMore}
-                    hasMore={repliesMutation?.data && ((repliesMutation?.data?.length ?? 0) > limit)}
+
+                    dataLength={limit}
+                    next={handleLoadMore}
+                    hasMore={((repliesMutation?.data?.length ?? 0) > limit)}
                     loader={<div className='flex justify-center items-center'>
                         <Button color='default' variant='flat' className='self-center'
                             onPress={handleLoadMore} isLoading isDisabled>Loading...</Button>
-                    </div>
+                    </div>}
+                    endMessage={
+                        repliesMutation.isSuccess && <EmptyList />
                     }
                 >
                     {rootReplies?.map((reply: Post) => {
