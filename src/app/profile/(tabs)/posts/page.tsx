@@ -1,7 +1,6 @@
 "use client"
 
 import FeedList from '@/components/comment/FeedList';
-import { isDev } from '@/libs/constants/AppConstants';
 import { useAppSelector } from '@/libs/constants/AppFunctions';
 import { FeedTypes } from '@/libs/steem/sds';
 import usePathnameClient from '@/libs/utils/usePathnameClient';

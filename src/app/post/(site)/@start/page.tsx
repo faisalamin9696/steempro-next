@@ -1,27 +1,25 @@
 "use client"
 
-import { Accordion, AccordionItem, Button } from '@nextui-org/react'
-import React, { useState } from 'react'
-import { IoIosRefresh } from 'react-icons/io'
-import useSWR from 'swr'
-import LoadingCard from '@/components/LoadingCard'
-import CompactPost from '@/components/CompactPost'
-import { fetchSds, awaitTimeout } from '@/libs/constants/AppFunctions'
-import { useSession } from 'next-auth/react'
-import usePathnameClient from '@/libs/utils/usePathnameClient'
-import { MdDescription } from 'react-icons/md'
-import { ImBlog } from "react-icons/im";
+import { Accordion, AccordionItem } from '@nextui-org/accordion';
+import { Button } from '@nextui-org/button';
+import React, { useState } from 'react';
+import { IoIosRefresh } from 'react-icons/io';
+import useSWR from 'swr';
+import LoadingCard from '@/components/LoadingCard';
+import CompactPost from '@/components/CompactPost';
+import { fetchSds, awaitTimeout, useAppSelector } from '@/libs/constants/AppFunctions';
+import usePathnameClient from '@/libs/utils/usePathnameClient';
 import { GrBlog } from "react-icons/gr";
-
 
 
 export default function PostStart() {
   const { username, permlink } = usePathnameClient();
-  const { data: session } = useSession();
   const [offset, setOffset] = useState(0);
   const [muting, setMuting] = useState(false);
+  const loginInfo = useAppSelector(state => state.loginReducer.value);
 
-  const URL = `/feeds_api/getPostsByAuthor/${username}/${session?.user?.name || 'null'}/250/5/${offset}`
+
+  const URL = `/feeds_api/getPostsByAuthor/${username}/${loginInfo.name || 'null'}/250/5/${offset}`
   const { data, mutate, isLoading, isValidating } = useSWR(muting ? null : URL, fetchSds<Feed[]>)
 
   async function handlePromotionRefresh() {

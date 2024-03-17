@@ -1,7 +1,7 @@
 "use client"
 
 import React, { memo, useEffect } from 'react'
-import { Avatar, AvatarGroup } from '@nextui-org/react'
+import { Avatar, AvatarGroup } from '@nextui-org/avatar'
 import { fetchSds, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions'
 import { useSession } from 'next-auth/react';
 import LoadingCard from '@/components/LoadingCard';
@@ -50,9 +50,10 @@ export default memo(function ProfileInfoCard(props: Props) {
 
     const { username, profile, community, data: accountExt } = props;
     const { data: session } = useSession();
-    const URL = `/accounts_api/getAccountExt/${username}/${session?.user?.name || 'null'}`;
-    let { data, isLoading } = useSWR(accountExt ? undefined : URL, fetchSds<AccountExt>);
     const loginInfo = useAppSelector(state => state.loginReducer.value);
+
+    const URL = `/accounts_api/getAccountExt/${username}/${loginInfo.name || 'null'}`;
+    let { data, isLoading } = useSWR(accountExt ? undefined : URL, fetchSds<AccountExt>);
     const isSelf = !!loginInfo.name && (loginInfo.name === (username || data?.name));
 
     if (accountExt)
@@ -65,9 +66,9 @@ export default memo(function ProfileInfoCard(props: Props) {
 
     const posting_json_metadata = JSON.parse(profileInfo?.posting_json_metadata || '{}')
 
-    const URL_2 = `/followers_api/getKnownFollowers/${username || profileInfo?.name}/${session?.user?.name || 'null'}`
+    const URL_2 = `/followers_api/getKnownFollowers/${username || profileInfo?.name}/${loginInfo.name || 'null'}`
     const { data: knownPeople, isLoading: isKnownLoading } =
-        useSWR(session?.user?.name ? URL_2 : undefined, fetchSds<string[]>)
+        useSWR(!!loginInfo.name ? URL_2 : undefined, fetchSds<string[]>)
     const steemProps = useAppSelector(state => state.steemGlobalsReducer).value;
     const voteData = profileInfo && getVoteData(profileInfo, steemProps);
     const router = useRouter();
@@ -98,7 +99,7 @@ export default memo(function ProfileInfoCard(props: Props) {
 
     return (
         <div
-            className={clsx(`relative flex flex-col card-content border-none 
+            className={clsx(`relative flex flex-col card-content border-none  rounded-lg
         bg-transparent items-start gap-4 p-2 w-full bg-white dark:bg-white/5`, props.className)}>
             <div className="flex flex-row justify-between gap-2 w-full">
                 <div className="flex gap-2">
@@ -121,7 +122,7 @@ export default memo(function ProfileInfoCard(props: Props) {
 
                 {!isSelf && profileInfo && <FollowButton account={profileInfo} community={communityInfo} />}
                 {/* <Button
-                    disabled={isLoading}
+                    isDisabled={isLoading}
                     color={data?.observer_follows_author ? 'warning' : "secondary"}
                     radius="full"
                     size='sm'

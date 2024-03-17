@@ -1,5 +1,5 @@
 import React from "react";
-import { User } from "@nextui-org/react";
+import { User } from "@nextui-org/user";
 import { getResizedAvatar } from "@/libs/utils/image";
 import clsx from "clsx";
 import Link from "next/link";
@@ -15,9 +15,9 @@ export const RoleCard = (props: Props) => {
     const { role, compact } = props;
     // // const [isFollowed, setIsFollowed] = React.useState(comment.observer_follows_author === 1);
     // const { data: session } = useSession();
-    // const URL = `/accounts_api/getAccountExt/${username}/${session?.user?.name || 'null'}`;
+    // const URL = `/accounts_api/getAccountExt/${username}/${loginInfo.name || 'null'}`;
     // const { data, isLoading } = useSWR(URL, fetchSds<AccountExt>);
-    // const URL_2 = `/followers_api/getKnownFollowers/${username}/${session?.user?.name || 'null'}`
+    // const URL_2 = `/followers_api/getKnownFollowers/${username}/${loginInfo.name || 'null'}`
     // const { data: knownPeople, isLoading: isKnownLoading } = useSWR(compact ? null : URL_2, fetchSds<string[]>)
 
     // const posting_json_metadata = JSON.parse(String(data?.posting_json_metadata || '{}'));

@@ -2,7 +2,7 @@
 
 import React, { memo, useState } from 'react'
 import DrawerItems from './DrawerItems'
-import { Button } from '@nextui-org/react';
+import { Button } from '@nextui-org/button';
 import { RxHamburgerMenu } from "react-icons/rx";
 
 

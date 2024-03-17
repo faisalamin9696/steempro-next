@@ -1,20 +1,19 @@
 import SAvatar from '@/components/SAvatar';
-import TimeAgoWrapper from '@/components/wrapper/TimeAgoWrapper';
-import { useAppSelector } from '@/libs/constants/AppFunctions';
 import { vestToSteem } from '@/libs/steem/sds';
-import { Accordion, Card, CardBody } from '@nextui-org/react';
-import React, { useContext } from 'react';
+import Link from 'next/link';
+import React from 'react';
 
 interface Props {
     op: AccountHistory,
     context: any,
     socialUrl?: any,
+    steem_per_share: number;
 }
 
 
-function TransferFromTo({ title, from, to }: { title: string, from?: string, to?: string }) {
+function TransferFromTo({ title, from, to }: { title: any, from?: string, to?: string }) {
     return <div className='flex flex-row items-center gap-2'>
-        <p>{title}</p>
+        <div>{title}</div>
         {from && <div className=' flex items-center gap-2'>
             <SAvatar size='xs' username={from} />
             <p>{from}</p>
@@ -32,44 +31,49 @@ const TransferHistoryItem = (props: Props): JSX.Element => {
         op,
         context,
         socialUrl,
+        steem_per_share
     } = props;
 
-    const steemGlobals = useAppSelector(state => state.steemGlobalsReducer.value);
     // context -> account perspective
 
     const type = op.op[0];
     const data = op.op[1];
+    const amount_vests = data?.reward_vests?.split(' ')?.[0];
+    const amount_curation = data?.reward?.split(' ')?.[0];
+    const amount_vesting = data?.vesting_payout?.split(' ')?.[0];
+
+
 
     const powerdown_vests =
         type === 'withdraw_vesting'
-            ? vestToSteem(data.vesting_shares, steemGlobals.steem_per_share)?.toLocaleString('en-US')
+            ? vestToSteem(data.vesting_shares, steem_per_share)?.toLocaleString()
             : undefined;
 
     const reward_vests =
         type === 'claim_reward_balance'
             ?
-            vestToSteem(data.reward_vests, steemGlobals.steem_per_share)?.toLocaleString('en-US')
+            vestToSteem(amount_vests, steem_per_share)?.toLocaleString()
             : undefined;
     const curation_reward =
         type === 'curation_reward'
-            ? vestToSteem(data.reward, steemGlobals.steem_per_share)?.toLocaleString('en-US')
+            ? vestToSteem(amount_curation, steem_per_share)?.toLocaleString()
             : undefined;
     const author_reward =
         type === 'author_reward'
-            ? vestToSteem(data.vesting_payout, steemGlobals.steem_per_share)?.toLocaleString('en-US')
+            ? vestToSteem(amount_vesting, steem_per_share)?.toLocaleString()
             : undefined;
     const benefactor_reward =
         type === 'comment_benefactor_reward'
-            ? vestToSteem(data.reward, steemGlobals.steem_per_share)?.toLocaleString('en-US')
+            ? vestToSteem(amount_vesting, steem_per_share)?.toLocaleString()
             : undefined;
 
     /* All transfers involve up to 2 accounts, context and 1 other. */
     let message;
 
-    const postLink = (socialUrl, author, permlink) => (
-        <a href={`${socialUrl}/@${author}/${permlink}`} target="_blank">
+    const PostLink = ({ author, permlink }: { author: string, permlink: string }) => (
+        <Link className='text-blue-500' href={`/@${author}/${permlink}`} target="_blank">
             {author}/{permlink}
-        </a>
+        </Link>
     );
 
     if (type === 'transfer_to_vesting') {
@@ -77,26 +81,19 @@ const TransferHistoryItem = (props: Props): JSX.Element => {
 
         if (data.from === context) {
             if (data.to === '') {
-                message = <TransferFromTo title={`Transfer ${amount} to STEEM POWER`}
-
-                />
-                // tt('g.transfer') + amount + tt('g.to') + 'STEEM POWER';
+                message = <TransferFromTo title={`Transfer ${amount} to STEEM POWER`} />
             } else {
                 message = <TransferFromTo title={`Transfer ${amount} STEEM POWER`}
-                    to={data.to}
-                />
-                // tt('g.transfer') + amount + ' STEEM POWER' + tt('g.to');
+                    to={data.to} />
             }
         } else if (data.to === context) {
             message = <TransferFromTo title={`Receive ${amount} STEEM POWER from`}
-                from={data.from}
-            />
+                from={data.from} />
 
             // tt('g.receive') + amount + ' STEEM POWER' + tt('g.from');
         } else {
             message = <TransferFromTo title={`Transfer ${amount} STEEM POWER from`}
-                from={data.from} to={data.to}
-            />
+                from={data.from} to={data.to} />
 
         }
     } else if (
@@ -108,14 +105,10 @@ const TransferHistoryItem = (props: Props): JSX.Element => {
         const fromWhere =
             type === 'transfer_to_savings'
                 ? <TransferFromTo title={`Transfer to savings ${data.amount}`}
-                    to={data.to}
-                /> : type === 'transfer_from_savings'
+                    to={data.to} /> : type === 'transfer_from_savings'
                     ? <TransferFromTo title={`Transfer from savings ${data.amount}`}
-                        to={data.to}
-                    />
-                    : <TransferFromTo title={`Transfer ${data.amount}`}
-                        to={data.to}
-                    />;
+                        to={data.to} />
+                    : <TransferFromTo title={`Transfer ${data.amount}`} />;
 
         if (data.from === context) {
             // Semi-bad behavior - passing `type` to translation engine -- @todo better somehow?
@@ -136,16 +129,13 @@ const TransferHistoryItem = (props: Props): JSX.Element => {
             const fromWhere =
                 type === 'transfer_to_savings'
                     ? <TransferFromTo title={`Receive from savings ${data.amount} from`}
-                        from={data.from}
-                    />
+                        from={data.from} />
 
                     : type === 'transfer_from_savings'
                         ? <TransferFromTo title={`Transfer from savings ${data.amount} from`}
-                            from={data.from}
-                        />
+                            from={data.from} />
                         : <TransferFromTo title={`Received ${data.amount} from`}
-                            from={data.from}
-                        />;
+                            from={data.from} />;
             message = fromWhere;
 
 
@@ -154,46 +144,50 @@ const TransferHistoryItem = (props: Props): JSX.Element => {
             const fromWhere =
                 type === 'transfer_to_savings'
                     ? <TransferFromTo title={`Transfer to savings ${data.amount} from`}
-                        from={data.from} to={data.to}
-                    />
+                        from={data.from} to={data.to} />
 
                     : type === 'transfer_from_savings'
                         ? <TransferFromTo title={`Transfer from savings ${data.amount} from`}
-                            from={data.from} to={data.to}
-                        />
+                            from={data.from} to={data.to} />
                         : <TransferFromTo title={`Transfer ${data.amount} from`}
-                            from={data.from} to={data.to}
-                        />;
+                            from={data.from} to={data.to} />;
 
             message = fromWhere;
 
 
         }
     } else if (type === 'cancel_transfer_from_savings') {
-        message = `Cancel transfer from savings Request ID: ${data.request_id}`
-        // `${tt('transferhistoryrow_jsx.cancel_transfer_from_savings')} (${tt('g.request')} ${data.request_id})`;
+        message = <TransferFromTo title={`Cancel transfer from savings Request ID: `} from={data.request_id} />
+        // `${ tt('transferhistoryrow_jsx.cancel_transfer_from_savings') } (${ tt('g.request') } ${ data.request_id })`;
     } else if (type === 'withdraw_vesting') {
         if (data.vesting_shares === '0.000000 VESTS')
-            message = `Stop power down`
+            message = <TransferFromTo title={`Stop power down`} />
         else
-            message = `Start power down of ${powerdown_vests} STEEM`
+            message = <TransferFromTo title={`Start power down of ${powerdown_vests} STEEM`} />
 
         // tt('transferhistoryrow_jsx.start_power_down_of') + ' ' + powerdown_vests + ' STEEM';
     } else if (type === 'curation_reward') {
-        message = `${curation_reward} STEEM POWER for ${postLink(
-            socialUrl,
-            data.comment_author,
-            data.comment_permlink
-        )}`
 
-        // `${curation_reward} TEEM POWER` + tt('g.for');
+        message = <TransferFromTo
+            title={<div className='flex gap-2'>
+                <p>Claim {curation_reward} STEEM POWER for</p>
+                <PostLink author={data.comment_author} permlink={data.comment_permlink} />
+
+            </div>} />
+
+        // `${ curation_reward } TEEM POWER` + tt('g.for');
     } else if (type === 'author_reward') {
         let steem_payout = '';
         if (data.steem_payout !== '0.000 STEEM')
             steem_payout = ', ' + data.steem_payout;
-        message = `${author_reward} ${steem_payout} and ${data.sbd_payout} STEEM POWER for ${postLink(socialUrl, data.author, data.permlink)}`
+        message = <TransferFromTo title={
+            <div className='flex gap-2'>
+                <p>Claim {author_reward} SP, {steem_payout} and {data.sbd_payout} for</p>
 
-        // `${data.sbd_payout}${steem_payout}, ${tt( 'g.and' )} ${author_reward} STEEM POWER ${tt('g.for')}`;
+                <PostLink author={data.author} permlink={data.permlink} />
+            </div>} />
+
+        // `${ data.sbd_payout }${ steem_payout }, ${ tt('g.and') } ${ author_reward } STEEM POWER ${ tt('g.for') } `;
     } else if (type === 'claim_reward_balance') {
         const rewards: any[] = [];
         if (parseFloat(data.reward_steem.split(' ')[0]) > 0)
@@ -205,31 +199,32 @@ const TransferHistoryItem = (props: Props): JSX.Element => {
 
         switch (rewards.length) {
             case 3:
-                message = `Claim rewards: ${rewards[0]}, ${rewards[1]} and ${rewards[2]}`
+                message = <TransferFromTo title={`Claim rewards: ${rewards[0]}, ${rewards[1]} and ${rewards[2]} `} />
                 break;
             case 2:
-                message = `Claim rewards: ${rewards[0]} and ${rewards[1]}`
+                message = <TransferFromTo title={`Claim rewards: ${rewards[0]} and ${rewards[1]} `} />
                 break;
             case 1:
-                message = `Claim rewards:${rewards[0]}`
+                message = <TransferFromTo title={`Claim rewards: ${rewards[0]} `} />
                 break;
         }
     } else if (type === 'interest') {
-        message = `Receive interest of ${data.interest}`
+        message = <TransferFromTo title={`Receive interest of ${data.interest} `} />
     } else if (type === 'fill_convert_request') {
-        message = `Fill convert request: ${data.amount_in} for ${data.amount_out}`
+        message = <TransferFromTo title={`Fill convert request: ${data.amount_in} for ${data.amount_out}`} />
+
     } else if (type === 'fill_order') {
         if (data.open_owner == context) {
             // my order was filled by data.current_owner
-            message = `Paid ${data.open_pays} for ${data.current_pays}`
+            message = <TransferFromTo title={`Paid ${data.open_pays} for ${data.current_pays}`} />
         } else {
             // data.open_owner filled my order
-            message = `Paid ${data.open_pays} for ${data.current_pays}`
+            message = <TransferFromTo title={`Paid ${data.open_pays} for ${data.current_pays}`} />
 
-            // `Paid ${data.current_pays} for ${ data.open_pays }`;
+            // `Paid ${ data.current_pays } for ${ data.open_pays }`;
         }
     } else if (type === 'comment_benefactor_reward') {
-        message = `${benefactor_reward} STEEM POWER for ${data.author}/${data.permlink}`
+        message = <TransferFromTo title={`${benefactor_reward} STEEM POWER for ${data.author} / ${data.permlink}`} />
 
     } else {
         message = JSON.stringify({ type, ...data }, null, 2);

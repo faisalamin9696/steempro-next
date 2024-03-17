@@ -57,7 +57,7 @@ export function middleware(request: NextRequest) {
     // Check if the URL matches the pattern for a category
     else if (valid_categories.filter(item => item !== 'about').includes(first_param)) {
 
-        if (basic_categories.includes(first_param)) {
+        if (basic_categories.includes(first_param) && splitted_path.length === 1) {
             return NextResponse.rewrite(new URL('/', request.nextUrl), { headers: request.headers });
         }
         return NextResponse.rewrite(new URL('/category', request.nextUrl), { headers: request.headers });

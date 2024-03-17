@@ -7,7 +7,7 @@ import CommentHeader from '@/components/comment/component/CommentHeader';
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { addCommentHandler } from '@/libs/redux/reducers/CommentReducer';
 import { getSettings } from '@/libs/utils/user';
-import { Card, CardFooter } from '@nextui-org/react';
+import { Card, CardFooter } from '@nextui-org/card';
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
@@ -20,6 +20,7 @@ import { useRouter } from 'next13-progressbar';
 import { ViewCountTime } from '@/libs/constants/AppConstants';
 import Link from 'next/link';
 import { hasNsfwTag } from '@/libs/utils/StateFunctions';
+import TagsListCard from '@/components/TagsListCard';
 const DynamicPostReplies = dynamic(() => import('../_components/PostReplies'))
 
 
@@ -122,6 +123,9 @@ export default function PostPage(props: Props) {
                                 noImage={!!commentInfo.is_muted}
                                 text={commentInfo.body} />
                         </div>
+
+                        <TagsListCard tags={commentInfo.depth === 0 ?
+                            JSON.parse(commentInfo.json_metadata ?? `{}`)?.tags ?? [] : []} />
 
                         <CardFooter className='w-full p-0  overflow-visible'>
                             <CommentFooter comment={commentInfo}

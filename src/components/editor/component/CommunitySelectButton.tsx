@@ -1,12 +1,12 @@
 'use client';
 
-import { Avatar, Button, Select, SelectItem } from '@nextui-org/react';
+import { Select, SelectItem } from '@nextui-org/select';
+import { Button } from '@nextui-org/button';
 import { memo, useEffect } from 'react';
-import { Image } from '@nextui-org/react';
+import { Image } from '@nextui-org/image';
 import { fetchSds, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { getResizedAvatar } from '@/libs/utils/image';
 import useSWR from 'swr';
-import { useSession } from 'next-auth/react';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import { IoCloseOutline } from "react-icons/io5";
 import { empty_community } from '@/libs/constants/Placeholders';
@@ -15,12 +15,12 @@ interface Props {
     community?: Community;
     onSelectCommunity: (community?: Community) => void;
     onlyCommunity?: boolean;
-    disabled?: boolean;
+    isDisabled?: boolean;
 
 
 }
 export default memo(function CommunitySelectButton(props: Props) {
-    const { community, onSelectCommunity, onlyCommunity, disabled } = props;
+    const { community, onSelectCommunity, onlyCommunity, isDisabled } = props;
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const URL = `/communities_api/getCommunitiesBySubscriber/${loginInfo.name}`;
 
@@ -61,7 +61,7 @@ export default memo(function CommunitySelectButton(props: Props) {
                             title: community.title
                         })] : []}
                     size='sm'
-                    isDisabled={onlyCommunity || disabled}
+                    isDisabled={onlyCommunity || isDisabled}
                     items={onlyCommunity ? commmunities : ((data || loginInfo?.communities) ?? [])}
                     isLoading={isLoading}
                     placeholder='Select Community'
@@ -117,6 +117,7 @@ export default memo(function CommunitySelectButton(props: Props) {
             {!onlyCommunity && community && <Button size='sm' isIconOnly
                 className='text-default-500'
                 radius='full' variant='light'
+                isDisabled={isDisabled}
                 onPress={() => onSelectCommunity(undefined)}>
                 <IoCloseOutline className='text-xl' />
             </Button>}

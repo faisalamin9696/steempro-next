@@ -1,7 +1,7 @@
 'use client';
 
 import CommentCover from '@/components/comment/component/CommentCover'
-import { Card } from '@nextui-org/react'
+import { Card } from "@nextui-org/card";
 import React, { memo } from 'react'
 import { getPostThumbnail } from '@/libs/utils/image'
 import BodyShort from '@/components/body/BodyShort'
@@ -24,7 +24,7 @@ export default memo(function CompactPost(props: Props) {
     const thumbnail = getPostThumbnail(commentInfo?.json_images);
 
 
- 
+
 
     return (
         <div className="card card-compact rounded-lg overflow-hidden shadow-lg flex flex-col bg-white dark:bg-white/5">
@@ -62,9 +62,7 @@ export default memo(function CompactPost(props: Props) {
 
                 <div className=' flex items-center gap-2'>
 
-                    <p className='text-tiny font-light '>
-                        <ViewCountCard comment={commentInfo} />
-                    </p>
+                    <ViewCountCard comment={commentInfo} className='text-tiny font-light' />
 
                     <span className="py-1 text-xs font-regular gap-1 text-default-900/80 mr-1 flex flex-row items-center">
                         <svg className="h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tooltip as NextTooltip } from "@nextui-org/react";
+import { Tooltip as NextTooltip } from "@nextui-org/tooltip";
 import clsx from 'clsx';
 
 type OverlayPlacement = "top" | "bottom" | "right" | "left" | "top-start" | "top-end" | "bottom-start" | "bottom-end" | "left-start" | "left-end" | "right-start" | "right-end";

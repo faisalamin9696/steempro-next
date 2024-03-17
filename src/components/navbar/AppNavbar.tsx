@@ -2,37 +2,23 @@
 
 import React, { useMemo } from 'react'
 import './header.scss';
-import { Badge, Button, Input, Navbar, NavbarBrand, NavbarContent, Popover, PopoverContent, PopoverTrigger, User } from "@nextui-org/react";
-import { MdSearch } from 'react-icons/md';
+import { Navbar, NavbarBrand, NavbarContent } from "@nextui-org/navbar";
+import { Popover, PopoverTrigger, PopoverContent, } from '@nextui-org/popover';
+import { Button } from '@nextui-org/button';
+import { User } from '@nextui-org/user';
+import { Badge } from '@nextui-org/badge';
 import { LuPencilLine } from "react-icons/lu";
 import { useLogin } from '../useLogin';
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
-import { getCredentials, getSettings, logoutSession } from '@/libs/utils/user';
-import { logoutHandler } from '@/libs/redux/reducers/LoginReducer';
+import { getCredentials } from '@/libs/utils/user';
 import { getResizedAvatar } from '@/libs/utils/image';
 import Image from 'next/image';
 import { signIn, signOut, useSession } from 'next-auth/react';
-import dynamic from 'next/dynamic';
 import AccountsModal from '../AccountsModal';
 import AppDrawer from './AppDrawer';
 import NotificationsCard from '../NotificationsCard';
 import { FaRegBell } from 'react-icons/fa';
 import Link from 'next/link';
-const NavbarDrawerItems = dynamic(() => import('./DrawerItems'))
-
-
-const menuItems = [
-    "Profile",
-    "Dashboard",
-    "Activity",
-    "Analytics",
-    "System",
-    "Deployments",
-    "My Settings",
-    "Team Settings",
-    "Help & Feedback",
-    "Log Out",
-];
 
 export default function AppNavbar() {
 
@@ -45,15 +31,17 @@ export default function AppNavbar() {
     const [notificationPopup, setNotificationPopup] = React.useState(false);
 
 
-
     // validate the local storage auth
     useMemo(() => {
         const credentials = getCredentials();
+
         if (status === 'authenticated') {
-            if (!credentials?.username) signOut();
+            if (!credentials?.username) {
+                signOut();
+            }
         }
 
-        if (status === 'unauthenticated' && credentials?.username) {
+        if (status === 'unauthenticated' && !!credentials?.username) {
             signIn('credentials', {
                 username: credentials.username,
                 redirect: false
@@ -62,10 +50,6 @@ export default function AppNavbar() {
         }
     }, [status]);
 
-    function handleLogout() {
-        logoutSession();
-        dispatch(logoutHandler());
-    }
 
     function handleLogin() {
         authenticateUser();
@@ -92,19 +76,14 @@ export default function AppNavbar() {
                         className='hidden sm:block'
                         src={'/logo-default.png'}
                         alt='logo'
-                        placeholder='blur'
-                        blurDataURL={'/logo-default.png'}
                         priority
                         height={40}
                         width={150}
                         style={{ height: 'auto' }}
-
                     />
                 </Link>
                 <Link href={'/'}>
                     <Image priority className='hidden max-sm:block'
-                        placeholder='blur'
-                        blurDataURL={'/logo192.png'}
                         src={'/logo192.png'}
                         alt='logo'
                         height={35}
@@ -119,7 +98,7 @@ export default function AppNavbar() {
             <NavbarContent as="div" className="items-center z-0 " justify="end">
                 <div className="flex flex-row gap-2 items-center">
 
-                    <Input
+                    {/* <Input
                         radius='full'
                         className='hidden 1md:block'
                         classNames={{
@@ -133,16 +112,16 @@ export default function AppNavbar() {
                         size="sm"
                         startContent={<MdSearch size={18} />}
                         type="search"
-                    />
+                    /> */}
 
-                    <Button radius='full'
+                    {/* <Button radius='full'
                         className='1md:hidden '
                         isIconOnly size='sm' variant='light'
                         onPress={() => {
                             authenticateUser();
                         }}>
                         <MdSearch className='text-xl text-default-600 ' />
-                    </Button>
+                    </Button> */}
 
 
                     <Button radius='full' as={Link} href={'/submit'}
@@ -165,6 +144,7 @@ export default function AppNavbar() {
                                     size='sm'
                                     radius="full"
                                     isIconOnly
+                                    isDisabled={!!!loginInfo.name}
                                     className='text-default-600 max-sm:hidden'
                                     onPress={() => { setNotificationPopup(!notificationPopup) }}
                                     aria-label="more than 99 notifications"
@@ -176,7 +156,7 @@ export default function AppNavbar() {
 
                         </PopoverTrigger>
                         <PopoverContent>
-                            <NotificationsCard username={session?.user?.name} />
+                            <NotificationsCard username={loginInfo.name} />
                         </PopoverContent>
                     </Popover>
 
@@ -194,7 +174,7 @@ export default function AppNavbar() {
                                     name=""
                                     className="transition-transform"
                                     avatarProps={{
-                                        src: getResizedAvatar(session?.user?.name ?? '')
+                                        src: getResizedAvatar(loginInfo.name)
                                     }}
                                 />
                             </PopoverTrigger>

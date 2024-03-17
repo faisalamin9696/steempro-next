@@ -1,5 +1,5 @@
 import NsfwOverlay from "@/components/NsfwOverlay";
-import { Card } from "@nextui-org/react";
+import { Card } from "@nextui-org/card";
 import clsx from "clsx";
 import Image from "next/image";
 import { memo, useState } from "react";

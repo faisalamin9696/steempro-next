@@ -1,4 +1,6 @@
-import { Card, CardBody, Dropdown, DropdownTrigger, Button } from "@nextui-org/react";
+import {  Dropdown, DropdownTrigger } from "@nextui-org/dropdown";
+import { Button } from '@nextui-org/button';
+import { Card, CardBody } from '@nextui-org/card';
 import { FaSortDown } from "react-icons/fa";
 import { BsInfoCircle } from "react-icons/bs";
 import { SteemTokens } from "../app/community/(tabs)/wallet/page";

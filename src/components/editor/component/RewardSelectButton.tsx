@@ -1,4 +1,7 @@
-import { Popover, PopoverTrigger, Button, PopoverContent, RadioGroup, Radio } from '@nextui-org/react'
+import { Popover, PopoverTrigger, PopoverContent, } from '@nextui-org/popover';
+import { Button } from '@nextui-org/button';
+import { RadioGroup, Radio } from '@nextui-org/radio';
+
 import React, { memo, useState } from 'react'
 import { FaDollarSign } from 'react-icons/fa'
 
@@ -11,17 +14,15 @@ export const rewardTypes: Payout[] = [{ title: 'Decline Payout', shortTitle: 'De
 interface Props {
     onSelectReward?: (reward: Payout) => void;
     selectedValue: Payout;
-    disabled?: boolean;
+    isDisabled?: boolean;
 
 }
 
 export default memo(function RewardSelectButton(props: Props) {
-    const { onSelectReward, selectedValue, disabled } = props;
+    const { onSelectReward, selectedValue, isDisabled } = props;
 
     const [rewardPopup, setRewardPopup] = useState(false);
 
-
-    if (disabled) return null
 
     return (<div>
         <Popover isOpen={rewardPopup} onOpenChange={(open) => setRewardPopup(open)}
@@ -30,8 +31,7 @@ export default memo(function RewardSelectButton(props: Props) {
             }}>
             <PopoverTrigger >
                 <Button size='sm'
-                    isDisabled={disabled}
-
+                    isDisabled={isDisabled}
                     startContent={<FaDollarSign className='text-lg' />}
                     className='text-white  bg-teal-600'
 

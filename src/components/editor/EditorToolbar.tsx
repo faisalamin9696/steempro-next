@@ -1,17 +1,17 @@
 import { FaQuoteLeft, FaItalic, FaBold, FaLink, FaHeading, FaCode, FaTable } from 'react-icons/fa';
-import { Button, Kbd, Tooltip } from '@nextui-org/react';
-import { LuHeading1, LuHeading2, LuHeading3, LuHeading4 } from 'react-icons/lu';
+import { Tooltip } from '@nextui-org/tooltip';
+import { Button } from '@nextui-org/button';
 
+import { LuHeading1, LuHeading2, LuHeading3, LuHeading4 } from 'react-icons/lu';
 
 import {
     Dropdown,
     DropdownTrigger,
     DropdownMenu,
     DropdownItem
-} from "@nextui-org/react";
+} from "@nextui-org/dropdown";
 import clsx from 'clsx';
 import { BsImage, BsJustify, BsTextCenter } from 'react-icons/bs';
-import { MdContentPasteGo } from 'react-icons/md';
 import { ToolbarItem } from './component/EditorToolbarItem';
 
 
@@ -116,11 +116,11 @@ const EditorToolbar = (props: ToolbarProps) => {
 
                     <div className='h-4 w-[1px] bg-default-900/20' />
 
-                    <ToolbarItem tooltip={{
+                    {/* <ToolbarItem tooltip={{
                         description: 'Snippet',
                         shortcut: `${masterKey + 'S'}`
                     }} onSelect={() => { onSelect('snip') }}
-                        IconType={MdContentPasteGo} />
+                        IconType={MdContentPasteGo} /> */}
 
                     <ToolbarItem tooltip={{
                         description: 'Link',

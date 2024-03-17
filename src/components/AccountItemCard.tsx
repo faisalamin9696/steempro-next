@@ -1,5 +1,7 @@
 import { addToCurrent, saveSessionKey } from '@/libs/utils/user';
-import { Card, CardBody, Chip, Button } from '@nextui-org/react';
+import {  Chip } from '@nextui-org/chip';
+import { Button } from '@nextui-org/button';
+import { Card, CardBody, } from '@nextui-org/card';
 import React, { memo, useState } from 'react'
 import SAvatar from './SAvatar';
 import { useLogin } from './useLogin';
@@ -9,11 +11,17 @@ import { getAuth, signInAnonymously } from 'firebase/auth';
 import { signIn } from 'next-auth/react';
 import { toast } from 'sonner';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
+import { twMerge } from 'tailwind-merge';
+import { useRouter } from 'next/navigation';
 
 interface Props {
     user: User;
     defaultAccount?: User;
     handleSwitchSuccess?: () => void;
+    className?: string;
+    switchText?: string;
+    isLogin?: boolean;
+    isDisabled?: boolean;
 }
 
 
@@ -25,9 +33,12 @@ const keysColorMap = {
 
 
 export default memo(function AccountItemCard(props: Props) {
-    const { defaultAccount, user, handleSwitchSuccess } = props;
+    const { defaultAccount, user, handleSwitchSuccess,
+        switchText, isLogin, isDisabled } = props;
+
     const { authenticateUser, isAuthorized } = useLogin();
     const dispatch = useAppDispatch();
+    const router = useRouter();
 
     const [switching, setSwitching] = useState(false);
 
@@ -37,6 +48,8 @@ export default memo(function AccountItemCard(props: Props) {
         setSwitching(false);
         if (error)
             toast.error(error);
+        else router.refresh();
+
     }
 
     async function handleSwitch() {
@@ -63,12 +76,16 @@ export default memo(function AccountItemCard(props: Props) {
                             return
                         }
                         saveSessionKey('');
+
                         dispatch(saveLoginHandler({
                             ...account, login: true,
                             encKey: user.key
                         }));
                         handleSwitchSuccess && handleSwitchSuccess();
-                        toast.success(`Successfully switched to ${user.username}`);
+                        if (isLogin)
+                            toast.success(`Login successsful with private ${user.type} key`);
+                        else
+                            toast.success(`Successfully switched to ${user.username}`);
                         onComplete();
                     })
                     .catch((error) => {
@@ -84,8 +101,8 @@ export default memo(function AccountItemCard(props: Props) {
     const isDefault = (defaultAccount?.username === user.username && defaultAccount?.type === user.type);
 
     return <Card
-        className='w-full bg-foreground/10'>
-        <CardBody className='flex flex-row gap-2  items-center'>
+        className={twMerge('w-full bg-foreground/10', props.className)}>
+        <CardBody className={twMerge('flex flex-row gap-2  items-center', props.className)}>
             <SAvatar
                 size='xs'
                 username={user.username} />
@@ -102,11 +119,11 @@ export default memo(function AccountItemCard(props: Props) {
                     </Chip> :
                     <Button size='sm'
                         isLoading={switching}
-                        isDisabled={switching}
+                        isDisabled={switching || isDisabled}
                         radius='full'
                         onPress={handleSwitch}
                         className='min-w-0  h-6 bg-foreground/20'>
-                        Switch
+                        {switchText ?? 'Switch'}
                     </Button>}
 
 

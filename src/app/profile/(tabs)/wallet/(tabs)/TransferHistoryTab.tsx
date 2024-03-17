@@ -8,14 +8,17 @@ import {
     TableBody,
     TableRow,
     TableCell,
-    Input,
-    Button,
-    DropdownTrigger,
-    Dropdown,
-    DropdownMenu,
-    DropdownItem,
-    Pagination,
-} from "@nextui-org/react";
+
+} from "@nextui-org/table";
+
+import { Button } from '@nextui-org/button';
+import { Input } from '@nextui-org/input';
+import { Pagination } from '@nextui-org/pagination';
+import {
+    DropdownTrigger, Dropdown, DropdownMenu, DropdownItem
+} from '@nextui-org/dropdown';
+
+
 import { FaChevronDown, FaSearch } from "react-icons/fa";
 import useSWR from "swr";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
@@ -36,9 +39,11 @@ const columns = [
 ];
 
 const statusOptions = [
-    { name: "Incoming", uid: "incoming" },
-    { name: "Expiring", uid: "expiring" },
-    { name: "Outgoing", uid: "outgoing" },
+    { name: "Normal Transfer", uid: "transfer" },
+    { name: "Transfer to Vestings", uid: "transfer_to_vesting" },
+    { name: "Author Reward", uid: "author_reward" },
+    { name: "curation Reward", uid: "curation_reward" },
+    { name: "Claim Reward", uid: "claim_reward_balance" },
 ];
 
 
@@ -53,7 +58,8 @@ const end_date = moment().unix();
 export default function TransferHistoryTab({ data }: { data: AccountExt }) {
     const { username } = usePathnameClient();
 
-    const filters = (`withdraw_vesting,cancel_transfer_from_savings,claim_reward_balance,fill_convert_request,fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_from_savings,transfer_to_savings,transfer_to_vesting`);
+    const filters = (`author_reward,curation_reward,withdraw_vesting,cancel_transfer_from_savings,claim_reward_balance,fill_convert_request,
+fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_from_savings,transfer_to_savings,transfer_to_vesting`);
 
     const URL = `/account_history_api/getHistoryByOpTypesTime/${data.name}/${filters}/${start_date}-${end_date}`;
     const { data: historyData, isLoading: isLoading } = useSWR(URL, fetchSds<AccountHistory[]>);
@@ -67,9 +73,10 @@ export default function TransferHistoryTab({ data }: { data: AccountExt }) {
     const [allRows, setAllRows] = useState<AccountHistory[]>([]);
 
     useEffect(() => {
-        if (historyData)
+        if (historyData) {
+            historyData.reverse();
             setAllRows(historyData);
-
+        }
     }, [historyData]);
 
 
@@ -79,7 +86,7 @@ export default function TransferHistoryTab({ data }: { data: AccountExt }) {
     const [rowsPerPage, setRowsPerPage] = React.useState<any>(10);
     const [sortDescriptor, setSortDescriptor] = React.useState<any>({
         column: "time",
-        direction: "ascending",
+        direction: "descending",
     });
     const [page, setPage] = React.useState(1);
 
@@ -92,27 +99,27 @@ export default function TransferHistoryTab({ data }: { data: AccountExt }) {
     }, [visibleColumns]);
 
     const filteredItems = React.useMemo(() => {
-        let filteredDelegations = [...allRows];
+        let filteredHistory = [...allRows];
 
         if (hasSearchFilter) {
-            filteredDelegations = filteredDelegations.filter((history) =>
+            filteredHistory = filteredHistory.filter((history) =>
                 JSON.stringify(history.op).toLowerCase().includes(filterValue.toLowerCase())
             );
         }
-        // if (statusFilter !== "all" && Array.from(statusFilter)?.length !== statusOptions.length) {
-        //     filteredDelegations = filteredDelegations.filter((history) =>
-        //         Array.from(statusFilter).includes(history.op[0]),
-        //     );
-        // }
+        if (statusFilter !== "all" && Array.from(statusFilter)?.length !== statusOptions.length) {
+            filteredHistory = filteredHistory.filter((history) =>
+                Array.from(statusFilter).includes(history.op[0]),
+            );
+        }
 
-        return filteredDelegations;
+        return filteredHistory;
     }, [allRows, filterValue, statusFilter]);
 
     const pages = Math.ceil(filteredItems?.length / rowsPerPage);
 
     const items = React.useMemo(() => {
-        const start = (page - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
+        const start = 0;
+        const end = start + filteredItems.length;
 
         return filteredItems.slice(start, end);
     }, [page, filteredItems, rowsPerPage]);
@@ -139,7 +146,8 @@ export default function TransferHistoryTab({ data }: { data: AccountExt }) {
         switch (columnKey) {
             case "op":
                 return (
-                    <TransferHistoryItem op={history} context={username} />
+                    <TransferHistoryItem op={history} context={username}
+                        steem_per_share={globalData.steem_per_share} />
                     // <div className="flex flex-row items-start gap-1">
                     //     <div className="flex flex-col gap-2">
 
@@ -220,7 +228,7 @@ export default function TransferHistoryTab({ data }: { data: AccountExt }) {
                         <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
                                 <Button size="sm" endContent={<FaChevronDown className="text-small" />} variant="flat">
-                                    Status
+                                    FILTER
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu
@@ -272,7 +280,7 @@ export default function TransferHistoryTab({ data }: { data: AccountExt }) {
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-default-400 text-small">Total {allRows?.length} delegations</span>
+                    <span className="text-default-400 text-small">Total {allRows?.length} entries</span>
                     <label className="flex items-center text-default-400 text-small">
                         Rows per page:
                         <select
@@ -349,7 +357,7 @@ export default function TransferHistoryTab({ data }: { data: AccountExt }) {
     return (
         <div>
             <Table
-                aria-label="Delegation table"
+                aria-label="Transfet history table"
                 isHeaderSticky
                 removeWrapper
                 bottomContent={bottomContent}
@@ -374,9 +382,9 @@ export default function TransferHistoryTab({ data }: { data: AccountExt }) {
                         </TableColumn>
                     )}
                 </TableHeader>
-                <TableBody emptyContent={"No data found"} items={sortedItems}>
+                <TableBody emptyContent={"No data found"} items={sortedItems.slice((page - 1) * rowsPerPage, (page) * rowsPerPage)}>
                     {(item) => (
-                        <TableRow key={`${item.id}`}>
+                        <TableRow key={`${item.id}`} >
                             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                         </TableRow>
                     )}

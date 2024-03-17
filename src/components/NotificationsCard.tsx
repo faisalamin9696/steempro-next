@@ -3,7 +3,13 @@
 import { capitalize } from '@/app/profile/(tabs)/wallet/(tabs)/DelegationTab';
 import { defaultNotificationFilters } from '@/libs/constants/AppConstants';
 import { fetchSds, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
-import { Button, Chip, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table';
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/dropdown';
+import { Input } from '@nextui-org/input';
+import { Spinner } from '@nextui-org/spinner';
+import { Button } from '@nextui-org/button';
+import { Chip } from '@nextui-org/chip';
+
 import React, { useEffect, useState } from 'react'
 import { FaSearch } from 'react-icons/fa';
 import useSWR from 'swr';

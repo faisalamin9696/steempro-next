@@ -2,9 +2,11 @@ import { useAppSelector } from '@/libs/constants/AppFunctions';
 import { addCommentHandler } from '@/libs/redux/reducers/CommentReducer';
 import { setUserRole, setUserRoleTitle, setUserTitle } from '@/libs/steem/condenser';
 import { Role } from '@/libs/utils/community';
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Input, Select, SelectItem } from '@nextui-org/react'
+import { Select, SelectItem } from '@nextui-org/select'
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/modal";
+import { Button } from "@nextui-org/button";
+import { Input } from "@nextui-org/input";
 import { useMutation } from '@tanstack/react-query';
-import { KeyType } from 'crypto';
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux';
 import { toast } from 'sonner';
@@ -19,15 +21,13 @@ interface Props {
 }
 export default function EditRoleModal(props: Props) {
     const { comment } = props;
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { isOpen, onOpenChange } = useDisclosure();
 
     let [title, setTitle] = useState(comment.author_title);
     let [role, setRole] = useState<'muted' | 'guest' | 'member' | 'mod' | 'admin' | 'owner' | ''>(comment.author_role || 'guest');
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const observerRole = comment.observer_role;
-    const isSameRole = comment.author_role === comment.observer_role;
     const dispatch = useDispatch();
-    const [loading, setLoading] = useState(false);
     const { authenticateUser, isAuthorized } = useLogin();
 
 
@@ -56,6 +56,7 @@ export default function EditRoleModal(props: Props) {
             author_title: title
         }))
         toast.success('Updated');
+        props.onOpenChange && props.onOpenChange(false);
         onOpenChange();
     }
     function handleFailed(error: any) {
@@ -72,9 +73,7 @@ export default function EditRoleModal(props: Props) {
             handleSuccess();
         },
         onError(error) { handleFailed(error) },
-        onSettled() {
-            setLoading(false);
-        }
+
     });
 
 
@@ -87,9 +86,7 @@ export default function EditRoleModal(props: Props) {
         onSuccess() {
             handleSuccess();
         }, onError(error) { handleFailed(error) },
-        onSettled() {
-            setLoading(false);
-        }
+
     });
 
 
@@ -101,8 +98,6 @@ export default function EditRoleModal(props: Props) {
         }),
         onSuccess() {
             handleSuccess();
-        }, onError(error) { handleFailed(error) }, onSettled() {
-            setLoading(false);
         }
     });
 
@@ -117,7 +112,6 @@ export default function EditRoleModal(props: Props) {
             if (!isAuthorized())
                 return
 
-            setLoading(true);
             const credentials = getCredentials(getSessionKey());
             if (!credentials?.key) {
                 toast.error('Invalid credentials')
@@ -149,31 +143,35 @@ export default function EditRoleModal(props: Props) {
 
 
     }
+
+    const isPending = roleMutation.isPending || titleMutation.isPending || roleTitleMutation.isPending;
     return (
         <Modal isOpen={props.isOpen ?? isOpen}
+            hideCloseButton={isPending}
+            isDismissable={!isPending}
             onOpenChange={props.onOpenChange ?? onOpenChange}>
             <ModalContent>
                 {(onClose) => (
                     <>
                         <ModalHeader className="flex flex-col gap-1">Update Title, Role</ModalHeader>
                         <ModalBody>
-                            <div className='flex flex-col gap-2'>
-                                <Input
+                            <div className='flex flex-col gap-4'>
+                                <Input className='w-full'
                                     maxLength={32}
                                     label='Title'
-                                    labelPlacement='outside-left'
+                                    size='sm'
                                     classNames={{ base: 'items-center' }}
                                     value={title} onValueChange={setTitle} />
 
                                 {!(Role.level(comment.observer_role) <= Role.level(comment.author_role))
                                     && <Select
+                                        size='sm'
                                         aria-label="Select role"
                                         items={items}
                                         label="Role"
                                         className="max-w-xs"
                                         defaultSelectedKeys={[role]}
                                         disabledKeys={[comment.author_role]}
-                                        labelPlacement='outside-left'
                                         onSelectionChange={(key) => setRole(key as any)}
                                         classNames={{ base: 'items-center' }}
                                     >
@@ -185,10 +183,14 @@ export default function EditRoleModal(props: Props) {
 
                         </ModalBody>
                         <ModalFooter>
-                            <Button color="danger" variant="light" onPress={onClose}>
+                            <Button color="danger"
+                                isDisabled={isPending}
+                                variant="light" onPress={onClose}>
                                 Close
                             </Button>
-                            <Button color="primary" onPress={handleUpdate}>
+                            <Button color="primary"
+                                isDisabled={isPending} isLoading={isPending}
+                                onPress={handleUpdate}>
                                 Update
                             </Button>
                         </ModalFooter>

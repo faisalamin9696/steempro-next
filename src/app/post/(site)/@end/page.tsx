@@ -1,8 +1,9 @@
 "use client"
 
 import React, { useEffect, useState } from 'react'
-import { Button, Card } from '@nextui-org/react'
-import { filterRecommendations, mapSds } from '@/libs/constants/AppFunctions'
+import { Button } from '@nextui-org/button';
+import { Card } from '@nextui-org/card';
+import { filterRecommendations, useAppSelector } from '@/libs/constants/AppFunctions'
 import UserCard from '@/components/UserCard'
 import { IoIosRefresh } from 'react-icons/io'
 import usePathnameClient from '@/libs/utils/usePathnameClient'
@@ -12,12 +13,14 @@ import { useSession } from 'next-auth/react'
 export default function PostEnd() {
   const { username } = usePathnameClient();
   const { data: session } = useSession();
+  const loginInfo = useAppSelector(state => state.loginReducer.value);
+
 
   const [recomendations, setRecomendations] = useState<string[]>([]);
-  let followingList = [username].concat([session?.user?.name || ''])
+  let followingList = [username].concat([loginInfo.name])
 
   useEffect(() => {
-    followingList = [username].concat([session?.user?.name || '']);
+    followingList = [username].concat([loginInfo.name]);
     setRecomendations(filterRecommendations(followingList));
   }, []);
 

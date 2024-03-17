@@ -92,7 +92,7 @@ type KeyTypes = {
   MEMO: 'MEMO';
 };
 type AccountExt = {
-  name: string;
+  name: string = '';
   creator: string;
   recovery_account: string;
   reset_account: string;

@@ -21,7 +21,6 @@ import { initializeApp } from "firebase/app";
 import {
     signInAnonymously, getAuth
 } from "firebase/auth";
-import { toast } from 'sonner';
 import { Next13ProgressBar } from 'next13-progressbar';
 
 

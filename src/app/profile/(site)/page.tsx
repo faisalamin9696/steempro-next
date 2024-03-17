@@ -1,7 +1,7 @@
 "use client";
 
-import { Tab, Tabs } from '@nextui-org/react'
-import React, { useEffect } from 'react'
+import { Tab, Tabs } from '@nextui-org/tabs';
+import React, { useEffect } from 'react';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import ProfileBlogsTab from '../(tabs)/blogs/page';
 import ProfileWalletTab from '../(tabs)/wallet/ProfileWalletTab';

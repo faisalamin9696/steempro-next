@@ -34,7 +34,7 @@ export default function SAvatar(props: Props) {
             width={imageSize}
             onClick={onClick}
             src={`${getResizedAvatar(username, quality ?? 'small')}`}
-            className={clsx(' shadow-lg rounded-full', border && 'border', className)}
+            className={clsx('max-w-none shadow-lg rounded-full', border && 'border', className)}
         />
     </Link>
     )

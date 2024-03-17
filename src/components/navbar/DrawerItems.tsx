@@ -2,22 +2,23 @@
 
 import React, { } from 'react'
 import { FaArrowCircleLeft, FaInfoCircle, FaTools, FaUserCircle } from 'react-icons/fa';
-import { Button } from '@nextui-org/react';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/modal';
+import { Button } from '@nextui-org/button';
 import SAvatar from '../SAvatar';
 import { signOut } from 'next-auth/react';
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
-import secureLocalStorage from 'react-secure-storage';
-import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
+import { logoutHandler } from '@/libs/redux/reducers/LoginReducer';
 import { abbreviateNumber } from '@/libs/utils/helper';
 import { IoLogOut } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
 import { useLogin } from '../useLogin';
-import { empty_profile } from '@/libs/constants/Placeholders';
 import Reputation from '../Reputation';
 import Link from 'next/link';
 import ThemeSwitch from '../ThemeSwitch';
 import { PiUserSwitchFill } from "react-icons/pi";
 import { RiUserStarFill } from "react-icons/ri";
+import { getCredentials, getSessionKey, removeCredentials } from '@/libs/utils/user';
+import { toast } from 'sonner';
 
 
 
@@ -29,16 +30,27 @@ interface Props {
 export default function DrawerItems(props: Props) {
     const { onItemClick, onAccountSwitch } = props;
     const dispatch = useAppDispatch();
-    const { credentials, isLogin } = useLogin();
-    const loginInfo = useAppSelector(state => state.loginReducer.value) ?? empty_profile(credentials?.username ?? '');
+    const { isLogin, authenticateUser, isAuthorized } = useLogin();
+    const loginInfo = useAppSelector(state => state.loginReducer.value);
     const posting_json_metadata = JSON.parse(loginInfo?.posting_json_metadata || '{}')
-
-
+    const { isOpen, onOpenChange } = useDisclosure();
 
     function handleLogout() {
+        authenticateUser();
+        if (!isAuthorized()) {
+            return
+        }
+
+        const credentials = getCredentials(getSessionKey());
+        if (!credentials?.key) {
+            toast.error('Invalid credentials');
+            return
+        }
+        onOpenChange();
+        removeCredentials(credentials);
+        dispatch(logoutHandler());
         signOut();
-        secureLocalStorage.removeItem('auth');
-        dispatch(saveLoginHandler({ ...loginInfo, login: false }));
+        toast.success(`${credentials.username} logged out successfully`);
     }
 
 
@@ -47,7 +59,7 @@ export default function DrawerItems(props: Props) {
             {isLogin() ?
                 <div className='flex flex-col gap-4 py-6 rounded-bl-xl '>
                     <div className='flex flex-row gap-2 items-center'>
-                        <SAvatar size='sm' username={loginInfo.name ?? ''} />
+                        <SAvatar size='sm' username={loginInfo.name} />
                         <div className='flex flex-col items-start text-sm text-default-600'>
 
                             <h4>{posting_json_metadata?.profile?.name}</h4>
@@ -115,6 +127,9 @@ export default function DrawerItems(props: Props) {
                 </Button>
 
                 <Button variant='light'
+                    as={Link}
+                    href='https://hivelearners-bcd3c.web.app'
+                    target='_blank'
                     className='w-full justify-start text-inherit '
                     onClick={onItemClick}
                     startContent={<FaTools className='text-xl' />}>
@@ -132,47 +147,20 @@ export default function DrawerItems(props: Props) {
                 {isLogin() &&
                     < Button className='w-full justify-start text-danger '
                         variant='light'
-                        onPress={handleLogout}
+                        onPress={() => {
+                            authenticateUser();
+                            if (!isAuthorized()) {
+                                return
+                            }
+                            onOpenChange();
+                        }}
                         startContent={<IoLogOut className='text-xl text-default-600' />}>
                         Logout
                     </Button>}
-
-                {/* <Button
-                                onPress={() => {
-                                    router.push('/about')
-                                }}
-                                startContent={<FaInfoCircle className='text-lg' />}
-                                className=' text-start'
-                                color='default'
-                                size="sm"  >
-                                About
-                            </Button>
-
-
-
-                            <Button
-                                onPress={() => {
-                                    router.push('/about')
-                                }}
-                                color='default'
-                                size="sm"  >
-                                Tools
-                            </Button>
-
-                            <Button
-                                onPress={handleLogout}
-                                color='danger'
-                                size="sm"  >
-                                Logout
-                            </Button> */}
-
-
-
             </div>
         </>
 
         <div className='flex justify-between'>
-
             <ThemeSwitch />
             <Button variant='light' isIconOnly onPress={onItemClick}
                 radius='full' size='sm'>
@@ -180,6 +168,27 @@ export default function DrawerItems(props: Props) {
             </Button>
         </div>
 
+
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange} size='sm' closeButton>
+            <ModalContent>
+                {(onClose) => (
+                    <>
+                        <ModalHeader className="flex flex-col gap-1">Confirmation</ModalHeader>
+                        <ModalBody>
+                            <p>Do you really want to logout {loginInfo.name}?</p>
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button color="primary" variant="light" onPress={onClose}>
+                                Close
+                            </Button>
+                            <Button color="danger" onPress={handleLogout}>
+                                Logout
+                            </Button>
+                        </ModalFooter>
+                    </>
+                )}
+            </ModalContent>
+        </Modal>
     </div >
 
 

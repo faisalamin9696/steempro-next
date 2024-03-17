@@ -1,4 +1,4 @@
-import { Card } from "@nextui-org/react";
+import { Card } from "@nextui-org/card";
 import { CommentProps } from "../CommentCard";
 import CommentHeader from "../component/CommentHeader";
 import { getPostThumbnail } from "@/libs/utils/image";

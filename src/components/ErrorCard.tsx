@@ -1,5 +1,5 @@
-import { Card, Button } from '@nextui-org/react'
-import error from 'next/error'
+import { Card } from '@nextui-org/card';
+import { Button } from '@nextui-org/button';
 import React from 'react'
 import MainWrapper from './wrapper/MainWrapper'
 

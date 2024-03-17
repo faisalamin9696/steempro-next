@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, memo, useEffect } from 'react';
 import EditorToolbar from './EditorToolbar';
 import { useDropzone } from 'react-dropzone';
-import { Textarea } from "@nextui-org/react";
+import { Textarea } from "@nextui-org/input";
 import clsx from 'clsx';
 import { KeyboardEvent } from "react";
 import { MAXIMUM_UPLOAD_SIZE, isValidImage } from '@/libs/utils/image';
@@ -30,7 +30,7 @@ interface EditorProps {
     onImageInvalid: () => void,
     inputClass?: string;
     rows?: number;
-    disabled?: boolean;
+    isDisabled?: boolean;
 }
 
 
@@ -44,7 +44,7 @@ export default memo(function EditorInput(props: EditorProps) {
         onChange,
         inputClass,
         rows,
-        disabled
+        isDisabled
     } = props;
 
     const { authenticateUser, credentials, isAuthorized } = useLogin();
@@ -288,7 +288,7 @@ export default memo(function EditorInput(props: EditorProps) {
             case 'table':
                 insertAtCursor(tableTemplete, '', tableTemplete.length, tableTemplete.length);
                 break;
-            case 'table':
+            case 'code':
                 insertAtCursor('<code>', '</code>', 1, 1);
                 break;
             case 'link':
@@ -306,7 +306,7 @@ export default memo(function EditorInput(props: EditorProps) {
                 break;
 
             case 'justify':
-                insertAtCursor('<div className="text-justify">\n\n', '\n</div>', 2, 2);
+                insertAtCursor('<div class="text-justify">\n\n', '\n</div>', 2, 2);
                 break;
 
             case 'center':
@@ -478,7 +478,7 @@ export default memo(function EditorInput(props: EditorProps) {
                         onSelect={insertCode}
                         className={' mb-4'} />}
                     radius='sm'
-                    isDisabled={disabled}
+                    isDisabled={isDisabled}
                     variant='flat'
                     placeholder={'Write something...'}
                     disableAnimation

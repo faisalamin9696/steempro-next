@@ -1,10 +1,12 @@
-import { Accordion, AccordionItem, Button, Card, CardFooter, CardHeader, Input, Slider } from '@nextui-org/react'
-import clsx from 'clsx';
+import { Accordion, AccordionItem } from '@nextui-org/accordion';
+import { Button } from '@nextui-org/button';
+import { Card, CardHeader } from '@nextui-org/card';
+import { Slider } from '@nextui-org/slider';
+
 import React, { useEffect, useState } from 'react'
-import IconButton from './IconButton';
 import { IoChevronDownCircleSharp, IoChevronUpCircleSharp } from 'react-icons/io5';
 import STooltip from './STooltip';
-import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
+import { useAppSelector } from '@/libs/constants/AppFunctions';
 import { getVoteData } from '@/libs/steem/sds';
 import { twMerge } from 'tailwind-merge';
 

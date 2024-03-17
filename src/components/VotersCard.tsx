@@ -8,27 +8,24 @@ import {
     TableBody,
     TableRow,
     TableCell,
-    Input,
-    Button,
+} from "@nextui-org/table";
+
+import { Pagination } from '@nextui-org/pagination';
+import { Button } from '@nextui-org/button';
+import { Input } from '@nextui-org/input';
+import {
     DropdownTrigger,
     Dropdown,
     DropdownMenu,
     DropdownItem,
-    Pagination,
-} from "@nextui-org/react";
+} from '@nextui-org/dropdown';
+
 import { FaChevronDown, FaSearch } from "react-icons/fa";
 import useSWR from "swr";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import SAvatar from "@/components/SAvatar";
 import TimeAgoWrapper from "@/components/wrapper/TimeAgoWrapper";
 import LoadingCard from "@/components/LoadingCard";
-
-const statusColorMap = {
-    incoming: "success",
-    expiring: "danger",
-    outgoing: "warning",
-};
 
 const INITIAL_VISIBLE_COLUMNS = ["voter", 'rshares'];
 
@@ -104,8 +101,8 @@ export default function VotersCard({ comment }: { comment: Feed | Post }) {
     const pages = Math.ceil(filteredItems?.length / rowsPerPage);
 
     const items = React.useMemo(() => {
-        const start = (page - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
+        const start = 0;
+        const end = start + filteredItems.length;
 
         return filteredItems.slice(start, end);
     }, [page, filteredItems, rowsPerPage]);
@@ -368,7 +365,7 @@ export default function VotersCard({ comment }: { comment: Feed | Post }) {
                         </TableColumn>
                     )}
                 </TableHeader>
-                <TableBody emptyContent={"No data found"} items={sortedItems}>
+                <TableBody emptyContent={"No data found"} items={sortedItems.slice((page - 1) * rowsPerPage, (page) * rowsPerPage)}>
                     {(item) => (
                         <TableRow key={`${item.voter}`}>
                             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}

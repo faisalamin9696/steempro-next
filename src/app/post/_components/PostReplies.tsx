@@ -3,7 +3,8 @@
 import { awaitTimeout, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { addRepliesHandler } from '@/libs/redux/reducers/RepliesReducer';
 import { getPostReplies } from '@/libs/steem/sds';
-import { Button, Card } from '@nextui-org/react';
+import { Button } from '@nextui-org/button';
+import { Card } from '@nextui-org/card';
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { memo, useEffect, useState } from 'react'
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -17,7 +18,7 @@ import { toast } from 'sonner';
 import { AppStrings } from '@/libs/constants/AppStrings';
 import { addCommentHandler } from '@/libs/redux/reducers/CommentReducer';
 import { publishContent } from '@/libs/steem/condenser';
-import { validateCommentBody, generateReplyPermlink, makeJsonMetadataReply, createPatch, extractMetadata, makeJsonMetadata } from '@/libs/utils/editor';
+import { validateCommentBody, generateReplyPermlink, makeJsonMetadataReply } from '@/libs/utils/editor';
 import { checkPromotionText, getCredentials, getSessionKey } from '@/libs/utils/user';
 import { useLogin } from '@/components/useLogin';
 import secureLocalStorage from 'react-secure-storage';
@@ -30,7 +31,7 @@ interface Props {
 }
 
 export default memo(function PostReplies(props: Props) {
-    const { comment, onReplyClick } = props;
+    const { comment } = props;
 
     const commentInfo: Post = (useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment) as Post;
     const postReplies = useAppSelector(state => state.repliesReducer.values)[`${commentInfo.author}/${commentInfo.permlink}`] ?? [];
@@ -289,7 +290,7 @@ export default memo(function PostReplies(props: Props) {
                                 </Button>}
 
                                 <PublishButton
-                                    disabled={isPosting}
+                                    isDisabled={isPosting}
                                     onPress={handlePublish}
                                     isLoading={isPosting}
                                     tooltip=''

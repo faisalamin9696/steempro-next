@@ -1,6 +1,9 @@
 "use client";
 
-import { Button, DropdownItem, DropdownMenu, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react'
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/modal'
+import { Button } from '@nextui-org/button'
+import { DropdownItem, DropdownMenu } from '@nextui-org/dropdown'
+
 import { useMemo, useState } from 'react';
 import { TokenCard } from '../../../../components/TokenCard';
 

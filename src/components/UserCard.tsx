@@ -1,5 +1,5 @@
 import React, { memo, useEffect } from "react";
-import { Avatar, AvatarGroup } from "@nextui-org/react";
+import { Avatar, AvatarGroup } from "@nextui-org/avatar";
 import { fetchSds, useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import SAvatar from "./SAvatar";
 import { abbreviateNumber } from "@/libs/utils/helper";
@@ -25,12 +25,14 @@ export const UserCard = memo((props: Props) => {
     const { username, compact } = props;
     // const [isFollowed, setIsFollowed] = React.useState(comment.observer_follows_author === 1);
     const { data: session } = useSession();
-    const URL = `/accounts_api/getAccountExt/${username}/${session?.user?.name || 'null'}`;
+    const loginInfo = useAppSelector(state => state.loginReducer.value);
+
+    const URL = `/accounts_api/getAccountExt/${username}/${loginInfo.name || 'null'}`;
     const { data, isLoading } = useSWR(URL, fetchSds<AccountExt>);
 
     const profileInfo = useAppSelector(state => state.profileReducer.value)[username ?? data?.name ?? ''] ?? data;
 
-    const URL_2 = `/followers_api/getKnownFollowers/${username}/${session?.user?.name || 'null'}`
+    const URL_2 = `/followers_api/getKnownFollowers/${username}/${loginInfo.name || 'null'}`
     const { data: knownPeople, isLoading: isKnownLoading } = useSWR(compact ? null : URL_2, fetchSds<string[]>)
     const posting_json_metadata = JSON.parse(profileInfo?.posting_json_metadata || '{}');
     const dispatch = useAppDispatch();

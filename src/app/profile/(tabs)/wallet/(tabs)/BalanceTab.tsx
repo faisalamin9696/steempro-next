@@ -3,7 +3,9 @@ import TransferModal from '@/components/TransferModal';
 import { useAppSelector } from '@/libs/constants/AppFunctions';
 import { vestToSteem } from '@/libs/steem/sds';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
-import { useDisclosure, DropdownMenu, DropdownItem, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from '@nextui-org/react';
+import { useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@nextui-org/modal';
+import { Button } from '@nextui-org/button';
+import { DropdownMenu, DropdownItem } from '@nextui-org/dropdown';
 import React, { Key, useState } from 'react'
 
 export type SteemTokens = 'steem' | 'steem_power' | 'steem_dollar' | 'saving';
@@ -43,7 +45,7 @@ STEEM POWER increases at an APR of approximately 2.77%, subject to blockchain va
 export default function BalanceTab({ data }: { data: AccountExt }) {
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
-    let { username, category } = usePathnameClient();
+    let { username } = usePathnameClient();
 
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const isSelf = !!loginInfo.name && (loginInfo.name === (username));

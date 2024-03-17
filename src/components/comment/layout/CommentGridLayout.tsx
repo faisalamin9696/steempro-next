@@ -5,12 +5,11 @@ import BodyShort from '../../body/BodyShort';
 import Image from 'next/image';
 import { getPostThumbnail, getResizedAvatar } from '@/libs/utils/image';
 import TimeAgoWrapper from '../../wrapper/TimeAgoWrapper';
-import { Card, CardBody, User } from '@nextui-org/react';
+import { Card, CardBody } from '@nextui-org/card';
+import { User } from '@nextui-org/user';
 import Reputation from '@/components/Reputation';
-import dynamic from 'next/dynamic';
 import CommentFooter from '../component/CommentFooter';
 import STag from '@/components/STag';
-const DynamicUserCard = dynamic(() => import('../../UserCard'));
 import './style.scss'
 import { CommentProps } from '../CommentCard';
 import clsx from 'clsx';

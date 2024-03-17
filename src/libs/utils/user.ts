@@ -72,6 +72,22 @@ export function addToCurrent(username: string,
 
 }
 
+
+
+export function removeCredentials(credentials: User) {
+    try {
+        if (credentials) {
+            secureLocalStorage.removeItem('auth');
+            let allAccounts = getAllCredentials();
+            allAccounts = allAccounts.filter(user => !((user.username === credentials.username && user.type === credentials.type)));
+            secureLocalStorage.setItem('accounts', allAccounts);
+        }
+    }
+    catch {
+    }
+}
+
+
 function addToAccounts(username: string, encKey: string, keyType: Keys) {
     const accounts = (secureLocalStorage.getItem('accounts') ?? []) as User[];
     const index = accounts.findIndex(account => (account.username === username) && (account.type === keyType));

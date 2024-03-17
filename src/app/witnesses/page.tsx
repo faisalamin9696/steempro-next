@@ -5,7 +5,22 @@ import MainWrapper from '@/components/wrapper/MainWrapper';
 import TimeAgoWrapper from '@/components/wrapper/TimeAgoWrapper';
 import { fetchSds, useAppSelector } from '@/libs/constants/AppFunctions';
 import { abbreviateNumber } from '@/libs/utils/helper';
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+
+} from "@nextui-org/table";
+
+import { Button } from '@nextui-org/button';
+import { Input } from '@nextui-org/input';
+import { Pagination } from '@nextui-org/pagination';
+import {
+  DropdownTrigger, Dropdown, DropdownMenu, DropdownItem
+} from '@nextui-org/dropdown';
 import React, { useEffect, useState } from 'react'
 import { FaChevronDown, FaSearch } from 'react-icons/fa';
 import useSWR from 'swr';
@@ -16,7 +31,6 @@ import Link from 'next/link';
 import { replaceOldDomains } from '@/libs/utils/Links';
 import WitnessVoteButton from '@/components/WitnessVoteButton';
 import { WitnessAccount } from '@/libs/constants/AppConstants';
-
 
 
 const INITIAL_VISIBLE_COLUMNS = ["name", 'last_confirmed_block', 'received_votes', "action"];
@@ -90,8 +104,8 @@ export default function page() {
   const pages = Math.ceil(filteredItems?.length / rowsPerPage);
 
   const items = React.useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
+    const start = 0;
+    const end = start + filteredItems.length;
 
     return filteredItems.slice(start, end);
   }, [page, filteredItems, rowsPerPage]);
@@ -351,7 +365,7 @@ export default function page() {
               </TableColumn>
             )}
           </TableHeader>
-          <TableBody emptyContent={"No data found"} items={sortedItems}>
+          <TableBody emptyContent={"No data found"} items={sortedItems.slice((page - 1) * rowsPerPage, (page) * rowsPerPage)}>
             {(item) => (
               <TableRow key={`${item.rank}-${item.name}`}>
                 {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}

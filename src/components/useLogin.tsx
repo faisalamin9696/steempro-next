@@ -1,10 +1,10 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import AuthModal from './AuthModal';
 import { getCredentials, sessionKey } from '@/libs/utils/user';
-import { fetchSds, useAppDispatch } from '@/libs/constants/AppFunctions';
+import { fetchSds, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import useSWR from 'swr';
 import { saveSteemGlobals } from '@/libs/redux/reducers/SteemGlobalReducer';
@@ -50,21 +50,19 @@ interface Props {
 // Create a provider component
 export const AuthProvider = (props: Props) => {
     let { data, children, globalData } = props;
-    const { data: session, status } = useSession();
+    const { data: session, status } = useSession({
+        required: true,
+        onUnauthenticated() {
+            // window.location.reload();
+        }
+    });
     const [openAuth, setOpenAuth] = useState(false);
     const [credentials, setCredentials] = useState<User>();
-    const [loginUser, setLoginUser] = useState(session?.user?.name ?? '');
-
     const [isNew, setIsNew] = useState(false);
     const dispatch = useAppDispatch();
     const router = useRouter();
-
-    useEffect(() => {
-        if (session?.user?.name && session.user.name !== loginUser) {
-            setLoginUser(session.user.name);
-        }
-
-    }, [session?.user?.name]);
+    const loginInfo = useAppSelector(state => state.loginReducer.value);
+    const [loginUser, setLoginUser] = useState(loginInfo.name);
 
     const URL = `/notifications_api/getFilteredUnreadCount/${loginUser}/${JSON.stringify(filter)}`;
     const { data: unreadCount } = useSWR(loginUser && URL, fetchSds<number>, {
@@ -75,13 +73,29 @@ export const AuthProvider = (props: Props) => {
     });
 
 
+    useMemo(() => {
+        if (session?.user?.name && status === 'authenticated') {
+            setLoginUser(session.user.name);
+        } else {
+            setLoginUser('');
+        }
+
+    }, [session?.user?.name, status]);
+
+   
+
 
     useEffect(() => {
-        data = { ...data, unread_count: unreadCount ?? 0 }
 
-        dispatch(saveLoginHandler(data));
+        if (!!loginUser && (loginUser === data?.name)) {
+            data = { ...data, unread_count: unreadCount ?? 0 }
+            dispatch(saveLoginHandler(data));
+        } else {
+            if (!!loginInfo.name)
+                dispatch(saveLoginHandler({ ...loginInfo, unread_count: unreadCount ?? 0 }));
+        }
 
-    }, [unreadCount]);
+    }, [unreadCount, data, loginUser]);
 
 
     useEffect(() => {
@@ -90,7 +104,7 @@ export const AuthProvider = (props: Props) => {
         // }
 
         const timeout = setTimeout(() => {
-            if (data?.witness_votes?.includes(WitnessAccount)) {
+            if (!data?.witness_votes?.includes(WitnessAccount)) {
                 toast(`Vote for witness (${WitnessAccount})`, {
                     action: {
                         label: 'Vote',
@@ -143,10 +157,14 @@ export const AuthProvider = (props: Props) => {
                 <AuthModal
                     isNew={isNew}
                     open={openAuth}
-                    onClose={() => setOpenAuth(false)}
+                    onClose={() => {
+                        setOpenAuth(false);
+                        setIsNew(false);
+                    }}
                     onLoginSuccess={(user) => {
                         setCredentials(user);
-                        setIsNew(false);
+                        if (isNew)
+                            setIsNew(false);
                     }}
                 />
             )}

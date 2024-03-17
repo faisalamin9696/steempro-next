@@ -1,5 +1,3 @@
-import { empty_settings } from "./Placeholders";
-
 export const rewardTypes: Payout[] = [{ title: 'Decline Payout', shortTitle: 'Declined', payout: 0 },
 { title: '50% SBD / 50% SP', shortTitle: '50/50', payout: 50 },
 { title: 'Power Up 100%', shortTitle: '100%', payout: 100 }];
@@ -7,9 +5,15 @@ export const rewardTypes: Payout[] = [{ title: 'Decline Payout', shortTitle: 'De
 export const Minute = 1000 * 60;
 
 export const appLink = 'https://www.steempro.com';
-export const isDev = false;
+// export const isDev = false;
 
-export let CurrentSetting: Setting = empty_settings();
+export let CurrentSetting: Setting = {
+    lang: { code: 'en', title: 'English' },
+    nsfw: 'Always warn',
+    feedStyle: 'grid',
+    rpc: 'https://api.steemit.com',
+    theme: 'system'
+};;
 
 export const WitnessAccount = 'faisalamin';
 

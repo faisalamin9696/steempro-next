@@ -2,7 +2,7 @@ import { awaitTimeout, fetchSds, useAppSelector } from '@/libs/constants/AppFunc
 import { notFound } from 'next/navigation';
 import React, { memo, useMemo, useState } from 'react'
 import useSWR from 'swr';
-import { Button } from '@nextui-org/react';
+import { Button } from '@nextui-org/button';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import CommentCard from './CommentCard';
 import CommentSkeleton from './component/CommentSkeleton';

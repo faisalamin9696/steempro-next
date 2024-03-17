@@ -1,12 +1,11 @@
 'use client';
 
-import { fetchSds } from '@/libs/constants/AppFunctions';
-import { useSession } from 'next-auth/react';
+import { fetchSds, useAppSelector } from '@/libs/constants/AppFunctions';
 import React from 'react'
 import useSWR from 'swr';
 import { getPostThumbnail } from '@/libs/utils/image';
 import { useRouter } from 'next13-progressbar';
-import { Card } from '@nextui-org/react';
+import { Card } from '@nextui-org/card';
 import ViewCountCard from './ViewCountCard';
 import Image from 'next/image';
 import SAvatar from './SAvatar';
@@ -20,9 +19,9 @@ interface Props {
 export default function PromotionCard(props: Props) {
     const { authPerm } = props;
     const [author, permlink] = authPerm.split('/');
-    const { data: session } = useSession();
+    const loginInfo = useAppSelector(state => state.loginReducer.value);
 
-    const URL = `/posts_api/getPost/${authPerm}/${false}/${session?.user?.name || 'null'}`;
+    const URL = `/posts_api/getPost/${authPerm}/${false}/${loginInfo.name || 'null'}`;
     const { data } = useSWR(URL, fetchSds<Post>);
 
     if (!data)

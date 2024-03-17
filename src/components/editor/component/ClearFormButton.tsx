@@ -1,14 +1,16 @@
 import STooltip from '@/components/STooltip';
-import { Popover, PopoverTrigger, Button, PopoverContent } from '@nextui-org/react'
+
+import { Popover, PopoverTrigger, PopoverContent, } from '@nextui-org/popover';
+import { Button } from '@nextui-org/button';
 import { memo, useState } from 'react'
 import { MdDelete } from 'react-icons/md'
 
 interface Props {
     onClearPress?: () => void;
-    disabled?: boolean;
+    isDisabled?: boolean;
 }
 export default memo(function ClearFormButton(props: Props) {
-    const { onClearPress, disabled } = props;
+    const { onClearPress, isDisabled } = props;
 
     const [clearPopup, setClearPopup] = useState(false);
 
@@ -21,7 +23,7 @@ export default memo(function ClearFormButton(props: Props) {
                 placement={'top-start'} >
                 <PopoverTrigger >
                     <Button size='sm' color='danger'
-                        isDisabled={disabled}
+                        isDisabled={isDisabled}
                         isIconOnly startContent={<MdDelete className='text-lg' />}
                         className='!text-white'
                         variant='shadow' />

@@ -2,10 +2,13 @@
 
 import { useLogin } from '@/components/useLogin';
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions'
-import { client, signImage, updateClient, updateProfile, uploadImage } from '@/libs/steem/condenser';
+import { signImage, updateClient, updateProfile, uploadImage } from '@/libs/steem/condenser';
 import { toBase64 } from '@/libs/utils/helper';
 import { getCredentials, getSessionKey, getSettings, updateSettings } from '@/libs/utils/user';
-import { Button, Divider, Input, Select, SelectItem } from '@nextui-org/react';
+import { Divider, } from '@nextui-org/divider';
+import { Button } from '@nextui-org/button';
+import { Input } from '@nextui-org/input';
+import { Select, SelectItem } from '@nextui-org/select';
 import React, { useRef, useState } from 'react'
 import { FaInfoCircle, FaUpload, FaUserCircle } from "react-icons/fa";
 import { toast } from 'sonner';
@@ -23,6 +26,7 @@ import { useMutation } from '@tanstack/react-query';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import { IoIosSettings } from "react-icons/io";
+import { addProfileHandler } from '@/libs/redux/reducers/ProfileReducer';
 
 let isCover: boolean = false;
 export default function SettingsPage() {
@@ -79,7 +83,8 @@ export default function SettingsPage() {
                 toast.error(error.message);
                 return;
             }
-            dispatch(saveLoginHandler({ ...loginInfo, posting_json_metadata: JSON.stringify({ profile: variables.params }) }))
+            dispatch(addProfileHandler({ ...loginInfo, posting_json_metadata: JSON.stringify({ profile: variables.params }) }));
+            dispatch(saveLoginHandler({ ...loginInfo, posting_json_metadata: JSON.stringify({ profile: variables.params }) }));
             toast.success('Updated');
         },
     })
@@ -118,22 +123,9 @@ export default function SettingsPage() {
             return
         }
 
-        dispatch(saveLoginHandler({
-            ...loginInfo, posting_json_metadata: JSON.stringify({
-                profile: {
-                    name: name,
-                    about: about,
-                    profile_image: profileImage,
-                    website: website,
-                    location: location,
-                    cover_image: coverImage
-                }
-            })
-        }))
-
         updateMutation.mutate({
             key: credentials.key, params: {
-                name: name,
+                name: displayName,
                 about: about,
                 profile_image: profileImage,
                 website: website,

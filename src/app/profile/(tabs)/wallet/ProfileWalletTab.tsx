@@ -1,6 +1,7 @@
 "use client";
 
-import { Button, Tab, Tabs } from '@nextui-org/react'
+import { Tab, Tabs } from '@nextui-org/tabs'
+import { Button } from '@nextui-org/button';
 import BalanceTab from './(tabs)/BalanceTab';
 import DelegationTab from './(tabs)/DelegationTab';
 import { vestToSteem } from '@/libs/steem/sds';

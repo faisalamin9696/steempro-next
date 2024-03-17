@@ -1,6 +1,6 @@
 import { IconType } from 'react-icons';
 import clsx, { ClassValue } from 'clsx';
-import { As, Button } from '@nextui-org/react';
+import { Button } from '@nextui-org/button';
 
 interface Props {
     children?: React.ReactNode,
@@ -8,7 +8,6 @@ interface Props {
     tooltip?: string,
     onClick?: () => void,
     className?: ClassValue | undefined;
-    as?: As<any>;
     size?: 'sm' | 'md' | 'lg';
     isLoading?: boolean;
     variant?: "solid" | "bordered" | "light" | "flat" | "faded" | "shadow" | "ghost" | undefined
@@ -17,12 +16,11 @@ interface Props {
     href?: string;
 }
 const IconButton = (props: Props) => {
-    const { children, color, IconType, onClick, href, tooltip, className, iconClassName, as, size, isLoading, variant } = props;
+    const { children, color, IconType, onClick, href, tooltip, className, iconClassName, size, isLoading, variant } = props;
 
     return <Button
         color={color}
         isLoading={isLoading}
-        as={as}
         isIconOnly
         radius="full"
         className={clsx("text-default-900/60 data-[hover]:bg-foreground/10", className)}

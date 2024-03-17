@@ -4,7 +4,7 @@ import usePathnameClient from '@/libs/utils/usePathnameClient';
 import React from 'react'
 import ProfileCommentsTab from '../comments/page';
 import ProfileRepliesTab from '../replies/page';
-import { Tab, Tabs } from '@nextui-org/react';
+import { Tab, Tabs } from '@nextui-org/tabs';
 import { clsx } from 'clsx';
 import ProfilePostsTab from '../posts/page';
 import ProfileFriendsTab from '../friends/page';

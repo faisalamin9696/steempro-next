@@ -1,19 +1,25 @@
 import React, { useEffect, useState } from "react";
-import {
-    Input, Button, Modal, ModalContent,
-    useDisclosure, Avatar, Spinner, ModalHeader, ModalBody, Checkbox
-} from "@nextui-org/react";
+import { Modal, ModalContent,
+    useDisclosure, ModalHeader, ModalBody
+} from "@nextui-org/modal";
+import { Avatar } from '@nextui-org/avatar';
+import { Button } from '@nextui-org/button';
+import { Spinner } from '@nextui-org/spinner';
+import { Checkbox } from '@nextui-org/checkbox';
+import { Input } from '@nextui-org/input';
+
 import { useAppSelector, useAppDispatch, awaitTimeout } from "@/libs/constants/AppFunctions";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { getKeyType } from "@/libs/steem/condenser";
 import { getAuthorExt } from "@/libs/steem/sds";
 import { validate_account_name } from "@/libs/utils/ChainValidation";
 import { getResizedAvatar } from "@/libs/utils/image";
-import { getSettings, getCredentials, saveSessionKey, validatePassword, saveCredentials, sessionKey } from "@/libs/utils/user";
+import { getSettings, getCredentials, saveSessionKey, validatePassword, saveCredentials, sessionKey, getAllCredentials } from "@/libs/utils/user";
 import { useLogin } from "./useLogin";
 import { toast } from "sonner";
 import { signIn, useSession } from 'next-auth/react'
 import { getAuth, signInAnonymously } from "firebase/auth";
+import AccountItemCard from "./AccountItemCard";
 
 interface Props {
     open: boolean;
@@ -30,6 +36,8 @@ export default function AuthModal(props: Props) {
     const { isOpen, onClose } = useDisclosure();
     const [loading, setLoading] = useState(false);
     let [username, setUsername] = useState('');
+    const loginInfo = useAppSelector(state => state.loginReducer.value);
+
     const [key, setKey] = useState('');
     const [password, setPassword] = useState('');
     const [password2, setPassword2] = useState('');
@@ -38,8 +46,9 @@ export default function AuthModal(props: Props) {
     const [avatar, setAvatar] = useState('');
     const { data: session, status } = useSession();
     const [isCurrent, setIsCurrent] = React.useState(false);
-
     const isLocked = status === 'authenticated' && !sessionKey;
+    const [accounts, setAccounts] = useState<User[]>();
+
 
     useEffect(() => {
         const timeOut = setTimeout(() => {
@@ -51,11 +60,15 @@ export default function AuthModal(props: Props) {
     }, [username])
 
     useEffect(() => {
+
+        const allCredentials = getAllCredentials();
+        setAccounts(allCredentials);
+
         const timeOut = setTimeout(() => {
             setIsShow(false);
         }, 1000);
 
-        return () => clearTimeout(timeOut)
+        return () => clearTimeout(timeOut);
     }, [])
 
     function handleOnClose() {
@@ -263,7 +276,7 @@ export default function AuthModal(props: Props) {
                 }}
                 backdrop={'opaque'}
                 isOpen={open}
-                closeButton={!loading}
+                hideCloseButton={loading}
                 isDismissable={!loading}
                 motionProps={{
                     variants: {
@@ -302,9 +315,9 @@ export default function AuthModal(props: Props) {
                                             <form className="flex flex-col gap-4">
 
                                                 <p className="text-md font-bold flex items-center space-x-2">
-                                                    <p>Hi, {session?.user?.name}</p>
+                                                    <p>Hi, {loginInfo.name}</p>
                                                     <Avatar
-                                                        src={getResizedAvatar(session?.user?.name || '')}
+                                                        src={getResizedAvatar(loginInfo.name)}
                                                         size="sm" /></p>
 
                                                 <Input
@@ -325,7 +338,7 @@ export default function AuthModal(props: Props) {
                                                     <Button fullWidth color="primary"
                                                         isLoading={loading}
                                                         onPress={handleUnlock}
-                                                        disabled={loading}>
+                                                        isDisabled={loading}>
                                                         Unlock
                                                     </Button>
                                                 </div>
@@ -396,11 +409,29 @@ export default function AuthModal(props: Props) {
                Sign up
            </Link>
        </p> */}
+                                                <div
+                                                    className="flex flex-row gap-2 overflow-x-auto p-1">
+                                                    {!!!loginInfo.name && accounts?.map(user => {
+                                                        return <div className="w-fit" key={`${user.username}-${user.type}`}>
+                                                            <AccountItemCard
+                                                                switchText="Login" isDisabled={loading}
+                                                                user={user} isLogin
+                                                                className="px-[2px] py-1 rounded-lg shadow-none"
+                                                                handleSwitchSuccess={() => {
+                                                                    {
+                                                                        handleOnClose();
+                                                                        clearAll();
+                                                                    }
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    })}
+                                                </div>
                                                 <div className="flex gap-2 justify-end">
                                                     <Button fullWidth color="primary"
                                                         isLoading={loading}
                                                         onPress={handleLogin}
-                                                        disabled={loading}>
+                                                        isDisabled={loading}>
                                                         {isNew ? 'Add account' : 'Login'}
                                                     </Button>
                                                 </div>

@@ -1,7 +1,9 @@
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { addCommentHandler } from '@/libs/redux/reducers/CommentReducer';
 import { deleteComment, mutePost } from '@/libs/steem/condenser';
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Input } from '@nextui-org/react';
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from '@nextui-org/modal';
+import { Input } from '@nextui-org/input';
+import { Button } from '@nextui-org/button';
 import { useMutation } from '@tanstack/react-query';
 import React from 'react'
 import { toast } from 'sonner';

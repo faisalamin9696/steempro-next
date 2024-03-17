@@ -1,5 +1,7 @@
 import React, { memo } from "react";
-import { Button, Card, User } from "@nextui-org/react";
+import { Button } from "@nextui-org/button";
+import { Card } from "@nextui-org/card";
+import { User } from "@nextui-org/user";
 import { abbreviateNumber } from "@/libs/utils/helper";
 import TimeAgoWrapper from "./wrapper/TimeAgoWrapper";
 import { getResizedAvatar } from "@/libs/utils/image";
@@ -17,9 +19,9 @@ export const CommunityCard = memo((props: Props) => {
     const { community, compact } = props;
     // // const [isFollowed, setIsFollowed] = React.useState(comment.observer_follows_author === 1);
     // const { data: session } = useSession();
-    // const URL = `/accounts_api/getAccountExt/${username}/${session?.user?.name || 'null'}`;
+    // const URL = `/accounts_api/getAccountExt/${username}/${loginInfo.name || 'null'}`;
     // const { data, isLoading } = useSWR(URL, fetchSds<AccountExt>);
-    // const URL_2 = `/followers_api/getKnownFollowers/${username}/${session?.user?.name || 'null'}`
+    // const URL_2 = `/followers_api/getKnownFollowers/${username}/${loginInfo.name || 'null'}`
     // const { data: knownPeople, isLoading: isKnownLoading } = useSWR(compact ? null : URL_2, fetchSds<string[]>)
 
     // const posting_json_metadata = JSON.parse(String(data?.posting_json_metadata || '{}'));

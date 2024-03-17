@@ -1,21 +1,18 @@
 'use client';
 import React, { useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
-import usePathnameClient from '@/libs/utils/usePathnameClient';
 import UserCoverCard from '@/components/UserCoverCard';
 import { abbreviateNumber } from '@/libs/utils/helper';
 import Reputation from '@/components/Reputation';
 import ProfileInfoCard from '@/components/ProfileInfoCard';
-import { Popover, PopoverTrigger, Button, PopoverContent } from '@nextui-org/react';
+import { Popover, PopoverTrigger, PopoverContent} from "@nextui-org/popover";
+import { Button } from '@nextui-org/button';
 import { BsInfoCircleFill } from 'react-icons/bs';
 import VanillaTilt from 'vanilla-tilt';
 import { useDeviceInfo } from '@/libs/utils/useDeviceInfo';
 import SAvatar from '@/components/SAvatar';
 import { FaDollarSign } from 'react-icons/fa';
 import { proxifyImageUrl } from '@/libs/utils/ProxifyUrl';
-import clsx from 'clsx';
-import { useRouter } from 'next13-progressbar';
-import { usePathname } from 'next/navigation';
 import { addProfileHandler } from '@/libs/redux/reducers/ProfileReducer';
 import { addCommunityHandler } from '@/libs/redux/reducers/CommunityReducer';
 import { twMerge } from 'tailwind-merge';
@@ -39,10 +36,7 @@ export default function AccountHeader(props: Props) {
     const cardRef = useRef<HTMLElement | undefined | any>();
     const { isDesktop } = useDeviceInfo();
     const isCommunity = !!community;
-    const isAccount = !!account;
     const dispatch = useAppDispatch();
-
-
     const communityInfo = useAppSelector(state => state.communityReducer.values)[community?.account ?? ''] ?? community;
     const profileInfo = useAppSelector(state => state.profileReducer.value)[account?.name ?? ''] ?? account;
 
@@ -84,7 +78,9 @@ export default function AccountHeader(props: Props) {
                                 {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg> */}
                             </div>
                             <div className="stat-title text-white/60">{isCommunity ? 'Rank' : 'Followers'}</div>
-                            <div className={twMerge("stat-value", 'max-md:text-lg')}>{abbreviateNumber(isCommunity ? communityInfo.rank : profileInfo.count_followers)}</div>
+                            <div className={twMerge("stat-value", 'max-md:text-lg')} title={isCommunity ? communityInfo.rank : profileInfo.count_followers}>
+                                {abbreviateNumber(isCommunity ? communityInfo.rank : profileInfo.count_followers)}
+                            </div>
                             <div className="stat-desc"></div>
                         </div>
 
@@ -94,7 +90,8 @@ export default function AccountHeader(props: Props) {
                                 {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> */}
                             </div>
                             <div className="stat-title text-white/60">{isCommunity ? 'Members' : 'Followings'}</div>
-                            <div className="stat-value text-secondary max-md:text-lg"> {abbreviateNumber(isCommunity ? communityInfo.count_subs : profileInfo.count_following)}</div>
+                            <div className="stat-value text-secondary max-md:text-lg" title={isCommunity ? communityInfo.count_subs : profileInfo.count_following}>
+                                {abbreviateNumber(isCommunity ? communityInfo.count_subs : profileInfo.count_following)}</div>
                             <div className="stat-desc"></div>
                         </div>
 
@@ -103,7 +100,8 @@ export default function AccountHeader(props: Props) {
                                 <FaDollarSign />
                             </div>
                             <div className="stat-title text-white/60">{'Reward'}</div>
-                            <div className="stat-value text-info max-md:text-lg"> {abbreviateNumber(communityInfo.sum_pending)}</div>
+                            <div className="stat-value text-info max-md:text-lg" title={communityInfo.sum_pending}>
+                                {abbreviateNumber(communityInfo.sum_pending)}</div>
                             <div className="stat-desc"></div>
                         </div>}
                     </div>
@@ -138,7 +136,7 @@ export default function AccountHeader(props: Props) {
                                         </Button>
                                     </PopoverTrigger>
                                     <PopoverContent>
-                                        <ProfileInfoCard className='!bg-transparent'
+                                        <ProfileInfoCard key={'info-profile-card'} className='!bg-transparent'
                                             community={communityInfo}
                                             username={isCommunity ? communityInfo.account : profileInfo.name} />
                                     </PopoverContent>

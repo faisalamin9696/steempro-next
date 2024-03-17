@@ -1,7 +1,8 @@
-import { addToCurrent, getAllCredentials, getCredentials, saveCredentials } from '@/libs/utils/user';
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Card, CardBody, Spinner, Chip } from '@nextui-org/react'
-import React, { useEffect, useState } from 'react'
-import SAvatar from './SAvatar';
+import { getAllCredentials, getCredentials } from '@/libs/utils/user';
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from '@nextui-org/modal';
+import { Button } from '@nextui-org/button';
+import { Spinner } from '@nextui-org/spinner';
+import React, { useEffect, useState } from 'react';
 import { useLogin } from './useLogin';
 import AccountItemCard from './AccountItemCard';
 
@@ -13,12 +14,11 @@ interface Props {
 
 
 export default function AccountsModal(props: Props) {
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { isOpen, onOpenChange } = useDisclosure();
     const [accounts, setAccounts] = useState<User[]>();
     const [defaultAcc, setDefaultAcc] = useState<User>();
     const [isShow, setIsShow] = useState(true);
-
-    const { authenticateUser, isAuthorized } = useLogin();
+    const { authenticateUser } = useLogin();
     useEffect(() => {
         const credentials = getCredentials();
         if (credentials?.username) {
@@ -63,7 +63,7 @@ export default function AccountsModal(props: Props) {
                                     <ModalBody>
                                         <div className='grid grid-cols-1 md:grid-cols-2 gap-2 items-center'>
                                             {accounts?.map(user => {
-                                                return <AccountItemCard key={user.username}
+                                                return <AccountItemCard key={`${user.username}-${user.type}`}
                                                     user={user}
                                                     defaultAccount={defaultAcc}
                                                     handleSwitchSuccess={() => {

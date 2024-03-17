@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useMemo, useState } from "react";
-import { Switch } from "@nextui-org/react";
+import { Switch } from "@nextui-org/switch";
 import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs';
 import { getSettings, updateSettings } from "@/libs/utils/user";
 import { updateSettingsHandler } from "@/libs/redux/reducers/SettingsReducer";

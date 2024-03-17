@@ -1,4 +1,7 @@
-import { Button, Card, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Popover, PopoverContent, PopoverTrigger, useDisclosure } from '@nextui-org/react';
+import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure } from '@nextui-org/modal';
+import { Button } from '@nextui-org/button';
+import { Card } from '@nextui-org/card';
+import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/popover';
 import React, { memo, useState } from 'react'
 import { PiCurrencyCircleDollarFill } from 'react-icons/pi';
 import { SlLoop } from 'react-icons/sl';
@@ -26,11 +29,9 @@ import ClickAwayListener from 'react-click-away-listener';
 
 export default memo(function CommentFooter(props: CommentProps) {
     const { comment, className, isReply, onEditClick,
-        onDeleteClick, onMuteClick, compact, onPinClick, onPublishClick } = props;
+        onDeleteClick, onMuteClick, compact, } = props;
 
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
-    const { isOpen: isUpvoteOpen, onOpenChange: onUpvoteChange, onClose: onUpvoteClose } = useDisclosure();
-    const { isOpen: isDownvoteOpen, onOpenChange: onDownvoteChange, onClose: onDownvoteClose } = useDisclosure();
     const [votersModal, setVotersModal] = useState(false);
 
     const { authenticateUser, isAuthorized } = useLogin();
@@ -118,12 +119,8 @@ export default memo(function CommentFooter(props: CommentProps) {
             dispatch(saveLoginHandler({ ...loginInfo, upvote_mana_percent: upvote_per, downvote_mana_percent: downvote_per }))
 
             if (variables.weight < 0) {
-                onDownvoteClose();
                 return
             }
-            onUpvoteClose();
-
-
 
         },
 
@@ -263,19 +260,19 @@ export default memo(function CommentFooter(props: CommentProps) {
                                 placement={'top-start'} >
                                 <PopoverTrigger >
                                     <Button title='Resteem'
-                                        className={twMerge('min-w-0 shadow-lg bg-white dark:bg-foreground/10 flex flex-row items-center gap-2 rounded-full',
-                                            ' px-3', compact && 'px-4',
-                                            isResteemd && 'text-success-400')}
-                                        variant='light' radius='full'
+                                        className={twMerge('min-w-0  shadow-lg text-default-900  flex flex-row items-center gap-2 rounded-full',
+                                            ' px-3', compact && 'px-4', !isResteemd && 'bg-white dark:bg-foreground/10')}
+                                        variant='flat' radius='full'
 
-                                        isDisabled={reblogMutation.isPending || isResteemd}
+                                        color={isResteemd ? 'success' : undefined}
+                                        isDisabled={reblogMutation.isPending}
                                         isLoading={reblogMutation.isPending}
 
                                         size='sm'>
 
-                                        <SlLoop className='text-lg' />
+                                        <SlLoop className='text-lg text-default-900' />
 
-                                        {!compact && <div className='text-tiny'>
+                                        {!compact && <div className='text-tiny text-default-900'>
                                             {abbreviateNumber(comment.resteem_count)}
                                         </div>}
                                     </Button>

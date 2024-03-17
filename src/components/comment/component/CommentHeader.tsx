@@ -1,7 +1,10 @@
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Popover, PopoverContent, PopoverTrigger, User } from '@nextui-org/react'
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, } from '@nextui-org/dropdown';
+import { User } from '@nextui-org/user';
+import { Button } from '@nextui-org/button';
+import { Popover, PopoverContent, PopoverTrigger, } from '@nextui-org/popover';
 import clsx, { ClassValue } from 'clsx'
 import { FaEllipsis } from "react-icons/fa6";
-import { awaitTimeout, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
+import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import Reputation from '@/components/Reputation';
 import { getResizedAvatar } from '@/libs/utils/image';
 import TimeAgoWrapper from '@/components/wrapper/TimeAgoWrapper';
@@ -9,7 +12,6 @@ import { validateCommunity } from '@/libs/utils/helper';
 import { getCredentials, getSessionKey, getSettings } from '@/libs/utils/user';
 import STag from '@/components/STag';
 
-import { useSession } from 'next-auth/react';
 import { Key, memo, useState } from 'react';
 import { MdDelete } from 'react-icons/md';
 import { GrAnnounce } from "react-icons/gr";
@@ -22,7 +24,6 @@ import { RiEdit2Fill } from "react-icons/ri";
 import { LuHistory } from "react-icons/lu";
 import { toast } from 'sonner';
 import { BsClipboard2Minus } from "react-icons/bs";
-import usePathnameClient from '@/libs/utils/usePathnameClient';
 import EditRoleModal from '@/components/EditRoleModal';
 import { FaInfoCircle } from 'react-icons/fa';
 import MuteDeleteModal from '@/components/MuteDeleteModal';
@@ -49,9 +50,8 @@ export default memo(function CommentHeader(props: Props) {
     const { comment, className, isReply, compact, handleEdit, isDetail } = props;
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const dispatch = useAppDispatch();
-    const { data: session } = useSession();
-    const username = session?.user?.name;
-    const isSelf = !!loginInfo.name && (loginInfo.name === ( comment.author));
+    const username = loginInfo.name;
+    const isSelf = !!loginInfo.name && (loginInfo.name === (comment.author));
 
     const canMute = username && Role.atLeast(comment.observer_role, 'mod');
     const canDelete = !comment.children && isSelf && allowDelete(comment);

@@ -1,4 +1,6 @@
-import { Button, Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
+import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/popover'
+import { Button, } from '@nextui-org/button'
+
 import React from 'react'
 import { MdSettings } from 'react-icons/md'
 

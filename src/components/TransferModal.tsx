@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Button, Checkbox, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, Textarea, useDisclosure } from "@nextui-org/react";
+import {  Textarea } from "@nextui-org/input";
+import { Modal, ModalBody, ModalContent, ModalHeader, ModalFooter, useDisclosure } from '@nextui-org/modal';
+import { Button } from '@nextui-org/button';
+import { Checkbox } from '@nextui-org/checkbox';
+import { Input } from '@nextui-org/input';
+import { Select, SelectItem } from '@nextui-org/select';
 import SAvatar from "./SAvatar";
 import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import { toast } from "sonner";
@@ -62,8 +67,8 @@ const TransferModal = (props: Props): JSX.Element => {
     const { data: session } = useSession();
     const { authenticateUser, isAuthorized } = useLogin();
 
-    let [from, setFrom] = useState(loginInfo.name || session?.user?.name || '');
-    let [to, setTo] = useState(delegation ? (delegatee || '') : (savings || powewrup) ? session?.user?.name || '' : '');
+    let [from, setFrom] = useState(loginInfo.name);
+    let [to, setTo] = useState(delegation ? (delegatee || '') : (savings || powewrup) ? loginInfo.name : '');
     let [amount, setAmount] = useState(isRemove ? '0' : oldSpDelegation?.toFixed(3) || '');
     let [memo, setMemo] = useState('');
 
@@ -306,7 +311,7 @@ const TransferModal = (props: Props): JSX.Element => {
 
     return (<Modal isOpen={props.isOpen || isOpen}
         placement='top-center'
-        closeButton={!isPending}
+        hideCloseButton={isPending}
         isDismissable={false}
         onOpenChange={props.onOpenChange || onOpenChange}>
         <ModalContent>

@@ -1,11 +1,9 @@
 "use client";
 
-import { Tab, Tabs } from '@nextui-org/react'
+import {Tabs, Tab} from "@nextui-org/tabs";
 import React from 'react'
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import FeedPatternSwitch from '@/components/FeedPatternSwitch';
-import { useAppSelector } from '@/libs/constants/AppFunctions';
-import { getSettings } from '@/libs/utils/user';
 import clsx from 'clsx';
 import HomeTrendingsTab from './(tabs)/trendings/page';
 import HomeCreatedTab from './(tabs)/created/page';

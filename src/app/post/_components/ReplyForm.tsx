@@ -7,7 +7,11 @@ import { FiCornerLeftUp } from 'react-icons/fi';
 
 import { useLogin } from '../../../components/useLogin';
 import moment from 'moment';
-import { Accordion, AccordionItem, Button, Card, Popover, PopoverContent, PopoverTrigger, User } from '@nextui-org/react';
+import { Popover, PopoverContent, PopoverTrigger,  } from '@nextui-org/popover';
+import { Button } from '@nextui-org/button';
+import { Card } from '@nextui-org/card';
+import { Accordion, AccordionItem } from '@nextui-org/accordion';
+import {User} from '@nextui-org/user'
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { awaitTimeout, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator';
@@ -25,7 +29,6 @@ import { getResizedAvatar } from '@/libs/utils/image';
 import { createPatch, extractMetadata, generateReplyPermlink, makeJsonMetadata, makeJsonMetadataReply, validateCommentBody } from '@/libs/utils/editor';
 import { checkPromotionText, getCredentials, getSessionKey, getSettings } from '@/libs/utils/user';
 import secureLocalStorage from 'react-secure-storage';
-import { useSession } from 'next-auth/react';
 import { Role } from '@/libs/utils/community';
 import { allowDelete } from '@/libs/utils/StateFunctions';
 import CommentFooter from '@/components/comment/component/CommentFooter';
@@ -506,7 +509,7 @@ export default memo(function ReplyForm(props: Props) {
                                             </Button>}
 
                                             <PublishButton
-                                                disabled={isPosting}
+                                                isDisabled={isPosting}
                                                 onPress={handlePublish}
                                                 isLoading={isPosting}
                                                 tooltip=''

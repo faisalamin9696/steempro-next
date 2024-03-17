@@ -3,13 +3,13 @@
 import CommunityCard from "@/components/CommunityCard";
 import ErrorCard from "@/components/ErrorCard";
 import LoadingCard from "@/components/LoadingCard";
-import { awaitTimeout, fetchSds } from "@/libs/constants/AppFunctions";
+import { awaitTimeout, fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import { getAnnouncements } from "@/libs/firebase/firebaseApp";
-import { Button, ScrollShadow } from "@nextui-org/react";
-import { useSession } from "next-auth/react";
+import { ScrollShadow } from "@nextui-org/scroll-shadow";
+import { Button } from "@nextui-org/button";
+
 import Link from "next/link";
 import { GrAnnounce } from "react-icons/gr";
-import { IoIosRefresh } from "react-icons/io";
 import useSWR from "swr";
 import { HiMiniUserGroup } from "react-icons/hi2";
 import { useEffect, useState } from "react";
@@ -18,11 +18,11 @@ import EmptyList from "@/components/EmptyList";
 
 export default function HomeStart() {
 
-    const { data: session } = useSession();
     const { data, error, mutate, isLoading, isValidating } = useSWR('annoucements', getAnnouncements);
     const annoucements = data?.['posts'];
+    const loginInfo = useAppSelector(state => state.loginReducer.value);
 
-    const URL = `/communities_api/getCommunitiesByRank/${session?.user?.name || null}`;
+    const URL = `/communities_api/getCommunitiesByRank/${loginInfo.name || null}`;
     let { data: allCommunities, isLoading: isCommunitiesLoading,
         error: communitiesError, mutate: mutateCommunities } = useSWR(URL, fetchSds<Community[]>);
 

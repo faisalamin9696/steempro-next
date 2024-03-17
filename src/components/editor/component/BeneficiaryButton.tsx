@@ -1,25 +1,28 @@
 
-import { Avatar, Button, Card, Input, Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
+import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/popover'
+import { Button } from '@nextui-org/button';
+import { Card } from '@nextui-org/card';
+import { Input } from '@nextui-org/input';
 import { memo, useState } from 'react'
 import { FaUsersCog } from 'react-icons/fa'
 import { MdAdd, MdClose } from 'react-icons/md';
 import IconButton from '../../IconButton';
 import { toast } from 'sonner';
 import { validate_account_name } from '@/libs/utils/ChainValidation';
-import { getResizedAvatar } from '@/libs/utils/image';
 import { useAppSelector } from '@/libs/constants/AppFunctions';
+import SAvatar from '@/components/SAvatar';
 
 interface Props {
     onSelectBeneficiary?: (bene: Beneficiary) => void;
     beneficiaries: Beneficiary[];
     onRemove?: (bene: Beneficiary) => void,
-    disabled?: boolean;
+    isDisabled?: boolean;
 
 }
 
 
 export default memo(function BeneficiaryButton(props: Props) {
-    const { onSelectBeneficiary, beneficiaries, onRemove, disabled } = props;
+    const { onSelectBeneficiary, beneficiaries, onRemove, isDisabled } = props;
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     let [username, setUsername] = useState('');
     const [weight, setWeight] = useState('');
@@ -72,8 +75,6 @@ export default memo(function BeneficiaryButton(props: Props) {
         onRemove && onRemove(bene);
     }
 
-    if (disabled) return null
-
     return (<div>
         <Popover isOpen={benePopup}
             onOpenChange={(open) => setBenePopup(open)}
@@ -83,6 +84,7 @@ export default memo(function BeneficiaryButton(props: Props) {
             <PopoverTrigger  >
 
                 <Button size='sm'
+                    isDisabled={isDisabled}
                     color='default'
                     startContent={<FaUsersCog className='text-lg' />}
                     className=''
@@ -99,7 +101,7 @@ export default memo(function BeneficiaryButton(props: Props) {
                         </div>
                         <Card className='pe-2 gap-4 flex-row bg-secondary-800/10 max-sm:self-start
                         items-center rounded-full justify-start' >
-                            <Avatar size='sm' src={getResizedAvatar(loginInfo.name)} />
+                            <SAvatar size='xs' username={loginInfo.name} />
                             <div className='flex space-x-2 flex-1'>
                                 <p>{loginInfo.name}</p>
                                 <p className=' font-bold'>{availableBene}%</p>
@@ -148,7 +150,7 @@ export default memo(function BeneficiaryButton(props: Props) {
                             return <div className="flex  w-full">
                                 <Card className='gap-4 pe-2 w-full
                                          flex-row items-center rounded-full' >
-                                    <Avatar size='sm' src={getResizedAvatar(bene.account)} />
+                                    <SAvatar size='xs' username={bene.account} />
                                     <div className='flex space-x-2 flex-1'>
                                         <p>{bene.account}</p>
                                         <p>{bene.weight / 100}%</p>

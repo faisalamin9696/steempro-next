@@ -1,9 +1,10 @@
 import { useEffect, useRef } from "react";
 import './style.scss'
 import VanillaTilt from "vanilla-tilt";
-import { Button, Card, CardBody } from "@nextui-org/react";
+import {  Card, CardBody } from "@nextui-org/card";
+import { Button } from "@nextui-org/button";
+
 import SAvatar from "@/components/SAvatar";
-import TransferModal from "@/components/TransferModal";
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 
 interface Props {

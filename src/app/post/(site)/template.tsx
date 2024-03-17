@@ -28,7 +28,7 @@ export default async function LayoutTemplate({
                 endClassName={'1md:block'}
                 startClassName=' max-h-screen lg:block'
                 startContent={<PostStart />}
-                endContent={<ProfileInfoCard profile username={username} />}>
+                endContent={<ProfileInfoCard key={data.author} profile username={username} />}>
                 <PostPage data={data} />
             </MainWrapper>
         </main>

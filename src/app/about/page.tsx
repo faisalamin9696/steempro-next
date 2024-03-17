@@ -4,7 +4,7 @@ import React from 'react'
 import { AboutItem } from './_components/AboutItem';
 import './style.scss'
 import MainWrapper from '@/components/wrapper/MainWrapper';
-import { Card } from '@nextui-org/react';
+import { Card } from '@nextui-org/card';
 
 export default function AboutPage() {
 

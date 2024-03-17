@@ -1,5 +1,4 @@
-import { As, Badge } from "@nextui-org/react";
-import { Avatar as NextAvatar } from "@nextui-org/react";
+import { Badge } from "@nextui-org/badge";
 import clsx from "clsx";
 import STooltip from "./STooltip";
 import { getResizedAvatar } from "@/libs/utils/image";

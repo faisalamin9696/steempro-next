@@ -1,4 +1,4 @@
-import { Button } from "@nextui-org/react";
+import { Button } from "@nextui-org/button";
 import { memo } from "react";
 import { IconType } from "react-icons";
 

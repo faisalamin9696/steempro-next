@@ -1,10 +1,10 @@
-import { awaitTimeout, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
+import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { addCommentHandler } from '@/libs/redux/reducers/CommentReducer';
 import { addProfileHandler } from '@/libs/redux/reducers/ProfileReducer';
 import { followUser, subscribeCommunity, unfollowUser } from '@/libs/steem/condenser';
-import { Button, Spinner } from '@nextui-org/react'
+import { Button } from '@nextui-org/button'
 import { useMutation } from '@tanstack/react-query';
-import React, { useState } from 'react'
+import React from 'react'
 import { toast } from 'sonner';
 import { useLogin } from './useLogin';
 import { getCredentials, getSessionKey } from '@/libs/utils/user';
@@ -33,13 +33,20 @@ export default function FollowButton(props: Props) {
 
     function handleSuccess(follow?: boolean) {
         if (comment)
-            dispatch(addCommentHandler({ ...comment, observer_follows_author: isFollowing ? 0 : 1 }));
+            dispatch(addCommentHandler({
+                ...comment,
+                observer_follows_author: isFollowing ? 0 : 1, status: 'idle'
+            }));
 
         if (account)
-            dispatch(addProfileHandler({ ...account, observer_follows_author: isFollowing ? 0 : 1 }));
-        if (follow)
-            toast.success('Followed')
-        else toast.success('Unfollowed');
+            dispatch(addProfileHandler({
+                ...account,
+                observer_follows_author: isFollowing ? 0 : 1, status: 'idle'
+            }));
+
+        if (isFollowing)
+            toast.success('Unfollowed')
+        else toast.success('Followed');
 
     }
     function handleFailed(error: any) {
@@ -107,7 +114,7 @@ export default function FollowButton(props: Props) {
     return (
         <div>
             <Button
-                disabled={isPending}
+                isDisabled={isPending}
                 color={community ? isSubscribed ? 'danger' : 'success' :
                     isFollowing ? 'danger' : "success"}
                 radius="full"

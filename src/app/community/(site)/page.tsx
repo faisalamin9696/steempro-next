@@ -1,6 +1,6 @@
 "use client";
 
-import { Accordion, AccordionItem, Tab, Tabs } from '@nextui-org/react'
+import { Tab, Tabs } from '@nextui-org/tabs'
 import React from 'react'
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import FeedPatternSwitch from '@/components/FeedPatternSwitch';
@@ -8,18 +8,12 @@ import CommunityImportantTab from '../(tabs)/important/page';
 import CommunityTrendingsTab from '../(tabs)/trendings/page';
 import CommunityCreatedPage from '../(tabs)/created/page';
 import { useDeviceInfo } from '@/libs/utils/useDeviceInfo';
-import MarkdownViewer from '@/components/body/MarkdownViewer';
-import { FaClipboardQuestion } from 'react-icons/fa6';
-import { MdDescription } from 'react-icons/md';
-import { PiUserListBold } from 'react-icons/pi';
-import CommunityRoles from '../_components/CommunityRoles';
 import { CommunityAboutContent } from '../_components/CommunityAboutContent';
+
 interface Props {
     data: Community;
 
 }
-
-
 
 export default function CommunityPage(props: Props) {
     const { data } = props;

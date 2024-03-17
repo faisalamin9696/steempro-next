@@ -8,28 +8,32 @@ import {
     TableBody,
     TableRow,
     TableCell,
-    Input,
-    Button,
+} from "@nextui-org/table";
+
+import { Pagination } from '@nextui-org/pagination';
+import { Button } from '@nextui-org/button';
+import { Input } from '@nextui-org/input';
+
+import {
     DropdownTrigger,
     Dropdown,
     DropdownMenu,
     DropdownItem,
-    Chip,
-    Pagination,
-    Tooltip,
-} from "@nextui-org/react";
+} from '@nextui-org/dropdown';
+
+import { Chip } from '@nextui-org/chip';
+
+
 import { FaChevronDown, FaPlus, FaSearch } from "react-icons/fa";
 import useSWR from "swr";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import { FiCornerDownRight } from "react-icons/fi";
-import { MdDelete, MdEdit } from "react-icons/md";
 import { vestToSteem } from "@/libs/steem/sds";
 import SAvatar from "@/components/SAvatar";
 import TimeAgoWrapper from "@/components/wrapper/TimeAgoWrapper";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import TransferModal from "@/components/TransferModal";
-import { useSession } from "next-auth/react";
 import LoadingCard from "@/components/LoadingCard";
 import { useLogin } from "@/components/useLogin";
 
@@ -139,8 +143,8 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
     const pages = Math.ceil(filteredItems?.length / rowsPerPage);
 
     const items = React.useMemo(() => {
-        const start = (page - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
+        const start = 0;
+        const end = start + filteredItems.length;
 
         return filteredItems.slice(start, end);
     }, [page, filteredItems, rowsPerPage]);
@@ -444,7 +448,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                         </TableColumn>
                     )}
                 </TableHeader>
-                <TableBody emptyContent={"No data found"} items={sortedItems}>
+                <TableBody emptyContent={"No data found"} items={sortedItems.slice((page - 1) * rowsPerPage, (page) * rowsPerPage)}>
                     {(item) => (
                         <TableRow key={`${item.from}-${item.to}`}>
                             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}

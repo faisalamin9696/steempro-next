@@ -1,5 +1,5 @@
 import MarkdownViewer from "@/components/body/MarkdownViewer";
-import { Accordion, AccordionItem } from "@nextui-org/react";
+import { Accordion, AccordionItem } from "@nextui-org/accordion";
 import { FaClipboardQuestion } from "react-icons/fa6";
 import { MdDescription } from "react-icons/md";
 import { PiUserListBold } from "react-icons/pi";

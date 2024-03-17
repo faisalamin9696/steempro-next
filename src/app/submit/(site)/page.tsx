@@ -5,10 +5,11 @@ import RewardSelectButton, { rewardTypes } from '../../../components/editor/comp
 import CommunitySelectButton from '../../../components/editor/component/CommunitySelectButton';
 import ClearFormButton from '../../../components/editor/component/ClearFormButton';
 import BeneficiaryButton from '../../../components/editor/component/BeneficiaryButton';
-import ScheduleButton from '../../../components/editor/component/ScheduleButton';
 import PublishButton from '../../../components/editor/component/PublishButton';
 import { useLogin } from '../../../components/useLogin';
-import { Input, Card, Chip, Button } from '@nextui-org/react';
+import { Card } from '@nextui-org/card';
+import { Button } from '@nextui-org/button';
+import { Input } from '@nextui-org/input';
 import { useMutation } from '@tanstack/react-query';
 import { checkPromotionText, getCredentials, getSessionKey } from '@/libs/utils/user';
 import { awaitTimeout, useAppSelector } from '@/libs/constants/AppFunctions';
@@ -28,6 +29,7 @@ import { useSession } from 'next-auth/react';
 import clsx from 'clsx';
 import CommentOptionWrapper from '@/components/wrapper/CommentOptionWrapper';
 import { useDeviceInfo } from '@/libs/utils/useDeviceInfo';
+import TagsListCard from '@/components/TagsListCard';
 
 interface Props {
     params?: {
@@ -203,9 +205,9 @@ export default function SubmitPage(props: Props) {
                 let permlink = generatePermlink(title);
                 let simplePost;
                 if (!isEdit) {
-                    if (session?.user?.name)
+                    if (!!loginInfo.name)
                         try {
-                            simplePost = await getPost(session.user.name, permlink);
+                            simplePost = await getPost(loginInfo.name, permlink);
                         } catch (e) {
                             // silent ignore
                         }
@@ -225,7 +227,7 @@ export default function SubmitPage(props: Props) {
                 }
 
                 let options = makeOptions({
-                    author: session?.user?.name,
+                    author: loginInfo.name,
                     permlink,
                     operationType: reward?.payout,
                     beneficiaries: beneficiaries,
@@ -319,7 +321,7 @@ export default function SubmitPage(props: Props) {
             !oldPost && '1md:w-[50%] 1md:float-start 1md:sticky 1md:self-start 1md:top-[70px] px-1')}>
 
             <CommunitySelectButton
-                disabled={isPosting}
+                isDisabled={isPosting}
                 community={community}
                 onlyCommunity={isEdit}
                 onSelectCommunity={setCommunity} />
@@ -351,7 +353,7 @@ export default function SubmitPage(props: Props) {
                 maxLength={255} />
 
             <EditorInput value={markdown}
-                disabled={isPosting}
+                isDisabled={isPosting}
                 onChange={setMarkdown}
                 inputClass=' h-full'
                 onImageUpload={() => { }}
@@ -363,11 +365,11 @@ export default function SubmitPage(props: Props) {
 
                 <div className='gap-2 flex'>
                     <ClearFormButton onClearPress={clearForm}
-                        disabled={isPosting} />
+                        isDisabled={isPosting} />
 
                     <CommentOptionWrapper advance={isMobile}>
                         <BeneficiaryButton
-                            disabled={isEdit || isPosting}
+                            isDisabled={isEdit || isPosting}
                             onSelectBeneficiary={bene => {
                                 setBeneficiaries([...beneficiaries, { ...bene, weight: bene.weight }]);
                             }}
@@ -377,7 +379,7 @@ export default function SubmitPage(props: Props) {
                             beneficiaries={beneficiaries}
                         />
                         <RewardSelectButton
-                            disabled={isEdit || isPosting}
+                            isDisabled={isEdit || isPosting}
                             selectedValue={reward}
                             onSelectReward={(reward) => {
                                 setReward(reward);
@@ -387,7 +389,7 @@ export default function SubmitPage(props: Props) {
                 </div>
 
                 <div className='flex flex-1 justify-end gap-2 w-full'>
-                    {/* <ScheduleButton disabled={isEdit} onPress={handleSchedule} /> */}
+                    {/* <ScheduleButton isDisabled={isEdit} onPress={handleSchedule} /> */}
 
                     {isEdit && <Button size='sm'
                         radius='full' onPress={() => {
@@ -397,7 +399,7 @@ export default function SubmitPage(props: Props) {
                     </Button>}
 
                     <PublishButton
-                        disabled={isPosting}
+                        isDisabled={isPosting}
                         isLoading={isPosting}
                         buttonText={isEdit ? 'Update' : undefined}
                         onPress={handlePublish} />
@@ -419,11 +421,7 @@ export default function SubmitPage(props: Props) {
             </div>
             {markdown ? <Card shadow='none'
                 className='p-2 lg:shadow-md space-y-2'>
-                <div className='flex gap-2 overscroll-x-contain flex-wrap shrink-0'>
-                    {tags?.trim().split(' ')?.filter(tag => !!tag)?.map(tag => {
-                        return <Chip key={tag}>{tag}</Chip>
-                    })}
-                </div>
+                <TagsListCard tags={tags?.trim().split(' ')} />
                 <div className='flex flex-col items-center'>
                     <MarkdownViewer text={markdown} />
                 </div>

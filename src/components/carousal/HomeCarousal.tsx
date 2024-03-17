@@ -1,7 +1,7 @@
 'use client';
 
 import { getPromotions } from "@/libs/firebase/firebaseApp";
-import { Button } from "@nextui-org/react";
+import { Button } from '@nextui-org/button';
 import clsx from "clsx";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import useSWR from "swr";
