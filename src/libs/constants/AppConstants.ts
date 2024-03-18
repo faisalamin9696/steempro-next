@@ -10,7 +10,7 @@ export const appLink = 'https://www.steempro.com';
 export let CurrentSetting: Setting = {
     lang: { code: 'en', title: 'English' },
     nsfw: 'Always warn',
-    feedStyle: 'grid',
+    feedStyle: 'list',
     rpc: 'https://api.steemit.com',
     theme: 'system'
 };;

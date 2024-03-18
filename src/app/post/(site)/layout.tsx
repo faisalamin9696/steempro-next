@@ -1,5 +1,6 @@
 import { getPost } from '@/libs/steem/sds';
 import { getPostThumbnail } from '@/libs/utils/image';
+import { postSummary } from '@/libs/utils/postSummary';
 import usePathnameServer from '@/libs/utils/usePathnameServer';
 import { ResolvingMetadata } from 'next';
 import React from 'react'
@@ -24,12 +25,12 @@ export async function generateMetadata(parent: ResolvingMetadata) {
     const thumbnail = getPostThumbnail(result?.json_images);
 
     const pageTitle = result.depth === 0 ? result.title : `RE: ${result.root_title}`;
-    const pageDescription = result.body?.substring(0, 250) || '';
-
+    const pageDescription = result.depth === 0 ? pageTitle + ` by @${result.author}` :
+        `${postSummary(result.body)} by ${result.author}`;
 
     return {
         title: pageTitle,
-        description: pageDescription,
+        description: pageDescription ?? '',
         openGraph: {
             images: [thumbnail, ...previousImages]
         }

@@ -24,16 +24,16 @@ export const metadata: Metadata = {
   icons: {
     icon: '/favicon.ico',
     apple: '/apple-touch-icon.png',
-    shortcut: '/apple-touch-icon.png'
+    shortcut: '/apple-touch-icon.png',
   },
   manifest: '/site.webmanifest',
   openGraph: {
-    images: ['/og.jpg'],
+    images: ['/opengraph-image.jpg'],
     type: 'website',
     siteName: 'SteemPro',
   },
   twitter: {
-    images: ['/og.jpg'],
+    images: ['/opengraph-image.jpg'],
     card: 'summary_large_image',
     site: '@steemproblogs',
   }

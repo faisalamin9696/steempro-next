@@ -206,7 +206,7 @@ export const empty_settings = (): Setting => {
   return {
     lang: { code: 'en', title: 'English' },
     nsfw: 'Always warn',
-    feedStyle: 'grid',
+    feedStyle: 'list',
     rpc: 'https://api.steemit.com',
     theme: 'system'
   };
