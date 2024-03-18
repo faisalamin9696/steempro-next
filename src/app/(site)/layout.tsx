@@ -32,12 +32,15 @@ export default async function Layout({
 export async function generateMetadata() {
     const { category } = usePathnameServer();
     const capCat = category.charAt(0).toUpperCase() + category.slice(1);
+    const pageTitle = `${capCat} topics`;
+    const pageDescription = `Explore ${category} discussions on a user-owned social network. ${capCat} topics cover a wide range of interests and perspectives, providing valuable insights and lively conversations.`;
+
 
     return {
-        title: `${capCat} topics`,
-        description: `Explore ${category} discussions on a user-owned social network.`,
+        title: pageTitle,
+        description: pageDescription,
         openGraph: {
-            description: `Explore ${category} discussions on a user-owned social network.`
+            description: pageDescription
         }
     }
 }

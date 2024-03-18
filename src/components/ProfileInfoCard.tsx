@@ -59,7 +59,7 @@ export default memo(function ProfileInfoCard(props: Props) {
     if (accountExt)
         data = accountExt;
 
-    const profileInfo = useAppSelector(state => state.profileReducer.value)[username ?? data?.name ?? ''] ?? data;
+    const profileInfo: AccountExt = useAppSelector(state => state.profileReducer.value)[username ?? data?.name ?? ''] ?? data;
     const communityInfo = useAppSelector(state => state.communityReducer.values)[community?.account ?? ''] ?? community;
 
     const { data: clubData } = useSWR(username || profileInfo?.name, getClubStatus);
@@ -90,7 +90,7 @@ export default memo(function ProfileInfoCard(props: Props) {
     const detailItems = [
         { title: 'Vote Value', desc: `$${voteData?.full_vote?.toFixed(3)}` },
         { title: 'VP', desc: `${profileInfo?.upvote_mana_percent}%` },
-        { title: 'Self Voting', profileInfo: `${profileInfo?.selfvote_rate}%` },
+        { title: 'Self Voting', desc: `${profileInfo?.selfvote_rate}%` },
         { title: 'CSI', desc: `${profileInfo?.voting_csi}%` },
         { title: 'RC', desc: `${profileInfo?.rc_mana_percent}%` },
         { title: 'Club', desc: getClubString(clubData) }
@@ -142,13 +142,13 @@ export default memo(function ProfileInfoCard(props: Props) {
 
             <div className="flex flex-row gap-2" >
                 <div className="flex gap-1">
-                    <p title={profile ? profileInfo?.count_followers : profileInfo?.count_root_posts}
+                    <p title={profile ? profileInfo?.count_followers?.toString() : profileInfo?.count_root_posts?.toString()}
                         className="font-semibold text-default-600 text-small">
                         {abbreviateNumber(profile ? profileInfo?.count_followers : profileInfo?.count_root_posts)}</p>
                     <p className=" text-default-500 text-small">{profile ? 'Followers' : 'Posts'}</p>
                 </div>
                 <div className="flex gap-1">
-                    <p title={profile ? profileInfo?.count_following : profileInfo?.count_comments}
+                    <p title={profile ? profileInfo?.count_following?.toString() : profileInfo?.count_comments?.toString()}
                         className="font-semibold text-default-600 text-small">
                         {abbreviateNumber(profile ? profileInfo?.count_following : profileInfo?.count_comments)}</p>
                     <p className="text-default-500 text-small">{profile ? 'Following' : 'Comments'}</p>

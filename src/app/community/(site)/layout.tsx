@@ -39,18 +39,19 @@ export default async function Layout({
 
 
 export async function generateMetadata(parent: ResolvingMetadata) {
-    const { community } = usePathnameServer();
+    const { category, community } = usePathnameServer();
     const previousImages = (await parent)?.openGraph?.images || [];
     const result = await getCommunity(community);
     const { title, about } = result ?? {};
-    
+    const pageTitle = title ? `${title} - ${category} in the ${community} Community` : `${community} Community ${category} List`;
+    const pageDescription = about || '';
 
     return {
-        title: (title ? `${title} (@${community})` : community),
-        description: about ?? '',
+        title: pageTitle,
+        description: pageDescription,
         openGraph: {
             description: about ?? '',
-            images: [getResizedAvatar(result.account,'medium'), ...previousImages]
+            images: [getResizedAvatar(result.account, 'medium'), ...previousImages]
         }
     }
 
