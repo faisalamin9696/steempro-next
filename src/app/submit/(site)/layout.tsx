@@ -1,10 +1,4 @@
 import MainWrapper from "@/components/wrapper/MainWrapper";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-    title: 'Submit',
-}
-
 
 export default async function Layout({
     children,
