@@ -332,7 +332,7 @@ export default function page() {
   );
 
   return (
-    <MainWrapper className='flex flex-col gap-4'>
+    <div className='flex flex-col gap-4'>
       <div className='flex flex-col gap-1'>
         <p className='text-lg font-semibold'>Steem Witnesses (aka "Block Producers")</p>
         <p className='text-tiny'>{`You have ${30 - (loginInfo?.witness_votes?.length || 0)} votes remaining. You can vote for a maximum of 30 witnesses.`}</p>
@@ -377,7 +377,7 @@ export default function page() {
 
 
 
-    </MainWrapper>
+    </div>
   )
 }
 

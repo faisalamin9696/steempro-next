@@ -50,7 +50,6 @@ export async function generateMetadata(parent: ResolvingMetadata) {
         title: pageTitle,
         description: pageDescription,
         openGraph: {
-            description: about ?? '',
             images: [getResizedAvatar(result.account, 'medium'), ...previousImages]
         }
     }

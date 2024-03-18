@@ -33,7 +33,7 @@ export async function generateMetadata() {
     let { category } = usePathnameServer();
     if (!category)
         category = 'trending';
-    
+
     const capCat = category.charAt(0).toUpperCase() + category.slice(1);
     const pageTitle = `${capCat} topics`;
     const pageDescription = `Explore ${category} discussions on a user-owned social network. ${capCat} topics cover a wide range of interests and perspectives, providing valuable insights and lively conversations.`;
@@ -42,8 +42,5 @@ export async function generateMetadata() {
     return {
         title: pageTitle,
         description: pageDescription,
-        openGraph: {
-            description: pageDescription
-        }
     }
 }
