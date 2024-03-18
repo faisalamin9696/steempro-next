@@ -32,13 +32,12 @@ const HomeCarousel = memo(() => {
             isRTL={false}
             breakPoints={breakPoints}
             showArrows
-            enableAutoPlay
-            autoPlaySpeed={5000}
+            // enableAutoPlay
+            // autoPlaySpeed={5000}
             className="w-full mb-2 relative flex flex-row items-center"
             pagination={false}
             focusOnSelect={true}
             itemPadding={[4]}
-
             enableMouseSwipe={true}
             renderArrow={({ type, onClick, isEdge }) => {
                 return <Button size="sm"

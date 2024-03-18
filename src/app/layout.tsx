@@ -28,12 +28,12 @@ export const metadata: Metadata = {
   },
   manifest: '/site.webmanifest',
   openGraph: {
-    images: ['/opengraph-image.jpg'],
+    images: ['https://i.ibb.co/VxtjLNx/opengraph-image.jpg'],
     type: 'website',
     siteName: 'SteemPro',
   },
   twitter: {
-    images: ['/opengraph-image.jpg'],
+    images: ['https://i.ibb.co/VxtjLNx/opengraph-image.jpg'],
     card: 'summary_large_image',
     site: '@steemproblogs',
   }
