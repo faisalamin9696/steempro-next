@@ -1,6 +1,5 @@
 import MainWrapper from '@/components/wrapper/MainWrapper';
 import React from 'react'
-import { ResolvingMetadata } from 'next';
 
 export default async function Layout({
     children,
@@ -17,7 +16,7 @@ export default async function Layout({
 }
 
 
-export async function generateMetadata(parent: ResolvingMetadata) {
+export async function generateMetadata() {
     return {
         title: `Settings - Customize Your SteemPro Experience`,
         description: `Explore the settings page on SteemPro to personalize and optimize your experience on the Steem blockchain. Customize your preferences, security settings, notifications, and more to tailor SteemPro to your needs and preferences.`,

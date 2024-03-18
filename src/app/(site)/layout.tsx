@@ -1,7 +1,6 @@
 import MainWrapper from '@/components/wrapper/MainWrapper';
 import React from 'react'
 import HomeCarousel from '@/components/carousal/HomeCarousal';
-import { ResolvingMetadata } from 'next';
 import usePathnameServer from '@/libs/utils/usePathnameServer';
 
 export default async function Layout({
@@ -30,7 +29,7 @@ export default async function Layout({
 }
 
 
-export async function generateMetadata(parent: ResolvingMetadata) {
+export async function generateMetadata() {
     const { category } = usePathnameServer();
     const capCat = category.charAt(0).toUpperCase() + category.slice(1);
 
