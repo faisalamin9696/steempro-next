@@ -22,7 +22,7 @@ import LoadingCard from "@/components/LoadingCard";
 const INITIAL_VISIBLE_COLUMNS = [""];
 
 export default function FollowersCard({ username, isFollowing }: { username: string, isFollowing?: boolean }) {
-    const URL = `/followers_api/get${isFollowing ? 'Following' : 'Followers'}/${username}`;
+    const URL = `/followers_api/get${isFollowing ? 'Following' : 'Followers'}/${username}/100000`;
 
     if (!username)
         return null;
