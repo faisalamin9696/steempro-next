@@ -43,12 +43,14 @@ export async function generateMetadata(parent: ResolvingMetadata) {
     const previousImages = (await parent)?.openGraph?.images || [];
     const result = await getCommunity(community);
     const { title, about } = result ?? {};
+    
 
     return {
-        title: (title ? `${title} (@${community})` : community) + ' | SteemPro',
+        title: (title ? `${title} (@${community})` : community),
         description: about ?? '',
         openGraph: {
-            images: [getResizedAvatar(result.account), ...previousImages]
+            description: about ?? '',
+            images: [getResizedAvatar(result.account,'medium'), ...previousImages]
         }
     }
 

@@ -340,7 +340,6 @@ export default memo(function CommentFooter(props: CommentProps) {
         {votersModal && <Modal isOpen={votersModal} onOpenChange={setVotersModal}
             placement='top-center'
             scrollBehavior='inside'
-            backdrop='blur'
             closeButton>
             <ModalContent>
                 {(onClose) => (

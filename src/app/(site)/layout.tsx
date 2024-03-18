@@ -1,20 +1,18 @@
 import MainWrapper from '@/components/wrapper/MainWrapper';
-import { getServerSession } from 'next-auth';
 import React from 'react'
-import HomePage from './page';
 import HomeCarousel from '@/components/carousal/HomeCarousal';
+import { ResolvingMetadata } from 'next';
+import usePathnameServer from '@/libs/utils/usePathnameServer';
 
 export default async function Layout({
     children,
     start,
-    end,
 }: Readonly<{
     children: React.ReactNode,
     start: React.ReactNode,
     end: React.ReactNode,
 
 }>) {
-    const session = await getServerSession();
 
     return (
 
@@ -24,26 +22,23 @@ export default async function Layout({
             startContent={start}
             startClassName={' max-h-screen md:block !static pr-2'} >
             <div className=' flex flex-col'>
-                <HomeCarousel  />
-
-                <HomePage isLogin={!!session?.user?.name} />
+                <HomeCarousel />
+                {children}
             </div>
         </MainWrapper>
     )
 }
 
 
-// export async function generateMetadata(parent: ResolvingMetadata) {
-//     const { username, permlink } = usePathnameServer();
-//     const result = await getPost(username, permlink);
-//     const previousImages = (await parent).openGraph?.images || [];
+export async function generateMetadata(parent: ResolvingMetadata) {
+    const { category } = usePathnameServer();
+    const capCat = category.charAt(0).toUpperCase() + category.slice(1);
 
-
-//     return {
-//         title: (result.title) + ' | SteemPro',
-//         description: result.body ?? '',
-//         openGraph: {
-//             images: [JSON.parse(result?.json_images ?? `[]`), ...previousImages]
-//         }
-//     }
-// }
+    return {
+        title: `${capCat} topics`,
+        description: `Explore ${category} discussions on a user-owned social network.`,
+        openGraph: {
+            description: `Explore ${category} discussions on a user-owned social network.`
+        }
+    }
+}

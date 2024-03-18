@@ -1,10 +1,28 @@
-import MainWrapper from '@/components/wrapper/MainWrapper'
+import MainWrapper from '@/components/wrapper/MainWrapper';
 import React from 'react'
+import { ResolvingMetadata } from 'next';
 
-export default function layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({
+    children,
+}: Readonly<{
+    children: React.ReactNode,
+
+}>) {
+
     return (
         <MainWrapper>
             {children}
         </MainWrapper>
     )
+}
+
+
+export async function generateMetadata(parent: ResolvingMetadata) {
+    return {
+        title: `Settings - Customize Your SteemPro Experience`,
+        description: `Explore the settings page on SteemPro to personalize and optimize your experience on the Steem blockchain. Customize your preferences, security settings, notifications, and more to tailor SteemPro to your needs and preferences.`,
+        openGraph: {
+            description: `Explore the settings page on SteemPro to personalize and optimize your experience on the Steem blockchain. Customize your preferences, security settings, notifications, and more to tailor SteemPro to your needs and preferences.`
+        }
+    }
 }

@@ -159,7 +159,7 @@ export default function HomeStart() {
                     communitiesError ? <ErrorCard message={communitiesError?.message} onPress={mutateCommunities} /> :
                         <ScrollShadow id="scrollableDiv"
                             style={{
-                                height: 270,
+                                height: 280,
                                 overflow: 'auto',
                                 display: 'flex',
                                 flexDirection: 'column',

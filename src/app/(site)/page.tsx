@@ -1,6 +1,6 @@
 "use client";
 
-import {Tabs, Tab} from "@nextui-org/tabs";
+import { Tabs, Tab } from "@nextui-org/tabs";
 import React from 'react'
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import FeedPatternSwitch from '@/components/FeedPatternSwitch';
@@ -9,10 +9,13 @@ import HomeTrendingsTab from './(tabs)/trendings/page';
 import HomeCreatedTab from './(tabs)/created/page';
 import HomePayoutTab from './(tabs)/payout/page';
 import HomeCommunitiesTab from './(tabs)/communities/page';
+import { useAppSelector } from "@/libs/constants/AppFunctions";
 
 
-export default function HomePage({ isLogin }: { isLogin?: boolean }) {
-  let { username, category } = usePathnameClient();
+export default function HomePage() {
+  let { category } = usePathnameClient();
+  const loginInfo = useAppSelector(state => state.loginReducer.value);
+  const isLoggedin = !!loginInfo.name
 
   let homeTabs = [
     { title: 'Trendings', key: 'trending', children: <HomeTrendingsTab /> },
@@ -21,7 +24,7 @@ export default function HomePage({ isLogin }: { isLogin?: boolean }) {
 
   ]
 
-  if (isLogin)
+  if (isLoggedin)
     homeTabs.push({ title: 'Communities', key: 'communities', children: <HomeCommunitiesTab /> })
 
 
@@ -35,7 +38,7 @@ export default function HomePage({ isLogin }: { isLogin?: boolean }) {
         color={'secondary'}
         radius="full"
         className='justify-center'
-        defaultSelectedKey={(isLogin && category === 'communities') ? 'communities' : category ?? 'trending'}
+        defaultSelectedKey={(isLoggedin && category === 'communities') ? 'communities' : category ?? 'trending'}
         onSelectionChange={(key) => {
           if (!category)
             history.replaceState({}, '', `/${key}`);

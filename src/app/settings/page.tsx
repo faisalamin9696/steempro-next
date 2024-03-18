@@ -9,7 +9,7 @@ import { Divider, } from '@nextui-org/divider';
 import { Button } from '@nextui-org/button';
 import { Input } from '@nextui-org/input';
 import { Select, SelectItem } from '@nextui-org/select';
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { FaInfoCircle, FaUpload, FaUserCircle } from "react-icons/fa";
 import { toast } from 'sonner';
 import { FaGlobe } from "react-icons/fa";
@@ -37,6 +37,7 @@ export default function SettingsPage() {
     const { profile_image = "", cover_image = "", name = "", about: userAbout = "",
         website: userWebsite = "", location: userLocation = "" } = parsed_metadata?.profile ?? {};
 
+
     const [displayName, setDisplayName] = useState(name ?? '');
     const [coverImage, setCoverImage] = useState(cover_image ?? '');
     const [profileImage, setProfileImage] = useState(profile_image ?? '');
@@ -51,6 +52,19 @@ export default function SettingsPage() {
     const dispatch = useAppDispatch();
 
     const { authenticateUser, isAuthorized } = useLogin();
+
+    useEffect(() => {
+        if (isSelf) {
+            setDisplayName(name);
+            setCoverImage(cover_image);
+            setProfileImage(profile_image);
+            setAbout(userAbout);
+            setLocation(userLocation);
+            setWebsite(userWebsite);
+        }
+
+
+    }, [parsed_metadata]);
 
     const isChanged = profileImage !== profile_image || coverImage !== cover_image ||
         name !== displayName || about !== userAbout || location !== userLocation || website !== userWebsite;

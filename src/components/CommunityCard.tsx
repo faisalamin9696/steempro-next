@@ -85,6 +85,9 @@ export const CommunityCard = memo((props: Props) => {
 
                 }}
             />
+            <p title={community.about} className="text-tiny line-clamp-1">
+                {community.about}
+            </p>
             <div className="flex flex-row gap-4">
                 <div className="flex gap-1">
                     <p className="font-semibold text-default-600 text-tiny">{abbreviateNumber(community.count_subs)}</p>

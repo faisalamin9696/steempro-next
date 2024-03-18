@@ -31,8 +31,8 @@ const INITIAL_VISIBLE_COLUMNS = ["voter", 'rshares'];
 
 const columns = [
     { name: "VOTER", uid: "voter", sortable: true },
-    { name: "VALUE", uid: "rshares", sortable: false },
-    { name: "PERCENT", uid: "percent", sortable: false },
+    { name: "VALUE", uid: "rshares", sortable: true },
+    { name: "PERCENT", uid: "percent", sortable: true },
 
 ];
 // const statusOptions = [

@@ -5,6 +5,8 @@ import { getSettings, updateSettings } from "@/libs/utils/user";
 import { updateSettingsHandler } from "@/libs/redux/reducers/SettingsReducer";
 import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import { useTheme } from "next-themes";
+import { VisuallyHidden, useSwitch } from "@nextui-org/react";
+import { FaSun } from "react-icons/fa";
 
 export default memo(function ThemeSwitch({ className }: { className?: string }) {
 
@@ -47,25 +49,55 @@ export default memo(function ThemeSwitch({ className }: { className?: string }) 
         document?.querySelector('html')?.setAttribute('data-theme', newMode.theme);
         setIsSelected(newMode.theme === 'light');
     }
-
-
+    const {
+        Component,
+        slots,
+        getBaseProps,
+        getInputProps,
+        getWrapperProps,
+    } = useSwitch({ onChange: toggleTheme, color: 'default' });
 
     return (
-        <Switch
-            title="Change theme"
-            onChange={toggleTheme}
-            size="lg"
-            // isSelected={!appTheme ? windowTheme === 'light' : appTheme === 'light'}
-            isSelected={isSelected}
-            className={className}
-            color="secondary"
-            thumbIcon={({ isSelected, className }) =>
-                isSelected ? (
-                    <BsFillSunFill className={className} />
-                ) : (
-                    <BsFillMoonStarsFill className={className} />
-                )
-            }
-        />
-    );
+        <div className="flex flex-col gap-2" title="Change theme">
+            <Component {...getBaseProps()}>
+                <VisuallyHidden>
+                    <input {...getInputProps()} />
+                </VisuallyHidden>
+                <div
+                    {...getWrapperProps()}
+                    className={slots.wrapper({
+                        class: [
+                            "w-6 h-6",
+                            "flex items-center justify-center",
+                            "rounded-full hover:bg-default-200",
+                        ],
+                    })}
+                >
+                    {isSelected ? <FaSun className={className} /> :
+                        <BsFillMoonStarsFill className={className} />}
+                </div>
+            </Component>
+        </div>
+    )
+
+
+
+    // return (
+    //     <Switch
+    //         title="Change theme"
+    //         onChange={toggleTheme}
+    //         size="lg"
+    //         // isSelected={!appTheme ? windowTheme === 'light' : appTheme === 'light'}
+    //         isSelected={isSelected}
+    //         className={className}
+    //         color="secondary"
+    //         thumbIcon={({ isSelected, className }) =>
+    //             isSelected ? (
+    //                 <BsFillSunFill className={className} />
+    //             ) : (
+    //                 <BsFillMoonStarsFill className={className} />
+    //             )
+    //         }
+    //     />
+    // );
 })

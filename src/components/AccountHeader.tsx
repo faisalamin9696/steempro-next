@@ -1,11 +1,11 @@
 'use client';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import UserCoverCard from '@/components/UserCoverCard';
 import { abbreviateNumber } from '@/libs/utils/helper';
 import Reputation from '@/components/Reputation';
 import ProfileInfoCard from '@/components/ProfileInfoCard';
-import { Popover, PopoverTrigger, PopoverContent} from "@nextui-org/popover";
+import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
 import { Button } from '@nextui-org/button';
 import { BsInfoCircleFill } from 'react-icons/bs';
 import VanillaTilt from 'vanilla-tilt';
@@ -20,6 +20,9 @@ import { FaRegHeart } from "react-icons/fa";
 import { IoFlashOutline } from "react-icons/io5";
 import { FaRankingStar } from "react-icons/fa6";
 import { PiUserListBold } from 'react-icons/pi';
+import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/react';
+import FollowersCard from './FollowersCard';
+import { comment } from 'postcss';
 
 type Props = (
     {
@@ -38,8 +41,13 @@ export default function AccountHeader(props: Props) {
     const isCommunity = !!community;
     const dispatch = useAppDispatch();
     const communityInfo = useAppSelector(state => state.communityReducer.values)[community?.account ?? ''] ?? community;
-    const profileInfo = useAppSelector(state => state.profileReducer.value)[account?.name ?? ''] ?? account;
-
+    const profileInfo: AccountExt = useAppSelector(state => state.profileReducer.value)[account?.name ?? ''] ?? account;
+    const [followerModal, setFollowerModal] = useState<{
+        isOpen: boolean,
+        isFollowing?: boolean
+    }>({
+        isOpen: false
+    });
     const posting_json_metadata = JSON.parse(profileInfo?.posting_json_metadata || '{}');
     const cover_picture = isCommunity ? '/steempro-cover.png' :
         proxifyImageUrl(posting_json_metadata?.profile?.cover_image ?? '');
@@ -78,9 +86,10 @@ export default function AccountHeader(props: Props) {
                                 {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg> */}
                             </div>
                             <div className="stat-title text-white/60">{isCommunity ? 'Rank' : 'Followers'}</div>
-                            <div className={twMerge("stat-value", 'max-md:text-lg')} title={isCommunity ? communityInfo.rank : profileInfo.count_followers}>
+                            <button onClick={() => { if (!isCommunity) setFollowerModal({ isOpen: true }) }}
+                                className={twMerge("stat-value", 'max-md:text-lg')} title={isCommunity ? communityInfo.rank : profileInfo.count_followers}>
                                 {abbreviateNumber(isCommunity ? communityInfo.rank : profileInfo.count_followers)}
-                            </div>
+                            </button>
                             <div className="stat-desc"></div>
                         </div>
 
@@ -90,8 +99,9 @@ export default function AccountHeader(props: Props) {
                                 {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> */}
                             </div>
                             <div className="stat-title text-white/60">{isCommunity ? 'Members' : 'Followings'}</div>
-                            <div className="stat-value text-secondary max-md:text-lg" title={isCommunity ? communityInfo.count_subs : profileInfo.count_following}>
-                                {abbreviateNumber(isCommunity ? communityInfo.count_subs : profileInfo.count_following)}</div>
+                            <button onClick={() => { if (!isCommunity) setFollowerModal({ isOpen: true, isFollowing: true }) }}
+                                className="stat-value text-secondary max-md:text-lg" title={isCommunity ? communityInfo.count_subs : profileInfo.count_following}>
+                                {abbreviateNumber(isCommunity ? communityInfo.count_subs : profileInfo.count_following)}</button>
                             <div className="stat-desc"></div>
                         </div>
 
@@ -155,6 +165,24 @@ export default function AccountHeader(props: Props) {
                 </div>
             </div>
         </div>
+
+        {followerModal.isOpen && <Modal isOpen={followerModal.isOpen} onOpenChange={(isOpen) => setFollowerModal({ isOpen: isOpen })}
+            placement='top-center'
+            scrollBehavior='inside'
+            closeButton>
+            <ModalContent>
+                {(onClose) => (
+                    <>
+                        <ModalHeader className="flex flex-col gap-1">{followerModal.isFollowing ? 'Following' : 'Followers'}</ModalHeader>
+                        <ModalBody>
+                            <FollowersCard isFollowing={followerModal.isFollowing}
+                                username={isCommunity ? communityInfo.account : profileInfo.name} />
+                        </ModalBody>
+
+                    </>
+                )}
+            </ModalContent>
+        </Modal>}
     </div>
     )
 }

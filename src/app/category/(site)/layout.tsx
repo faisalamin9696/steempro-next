@@ -2,20 +2,19 @@ import MainWrapper from '@/components/wrapper/MainWrapper';
 import usePathnameServer from '@/libs/utils/usePathnameServer';
 import React from 'react'
 import { ResolvingMetadata } from 'next';
+import HomeStart from '@/app/(site)/@start/page';
 
 export default async function Layout({
     children,
-    start,
 }: Readonly<{
     children: React.ReactNode,
-    start: React.ReactNode,
     end: React.ReactNode,
 
 }>) {
     return (
 
         <MainWrapper
-            startContent={start}
+            startContent={<HomeStart />}
             startClassName={' max-h-screen md:block !static pr-2'} >
             <div className=' flex flex-col'>
                 {children}
@@ -31,9 +30,9 @@ export async function generateMetadata(parent: ResolvingMetadata) {
 
     return {
         title: `Latest #${tag} ${category} topic on internet`,
-        description: `${capCat} #${tag} topics`,
+        description: `#${tag} ${capCat}: Explore the latest topics on ${tag}.`,
         openGraph: {
-            description: `${capCat} #${tag} topics`
+            description: `#${tag} ${capCat}: Explore the latest topics on ${tag}.`,
         }
     }
 }

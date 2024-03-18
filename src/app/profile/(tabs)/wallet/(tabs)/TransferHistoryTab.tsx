@@ -68,9 +68,10 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
     const isSelf = !!loginInfo.name && (loginInfo.name === (username));
     const { authenticateUser, isAuthorized } = useLogin();
-
-
     const [allRows, setAllRows] = useState<AccountHistory[]>([]);
+
+    if (isLoading)
+        return <LoadingCard />
 
     useEffect(() => {
         if (historyData) {
@@ -351,8 +352,7 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
         [],
     );
 
-    if (isLoading)
-        return <LoadingCard />
+
 
     return (
         <div>
