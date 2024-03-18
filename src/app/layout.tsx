@@ -20,13 +20,16 @@ export const metadata: Metadata = {
     template: '%s | SteemPro',
     absolute: '',
   },
-  description: "Powered by Steem Blockchain",
+  description: "Experience a social network empowered by the Steem blockchain. Explore trending discussions and share your unique perspective.",
   icons: {
     icon: '/favicon.ico?v=1',
     apple: '/apple-touch-icon.png?v=4',
     shortcut: '/apple-touch-icon.png'
   },
-  manifest:'/site.webmanifest'
+  manifest:'/site.webmanifest',
+  openGraph:{
+    images:['/og.jpg']
+  }
 
 };
 

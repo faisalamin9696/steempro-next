@@ -1,7 +1,7 @@
 {
     "name": "SteemPro",
     "short_name": "SteemPro",
-    "description": "SteemPro Empowering Your Steem Experience",
+    "description": "Experience a social network empowered by the Steem blockchain. Explore trending discussions and share your unique perspective.",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",
