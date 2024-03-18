@@ -26,9 +26,16 @@ export const metadata: Metadata = {
     apple: '/apple-touch-icon.png?v=4',
     shortcut: '/apple-touch-icon.png'
   },
-  manifest:'/site.webmanifest',
-  openGraph:{
-    images:['/og.jpg']
+  manifest: '/site.webmanifest',
+  openGraph: {
+    images: ['/og.jpg'],
+    type: 'website',
+    siteName: 'SteemPro',
+  },
+  twitter: {
+    images: ['/og.jpg'],
+    card: 'summary_large_image',
+    site: '@steemproblogs',
   }
 
 };
