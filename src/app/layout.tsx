@@ -60,8 +60,8 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning={true}>
-      <link rel="dns-prefetch" href="https://identitytoolkit.googleapis.com" />
-      <link rel="preconnect" href="https://identitytoolkit.googleapis.com" />
+      <link rel="dns-prefetch" href="https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg" />
+      <link rel="preconnect" href="https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg" />
       <link rel="preconnect " href={AppStrings.sds_base_url} />
 
       <body className={clsx()}>
