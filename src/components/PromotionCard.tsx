@@ -49,16 +49,16 @@ export default function PromotionCard(props: Props) {
                     height: '100%'
                 }}
             />}
-            <div
+            {/* <div
                 className="rounded-lg hover:bg-transparent transition duration-300 absolute bottom-0 top-0 right-0 left-0 bg-gray-900 opacity-25">
-            </div>
+            </div> */}
             <Card as={Link} href={`/${data?.category}/@${data?.author}/${data?.permlink}`}
                 shadow='none' radius='none'
-                className="text-white text-start p-1 bg-transparent px-2  
-                mb-auto absolute bottom-0 self-end left-0 gap-2  ">
+                className="text-white text-start  p-2 
+                mb-auto absolute bottom-0 self-end left-0 gap-2 bg-black/50 rounded-t-lg
+                backdrop-blur-sm">
                 <p
-                    className="text-start font-bold 
-                    backdrop-blur-sm text-lg line-clamp-1">
+                    className="text-start font-bold  text-sm line-clamp-1">
                     {data?.title}</p>
                 <div className='flex flex-row items-center gap-2 text-tiny'>
                     <SAvatar size='xs' username={author} />

@@ -17,7 +17,7 @@ export default async function Layout({
 
 export async function generateMetadata() {
     return {
-        title: `Witnesses of Steem Blockchain`,
-        description: `Witnessess (block producer) of Steem Blockchain`,
+        title: `Steem Blockchain Witnesses: Trusted Block Producers`,
+        description: `Discover the trusted witnesses (block producers) contributing to the security and governance of the Steem blockchain. Learn about their role and contributions.`,
     }
 }

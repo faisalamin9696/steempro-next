@@ -246,7 +246,7 @@ export default memo(function PostReplies(props: Props) {
 
 
     return (
-        <div className='p-1'>
+        <div className='p-1' id='post-replies'>
 
             <div className='card card-compact mt-4 flex flex-col py-4 gap-4'>
 

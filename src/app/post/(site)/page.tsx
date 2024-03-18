@@ -127,11 +127,19 @@ export default function PostPage(props: Props) {
                         <TagsListCard tags={commentInfo.depth === 0 ?
                             JSON.parse(commentInfo.json_metadata ?? `{}`)?.tags ?? [] : []} />
 
-                        <CardFooter className='w-full p-0  overflow-visible'>
-                            <CommentFooter comment={commentInfo}
-                                className={'w-full'} />
-                        </CardFooter>
+                        <div className='sticky bottom-2'>
+                            <CardFooter className='w-full m-[1px] p-1  overflow-visible  bg-white rounded-full dark:bg-black/90'>
+                                <CommentFooter comment={commentInfo}
+                                    onCommentsClick={() => {
+                                        document.getElementById(`post-replies`)?.scrollIntoView({ behavior: 'smooth' });
+
+                                    }}
+
+                                    className={'w-full'} />
+                            </CardFooter>
+                        </div>
                     </Card>
+
                 </div>
 
                 <DynamicPostReplies comment={commentInfo} />

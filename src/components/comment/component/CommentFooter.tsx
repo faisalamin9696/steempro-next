@@ -28,8 +28,7 @@ import './style.scss'
 import ClickAwayListener from 'react-click-away-listener';
 
 export default memo(function CommentFooter(props: CommentProps) {
-    const { comment, className, isReply, onEditClick,
-        onDeleteClick, onMuteClick, compact, } = props;
+    const { comment, className, isReply, onCommentsClick, compact, } = props;
 
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
     const [votersModal, setVotersModal] = useState(false);
@@ -240,6 +239,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                         title={`${comment.children} Comments`}>
 
                         <Button radius='full' isIconOnly size='sm'
+                            onPress={onCommentsClick}
                             variant='light'>
                             <FaRegCommentAlt className='text-lg' />
                         </Button>
