@@ -54,7 +54,7 @@ export default function PromotionCard(props: Props) {
             </div> */}
             <Card as={Link} href={`/${data?.category}/@${data?.author}/${data?.permlink}`}
                 shadow='none' radius='none'
-                className="text-white text-start  p-2 
+                className="text-white text-start  p-2 w-full
                 mb-auto absolute bottom-0 self-end left-0 gap-2 bg-black/50 rounded-t-lg
                 backdrop-blur-sm">
                 <p

@@ -47,8 +47,8 @@ export default function SettingsPage() {
     const settings = getSettings();
     const isSelf = !!loginInfo.name && (!username || (loginInfo.name === username));
 
-    const [rpc, setRpc] = useState(settings.rpc);
-    const [nsfw, setNsfw] = useState(settings.nsfw);
+    const [rpc, setRpc] = useState(settings.rpc || AppStrings.rpc_servers[0]);
+    const [nsfw, setNsfw] = useState(settings.nsfw || 'Always warn');
     const dispatch = useAppDispatch();
 
     const { authenticateUser, isAuthorized } = useLogin();

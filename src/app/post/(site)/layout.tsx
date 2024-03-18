@@ -1,5 +1,5 @@
 import { getPost } from '@/libs/steem/sds';
-import { getPostThumbnail } from '@/libs/utils/image';
+import { getPostThumbnail, getResizedAvatar } from '@/libs/utils/image';
 import { postSummary } from '@/libs/utils/postSummary';
 import usePathnameServer from '@/libs/utils/usePathnameServer';
 import { ResolvingMetadata } from 'next';
@@ -32,7 +32,7 @@ export async function generateMetadata(parent: ResolvingMetadata) {
         title: pageTitle,
         description: pageDescription ?? '',
         openGraph: {
-            images: [thumbnail, ...previousImages]
+            images: [thumbnail, getResizedAvatar(result.author, 'medium'), ...previousImages]
         }
     }
 }
