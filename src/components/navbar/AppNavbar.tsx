@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import './header.scss';
 import { Navbar, NavbarBrand, NavbarContent } from "@nextui-org/navbar";
 import { Popover, PopoverTrigger, PopoverContent, } from '@nextui-org/popover';
@@ -10,7 +10,7 @@ import { Badge } from '@nextui-org/badge';
 import { LuPencilLine } from "react-icons/lu";
 import { useLogin } from '../useLogin';
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
-import { getCredentials } from '@/libs/utils/user';
+import { getCredentials, saveSessionKey, sessionKey } from '@/libs/utils/user';
 import { getResizedAvatar } from '@/libs/utils/image';
 import Image from 'next/image';
 import { signIn, signOut, useSession } from 'next-auth/react';
@@ -19,16 +19,20 @@ import AppDrawer from './AppDrawer';
 import NotificationsCard from '../NotificationsCard';
 import { FaRegBell } from 'react-icons/fa';
 import Link from 'next/link';
+import { Avatar } from '@nextui-org/react';
+import { toast } from 'sonner';
 
 export default function AppNavbar() {
 
-    const { authenticateUser, isLogin } = useLogin();
+    const { authenticateUser, isLogin, isAuthorized } = useLogin();
     const dispatch = useAppDispatch();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const { data: session, status } = useSession();
     const [isPopOpen, setIsPopOpen] = React.useState(false);
     const [isAccOpen, setIsAccOpen] = React.useState(false);
     const [notificationPopup, setNotificationPopup] = React.useState(false);
+    const [isLocked, setLocked] = useState(status === 'authenticated' && !sessionKey);
+
 
 
     // validate the local storage auth
@@ -36,6 +40,11 @@ export default function AppNavbar() {
         const credentials = getCredentials();
 
         if (status === 'authenticated') {
+            if (!sessionKey) {
+                setLocked(true);
+            } else {
+                setLocked(false);
+            }
             if (!credentials?.username) {
                 signOut();
             }
@@ -48,13 +57,27 @@ export default function AppNavbar() {
             });
 
         }
-    }, [status]);
+    }, [status, isAuthorized()]);
 
 
     function handleLogin() {
         authenticateUser();
     }
 
+    function handleUnlock() {
+        if (isLocked) {
+            authenticateUser();
+            if (isAuthorized()) {
+                setLocked(false);
+            }
+        } else {
+            saveSessionKey('');
+            setLocked(true);
+            toast.success('Locked');
+        }
+
+
+    }
 
     return (
         <Navbar
@@ -169,13 +192,8 @@ export default function AppNavbar() {
                             shouldCloseOnBlur={false}
                             isOpen={isPopOpen} onOpenChange={(open) => setIsPopOpen(open)}>
                             <PopoverTrigger>
-                                <User
-                                    as="button"
-                                    name=""
-                                    className="transition-transform"
-                                    avatarProps={{
-                                        src: getResizedAvatar(loginInfo.name)
-                                    }}
+                                <Avatar src={getResizedAvatar(loginInfo.name)}
+                                    className=' cursor-pointer'
                                 />
                             </PopoverTrigger>
                             <PopoverContent>
@@ -183,8 +201,11 @@ export default function AppNavbar() {
                                     if (isPopOpen) setIsPopOpen(false);
                                 }}>
                                     <li><Link href={`/@${loginInfo.name}`}>Profile</Link></li>
-                                    <li><a onClick={() => setIsAccOpen(!isAccOpen)}>Switch Account</a></li>
                                     <li className='hidden max-sm:block'><a onClick={() => setNotificationPopup(!notificationPopup)}>{'Notifications'}</a></li>
+                                    <li><a onClick={() => setIsAccOpen(!isAccOpen)}>Switch Account</a></li>
+                                    <li><a onClick={handleUnlock}> {isLocked ? 'Unlock' : 'Lock'} Account</a>
+                                    </li>
+
                                 </ul>
                             </PopoverContent>
                         </Popover>

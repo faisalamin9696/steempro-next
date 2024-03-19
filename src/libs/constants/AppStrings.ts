@@ -1,4 +1,4 @@
-import { appLink } from "./AppConstants";
+import { AppLink } from "./AppConstants";
 
 export const AppStrings = {
     steempro_base_url: 'https://steempro.com',
@@ -25,7 +25,7 @@ export const AppStrings = {
         master: 'MASTER',
         memo: 'MEMO',
     },
-    promotion_text: `<center><sub>Posted using [SteemPro](${appLink})</sub></center>`,
+    promotion_text: `<center><sub>Posted using [SteemPro](${AppLink})</sub></center>`,
 
 
 }

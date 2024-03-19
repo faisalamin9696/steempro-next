@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Modal, ModalContent,
+import {
+    Modal, ModalContent,
     useDisclosure, ModalHeader, ModalBody
 } from "@nextui-org/modal";
 import { Avatar } from '@nextui-org/avatar';
@@ -20,6 +21,8 @@ import { toast } from "sonner";
 import { signIn, useSession } from 'next-auth/react'
 import { getAuth, signInAnonymously } from "firebase/auth";
 import AccountItemCard from "./AccountItemCard";
+import Link from "next/link";
+import { SignupLink } from "@/libs/constants/AppConstants";
 
 interface Props {
     open: boolean;
@@ -96,20 +99,18 @@ export default function AuthModal(props: Props) {
         await awaitTimeout(3);
 
         const credentials = getCredentials(password);
+        if (!credentials?.key) {
+            toast.error('Invalid credentials');
 
-
-        if (credentials?.key) {
-            const enc = saveSessionKey(password);
-            toast.success('Unlocked');
-            onLoginSuccess && onLoginSuccess({ ...credentials, key: enc });
-            handleOnClose();
-            clearAll();
-
-
-        } else {
-            toast.error('Invalid password');
-
+            return
         }
+
+
+        const enc = saveSessionKey(password);
+        toast.success('Unlocked');
+        onLoginSuccess && onLoginSuccess({ ...credentials, key: enc });
+        handleOnClose();
+        clearAll();
         setLoading(false);
 
 
@@ -334,7 +335,14 @@ export default function AuthModal(props: Props) {
                                                 />
 
 
-                                                <div className="flex gap-2 justify-end">
+                                                <div className="flex gap-2 items-center">
+
+                                                    <Button color="danger" variant="light"
+                                                        onPress={onClose}
+                                                        isDisabled={loading}>
+                                                        Cancel
+                                                    </Button>
+
                                                     <Button fullWidth color="primary"
                                                         isLoading={loading}
                                                         onPress={handleUnlock}
@@ -402,13 +410,12 @@ export default function AuthModal(props: Props) {
                                                         set as default
                                                     </Checkbox>}
 
-                                                {/* <p className="text-center text-small">
-           Need to create an account?{" "}
-           <Link
-               size="sm" onPress={() => setSelected("sign-up")}>
-               Sign up
-           </Link>
-       </p> */}
+                                                <p className="text-start text-small">
+                                                    Need to create an account?{" "}
+                                                    <Link href={SignupLink} target='_blank'>
+                                                        Sign up
+                                                    </Link>
+                                                </p>
                                                 <div
                                                     className="flex flex-row gap-2 overflow-x-auto p-1">
                                                     {!!!loginInfo.name && accounts?.map(user => {
@@ -428,6 +435,14 @@ export default function AuthModal(props: Props) {
                                                     })}
                                                 </div>
                                                 <div className="flex gap-2 justify-end">
+
+                                                    <Button color="danger" variant="light"
+                                                        onPress={onClose}
+                                                        isDisabled={loading}>
+                                                        Cancel
+                                                    </Button>
+
+
                                                     <Button fullWidth color="primary"
                                                         isLoading={loading}
                                                         onPress={handleLogin}

@@ -28,13 +28,10 @@ export const metadata: Metadata = {
   },
   manifest: '/site.webmanifest',
   openGraph: {
-    images: ['https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg'],
-    type: 'website',
     siteName: 'SteemPro',
     url: 'https://www.steempro.com'
   },
   twitter: {
-    images: ['https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg'],
     card: 'summary_large_image',
     site: '@steemproblogs',
   }
@@ -52,15 +49,16 @@ export default async function RootLayout({
   let data;
 
   let globalData: SteemProps;
-  globalData = await getSteemGlobal();
+  // globalData = await getSteemGlobal();
 
-  if (session?.user?.name)
-    data = await getAuthorExt(session?.user?.name)
+  // if (session?.user?.name)
+  //   data = await getAuthorExt(session?.user?.name)
 
 
 
   return (
     <html lang="en" suppressHydrationWarning={true}>
+
       <link rel="dns-prefetch" href="https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg" />
       <link rel="preconnect" href="https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg" />
       <link rel="preconnect " href={AppStrings.sds_base_url} />

@@ -72,14 +72,7 @@ export default function SettingsPage() {
     const className = 'text-medium text-default-600';
     const fileInputRef = useRef<any>(null);
 
-    // const params = {
-    //     name: name,
-    //     about: about,
-    //     profile_image: profilePic,
-    //     website: website,
-    //     location: location,
-    //     cover_image: coverPic
-    // };
+  
     const updateMutation = useMutation({
         mutationFn: (data: {
             key: string, params: {
@@ -101,7 +94,7 @@ export default function SettingsPage() {
             dispatch(saveLoginHandler({ ...loginInfo, posting_json_metadata: JSON.stringify({ profile: variables.params }) }));
             toast.success('Updated');
         },
-    })
+    });
 
     const handleOnPicked = (event) => {
         if (event.target.files && event.target.files[0]) {
@@ -117,14 +110,15 @@ export default function SettingsPage() {
         updateClient();
         toast.success(`RPC changed to ${newRpc}`);
 
-    }
+    };
+
     function handleNsfwChange(newNsfw: NSFW) {
         setNsfw(newNsfw);
         const newSetting = updateSettings({ ...settings, nsfw: newNsfw });
         dispatch(updateSettingsHandler(newSetting));
         toast.success(`NSFW content visibility: ${newNsfw}`);
 
-    }
+    };
 
     async function handleUpdate() {
         authenticateUser();
@@ -148,9 +142,7 @@ export default function SettingsPage() {
             }
         });
 
-
-
-    }
+    };
 
 
     const handleImageUpload = () => {
@@ -218,9 +210,7 @@ export default function SettingsPage() {
 
                 },
             });
-    }
-
-
+    };
 
     return (
 
@@ -229,7 +219,7 @@ export default function SettingsPage() {
             <div className='flex flex-col gap-2  max-w-2xl'>
 
                 <div className='flex items-center gap-2'>
-                    <IoIosSettings className=' text-lg' />
+                    <IoIosSettings className=' text-xl' />
                     <p className='text-sm'>General</p>
 
                     <Divider orientation='horizontal' className=' shrink' />
@@ -300,7 +290,7 @@ export default function SettingsPage() {
                 isSelf && <div className='flex flex-col gap-2  max-w-2xl'>
 
                     <div className='flex items-center gap-2'>
-                        <RiUserSettingsFill className=' text-lg' />
+                        <RiUserSettingsFill className=' text-xl' />
                         <p className='text-sm'>Profile</p>
 
                         <Divider orientation='horizontal' className=' shrink' />

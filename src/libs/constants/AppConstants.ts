@@ -4,7 +4,9 @@ export const rewardTypes: Payout[] = [{ title: 'Decline Payout', shortTitle: 'De
 
 export const Minute = 1000 * 60;
 
-export const appLink = 'https://www.steempro.com';
+export const AppLink = 'https://www.steempro.com';
+export const SignupLink = 'https://signup.steemit.com/'
+
 // export const isDev = false;
 
 export let CurrentSetting: Setting = {
