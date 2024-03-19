@@ -18,9 +18,8 @@ import { SWRConfig } from 'swr';
 import { fetchSds } from '@/libs/constants/AppFunctions';
 import { firebaseConfig } from '@/libs/firebase/firebase.config';
 import { initializeApp } from "firebase/app";
-import {
-    signInAnonymously, getAuth
-} from "firebase/auth";
+import { signInAnonymously, getAuth } from "firebase/auth";
+import { getAnalytics } from "firebase/analytics";
 import { Next13ProgressBar } from 'next13-progressbar';
 
 
@@ -32,7 +31,9 @@ interface Props {
 export function Providers(props: Props) {
     const { children } = props;
 
-    initializeApp(firebaseConfig);
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    analytics.app.automaticDataCollectionEnabled = true
 
     const router = useRouter();
     const [isMounted, setIsMounted] = useState(false);
