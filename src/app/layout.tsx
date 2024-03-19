@@ -29,11 +29,13 @@ export const metadata: Metadata = {
   manifest: '/site.webmanifest',
   openGraph: {
     siteName: 'SteemPro',
-    url: 'https://www.steempro.com'
+    url: 'https://www.steempro.com',
+    images: ['https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg']
   },
   twitter: {
     card: 'summary_large_image',
     site: '@steemproblogs',
+    images: ['https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg']
   }
 
 };
