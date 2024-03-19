@@ -19,7 +19,7 @@ import { fetchSds } from '@/libs/constants/AppFunctions';
 import { firebaseConfig } from '@/libs/firebase/firebase.config';
 import { initializeApp } from "firebase/app";
 import { signInAnonymously, getAuth } from "firebase/auth";
-import { getAnalytics } from "firebase/analytics";
+import { getAnalytics, isSupported } from "firebase/analytics";
 import { Next13ProgressBar } from 'next13-progressbar';
 
 
@@ -31,23 +31,23 @@ interface Props {
 export function Providers(props: Props) {
     const { children } = props;
 
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    analytics.app.automaticDataCollectionEnabled = true
+    // const app = initializeApp(firebaseConfig);
+
+    let app; let analytics;
+    if (typeof window != undefined) {
+        app = initializeApp(firebaseConfig);
+        analytics = isSupported().then(yes => yes ? getAnalytics(app) : null);
+    }
 
     const router = useRouter();
     const [isMounted, setIsMounted] = useState(false);
     const auth = getAuth();
 
 
-
     useEffect(() => {
-
-
         try {
             if (!auth.currentUser)
                 signInAnonymously(auth);
-
 
         } catch (error) {
             // failed silently
