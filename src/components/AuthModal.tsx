@@ -374,7 +374,7 @@ export default function AuthModal(props: Props) {
 
                                                     isRequired
                                                     label="Private key"
-                                                    placeholder="Enter your private key"
+                                                    placeholder="Enter your private posting key"
                                                     type="password"
                                                 />
 
