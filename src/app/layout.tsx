@@ -30,12 +30,12 @@ export const metadata: Metadata = {
   openGraph: {
     siteName: 'SteemPro',
     url: 'https://www.steempro.com',
-    // images: ['https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg']
+    images: ['https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg']
   },
   twitter: {
     card: 'summary_large_image',
     site: '@steemproblogs',
-    // images: ['https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg']
+    images: ['https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg']
   }
 
 };
