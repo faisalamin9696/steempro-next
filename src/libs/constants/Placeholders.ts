@@ -175,7 +175,7 @@ export const empty_draft = (): PostDraft => {
   };
 };
 
-export const empty_community = (account: string, title: string): Community => {
+export const empty_community = (account: string, title?: string | null): Community => {
   return {
     id: 0,
     type: 'topic',
@@ -188,7 +188,7 @@ export const empty_community = (account: string, title: string): Community => {
     count_authors: 0,
     count_subs: 0,
     lang: '',
-    title: title,
+    title: title || '',
     about: '',
     description: '',
     flag_text: '',

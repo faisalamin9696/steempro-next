@@ -16,11 +16,21 @@ interface Props {
     onSelectCommunity: (community?: Community) => void;
     onlyCommunity?: boolean;
     isDisabled?: boolean;
+    refCommunity?: Community;
+    handleOnClear?: () => void;
+
 
 
 }
 export default memo(function CommunitySelectButton(props: Props) {
-    const { community, onSelectCommunity, onlyCommunity, isDisabled } = props;
+    let { community, onSelectCommunity, onlyCommunity, isDisabled,
+        refCommunity, handleOnClear } = props;
+
+    if (refCommunity) {
+        onlyCommunity = true;
+        community = refCommunity;
+    }
+
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const URL = `/communities_api/getCommunitiesBySubscriber/${loginInfo.name}`;
 
@@ -114,11 +124,14 @@ export default memo(function CommunitySelectButton(props: Props) {
 
                 </Select>
             </div>
-            {!onlyCommunity && community && <Button size='sm' isIconOnly
+            {(!!refCommunity?.account || (!onlyCommunity && community)) && <Button size='sm' isIconOnly
                 className='text-default-500'
                 radius='full' variant='light'
                 isDisabled={isDisabled}
-                onPress={() => onSelectCommunity(undefined)}>
+                onPress={() => {
+                    handleOnClear && handleOnClear();
+                    onSelectCommunity(undefined);
+                }}>
                 <IoCloseOutline className='text-xl' />
             </Button>}
 

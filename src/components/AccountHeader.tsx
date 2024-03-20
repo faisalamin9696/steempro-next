@@ -146,7 +146,8 @@ export default function AccountHeader(props: Props) {
                                         </Button>
                                     </PopoverTrigger>
                                     <PopoverContent>
-                                        <ProfileInfoCard key={'info-profile-card'} className='!bg-transparent'
+                                        <ProfileInfoCard hideAvatar
+                                            key={'info-profile-card'} className='!bg-transparent'
                                             community={communityInfo}
                                             username={isCommunity ? communityInfo.account : profileInfo.name} />
                                     </PopoverContent>

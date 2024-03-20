@@ -10,6 +10,11 @@ import { useLogin } from './useLogin';
 import { getCredentials, getSessionKey } from '@/libs/utils/user';
 import clsx from 'clsx';
 import { addCommunityHandler } from '@/libs/redux/reducers/CommunityReducer';
+import { FaPencil } from 'react-icons/fa6';
+import { useRouter } from 'next13-progressbar';
+import usePathnameClient from '@/libs/utils/usePathnameClient';
+import { LuPencilLine } from 'react-icons/lu';
+import Link from 'next/link';
 
 type Props = {
     account: AccountExt;
@@ -24,12 +29,16 @@ type Props = {
 
 export default function FollowButton(props: Props) {
     const { account, comment, community } = props;
+    const { username } = usePathnameClient();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const followingAccount = comment ? comment.author : account?.name;
     const isFollowing = comment ? comment.observer_follows_author === 1 : account?.observer_follows_author === 1;
     const isSubscribed = community?.observer_subscribed === 1;
     const dispatch = useAppDispatch();
+    const isSelf = !!loginInfo.name && (loginInfo.name === username);
+
     const { authenticateUser, isAuthorized } = useLogin();
+    const router = useRouter();
 
     function handleSuccess(follow?: boolean) {
         if (comment)
@@ -107,13 +116,31 @@ export default function FollowButton(props: Props) {
 
     }
 
+    function handleAccountEdit() {
+        if (account?.name)
+            router.push(`/@${account?.name}/settings`);
+
+    }
+
+
     const isPending = followMutation.isPending || joinMutation.isPending ||
         community?.status === 'leaving' || community?.status === 'joining' ||
         account?.status === 'following' || account?.status === 'unfollowing';
 
     return (
-        <div>
-            <Button
+        <div className='flex flex-row items-start gap-1 justify-center'>
+
+            {isSelf && <Button size='sm' variant='flat'
+                title='Edit profile'
+                className={clsx('min-w-0  h-6')}
+                color='primary'
+                onPress={handleAccountEdit}
+                startContent={<FaPencil />}
+                radius='full'>
+                Edit
+            </Button>}
+
+            {!isSelf && <Button
                 isDisabled={isPending}
                 color={community ? isSubscribed ? 'danger' : 'success' :
                     isFollowing ? 'danger' : "success"}
@@ -131,8 +158,24 @@ export default function FollowButton(props: Props) {
                 {isPending ? '' : community ? isSubscribed ? 'Leave' : 'Join' :
                     isFollowing ? 'Unfollow' : 'Follow'}
 
-            </Button>
+            </Button>}
 
+            {community && !!community.observer_subscribed && <Button size='sm' isIconOnly variant='flat'
+                title='Create post'
+                className={clsx('min-w-0  h-6')}
+                color='primary'
+                as={Link}
+                isDisabled={community.observer_role === 'muted'}
+                href={{
+                    pathname: `/submit`,
+                    query: {
+                        account: community?.account,
+                        title: community?.title
+                    }
+                } as any}
+                radius='full'>
+                <LuPencilLine />
+            </Button>}
         </div>
     )
 }

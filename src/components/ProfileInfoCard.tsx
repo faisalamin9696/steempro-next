@@ -40,6 +40,7 @@ type Props = {
     profile?: boolean;
     community?: Community;
     className?: string;
+    hideAvatar?: boolean;
 } & (
         { username: string } |
         { data: AccountExt } |
@@ -48,7 +49,7 @@ type Props = {
 
 export default memo(function ProfileInfoCard(props: Props) {
 
-    const { username, profile, community, data: accountExt } = props;
+    const { username, profile, community, data: accountExt, hideAvatar } = props;
     const { data: session } = useSession();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
 
@@ -103,16 +104,17 @@ export default memo(function ProfileInfoCard(props: Props) {
         bg-transparent items-start gap-4 p-2 w-full bg-white dark:bg-white/5`, props.className)}>
             <div className="flex flex-row justify-between gap-2 w-full">
                 <div className="flex gap-2">
-                    <SAvatar
-                        className='cursor-pointer' size='sm' username={username || profileInfo?.name || ''} />
+                    {!hideAvatar && <SAvatar 
+                        className='cursor-pointer' size='sm'
+                        username={username || profileInfo?.name || ''} />}
                     <div className="flex flex-col items-start justify-center">
-                        <h4 className="text-small font-semibold leading-none text-default-600">{posting_json_metadata?.profile?.name}</h4>
+                        <h4 className="text-xs font-semibold leading-none text-default-600">{posting_json_metadata?.profile?.name}</h4>
                         {/* <Link prefetch={false} href={authorLink}>{comment.author}</Link> */}
 
                         <h5 className={clsx("text-small tracking-tight text-default-500")}>@{username || profileInfo?.name}</h5>
 
-                        <div className='flex text-sm gap-2 text-default-600 items-center'>
-                            <p className='text-default-500'>Joined</p>
+                        <div className='flex text-sm gap-1 text-default-600 items-center'>
+                            <p className='text-default-500 text-tiny'>Joined</p>
                             <TimeAgoWrapper className='text-tiny' created={(profileInfo?.created || 0) * 1000} />
                         </div>
 
@@ -120,7 +122,7 @@ export default memo(function ProfileInfoCard(props: Props) {
                 </div>
 
 
-                {!isSelf && profileInfo && <FollowButton account={profileInfo} community={communityInfo} />}
+                {profileInfo && <FollowButton account={profileInfo} community={communityInfo} />}
                 {/* <Button
                     isDisabled={isLoading}
                     color={data?.observer_follows_author ? 'warning' : "secondary"}

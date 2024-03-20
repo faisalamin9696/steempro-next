@@ -7,6 +7,8 @@ import TimeAgoWrapper from "./wrapper/TimeAgoWrapper";
 import { getResizedAvatar } from "@/libs/utils/image";
 import Link from "next/link";
 import clsx from "clsx";
+import { LuPencilLine } from "react-icons/lu";
+import { useRouter } from "next13-progressbar";
 
 
 interface Props {
@@ -17,6 +19,7 @@ interface Props {
 
 export const CommunityCard = memo((props: Props) => {
     const { community, compact } = props;
+    const router = useRouter();
     // // const [isFollowed, setIsFollowed] = React.useState(comment.observer_follows_author === 1);
     // const { data: session } = useSession();
     // const URL = `/accounts_api/getAccountExt/${username}/${loginInfo.name || 'null'}`;
@@ -27,22 +30,46 @@ export const CommunityCard = memo((props: Props) => {
     // const posting_json_metadata = JSON.parse(String(data?.posting_json_metadata || '{}'));
 
 
+    // function handleCreatePost() {
+    //     router.push(`/submit?account=${community?.account}&title=${community.title || ''}`);
+    // }
+
     return (
         <Card
-            as={Link}
-            href={`/trending/${community.account}`}
+
             className={clsx(`relative flex flex-col items-start gap-2 w-full bg-white
              dark:bg-white/5`, compact ? 'p-2' : 'p-4')}>
 
             {!compact &&
-                <Button as={Link} href={`/trending/${community.account}`}
-                    size="sm" color="primary" radius="full"
-                    className="top-5 right-5 absolute">Explore</Button>}
+                <div className="flex flex-row items-center gap-1 top-5 right-5 absolute">
+
+                    <Button size='sm' isIconOnly variant='flat'
+
+                        title='Create post'
+                        className={clsx('min-w-0  h-6')}
+                        as={Link}
+                        href={{
+                            pathname: `/submit`,
+                            query: {
+                                account: community?.account,
+                                title: community?.title
+                            }
+                        } as any}
+                        color='primary'
+                        radius='full'>
+                        <LuPencilLine className="text-lg" />
+                    </Button>
+                    <Button as={Link}
+                        href={`/trending/${community.account}`}
+                        size="sm" color="primary" radius="full"
+                    >Explore</Button>
+
+                </div>}
 
             <User
 
                 classNames={{
-                    description: 'text-default-900/60 dark:text-gray-200 text-sm',
+                    description: 'text-default-900/60 dark:text-gray-200 text-sm mt-1',
                     name: 'text-default-800'
                 }}
                 name={<div className='flex flex-col items-start gap-1'>

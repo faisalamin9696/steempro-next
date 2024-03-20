@@ -24,7 +24,8 @@ export default function ProfileEnd({ data }: { data?: AccountExt }) {
 
 
   return (
-    <ProfileInfoCard key={data?.name || username} data={data} username={username} />
+    <ProfileInfoCard hideAvatar key={data?.name || username}
+      data={data} username={username} />
     // <div className="flex flex-col pb-60 ">
 
     //   <div className='sticky top-0 z-10 backdrop-blur-lg'>

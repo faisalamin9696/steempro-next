@@ -24,7 +24,7 @@ import { getPost } from '@/libs/steem/sds';
 import EditorInput from '@/components/editor/EditorInput';
 import './style.scss'
 import secureLocalStorage from 'react-secure-storage';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import clsx from 'clsx';
 import CommentOptionWrapper from '@/components/wrapper/CommentOptionWrapper';
@@ -44,6 +44,12 @@ export default function SubmitPage(props: Props) {
     const { oldPost, handleUpdateSuccess, handleUpdateCancel } = props?.params || {};
     const isEdit = !!oldPost?.permlink;
     const { isMobile } = useDeviceInfo();
+
+    const searchParams = useSearchParams();
+    const accountParams = searchParams.get('account');
+    const titleParams = searchParams.get('title');
+    const [refCommunity, setRefCommunity] = useState(accountParams ? empty_community(accountParams,
+        titleParams) : undefined);
 
     const draft = secureLocalStorage.getItem('post_draft') as {
         title: string,
@@ -324,7 +330,18 @@ export default function SubmitPage(props: Props) {
                 isDisabled={isPosting}
                 community={community}
                 onlyCommunity={isEdit}
-                onSelectCommunity={setCommunity} />
+                refCommunity={refCommunity}
+                onSelectCommunity={setCommunity}
+                handleOnClear={() => {
+                    if (refCommunity) {
+                        history.replaceState({}, '', '/submit');
+                        setRefCommunity(undefined);
+
+                    }
+
+                }}
+
+            />
 
 
             <Input size='sm'
