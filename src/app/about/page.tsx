@@ -7,6 +7,8 @@ import { Card } from '@nextui-org/card';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Divider } from '@nextui-org/divider';
+import { AppStrings } from '@/libs/constants/AppStrings';
+import { AppLink, MObileAppLink } from '@/libs/constants/AppConstants';
 
 export default function AboutPage() {
 
@@ -46,7 +48,7 @@ export default function AboutPage() {
 
                 <div className='flex justify-end max-sm:justify-center  w-[217px]'>
 
-                    <Image height={80} width={100} 
+                    <Image height={80} width={100}
                         className='rounded-lg'
                         alt='qr-code'
                         src={'/qr-code.png'} />
@@ -55,7 +57,7 @@ export default function AboutPage() {
                 <Divider orientation='vertical' className='block max-sm:hidden' />
 
                 <div className='flex justify-start max-sm:justify-center w-[217px]'>
-                    <Link href={''} target='_blank' className='p-0 max-w-fit'>
+                    <Link href={MObileAppLink} target='_blank' className='p-0 max-w-fit'>
                         <Image height={40} width={150}
                             src='/google-play.png'
                             alt={'google-play-store'} />
