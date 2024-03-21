@@ -46,7 +46,7 @@ export default function AboutPage() {
 
                 <div className='flex justify-end max-sm:justify-center  w-[217px]'>
 
-                    <Image height={80} width={100} style={{ width: 'auto' }}
+                    <Image height={80} width={100} 
                         className='rounded-lg'
                         alt='qr-code'
                         src={'/qr-code.png'} />
@@ -58,9 +58,6 @@ export default function AboutPage() {
                     <Link href={''} target='_blank' className='p-0 max-w-fit'>
                         <Image height={40} width={150}
                             src='/google-play.png'
-                            style={{
-                                height: 'auto'
-                            }}
                             alt={'google-play-store'} />
                     </Link>
                 </div>

@@ -111,9 +111,9 @@ export default function AppNavbar() {
                     <Image priority className='hidden max-sm:block'
                         src={'/logo192.png'}
                         alt='logo'
-                        height={35}
-                        width={35}
-                        style={{ width: 'auto', height: 'auto' }}
+                        height={40}
+                        width={40}
+                        // style={{ width: 'auto', height: 'auto' }}
                     />
 
                 </Link>
