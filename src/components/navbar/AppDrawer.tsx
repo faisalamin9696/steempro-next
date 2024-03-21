@@ -56,7 +56,6 @@ export default memo(function AppDrawer(props: Props) {
                                 alt='logo'
                                 height={40}
                                 width={40}
-                                style={{ width: 'auto' }}
                             />
                         </Link>
 
