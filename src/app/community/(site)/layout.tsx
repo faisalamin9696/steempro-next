@@ -52,6 +52,9 @@ export async function generateMetadata(parent: ResolvingMetadata) {
         description: pageDescription,
         openGraph: {
             images: [getResizedAvatar(result.account, 'medium'), ...previousImages]
+        },
+        twitter: {
+            images: [getResizedAvatar(result.account, 'medium'), ...previousImages]
         }
     }
 

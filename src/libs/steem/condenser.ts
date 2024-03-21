@@ -840,6 +840,9 @@ export const delegateVestingShares = async (
     );
 };
 
+
+
+
 export const reblogPost = async (
     account: AccountExt,
     key: string,
@@ -1071,4 +1074,40 @@ export const markasRead = async (
     );
 };
 
+
+export async function withdrawVesting(account: AccountExt, privateKey: string,
+    amount: number) {
+    const keyData = getKeyType(account, privateKey);
+
+    if (keyData && PrivKey.atLeast(keyData.type, 'ACTIVE')) {
+        const key = PrivateKey.fromString(privateKey);
+
+        const op: Operation = [
+            'withdraw_vesting',
+            {
+                account: keyData.account,
+                vesting_shares: amount,
+            },
+        ];
+
+
+
+        return new Promise((resolve, reject) => {
+            client.broadcast
+                .sendOperations([op], key)
+                .then(result => {
+                    resolve(result);
+                })
+                .catch(err => {
+                    reject(err);
+                    console.log('Transfer error', err);
+                });
+        });
+    }
+    return Promise.reject(
+        new Error(
+            'Check private key permission! Required posting active key or above.',
+        ),
+    );
+}
 

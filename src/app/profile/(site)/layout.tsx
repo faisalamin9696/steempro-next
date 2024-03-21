@@ -53,6 +53,9 @@ export async function generateMetadata() {
         description: pageDescription,
         openGraph: {
             images: [getResizedAvatar(username, 'medium')]
+        },
+        twitter: {
+            images: [getResizedAvatar(username, 'medium')]
         }
     }
 

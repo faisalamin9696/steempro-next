@@ -21,18 +21,22 @@ export async function generateMetadata(parent: ResolvingMetadata) {
     const { username, permlink } = usePathnameServer();
     const result = await getPost(username, permlink);
     const previousImages = (await parent).openGraph?.images || [];
+    const isPost = result.depth === 0;
 
-    const thumbnail = getPostThumbnail(result?.json_images);
+    const thumbnail = isPost ? getPostThumbnail(result?.json_images) : getResizedAvatar(result.author, 'medium');
 
-    const pageTitle = result.depth === 0 ? result.title : `RE: ${result.root_title}`;
-    const pageDescription = result.depth === 0 ? pageTitle + ` by @${result.author}` :
+    const pageTitle = isPost ? result.title : `RE: ${result.root_title}`;
+    const pageDescription = isPost ? pageTitle + ` by @${result.author}` :
         `${postSummary(result.body)} by ${result.author}`;
 
     return {
         title: pageTitle,
         description: pageDescription ?? '',
         openGraph: {
-            images: [thumbnail, getResizedAvatar(result.author, 'medium'), ...previousImages]
+            images: [thumbnail, ...previousImages]
+        },
+        twitter: {
+            images: [thumbnail, ...previousImages]
         }
     }
 }
