@@ -1086,7 +1086,7 @@ export async function withdrawVesting(account: AccountExt, privateKey: string,
             'withdraw_vesting',
             {
                 account: keyData.account,
-                vesting_shares: amount,
+                vesting_shares: (amount)?.toFixed(6) + ' VESTS',
             },
         ];
 

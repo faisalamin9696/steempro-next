@@ -264,6 +264,7 @@ export default function AuthModal(props: Props) {
     return (
         <>
             <Modal
+                className=' mt-4'
                 scrollBehavior='inside'
                 placement='top-center'
                 size='md'
@@ -279,25 +280,6 @@ export default function AuthModal(props: Props) {
                 isOpen={open}
                 hideCloseButton={loading}
                 isDismissable={!loading}
-                motionProps={{
-                    variants: {
-                        enter: {
-
-                            opacity: 1,
-                            transition: {
-                                duration: 0.3,
-                                ease: "easeOut",
-                            },
-                        },
-                        exit: {
-                            opacity: 0,
-                            transition: {
-                                duration: 0.2,
-                                ease: "easeIn",
-                            },
-                        },
-                    }
-                }}
                 onClose={handleOnClose}>
 
                 <ModalContent>

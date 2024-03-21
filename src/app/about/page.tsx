@@ -12,6 +12,7 @@ export default function AboutPage() {
 
     return (
         <div className='flex flex-col gap-10 justify-between h-full pb-10'>
+
             <div>
                 <Card className="dark:bg-white/20 items-center p-6 sm:p-10 rounded-lg flex flex-col gap-2">
                     <h1 className='text-lg font-bold font-serif'>About Us</h1>
@@ -51,7 +52,7 @@ export default function AboutPage() {
                         src={'/qr-code.png'} />
                 </div>
 
-                <Divider orientation='vertical' className='block max-sm:hidden'  />
+                <Divider orientation='vertical' className='block max-sm:hidden' />
 
                 <div className='flex justify-start max-sm:justify-center w-[217px]'>
                     <Link href={''} target='_blank' className='p-0 max-w-fit'>

@@ -20,9 +20,8 @@ import { FaRegHeart } from "react-icons/fa";
 import { IoFlashOutline } from "react-icons/io5";
 import { FaRankingStar } from "react-icons/fa6";
 import { PiUserListBold } from 'react-icons/pi';
-import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/react';
+import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/modal';
 import FollowersCard from './FollowersCard';
-import { comment } from 'postcss';
 
 type Props = (
     {
@@ -40,7 +39,7 @@ export default function AccountHeader(props: Props) {
     const { isDesktop } = useDeviceInfo();
     const isCommunity = !!community;
     const dispatch = useAppDispatch();
-    const communityInfo = useAppSelector(state => state.communityReducer.values)[community?.account ?? ''] ?? community;
+    const communityInfo: Community = useAppSelector(state => state.communityReducer.values)[community?.account ?? ''] ?? community;
     const profileInfo: AccountExt = useAppSelector(state => state.profileReducer.value)[account?.name ?? ''] ?? account;
     const [followerModal, setFollowerModal] = useState<{
         isOpen: boolean,
@@ -87,7 +86,7 @@ export default function AccountHeader(props: Props) {
                             </div>
                             <div className="stat-title text-white/60">{isCommunity ? 'Rank' : 'Followers'}</div>
                             <button onClick={() => { if (!isCommunity) setFollowerModal({ isOpen: true }) }}
-                                className={twMerge("stat-value", 'max-md:text-lg')} title={isCommunity ? communityInfo.rank : profileInfo.count_followers}>
+                                className={twMerge("stat-value", 'max-md:text-lg')} title={isCommunity ? communityInfo.rank?.toString() : profileInfo.count_followers?.toString()}>
                                 {abbreviateNumber(isCommunity ? communityInfo.rank : profileInfo.count_followers)}
                             </button>
                             <div className="stat-desc"></div>
@@ -100,7 +99,7 @@ export default function AccountHeader(props: Props) {
                             </div>
                             <div className="stat-title text-white/60">{isCommunity ? 'Members' : 'Followings'}</div>
                             <button onClick={() => { if (!isCommunity) setFollowerModal({ isOpen: true, isFollowing: true }) }}
-                                className="stat-value text-secondary max-md:text-lg" title={isCommunity ? communityInfo.count_subs : profileInfo.count_following}>
+                                className="stat-value text-secondary max-md:text-lg" title={isCommunity ? communityInfo.count_subs?.toString() : profileInfo.count_following?.toString()}>
                                 {abbreviateNumber(isCommunity ? communityInfo.count_subs : profileInfo.count_following)}</button>
                             <div className="stat-desc"></div>
                         </div>
@@ -110,7 +109,7 @@ export default function AccountHeader(props: Props) {
                                 <FaDollarSign />
                             </div>
                             <div className="stat-title text-white/60">{'Reward'}</div>
-                            <div className="stat-value text-info max-md:text-lg" title={communityInfo.sum_pending}>
+                            <div className="stat-value text-info max-md:text-lg" title={communityInfo.sum_pending?.toString()}>
                                 {abbreviateNumber(communityInfo.sum_pending)}</div>
                             <div className="stat-desc"></div>
                         </div>}
@@ -147,7 +146,7 @@ export default function AccountHeader(props: Props) {
                                     </PopoverTrigger>
                                     <PopoverContent>
                                         <ProfileInfoCard hideAvatar
-                                            key={'info-profile-card'} className='!bg-transparent'
+                                            key={`info-profile-card-${communityInfo?.account || profileInfo.name}`} className='!bg-transparent'
                                             community={communityInfo}
                                             username={isCommunity ? communityInfo.account : profileInfo.name} />
                                     </PopoverContent>

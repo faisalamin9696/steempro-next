@@ -5,7 +5,6 @@ import './header.scss';
 import { Navbar, NavbarBrand, NavbarContent } from "@nextui-org/navbar";
 import { Popover, PopoverTrigger, PopoverContent, } from '@nextui-org/popover';
 import { Button } from '@nextui-org/button';
-import { User } from '@nextui-org/user';
 import { Badge } from '@nextui-org/badge';
 import { LuPencilLine } from "react-icons/lu";
 import { useLogin } from '../useLogin';
@@ -19,8 +18,11 @@ import AppDrawer from './AppDrawer';
 import NotificationsCard from '../NotificationsCard';
 import { FaRegBell } from 'react-icons/fa';
 import Link from 'next/link';
-import { Avatar } from '@nextui-org/react';
+import { Avatar } from '@nextui-org/avatar';
 import { toast } from 'sonner';
+import SearchModal from '../SearchModal';
+import { MdSearch } from 'react-icons/md';
+import { Input } from '@nextui-org/input';
 
 export default function AppNavbar() {
 
@@ -32,7 +34,7 @@ export default function AppNavbar() {
     const [isAccOpen, setIsAccOpen] = React.useState(false);
     const [notificationPopup, setNotificationPopup] = React.useState(false);
     const [isLocked, setLocked] = useState(status === 'authenticated' && !sessionKey);
-
+    const [searchModal, setSearchModal] = useState(false);
 
 
     // validate the local storage auth
@@ -121,7 +123,7 @@ export default function AppNavbar() {
             <NavbarContent as="div" className="items-center z-0 " justify="end">
                 <div className="flex flex-row gap-2 items-center">
 
-                    {/* <Input
+                    <Input
                         radius='full'
                         className='hidden 1md:block'
                         classNames={{
@@ -133,18 +135,18 @@ export default function AppNavbar() {
                         }}
                         placeholder="Type to search..."
                         size="sm"
+                        isReadOnly
+                        onClick={() => setSearchModal(!searchModal)}
                         startContent={<MdSearch size={18} />}
                         type="search"
-                    /> */}
+                    />
 
-                    {/* <Button radius='full'
+                    <Button radius='full'
                         className='1md:hidden '
                         isIconOnly size='sm' variant='light'
-                        onPress={() => {
-                            authenticateUser();
-                        }}>
+                        onPress={() => setSearchModal(!searchModal)}>
                         <MdSearch className='text-xl text-default-600 ' />
-                    </Button> */}
+                    </Button>
 
 
                     <Button radius='full' as={Link} href={'/submit'}
@@ -221,8 +223,13 @@ export default function AppNavbar() {
 
                 </div>
             </NavbarContent>
+
+            {searchModal && <SearchModal isOpen={searchModal}
+                onOpenChange={setSearchModal} />}
+
             {isAccOpen &&
-                <AccountsModal isOpen={isAccOpen} onOpenChange={setIsAccOpen} />
+                <AccountsModal isOpen={isAccOpen}
+                    onOpenChange={setIsAccOpen} />
             }
         </Navbar>
 

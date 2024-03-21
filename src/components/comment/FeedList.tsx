@@ -46,7 +46,7 @@ export default memo(function FeedList(props: Props) {
             setLoadingMore(true);
             await awaitTimeout(2.5);
             const newRows = loadMoreRows(data, rows);
-            setRows([...rows, ...newRows!])
+            setRows([...rows, ...newRows!]);
             setLoadingMore(false);
         }
     }

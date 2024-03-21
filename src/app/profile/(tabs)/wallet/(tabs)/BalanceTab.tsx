@@ -7,6 +7,7 @@ import { useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter
 import { Button } from '@nextui-org/button';
 import { DropdownMenu, DropdownItem } from '@nextui-org/dropdown';
 import React, { Key, useState } from 'react'
+import PowerDownModal from '@/components/PowerDownModal';
 
 export type SteemTokens = 'steem' | 'steem_power' | 'steem_dollar' | 'saving';
 
@@ -51,6 +52,12 @@ export default function BalanceTab({ data }: { data: AccountExt }) {
     const isSelf = !!loginInfo.name && (loginInfo.name === (username));
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
     let [key, setKey] = useState<SteemTokens>();
+    const [powerDownModal, setPowerDownModal] = useState<{
+        isOpen: boolean,
+        cancel?: boolean
+    }>({
+        isOpen: false,
+    });
 
     const [transferModal, setTransferModal] = useState<{
         isOpen: boolean,
@@ -101,6 +108,13 @@ export default function BalanceTab({ data }: { data: AccountExt }) {
             case 'delegation':
                 setTransferModal({ isOpen: true, delegation: true, asset: 'VESTS' });
                 break;
+
+            case 'power-down':
+                setPowerDownModal({ isOpen: true });
+                break;
+            case 'cancel-power-down':
+                setPowerDownModal({ isOpen: true, cancel: true });
+                break;
         }
 
     }
@@ -131,13 +145,17 @@ export default function BalanceTab({ data }: { data: AccountExt }) {
                     description={steem_power_desc('')}
                     title={tokens.steem_power.title}
 
-                    endContent={<div>
+                    endContent={<div className=''>
                         <p>{vestToSteem(data.vests_own, globalData.steem_per_share)?.toLocaleString()}</p>
+
                     </div>}
 
                     actionContent={isSelf && <DropdownMenu onAction={handleAction}>
                         <DropdownItem key="delegation">Delegate</DropdownItem>
                         <DropdownItem key="power-down">Power Down</DropdownItem>
+                        <DropdownItem className={!!loginInfo.powerdown ? 'block' : 'hidden'}
+                            key="cancel-power-down">Cancel Power Down</DropdownItem>
+
                     </DropdownMenu>
                     }
                     handleInfoClick={handleInfo}
@@ -153,7 +171,7 @@ export default function BalanceTab({ data }: { data: AccountExt }) {
                         <p>${data.balance_sbd?.toLocaleString()}</p>
                     </div>}
 
-                    actionContent={isSelf &&<DropdownMenu
+                    actionContent={isSelf && <DropdownMenu
                         onAction={handleAction}>
                         <DropdownItem key="transfer-sbd">Transfer</DropdownItem>
                         <DropdownItem key="savings-sbd">Transfer to Savings</DropdownItem>
@@ -187,6 +205,12 @@ export default function BalanceTab({ data }: { data: AccountExt }) {
                 delegatee={isSelf ? '' : username}
                 isOpen={transferModal.isOpen}
                 onOpenChange={(isOpen) => setTransferModal({ ...transferModal, isOpen: isOpen })}
+            />}
+
+            {powerDownModal.isOpen && <PowerDownModal
+                isOpen={powerDownModal.isOpen}
+                cancel={powerDownModal.cancel}
+                onOpenChange={(isOpen) => setPowerDownModal({ isOpen: isOpen })}
             />}
 
             {isOpen && <Modal isOpen={isOpen} onOpenChange={onOpenChange}>

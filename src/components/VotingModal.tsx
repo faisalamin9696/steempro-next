@@ -119,6 +119,14 @@ export default function VotingModal(props: Props) {
                             className="max-w-md"
                             classNames={{ mark: 'text-tiny' }}
                             onChange={handleValueChange}
+
+                            tooltipProps={{
+                                classNames: {
+                                    content: [
+                                        "text-white dark:text-default-900",
+                                    ],
+                                },
+                            }}
                             // renderValue={({ children, ...props }) => (
                             //     <output {...props}>
 

@@ -14,6 +14,8 @@ import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import { useLogin } from '@/components/useLogin';
 import { getCredentials, getSessionKey } from '@/libs/utils/user';
 import TransferHistoryTab from './(tabs)/TransferHistoryTab';
+import { getTimeFromNow } from '@/libs/utils/time';
+import { FaArrowAltCircleDown } from 'react-icons/fa';
 
 
 
@@ -103,6 +105,16 @@ export default function ProfileWalletTab({ data }: { data: AccountExt }) {
         </div>
       }
 
+      {!!loginInfo.powerdown && <div className='flex flex-col gap-2 items-center mt-4'>
+        <div className='flex gap-2 items-center'>
+          <FaArrowAltCircleDown className='text-red-400 text-medium' title='Power down' />
+          <p className='text-sm'>{vestToSteem(data.powerdown_done, globalData.steem_per_share)?.toLocaleString()}/{vestToSteem(data.powerdown, globalData.steem_per_share)?.toLocaleString()} STEEM</p>
+        </div>
+        <p className='text-tiny'>Next power down {getTimeFromNow(data.next_powerdown * 1000)}: ~{vestToSteem(data.powerdown_rate, globalData.steem_per_share)?.toLocaleString()} STEEM</p>
+
+
+      </div>
+      }
 
       <Tabs aria-label="Options" variant='underlined' size='sm'>
         <Tab key="balance" title="Balance">

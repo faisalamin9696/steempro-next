@@ -9,6 +9,8 @@ import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator'
 import ViewCountCard from './ViewCountCard'
 import { useAppSelector } from '@/libs/constants/AppFunctions'
 import Link from 'next/link';
+import TimeAgoWrapper from './wrapper/TimeAgoWrapper';
+import { FaClock } from 'react-icons/fa';
 
 
 interface Props {
@@ -57,7 +59,11 @@ export default memo(function CompactPost(props: Props) {
             <div className="px-2 py-2 flex flex-row items-center justify-between">
                 <span className="py-1 text-xs font-regular  mr-1 flex flex-row items-center">
 
-                    <span className="ml-1 text-default-900/80">{readingTime('', commentInfo?.word_count).text}</span>
+
+                    {<div className="flex items-center gap-2 ml-1 text-default-900/80">
+                        <FaClock  />
+                        <TimeAgoWrapper created={comment.created * 1000} />
+                    </div>}
                 </span>
 
                 <div className=' flex items-center gap-2'>

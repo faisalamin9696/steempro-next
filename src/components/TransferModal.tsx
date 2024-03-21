@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {  Textarea } from "@nextui-org/input";
+import { Textarea } from "@nextui-org/input";
 import { Modal, ModalBody, ModalContent, ModalHeader, ModalFooter, useDisclosure } from '@nextui-org/modal';
 import { Button } from '@nextui-org/button';
 import { Checkbox } from '@nextui-org/checkbox';
@@ -310,7 +310,7 @@ const TransferModal = (props: Props): JSX.Element => {
                 `Transfer to ${savings ? 'Savings' : 'Account'}`;
 
     return (<Modal isOpen={props.isOpen || isOpen}
-        placement='top-center'
+        placement='center'
         hideCloseButton={isPending}
         isDismissable={false}
         onOpenChange={props.onOpenChange || onOpenChange}>
@@ -392,7 +392,7 @@ const TransferModal = (props: Props): JSX.Element => {
 
                         <Checkbox size="sm" isSelected={confirmCheck}
                             onValueChange={setConfirmCheck}
-                        >Confirm Transfer</Checkbox>
+                        >Confirm {powewrup ? 'Power Up' : `Transfer`}</Checkbox>
 
                     </ModalBody>
                     <ModalFooter>
