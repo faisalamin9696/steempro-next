@@ -181,6 +181,7 @@ const PowerDownModal = (props: Props): JSX.Element => {
 
 
                         <Checkbox size="sm" isSelected={confirmCheck}
+                            isDisabled={withdrawMutation.isPending}
                             onValueChange={setConfirmCheck}
                         >Confirm {(cancel ? 'Cancel ' : '') + 'Power Down'}</Checkbox>
 

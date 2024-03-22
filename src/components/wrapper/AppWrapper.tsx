@@ -97,11 +97,12 @@ export default function AppWrapper({ children }: { children: React.ReactNode }) 
 
     useEffect(() => {
         if (unreadData) {
+            console.log(1122, 777, loginInfo.name)
             dispatch(saveLoginHandler({ ...loginInfo, unread_count: unreadData ?? 0 }));
         }
 
     }, [unreadData]);
-    
+
     return (
         <div>
             {children}

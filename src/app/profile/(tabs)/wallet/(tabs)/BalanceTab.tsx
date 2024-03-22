@@ -50,6 +50,7 @@ export default function BalanceTab({ data }: { data: AccountExt }) {
 
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const isSelf = !!loginInfo.name && (loginInfo.name === (username));
+
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
     let [key, setKey] = useState<SteemTokens>();
     const [powerDownModal, setPowerDownModal] = useState<{
@@ -131,7 +132,10 @@ export default function BalanceTab({ data }: { data: AccountExt }) {
                         <p>{data.balance_steem?.toLocaleString()}</p>
                     </div>}
 
-                    actionContent={isSelf && <DropdownMenu onAction={handleAction}>
+                    actionContent={isSelf && <DropdownMenu
+                        aria-labelledby={`steem`}
+
+                        onAction={handleAction}>
                         <DropdownItem key="transfer-steem">Transfer</DropdownItem>
                         <DropdownItem key="savings-steem">Transfer to Savings</DropdownItem>
                         <DropdownItem key="power-up">Power Up</DropdownItem>
@@ -150,7 +154,9 @@ export default function BalanceTab({ data }: { data: AccountExt }) {
 
                     </div>}
 
-                    actionContent={isSelf && <DropdownMenu onAction={handleAction}>
+                    actionContent={isSelf && <DropdownMenu
+                        aria-labelledby={`steem-power`}
+                        onAction={handleAction}>
                         <DropdownItem key="delegation">Delegate</DropdownItem>
                         <DropdownItem key="power-down">Power Down</DropdownItem>
                         <DropdownItem className={!!loginInfo.powerdown ? 'block' : 'hidden'}
@@ -172,6 +178,7 @@ export default function BalanceTab({ data }: { data: AccountExt }) {
                     </div>}
 
                     actionContent={isSelf && <DropdownMenu
+                        aria-labelledby={`steem-dollar`}
                         onAction={handleAction}>
                         <DropdownItem key="transfer-sbd">Transfer</DropdownItem>
                         <DropdownItem key="savings-sbd">Transfer to Savings</DropdownItem>

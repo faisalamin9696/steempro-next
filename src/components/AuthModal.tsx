@@ -263,7 +263,7 @@ export default function AuthModal(props: Props) {
     return (
         <>
             <Modal
-             className=' mt-4'
+                className=' mt-4'
                 scrollBehavior='inside'
                 placement='top-center'
                 size='md'
@@ -391,9 +391,9 @@ export default function AuthModal(props: Props) {
                                                         set as default
                                                     </Checkbox>}
 
-                                                <p className="text-start text-small">
+                                                <p className="text-start text-small text-default-600">
                                                     Need to create an account?{" "}
-                                                    <Link href={SignupLink} target='_blank'>
+                                                    <Link className="hover:text-blue-500" href={SignupLink} target='_blank'>
                                                         Sign up
                                                     </Link>
                                                 </p>

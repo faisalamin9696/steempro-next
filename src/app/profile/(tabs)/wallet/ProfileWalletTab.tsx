@@ -105,7 +105,7 @@ export default function ProfileWalletTab({ data }: { data: AccountExt }) {
         </div>
       }
 
-      {!!loginInfo.powerdown && <div className='flex flex-col gap-2 items-center mt-4'>
+      {!!data.powerdown && <div className='flex flex-col gap-2 items-center mt-4'>
         <div className='flex gap-2 items-center'>
           <FaArrowAltCircleDown className='text-red-400 text-medium' title='Power down' />
           <p className='text-sm'>{vestToSteem(data.powerdown_done, globalData.steem_per_share)?.toLocaleString()}/{vestToSteem(data.powerdown, globalData.steem_per_share)?.toLocaleString()} STEEM</p>

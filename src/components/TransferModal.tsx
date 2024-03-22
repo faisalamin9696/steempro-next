@@ -391,6 +391,7 @@ const TransferModal = (props: Props): JSX.Element => {
 
 
                         <Checkbox size="sm" isSelected={confirmCheck}
+                            isDisabled={isPending}
                             onValueChange={setConfirmCheck}
                         >Confirm {powewrup ? 'Power Up' : `Transfer`}</Checkbox>
 

@@ -137,8 +137,8 @@ export default memo(function CommentFooter(props: CommentProps) {
                 toast.error(error.message);
                 return;
             }
-            dispatch(addCommentHandler({ ...comment, is_pinned: comment.is_pinned ? 0 : 1 }));
-            toast.success(!!!comment.is_pinned ? 'Pinned' : 'Unpinned')
+            dispatch(addCommentHandler({ ...comment, observer_resteem: 1 }));
+            toast.success('Resteemed');
 
         },
     });
@@ -252,7 +252,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                     </CustomCard>
                     }
 
-                    {!isReply && !!comment.resteem_count &&
+                    {!isReply &&
                         <div>
                             <Popover isOpen={resteemPopup}
 
@@ -270,9 +270,9 @@ export default memo(function CommentFooter(props: CommentProps) {
 
                                         size='sm'>
 
-                                        <SlLoop className='text-lg text-default-900' />
-
-                                        {!compact && <div className='text-tiny text-default-900'>
+                                        {!reblogMutation.isPending && <SlLoop className='text-lg text-default-900' />
+                                        }
+                                        {!compact && !!comment.resteem_count && <div className='text-tiny text-default-900'>
                                             {abbreviateNumber(comment.resteem_count)}
                                         </div>}
                                     </Button>
