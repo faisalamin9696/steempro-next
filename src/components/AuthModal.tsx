@@ -16,7 +16,6 @@ import { getAuthorExt } from "@/libs/steem/sds";
 import { validate_account_name } from "@/libs/utils/ChainValidation";
 import { getResizedAvatar } from "@/libs/utils/image";
 import { getSettings, getCredentials, saveSessionKey, validatePassword, saveCredentials, sessionKey, getAllCredentials } from "@/libs/utils/user";
-import { useLogin } from "./useLogin";
 import { toast } from "sonner";
 import { signIn, useSession } from 'next-auth/react'
 import { getAuth, signInAnonymously } from "firebase/auth";

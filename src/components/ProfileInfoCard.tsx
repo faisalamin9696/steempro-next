@@ -108,7 +108,7 @@ export default memo(function ProfileInfoCard(props: Props) {
                         className='cursor-pointer' size='sm'
                         username={username || profileInfo?.name || ''} />}
                     <div className="flex flex-col items-start justify-center">
-                        <h4 className="text-xs font-semibold leading-none text-default-600">{posting_json_metadata?.profile?.name}</h4>
+                        <h4 className="text-sm font-semibold leading-none text-default-600">{posting_json_metadata?.profile?.name}</h4>
                         {/* <Link prefetch={false} href={authorLink}>{comment.author}</Link> */}
 
                         <h5 className={clsx("text-small tracking-tight text-default-500")}>@{username || profileInfo?.name}</h5>

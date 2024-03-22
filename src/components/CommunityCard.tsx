@@ -8,7 +8,8 @@ import { getResizedAvatar } from "@/libs/utils/image";
 import Link from "next/link";
 import clsx from "clsx";
 import { LuPencilLine } from "react-icons/lu";
-import { useRouter } from "next13-progressbar";
+import { useAppSelector } from "@/libs/constants/AppFunctions";
+import usePathnameClient from "@/libs/utils/usePathnameClient";
 
 
 interface Props {
@@ -18,21 +19,12 @@ interface Props {
 
 
 export const CommunityCard = memo((props: Props) => {
+    const { username } = usePathnameClient();
     const { community, compact } = props;
-    const router = useRouter();
-    // // const [isFollowed, setIsFollowed] = React.useState(comment.observer_follows_author === 1);
-    // const { data: session } = useSession();
-    // const URL = `/accounts_api/getAccountExt/${username}/${loginInfo.name || 'null'}`;
-    // const { data, isLoading } = useSWR(URL, fetchSds<AccountExt>);
-    // const URL_2 = `/followers_api/getKnownFollowers/${username}/${loginInfo.name || 'null'}`
-    // const { data: knownPeople, isLoading: isKnownLoading } = useSWR(compact ? null : URL_2, fetchSds<string[]>)
-
-    // const posting_json_metadata = JSON.parse(String(data?.posting_json_metadata || '{}'));
+    const loginInfo = useAppSelector(state => state.loginReducer.value);
+    const isSelf = !!loginInfo.name && (loginInfo.name === username);
 
 
-    // function handleCreatePost() {
-    //     router.push(`/submit?account=${community?.account}&title=${community.title || ''}`);
-    // }
 
     return (
         <Card
@@ -43,7 +35,7 @@ export const CommunityCard = memo((props: Props) => {
             {!compact &&
                 <div className="flex flex-row items-center gap-1 top-5 right-5 absolute">
 
-                    <Button size='sm' isIconOnly variant='flat'
+                    {isSelf && <Button size='sm' isIconOnly variant='flat'
 
                         title='Create post'
                         className={clsx('min-w-0  h-6')}
@@ -58,7 +50,7 @@ export const CommunityCard = memo((props: Props) => {
                         color='primary'
                         radius='full'>
                         <LuPencilLine className="text-lg" />
-                    </Button>
+                    </Button>}
                     <Button as={Link}
                         href={`/trending/${community.account}`}
                         size="sm" color="primary" radius="full"

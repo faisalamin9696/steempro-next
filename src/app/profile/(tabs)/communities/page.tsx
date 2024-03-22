@@ -4,13 +4,11 @@ import CommunityCard from '@/components/CommunityCard';
 // import FeedList from '@/components/comment/FeedList';
 import { fetchSds, useAppSelector } from '@/libs/constants/AppFunctions';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
-import { useSession } from 'next-auth/react';
 import React from 'react'
 import useSWR from 'swr';
 
 export default function ProfileCommunitiesTab() {
     const { username } = usePathnameClient();
-    const { data: session } = useSession();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
 
     const URL = `/communities_api/getCommunitiesBySubscriber/${username}/${loginInfo.name || 'null'}`;

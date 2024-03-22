@@ -1,7 +1,7 @@
 "sue client";
 
 import { WitnessAccount, defaultNotificationFilters } from '@/libs/constants/AppConstants';
-import { fetchSds, useAppDispatch } from '@/libs/constants/AppFunctions';
+import { fetchSds, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import { saveSteemGlobals } from '@/libs/redux/reducers/SteemGlobalReducer';
 import { getAuthorExt, getSteemGlobal } from '@/libs/steem/sds';
@@ -28,6 +28,7 @@ export default function AppWrapper({ children }: { children: React.ReactNode }) 
     const [username, setUsername] = useState<string | undefined | null>(session?.user?.name);
     const dispatch = useAppDispatch();
     const router = useRouter();
+    const loginInfo = useAppSelector(state => state.loginReducer.value);
 
 
     function pingForWitnessVote() {
@@ -69,9 +70,9 @@ export default function AppWrapper({ children }: { children: React.ReactNode }) 
         errorRetryInterval: 3000
     });
 
-    const URL = `/notifications_api/getFilteredUnreadCount/${username}/${JSON.stringify(filter)}`;
+    const URL = `/notifications_api/getFilteredUnreadCount/${loginInfo?.name}/${JSON.stringify(filter)}`;
 
-    const { data: unreadData } = useSWR(username && URL, fetchSds<number>, {
+    const { data: unreadData } = useSWR(!!loginInfo?.name && URL, fetchSds<number>, {
         shouldRetryOnError: true,
         refreshInterval: 300000, // 10 minutes
         errorRetryInterval: 10000
@@ -83,22 +84,24 @@ export default function AppWrapper({ children }: { children: React.ReactNode }) 
     useEffect(() => {
 
         if (accountData) {
-            // check if the unread notifications data is loaded
-            if (unreadData)
-                dispatch(saveLoginHandler({ ...accountData, unread_count: unreadData ?? 0 }));
-            // if unread data is not loaded
-            else dispatch(saveLoginHandler(accountData));
-
+            dispatch(saveLoginHandler(accountData));
             if (!accountData.witness_votes.includes(WitnessAccount))
                 pingForWitnessVote();
         }
-
         if (globalData)
             dispatch(saveSteemGlobals(globalData));
 
-    }, [globalData, accountData, unreadData]);
+    }, [globalData, accountData]);
 
 
+
+    useEffect(() => {
+        if (unreadData) {
+            dispatch(saveLoginHandler({ ...loginInfo, unread_count: unreadData ?? 0 }));
+        }
+
+    }, [unreadData]);
+    
     return (
         <div>
             {children}

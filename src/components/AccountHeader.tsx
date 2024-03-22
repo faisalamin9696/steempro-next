@@ -118,7 +118,7 @@ export default function AccountHeader(props: Props) {
                     <div className="profile-card stat">
                         <div className="stat-figure text-secondary relative">
 
-                            <SAvatar username={isCommunity ? communityInfo.account : profileInfo.name} size='lg' />
+                            <SAvatar username={isCommunity ? communityInfo.account : profileInfo.name} size='lg' quality='medium' />
 
                             {/* <BadgeAvatar {...props} username={communityInfo.account} size={'lg'} quality='medium'
                                 badge={'Subscribe'} /> */}

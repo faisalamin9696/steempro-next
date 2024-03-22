@@ -107,7 +107,7 @@ export default function AppNavbar() {
                         style={{ height: 'auto' }}
                     />
                 </Link>
-                <Link href={'/'}>
+                <Link href={'/'} className='hidden max-sm:block max-xs:hidden'>
                     <Image priority className='hidden max-sm:block'
                         src={'/logo192.png'}
                         alt='logo'
@@ -140,70 +140,70 @@ export default function AppNavbar() {
                         type="search"
                     />
 
-                    <Button radius='full'
-                        className='1md:hidden '
-                        isIconOnly size='sm' variant='light'
-                        onPress={(e) => {
+                    <button className='1md:hidden hover:bg-foreground/10 transition-all delay-100 rounded-full p-1'
+                        onClick={(e) => {
                             setSearchModal(true)
                         }}>
                         <MdSearch className='text-xl text-default-600 ' />
-                    </Button>
+                    </button>
 
 
-                    <Button radius='full' as={Link} href={'/submit'}
-
-                        isIconOnly size='sm' variant='light'>
+                    <Link href='/submit'
+                        className='hover:bg-foreground/10 transition-all delay-100 rounded-full p-1'
+                    >
                         <LuPencilLine className='text-xl text-default-600' />
-                    </Button>
-                    {status === 'authenticated' && <Popover style={{
-                        zIndex: 50,
-                    }} backdrop='opaque'
+                    </Link>
 
-                        placement="right" isOpen={notificationPopup}
-                        onOpenChange={setNotificationPopup}>
-                        <PopoverTrigger >
-                            <Badge className=' max-sm:hidden'
-                                content={
-                                    loginInfo.unread_count > 99 ?
-                                        '99+' : loginInfo.unread_count > 0 && loginInfo.unread_count}
-                                shape="circle" color="primary" size='sm'>
-                                <Button
-                                    size='sm'
-                                    radius="full"
-                                    isIconOnly
-                                    isDisabled={!!!session?.user?.name}
-                                    className='text-default-600 max-sm:hidden'
-                                    onPress={() => { setNotificationPopup(!notificationPopup) }}
-                                    aria-label="more than 99 notifications"
-                                    variant="light"
+                    {status === 'authenticated' &&
+                        <Popover style={{
+                            zIndex: 50,
+                        }}
+                            backdrop='opaque'
+                        >
+                            <PopoverTrigger >
+
+                                <button
+                                    className={`text-default-600 relative hover:bg-foreground/10 
+                                    transition-all delay-100 rounded-full p-1 items-center`}
+                                    aria-label="notifications bg-red-100"
                                 >
-                                    <FaRegBell className='text-xl text-default-600' />
-                                </Button>
-                            </Badge>
+                                    <Badge size='sm' content={loginInfo.unread_count > 99 ?
+                                        '99+' : loginInfo.unread_count > 0 && loginInfo.unread_count}
+                                        className='opacity-80' color='primary'>
+                                        <FaRegBell className='text-xl text-default-600' />
+                                    </Badge>
+                                </button>
 
-                        </PopoverTrigger>
-                        <PopoverContent>
-                            <NotificationsCard username={session?.user?.name} />
-                        </PopoverContent>
-                    </Popover>}
-
-
+                            </PopoverTrigger>
+                            <PopoverContent>
+                                <NotificationsCard username={session?.user?.name} />
+                            </PopoverContent>
+                        </Popover>}
 
                     {status !== 'authenticated' &&
-                        <Button isIconOnly={status !== 'unauthenticated'}
-                            radius='lg' variant='flat' color='success'
-                            onPress={handleLogin} size='sm'
-                            isDisabled={status === 'loading'} isLoading={status === 'loading'}>
-                            Login
-                        </Button>}
+                        <div className=' items-center'>
+                            <Button isIconOnly={status !== 'unauthenticated'}
+                                className=' max-sm:hidden'
+                                radius='lg' variant='flat' color='success'
+                                onPress={handleLogin} size='sm'
+                                isDisabled={status === 'loading'} isLoading={status === 'loading'}>
+                                Login
+                            </Button>
+
+                            <button onClick={handleLogin}
+                                type="button" className={`hidden max-sm:block text-white bg-success-700/20 hover:bg-success-800/50 focus:outline-none
+                             rounded-lg text-sm px-4 py-1 text-center dark:bg-success-600/20 dark:hover:bg-success-700/50`}>Login</button>
+
+                        </div>
+
+                    }
 
                     {status === 'authenticated' &&
                         <Popover placement="top" color='default'
-                            classNames={{ base: '!z-[10]' }}
                             shouldCloseOnBlur={false}
                             isOpen={isPopOpen} onOpenChange={(open) => setIsPopOpen(open)}>
                             <PopoverTrigger>
-                                <Button isIconOnly
+                                <Button isIconOnly className='ms-2'
                                     radius='full' variant='light'>
                                     <Avatar src={getResizedAvatar(session?.user?.name ?? '')}
                                         className=' cursor-pointer'
@@ -215,14 +215,14 @@ export default function AppNavbar() {
                                     if (isPopOpen) setIsPopOpen(false);
                                 }}>
                                     <li><Link href={`/@${session?.user?.name}`}>Profile</Link></li>
-                                    <li className='hidden max-sm:block'><a onClick={() => setNotificationPopup(!notificationPopup)}>{'Notifications'}</a></li>
                                     <li><a onClick={() => setIsAccOpen(!isAccOpen)}>Switch Account</a></li>
                                     <li><a onClick={handleUnlock}> {isLocked ? 'Unlock' : 'Lock'} Account</a>
                                     </li>
 
                                 </ul>
                             </PopoverContent>
-                        </Popover>}
+                        </Popover>
+                    }
 
 
                 </div>
@@ -234,6 +234,8 @@ export default function AppNavbar() {
                     <AccountsModal isOpen={isAccOpen}
                         onOpenChange={setIsAccOpen} />
                 }
+
+
 
             </NavbarContent>
 

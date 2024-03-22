@@ -132,6 +132,7 @@ export default memo(function BeneficiaryButton(props: Props) {
 
                             <Input classNames={{ label: 'text-default-900/80' }}
                                 className='w-[70%]'
+                                autoCapitalize='off'
                                 labelPlacement='outside' label={'Username'} size="sm"
                                 onValueChange={setUsername}
                                 variant="flat" value={username} />

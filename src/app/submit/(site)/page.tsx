@@ -363,10 +363,9 @@ export default function SubmitPage(props: Props) {
                 classNames={{
                     inputWrapper: 'h-8'
                 }}
-
+                autoCapitalize='off'
                 placeholder={'Tags here...'}
                 isDisabled={isPosting}
-
                 maxLength={255} />
 
             <EditorInput value={markdown}

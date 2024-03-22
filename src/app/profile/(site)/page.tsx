@@ -36,7 +36,7 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
     useEffect(() => {
         if (data)
             if (isSelf)
-                dispatch(saveLoginHandler(data));
+                dispatch(saveLoginHandler({ ...data, unread_count: loginInfo.unread_count }));
             else dispatch(addProfileHandler(data));
 
     }, [data]);
