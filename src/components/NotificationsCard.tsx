@@ -30,6 +30,7 @@ import Link from 'next/link';
 
 interface Props {
     username?: string | null;
+    onItemClick?: () => void;
 }
 
 const typeColorMap = {
@@ -81,7 +82,7 @@ const filter = {
 };
 
 export default function NotificationsCard(props: Props) {
-    const { username } = props;
+    const { username, onItemClick } = props;
 
     if (!username)
         return null
@@ -270,7 +271,7 @@ export default function NotificationsCard(props: Props) {
 
     const topContent = React.useMemo(() => {
         return (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 p-1">
                 <div className="flex justify-between gap-3 items-end">
                     <Input size="sm"
                         isClearable
@@ -327,7 +328,7 @@ export default function NotificationsCard(props: Props) {
                                 ))}
                             </DropdownMenu>
                         </Dropdown> */}
-                        <Button size="sm" onPress={handleMarkRead}
+                        <Button size="sm" onClick={handleMarkRead}
                             isLoading={markMutation.isPending}
                             isDisabled={markMutation.isPending || !loginInfo.unread_count}
                             color="primary" endContent={<IoCheckmarkDone
@@ -435,6 +436,7 @@ export default function NotificationsCard(props: Props) {
 
                         return (
                             <TableRow as={Link} href={getTargetUrl(item)}
+                                onClick={onItemClick}
                                 key={JSON.stringify(item)} className='cursor-pointer hover:bg-foreground/10'>
                                 {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                             </TableRow>

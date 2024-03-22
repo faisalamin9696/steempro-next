@@ -40,7 +40,6 @@ export default function AppNavbar() {
     // validate the local storage auth
     useMemo(() => {
         const credentials = getCredentials();
-
         if (status === 'authenticated') {
             if (!sessionKey) {
                 setLocked(true);
@@ -140,62 +139,55 @@ export default function AppNavbar() {
                         type="search"
                     />
 
-                    <button className='1md:hidden hover:bg-foreground/10 transition-all delay-100 rounded-full p-1'
+                    <Button
+                        size='sm' isIconOnly radius='lg'
+                        variant='light'
+                        className='1md:hidden'
                         onClick={(e) => {
                             setSearchModal(true)
                         }}>
                         <MdSearch className='text-xl text-default-600 ' />
-                    </button>
+                    </Button>
 
 
-                    <Link href='/submit'
+                    <Button as={Link}
+                        size='sm' isIconOnly radius='lg'
+                        variant='light' href='/submit'
                         className='hover:bg-foreground/10 transition-all delay-100 rounded-full p-1'
                     >
                         <LuPencilLine className='text-xl text-default-600' />
-                    </Link>
+                    </Button>
 
-                    {status === 'authenticated' &&
-                        <Popover style={{
-                            zIndex: 50,
-                        }}
+                    {
+                        <Popover isOpen={notificationPopup}
+                            onOpenChange={setNotificationPopup}
+                            onClose={() => setNotificationPopup(false)}
+                            style={{ zIndex: 50 }}
                             backdrop='opaque'
                         >
                             <PopoverTrigger >
-
-                                <button
-                                    className={`text-default-600 relative hover:bg-foreground/10 
-                                    transition-all delay-100 rounded-full p-1 items-center`}
-                                    aria-label="notifications bg-red-100"
-                                >
+                                <button onClick={() => setNotificationPopup(true)}
+                                    className="hover:bg-black/10 dark:hover:bg-white/10   focus:outline-none focus:ring-0 px-1 rounded-lg">
                                     <Badge size='sm' content={loginInfo.unread_count > 99 ?
                                         '99+' : loginInfo.unread_count > 0 && loginInfo.unread_count}
                                         className='opacity-80' color='primary'>
                                         <FaRegBell className='text-xl text-default-600' />
                                     </Badge>
                                 </button>
-
                             </PopoverTrigger>
                             <PopoverContent>
-                                <NotificationsCard username={session?.user?.name} />
+                                <NotificationsCard username={session?.user?.name}
+                                    onItemClick={() => setNotificationPopup(false)} />
                             </PopoverContent>
                         </Popover>}
 
                     {status !== 'authenticated' &&
-                        <div className=' items-center'>
-                            <Button isIconOnly={status !== 'unauthenticated'}
-                                className=' max-sm:hidden'
-                                radius='lg' variant='flat' color='success'
-                                onPress={handleLogin} size='sm'
-                                isDisabled={status === 'loading'} isLoading={status === 'loading'}>
-                                Login
-                            </Button>
-
-                            <button onClick={handleLogin}
-                                type="button" className={`hidden max-sm:block text-white bg-success-700/20 hover:bg-success-800/50 focus:outline-none
-                             rounded-lg text-sm px-4 py-1 text-center dark:bg-success-600/20 dark:hover:bg-success-700/50`}>Login</button>
-
-                        </div>
-
+                        <Button isIconOnly={status !== 'unauthenticated'}
+                            radius='lg' variant='flat' color='success'
+                            onClick={handleLogin} size='sm'
+                            isDisabled={status === 'loading'} isLoading={status === 'loading'}>
+                            Login
+                        </Button>
                     }
 
                     {status === 'authenticated' &&

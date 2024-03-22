@@ -121,7 +121,7 @@ export default function SearchModal(props: Props) {
     }
 
 
-    useMemo(() => {
+    useMemo(() => { 
         handleSearch();
     }, [searchType]);
 

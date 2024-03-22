@@ -22,7 +22,7 @@ export function getCredentials(password?: string):
             return { ...credentials, key: privateKey };
         }
     }
-    catch {
+    catch (e) {
         return undefined
     }
 
