@@ -113,7 +113,6 @@ export default function AppNavbar() {
                         alt='logo'
                         height={40}
                         width={40}
-                        // style={{ width: 'auto', height: 'auto' }}
                     />
 
                 </Link>
@@ -121,7 +120,7 @@ export default function AppNavbar() {
 
 
             <NavbarContent as="div" className="items-center z-0 " justify="end">
-                <div className="flex flex-row gap-2 items-center">
+                <div className="flex flex-row gap-2 items-center ">
 
                     <Input
                         radius='full'
@@ -136,7 +135,7 @@ export default function AppNavbar() {
                         placeholder="Type to search..."
                         size="sm"
                         isReadOnly
-                        onClick={() => setSearchModal(!searchModal)}
+                        onClick={() => setSearchModal(true)}
                         startContent={<MdSearch size={18} />}
                         type="search"
                     />
@@ -144,7 +143,9 @@ export default function AppNavbar() {
                     <Button radius='full'
                         className='1md:hidden '
                         isIconOnly size='sm' variant='light'
-                        onPress={() => setSearchModal(!searchModal)}>
+                        onPress={(e) => {
+                            setSearchModal(true)
+                        }}>
                         <MdSearch className='text-xl text-default-600 ' />
                     </Button>
 
@@ -154,9 +155,10 @@ export default function AppNavbar() {
                         isIconOnly size='sm' variant='light'>
                         <LuPencilLine className='text-xl text-default-600' />
                     </Button>
-                    <Popover style={{
+                    {status === 'authenticated' && <Popover style={{
                         zIndex: 50,
-                    }}
+                    }} backdrop='opaque'
+
                         placement="right" isOpen={notificationPopup}
                         onOpenChange={setNotificationPopup}>
                         <PopoverTrigger >
@@ -169,7 +171,7 @@ export default function AppNavbar() {
                                     size='sm'
                                     radius="full"
                                     isIconOnly
-                                    isDisabled={!!!loginInfo.name}
+                                    isDisabled={!!!session?.user?.name}
                                     className='text-default-600 max-sm:hidden'
                                     onPress={() => { setNotificationPopup(!notificationPopup) }}
                                     aria-label="more than 99 notifications"
@@ -181,28 +183,38 @@ export default function AppNavbar() {
 
                         </PopoverTrigger>
                         <PopoverContent>
-                            <NotificationsCard username={loginInfo.name} />
+                            <NotificationsCard username={session?.user?.name} />
                         </PopoverContent>
-                    </Popover>
+                    </Popover>}
 
 
 
+                    {status !== 'authenticated' &&
+                        <Button isIconOnly={status !== 'unauthenticated'}
+                            radius='lg' variant='flat' color='success'
+                            onPress={handleLogin} size='sm'
+                            isDisabled={status === 'loading'} isLoading={status === 'loading'}>
+                            Login
+                        </Button>}
 
-                    {isLogin() ?
+                    {status === 'authenticated' &&
                         <Popover placement="top" color='default'
                             classNames={{ base: '!z-[10]' }}
                             shouldCloseOnBlur={false}
                             isOpen={isPopOpen} onOpenChange={(open) => setIsPopOpen(open)}>
                             <PopoverTrigger>
-                                <Avatar src={getResizedAvatar(loginInfo.name)}
-                                    className=' cursor-pointer'
-                                />
+                                <Button isIconOnly
+                                    radius='full' variant='light'>
+                                    <Avatar src={getResizedAvatar(session?.user?.name ?? '')}
+                                        className=' cursor-pointer'
+                                    />
+                                </Button>
                             </PopoverTrigger>
                             <PopoverContent>
                                 <ul tabIndex={0} className="menu menu-sm" onClick={() => {
                                     if (isPopOpen) setIsPopOpen(false);
                                 }}>
-                                    <li><Link href={`/@${loginInfo.name}`}>Profile</Link></li>
+                                    <li><Link href={`/@${session?.user?.name}`}>Profile</Link></li>
                                     <li className='hidden max-sm:block'><a onClick={() => setNotificationPopup(!notificationPopup)}>{'Notifications'}</a></li>
                                     <li><a onClick={() => setIsAccOpen(!isAccOpen)}>Switch Account</a></li>
                                     <li><a onClick={handleUnlock}> {isLocked ? 'Unlock' : 'Lock'} Account</a>
@@ -210,27 +222,22 @@ export default function AppNavbar() {
 
                                 </ul>
                             </PopoverContent>
-                        </Popover>
-                        :
-                        <Button size='sm' variant='ghost'
-                            onPress={handleLogin}
-                            color='success'
-                            isLoading={status === 'loading'}
-                            isIconOnly={status === 'loading'}
-                            radius={status === 'loading' ? 'full' : 'sm'}
-                        >{(isLogin()) ? '' : 'Login'}</Button>
-                    }
+                        </Popover>}
+
 
                 </div>
+
+                {searchModal && <SearchModal isOpen={searchModal}
+                    onOpenChange={setSearchModal} />}
+
+                {isAccOpen &&
+                    <AccountsModal isOpen={isAccOpen}
+                        onOpenChange={setIsAccOpen} />
+                }
+
             </NavbarContent>
 
-            {searchModal && <SearchModal isOpen={searchModal}
-                onOpenChange={setSearchModal} />}
 
-            {isAccOpen &&
-                <AccountsModal isOpen={isAccOpen}
-                    onOpenChange={setIsAccOpen} />
-            }
         </Navbar>
 
 

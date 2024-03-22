@@ -21,12 +21,11 @@ import { initializeApp } from "firebase/app";
 import { signInAnonymously, getAuth } from "firebase/auth";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { Next13ProgressBar } from 'next13-progressbar';
+import AppWrapper from '@/components/wrapper/AppWrapper';
 
 
 interface Props {
     children: React.ReactNode;
-    data: AccountExt,
-    globalData: SteemProps;
 }
 export function Providers(props: Props) {
     const { children } = props;
@@ -108,13 +107,12 @@ export function Providers(props: Props) {
                                     dedupingInterval: 10000,
                                     loadingTimeout: 20000,
                                     // revalidateOnMount: false
-                                }}
-
-
-                            >
-                                <AuthProvider {...props}>
-                                    <AppNavbar />
-                                    {children}
+                                }}  >
+                                <AuthProvider>
+                                    <AppWrapper>
+                                        <AppNavbar />
+                                        {children}
+                                    </AppWrapper>
                                 </AuthProvider>
                             </SWRConfig>
                         </SessionProvider> : <LoadingCard />}

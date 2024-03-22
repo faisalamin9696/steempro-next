@@ -1,0 +1,107 @@
+"sue client";
+
+import { WitnessAccount, defaultNotificationFilters } from '@/libs/constants/AppConstants';
+import { fetchSds, useAppDispatch } from '@/libs/constants/AppFunctions';
+import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
+import { saveSteemGlobals } from '@/libs/redux/reducers/SteemGlobalReducer';
+import { getAuthorExt, getSteemGlobal } from '@/libs/steem/sds';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next13-progressbar';
+import React, { useEffect, useState } from 'react'
+import { toast } from 'sonner';
+import useSWR from 'swr';
+
+const defFilter = defaultNotificationFilters;
+const filter = {
+    "mention": { "exclude": defFilter.mention.status, "minSP": defFilter.mention.minSp, "minReputation": defFilter.mention.minRep },
+    "vote": { "exclude": defFilter.vote.status, "minVoteAmount": defFilter.vote.minVote, "minReputation": defFilter.vote.minRep, "minSP": defFilter.vote.minSp },
+    "follow": { "exclude": defFilter.follow.status, "minSP": defFilter.follow.minSp, "minReputation": defFilter.follow.minRep },
+    "resteem": { "exclude": defFilter.resteem.status, "minSP": defFilter.resteem.minSp, "minReputation": defFilter.resteem.minRep },
+    "reply": { "exclude": defFilter.reply.status, "minSP": defFilter.reply.minSp, "minReputation": defFilter.reply.minRep }
+};
+
+let isPinged = false;
+
+export default function AppWrapper({ children }: { children: React.ReactNode }) {
+
+    const { data: session, status } = useSession();
+    const [username, setUsername] = useState<string | undefined | null>(session?.user?.name);
+    const dispatch = useAppDispatch();
+    const router = useRouter();
+
+
+    function pingForWitnessVote() {
+        if (!isPinged) {
+            toast(`Vote for witness (${WitnessAccount})`, {
+                action: { label: 'Vote', onClick: () => { router.push('/witnesses'); } },
+                closeButton: false, duration: 30000,
+            });
+            isPinged = true;
+        }
+    };
+
+    // gettting login user from session
+    useEffect(() => {
+        if (status === 'authenticated' && session.user?.name)
+            setUsername(session.user.name);
+
+        let timeout;
+        if (status === 'unauthenticated')
+            timeout = setTimeout(() => {
+                pingForWitnessVote();
+            }, 5000);
+
+        return () => clearTimeout(timeout);
+
+    }, [status]);
+
+
+    const { data: globalData } = useSWR(`/steem_requests_api/getSteemProps`, fetchSds<SteemProps>, {
+        shouldRetryOnError: true,
+        refreshInterval: 600000, // 10 minutes
+        errorRetryInterval: 5000
+    });
+
+
+    const { data: accountData } = useSWR(username && [username], getAuthorExt, {
+        shouldRetryOnError: true,
+        refreshInterval: 300000, // 10 minutes
+        errorRetryInterval: 3000
+    });
+
+    const URL = `/notifications_api/getFilteredUnreadCount/${username}/${JSON.stringify(filter)}`;
+
+    const { data: unreadData } = useSWR(username && URL, fetchSds<number>, {
+        shouldRetryOnError: true,
+        refreshInterval: 300000, // 10 minutes
+        errorRetryInterval: 10000
+    });
+
+
+
+    // saving the fetched data in redux state
+    useEffect(() => {
+
+        if (accountData) {
+            // check if the unread notifications data is loaded
+            if (unreadData)
+                dispatch(saveLoginHandler({ ...accountData, unread_count: unreadData ?? 0 }));
+            // if unread data is not loaded
+            else dispatch(saveLoginHandler(accountData));
+
+            if (!accountData.witness_votes.includes(WitnessAccount))
+                pingForWitnessVote();
+        }
+
+        if (globalData)
+            dispatch(saveSteemGlobals(globalData));
+
+    }, [globalData, accountData, unreadData]);
+
+
+    return (
+        <div>
+            {children}
+        </div>
+    )
+}

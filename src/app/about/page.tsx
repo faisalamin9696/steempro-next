@@ -7,10 +7,11 @@ import { Card } from '@nextui-org/card';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Divider } from '@nextui-org/divider';
-import { AppStrings } from '@/libs/constants/AppStrings';
-import { AppLink, MObileAppLink } from '@/libs/constants/AppConstants';
+import { MObileAppLink } from '@/libs/constants/AppConstants';
+import { useSession } from 'next-auth/react';
 
 export default function AboutPage() {
+    const {data} = useSession();
 
     return (
         <div className='flex flex-col gap-10 justify-between h-full pb-10'>

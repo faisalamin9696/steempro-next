@@ -264,7 +264,7 @@ export default function AuthModal(props: Props) {
     return (
         <>
             <Modal
-                className=' mt-4'
+             className=' mt-4'
                 scrollBehavior='inside'
                 placement='top-center'
                 size='md'

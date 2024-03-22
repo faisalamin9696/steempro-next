@@ -46,18 +46,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
 
-
-  const session = await getServerSession();
-  let data;
-
-  let globalData: SteemProps;
-  globalData = await getSteemGlobal();
-
-  if (session?.user?.name)
-    data = await getAuthorExt(session?.user?.name)
-
-
-
   return (
     <html lang="en" suppressHydrationWarning={true}>
 
@@ -67,7 +55,7 @@ export default async function RootLayout({
 
       <body className={clsx()}>
 
-        <Providers data={data} globalData={globalData}>
+        <Providers>
           {children}
           <Toaster richColors closeButton />
         </Providers>

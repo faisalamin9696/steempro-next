@@ -26,7 +26,6 @@ interface Props {
 export default function SearchModal(props: Props) {
 
     const loginInfo = useAppSelector(state => state.loginReducer.value);
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [searchType, setSearchType] = useState<SearchTypes>('posts');
     const [searchText, setSearchText] = useState('');
     const [searchAuthor, setSearchAuthor] = useState('');
@@ -127,17 +126,11 @@ export default function SearchModal(props: Props) {
     }, [searchType]);
 
     return (
-        <Modal isOpen={props.isOpen || isOpen}
-            onOpenChange={props.onOpenChange || onOpenChange}
+        <Modal isOpen={props.isOpen}
+            onOpenChange={props.onOpenChange}
             className=' mt-4'
             scrollBehavior='inside'
             backdrop='blur'
-            size='xl'
-            onSubmit={(e) => {
-                e.preventDefault();
-                handleSearch();
-
-            }}
             placement='top'>
             <ModalContent>
                 {(onClose) => (
