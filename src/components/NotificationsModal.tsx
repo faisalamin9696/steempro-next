@@ -391,7 +391,7 @@ export default function NotificationsModal(props: Props) {
             className=' mt-4'
             scrollBehavior='inside'
             backdrop='blur'
-            placement='auto'>
+            placement='top-center'>
             <ModalContent>
                 {(onClose) => (
                     <>
