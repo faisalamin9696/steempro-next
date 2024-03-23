@@ -15,7 +15,7 @@ import Image from 'next/image';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import AccountsModal from '../AccountsModal';
 import AppDrawer from './AppDrawer';
-import NotificationsCard from '../NotificationsCard';
+import NotificationsModal from '../NotificationsModal';
 import { FaRegBell } from 'react-icons/fa';
 import Link from 'next/link';
 import { Avatar } from '@nextui-org/avatar';
@@ -32,7 +32,7 @@ export default function AppNavbar() {
     const { data: session, status } = useSession();
     const [isPopOpen, setIsPopOpen] = React.useState(false);
     const [isAccOpen, setIsAccOpen] = React.useState(false);
-    const [notificationPopup, setNotificationPopup] = React.useState(false);
+    const [notificationPopup, setNotificationPopup] = useState(false);
     const [isLocked, setLocked] = useState(status === 'authenticated' && !sessionKey);
     const [searchModal, setSearchModal] = useState(false);
 
@@ -157,29 +157,20 @@ export default function AppNavbar() {
                     >
                         <LuPencilLine className='text-xl text-default-600' />
                     </Button>
-
-                    {
-                        <Popover isOpen={notificationPopup}
-                            onOpenChange={setNotificationPopup}
-                            onClose={() => setNotificationPopup(false)}
-                            style={{ zIndex: 50 }}
-                            backdrop='opaque'
+                    
+                    <Badge size='sm' content={loginInfo.unread_count > 99 ?
+                        '99+' : loginInfo.unread_count > 0 && loginInfo.unread_count}
+                        className='opacity-80' color='primary'>
+                        <Button onClick={() => setNotificationPopup(true)}
+                            radius='lg' isIconOnly variant='light' size='sm'
                         >
-                            <PopoverTrigger >
-                                <button onClick={() => setNotificationPopup(true)}
-                                    className="hover:bg-black/10 dark:hover:bg-white/10   focus:outline-none focus:ring-0 px-1 rounded-lg">
-                                    <Badge size='sm' content={loginInfo.unread_count > 99 ?
-                                        '99+' : loginInfo.unread_count > 0 && loginInfo.unread_count}
-                                        className='opacity-80' color='primary'>
-                                        <FaRegBell className='text-xl text-default-600' />
-                                    </Badge>
-                                </button>
-                            </PopoverTrigger>
-                            <PopoverContent>
-                                <NotificationsCard username={session?.user?.name}
-                                    onItemClick={() => setNotificationPopup(false)} />
-                            </PopoverContent>
-                        </Popover>}
+
+                            <FaRegBell className='text-xl text-default-600' />
+
+                        </Button>
+                    </Badge>
+
+
 
                     {status !== 'authenticated' &&
                         <Button isIconOnly={status !== 'unauthenticated'}
@@ -226,6 +217,11 @@ export default function AppNavbar() {
                     <AccountsModal isOpen={isAccOpen}
                         onOpenChange={setIsAccOpen} />
                 }
+
+                {notificationPopup && <NotificationsModal
+                    isOpen={notificationPopup}
+                    onOpenChange={setNotificationPopup}
+                    username={session?.user?.name} />}
 
 
 

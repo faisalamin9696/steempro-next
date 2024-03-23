@@ -70,7 +70,7 @@ export default memo(function PostReplies(props: Props) {
 
     useEffect(() => {
         if (showReply) {
-            document.getElementById(`editorDiv-${commentInfo.author + '-' + commentInfo.permlink}`)?.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById(`editorDiv-${commentInfo.author + '-' + commentInfo.permlink}`)?.scrollIntoView({ block: "start", behavior: "smooth" });
         }
 
     }, [showReply]);
@@ -248,24 +248,45 @@ export default memo(function PostReplies(props: Props) {
     return (
         <div className='p-1' id='post-replies'>
 
+            <div className='flex justify-end'>
+                <Button size='sm' variant='flat'
+                    color='secondary'
+                    radius='full'
+                    onPress={toggleReply}
+                    isDisabled={showReply}
+                    className='text-tiny min-h-0'>
+                    Reply
+                </Button>
+            </div>
+
             <div className='card card-compact mt-4 flex flex-col py-4 gap-4'>
 
+
+
+
                 {repliesMutation.isSuccess ? null :
-                    <Button color='default' variant='flat' className='self-center' onPress={handleLoadComments}
-                        isLoading={isLoading}>Load comments</Button>}
+                    <div className='flex flex-row gap-2 items-center justify-center'>
+
+                        <Button color='default' variant='flat' className='self-center'
+                            onPress={handleLoadComments}
+                            isLoading={isLoading}>Load comments</Button>
+
+                    </div>}
 
                 {(repliesMutation.isSuccess && commentInfo.children === 0) ?
                     <div className='flex flex-1 self-center items-center gap-1'>
                         <p>Be the first to</p>
                         <Button size='sm' variant='light'
                             onPress={toggleReply}
+
                             className='text-tiny min-w-0 min-h-0'>
                             Reply
                         </Button>
                     </div> : null}
 
                 {showReply &&
-                    <div id={`editorDiv-${commentInfo.author + '-' + commentInfo.permlink}`} className='flex flex-col mt-2 gap-2'>
+                    <div
+                        className='flex flex-col mt-2 gap-2'>
                         <EditorInput
                             value={markdown}
                             onChange={setMarkdown}
@@ -331,9 +352,11 @@ export default memo(function PostReplies(props: Props) {
                 >
                     {rootReplies?.map((reply: Post) => {
                         return (!reply.link_id) ? null :
-                            < Reply key={reply.link_id}
-                                comment={reply}
-                                rootComment={comment} />
+                            <div id={`editorDiv-${reply.author + '-' + reply.permlink}`}>
+                                < Reply key={reply.link_id}
+                                    comment={reply}
+                                    rootComment={comment} />
+                            </div>
                     })}
                 </InfiniteScroll>
 

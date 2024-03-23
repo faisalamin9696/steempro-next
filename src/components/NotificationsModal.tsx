@@ -27,10 +27,12 @@ import { getCredentials, getSessionKey } from '@/libs/utils/user';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import { IoMdSettings } from "react-icons/io";
 import Link from 'next/link';
+import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/react';
 
 interface Props {
     username?: string | null;
-    onItemClick?: () => void;
+    isOpen: boolean;
+    onOpenChange: (isOpen: boolean) => void;
 }
 
 const typeColorMap = {
@@ -81,8 +83,8 @@ const filter = {
     "reply": { "exclude": defFilter.reply.status, "minSP": defFilter.reply.minSp, "minReputation": defFilter.reply.minRep }
 };
 
-export default function NotificationsCard(props: Props) {
-    const { username, onItemClick } = props;
+export default function NotificationsModal(props: Props) {
+    const { username } = props;
 
     if (!username)
         return null
@@ -383,69 +385,88 @@ export default function NotificationsCard(props: Props) {
 
     };
 
-
-
-    if (isLoading)
-        return <LoadingCard />
-
     return (
-        <div className=' max-w-sm'>
-            <Table
-                aria-label="Notification table"
-                isHeaderSticky
-                // bottomContent={bottomContent}
-                classNames={{
-                    base: "max-h-[520px] overflow-auto",
-                    table: "min-h-[420px]",
-                }} sortDescriptor={sortDescriptor}
-                topContent={topContent}
-                topContentPlacement="outside"
-                onSortChange={setSortDescriptor}
-                bottomContent={
-                    allRows?.length > 0 && !isLoading ? (
-                        <div className="flex w-full justify-center">
-                            <Button size='sm' isDisabled={isLoading || loadMoreMutation.isPending}
-                                isLoading={loadMoreMutation.isPending}
-                                radius='full'
-                                variant='shadow' onPress={() => {
-                                    offset += 20;
-                                    loadMoreMutation.mutate(offset);
-                                }}>
-                                {isLoading && <Spinner size="sm" />}
-                                Load More
-                            </Button>
-                        </div>
-                    ) : null
-                }
-
-            >
-                <TableHeader columns={headerColumns}>
-                    {(column) => (
-                        <TableColumn
-                            key={column.uid}
-                            align={column.uid === "actions" ? "center" : "start"}
-                            allowsSorting={column.sortable}
-                        >
-                            {column.name}
-                        </TableColumn>
-                    )}
-                </TableHeader>
-                <TableBody emptyContent={"No data found"} items={sortedItems}>
-                    {(item) => {
+        <Modal isOpen={props.isOpen}
+            onOpenChange={props.onOpenChange}
+            className=' mt-4'
+            scrollBehavior='inside'
+            backdrop='blur'
+            placement='auto'>
+            <ModalContent>
+                {(onClose) => (
+                    <>
+                        <ModalHeader className="flex flex-col gap-1">Search</ModalHeader>
+                        <ModalBody id='scrollDiv' className=' pb-4'>
+                            <div className=' flex flex-col gap-4'>
+                                <div className=' max-w-sm'>
 
 
-                        return (
-                            <TableRow as={Link} href={getTargetUrl(item)}
-                                onClick={onItemClick}
-                                key={JSON.stringify(item)} className='cursor-pointer hover:bg-foreground/10'>
-                                {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-                            </TableRow>
-                        )
-                    }}
-                </TableBody>
-            </Table>
+                                    {isLoading ?
+                                        <LoadingCard /> :
+                                        <Table
+                                            aria-label="Notification table"
+                                            isHeaderSticky
+                                            // bottomContent={bottomContent}
+                                            classNames={{
+                                                base: "max-h-[520px] overflow-auto",
+                                                table: "min-h-[420px]",
+                                            }} sortDescriptor={sortDescriptor}
+                                            topContent={topContent}
+                                            topContentPlacement="outside"
+                                            onSortChange={setSortDescriptor}
+                                            bottomContent={
+                                                allRows?.length > 0 && !isLoading ? (
+                                                    <div className="flex w-full justify-center">
+                                                        <Button size='sm' isDisabled={isLoading || loadMoreMutation.isPending}
+                                                            isLoading={loadMoreMutation.isPending}
+                                                            radius='full'
+                                                            variant='shadow' onPress={() => {
+                                                                offset += 20;
+                                                                loadMoreMutation.mutate(offset);
+                                                            }}>
+                                                            {isLoading && <Spinner size="sm" />}
+                                                            Load More
+                                                        </Button>
+                                                    </div>
+                                                ) : null
+                                            }
+
+                                        >
+                                            <TableHeader columns={headerColumns}>
+                                                {(column) => (
+                                                    <TableColumn
+                                                        key={column.uid}
+                                                        align={column.uid === "actions" ? "center" : "start"}
+                                                        allowsSorting={column.sortable}
+                                                    >
+                                                        {column.name}
+                                                    </TableColumn>
+                                                )}
+                                            </TableHeader>
+                                            <TableBody emptyContent={"No data found"} items={sortedItems}>
+                                                {(item) => {
 
 
-        </div>
+                                                    return (
+                                                        <TableRow as={Link} href={getTargetUrl(item)}
+                                                            onClick={onClose}
+                                                            key={JSON.stringify(item)} className='cursor-pointer hover:bg-foreground/10'>
+                                                            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                                                        </TableRow>
+                                                    )
+                                                }}
+                                            </TableBody>
+                                        </Table>}
+
+
+                                </div>
+                            </div>
+                        </ModalBody>
+                    </>
+                )}
+            </ModalContent>
+        </Modal >
+
+
     )
 }
