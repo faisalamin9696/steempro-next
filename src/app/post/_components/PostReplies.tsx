@@ -46,6 +46,8 @@ export default memo(function PostReplies(props: Props) {
     const queryClient = useQueryClient();
     const mutationKey = [`repliesMutation-${`${commentInfo?.author}/${commentInfo?.permlink}`}`];
 
+    const { users } = JSON.parse(commentInfo.json_metadata ?? `{}`) || [];
+
 
     const [isLoading, setIsLoading] = useState(false);
     const [markdown, setMarkdown] = useState('');
@@ -118,6 +120,7 @@ export default memo(function PostReplies(props: Props) {
             last_update: time,
 
             ...postData,
+            json_metadata: JSON.stringify(postData.json_metadata),
             body: postData.body,
             author: loginInfo.name,
             depth: commentInfo.depth + 1,
@@ -126,10 +129,10 @@ export default memo(function PostReplies(props: Props) {
             observer_vote: 0,
             category: commentInfo.category,
             author_reputation: loginInfo.reputation,
-            author_role: commentInfo.observer_role ?? '',
-            author_title: commentInfo.observer_title ?? '',
-            observer_title: commentInfo.observer_title ?? '',
-            observer_role: commentInfo.observer_role ?? '',
+            author_role: commentInfo?.observer_role ?? '',
+            author_title: commentInfo?.observer_title ?? '',
+            observer_title: commentInfo?.observer_title ?? '',
+            observer_role: commentInfo?.observer_role ?? '',
             root_author: commentInfo.author,
             root_permlink: commentInfo.permlink,
             root_title: commentInfo.root_title,
@@ -289,6 +292,7 @@ export default memo(function PostReplies(props: Props) {
                         className='flex flex-col mt-2 gap-2'>
                         <EditorInput
                             value={markdown}
+                            users={[commentInfo.author, commentInfo.parent_author, commentInfo.root_author, ...(users ?? [])]}
                             onChange={setMarkdown}
                             onImageUpload={() => { }}
                             onImageInvalid={() => { }}

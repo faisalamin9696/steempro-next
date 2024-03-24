@@ -1,4 +1,3 @@
-import STooltip from '@/components/STooltip';
 import { Button } from '@nextui-org/button'
 import { LuCalendarRange } from 'react-icons/lu';
 
@@ -12,8 +11,8 @@ interface Props {
 export default function ScheduleButton(props: Props) {
     const { buttonText, isLoading, onPress, isDisabled } = props;
 
-    return (<STooltip content={'Schedule post'} >
-        <Button size='sm'
+    return (
+        <Button size='sm' title='Schedule post'
             onPress={onPress}
             color='secondary'
             isDisabled={isDisabled}
@@ -25,7 +24,6 @@ export default function ScheduleButton(props: Props) {
             <LuCalendarRange className='text-2xl' />
             {/* {buttonText ?? 'Schedule'} */}
         </Button>
-    </STooltip>
 
     )
 }

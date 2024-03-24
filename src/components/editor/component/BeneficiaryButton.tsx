@@ -75,7 +75,7 @@ export default memo(function BeneficiaryButton(props: Props) {
         onRemove && onRemove(bene);
     }
 
-    return (<div>
+    return (<div title='Beneficiaries'>
         <Popover isOpen={benePopup}
             onOpenChange={(open) => setBenePopup(open)}
             placement={'top-start'} className=' ' classNames={{

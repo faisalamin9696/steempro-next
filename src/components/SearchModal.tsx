@@ -2,7 +2,7 @@ import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure } from '@nex
 import { Button } from '@nextui-org/button';
 import React, { useMemo, useState } from 'react'
 import { Tab, Tabs } from '@nextui-org/tabs';
-import { Input } from '@nextui-org/react';
+import { Input } from '@nextui-org/input';
 import { awaitTimeout, fetchSds, useAppSelector } from '@/libs/constants/AppFunctions';
 import useSWR from 'swr';
 import LoadingCard from './LoadingCard';

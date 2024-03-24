@@ -353,6 +353,7 @@ export const getPostReplies = async (
 };
 
 
+
 export const getClubStatus = async (username: string) => {
     const date_from = moment().subtract(1, "months").unix();
     const date_to = moment().unix();
@@ -568,5 +569,28 @@ export const getUnreadNotifications = async (
         console.error('Failed to fetch post:', error);
         // throw new Error(error);
         throw new Error(`Error: ${error}`);
+    }
+};
+
+
+export const getAccountsByPrefix = async (
+    prefix: string,
+    observer: string = 'null',
+    fields: string = 'name',
+    limit: number = 7,
+): Promise<AccountExt[]> => {
+    try {
+        const R_API = `/accounts_api/getAccountsByPrefix/${prefix}/${observer}/${fields}/${limit}`;
+        console.log(R_API);
+        const response = await fetchSds<any>(R_API);
+        if (response) {
+            return response as AccountExt[];
+        } else {
+            throw new Error(response);
+        }
+    }
+    catch (error: any) {
+        console.error('Failed to fetch global variables:', error);
+        throw new Error(error);
     }
 };

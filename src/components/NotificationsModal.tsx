@@ -27,7 +27,7 @@ import { getCredentials, getSessionKey } from '@/libs/utils/user';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import { IoMdSettings } from "react-icons/io";
 import Link from 'next/link';
-import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/react';
+import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/modal';
 
 interface Props {
     username?: string | null;
@@ -285,7 +285,7 @@ export default function NotificationsModal(props: Props) {
                         onValueChange={onSearchChange}
                     />
                     <div className="flex gap-3">
-                        <Dropdown  >
+                        <Dropdown >
                             <DropdownTrigger className="hidden sm:flex">
                                 <Button size="sm" variant="flat" isIconOnly>
                                     <IoMdSettings className='text-lg' />

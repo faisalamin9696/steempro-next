@@ -1,5 +1,3 @@
-import STooltip from '@/components/STooltip';
-
 import { Popover, PopoverTrigger, PopoverContent, } from '@nextui-org/popover';
 import { Button } from '@nextui-org/button';
 import { memo, useState } from 'react'
@@ -15,9 +13,8 @@ export default memo(function ClearFormButton(props: Props) {
     const [clearPopup, setClearPopup] = useState(false);
 
 
-    return (<STooltip content={'Clear all'}>
-
-        <div>
+    return (
+        <div title='Clear all'>
             <Popover isOpen={clearPopup}
                 onOpenChange={(open) => setClearPopup(open)}
                 placement={'top-start'} >
@@ -51,6 +48,5 @@ export default memo(function ClearFormButton(props: Props) {
             </Popover>
 
         </div>
-    </STooltip>
     )
 })

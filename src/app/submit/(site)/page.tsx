@@ -371,7 +371,6 @@ export default function SubmitPage(props: Props) {
             <EditorInput value={markdown}
                 isDisabled={isPosting}
                 onChange={setMarkdown}
-                inputClass=' h-full'
                 onImageUpload={() => { }}
                 onImageInvalid={() => { }} />
 

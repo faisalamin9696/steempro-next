@@ -7,11 +7,11 @@ import { FiCornerLeftUp } from 'react-icons/fi';
 
 import { useLogin } from '../../../components/useLogin';
 import moment from 'moment';
-import { Popover, PopoverContent, PopoverTrigger,  } from '@nextui-org/popover';
+import { Popover, PopoverContent, PopoverTrigger, } from '@nextui-org/popover';
 import { Button } from '@nextui-org/button';
 import { Card } from '@nextui-org/card';
 import { Accordion, AccordionItem } from '@nextui-org/accordion';
-import {User} from '@nextui-org/user'
+import { User } from '@nextui-org/user'
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { awaitTimeout, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator';
@@ -73,6 +73,7 @@ export default memo(function ReplyForm(props: Props) {
     const canEdit = isSelf;
     const allowReply = Role.canComment(commentInfo.community, commentInfo.observer_role);
     const canReply = allowReply && commentInfo.depth < 255;
+    const { users } = JSON.parse(commentInfo.json_metadata ?? `{}`) || [];
 
 
     const toggleReply = () => setShowReply(!showReply);
@@ -217,14 +218,16 @@ export default memo(function ReplyForm(props: Props) {
                 is_new: 1
             }
         } else {
+
+
             newComment = {
                 ...commentInfo,
                 link_id: time,
                 created: time,
                 last_update: time,
-
                 ...postData,
                 body: postData.body,
+                json_metadata: JSON.stringify(postData.json_metadata),
                 author: loginInfo.name,
                 depth: commentInfo.depth + 1,
                 payout: 0,
@@ -236,8 +239,8 @@ export default memo(function ReplyForm(props: Props) {
                 author_title: commentInfo.observer_title ?? '',
                 observer_title: commentInfo.observer_title ?? '',
                 observer_role: commentInfo.observer_role ?? '',
-                root_author: rootInfo.author,
-                root_permlink: rootInfo.permlink,
+                root_author: rootInfo?.author ?? '',
+                root_permlink: rootInfo?.permlink ?? '',
                 root_title: commentInfo.root_title,
                 net_rshares: 0,
                 children: 0,
@@ -250,6 +253,7 @@ export default memo(function ReplyForm(props: Props) {
                 cashout_time: moment().add(7, 'days').unix(),
                 is_new: 1
             }
+
         }
 
 
@@ -485,6 +489,7 @@ export default memo(function ReplyForm(props: Props) {
                             {(showReply || showEdit) ?
                                 <div className='flex flex-col mt-2 gap-2'>
                                     <EditorInput
+                                        users={[commentInfo.author, commentInfo.parent_author, commentInfo.root_author, ...(users ?? [])]}
                                         value={markdown}
                                         onChange={setMarkdown}
                                         onImageUpload={() => { }}

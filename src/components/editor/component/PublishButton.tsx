@@ -1,4 +1,3 @@
-import STooltip from '@/components/STooltip';
 import { Button } from '@nextui-org/button';
 
 
@@ -15,9 +14,8 @@ interface Props {
 export default function PublishButton(props: Props) {
     const { buttonText, isLoading, tooltip, onPress, isDisabled } = props;
 
-    return (< STooltip content={tooltip ?? 'Publish post'
-    } >
-        <Button size='sm'
+    return (
+        <Button size='sm' title={tooltip ?? 'Publish post'}
             isDisabled={isDisabled}
             color='success'
             onPress={onPress}
@@ -26,6 +24,5 @@ export default function PublishButton(props: Props) {
             radius='lg' variant='shadow'>
             {buttonText ?? 'Publish'}
         </Button>
-    </STooltip >
     )
 }

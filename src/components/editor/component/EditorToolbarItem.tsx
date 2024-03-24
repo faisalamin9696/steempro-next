@@ -7,12 +7,13 @@ interface ToolbarItemProps {
     onSelect?: (command: string) => void;
     IconType: IconType,
     size?: 'sm' | 'md' | 'lg';
+    isDisabled?: boolean;
 }
 export const ToolbarItem = memo((props: ToolbarItemProps) => {
-    const { tooltip, onSelect, IconType, size } = props
+    const { tooltip, onSelect, IconType, size, isDisabled } = props
     const { description, shortcut } = tooltip;
 
-    return <Button size={size ?? 'sm'}
+    return <Button size={size ?? 'sm'} isDisabled={isDisabled}
         title={description + ` (${shortcut})`}
         isIconOnly className='border-none' onClick={() =>
             onSelect && onSelect('b')}>

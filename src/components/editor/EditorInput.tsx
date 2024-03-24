@@ -3,8 +3,6 @@
 import { useState, useRef, useCallback, memo, useEffect } from 'react';
 import EditorToolbar from './EditorToolbar';
 import { useDropzone } from 'react-dropzone';
-import { Textarea } from "@nextui-org/input";
-import clsx from 'clsx';
 import { KeyboardEvent } from "react";
 import { MAXIMUM_UPLOAD_SIZE, isValidImage } from '@/libs/utils/image';
 import { toast } from 'sonner';
@@ -14,6 +12,12 @@ import { useLogin } from '../useLogin';
 import { getCredentials, getSessionKey } from '@/libs/utils/user';
 import { filesize } from 'filesize';
 import { FaCloudUploadAlt } from "react-icons/fa";
+import ReactTextareaAutocomplete from "@webscopeio/react-textarea-autocomplete";
+import "@webscopeio/react-textarea-autocomplete/style.css";
+import SAvatar from '../SAvatar';
+import LoadingCard from '../LoadingCard';
+import './style.scss';
+import { getAccountsByPrefix } from '@/libs/steem/sds';
 
 const tableTemplete = `|	Column 1	|	Column 2	|	Column 3	|
 |	------------	|	------------	|	------------	|
@@ -28,12 +32,12 @@ interface EditorProps {
         insertionStatus: (image: any, imageName: string) => void,
         setImageState: () => void) => void,
     onImageInvalid: () => void,
-    inputClass?: string;
     rows?: number;
     isDisabled?: boolean;
+    users?: string[];
 }
 
-
+let timeout: any = null;
 let imagesToUpload: { file: any; temporaryTag: string; }[] = [];
 
 export default memo(function EditorInput(props: EditorProps) {
@@ -42,24 +46,15 @@ export default memo(function EditorInput(props: EditorProps) {
         onImageUpload,
         onImageInvalid,
         onChange,
-        inputClass,
+        users,
         rows,
         isDisabled
     } = props;
 
-    const { authenticateUser, credentials, isAuthorized } = useLogin();
-    const [imageState, setImageState] = useState(
-        {
-            imageUploading: false,
-            dropzoneActive: false,
-        }
-    );
+    const { authenticateUser, isAuthorized } = useLogin();
     const postInput = useRef<any>(null);
-    const { dropzoneActive } = imageState;
     const postBodyRef = useRef<HTMLDivElement>(null);
     let [imagesUploadCount, setImagesUploadCount] = useState(0);
-
-
 
     const onDrop = useCallback((acceptedFiles: any[], rejectedFiles: any[]) => {
 
@@ -118,12 +113,13 @@ export default memo(function EditorInput(props: EditorProps) {
         },
     });
 
+
     useEffect(() => {
         if (postInput) {
             postInput?.current?.addEventListener('paste', handlePastedImage);
         }
 
-        return () => postInput?.current?.removeEventListener('paste');
+        return () => postInput?.current?.removeEventListener('paste', handlePastedImage);
     }, []);
 
 
@@ -159,6 +155,7 @@ export default memo(function EditorInput(props: EditorProps) {
 
     function setValue(newValue: string, start?: number, end?: number) {
         onChange(newValue);
+
         if (start && end) {
             setTimeout(() => {
                 postInput?.current?.setSelectionRange(start, end);
@@ -179,6 +176,7 @@ export default memo(function EditorInput(props: EditorProps) {
             value.substring(endPos, value.length);
 
         setValue(newValue, startPos + deltaStart, endPos + deltaEnd);
+
     }
 
     const shortcutHandler = {
@@ -342,7 +340,7 @@ export default memo(function EditorInput(props: EditorProps) {
             } else {
                 if (responseData.imgMd) {
                     const newValue = oldValue.replace(responseData.url, responseData.imgMd);
-                    setValue(newValue);
+                    setValue(newValue, startPos + newValue.length, startPos + newValue.length);
 
                 }
 
@@ -448,6 +446,17 @@ export default memo(function EditorInput(props: EditorProps) {
         });
     }
 
+
+    const SuggestionItem = ({ name }: { name: string }) => {
+        return (
+            <div className="flex flex-row items-center p-1 rounded-lg gap-2" >
+                <SAvatar username={name} size='xs' />
+                <p className='text-sm'>{name}</p>
+            </div>
+        );
+    }
+
+
     return (
         <div  {...getRootProps()} >
 
@@ -472,32 +481,58 @@ export default memo(function EditorInput(props: EditorProps) {
                         </div>
                     </div>}
 
-                <Textarea
-                    ref={postInput}
-                    label={<EditorToolbar
-                        onSelect={insertCode}
-                        className={' mb-4'} />}
-                    radius='sm'
-                    isDisabled={isDisabled}
-                    variant='flat'
-                    placeholder={'Write something...'}
-                    disableAnimation
-                    disableAutosize
-                    className='text-default-900 '
-                    fullWidth
-                    height={'100%'}
-                    classNames={{
-                        mainWrapper: 'w-full ',
-                        base: clsx("h-full ", inputClass),
-                        input: clsx("resize-y", inputClass),
-                        label: 'md-toolbar'
-                    }}
-                    value={value}
-                    onValueChange={handleChange}
-                    isMultiline
-                    rows={rows ?? 10}
+                <div className='flex flex-col gap-2'>
+                    <EditorToolbar
+                        onSelect={insertCode} />
 
-                />
+                    <ReactTextareaAutocomplete
+                        style={{ fontSize: 14 }}
+                        innerRef={ref => { postInput.current = ref }}
+                        value={value}
+                        dropdownStyle={{ zIndex: 14, }}
+                        containerStyle={{}}
+                        movePopupAsYouType
+                        disabled={isDisabled}
+                        placeholder='Write something...'
+                        rows={rows ?? 8}
+                        className="w-full focus-visible:outline-none p-2 rounded-lg bg-default-100 hover:bg-default-200 focus:bg-default-100"
+                        onChange={e => handleChange(e.target.value)}
+                        loadingComponent={() => <LoadingCard />}
+                        minChar={0}
+                        trigger={{
+                            "@": {
+                                dataProvider: async (token) => {
+                                    clearTimeout(timeout);
+                                    if (!users && token?.length <= 2) {
+                                        return []
+                                    }
+
+                                    return new Promise((resolve, reject) => {
+                                        timeout = setTimeout(async () => {
+                                            if (token?.length <= 2) {
+                                                const uniqueObjectArray = Object.values((users ?? []).reduce((acc, name) => ({ ...acc, [name]: { name } }), {})) as any;
+                                                resolve(uniqueObjectArray);
+                                            } else {
+                                                let suggestions = await getAccountsByPrefix(token.toLowerCase());
+                                                resolve(suggestions);
+                                            }
+                                        }, 300);
+                                    });
+                                },
+
+                                component: (item: { selected: boolean, entity: any }) => {
+
+                                    return <SuggestionItem name={item.entity.name} />
+
+                                },
+                                output: (item: any, trigger) => `@${item.name}`
+                            }
+                        }}
+                    />
+
+                </div>
+
+
             </div>
             <input style={{ width: 0, height: 0 }} {...getInputProps()} name="images"
                 hidden aria-hidden

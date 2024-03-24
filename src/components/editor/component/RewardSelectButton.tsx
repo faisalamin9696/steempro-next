@@ -24,7 +24,7 @@ export default memo(function RewardSelectButton(props: Props) {
     const [rewardPopup, setRewardPopup] = useState(false);
 
 
-    return (<div>
+    return (<div title='Payout reward type'>
         <Popover isOpen={rewardPopup} onOpenChange={(open) => setRewardPopup(open)}
             placement={'top-start'} className='' classNames={{
                 content: 'bg-teal-600'

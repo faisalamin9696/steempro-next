@@ -100,7 +100,7 @@ export default function AuthModal(props: Props) {
         const credentials = getCredentials(password);
         if (!credentials?.key) {
             toast.error('Invalid credentials');
-
+            setLoading(false);
             return
         }
 

@@ -4,7 +4,7 @@ import { WitnessAccount, defaultNotificationFilters } from '@/libs/constants/App
 import { fetchSds, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import { saveSteemGlobals } from '@/libs/redux/reducers/SteemGlobalReducer';
-import { getAuthorExt, getSteemGlobal } from '@/libs/steem/sds';
+import { getAuthorExt } from '@/libs/steem/sds';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next13-progressbar';
 import React, { useEffect, useState } from 'react'
@@ -97,7 +97,6 @@ export default function AppWrapper({ children }: { children: React.ReactNode }) 
 
     useEffect(() => {
         if (unreadData) {
-            console.log(1122, 777, loginInfo.name)
             dispatch(saveLoginHandler({ ...loginInfo, unread_count: unreadData ?? 0 }));
         }
 

@@ -1,0 +1,32 @@
+.rta__autocomplete {
+    min-width: 0 !important;
+    padding: 4px;
+    @apply bg-white dark:bg-background/90 rounded-lg z-10 shadow-md animate-appearance-in max-h-48 overflow-y-auto overflow-x-hidden w-48;
+
+    .rta__list {
+        border: none;
+        @apply flex flex-col gap-2 bg-transparent shadow-none text-default-900 max-h-48 w-48;
+
+        .rta__item {
+            border: none;
+            padding: 2px;
+
+            .rta__entity {
+                background: transparent;
+            }
+
+            .rta__entity--selected {
+                @apply bg-black/10 dark:bg-white/20 rounded-lg text-default-900;
+            }
+        }
+
+
+    }
+
+    .p-mention-items {
+        @apply flex flex-col gap-2;
+    }
+
+
+
+}
