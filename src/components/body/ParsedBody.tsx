@@ -34,7 +34,7 @@ export function ParsedBody({ body, isNsfw }: { body: string, isNsfw?: boolean })
                         className='open-button  absolute top-0 right-0 m-1'>
                         <MdOpenInNew className='text-xl' />
                     </Button>
-                
+
                     {/* <NsfwOverlay /> */}
                 </div>
 
@@ -52,15 +52,10 @@ export function ParsedBody({ body, isNsfw }: { body: string, isNsfw?: boolean })
             }
 
             if (domNode?.name === 'table') {
-
                 // Render the table content using domToReact
-                return <div className='markdown-body table-scrollable'>
-                    <table className={`w-full text-sm text-left rtl:text-right shadow-md sm:rounded-lg`}>
-                        {domToReact(domNode.children)}
-                    </table>
-
-
-                </div>;
+                return <table className='markdown-body table-scrollable'>
+                    {domToReact(domNode.children)}
+                </table>;
             }
 
         }

@@ -29,11 +29,7 @@
   table {
 
     th {
-      position: sticky;
-      top: 0px;
       padding: 8px;
-
-
       @apply backdrop-blur-[1px] bg-gray-200 dark:bg-gray-800
     }
 
@@ -47,7 +43,7 @@
 
     tbody {
       tr {
-        @apply hover:bg-gray-200 dark:hover:bg-gray-600 odd:bg-white odd:dark:bg-gray-900 even:bg-gray-100 even:dark:bg-gray-800 border-b dark:border-gray-700;
+        @apply odd:bg-white odd:dark:bg-gray-900 even:bg-gray-100 even:dark:bg-gray-800;
       }
 
     }
@@ -56,7 +52,7 @@
 
 
   .table-scrollable {
-    width: 100%;
+    min-width: 100% !important;
     overflow-x: auto;
     overflow-y: auto;
   }

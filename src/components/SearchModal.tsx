@@ -24,22 +24,24 @@ interface Props {
     isOpen: boolean;
     onOpenChange: (isOpen: boolean) => void;
 }
+const SPECIAL_TERMS = ['NOT', 'AND', 'OR'];
+
 export default function SearchModal(props: Props) {
 
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const [searchType, setSearchType] = useState<SearchTypes>('posts');
-    const [searchText, setSearchText] = useState('');
+    let [searchText, setSearchText] = useState('');
     const [searchAuthor, setSearchAuthor] = useState('');
     const [searchTags, setSearchTags] = useState('');
 
-    const filters = `any/${loginInfo.name || null}/${FeedBodyLength}/time/DESC/25/1000`;
-    const POST_BY_TEXT_URL = `/content_search_api/getPostsByText/${searchText}/${filters}`;
-    const POST_BY_TAGS_TEXT_URL = `/content_search_api/getPostsByTagsText/${searchTags}/${searchText}/${filters}`;
-    const POST_BY_AUTHOR_TEXT_URL = `/content_search_api/getPostsByAuthorText/${searchAuthor}/${searchText}/${filters}`;
+    const filters = `any/${loginInfo.name || null}/${FeedBodyLength}/time/DESC/100`;
+    const POST_BY_TEXT_URL = `/content_search_api/getPostsByText/"${searchText}"/${filters}`;
+    const POST_BY_TAGS_TEXT_URL = `/content_search_api/getPostsByTagsText/${searchTags}/"${searchText}"/${filters}`;
+    const POST_BY_AUTHOR_TEXT_URL = `/content_search_api/getPostsByAuthorText/${searchAuthor}/"${searchText}"/${filters}`;
 
-    const COMMENTS_BY_TEXT_URL = `/content_search_api/getCommentsByText/${searchText}/${filters}`;
+    const COMMENTS_BY_TEXT_URL = `/content_search_api/getCommentsByText/"${searchText}"/${filters}`;
     const COMMENTS_BY_AUTHOR_TEXT_URL = `/content_search_api/getCommentsByAuthorText/${searchAuthor}/${filters}`;
-    const PEOPLE_URL = `/accounts_api/getAccountsByPrefix/${searchText}/${loginInfo.name || 'null'}/name,reputation,posting_json_metadata,created`;
+    const PEOPLE_URL = `/accounts_api/getAccountsByPrefix/"${searchText}"/${loginInfo.name || 'null'}/name,reputation,posting_json_metadata,created`;
 
     const [url, setUrl] = useState<string | undefined>();
     const [rows, setRows] = useState<any[]>([]);
@@ -54,7 +56,9 @@ export default function SearchModal(props: Props) {
     }, [data]);
 
 
+
     function getUrl() {
+
         switch (searchType) {
             case 'posts':
                 if (searchText && searchAuthor)
@@ -122,7 +126,7 @@ export default function SearchModal(props: Props) {
     }
 
 
-    useMemo(() => { 
+    useMemo(() => {
         handleSearch();
     }, [searchType]);
 
