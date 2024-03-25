@@ -128,7 +128,7 @@ export default memo(function CommunitySelectButton(props: Props) {
                 className='text-default-500'
                 radius='full' variant='light'
                 isDisabled={isDisabled}
-                onPress={() => {
+                onClick={() => {
                     handleOnClear && handleOnClear();
                     onSelectCommunity(undefined);
                 }}>

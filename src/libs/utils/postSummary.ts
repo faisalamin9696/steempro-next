@@ -3,6 +3,7 @@ import { Remarkable } from 'remarkable';
 
 const remarkable = new Remarkable({ html: true });
 import textEllipsis from '@/libs/utils/ellibsis';
+import { FeedBodyLength } from '../constants/AppConstants';
 
 
 function decodeEntities(body: string): string {
@@ -20,7 +21,7 @@ export const postSummary = (text: string): string => {
         return ''
     }
 
-    return textEllipsis(body, 250)
+    return textEllipsis(body, FeedBodyLength)
 
 };
 

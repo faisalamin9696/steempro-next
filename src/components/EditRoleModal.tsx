@@ -185,12 +185,12 @@ export default function EditRoleModal(props: Props) {
                         <ModalFooter>
                             <Button color="danger"
                                 isDisabled={isPending}
-                                variant="light" onPress={onClose}>
+                                variant="light" onClick={onClose}>
                                 Close
                             </Button>
                             <Button color="primary"
                                 isDisabled={isPending} isLoading={isPending}
-                                onPress={handleUpdate}>
+                                onClick={handleUpdate}>
                                 Update
                             </Button>
                         </ModalFooter>

@@ -10,6 +10,7 @@ import CompactPost from '@/components/CompactPost';
 import { fetchSds, awaitTimeout, useAppSelector } from '@/libs/constants/AppFunctions';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import { GrBlog } from "react-icons/gr";
+import { FeedBodyLength } from '@/libs/constants/AppConstants';
 
 
 export default function PostStart() {
@@ -19,7 +20,7 @@ export default function PostStart() {
   const loginInfo = useAppSelector(state => state.loginReducer.value);
 
 
-  const URL = `/feeds_api/getPostsByAuthor/${username}/${loginInfo.name || 'null'}/250/5/${offset}`
+  const URL = `/feeds_api/getPostsByAuthor/${username}/${loginInfo.name || 'null'}/${FeedBodyLength}/5/${offset}`
   const { data, mutate, isLoading, isValidating } = useSWR(muting ? null : URL, fetchSds<Feed[]>)
 
   async function handlePromotionRefresh() {
@@ -46,7 +47,7 @@ export default function PostStart() {
               variant='light'
               color='default'
               size='sm'
-              onPress={handlePromotionRefresh}
+              onClick={handlePromotionRefresh}
               isIconOnly>
               <IoIosRefresh
                 className='text-lg' />
@@ -71,7 +72,7 @@ export default function PostStart() {
 // const { data, error, mutate, isLoading, isValidating } = useSWR('annoucements', getAnnouncements);
 // const annoucements = data?.['posts'];
 
-// if (error) return <ErrorCard message={error?.message} onPress={mutate} />
+// if (error) return <ErrorCard message={error?.message} onClick={mutate} />
 
 
 // function handleRefresh() {
@@ -91,7 +92,7 @@ export default function PostStart() {
 //         color='default'
 //         variant='light'
 //         size='sm'
-//         onPress={handleRefresh}
+//         onClick={handleRefresh}
 //         isIconOnly>
 //         <IoIosRefresh
 //           className='text-lg' />

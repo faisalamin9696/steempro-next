@@ -79,13 +79,13 @@ export default function AccountsModal(props: Props) {
                                     </ModalBody>
                                     <ModalFooter>
                                         <Button color="primary"
-                                            onPress={() => {
+                                            onClick={() => {
                                                 onClose();
                                                 authenticateUser(true);
                                             }}>
                                             Add Account
                                         </Button>
-                                        <Button color="danger" variant="light" onPress={onClose}>
+                                        <Button color="danger" variant="light" onClick={onClose}>
                                             Close
                                         </Button>
 

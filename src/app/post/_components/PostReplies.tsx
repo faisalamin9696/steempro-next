@@ -15,11 +15,10 @@ import ClearFormButton from '@/components/editor/component/ClearFormButton';
 import PublishButton from '@/components/editor/component/PublishButton';
 import moment from 'moment';
 import { toast } from 'sonner';
-import { AppStrings } from '@/libs/constants/AppStrings';
 import { addCommentHandler } from '@/libs/redux/reducers/CommentReducer';
 import { publishContent } from '@/libs/steem/condenser';
 import { validateCommentBody, generateReplyPermlink, makeJsonMetadataReply } from '@/libs/utils/editor';
-import { checkPromotionText, getCredentials, getSessionKey } from '@/libs/utils/user';
+import { getCredentials, getSessionKey } from '@/libs/utils/user';
 import { useLogin } from '@/components/useLogin';
 import secureLocalStorage from 'react-secure-storage';
 import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator';
@@ -231,10 +230,6 @@ export default memo(function PostReplies(props: Props) {
 
             }
 
-            // checkin if the promotion text already exist
-            if (!checkPromotionText(markdown))
-                postData.body = postData.body + '\n\n' + AppStrings.promotion_text;
-
             postingMutation.mutate({ postData, options: null, key: credentials.key });
 
 
@@ -251,11 +246,16 @@ export default memo(function PostReplies(props: Props) {
     return (
         <div className='p-1' id='post-replies'>
 
-            <div className='flex justify-end'>
+            <div className='flex justify-end items-center gap-2'>
+
+                {(repliesMutation.isSuccess && commentInfo.children === 0) ?
+                    <p className=' text-default-600'>Be the first to</p>
+
+                    : null}
                 <Button size='sm' variant='flat'
                     color='secondary'
                     radius='full'
-                    onPress={toggleReply}
+                    onClick={toggleReply}
                     isDisabled={showReply}
                     className='text-tiny min-h-0'>
                     Reply
@@ -271,21 +271,11 @@ export default memo(function PostReplies(props: Props) {
                     <div className='flex flex-row gap-2 items-center justify-center'>
 
                         <Button color='default' variant='flat' className='self-center'
-                            onPress={handleLoadComments}
+                            onClick={handleLoadComments}
                             isLoading={isLoading}>Load comments</Button>
 
                     </div>}
 
-                {(repliesMutation.isSuccess && commentInfo.children === 0) ?
-                    <div className='flex flex-1 self-center items-center gap-1'>
-                        <p>Be the first to</p>
-                        <Button size='sm' variant='light'
-                            onPress={toggleReply}
-
-                            className='text-tiny min-w-0 min-h-0'>
-                            Reply
-                        </Button>
-                    </div> : null}
 
                 {showReply &&
                     <div
@@ -296,7 +286,7 @@ export default memo(function PostReplies(props: Props) {
                             onChange={setMarkdown}
                             onImageUpload={() => { }}
                             onImageInvalid={() => { }}
-                            rows={5} />
+                            rows={6} />
 
                         <div className='flex justify-between'>
                             <ClearFormButton
@@ -306,7 +296,7 @@ export default memo(function PostReplies(props: Props) {
 
                                 {<Button radius='full'
                                     size='sm'
-                                    onPress={() => {
+                                    onClick={() => {
 
                                         toggleReply();
 
@@ -316,7 +306,7 @@ export default memo(function PostReplies(props: Props) {
 
                                 <PublishButton
                                     isDisabled={isPosting}
-                                    onPress={handlePublish}
+                                    onClick={handlePublish}
                                     isLoading={isPosting}
                                     tooltip=''
                                     buttonText={'Send'} />
@@ -348,7 +338,7 @@ export default memo(function PostReplies(props: Props) {
                     hasMore={((repliesMutation?.data?.length ?? 0) > limit)}
                     loader={<div className='flex justify-center items-center'>
                         <Button color='default' variant='flat' className='self-center'
-                            onPress={handleLoadMore} isLoading isDisabled>Loading...</Button>
+                            onClick={handleLoadMore} isLoading isDisabled>Loading...</Button>
                     </div>}
                     endMessage={
                         repliesMutation.isSuccess && <EmptyList />

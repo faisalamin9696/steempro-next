@@ -9,12 +9,12 @@ import FeedPatternSwitch from '@/components/FeedPatternSwitch';
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import clsx from 'clsx';
 import ProfilePostsMainTab from '../(tabs)/postsMain/page';
-import ProfileCommunitiesTab from '../(tabs)/communities/page';
 import ProfileSettingsTab from '../(tabs)/settings/page';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import { addProfileHandler } from '@/libs/redux/reducers/ProfileReducer';
 import { useRouter } from 'next13-progressbar';
 import { usePathname } from 'next/navigation';
+import ProfileCommunitiesMainTab from '../(tabs)/CommunitiesMain/page';
 
 export default function ProfilePage({ data }: { data: AccountExt }) {
     let { username, category } = usePathnameClient();
@@ -45,7 +45,7 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
     const profileTabs = [
         { title: 'Blogs', key: 'blogs', children: <ProfileBlogsTab /> },
         { title: 'Posts', key: 'posts', children: <ProfilePostsMainTab /> },
-        { title: 'Communities', key: 'communities', children: <ProfileCommunitiesTab /> },
+        { title: 'Communities', key: 'communities', children: <ProfileCommunitiesMainTab /> },
         { title: 'Wallet', key: 'wallet', children: <ProfileWalletTab data={isSelf ? loginInfo : profileInfo} /> },
     ];
 

@@ -144,7 +144,10 @@ export default function SubmitPage(props: Props) {
 
                 if (!checkPromotionText(body))
                     body = body + '\n\n' + AppStrings.promotion_text;
-                handleUpdateSuccess && handleUpdateSuccess({ ...oldPost, ...variables.postData, body: body });
+                handleUpdateSuccess && handleUpdateSuccess({
+                    ...oldPost, ...variables.postData, body: body, title: variables.postData.title,
+                    json_metadata: variables.postData.json_metadata
+                });
                 toast.success('Updated');
                 return
 
@@ -324,7 +327,7 @@ export default function SubmitPage(props: Props) {
         !oldPost && '1md:justify-evenly 1md:items-start 1md:flex-row ')} >
 
         <div className={clsx(`flex flex-col w-full  gap-2`,
-            !oldPost && '1md:w-[50%] 1md:float-start 1md:sticky 1md:self-start 1md:top-[70px] px-1')}>
+            !oldPost && '1md:w-[50%] 1md:float-start 1md:sticky 1md:z-[1]  1md:self-start 1md:top-[70px] px-1')}>
 
             <CommunitySelectButton
                 isDisabled={isPosting}
@@ -353,6 +356,7 @@ export default function SubmitPage(props: Props) {
                     input: 'font-bold text-md',
                     inputWrapper: 'h-8'
                 }}
+
                 isDisabled={isPosting}
                 placeholder={'Title'} maxLength={255} />
 
@@ -407,7 +411,7 @@ export default function SubmitPage(props: Props) {
                     {/* <ScheduleButton isDisabled={isEdit} onPress={handleSchedule} /> */}
 
                     {isEdit && <Button size='sm'
-                        radius='full' onPress={() => {
+                        radius='full' onClick={() => {
                             handleUpdateCancel && handleUpdateCancel();
                         }}>
                         Cancel
@@ -417,7 +421,7 @@ export default function SubmitPage(props: Props) {
                         isDisabled={isPosting}
                         isLoading={isPosting}
                         buttonText={isEdit ? 'Update' : undefined}
-                        onPress={handlePublish} />
+                        onClick={handlePublish} />
 
                 </div>
 

@@ -29,7 +29,7 @@ export function ParsedBody({ body, isNsfw }: { body: string, isNsfw?: boolean })
                         isIconOnly
                         title='Open image'
                         variant='flat'
-                        onPress={() => handleOpenImage(domNode?.attribs?.src)}
+                        onClick={() => handleOpenImage(domNode?.attribs?.src)}
                         radius='full'
                         className='open-button  absolute top-0 right-0 m-1'>
                         <MdOpenInNew className='text-xl' />

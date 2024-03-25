@@ -187,14 +187,14 @@ const PowerDownModal = (props: Props): JSX.Element => {
 
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="danger" variant="light" onPress={onClose}
+                        <Button color="danger" variant="light" onClick={onClose}
                             isDisabled={withdrawMutation.isPending}>
                             Cancel
                         </Button>
 
 
 
-                        <Button color="primary" onPress={handleWithdraw}
+                        <Button color="primary" onClick={handleWithdraw}
                             isLoading={withdrawMutation.isPending}
                             isDisabled={!confirmCheck || withdrawMutation.isPending}>
                             {(cancel ? 'Cancel ' : '') + 'Power Down'}

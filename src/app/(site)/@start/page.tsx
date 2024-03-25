@@ -22,11 +22,10 @@ export default function HomeStart() {
     const annoucements = data?.['posts'];
     const loginInfo = useAppSelector(state => state.loginReducer.value);
 
-    const URL = `/communities_api/getCommunitiesByRank/${loginInfo.name || null}`;
+    const URL = `/communities_api/getCommunitiesByRank/${loginInfo.name || null}/50`;
     let { data: allCommunities, isLoading: isCommunitiesLoading,
         error: communitiesError, mutate: mutateCommunities } = useSWR(URL, fetchSds<Community[]>);
 
-    const index = allCommunities?.findIndex(account => account.account === ('hive-160125'));
 
     const [query, setQuery] = useState('');
     const [filteredData, setFilteredData] = useState<Community[]>([]);
@@ -34,18 +33,8 @@ export default function HomeStart() {
     const [loadingMore, setLoadingMore] = useState(false);
 
 
-    if (index && index !== -1) {
-        const officialCommunity = allCommunities?.splice(index, 1)[0];
-        if (officialCommunity)
-            allCommunities?.unshift(officialCommunity);
-    }
-
     if (error) return
 
-
-    // function handleRefresh() {
-    //     mutate();
-    // }
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -94,7 +83,7 @@ export default function HomeStart() {
                 isIconOnly
                 isLoading={loadingMore}
                 isDisabled
-                onPress={handleEndReached} ></Button>
+                onClick={handleEndReached} ></Button>
         </div>)
     }
 
@@ -111,7 +100,7 @@ export default function HomeStart() {
                         color='default'
                         variant='light'
                         size='sm'
-                        onPress={handleRefresh}
+                        onClick={handleRefresh}
                         isIconOnly>
                         <IoIosRefresh
                             className='text-lg' />
@@ -119,7 +108,7 @@ export default function HomeStart() {
                 </div>
 
                 {isLoading || isValidating ? <LoadingCard /> :
-                    error ? <ErrorCard message={error?.message} onPress={mutate} /> :
+                    error ? <ErrorCard message={error?.message} onClick={mutate} /> :
                         <div className='flex flex-col gap-4'>
                             {annoucements?.map(annoucement => {
                                 return (<div key={annoucement.authPerm}
@@ -143,12 +132,12 @@ export default function HomeStart() {
                     font-bold mb-4 z-10 sticky top-0 backdrop-blur-lg`}>
                     <HiMiniUserGroup className="text-primary text-xl" />
 
-                    <p>{'Communities'}</p>
+                    <Link href={'/communities'}>{'Top Communities'}</Link>
                     {/* <Button radius='full'
                         color='default'
                         variant='light'
                         size='sm'
-                        onPress={handleRefresh}
+                        onClick={handleRefresh}
                         isIconOnly>
                         <IoIosRefresh
                             className='text-lg' />
@@ -156,7 +145,7 @@ export default function HomeStart() {
                 </div>
 
                 {isCommunitiesLoading ? <LoadingCard /> :
-                    communitiesError ? <ErrorCard message={communitiesError?.message} onPress={mutateCommunities} /> :
+                    communitiesError ? <ErrorCard message={communitiesError?.message} onClick={mutateCommunities} /> :
                         <ScrollShadow id="scrollableDiv"
                             style={{
                                 height: 280,

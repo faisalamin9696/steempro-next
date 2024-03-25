@@ -15,6 +15,7 @@ import { PiUserSwitchFill } from "react-icons/pi";
 import { RiUserStarFill } from "react-icons/ri";
 import { getCredentials, getSessionKey, removeCredentials } from '@/libs/utils/user';
 import { toast } from 'sonner';
+import { HiMiniUserGroup } from 'react-icons/hi2';
 
 interface Props {
     onItemClick?: () => void;
@@ -50,7 +51,7 @@ export default function DrawerItems(props: Props) {
 
     return (<div className="flex flex-col gap-4 w-full h-full justify-between overflow-y-auto scrollbar-thin">
         <>
-          
+
 
             <div className='flex flex-col gap-2 h-full text-default-600'>
                 {isLogin() && <Button className='w-full justify-start text-inherit '
@@ -63,7 +64,7 @@ export default function DrawerItems(props: Props) {
 
                 {isLogin() && <Button className='w-full justify-start text-inherit '
                     variant='light'
-                    onPress={() => {
+                    onClick={() => {
                         onAccountSwitch && onAccountSwitch();
                         onItemClick && onItemClick();
                     }
@@ -78,6 +79,14 @@ export default function DrawerItems(props: Props) {
                     onClick={onItemClick}
                     startContent={<IoMdSettings className='text-xl' />}>
                     Settings
+                </Button>
+
+                <Button variant='light'
+                    className='w-full justify-start text-inherit '
+                    as={Link} href={`/communities`}
+                    onClick={onItemClick}
+                    startContent={<HiMiniUserGroup className='text-xl' />}>
+                    Communities
                 </Button>
 
                 <Button variant='light'
@@ -109,7 +118,7 @@ export default function DrawerItems(props: Props) {
                 {isLogin() &&
                     < Button className='w-full justify-start text-danger '
                         variant='light'
-                        onPress={() => {
+                        onClick={() => {
                             authenticateUser();
                             if (!isAuthorized()) {
                                 return
@@ -134,10 +143,10 @@ export default function DrawerItems(props: Props) {
                             <p>Do you really want to logout {loginInfo.name}?</p>
                         </ModalBody>
                         <ModalFooter>
-                            <Button color="primary" variant="light" onPress={onClose}>
+                            <Button color="primary" variant="light" onClick={onClose}>
                                 Close
                             </Button>
-                            <Button color="danger" onPress={handleLogout}>
+                            <Button color="danger" onClick={handleLogout}>
                                 Logout
                             </Button>
                         </ModalFooter>

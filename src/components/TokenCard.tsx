@@ -32,7 +32,7 @@ export const TokenCard = (props: TokenCardProps) => {
                     <div className="flex flex-row gap-1 items-center" >
                         <p className='text-md font-bold'>{title}</p>
 
-                        <Button radius="full" isIconOnly size="sm" variant="light" onPress={handleInfo}>
+                        <Button radius="full" isIconOnly size="sm" variant="light" onClick={handleInfo}>
                             <BsInfoCircle
                                 className="text-sm" />
                         </Button>

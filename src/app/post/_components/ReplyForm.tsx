@@ -27,7 +27,7 @@ import ClearFormButton from '@/components/editor/component/ClearFormButton';
 import PublishButton from '@/components/editor/component/PublishButton';
 import { getResizedAvatar } from '@/libs/utils/image';
 import { createPatch, extractMetadata, generateReplyPermlink, makeJsonMetadata, makeJsonMetadataReply, validateCommentBody } from '@/libs/utils/editor';
-import { checkPromotionText, getCredentials, getSessionKey, getSettings } from '@/libs/utils/user';
+import { getCredentials, getSessionKey, getSettings } from '@/libs/utils/user';
 import secureLocalStorage from 'react-secure-storage';
 import { Role } from '@/libs/utils/community';
 import { allowDelete } from '@/libs/utils/StateFunctions';
@@ -207,9 +207,6 @@ export default memo(function ReplyForm(props: Props) {
         if (showEdit) {
             let body = markdown;
 
-            if (!checkPromotionText(body))
-                body = body + '\n\n' + AppStrings.promotion_text;
-
             newComment = {
                 ...postData,
                 ...commentInfo,
@@ -344,10 +341,6 @@ export default memo(function ReplyForm(props: Props) {
 
                 }
 
-                // checkin if the promotion text already exist
-                if (!checkPromotionText(markdown))
-                    postData.body = postData.body + '\n\n' + AppStrings.promotion_text;
-
 
                 const cbody = markdown.replace(/[\x00-\x09\x0B-\x0C\x0E-\x1F\x7F-\x9F]/g, "");
 
@@ -355,8 +348,7 @@ export default memo(function ReplyForm(props: Props) {
                 if (showEdit) {
                     const oldComment = commentInfo;
                     let newBody = cbody;
-                    if (!checkPromotionText(newBody))
-                        newBody = newBody + '\n\n' + AppStrings.promotion_text;
+
                     const patch = createPatch(oldComment?.body, newBody?.trim());
                     if (patch && patch.length < Buffer.from(oldComment?.body, "utf-8").length) {
                         newBody = patch;
@@ -414,7 +406,7 @@ export default memo(function ReplyForm(props: Props) {
                             <>
                                 {canReply &&
                                     <Button size='sm'
-                                        onPress={() => { toggleReply() }}
+                                        onClick={() => { toggleReply() }}
                                         variant='light'
                                         isDisabled={showReply || showEdit}
                                         className='text-tiny min-w-0 min-h-0'>
@@ -424,7 +416,7 @@ export default memo(function ReplyForm(props: Props) {
 
                                 {canEdit &&
                                     <Button size='sm'
-                                        onPress={() => { toggleEdit() }}
+                                        onClick={() => { toggleEdit() }}
                                         variant='light'
                                         isDisabled={showReply || showEdit}
                                         className='text-tiny min-w-0 min-h-0'>
@@ -453,10 +445,10 @@ export default memo(function ReplyForm(props: Props) {
                                                 </div>
 
                                                 <div className="text-tiny flex mt-2 space-x-2">
-                                                    <Button onPress={() => setDeletePopup(false)}
+                                                    <Button onClick={() => setDeletePopup(false)}
                                                         size='sm' color='default'>No</Button>
                                                     <Button size='sm' color='danger' variant='solid'
-                                                        onPress={() => {
+                                                        onClick={() => {
                                                             setDeletePopup(false);
                                                             handleDelete();
                                                         }}>YES</Button>
@@ -472,7 +464,7 @@ export default memo(function ReplyForm(props: Props) {
                                 {canMute &&
                                     <Button size='sm'
                                         isLoading={unmuteMutation.isPending}
-                                        onPress={() => { handleMute() }}
+                                        onClick={() => { handleMute() }}
                                         variant='light'
                                         isDisabled={unmuteMutation.isPending || showReply || showEdit}
                                         className='text-tiny min-w-0 min-h-0'>
@@ -494,7 +486,7 @@ export default memo(function ReplyForm(props: Props) {
                                         onChange={setMarkdown}
                                         onImageUpload={() => { }}
                                         onImageInvalid={() => { }}
-                                        rows={5} />
+                                        rows={6} />
 
                                     <div className='flex justify-between'>
                                         <ClearFormButton
@@ -504,7 +496,7 @@ export default memo(function ReplyForm(props: Props) {
 
                                             {<Button radius='full'
                                                 size='sm'
-                                                onPress={() => {
+                                                onClick={() => {
                                                     if (showReply)
                                                         toggleReply();
                                                     else toggleEdit();
@@ -515,7 +507,7 @@ export default memo(function ReplyForm(props: Props) {
 
                                             <PublishButton
                                                 isDisabled={isPosting}
-                                                onPress={handlePublish}
+                                                onClick={handlePublish}
                                                 isLoading={isPosting}
                                                 tooltip=''
                                                 buttonText={showEdit ? 'Update' : 'Send'} />

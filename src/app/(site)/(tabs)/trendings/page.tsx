@@ -1,6 +1,7 @@
 "use client"
 
 import FeedList from '@/components/comment/FeedList';
+import { FeedBodyLength } from '@/libs/constants/AppConstants';
 import { useAppSelector } from '@/libs/constants/AppFunctions';
 import { FeedTypes } from '@/libs/steem/sds';
 import React from 'react'
@@ -10,7 +11,7 @@ export default function HomeTrendingsTab() {
 
 
     function getEndPoint(feedType: FeedTypes,
-        bodyLength = 250,
+        bodyLength = FeedBodyLength,
         limit = 1000,
         offset = 0) {
         const URL = `/feeds_api/get${feedType ??

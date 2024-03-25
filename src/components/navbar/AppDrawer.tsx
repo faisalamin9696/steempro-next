@@ -63,7 +63,7 @@ export default memo(function AppDrawer(props: Props) {
                     </div>
 
                     <Button variant='light'
-                        isIconOnly onPress={toggleDrawer}
+                        isIconOnly onClick={toggleDrawer}
                         radius='full' size='sm'>
                         <MdClose className='text-lg' />
                     </Button>

@@ -156,13 +156,13 @@ export default memo(function CommentFooter(props: CommentProps) {
 
         reblogMutation.mutate(credentials.key);
     }
-    const CustomCard = ({ children, className, title, onPress }: {
+    const CustomCard = ({ children, className, title, onClick }: {
         children: React.ReactNode,
         className?: string,
         title?: string,
-        onPress?: (event) => void
+        onClick?: (event) => void
     }) => {
-        return <Card title={title} isPressable={!!onPress} onPress={onPress}
+        return <Card title={title} isPressable={!!onClick} onClick={onClick}
             className={clsx(`dark:bg-foreground/10 flex flex-row items-center gap-1 rounded-full`,
                 className)}>
             {children}
@@ -190,7 +190,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                         <Button radius='full'
                             title='Upvote'
                             variant='light'
-                            onPress={() => {
+                            onClick={() => {
                                 if (!isAuthorized()) {
                                     authenticateUser();
                                     return false
@@ -219,7 +219,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                             title='Downvote'
                             isDisabled={isVoting}
                             isLoading={comment.status === 'downvoting'}
-                            onPress={() => {
+                            onClick={() => {
                                 if (!isAuthorized()) {
                                     authenticateUser();
                                     return false
@@ -235,18 +235,19 @@ export default memo(function CommentFooter(props: CommentProps) {
 
                     </CustomCard>
 
-                    {!compact && !!comment.children && <CustomCard className='px-3'
+                    {!compact && <CustomCard className={'px-2'}
                         title={`${comment.children} Comments`}>
 
                         <Button radius='full' isIconOnly size='sm'
-                            onPress={onCommentsClick}
+
+                            onClick={onCommentsClick}
                             variant='light'>
                             <FaRegCommentAlt className='text-lg' />
                         </Button>
 
 
 
-                        {<div className='text-tiny'>
+                        {!!comment.children && <div className='text-tiny'>
                             {abbreviateNumber(comment.children)}
                         </div>}
                     </CustomCard>
@@ -286,10 +287,10 @@ export default memo(function CommentFooter(props: CommentProps) {
                                         </div>
 
                                         <div className="text-tiny flex mt-2 space-x-2">
-                                            <Button onPress={() => setResteemPopup(false)}
+                                            <Button onClick={() => setResteemPopup(false)}
                                                 size='sm' color='default'>No</Button>
                                             <Button size='sm' color='secondary' variant='solid'
-                                                onPress={() => {
+                                                onClick={() => {
                                                     setResteemPopup(false);
                                                     if (isResteemd) {
                                                         toast.success('Already resteem');
@@ -309,7 +310,7 @@ export default memo(function CommentFooter(props: CommentProps) {
 
             </div>
 
-            {!!comment.payout && <CustomCard onPress={() => setBreakdownModal(!breakdownModal)}
+            {!!comment.payout && <CustomCard onClick={() => setBreakdownModal(!breakdownModal)}
                 className='pr-2'
                 title={`$${comment.payout?.toLocaleString()} Payout`}>
 
@@ -337,10 +338,13 @@ export default memo(function CommentFooter(props: CommentProps) {
 
         </div >
 
-        {votersModal && <Modal isOpen={votersModal} onOpenChange={setVotersModal}
+        {votersModal && <Modal isOpen={votersModal}
+            onOpenChange={setVotersModal}
             placement='top-center'
             scrollBehavior='inside'
+            size='lg'
             closeButton>
+                
             <ModalContent>
                 {(onClose) => (
                     <>
@@ -349,10 +353,10 @@ export default memo(function CommentFooter(props: CommentProps) {
                             <VotersCard comment={comment} />
                         </ModalBody>
                         {/* <ModalFooter>
-                            <Button color="danger" variant="light" onPress={onClose}>
+                            <Button color="danger" variant="light" onClick={onClose}>
                                 Close
                             </Button>
-                            <Button color="primary" onPress={onClose}>
+                            <Button color="primary" onClick={onClose}>
                                 Action
                             </Button>
                         </ModalFooter> */}

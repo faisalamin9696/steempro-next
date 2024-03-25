@@ -483,6 +483,7 @@ export default memo(function EditorInput(props: EditorProps) {
 
                 <div className='flex flex-col gap-2'>
                     <EditorToolbar
+                        isDisabled={isDisabled}
                         onSelect={insertCode} />
 
                     <ReactTextareaAutocomplete
@@ -494,8 +495,8 @@ export default memo(function EditorInput(props: EditorProps) {
                         movePopupAsYouType
                         disabled={isDisabled}
                         placeholder='Write something...'
-                        rows={rows ?? 8}
-                        className="w-full focus-visible:outline-none p-2 rounded-lg bg-default-100 hover:bg-default-200 focus:bg-default-100"
+                        rows={rows ?? 10}
+                        className="w-full focus-visible:outline-none p-2 rounded-lg bg-default-100  enabled:hover:bg-default-200 enabled:focus:bg-default-100 disabled:opacity-disabled"
                         onChange={e => handleChange(e.target.value)}
                         loadingComponent={() => <LoadingCard />}
                         minChar={0}
@@ -510,8 +511,11 @@ export default memo(function EditorInput(props: EditorProps) {
                                     return new Promise((resolve, reject) => {
                                         timeout = setTimeout(async () => {
                                             if (token?.length <= 2) {
-                                                const uniqueObjectArray = Object.values((users ?? []).reduce((acc, name) => ({ ...acc, [name]: { name } }), {})) as any;
-                                                resolve(uniqueObjectArray);
+                                                const uniqueObjectArray = Object.values(
+                                                    (users ?? [])
+                                                      .filter(name => name.trim() !== '') // Filter out empty strings
+                                                      .reduce((acc, name) => ({ ...acc, [name]: { name } }), {})
+                                                  ) as any;                                                resolve(uniqueObjectArray);
                                             } else {
                                                 let suggestions = await getAccountsByPrefix(token.toLowerCase());
                                                 resolve(suggestions);

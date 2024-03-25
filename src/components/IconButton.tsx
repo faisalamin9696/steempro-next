@@ -27,7 +27,7 @@ const IconButton = (props: Props) => {
         variant={variant ?? 'light'}
         size={size}
         href={href}
-        onPress={onClick} >
+        onClick={onClick} >
         <IconType className={clsx(size === 'sm' ? 'text-sm' : size === 'lg' ? 'text-3xl' : ' text-2xl', iconClassName)}
         />
     </Button>

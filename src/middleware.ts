@@ -7,8 +7,8 @@ import type { NextRequest } from 'next/server';
 const valid_tabs = ['blogs', 'posts', 'friends',
     'comments', 'replies', 'wallet', 'communities', 'settings'];
 
-const basic_categories = ['trending', 'created',
-    'payout', 'communities'];
+const basic_categories = ['trending', 'created','hot',
+    'payout', ];
 
 const valid_categories = basic_categories.concat(['important', 'about']);
 

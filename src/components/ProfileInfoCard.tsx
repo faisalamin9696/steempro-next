@@ -131,7 +131,7 @@ export default memo(function ProfileInfoCard(props: Props) {
                     className='min-w-0  h-6'
                     title={data?.observer_follows_author ? 'Unfollow' : 'Follow'}
                     variant={data?.observer_follows_author ? "bordered" : "solid"}
-                    onPress={() => { }}
+                    onClick={() => { }}
 
                 >
                     {data?.observer_follows_author ? 'Unfollow' : 'Follow'}

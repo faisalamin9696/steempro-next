@@ -333,7 +333,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                                 ))}
                             </DropdownMenu> 
                         </Dropdown> */}
-                        <Button size="sm" onPress={() => {
+                        <Button size="sm" onClick={() => {
                             authenticateUser();
                             if (!isAuthorized())
                                 return
@@ -386,10 +386,10 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                     onChange={setPage}
                 />
                 <div className="hidden sm:flex w-[30%] justify-end gap-2">
-                    <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onPreviousPage}>
+                    <Button isDisabled={pages === 1} size="sm" variant="flat" onClick={onPreviousPage}>
                         Previous
                     </Button>
-                    <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onNextPage}>
+                    <Button isDisabled={pages === 1} size="sm" variant="flat" onClick={onNextPage}>
                         Next
                     </Button>
                 </div>

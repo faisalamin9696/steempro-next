@@ -15,6 +15,6 @@ export default function Error({
     }, [error])
 
     return (
-        <ErrorCard onPress={reset} message={error?.message} />
+        <ErrorCard onClick={reset} message={error?.message} />
     )
 }

@@ -1,6 +1,7 @@
 "use client"
 
 import FeedList from '@/components/comment/FeedList';
+import { FeedBodyLength } from '@/libs/constants/AppConstants';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import React from 'react'
 
@@ -9,7 +10,7 @@ export default function CommunityCreatedPage() {
 
 
     function getEndPoint(feedType: ValidCategories,
-        bodyLength = 250,
+        bodyLength = FeedBodyLength,
         limit = 1000,
         offset = 0) {
         const URL = `/feeds_api/getActiveCommunityPostsBy${feedType}/${community}/${'null'}/${bodyLength}/${limit}/${offset} `;

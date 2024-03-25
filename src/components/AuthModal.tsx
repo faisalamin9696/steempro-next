@@ -319,14 +319,14 @@ export default function AuthModal(props: Props) {
                                                 <div className="flex gap-2 items-center">
 
                                                     <Button color="danger" variant="light"
-                                                        onPress={onClose}
+                                                        onClick={onClose}
                                                         isDisabled={loading}>
                                                         Cancel
                                                     </Button>
 
                                                     <Button fullWidth color="primary"
                                                         isLoading={loading}
-                                                        onPress={handleUnlock}
+                                                        onClick={handleUnlock}
                                                         isDisabled={loading}>
                                                         Unlock
                                                     </Button>
@@ -418,7 +418,7 @@ export default function AuthModal(props: Props) {
                                                 <div className="flex gap-2 justify-end">
 
                                                     <Button color="danger" variant="light"
-                                                        onPress={onClose}
+                                                        onClick={onClose}
                                                         isDisabled={loading}>
                                                         Cancel
                                                     </Button>
@@ -426,7 +426,7 @@ export default function AuthModal(props: Props) {
 
                                                     <Button fullWidth color="primary"
                                                         isLoading={loading}
-                                                        onPress={handleLogin}
+                                                        onClick={handleLogin}
                                                         isDisabled={loading}>
                                                         {isNew ? 'Add account' : 'Login'}
                                                     </Button>
@@ -448,7 +448,7 @@ export default function AuthModal(props: Props) {
                                                     <p className="text-center text-small">
                                                         Already have an account?{" "}
                                                         <Link size="sm"
-                                                            onPress={() => setSelected('login')}>
+                                                            onClick={() => setSelected('login')}>
                                                             Login
                                                         </Link>
                                                     </p>

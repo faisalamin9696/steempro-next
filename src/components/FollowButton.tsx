@@ -31,9 +31,11 @@ export default function FollowButton(props: Props) {
     const { account, comment, community } = props;
     const { username } = usePathnameClient();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
+    const communityInfo: Community = useAppSelector(state => state.communityReducer.values)[community?.account ?? ''] ?? community;
+
     const followingAccount = comment ? comment.author : account?.name;
     const isFollowing = comment ? comment.observer_follows_author === 1 : account?.observer_follows_author === 1;
-    const isSubscribed = community?.observer_subscribed === 1;
+    const isSubscribed = communityInfo?.observer_subscribed === 1;
     const dispatch = useAppDispatch();
     const isSelf = !!loginInfo.name && (loginInfo.name === username);
 
@@ -81,7 +83,7 @@ export default function FollowButton(props: Props) {
 
     const joinMutation = useMutation({
         mutationFn: (key: string) => subscribeCommunity(loginInfo, key, {
-            community: community!.account,
+            community: communityInfo!.account,
             subscribe: isSubscribed ? false : true
         }), onSettled(data, error, variables, context) {
             if (error) {
@@ -89,9 +91,9 @@ export default function FollowButton(props: Props) {
                 return;
             }
             if (isSubscribed)
-                toast.success('Unsubscribed')
+                toast.success('Left')
             else toast.success('Joined');
-            dispatch(addCommunityHandler({ ...community, observer_subscribed: isSubscribed ? 0 : 1, status: 'idle' }));
+            dispatch(addCommunityHandler({ ...communityInfo, observer_subscribed: isSubscribed ? 0 : 1, status: 'idle' }));
         },
     });
 
@@ -106,8 +108,8 @@ export default function FollowButton(props: Props) {
             toast.error('Invalid credentials');
             return
         }
-        if (community) {
-            dispatch(addCommunityHandler({ ...community, status: isSubscribed ? 'leaving' : 'joining' }));
+        if (communityInfo) {
+            dispatch(addCommunityHandler({ ...communityInfo, status: isSubscribed ? 'leaving' : 'joining' }));
             joinMutation.mutate(credentials.key);
             return
         }
@@ -124,7 +126,7 @@ export default function FollowButton(props: Props) {
 
 
     const isPending = followMutation.isPending || joinMutation.isPending ||
-        community?.status === 'leaving' || community?.status === 'joining' ||
+        communityInfo?.status === 'leaving' || communityInfo?.status === 'joining' ||
         account?.status === 'following' || account?.status === 'unfollowing';
 
     return (
@@ -134,48 +136,50 @@ export default function FollowButton(props: Props) {
                 title='Edit profile'
                 className={clsx('min-w-0  h-6')}
                 color='primary'
-                onPress={handleAccountEdit}
+                onClick={handleAccountEdit}
                 startContent={<FaPencil />}
                 radius='full'>
                 Edit
             </Button>}
 
-            {!isSelf && <Button
-                isDisabled={isPending}
-                color={community ? isSubscribed ? 'danger' : 'success' :
-                    isFollowing ? 'danger' : "success"}
-                radius="full"
-                size='sm'
-                isLoading={isPending}
-                className={clsx('min-w-0  h-6')}
-                title={community ? isSubscribed ? 'Leave community' : 'Join community' :
-                    isFollowing ? 'Unfollow' : 'Follow'}
-                variant={'flat'}
-                onPress={handleFollow}
-                isIconOnly={isPending}
-
-            >
-                {isPending ? '' : community ? isSubscribed ? 'Leave' : 'Join' :
-                    isFollowing ? 'Unfollow' : 'Follow'}
-
-            </Button>}
-
-            {community && !!community.observer_subscribed && <Button size='sm' isIconOnly variant='flat'
+            {communityInfo && !!communityInfo.observer_subscribed && <Button size='sm' isIconOnly variant='flat'
                 title='Create post'
                 className={clsx('min-w-0  h-6')}
                 color='primary'
                 as={Link}
-                isDisabled={community.observer_role === 'muted'}
+                isDisabled={communityInfo.observer_role === 'muted'}
                 href={{
                     pathname: `/submit`,
                     query: {
-                        account: community?.account,
-                        title: community?.title
+                        account: communityInfo?.account,
+                        title: communityInfo?.title
                     }
                 } as any}
                 radius='full'>
                 <LuPencilLine />
             </Button>}
+
+            {!isSelf && <Button
+                isDisabled={isPending}
+                color={communityInfo ? isSubscribed ? 'danger' : 'success' :
+                    isFollowing ? 'danger' : "success"}
+                radius="full"
+                size='sm'
+                isLoading={isPending}
+                className={clsx('min-w-0  h-6')}
+                title={communityInfo ? isSubscribed ? 'Leave community' : 'Join community' :
+                    isFollowing ? 'Unfollow' : 'Follow'}
+                variant={'flat'}
+                onClick={handleFollow}
+                isIconOnly={isPending}
+
+            >
+                {isPending ? '' : communityInfo ? isSubscribed ? 'Leave' : 'Join' :
+                    isFollowing ? 'Unfollow' : 'Follow'}
+
+            </Button>}
+
+          
         </div>
     )
 }

@@ -1,11 +1,12 @@
 import moment from "moment";
 import { fetchSds, mapSds } from "../constants/AppFunctions";
+import { FeedBodyLength } from "../constants/AppConstants";
 
 
 export const getActiveFeed = async (
     category: ValidCategories,
     observer: string = 'null',
-    bodyLength: number = 250,
+    bodyLength: number = FeedBodyLength,
     limit: number = 1000,
     offset: number = 0,
 
@@ -37,7 +38,7 @@ export const getActiveTagFeed = async (
     category: ValidCategories,
     tag: string,
     observer: string = 'null',
-    bodyLength: number = 250,
+    bodyLength: number = FeedBodyLength,
     limit: number = 1000,
     offset: number = 0,
 
@@ -68,7 +69,7 @@ export const getActiveCommunityFeed = async (
     category: ValidCategories,
     community: string,
     observer: string = 'null',
-    bodyLength: number = 250,
+    bodyLength: number = FeedBodyLength,
     limit: number = 1000,
     offset: number = 0,
 
@@ -98,13 +99,13 @@ export const getActiveCommunityFeed = async (
 export type FeedTypes = 'PostsByAuthor' | 'AccountFriendsFeed' | 'CommentsByAuthor' |
     'CommentsByParentAuthor' | 'ActiveCommunityPostsByTrending'
     | 'CommunityPostsByCreated' | 'CommunityPinnedPosts' | 'AccountBlog' | 'ActivePostsByTrending' |
-    'ActivePostsByCreated' | 'ActivePostsByPayout' | 'AccountCommunitiesFeedByCreated';
+    'ActivePostsByCreated' | 'ActivePostsByPayout' | 'AccountCommunitiesFeedByCreated' | 'ActivePostsByInteraction';
 
 export const getAuthorFeed = async (
     author: string,
     observer: string = 'null',
     feedType: FeedTypes,
-    bodyLength: number = 250,
+    bodyLength: number = FeedBodyLength,
     limit: number = 1000,
     offset: number = 0,
 
@@ -136,7 +137,7 @@ export const getAuthorFeed = async (
 export const getPinnedFeed = async (
     community: string,
     observer: string = 'null',
-    bodyLength: number = 250,
+    bodyLength: number = FeedBodyLength,
 ): Promise<Feed[]> => {
     try {
         if (!community) {

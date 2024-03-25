@@ -36,7 +36,7 @@ export default function ProfileEnd({ data }: { data?: AccountExt }) {
     //       <Button radius='full' variant='light'
     //         color='default'
     //         size='sm'
-    //         onPress={handlePeopleRefresh}
+    //         onClick={handlePeopleRefresh}
     //         isIconOnly>
     //         <IoIosRefresh
     //           className='text-lg' />

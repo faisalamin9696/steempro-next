@@ -1,7 +1,7 @@
 .rta__autocomplete {
-    min-width: 0 !important;
+    min-width: 200px !important;
     padding: 4px;
-    @apply bg-white dark:bg-background/90 rounded-lg z-10 shadow-md animate-appearance-in max-h-48 overflow-y-auto overflow-x-hidden w-48;
+    @apply bg-white dark:bg-background/90 rounded-lg z-10 shadow-md animate-appearance-in max-h-48 overflow-y-auto overflow-x-hidden;
 
     .rta__list {
         border: none;

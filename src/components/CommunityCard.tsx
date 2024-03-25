@@ -1,5 +1,4 @@
 import React, { memo } from "react";
-import { Button } from "@nextui-org/button";
 import { Card } from "@nextui-org/card";
 import { User } from "@nextui-org/user";
 import { abbreviateNumber } from "@/libs/utils/helper";
@@ -7,56 +6,34 @@ import TimeAgoWrapper from "./wrapper/TimeAgoWrapper";
 import { getResizedAvatar } from "@/libs/utils/image";
 import Link from "next/link";
 import clsx from "clsx";
-import { LuPencilLine } from "react-icons/lu";
-import { useAppSelector } from "@/libs/constants/AppFunctions";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
+import { twMerge } from "tailwind-merge";
 
 
 interface Props {
     community: Community;
     compact?: boolean;
+    className?: string;
+    endContent?: React.ReactNode;
+
+
 }
 
 
 export const CommunityCard = memo((props: Props) => {
-    const { username } = usePathnameClient();
-    const { community, compact } = props;
-    const loginInfo = useAppSelector(state => state.loginReducer.value);
-    const isSelf = !!loginInfo.name && (loginInfo.name === username);
+    const { community, compact, endContent } = props;
 
 
 
     return (
         <Card
 
-            className={clsx(`relative flex flex-col items-start gap-2 w-full bg-white
-             dark:bg-white/5`, compact ? 'p-2' : 'p-4')}>
+            className={twMerge(`relative flex flex-col items-start gap-2 w-full bg-white
+             dark:bg-white/5`, compact ? 'p-2' : 'p-4', props.className)}>
 
-            {!compact &&
-                <div className="flex flex-row items-center gap-1 top-5 right-5 absolute">
+            <div className="top-2 right-3 absolute">
+                {endContent}
+            </div>
 
-                    {isSelf && <Button size='sm' isIconOnly variant='flat'
-
-                        title='Create post'
-                        className={clsx('min-w-0  h-6')}
-                        as={Link}
-                        href={{
-                            pathname: `/submit`,
-                            query: {
-                                account: community?.account,
-                                title: community?.title
-                            }
-                        } as any}
-                        color='primary'
-                        radius='full'>
-                        <LuPencilLine className="text-lg" />
-                    </Button>}
-                    <Button as={Link}
-                        href={`/trending/${community.account}`}
-                        size="sm" color="primary" radius="full"
-                    >Explore</Button>
-
-                </div>}
 
             <User
 
@@ -66,7 +43,7 @@ export const CommunityCard = memo((props: Props) => {
                 }}
                 name={<div className='flex flex-col items-start gap-1'>
 
-                    <h2>{community.title}</h2>
+                    <Link className="hover:text-blue-500 font-semibold" href={`/trending/${community.account}`}>{community.title}</Link>
 
                     <div className="flex gap-2 items-center text-xs">
                         {<p>{community.account} </p>}
@@ -96,25 +73,21 @@ export const CommunityCard = memo((props: Props) => {
                 avatarProps={{
                     className: compact ? 'h-8 w-8' : '',
                     src: getResizedAvatar(community.account),
-                    // as: 'a',
-                    // onClick: () => {
-                    //     navigation.push(authorLink);
-                    // },
-
-
-                }}
+                    as: Link,
+                    href: `/trending/${community.account}`
+                } as any}
             />
-            <p title={community.about} className="text-tiny line-clamp-1">
+            <p title={community.about} className={clsx(compact ? 'text-tiny line-clamp-2' : '')}>
                 {community.about}
             </p>
-            <div className="flex flex-row gap-4">
+            <div className={clsx("flex flex-row gap-4", compact ? 'text-tiny' : '')}>
                 <div className="flex gap-1">
-                    <p className="font-semibold text-default-600 text-tiny">{abbreviateNumber(community.count_subs)}</p>
-                    <p className=" text-default-500 text-tiny">{compact ? 'Subs' : 'Subscribers'}</p>
+                    <p className="font-semibold text-default-600 ">{abbreviateNumber(community.count_subs)}</p>
+                    <p className=" text-default-500">{compact ? 'Subs' : 'Subscribers'}</p>
                 </div>
                 <div className="flex gap-1">
-                    <p className="font-semibold text-default-600 text-tiny">${abbreviateNumber(community.count_pending)}</p>
-                    <p className="text-default-500 text-tiny">{compact ? 'Reward' : 'Pending Reward'}</p>
+                    <p className="font-semibold text-default-600 ">${abbreviateNumber(community.count_pending)}</p>
+                    <p className="text-default-500">{compact ? 'Reward' : 'Pending Reward'}</p>
                 </div>
             </div>
 

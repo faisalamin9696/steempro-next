@@ -89,7 +89,7 @@ export default function CommunityRoles(props: Props) {
                 isIconOnly
                 isLoading={loadingMore}
                 isDisabled
-                onPress={handleEndReached} ></Button>
+                onClick={handleEndReached} ></Button>
         </div>)
     }
 
@@ -103,7 +103,7 @@ export default function CommunityRoles(props: Props) {
                     <Button radius='full'
                         color='default'
                         size='sm'
-                        onPress={handleRefresh}
+                        onClick={handleRefresh}
                         isIconOnly>
                         <IoIosRefresh
                             className='text-lg' />

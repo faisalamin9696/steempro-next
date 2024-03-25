@@ -3,6 +3,7 @@ import { Remarkable } from 'remarkable';
 
 const remarkable = new Remarkable({ html: true });
 import textEllipsis from '@/libs/utils/ellibsis';
+import { FeedBodyLength } from '@/libs/constants/AppConstants';
 
 
 function decodeEntities(body: string): string {
@@ -28,7 +29,7 @@ const BodyShort = (props: BodyShortProps): JSX.Element => {
     /* eslint-disable react/no-danger */
     return (
         <div className={props.className}>
-            <div dangerouslySetInnerHTML={{ __html: textEllipsis(body, props?.length || 250) }} />
+            <div dangerouslySetInnerHTML={{ __html: textEllipsis(body, props?.length || FeedBodyLength) }} />
         </div>
     )
 };

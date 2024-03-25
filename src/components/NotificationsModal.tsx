@@ -218,6 +218,12 @@ export default function NotificationsModal(props: Props) {
 
         switch (columnKey) {
             case "account":
+
+                const voteValue =
+                    (notification.voted_rshares / globalData.recent_reward_claims) *
+                    globalData.total_reward_fund *
+                    globalData.median_price;
+
                 return (<div className='flex flex-row items-center'>
                     {!notification.is_read && <Chip size='sm'
                         className="border-none gap-1 text-default-600 p-0 w-6 h-6"
@@ -225,7 +231,10 @@ export default function NotificationsModal(props: Props) {
 
                     <div className="flex gap-2">
                         <SAvatar size="xs" username={notification.account} />
-                        <p>{notification.account}</p>
+                        <div>
+                            <p>{notification.account}</p>
+                            {notification.type === 'vote' && <p className='text-tiny'>${voteValue?.toLocaleString()}</p>}
+                        </div>
                     </div>
                 </div>
 
@@ -391,24 +400,24 @@ export default function NotificationsModal(props: Props) {
             className=' mt-4'
             scrollBehavior='inside'
             backdrop='blur'
+            size='lg'
             placement='top-center'>
             <ModalContent>
                 {(onClose) => (
                     <>
-                        <ModalHeader className="flex flex-col gap-1">Search</ModalHeader>
+                        <ModalHeader className="flex flex-col gap-1">Notifications</ModalHeader>
                         <ModalBody id='scrollDiv' className=' pb-4'>
                             <div className=' flex flex-col gap-4'>
-                                <div className=' max-w-sm'>
+                                <div className=''>
 
 
                                     {isLoading ?
                                         <LoadingCard /> :
                                         <Table
                                             aria-label="Notification table"
-                                            isHeaderSticky
                                             // bottomContent={bottomContent}
                                             classNames={{
-                                                base: "max-h-[520px] overflow-auto",
+                                                base: "w-full max-h-[520px] overflow-auto",
                                                 table: "min-h-[420px]",
                                             }} sortDescriptor={sortDescriptor}
                                             topContent={topContent}
@@ -420,7 +429,7 @@ export default function NotificationsModal(props: Props) {
                                                         <Button size='sm' isDisabled={isLoading || loadMoreMutation.isPending}
                                                             isLoading={loadMoreMutation.isPending}
                                                             radius='full'
-                                                            variant='shadow' onPress={() => {
+                                                            variant='shadow' onClick={() => {
                                                                 offset += 20;
                                                                 loadMoreMutation.mutate(offset);
                                                             }}>

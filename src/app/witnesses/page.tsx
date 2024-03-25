@@ -250,7 +250,7 @@ export default function page() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            {/* <Button size="sm" onPress={() => setTransferModal(!transferModal)}
+            {/* <Button size="sm" onClick={() => setTransferModal(!transferModal)}
               color="primary" endContent={<FaPlus />}>
               Add New
             </Button> */}
@@ -300,10 +300,10 @@ export default function page() {
           onChange={setPage}
         />
         <div className="hidden sm:flex w-[30%] justify-end gap-2">
-          <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onPreviousPage}>
+          <Button isDisabled={pages === 1} size="sm" variant="flat" onClick={onPreviousPage}>
             Previous
           </Button>
-          <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onNextPage}>
+          <Button isDisabled={pages === 1} size="sm" variant="flat" onClick={onNextPage}>
             Next
           </Button>
         </div>

@@ -1,25 +1,21 @@
 "use client"
 
 import FeedList from '@/components/comment/FeedList';
+import { FeedBodyLength } from '@/libs/constants/AppConstants';
+// import FeedList from '@/components/comment/FeedList';
 import { useAppSelector } from '@/libs/constants/AppFunctions';
 import { FeedTypes } from '@/libs/steem/sds';
-import usePathnameClient from '@/libs/utils/usePathnameClient';
-import { useSession } from 'next-auth/react';
 import React from 'react'
 
-export default function HomeCommunitiesTab() {
-    const { data: session } = useSession();
-    const { username } = usePathnameClient();
+export default function HomeHotTab() {
     const loginInfo = useAppSelector(state => state.loginReducer.value);
 
-
-
     function getEndPoint(feedType: FeedTypes,
-        bodyLength = 250,
+        bodyLength = FeedBodyLength,
         limit = 1000,
         offset = 0) {
         const URL = `/feeds_api/get${feedType ??
-            'AccountCommunitiesFeedByCreated'}/${loginInfo.name || 'null'}/${loginInfo.name || 'null'}/${bodyLength}/${limit}/${offset}`;
+            'ActivePostsByInteraction'}/${loginInfo.name || 'null'}/${bodyLength}/${limit}/${offset}`;
         return URL.trim();
     }
 
@@ -27,7 +23,7 @@ export default function HomeCommunitiesTab() {
         <div >
             <div className='flex flex-col space-y-2'>
                 <FeedList className='md:grid-cols-1'
-                    endPoint={getEndPoint('AccountCommunitiesFeedByCreated')} />
+                    endPoint={getEndPoint('ActivePostsByInteraction')} />
             </div>
 
         </div>

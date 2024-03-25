@@ -132,10 +132,10 @@ export default function CommunityWalletPage() {
                 </p>
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
+                <Button color="danger" variant="light" onClick={onClose}>
                   Close
                 </Button>
-                {/* <Button color="primary" onPress={onClose}>
+                {/* <Button color="primary" onClick={onClose}>
                                     Action
                                 </Button> */}
               </ModalFooter>

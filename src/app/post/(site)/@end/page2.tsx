@@ -11,7 +11,7 @@ export default function PostEnd2(props: Props) {
   // const [offset, setOffset] = useState(0);
   // const [muting, setMuting] = useState(false);
 
-  // const URL = `/feeds_api/getActivePostsByTagPayout/${tag}/null/250/5/${offset}`
+  // const URL = `/feeds_api/getActivePostsByTagPayout/${tag}/null/PostBodyLength/5/${offset}`
   // const { data, mutate, isLoading, isValidating } = useSWR(muting ? null : URL, fetchSds<Feed[]>)
 
   // // const promotedList = ['faisalamin/photos-at-university-of-agriculture',
@@ -42,7 +42,7 @@ export default function PostEnd2(props: Props) {
               variant='light'
               color='default'
               size='sm'
-              onPress={handlePromotionRefresh}
+              onClick={handlePromotionRefresh}
               isIconOnly>
               <IoIosRefresh
                 className='text-lg' />

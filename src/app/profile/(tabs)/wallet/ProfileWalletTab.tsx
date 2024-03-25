@@ -98,7 +98,7 @@ export default function ProfileWalletTab({ data }: { data: AccountExt }) {
       {getRewardsString(data, globalData) &&
         <div className='flex flex-col gap-2 items-center mt-4'>
           <p className='text-sm text-default-800'>Unclaimed rewards ${getRewardsString(data, globalData)}</p>
-          {isSelf && <Button onPress={handleClaimReward}
+          {isSelf && <Button onClick={handleClaimReward}
             isDisabled={claimMutation.isPending}
             isLoading={claimMutation.isPending}
             size='sm'>Claim Reward</Button>}

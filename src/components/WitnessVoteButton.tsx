@@ -78,10 +78,10 @@ export default function WitnessVoteButton({ witness }: {
                     </div>
 
                     <div className="text-tiny flex mt-2 space-x-2">
-                        <Button onPress={() => setIsOpen(false)}
+                        <Button onClick={() => setIsOpen(false)}
                             size='sm' color='default'>CANCEL</Button>
                         <Button size='sm' color={isVoted ? 'danger' : 'success'} variant='solid'
-                            onPress={() => {
+                            onClick={() => {
                                 setIsOpen(false);
                                 handleVote();
                             }}>{isVoted ? 'REMOVE' : 'APPROVE'}</Button>

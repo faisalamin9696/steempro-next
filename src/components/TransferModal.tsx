@@ -397,19 +397,19 @@ const TransferModal = (props: Props): JSX.Element => {
 
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="danger" variant="light" onPress={onClose}
+                        <Button color="danger" variant="light" onClick={onClose}
                             isDisabled={isPending}>
                             Cancel
                         </Button>
 
                         {(savings || powewrup) &&
-                            <Button onPress={() => setBasic(!basic)}
+                            <Button onClick={() => setBasic(!basic)}
                                 variant='flat'
                                 isDisabled={isPending}>
                                 {basic ? 'Advance' : 'Basic'}
                             </Button>}
 
-                        <Button color="primary" onPress={handleTransfer}
+                        <Button color="primary" onClick={handleTransfer}
                             isLoading={isPending}
                             isDisabled={!confirmCheck || isPending}>
                             {delegation ? isRemove ? 'Remove' : !!oldDelegation ? 'Update' : 'Delegate' : powewrup ? 'Power Up' : 'Transfer'}

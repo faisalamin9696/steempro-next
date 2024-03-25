@@ -69,7 +69,7 @@ export default function PromotionCard(props: Props) {
 
             </Card>
 
-            <div className='absolute right-0 m-2 '>
+            <div className='absolute right-0 m-2 rounded-lg backdrop-blur-xl px-1'>
                 <ViewCountCard comment={data} compact />
 
             </div>

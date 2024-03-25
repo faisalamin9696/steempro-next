@@ -42,7 +42,7 @@ const HomeCarousel = memo(() => {
             renderArrow={({ type, onClick, isEdge }) => {
                 return <Button size="sm"
                     isDisabled={isEdge}
-                    onPress={onClick}
+                    onClick={onClick}
                     isIconOnly
                     radius="full"
                     variant='shadow'

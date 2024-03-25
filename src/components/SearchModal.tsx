@@ -14,6 +14,7 @@ import { FaSearch } from 'react-icons/fa';
 import Reputation from './Reputation';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import EmptyList from './EmptyList';
+import { FeedBodyLength } from '@/libs/constants/AppConstants';
 
 
 type SearchTypes = 'posts' | 'comments' | 'tags' | 'people';
@@ -31,7 +32,7 @@ export default function SearchModal(props: Props) {
     const [searchAuthor, setSearchAuthor] = useState('');
     const [searchTags, setSearchTags] = useState('');
 
-    const filters = `any/${loginInfo.name || null}/250/time/DESC/25/1000`;
+    const filters = `any/${loginInfo.name || null}/${FeedBodyLength}/time/DESC/25/1000`;
     const POST_BY_TEXT_URL = `/content_search_api/getPostsByText/${searchText}/${filters}`;
     const POST_BY_TAGS_TEXT_URL = `/content_search_api/getPostsByTagsText/${searchTags}/${searchText}/${filters}`;
     const POST_BY_AUTHOR_TEXT_URL = `/content_search_api/getPostsByAuthorText/${searchAuthor}/${searchText}/${filters}`;
@@ -92,7 +93,7 @@ export default function SearchModal(props: Props) {
                 isIconOnly
                 isLoading={loadingMore}
                 isDisabled
-                onPress={handleEndReached} ></Button>
+                onClick={handleEndReached} ></Button>
         </div>)
     }
 
@@ -142,7 +143,7 @@ export default function SearchModal(props: Props) {
                                 <div className=' flex items-center gap-2'>
 
                                     <Button isIconOnly radius='md'
-                                        onPress={handleSearch}
+                                        onClick={handleSearch}
                                         size='sm' color='primary' variant='flat'>
                                         <FaSearch />
                                     </Button>
@@ -234,7 +235,7 @@ export default function SearchModal(props: Props) {
 
                         </ModalBody>
                         {/* <ModalFooter>
-                            <Button color="danger" variant="light" onPress={onClose}>
+                            <Button color="danger" variant="light" onClick={onClose}>
                                 Close
                             </Button>
                         </ModalFooter> */}

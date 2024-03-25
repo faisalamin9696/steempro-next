@@ -166,14 +166,14 @@ const DelegationModal = (props: Props): JSX.Element => {
 
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="danger" variant="light" onPress={onClose}
+                        <Button color="danger" variant="light" onClick={onClose}
                             isDisabled={isPending}>
                             Cancel
                         </Button>
 
 
 
-                        <Button color="primary" onPress={handleTransfer}
+                        <Button color="primary" onClick={handleTransfer}
                             isLoading={isPending}
                             isDisabled={!confirmCheck || isPending}>
                             Delegate

@@ -9,7 +9,7 @@ import { Divider, } from '@nextui-org/divider';
 import { Button } from '@nextui-org/button';
 import { Input } from '@nextui-org/input';
 import { Select, SelectItem } from '@nextui-org/select';
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { FaInfoCircle, FaUpload, FaUserCircle } from "react-icons/fa";
 import { toast } from 'sonner';
 import { FaGlobe } from "react-icons/fa";
@@ -33,9 +33,9 @@ export default function SettingsPage() {
     const { username } = usePathnameClient();
 
     const loginInfo = useAppSelector(state => state.loginReducer.value);
-    let parsed_metadata = JSON.parse(loginInfo?.posting_json_metadata ?? `{}`)
+    const [parsedData, setParsedData] = useState<any>();
     const { profile_image = "", cover_image = "", name = "", about: userAbout = "",
-        website: userWebsite = "", location: userLocation = "" } = parsed_metadata?.profile ?? {};
+        website: userWebsite = "", location: userLocation = "" } = parsedData?.profile ?? {};
 
 
     const [displayName, setDisplayName] = useState(name ?? '');
@@ -53,18 +53,10 @@ export default function SettingsPage() {
 
     const { authenticateUser, isAuthorized } = useLogin();
 
+
     useEffect(() => {
-        if (isSelf) {
-            setDisplayName(name);
-            setCoverImage(cover_image);
-            setProfileImage(profile_image);
-            setAbout(userAbout);
-            setLocation(userLocation);
-            setWebsite(userWebsite);
-        }
-
-
-    }, [parsed_metadata]);
+        setParsedData(JSON.parse(loginInfo?.posting_json_metadata ?? `{}`));
+    }, [loginInfo?.posting_json_metadata]);
 
     const isChanged = profileImage !== profile_image || coverImage !== cover_image ||
         name !== displayName || about !== userAbout || location !== userLocation || website !== userWebsite;
@@ -72,7 +64,8 @@ export default function SettingsPage() {
     const className = 'text-medium text-default-600';
     const fileInputRef = useRef<any>(null);
 
-  
+
+
     const updateMutation = useMutation({
         mutationFn: (data: {
             key: string, params: {
@@ -212,6 +205,16 @@ export default function SettingsPage() {
             });
     };
 
+    useEffect(() => {
+        if (isSelf) {
+            setDisplayName(name);
+            setCoverImage(cover_image);
+            setProfileImage(profile_image);
+            setAbout(userAbout);
+            setLocation(userLocation);
+            setWebsite(userWebsite);
+        }
+    }, [parsedData]);
     return (
 
         <div className='flex flex-col gap-6 '>
@@ -303,7 +306,7 @@ export default function SettingsPage() {
                             value={profileImage} onValueChange={setProfileImage}
                             maxLength={200}
                             startContent={<FaUserCircle className={className} />}
-                            endContent={<Button title='Upload' onPress={() => {
+                            endContent={<Button title='Upload' onClick={() => {
                                 isCover = false;
                                 handleImageUpload()
                             }}
@@ -318,7 +321,7 @@ export default function SettingsPage() {
                         <Input label='Cover image url' maxLength={200}
                             value={coverImage} onValueChange={setCoverImage}
                             startContent={<AiFillPicture className={className} />}
-                            endContent={<Button title='Upload' onPress={() => {
+                            endContent={<Button title='Upload' onClick={() => {
                                 isCover = true;
                                 handleImageUpload()
                             }}
@@ -355,7 +358,7 @@ export default function SettingsPage() {
                     <Button size='sm'
                         isLoading={updateMutation.isPending}
                         isDisabled={!isChanged || updateMutation.isPending}
-                        onPress={handleUpdate}
+                        onClick={handleUpdate}
                         className='self-start'>Update</Button>
 
                 </div>

@@ -5,11 +5,11 @@ import MainWrapper from './wrapper/MainWrapper'
 
 interface Props {
     message?: string;
-    onPress?: () => void;
+    onClick?: () => void;
 }
 
 export default function ErrorCard(props: Props) {
-    const { message, onPress } = props;
+    const { message, onClick } = props;
     return (
         <MainWrapper className='items-center'>
             <Card className=" bg-gray-50 dark:bg-gray-700 self-center">
@@ -18,7 +18,7 @@ export default function ErrorCard(props: Props) {
                     <p className='text-md text-default-700 whitespace-pre-wrap' style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}>
                         {message}
                     </p>
-                    <Button color='primary' className='self-center' onPress={onPress}>Try again</Button>
+                    <Button color='primary' className='self-center' onClick={onClick}>Try again</Button>
 
 
                 </div>

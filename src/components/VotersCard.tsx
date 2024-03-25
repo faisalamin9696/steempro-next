@@ -27,20 +27,15 @@ import SAvatar from "@/components/SAvatar";
 import TimeAgoWrapper from "@/components/wrapper/TimeAgoWrapper";
 import LoadingCard from "@/components/LoadingCard";
 
-const INITIAL_VISIBLE_COLUMNS = ["voter", 'rshares'];
+const INITIAL_VISIBLE_COLUMNS = ["voter", 'rshares', 'time'];
 
 const columns = [
     { name: "VOTER", uid: "voter", sortable: true },
     { name: "VALUE", uid: "rshares", sortable: true },
-    { name: "PERCENT", uid: "percent", sortable: true },
+    { name: "TIME", uid: "time", sortable: true },
+
 
 ];
-// const statusOptions = [
-//     { name: "Incoming", uid: "incoming" },
-//     { name: "Expiring", uid: "expiring" },
-//     { name: "Outgoing", uid: "outgoing" },
-// ];
-
 
 export function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -144,19 +139,17 @@ export default function VotersCard({ comment }: { comment: Feed | Post }) {
                 const ratio = (comment?.payout ?? 1) / (comment?.net_rshares ?? 1);
                 const voteAmount = votes.rshares * ratio;
 
-
                 return (
                     <div className="flex flex-col">
                         <p className="text-bold text-small capitalize">${voteAmount.toLocaleString()}</p>
-                        <TimeAgoWrapper className="text-bold text-tiny capitalize text-default-600" created={votes.time * 1000} />
-                    </div>
+                        <p className="text-bold text-small capitalize">{votes.percent / 100}%</p>                    </div>
                 );
 
-            case "percent":
+
+            case "time":
                 return (
-                    <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">{votes.percent / 100}%</p>
-                    </div>
+                    <TimeAgoWrapper className="text-bold capitalize text-default-600" created={votes.time * 1000} />
+
                 );
 
             default:
@@ -252,7 +245,7 @@ export default function VotersCard({ comment }: { comment: Feed | Post }) {
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        {/* <Button size="sm" onPress={() => {
+                        {/* <Button size="sm" onClick={() => {
                             authenticateUser();
                             if (!isAuthorized())
                                 return
@@ -303,10 +296,10 @@ export default function VotersCard({ comment }: { comment: Feed | Post }) {
                     onChange={setPage}
                 />
                 {/* <div className="hidden sm:flex w-[30%] justify-end gap-2">
-                    <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onPreviousPage}>
+                    <Button isDisabled={pages === 1} size="sm" variant="flat" onClick={onPreviousPage}>
                         Previous
                     </Button>
-                    <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onNextPage}>
+                    <Button isDisabled={pages === 1} size="sm" variant="flat" onClick={onNextPage}>
                         Next
                     </Button>
                 </div> */}

@@ -70,7 +70,7 @@ export default memo(function FeedList(props: Props) {
                 isIconOnly
                 isLoading={loadingMore}
                 isDisabled
-                onPress={handleEndReached} ></Button>
+                onClick={handleEndReached} ></Button>
         </div>)
     }
 
