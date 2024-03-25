@@ -9,7 +9,6 @@ import {
   TableRow,
   TableCell,
 } from "@nextui-org/table";
-
 import { Pagination } from '@nextui-org/pagination';
 import { Button } from '@nextui-org/button';
 import { Input } from '@nextui-org/input';
@@ -20,20 +19,15 @@ import {
   DropdownMenu,
   DropdownItem,
 } from '@nextui-org/dropdown';
-
-
-
 import { FaChevronDown, FaSearch } from "react-icons/fa";
 import useSWR from "swr";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import LoadingCard from "@/components/LoadingCard";
-import { useLogin } from "@/components/useLogin";
 import CommunityCard from "@/components/CommunityCard";
 import FollowButton from "@/components/FollowButton";
+import { capitalize } from "../profile/(tabs)/wallet/(tabs)/DelegationTab";
 
 const INITIAL_VISIBLE_COLUMNS = ["title"];
-
 const columns = [
   { name: "RANK", uid: "rank", sortable: true },
   { name: "COMMUNITY", uid: "title", sortable: true },
@@ -44,21 +38,13 @@ const columns = [
 
 ];
 
-
-export function capitalize(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
 export default function CommunitiesPage() {
-  const { username } = usePathnameClient();
 
   const loginInfo = useAppSelector(state => state.loginReducer.value);
 
   const URL = `/communities_api/getCommunitiesByRank/${loginInfo.name || null}/1000`;
 
   const { data, isLoading } = useSWR(URL, fetchSds<Community[]>);
-
-  const { authenticateUser, isAuthorized } = useLogin();
 
   const [allRows, setAllRows] = useState<Community[]>([]);
 
@@ -95,11 +81,6 @@ export default function CommunitiesPage() {
         community.account.toLowerCase().includes(filterValue.toLowerCase()),
       );
     }
-    // if (statusFilter !== "all" && Array.from(statusFilter)?.length !== statusOptions.length) {
-    //   filteredDelegations = filteredDelegations.filter((delegation) =>
-    //     Array.from(statusFilter).includes(delegation.status),
-    //   );
-    // }
 
     return filteredCommunities;
   }, [allRows, filterValue, statusFilter]);
