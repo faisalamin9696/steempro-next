@@ -1,6 +1,6 @@
 import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure } from '@nextui-org/modal';
 import { Button } from '@nextui-org/button';
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Tab, Tabs } from '@nextui-org/tabs';
 import { Input } from '@nextui-org/input';
 import { awaitTimeout, fetchSds, useAppSelector } from '@/libs/constants/AppFunctions';
@@ -31,23 +31,31 @@ export default function SearchModal(props: Props) {
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const [searchType, setSearchType] = useState<SearchTypes>('posts');
     let [searchText, setSearchText] = useState('');
+    let [query, setQuery] = useState('');
+
     const [searchAuthor, setSearchAuthor] = useState('');
     const [searchTags, setSearchTags] = useState('');
 
     const filters = `any/${loginInfo.name || null}/${FeedBodyLength}/time/DESC/100`;
-    const POST_BY_TEXT_URL = `/content_search_api/getPostsByText/"${searchText}"/${filters}`;
-    const POST_BY_TAGS_TEXT_URL = `/content_search_api/getPostsByTagsText/${searchTags}/"${searchText}"/${filters}`;
-    const POST_BY_AUTHOR_TEXT_URL = `/content_search_api/getPostsByAuthorText/${searchAuthor}/"${searchText}"/${filters}`;
+    const POST_BY_TEXT_URL = `/content_search_api/getPostsByText/"${query}"/${filters}`;
+    const POST_BY_TAGS_TEXT_URL = `/content_search_api/getPostsByTagsText/${searchTags.replaceAll('@', '')?.replaceAll('#', '')}/"${query}"/${filters}`;
+    const POST_BY_AUTHOR_TEXT_URL = `/content_search_api/getPostsByAuthorText/${searchAuthor.replaceAll('@', '')?.replaceAll('#', '')}/"${query}"/${filters}`;
 
-    const COMMENTS_BY_TEXT_URL = `/content_search_api/getCommentsByText/"${searchText}"/${filters}`;
-    const COMMENTS_BY_AUTHOR_TEXT_URL = `/content_search_api/getCommentsByAuthorText/${searchAuthor}/${filters}`;
-    const PEOPLE_URL = `/accounts_api/getAccountsByPrefix/"${searchText}"/${loginInfo.name || 'null'}/name,reputation,posting_json_metadata,created`;
+    const COMMENTS_BY_TEXT_URL = `/content_search_api/getCommentsByText/"${query}"/${filters}`;
+    const COMMENTS_BY_AUTHOR_TEXT_URL = `/content_search_api/getCommentsByAuthorText/${searchAuthor.replaceAll('@', '')?.replaceAll('#', '')}/${filters}`;
+    const PEOPLE_URL = `/accounts_api/getAccountsByPrefix/${query}/${loginInfo.name || 'null'}/name,reputation,posting_json_metadata,created`;
 
     const [url, setUrl] = useState<string | undefined>();
     const [rows, setRows] = useState<any[]>([]);
     const [loadingMore, setLoadingMore] = useState(false);
     const { data, isLoading } = useSWR(url, fetchSds<any[]>);
 
+
+    useEffect(() => {
+        if (searchText)
+            setQuery(searchText?.replaceAll('@', '')?.replaceAll('#', ''));
+
+    }, [searchText])
 
     useMemo(() => {
         if (data) {
@@ -61,16 +69,16 @@ export default function SearchModal(props: Props) {
 
         switch (searchType) {
             case 'posts':
-                if (searchText && searchAuthor)
+                if (query && searchAuthor)
                     return POST_BY_AUTHOR_TEXT_URL;
-                else (searchText)
+                else (query)
                 return POST_BY_TEXT_URL;
             case 'comments':
-                if (searchText && searchAuthor)
+                if (query && searchAuthor)
                     return COMMENTS_BY_AUTHOR_TEXT_URL;
                 else return COMMENTS_BY_TEXT_URL;
             case 'tags':
-                if (searchText && searchTags)
+                if (query && searchTags)
                     return POST_BY_TAGS_TEXT_URL;
                 else return POST_BY_TEXT_URL;
             case 'people':
@@ -84,7 +92,7 @@ export default function SearchModal(props: Props) {
 
 
     function handleSearch() {
-        setUrl(!!searchText ? getUrl() : undefined);
+        setUrl(!!query ? getUrl() : undefined);
     }
 
 
@@ -158,13 +166,13 @@ export default function SearchModal(props: Props) {
                                         onKeyUp={handleKeyPress}
                                         value={searchText}
                                         onClear={() => setSearchText('')}
-                                        onValueChange={(value) => setSearchText(value?.replaceAll('@', '')?.replaceAll('#', ''))}
+                                        onValueChange={(value) => setSearchText(value)}
                                     />
 
                                     {(searchType !== 'people' && searchType !== 'tags') && <Input
                                         size='sm'
                                         value={searchAuthor}
-                                        onValueChange={(value) => setSearchAuthor(value?.replaceAll('@', '')?.replaceAll('#', ''))}
+                                        onValueChange={(value) => setSearchAuthor(value)}
                                         onKeyUp={handleKeyPress}
                                         className=' flex-[3]' placeholder='Author' />
                                     }
@@ -172,7 +180,7 @@ export default function SearchModal(props: Props) {
                                     {searchType === 'tags' && <Input
                                         size='sm'
                                         value={searchTags}
-                                        onValueChange={(value) => setSearchTags(value?.replaceAll('@', '')?.replaceAll('#', ''))}
+                                        onValueChange={(value) => setSearchTags(value)}
                                         onKeyUp={handleKeyPress}
                                         className=' flex-[3]' placeholder='Tags' />
                                     }
@@ -205,12 +213,12 @@ export default function SearchModal(props: Props) {
 
                                         {rows?.map((item) => {
                                             const posting_json_metadata = JSON.parse(item?.posting_json_metadata || '{}')
-                                            return item?.['permlink'] ? <div className=''>
+                                            return item?.['permlink'] ? <div className='' onClick={onClose}>
                                                 <CompactPost comment={item} />
                                             </div>
                                                 : <div className={`flex items-start h-full dark:bg-foreground/10
                                                 bg-white  overflow-hidden rounded-lg shadow-lg p-2 gap-4`}>
-                                                    <SAvatar
+                                                    <SAvatar onClick={onClose}
                                                         className='cursor-pointer' size='sm'
 
                                                         username={item?.name || ''} />

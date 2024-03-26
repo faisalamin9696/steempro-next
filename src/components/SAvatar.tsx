@@ -22,7 +22,7 @@ export default function SAvatar(props: Props) {
 
     if (!username) return null
 
-    return (<Link href={`/@${username}`}>
+    return (<Link href={`/@${username}`} onClick={onClick}>
         <Image
             title={username}
             onError={(e) => {
@@ -32,7 +32,6 @@ export default function SAvatar(props: Props) {
             alt=""
             height={imageSize}
             width={imageSize}
-            onClick={onClick}
             src={`${getResizedAvatar(username, quality ?? 'small')}`}
             className={clsx('max-w-none shadow-lg rounded-full', border && 'border', className)}
         />

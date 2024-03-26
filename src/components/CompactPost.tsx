@@ -5,7 +5,6 @@ import { Card } from "@nextui-org/card";
 import React, { memo } from 'react'
 import { getPostThumbnail } from '@/libs/utils/image'
 import BodyShort from '@/components/body/BodyShort'
-import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator'
 import ViewCountCard from './ViewCountCard'
 import { useAppSelector } from '@/libs/constants/AppFunctions'
 import Link from 'next/link';
@@ -15,10 +14,11 @@ import { FaClock } from 'react-icons/fa';
 
 interface Props {
     comment: Feed;
+    onClick?: () => void;
 }
 
 export default memo(function CompactPost(props: Props) {
-    const { comment } = props;
+    const { comment, onClick } = props;
     const commentInfo = useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment;
 
     // const URL = `/posts_api/getPost/${authPerm}`
@@ -46,7 +46,7 @@ export default memo(function CompactPost(props: Props) {
       Beauty of Creativity
     </Link> */}
             </div>
-            <Card as={Link}
+            <Card as={Link} onClick={onClick}
                 href={`/${commentInfo.category}/@${commentInfo.author}/${commentInfo.permlink}`}
                 shadow='none' radius='none' className=" text-start p-0 bg-transparent px-2 py-2 mb-auto">
                 <p
@@ -61,7 +61,7 @@ export default memo(function CompactPost(props: Props) {
 
 
                     {<div className="flex items-center gap-2 ml-1 text-default-900/80">
-                        <FaClock  />
+                        <FaClock />
                         <TimeAgoWrapper created={comment.created * 1000} />
                     </div>}
                 </span>

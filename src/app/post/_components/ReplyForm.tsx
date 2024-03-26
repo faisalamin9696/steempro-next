@@ -400,10 +400,10 @@ export default memo(function ReplyForm(props: Props) {
                                 className={``} />
                         </Card>
 
-                        <div className='flex gap-1  self-end opacity-70 items-center justify-around  w-full'>
+                        <div className='flex flex-col gap-1  self-end opacity-70 items-end justify-around  w-full'>
 
                             <CommentFooter isReply comment={comment} />
-                            <>
+                            <div className='flex'>
                                 {canReply &&
                                     <Button size='sm'
                                         onClick={() => { toggleReply() }}
@@ -432,7 +432,7 @@ export default memo(function ReplyForm(props: Props) {
                                             <Button size='sm'
                                                 variant='light'
                                                 isLoading={deleteMutation.isPending}
-                                                isDisabled={deleteMutation.isPending || showReply || showEdit}
+                                                isDisabled={deleteMutation.isPending}
                                                 className='text-tiny min-w-0 min-h-0'>
                                                 Delete
                                             </Button>
@@ -466,14 +466,14 @@ export default memo(function ReplyForm(props: Props) {
                                         isLoading={unmuteMutation.isPending}
                                         onClick={() => { handleMute() }}
                                         variant='light'
-                                        isDisabled={unmuteMutation.isPending || showReply || showEdit}
+                                        isDisabled={unmuteMutation.isPending}
                                         className='text-tiny min-w-0 min-h-0'>
                                         {commentInfo.is_muted ? 'Unmute' : 'Mute'}
 
                                     </Button>
                                 }
 
-                            </>
+                            </div>
 
                         </div>
 
