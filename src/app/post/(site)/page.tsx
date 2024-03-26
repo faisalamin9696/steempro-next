@@ -32,15 +32,15 @@ export default function PostPage(props: Props) {
     const { data } = props;
     const pathname = usePathname();
     const { category } = usePathnameClient();
-    // const { category, username: author, permlink } = getPathnameClient(null, location.pathname);
+    const loginInfo = useAppSelector(state => state.loginReducer.value);
     const dispatch = useAppDispatch();
-    // const queryKey = [`post-${author}-${permlink}`];
     const commentInfo: Post = useAppSelector(state => state.commentReducer.values)[`${data.author}/${data.permlink}`] ?? data;
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const [editMode, setEditMode] = useState(false);
     const toggleEditMode = () => setEditMode(!editMode)
     const router = useRouter();
     const isNsfw = hasNsfwTag(commentInfo) && (settings?.nsfw !== 'Always show');
+    const isSelf = !!loginInfo.name && (loginInfo.name === commentInfo.author);
 
     useEffect(() => {
         router.refresh();
@@ -61,7 +61,7 @@ export default function PostPage(props: Props) {
 
         // count view after ViewCountTime mili seconds
         const timeout = setTimeout(() => {
-            if (commentInfo.depth === 0)
+            if (commentInfo.depth === 0 && !isSelf)
                 updatePostView(data);
         }, ViewCountTime);
 
@@ -88,7 +88,7 @@ export default function PostPage(props: Props) {
         className='flex-col bg-white dark:bg-white/5
     backdrop-blur-md rounded-lg p-4 w-full mb-10'>
         {commentInfo ?
-            <div className='card w-full card-compact shadow-sm  gap-4'>
+            <div className='card w-full card-compact gap-4'>
 
                 {!!commentInfo.depth &&
                     <Card className='flex flex-col p-4 gap-2'>
@@ -130,6 +130,7 @@ export default function PostPage(props: Props) {
                         <div className='sticky bottom-2'>
                             <CardFooter className='w-full m-[1px] p-1  overflow-visible  bg-white rounded-full dark:bg-black/90'>
                                 <CommentFooter comment={commentInfo}
+                                    isDetails
                                     onCommentsClick={() => {
                                         document.getElementById(`post-replies`)?.scrollIntoView({ behavior: 'smooth' });
 

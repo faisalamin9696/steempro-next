@@ -7,7 +7,7 @@ export default function RoleTitleCard(props: Props) {
     const { comment } = props;
 
     if (!comment.author_role && !comment.author_title) return null
-    return (<div className='gap-2 flex flex-row'>
+    return (<div className='gap-2 flex flex-row items-center'>
         {comment.author_role && <p className='flex-none'>
             {comment.author_role}
         </p>}

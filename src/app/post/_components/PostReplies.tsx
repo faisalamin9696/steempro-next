@@ -244,7 +244,7 @@ export default memo(function PostReplies(props: Props) {
 
 
     return (
-        <div className='p-1' id='post-replies'>
+        <div id='post-replies'>
 
             <div className='flex justify-end items-center gap-2'>
 
@@ -262,10 +262,7 @@ export default memo(function PostReplies(props: Props) {
                 </Button>
             </div>
 
-            <div className='card card-compact mt-4 flex flex-col py-4 gap-4'>
-
-
-
+            <div className=' mt-4 flex flex-col py-4 gap-4'>
 
                 {repliesMutation.isSuccess ? null :
                     <div className='flex flex-row gap-2 items-center justify-center'>
@@ -344,14 +341,21 @@ export default memo(function PostReplies(props: Props) {
                         repliesMutation.isSuccess && <EmptyList />
                     }
                 >
-                    {rootReplies?.map((reply: Post) => {
-                        return (!reply.link_id) ? null :
-                            <div id={`editorDiv-${reply.author + '-' + reply.permlink}`}>
-                                < Reply key={reply.link_id}
-                                    comment={reply}
-                                    rootComment={comment} />
-                            </div>
-                    })}
+                    <div className='flex flex-col gap-4 p-1'>
+
+                     
+                        {rootReplies?.map((reply: Post) => {
+                            return (!reply.link_id) ? null :
+                                <div id={`editorDiv-${reply.author + '-' + reply.permlink}`}
+                                className=' border-b-1 rounded-lg border-default-200'
+                                >
+                                    < Reply key={reply.link_id}
+                                        comment={reply}
+                                        rootComment={comment} />
+                                        
+                                </div>
+                        })}
+                    </div>
                 </InfiniteScroll>
 
             </div >

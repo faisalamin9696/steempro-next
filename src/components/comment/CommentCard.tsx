@@ -21,6 +21,7 @@ export interface CommentProps {
     className?: string;
     isReply?: boolean;
     compact?: boolean;
+    isDetails?: boolean;
     onEditClick?: (comment: Feed | Post) => void;
     onDeleteClick?: (comment: Feed | Post) => void;
     onMuteClick?: (comment: Feed | Post) => void;

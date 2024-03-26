@@ -157,7 +157,7 @@ export default function AppNavbar() {
                     >
                         <LuPencilLine className='text-xl text-default-600' />
                     </Button>
-                    
+
                     <Badge size='sm' content={loginInfo.unread_count > 99 ?
                         '99+' : loginInfo.unread_count > 0 && loginInfo.unread_count}
                         className='opacity-80' color='primary'>
@@ -198,6 +198,7 @@ export default function AppNavbar() {
                                     if (isPopOpen) setIsPopOpen(false);
                                 }}>
                                     <li><Link href={`/@${session?.user?.name}`}>Profile</Link></li>
+                                    <li><Link href={`/@${session?.user?.name}/wallet`}>Wallet</Link></li>
                                     <li><a onClick={() => setIsAccOpen(!isAccOpen)}>Switch Account</a></li>
                                     <li><a onClick={handleUnlock}> {isLocked ? 'Unlock' : 'Lock'} Account</a>
                                     </li>

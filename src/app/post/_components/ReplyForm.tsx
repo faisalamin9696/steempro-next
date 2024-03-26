@@ -4,13 +4,11 @@ import React, { memo, useEffect, useState } from 'react'
 import Reply from './Reply';
 import BodyShort from '../../../components/body/BodyShort';
 import { FiCornerLeftUp } from 'react-icons/fi';
-
 import { useLogin } from '../../../components/useLogin';
 import moment from 'moment';
 import { Popover, PopoverContent, PopoverTrigger, } from '@nextui-org/popover';
 import { Button } from '@nextui-org/button';
 import { Card } from '@nextui-org/card';
-import { Accordion, AccordionItem } from '@nextui-org/accordion';
 import { User } from '@nextui-org/user'
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { awaitTimeout, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
@@ -19,7 +17,6 @@ import { addCommentHandler } from '@/libs/redux/reducers/CommentReducer';
 import { addRepliesHandler } from '@/libs/redux/reducers/RepliesReducer';
 import { toast } from 'sonner';
 import { deleteComment, mutePost, publishContent } from '@/libs/steem/condenser';
-import { AppStrings } from '@/libs/constants/AppStrings';
 import CommentHeader from '@/components/comment/component/CommentHeader';
 import MarkdownViewer from '@/components/body/MarkdownViewer';
 import EditorInput from '@/components/editor/EditorInput';
@@ -34,7 +31,6 @@ import { allowDelete } from '@/libs/utils/StateFunctions';
 import CommentFooter from '@/components/comment/component/CommentFooter';
 import MuteDeleteModal from '@/components/MuteDeleteModal';
 import clsx from 'clsx';
-import Link from 'next/link';
 
 interface Props {
     comment: Post;
@@ -45,7 +41,6 @@ export default memo(function ReplyForm(props: Props) {
     const { comment, rootComment } = props;
     const commentInfo: Post = (useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment) as Post;
     const rootInfo = (useAppSelector(state => state.commentReducer.values)[`${commentInfo.root_author}/${commentInfo.root_permlink}`]) as Post;
-    const [selectedKeys, setSelectedKeys] = React.useState(new Set([(commentInfo.depth === 1 || !!commentInfo.is_new) ? commentInfo.permlink : 'null']));
     const postReplies = useAppSelector(state => state.repliesReducer.values)[`${rootInfo?.author}/${rootInfo?.permlink}`] ?? [];
     const [showReply, setShowReply] = useState(false);
     const [markdown, setMarkdown] = useState('');
@@ -66,14 +61,13 @@ export default memo(function ReplyForm(props: Props) {
     });
 
     const isSelf = !!loginInfo.name && (loginInfo.name === (commentInfo.author));
-
-
     const canMute = loginInfo.name && Role.atLeast(commentInfo.observer_role, 'mod');
     const canDelete = !commentInfo.children && isSelf && allowDelete(comment);
     const canEdit = isSelf;
     const allowReply = Role.canComment(commentInfo.community, commentInfo.observer_role);
     const canReply = allowReply && commentInfo.depth < 255;
     const { users } = JSON.parse(commentInfo.json_metadata ?? `{}`) || [];
+    const [expanded, setExpanded] = useState(false);
 
 
     const toggleReply = () => setShowReply(!showReply);
@@ -384,25 +378,42 @@ export default memo(function ReplyForm(props: Props) {
 
 
     return (
-        <div >
-            <Accordion isCompact
-                expandedKeys={!!commentInfo.is_new ? [commentInfo.permlink] : []}
-                onSelectionChange={(keys) => setSelectedKeys(keys as Set<string>)}
-                selectedKeys={selectedKeys} >
-                <AccordionItem
-                    key={commentInfo.permlink}
-                    title={<div> <CommentHeader isDetail comment={commentInfo} isReply />
-                    </div>} >
-                    <div className='flex flex-col gap-2 p-1 '>
+        <div className='px-2  bg-background/40 pb-4 shadow-md dark:shadow-gray-600/10  rounded-lg'>
 
-                        <Card as={Link} href={`/${comment.category}/@${comment.author}/${comment.permlink}`} className={clsx('p-0 shadow-none bg-transparent', commentInfo.is_muted === 1 && 'opacity-60')}>
-                            <MarkdownViewer text={commentInfo.body}
-                                className={``} />
-                        </Card>
+            <div key={commentInfo.permlink} className='flex flex-col gap-1 '>
 
-                        <div className='flex flex-col gap-1  self-end opacity-70 items-end justify-around  w-full'>
+                <div className=' flex justify-between items-center'>
 
-                            <CommentFooter isReply comment={comment} />
+                    <CommentHeader isDetail comment={commentInfo} isReply />
+
+                    {commentInfo.children >= 1 &&
+                        <button title={expanded ? 'Collapse' : 'Expand'}
+                            className=' hover:text-primary'
+                            onClick={() => setExpanded(!expanded)}>
+                            [{expanded ? '-' : '+'}]
+                        </button>}
+                </div>
+
+                <div className='flex flex-col gap-2'>
+
+                    <Card className={clsx('p-0 shadow-none bg-transparent ', commentInfo.is_muted === 1 && 'opacity-60')}>
+                        <MarkdownViewer text={commentInfo.body}
+                            className={` !prose-sm !w-full !max-w-none`} />
+                    </Card>
+
+                    <div className='flex flex-col gap-1  self-end opacity-70 items-end justify-around  w-full'>
+
+                        <CommentFooter isReply comment={comment} />
+
+
+                        <div className='flex items-center justify-between w-full px-1'>
+                            <div>
+                                {!expanded && !!commentInfo.children && <Button variant='flat' className='self-start'
+                                    color='primary' radius='full' size='sm' onClick={() => setExpanded(!expanded)}>
+                                    Reveal {commentInfo.children} replies
+                                </Button>}
+                            </div>
+
                             <div className='flex'>
                                 {canReply &&
                                     <Button size='sm'
@@ -474,105 +485,103 @@ export default memo(function ReplyForm(props: Props) {
                                 }
 
                             </div>
-
                         </div>
-
-                        <div id={`editorDiv-${commentInfo.author + '-' + commentInfo.permlink}`}>
-                            {(showReply || showEdit) ?
-                                <div className='flex flex-col mt-2 gap-2'>
-                                    <EditorInput
-                                        users={[commentInfo.author, commentInfo.parent_author, commentInfo.root_author, ...(users ?? [])]}
-                                        value={markdown}
-                                        onChange={setMarkdown}
-                                        onImageUpload={() => { }}
-                                        onImageInvalid={() => { }}
-                                        rows={6} />
-
-                                    <div className='flex justify-between'>
-                                        <ClearFormButton
-                                            onClearPress={handleClear} />
-
-                                        <div className='flex gap-2 '>
-
-                                            {<Button radius='full'
-                                                size='sm'
-                                                onClick={() => {
-                                                    if (showReply)
-                                                        toggleReply();
-                                                    else toggleEdit();
-
-                                                }}>
-                                                Cancel
-                                            </Button>}
-
-                                            <PublishButton
-                                                isDisabled={isPosting}
-                                                onClick={handlePublish}
-                                                isLoading={isPosting}
-                                                tooltip=''
-                                                buttonText={showEdit ? 'Update' : 'Send'} />
-                                        </div>
-
-
-
-
-                                    </div>
-
-                                    <div className='space-y-1 w-full overflow-auto m-1 mt-4'>
-
-                                        <div className=' items-center flex justify-between'>
-                                            <p className='float-left text-sm text-default-900/70 font-semibold'>Preview</p>
-
-                                            <p className='float-right text-sm font-light text-default-900/60'>{rpm?.words} words, {rpm?.text}</p>
-
-                                        </div>
-                                        {markdown ? <Card isBlurred shadow='sm' className={'p-2 lg:shadow-none space-y-2'}>
-                                            <MarkdownViewer text={markdown} />
-                                        </Card> : null}
-                                    </div>
-
-                                </div> : null}
-                        </div>
-                        {replies?.map((item: Post) => (
-                            <div className=' mt-6 ' style={{
-
-                            }} key={item.link_id}>
-                                <div className='text-inherit flex flex-col items-start'>
-                                    <User
-                                        classNames={{
-                                            description: 'mt-2 dark:text-gray-200/40 text-xs',
-                                            name: 'text-xs dark:text-white/80'
-                                        }}
-
-                                        name={<div className='flex items-center space-x-2'>
-                                            <p>{commentInfo.author}</p>
-                                        </div>}
-                                        description={<BodyShort body={commentInfo.body} length={50} />}
-                                        title={item.parent_author}
-                                        avatarProps={{
-                                            src: getResizedAvatar(item.parent_author), size: 'sm'
-                                        }}
-                                    />
-
-                                </div>
-                                <div className='flex w-full mt-1 p-2'>
-                                    <FiCornerLeftUp className='text-default-900/50' />
-                                    <Reply
-                                        comment={item}
-                                        rootComment={rootInfo}
-                                    />
-                                </div>
-
-
-                            </div>
-
-                        ))
-
-                        }
 
                     </div>
-                </AccordionItem >
-            </Accordion >
+
+                    <div >
+                        {(showReply || showEdit) ?
+                            <div className='flex flex-col mt-2 gap-2' id={`editorDiv-${commentInfo.author + '-' + commentInfo.permlink}`}>
+                                <EditorInput
+                                    users={[commentInfo.author, commentInfo.parent_author, commentInfo.root_author, ...(users ?? [])]}
+                                    value={markdown}
+                                    onChange={setMarkdown}
+                                    onImageUpload={() => { }}
+                                    onImageInvalid={() => { }}
+                                    rows={6} />
+
+                                <div className='flex justify-between'>
+                                    <ClearFormButton
+                                        onClearPress={handleClear} />
+
+                                    <div className='flex gap-2 '>
+
+                                        {<Button radius='full'
+                                            size='sm'
+                                            onClick={() => {
+                                                if (showReply)
+                                                    toggleReply();
+                                                else toggleEdit();
+
+                                            }}>
+                                            Cancel
+                                        </Button>}
+
+                                        <PublishButton
+                                            isDisabled={isPosting}
+                                            onClick={handlePublish}
+                                            isLoading={isPosting}
+                                            tooltip=''
+                                            buttonText={showEdit ? 'Update' : 'Send'} />
+                                    </div>
+
+
+
+
+                                </div>
+
+                                <div className='space-y-1 w-full overflow-auto m-1 mt-4'>
+
+                                    <div className=' items-center flex justify-between'>
+                                        <p className='float-left text-sm text-default-900/70 font-semibold'>Preview</p>
+
+                                        <p className='float-right text-sm font-light text-default-900/60'>{rpm?.words} words, {rpm?.text}</p>
+
+                                    </div>
+                                    {markdown ? <Card isBlurred shadow='sm' className={'p-2 lg:shadow-none space-y-2'}>
+                                        <MarkdownViewer text={markdown} className='!prose-sm' />
+                                    </Card> : null}
+                                </div>
+
+                            </div> : null}
+                    </div>
+                    {expanded && replies?.map((item: Post) => (
+                        <div className=' mt-6 ' style={{
+
+                        }} key={item.link_id}>
+                            <div className='text-inherit flex flex-col items-start'>
+                                <User
+                                    classNames={{
+                                        description: 'mt-2 dark:text-gray-200/40 text-xs',
+                                        name: 'text-xs dark:text-white/80'
+                                    }}
+
+                                    name={<div className='flex items-center space-x-2'>
+                                        <p>{commentInfo.author}</p>
+                                    </div>}
+                                    description={<BodyShort body={commentInfo.body} length={50} />}
+                                    title={item.parent_author}
+                                    avatarProps={{
+                                        src: getResizedAvatar(item.parent_author), size: 'sm'
+                                    }}
+                                />
+
+                            </div>
+                            <div className='flex w-full mt-1 p-2'>
+                                <FiCornerLeftUp className='text-default-900/50' />
+                                <Reply
+                                    comment={item}
+                                    rootComment={rootInfo}
+                                />
+                            </div>
+
+
+                        </div>
+
+                    ))}
+
+                </div>
+            </div>
 
             {
                 confirmationModal.isOpen && <MuteDeleteModal

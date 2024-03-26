@@ -28,7 +28,7 @@ import './style.scss'
 import ClickAwayListener from 'react-click-away-listener';
 
 export default memo(function CommentFooter(props: CommentProps) {
-    const { comment, className, isReply, onCommentsClick, compact, } = props;
+    const { comment, className, isReply, onCommentsClick, compact, isDetails } = props;
 
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
     const [votersModal, setVotersModal] = useState(false);
@@ -235,7 +235,7 @@ export default memo(function CommentFooter(props: CommentProps) {
 
                     </CustomCard>
 
-                    {!compact && <CustomCard className={'px-2'}
+                    {((!compact && !!comment.children) || isDetails) && <CustomCard className={'px-2'}
                         title={`${comment.children} Comments`}>
 
                         <Button radius='full' isIconOnly size='sm'
@@ -344,7 +344,7 @@ export default memo(function CommentFooter(props: CommentProps) {
             scrollBehavior='inside'
             size='lg'
             closeButton>
-                
+
             <ModalContent>
                 {(onClose) => (
                     <>
