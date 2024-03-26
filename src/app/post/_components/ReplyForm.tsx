@@ -67,7 +67,7 @@ export default memo(function ReplyForm(props: Props) {
     const allowReply = Role.canComment(commentInfo.community, commentInfo.observer_role);
     const canReply = allowReply && commentInfo.depth < 255;
     const { users } = JSON.parse(commentInfo.json_metadata ?? `{}`) || [];
-    const [expanded, setExpanded] = useState(false);
+    const [expanded, setExpanded] = useState(commentInfo.depth <= 2);
 
 
     const toggleReply = () => setShowReply(!showReply);
