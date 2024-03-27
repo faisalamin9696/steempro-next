@@ -386,7 +386,7 @@ export default function SubmitPage(props: Props) {
                     <ClearFormButton onClearPress={clearForm}
                         isDisabled={isPosting} />
 
-                    <CommentOptionWrapper advance={isMobile}>
+                    <CommentOptionWrapper advance={isMobile} isDisabled={isEdit || isPosting}>
                         <BeneficiaryButton
                             isDisabled={isEdit || isPosting}
                             onSelectBeneficiary={bene => {

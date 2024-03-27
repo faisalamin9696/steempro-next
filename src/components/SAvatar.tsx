@@ -9,7 +9,7 @@ interface Props {
     onClick?: (event) => void;
     border?: boolean;
     className?: string;
-    size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+    size?: 'xs' | '1xs' | 'sm' | 'md' | 'lg' | 'xl';
 }
 export default function SAvatar(props: Props) {
     const { username, size, quality, onClick, border, className } = props;
@@ -17,7 +17,8 @@ export default function SAvatar(props: Props) {
         size === 'lg' ? 100 :
             size === 'md' ? 70 :
                 size === 'sm' ? 45 :
-                    size === 'xs' ? 25 : 60;
+                    size === '1xs' ? 35 :
+                        size === 'xs' ? 25 : 60;
 
 
     if (!username) return null

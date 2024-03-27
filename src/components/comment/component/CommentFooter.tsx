@@ -235,7 +235,7 @@ export default memo(function CommentFooter(props: CommentProps) {
 
                     </CustomCard>
 
-                    {((!compact && !!comment.children) || isDetails) && <CustomCard className={'px-2'}
+                    {(!isReply && !compact) && <CustomCard className={'px-2'}
                         title={`${comment.children} Comments`}>
 
                         <Button radius='full' isIconOnly size='sm'

@@ -45,7 +45,7 @@ export default memo(function PostReplies(props: Props) {
     const queryKey = [`post-${commentInfo.author}-${commentInfo.permlink}`];
     const queryClient = useQueryClient();
     const mutationKey = [`repliesMutation-${`${commentInfo?.author}/${commentInfo?.permlink}`}`];
-    const [sorting, setSorting] = useState<'created' | 'payout' | 'upvote_count'>('created');
+    const [sorting, setSorting] = useState<'created' | 'payout' | 'upvote_count'>('payout');
     const { users } = JSON.parse(commentInfo.json_metadata ?? `{}`) || [];
 
 
@@ -379,13 +379,13 @@ export default memo(function PostReplies(props: Props) {
                         repliesMutation.isSuccess && <EmptyList />
                     }
                 >
-                    <div className='flex flex-col gap-4 p-1'>
+                    <div className='flex flex-col '>
 
 
                         {rootReplies?.map((reply: Post) => {
                             return (!reply.link_id) ? null :
                                 <div id={`editorDiv-${reply.author + '-' + reply.permlink}`}
-                                    className=' border-b-1 rounded-lg border-default-200'
+                                    className=''
                                 >
                                     < Reply key={reply.link_id}
                                         comment={reply}

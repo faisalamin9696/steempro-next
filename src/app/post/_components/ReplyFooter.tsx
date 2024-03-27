@@ -1,0 +1,512 @@
+import MuteDeleteModal from '@/components/MuteDeleteModal';
+import MarkdownViewer from '@/components/body/MarkdownViewer';
+import CommentFooter from '@/components/comment/component/CommentFooter';
+import EditorInput from '@/components/editor/EditorInput';
+import ClearFormButton from '@/components/editor/component/ClearFormButton';
+import PublishButton from '@/components/editor/component/PublishButton';
+import { useLogin } from '@/components/useLogin';
+import { useAppSelector, useAppDispatch, awaitTimeout } from '@/libs/constants/AppFunctions';
+import { addCommentHandler } from '@/libs/redux/reducers/CommentReducer';
+import { addRepliesHandler } from '@/libs/redux/reducers/RepliesReducer';
+import { deleteComment, mutePost, publishContent } from '@/libs/steem/condenser';
+import { allowDelete } from '@/libs/utils/StateFunctions';
+import { Role } from '@/libs/utils/community';
+import { createPatch, extractMetadata, generateReplyPermlink, makeJsonMetadata, makeJsonMetadataReply, validateCommentBody } from '@/libs/utils/editor';
+import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator';
+import { getCredentials, getSessionKey } from '@/libs/utils/user';
+import { Button } from '@nextui-org/button';
+import { Card, Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import moment from 'moment';
+import React, { useEffect, useState } from 'react'
+import secureLocalStorage from 'react-secure-storage';
+import { toast } from 'sonner';
+
+export default function ReplyFooter({ comment, expanded, toggleExpand, className }: {
+    comment: Post,
+    expanded?: boolean,
+    toggleExpand?: () => void;
+    className?: string;
+}) {
+    const rootInfo = (useAppSelector(state => state.commentReducer.values)[`${comment.root_author}/${comment.root_permlink}`]) as Post;
+    const postReplies = useAppSelector(state => state.repliesReducer.values)[`${rootInfo?.author}/${rootInfo?.permlink}`] ?? [];
+    const [showReply, setShowReply] = useState(false);
+    const [markdown, setMarkdown] = useState('');
+    const rpm = readingTime(markdown);
+    const [isPosting, setPosting] = useState(false);
+    const { authenticateUser, isAuthorized } = useLogin();
+    const loginInfo = useAppSelector(state => state.loginReducer.value);
+    const dispatch = useAppDispatch();
+    const queryKey = [`post-${rootInfo?.author}-${rootInfo?.permlink}`];
+    const queryClient = useQueryClient();
+    const [showEdit, setShowEdit] = useState(false);
+    const [deletePopup, setDeletePopup] = useState(false);
+    const [confirmationModal, setConfirmationModal] = useState<{
+        isOpen: boolean, muteNote?: string
+    }>({
+        isOpen: false,
+        muteNote: ''
+    });
+
+    const isSelf = !!loginInfo.name && (loginInfo.name === (comment.author));
+    const canMute = loginInfo.name && Role.atLeast(comment.observer_role, 'mod');
+    const canDelete = !comment.children && isSelf && allowDelete(comment);
+    const canEdit = isSelf;
+    const allowReply = Role.canComment(comment.community, comment.observer_role);
+    const canReply = allowReply && comment.depth < 255;
+    const { users } = JSON.parse(comment.json_metadata ?? `{}`) || [];
+
+    const toggleReply = () => setShowReply(!showReply);
+    const toggleEdit = () => setShowEdit(!showEdit);
+
+
+    function handleClear() {
+        secureLocalStorage.removeItem('comment_draft');
+        setMarkdown('');
+
+    }
+
+    useEffect(() => {
+
+        if (showEdit || showReply) {
+            document.getElementById(`editorDiv-${comment.author + '-' + comment.permlink}`)?.scrollIntoView({ behavior: 'smooth' });
+
+        }
+        if (showEdit) {
+            setMarkdown(comment.body);
+        }
+        if (showReply) {
+            const draft = (secureLocalStorage.getItem('comment_draft') || '') as string;
+            setMarkdown(draft || '');
+        }
+
+    }, [showEdit, showReply]);
+
+
+    function saveDraft() {
+        if (showReply)
+            secureLocalStorage.setItem('comment_draft', markdown);
+
+    }
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            saveDraft();
+        }, 1000);
+
+        return () => clearTimeout(timeout);
+
+    }, [markdown]);
+
+
+    const deleteMutation = useMutation({
+        mutationFn: (key: string) => deleteComment(loginInfo, key, { author: comment.author, permlink: comment.permlink }),
+        onSettled(data, error, variables, context) {
+            if (error) {
+                toast.error(error.message);
+                return;
+            }
+            dispatch(addCommentHandler({ ...comment, link_id: undefined }));
+            dispatch(addCommentHandler({ ...rootInfo, children: rootInfo.children - 1 }));
+
+            toast.success(`Deleted`);
+
+        },
+    });
+
+
+    const unmuteMutation = useMutation({
+        mutationFn: (key: string) => mutePost(loginInfo, key, false, {
+            community: comment.category, account: comment.author, permlink: comment.permlink,
+        }),
+        onSettled(data, error, variables, context) {
+            if (error) {
+                toast.error(error.message);
+                return;
+            }
+            dispatch(addCommentHandler({ ...comment, is_muted: 0 }));
+            toast.success(`Unmuted`);
+
+        },
+    });
+
+
+    function handleDelete() {
+        authenticateUser();
+        if (!isAuthorized())
+            return
+
+        const credentials = getCredentials(getSessionKey());
+        if (!credentials?.key) {
+            toast.error('Invalid credentials');
+            return
+        }
+        deleteMutation.mutate(credentials.key);
+    }
+
+    function handleMute() {
+        authenticateUser();
+        if (!isAuthorized())
+            return
+        const credentials = getCredentials(getSessionKey());
+        if (!credentials?.key) {
+            toast.error('Invalid credentials');
+            return
+        }
+        if (comment.is_muted === 1) {
+            unmuteMutation.mutate(credentials.key);
+            return
+        }
+        setConfirmationModal({ ...confirmationModal, isOpen: true });
+    }
+
+
+    function clearForm() {
+        setMarkdown('');
+    }
+
+
+    function handleOnPublished(postData: PostingContent) {
+        const time = moment().unix();
+
+        let newComment: Post;
+        // if the update then use the old data
+        if (showEdit) {
+            let body = markdown;
+
+            newComment = {
+                ...postData,
+                ...comment,
+                last_update: time,
+                body: body,
+                is_new: 1
+            }
+        } else {
+
+
+            newComment = {
+                ...comment,
+                link_id: time,
+                created: time,
+                last_update: time,
+                ...postData,
+                body: postData.body,
+                json_metadata: JSON.stringify(postData.json_metadata),
+                author: loginInfo.name,
+                depth: comment.depth + 1,
+                payout: 0,
+                upvote_count: 0,
+                observer_vote: 0,
+                category: comment.category,
+                author_reputation: loginInfo.reputation,
+                author_role: comment.observer_role ?? '',
+                author_title: comment.observer_title ?? '',
+                observer_title: comment.observer_title ?? '',
+                observer_role: comment.observer_role ?? '',
+                root_author: rootInfo?.author ?? '',
+                root_permlink: rootInfo?.permlink ?? '',
+                root_title: comment.root_title,
+                net_rshares: 0,
+                children: 0,
+                observer_vote_percent: 0,
+                resteem_count: 0,
+                observer_resteem: 0,
+                replies: [],
+                votes: [],
+                downvote_count: 0,
+                cashout_time: moment().add(7, 'days').unix(),
+                is_new: 1
+            }
+
+        }
+
+
+        if (showEdit) {
+            dispatch(addCommentHandler({ ...newComment }));
+
+        } else {
+            queryClient.setQueryData(queryKey, { ...rootInfo, children: rootInfo?.children + 1 })
+
+            // update the redux state for the post
+            dispatch(addCommentHandler({ ...rootInfo, children: rootInfo?.children + 1, }));
+
+            // update the redux state for the current comment
+            dispatch(addCommentHandler({ ...comment, children: comment?.children + 1 }));
+
+            // update the redux state for the root post replies
+            dispatch(addRepliesHandler({
+                comment: rootInfo,
+                replies: [newComment].concat(postReplies)
+            }));
+
+        }
+
+        clearForm();
+        if (showEdit)
+            setShowEdit(false);
+        if (showReply)
+            setShowReply(false);
+
+        setPosting(false);
+        handleClear();
+        toast.success(showEdit ? 'Updated' : 'Sent');
+    }
+
+    const postingMutation = useMutation({
+        mutationKey: [`publish-reply`],
+        mutationFn: ({ postData, options, key }:
+            { postData: PostingContent, options?: any, key: string }) =>
+            publishContent(postData, options, key),
+        onSettled(data, error, variables, context) {
+            if (error) {
+                toast.error(error.message);
+                return
+            }
+            const { postData } = variables;
+            handleOnPublished(postData);
+            setPosting(false);
+
+        },
+    });
+
+
+    async function handlePublish() {
+
+        if (!markdown) {
+            toast.info('Comment can not be empty');
+            return
+        }
+
+        const limit_check = validateCommentBody(markdown, false);
+        if (limit_check !== true) {
+            toast.info(limit_check);
+            return;
+        }
+
+
+        authenticateUser();
+
+
+        if (isAuthorized()) {
+            setPosting(true);
+
+            await awaitTimeout(1);
+            try {
+
+
+                // generating the permlink for the comment author
+                let permlink = generateReplyPermlink(comment.author);
+
+
+                const postData: PostingContent = {
+                    author: loginInfo,
+                    title: '',
+                    body: markdown,
+                    parent_author: comment.author,
+                    parent_permlink: comment.permlink,
+                    json_metadata: makeJsonMetadataReply(),
+                    permlink: permlink
+
+                }
+
+
+                const cbody = markdown.replace(/[\x00-\x09\x0B-\x0C\x0E-\x1F\x7F-\x9F]/g, "");
+
+                // check if post is edit
+                if (showEdit) {
+                    const oldComment = comment;
+                    let newBody = cbody;
+
+                    const patch = createPatch(oldComment?.body, newBody?.trim());
+                    if (patch && patch.length < Buffer.from(oldComment?.body, "utf-8").length) {
+                        newBody = patch;
+                    }
+                    const meta = extractMetadata(markdown);
+                    const new_json_metadata = makeJsonMetadata(meta, []);
+                    postData.permlink = oldComment.permlink;
+                    postData.body = newBody;
+                    postData.json_metadata = '';
+                    postData.parent_author = oldComment.parent_author;
+                    postData.parent_permlink = oldComment.parent_permlink;
+                }
+
+
+                const credentials = getCredentials(getSessionKey());
+
+                if (credentials) {
+                    // handleOnPublished(postData);
+                    postingMutation.mutate({ postData, options: null, key: credentials.key });
+                } else {
+                    setPosting(false);
+                    toast.error('Invalid credentials');
+                }
+
+
+            } catch (e) {
+                toast.error(String(e));
+                setPosting(false);
+            }
+        }
+
+    }
+
+    return (
+        <div className={className}>
+
+            <div className='flex flex-col gap-2'>
+
+                <div className='flex justify-between items-center'>
+                    <CommentFooter isReply comment={comment} className='p-0' />
+
+                    <div className='flex'>
+                        {canReply &&
+                            <Button size='sm'
+                                onClick={() => { toggleReply() }}
+                                variant='light'
+                                isDisabled={showReply || showEdit}
+                                className='text-tiny min-w-0 min-h-0'>
+                                Reply
+
+                            </Button>}
+
+                        {canEdit &&
+                            <Button size='sm'
+                                onClick={() => { toggleEdit() }}
+                                variant='light'
+                                isDisabled={showReply || showEdit}
+                                className='text-tiny min-w-0 min-h-0'>
+                                Edit
+                            </Button>}
+
+
+                        {canDelete && < div >
+                            <Popover isOpen={deletePopup}
+                                onOpenChange={(open) => setDeletePopup(open)}
+                                placement={'top-start'}>
+                                <PopoverTrigger >
+                                    <Button size='sm'
+                                        variant='light'
+                                        isLoading={deleteMutation.isPending}
+                                        isDisabled={deleteMutation.isPending}
+                                        className='text-tiny min-w-0 min-h-0'>
+                                        Delete
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent >
+                                    <div className="px-1 py-2">
+                                        <div className="text-small font-bold">{'Confirmation'}</div>
+                                        <div className="text-tiny flex">
+                                            {'Do you really want to delete?'}
+                                        </div>
+
+                                        <div className="text-tiny flex mt-2 space-x-2">
+                                            <Button onClick={() => setDeletePopup(false)}
+                                                size='sm' color='default'>No</Button>
+                                            <Button size='sm' color='danger' variant='solid'
+                                                onClick={() => {
+                                                    setDeletePopup(false);
+                                                    handleDelete();
+                                                }}>YES</Button>
+
+                                        </div>
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
+
+                        </div>}
+
+
+                        {canMute &&
+                            <Button size='sm'
+                                isLoading={unmuteMutation.isPending}
+                                onClick={() => { handleMute() }}
+                                variant='light'
+                                isDisabled={unmuteMutation.isPending}
+                                className='text-tiny min-w-0 min-h-0'>
+                                {comment.is_muted ? 'Unmute' : 'Mute'}
+
+                            </Button>
+                        }
+
+                    </div>
+                </div>
+
+                <div className='flex items-center justify-between w-full'>
+                    {!expanded && !!comment.children && <Button variant='flat'
+                        className='self-start h-6 min-w-0 px-2'
+                        color='warning' radius='full' size='sm' onClick={toggleExpand}>
+                        Reveal {comment.children} replies
+                    </Button>}
+                </div>
+
+            </div>
+
+            <div >
+                {(showReply || showEdit) ?
+                    <div className='flex flex-col mt-2 gap-2' id={`editorDiv-${comment.author + '-' + comment.permlink}`}>
+                        <EditorInput
+                            users={[comment.author, comment.parent_author, comment.root_author, ...(users ?? [])]}
+                            value={markdown}
+                            onChange={setMarkdown}
+                            onImageUpload={() => { }}
+                            onImageInvalid={() => { }}
+                            rows={6} />
+
+                        <div className='flex justify-between'>
+                            <ClearFormButton
+                                onClearPress={handleClear} />
+
+                            <div className='flex gap-2 '>
+
+                                {<Button radius='full'
+                                    size='sm'
+                                    onClick={() => {
+                                        if (showReply)
+                                            toggleReply();
+                                        else toggleEdit();
+
+                                    }}>
+                                    Cancel
+                                </Button>}
+
+                                <PublishButton
+                                    isDisabled={isPosting}
+                                    onClick={handlePublish}
+                                    isLoading={isPosting}
+                                    tooltip=''
+                                    buttonText={showEdit ? 'Update' : 'Send'} />
+                            </div>
+
+
+
+
+                        </div>
+
+                        <div className='space-y-1 w-full overflow-auto m-1 mt-4'>
+
+                            <div className=' items-center flex justify-between'>
+                                <p className='float-left text-sm text-default-900/70 font-semibold'>Preview</p>
+
+                                <p className='float-right text-sm font-light text-default-900/60'>{rpm?.words} words, {rpm?.text}</p>
+
+                            </div>
+                            {markdown ? <Card isBlurred shadow='sm' className={'p-2 lg:shadow-none space-y-2'}>
+                                <MarkdownViewer text={markdown} className='!prose-sm' />
+                            </Card> : null}
+                        </div>
+
+                    </div> : null}
+            </div>
+
+            {
+                confirmationModal.isOpen && <MuteDeleteModal
+                    comment={comment}
+                    isOpen={confirmationModal.isOpen} onOpenChange={(isOpen) => setConfirmationModal({ ...confirmationModal, isOpen: isOpen })}
+                    mute={true}
+                    muteNote={confirmationModal.muteNote}
+                    onNoteChange={(value) => { setConfirmationModal({ ...confirmationModal, muteNote: value }); }}
+                />
+            }
+        </div>
+    )
+}

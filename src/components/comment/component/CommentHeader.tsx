@@ -225,9 +225,7 @@ export default memo(function CommentHeader(props: Props) {
                 {isDetail && <RoleTitleCard comment={comment} />}
 
                 <div className={clsx(`time-div flex gap-2`,)}>
-                    <Link className={clsx(isReply ? '' : 'pointer-events-none')} href={isReply ? `/${comment.category}/@${comment.author}/${comment.permlink}` : ''}>
-                        <TimeAgoWrapper lang={settings.lang.code} created={comment.created * 1000} lastUpdate={comment.last_update * 1000} />
-                    </Link>
+                    <TimeAgoWrapper lang={settings.lang.code} created={comment.created * 1000} lastUpdate={comment.last_update * 1000} />
                     {!isReply && <div className='flex gap-1  sm:items-center'>
                         <p className={''}>in</p>
 

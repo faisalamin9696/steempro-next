@@ -7,10 +7,11 @@ import { MdSettings } from 'react-icons/md'
 interface Props {
     children: React.ReactNode;
     advance?: boolean;
+    isDisabled?: boolean;
 }
 
 export default function CommentOptionWrapper(props: Props) {
-    const { children, advance } = props;
+    const { children, advance, isDisabled } = props;
     return (
         advance ?
             <Popover
@@ -19,6 +20,7 @@ export default function CommentOptionWrapper(props: Props) {
                 }}>
                 <PopoverTrigger  >
                     <Button size='sm' color='default'
+                        isDisabled={isDisabled}
                         startContent={<MdSettings className='text-lg' />}
                         radius='lg' variant='shadow'>
                         Advance
