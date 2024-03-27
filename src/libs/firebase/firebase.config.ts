@@ -1,9 +1,9 @@
 export const firebaseConfig = {
-    apiKey: "AIzaSyAdgqQmd86Yvkj765holthdvErQ_2hwSNo",
-    authDomain: "steempromobile.firebaseapp.com",
-    projectId: "steempromobile",
-    storageBucket: "steempromobile.appspot.com",
-    messagingSenderId: "419396556045",
-    appId: "1:419396556045:web:f1dd5a2ee8d62146938c44",
-    measurementId: "G-T818KWMWED"
+    apiKey: "AIzaSyBdobL0PyGeqJIRP2kF7VIFcz89pYP5QbQ",
+    authDomain: "steempro-blogs.firebaseapp.com",
+    projectId: "steempro-blogs",
+    storageBucket: "steempro-blogs.appspot.com",
+    messagingSenderId: "16233284467",
+    appId: "1:16233284467:web:cdccf991054e84801a7b06",
+    measurementId: "G-G18X0B2QSX"
 };
