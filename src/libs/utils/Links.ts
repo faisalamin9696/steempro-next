@@ -85,5 +85,5 @@ export function replaceOldDomains(link?: string) {
     if (!link)
         return '/';
     const regex = new RegExp(OLD_DOMAINS_LIST.join('|'), 'g');
-    return `${link.replace(regex, 'steempro.com')}`;
+    return `${link.replace(regex, 'steempro.com').replace('~witnesses', 'witnesses')}`;
 }

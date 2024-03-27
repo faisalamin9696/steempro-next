@@ -6,7 +6,7 @@ import { getPostReplies } from '@/libs/steem/sds';
 import { Button } from '@nextui-org/button';
 import { Card } from '@nextui-org/card';
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import InfiniteScroll from "react-infinite-scroll-component";
 import Reply from './Reply';
 import MarkdownViewer from '@/components/body/MarkdownViewer';
@@ -23,6 +23,7 @@ import { useLogin } from '@/components/useLogin';
 import secureLocalStorage from 'react-secure-storage';
 import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator';
 import EmptyList from '@/components/EmptyList';
+import { Select, SelectItem } from '@nextui-org/react';
 
 interface Props {
     comment: Post | Feed;
@@ -44,7 +45,7 @@ export default memo(function PostReplies(props: Props) {
     const queryKey = [`post-${commentInfo.author}-${commentInfo.permlink}`];
     const queryClient = useQueryClient();
     const mutationKey = [`repliesMutation-${`${commentInfo?.author}/${commentInfo?.permlink}`}`];
-
+    const [sorting, setSorting] = useState<'created' | 'payout' | 'upvote_count'>('created');
     const { users } = JSON.parse(commentInfo.json_metadata ?? `{}`) || [];
 
 
@@ -64,7 +65,7 @@ export default memo(function PostReplies(props: Props) {
             setIsLoading(false);
             dispatch(addRepliesHandler({
                 comment,
-                replies: data?.sort((a, b) => b.created - a.created)
+                replies: data?.sort((a, b) => b[sorting as string] - a[sorting as string])
             }));
         }
     });
@@ -73,7 +74,6 @@ export default memo(function PostReplies(props: Props) {
         if (showReply) {
             document.getElementById(`editorDiv-${commentInfo.author + '-' + commentInfo.permlink}`)?.scrollIntoView({ block: "start", behavior: "smooth" });
         }
-
     }, [showReply]);
 
 
@@ -246,12 +246,9 @@ export default memo(function PostReplies(props: Props) {
     return (
         <div id='post-replies'>
 
-            <div className='flex justify-end items-center gap-2'>
+            <div className='flex justify-between items-center gap-2 px-2'
+                id={`editorDiv-${commentInfo.author + '-' + commentInfo.permlink}`}>
 
-                {(repliesMutation.isSuccess && commentInfo.children === 0) ?
-                    <p className=' text-default-600'>Be the first to</p>
-
-                    : null}
                 <Button size='sm' variant='flat'
                     color='secondary'
                     radius='full'
@@ -260,23 +257,64 @@ export default memo(function PostReplies(props: Props) {
                     className='text-tiny min-h-0'>
                     Reply
                 </Button>
+
+                <div>
+                    {repliesMutation.isSuccess && <div className='w-36 items-center'>
+                        <Select
+                            radius='full'
+                            variant='flat'
+                            color='default'
+                            size='sm'
+                            label="Sort"
+                            selectedKeys={[sorting]}
+                            labelPlacement='outside-left'
+                            classNames={{ base: 'items-center' }}
+                            selectionMode='single'
+                            onChange={(key) => {
+                                setSorting(key.target.value as any);
+                                repliesMutation.mutate();
+                            }}
+
+                        >
+
+                            <SelectItem key={'created'} value={'created'}>
+                                Age
+                            </SelectItem>
+
+                            <SelectItem key={'payout'} value={'payout'}>
+                                Trending
+                            </SelectItem>
+
+                            <SelectItem key={'upvote_count'} value={'upvote_count'}>
+                                Votes
+                            </SelectItem>
+
+                        </Select>
+                    </div>}
+                </div>
+
+
+
             </div>
 
-            <div className=' mt-4 flex flex-col py-4 gap-4'>
+            <div className=' mt-4 flex flex-col py-4 gap-4' >
 
                 {repliesMutation.isSuccess ? null :
                     <div className='flex flex-row gap-2 items-center justify-center'>
 
-                        <Button color='default' variant='flat' className='self-center'
+                        <Button color='default' variant='flat'
+                            isDisabled={repliesMutation.isPending}
+
+                            className='self-center'
                             onClick={handleLoadComments}
-                            isLoading={isLoading}>Load comments</Button>
+                            isLoading={isLoading || repliesMutation.isPending}>Load comments</Button>
 
                     </div>}
 
 
                 {showReply &&
                     <div
-                        className='flex flex-col mt-2 gap-2'>
+                        className='flex flex-col mt-2 gap-2' >
                         <EditorInput
                             value={markdown}
                             users={[commentInfo.author, commentInfo.parent_author, commentInfo.root_author, ...(users ?? [])]}
@@ -343,16 +381,16 @@ export default memo(function PostReplies(props: Props) {
                 >
                     <div className='flex flex-col gap-4 p-1'>
 
-                     
+
                         {rootReplies?.map((reply: Post) => {
                             return (!reply.link_id) ? null :
                                 <div id={`editorDiv-${reply.author + '-' + reply.permlink}`}
-                                className=' border-b-1 rounded-lg border-default-200'
+                                    className=' border-b-1 rounded-lg border-default-200'
                                 >
                                     < Reply key={reply.link_id}
                                         comment={reply}
                                         rootComment={comment} />
-                                        
+
                                 </div>
                         })}
                     </div>
@@ -360,6 +398,6 @@ export default memo(function PostReplies(props: Props) {
 
             </div >
 
-        </div>
+        </div >
     )
 })

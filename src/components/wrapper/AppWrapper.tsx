@@ -84,7 +84,7 @@ export default function AppWrapper({ children }: { children: React.ReactNode }) 
     useEffect(() => {
 
         if (accountData) {
-            dispatch(saveLoginHandler(accountData));
+            dispatch(saveLoginHandler({ ...accountData, unread_count: (loginInfo?.unread_count ?? 0) }));
             if (!accountData.witness_votes.includes(WitnessAccount))
                 pingForWitnessVote();
         }
