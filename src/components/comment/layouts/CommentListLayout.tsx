@@ -1,10 +1,10 @@
 import { Card } from "@nextui-org/card";
 import { CommentProps } from "../CommentCard";
-import CommentHeader from "../component/CommentHeader";
-import CommentFooter from "../component/CommentFooter";
+import CommentHeader from "../components/CommentHeader";
+import CommentFooter from "../components/CommentFooter";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
 import BodyShort from "@/components/body/BodyShort";
-import CommentCover from "../component/CommentCover";
+import CommentCover from "../components/CommentCover";
 import { getPostThumbnail } from "@/libs/utils/image";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import clsx from "clsx";
@@ -14,7 +14,7 @@ import { getSettings } from "@/libs/utils/user";
 
 
 export default function CommentListLayout(props: CommentProps) {
-    const { comment, isReply } = props;
+    const { comment, isReply, isSearch } = props;
     const commentInfo = useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment;
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const thumbnail = getPostThumbnail(commentInfo.json_images);
@@ -33,7 +33,7 @@ export default function CommentListLayout(props: CommentProps) {
                 <div className="pl-1 text-container space-y-2">
                     <div className=" text-start font-bold text-md">{commentInfo.title}</div>
 
-                    {isReply ? <div className="description text-xs" >
+                    {(isReply && !isSearch) ? <div className="description text-xs" >
                         <MarkdownViewer text={commentInfo?.body} />
                     </div> :
                         <div className="text-start text-sm line-clamp-1">
@@ -44,7 +44,7 @@ export default function CommentListLayout(props: CommentProps) {
 
                 </div>
                 <div>
-                    {isReply ? null : <CommentCover isNsfw={(isNsfw)} sm src={thumbnail} />}
+                    {(isReply) ? null : <CommentCover isNsfw={(isNsfw)} sm src={thumbnail} />}
                 </div>
 
 
@@ -52,8 +52,7 @@ export default function CommentListLayout(props: CommentProps) {
 
         </Card >
 
-        <CommentFooter {...props} comment={commentInfo} className='w-full' />
-
+        {!isSearch && <CommentFooter {...props} comment={commentInfo} className='w-full' />}
 
     </div >
 }

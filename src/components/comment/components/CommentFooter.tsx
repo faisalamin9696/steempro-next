@@ -9,7 +9,7 @@ import clsx from 'clsx';
 import { useMutation } from '@tanstack/react-query';
 import { calculatePowerUsage, getCredentials, getSessionKey } from '@/libs/utils/user';
 import { awaitTimeout, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
-import { useLogin } from '@/components/useLogin';
+import { useLogin } from '@/components/AuthProvider';
 import { addCommentHandler } from '@/libs/redux/reducers/CommentReducer';
 import { toast } from 'sonner';
 import { reblogPost, voteComment } from '@/libs/steem/condenser';
@@ -21,7 +21,7 @@ import { BiDownvote, BiSolidDownvote, BiSolidUpvote, BiUpvote } from "react-icon
 import { abbreviateNumber } from '@/libs/utils/helper';
 import { FaRegCommentAlt } from "react-icons/fa";
 
-import { RewardBreakdownCard } from '@/components/comment/RewardBreakdownCard';
+import { RewardBreakdownCard } from '@/components/RewardBreakdownCard';
 import { twMerge } from 'tailwind-merge';
 import VotersCard from '@/components/VotersCard';
 import './style.scss'
@@ -178,7 +178,7 @@ export default memo(function CommentFooter(props: CommentProps) {
             <div className={clsx('flex', compact ? 'gap-3' : 'gap-4')}>
                 <div className='flex flex-row items-center gap-2 relative  '>
                     {(upvotePopup || downvotePopup) && <ClickAwayListener onClickAway={closeVotingModal}>
-                        <div className='absolute  animate-appearance-in z-[11] top-[-35px]'>
+                        <div className='absolute  animate-appearance-in z-[11] top-[-45px]'>
                             <VotingModal {...props}
                                 downvote={downvotePopup}
                                 onConfirm={castVote} />

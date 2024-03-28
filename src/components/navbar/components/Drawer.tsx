@@ -7,7 +7,7 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { twMerge } from 'tailwind-merge';
 import Link from 'next/link';
 import Image from 'next/image';
-import ThemeSwitch from '../ThemeSwitch';
+import ThemeSwitch from '../../ThemeSwitch';
 import { MdClose } from 'react-icons/md';
 
 
@@ -16,10 +16,8 @@ interface Props {
     onAccountSwitch?: () => void;
 }
 
-export default memo(function AppDrawer(props: Props) {
+export default memo(function Drawer(props: Props) {
     const [isOpen, setIsOpen] = useState(false);
-    const { onItemClick, onAccountSwitch } = props;
-
 
     const toggleDrawer = () => {
         const newState = !isOpen;

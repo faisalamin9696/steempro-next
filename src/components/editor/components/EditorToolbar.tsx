@@ -11,7 +11,7 @@ import {
 } from "@nextui-org/dropdown";
 import clsx from 'clsx';
 import { BsImage, BsJustify, BsTextCenter } from 'react-icons/bs';
-import { ToolbarItem } from './component/EditorToolbarItem';
+import { ToolbarItem } from './EditorToolbarItem';
 
 
 

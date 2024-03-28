@@ -1,4 +1,4 @@
-import MainWrapper from "@/components/wrapper/MainWrapper";
+import MainWrapper from "@/components/wrappers/MainWrapper";
 import { getCommunity } from "@/libs/steem/sds";
 import { getResizedAvatar } from "@/libs/utils/image";
 import usePathnameServer from "@/libs/utils/usePathnameServer";

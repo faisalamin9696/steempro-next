@@ -1,6 +1,6 @@
 "use client"
 
-import FeedList from '@/components/comment/FeedList';
+import FeedList from '@/components/FeedList';
 import { FeedBodyLength } from '@/libs/constants/AppConstants';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import React from 'react'

@@ -2,7 +2,7 @@
 
 import React from 'react'
 import usePathnameClient from '@/libs/utils/usePathnameClient';
-import FeedList from '@/components/comment/FeedList';
+import FeedList from '@/components/FeedList';
 import { FeedTypes } from '@/libs/steem/sds';
 import { FeedBodyLength } from '@/libs/constants/AppConstants';
 

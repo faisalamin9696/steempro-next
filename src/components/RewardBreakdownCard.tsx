@@ -2,7 +2,7 @@ import React, { Component, Fragment, useState } from "react";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import { getTimeFromNow } from "@/libs/utils/time";
 import useSWR from "swr";
-import LoadingCard from "../LoadingCard";
+import LoadingCard from "./LoadingCard";
 import clsx from "clsx";
 import './style.scss';
 

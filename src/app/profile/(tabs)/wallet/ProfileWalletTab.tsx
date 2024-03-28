@@ -11,7 +11,7 @@ import { useMutation } from '@tanstack/react-query';
 import { claimRewardBalance } from '@/libs/steem/condenser';
 import { toast } from 'sonner';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
-import { useLogin } from '@/components/useLogin';
+import { useLogin } from '@/components/AuthProvider';
 import { getCredentials, getSessionKey } from '@/libs/utils/user';
 import TransferHistoryTab from './(tabs)/TransferHistoryTab';
 import { getTimeFromNow } from '@/libs/utils/time';
@@ -97,7 +97,7 @@ export default function ProfileWalletTab({ data }: { data: AccountExt }) {
 
       {getRewardsString(data, globalData) &&
         <div className='flex flex-col gap-2 items-center mt-4'>
-          <p className='text-sm text-default-800'>Unclaimed rewards ${getRewardsString(data, globalData)}</p>
+          <p className='text-sm text-default-800'>Unclaimed rewards {getRewardsString(data, globalData)}</p>
           {isSelf && <Button onClick={handleClaimReward}
             isDisabled={claimMutation.isPending}
             isLoading={claimMutation.isPending}

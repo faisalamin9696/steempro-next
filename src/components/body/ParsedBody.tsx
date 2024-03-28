@@ -2,7 +2,7 @@ import { Link } from '@nextui-org/link';
 import { Button } from '@nextui-org/button';
 import parse, { domToReact } from 'html-react-parser';
 import React from 'react';
-import CommentCover from '../comment/component/CommentCover';
+import CommentCover from '../comment/components/CommentCover';
 import './style.scss';
 import { MdOpenInNew } from "react-icons/md";
 import { proxifyImageUrl } from '@/libs/utils/ProxifyUrl';

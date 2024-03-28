@@ -4,11 +4,11 @@ import React from 'react'
 import BodyShort from '../../body/BodyShort';
 import Image from 'next/image';
 import { getPostThumbnail, getResizedAvatar } from '@/libs/utils/image';
-import TimeAgoWrapper from '../../wrapper/TimeAgoWrapper';
+import TimeAgoWrapper from '../../wrappers/TimeAgoWrapper';
 import { Card, CardBody } from '@nextui-org/card';
 import { User } from '@nextui-org/user';
 import Reputation from '@/components/Reputation';
-import CommentFooter from '../component/CommentFooter';
+import CommentFooter from '../components/CommentFooter';
 import STag from '@/components/STag';
 import './style.scss'
 import { CommentProps } from '../CommentCard';

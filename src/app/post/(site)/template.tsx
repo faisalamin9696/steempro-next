@@ -1,5 +1,5 @@
 
-import MainWrapper from "@/components/wrapper/MainWrapper";
+import MainWrapper from "@/components/wrappers/MainWrapper";
 import { getPost } from "@/libs/steem/sds";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
 import PostPage from "./page";

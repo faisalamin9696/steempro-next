@@ -5,9 +5,9 @@ import './style.scss';
 
 import { useAppSelector } from '@/libs/constants/AppFunctions';
 import { getSettings } from '@/libs/utils/user';
-import CommentListLayout from './layout/CommentListLayout';
-import CommentBlogLayout from './layout/CommentBlogsLayout';
-import CommentGridLayout from './layout/CommentGridLayout';
+import CommentListLayout from './layouts/CommentListLayout';
+import CommentBlogLayout from './layouts/CommentBlogsLayout';
+import CommentGridLayout from './layouts/CommentGridLayout';
 import { useDeviceInfo } from '@/libs/utils/useDeviceInfo';
 
 interface Props {
@@ -28,6 +28,7 @@ export interface CommentProps {
     onPinClick?: (comment: Feed | Post) => void;
     onCommentsClick?: () => void;
     onPublishClick?: (comment: Feed | Post) => void;
+    isSearch?: boolean;
 }
 
 export default memo(function CommentCard(props: Props) {

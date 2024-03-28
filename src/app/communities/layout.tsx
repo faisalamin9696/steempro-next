@@ -1,4 +1,4 @@
-import MainWrapper from '@/components/wrapper/MainWrapper';
+import MainWrapper from '@/components/wrappers/MainWrapper';
 import { Metadata } from 'next';
 import React from 'react'
 

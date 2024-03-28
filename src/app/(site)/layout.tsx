@@ -1,4 +1,4 @@
-import MainWrapper from '@/components/wrapper/MainWrapper';
+import MainWrapper from '@/components/wrappers/MainWrapper';
 import React from 'react'
 import HomeCarousel from '@/components/carousal/HomeCarousal';
 import usePathnameServer from '@/libs/utils/usePathnameServer';
@@ -14,10 +14,7 @@ export default async function Layout({
 }>) {
 
     return (
-
-
         <MainWrapper
-
             startContent={start}
             startClassName={' max-h-screen md:block !static pr-2'} >
             <div className=' flex flex-col'>

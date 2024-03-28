@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useRef, useCallback, memo, useEffect } from 'react';
-import EditorToolbar from './EditorToolbar';
+import EditorToolbar from './components/EditorToolbar';
 import { useDropzone } from 'react-dropzone';
 import { KeyboardEvent } from "react";
 import { MAXIMUM_UPLOAD_SIZE, isValidImage } from '@/libs/utils/image';
 import { toast } from 'sonner';
 import { toBase64 } from '@/libs/utils/helper';
 import { signImage, uploadImage } from '@/libs/steem/condenser';
-import { useLogin } from '../useLogin';
+import { useLogin } from '../AuthProvider';
 import { getCredentials, getSessionKey } from '@/libs/utils/user';
 import { filesize } from 'filesize';
 import { FaCloudUploadAlt } from "react-icons/fa";

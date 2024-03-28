@@ -1,6 +1,6 @@
 'use client';
 
-import CommentCover from '@/components/comment/component/CommentCover'
+import CommentCover from '@/components/comment/components/CommentCover'
 import { Card } from "@nextui-org/card";
 import React, { memo } from 'react'
 import { getPostThumbnail } from '@/libs/utils/image'
@@ -8,7 +8,7 @@ import BodyShort from '@/components/body/BodyShort'
 import ViewCountCard from './ViewCountCard'
 import { useAppSelector } from '@/libs/constants/AppFunctions'
 import Link from 'next/link';
-import TimeAgoWrapper from './wrapper/TimeAgoWrapper';
+import TimeAgoWrapper from './wrappers/TimeAgoWrapper';
 import { FaClock } from 'react-icons/fa';
 
 

@@ -1,6 +1,6 @@
 "use client"
 
-import CommunityCard from "@/components/CommunityCard";
+import CommunityCard from "@/components/community/CommunityCard";
 import ErrorCard from "@/components/ErrorCard";
 import LoadingCard from "@/components/LoadingCard";
 import { awaitTimeout, fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";

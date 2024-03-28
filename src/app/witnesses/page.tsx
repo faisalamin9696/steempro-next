@@ -1,8 +1,8 @@
 'use client';
 
 import SAvatar from '@/components/SAvatar';
-import MainWrapper from '@/components/wrapper/MainWrapper';
-import TimeAgoWrapper from '@/components/wrapper/TimeAgoWrapper';
+import MainWrapper from '@/components/wrappers/MainWrapper';
+import TimeAgoWrapper from '@/components/wrappers/TimeAgoWrapper';
 import { fetchSds, useAppSelector } from '@/libs/constants/AppFunctions';
 import { abbreviateNumber } from '@/libs/utils/helper';
 import {

@@ -6,7 +6,7 @@ import { Button } from '@nextui-org/button'
 import { useMutation } from '@tanstack/react-query';
 import React from 'react'
 import { toast } from 'sonner';
-import { useLogin } from './useLogin';
+import { useLogin } from './AuthProvider';
 import { getCredentials, getSessionKey } from '@/libs/utils/user';
 import clsx from 'clsx';
 import { addCommunityHandler } from '@/libs/redux/reducers/CommunityReducer';

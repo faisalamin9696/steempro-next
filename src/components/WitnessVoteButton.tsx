@@ -9,7 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { BiSolidUpvote, BiUpvote } from "react-icons/bi";
 import { toast } from "sonner";
-import { useLogin } from "./useLogin";
+import { useLogin } from "./AuthProvider";
 
 export default function WitnessVoteButton({ witness }: {
     witness: Witness

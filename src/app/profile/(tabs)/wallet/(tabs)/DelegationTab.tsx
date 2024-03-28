@@ -31,11 +31,11 @@ import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import { FiCornerDownRight } from "react-icons/fi";
 import { vestToSteem } from "@/libs/steem/sds";
 import SAvatar from "@/components/SAvatar";
-import TimeAgoWrapper from "@/components/wrapper/TimeAgoWrapper";
+import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import TransferModal from "@/components/TransferModal";
 import LoadingCard from "@/components/LoadingCard";
-import { useLogin } from "@/components/useLogin";
+import { useLogin } from "@/components/AuthProvider";
 
 const statusColorMap = {
     incoming: "success",
@@ -184,12 +184,14 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
             case "from":
                 const canEdit = delegation['status'] === 'outgoing' && delegation.from === loginInfo.name;
                 const canRemove = delegation['status'] === 'incoming' && delegation.from === loginInfo.name;
+
+                const username = delegation.status === 'incoming' ? delegation.from : delegation.to;
                 return (
-                    <div className="flex flex-row items-start gap-1">
+                    <div className="flex flex-row items-center">
                         <Dropdown>
                             <DropdownTrigger>
-                                <Button isIconOnly size="sm" variant="light" radius="full">
-                                    <BiDotsVerticalRounded className="text-default-300 text-xl" />
+                                <Button isIconOnly size="sm" variant="light" radius="full" className="min-w-0 h-8 w-6">
+                                    <BiDotsVerticalRounded className="text-default-600 text-xl" />
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu disabledKeys={!(canEdit || canRemove) ? ['edit', 'remove'] : []}
@@ -197,24 +199,12 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                                 <DropdownItem key={`edit`}>Edit</DropdownItem>
                                 <DropdownItem key={`remove`} color="danger">Remove</DropdownItem>
 
-
                             </DropdownMenu>
                         </Dropdown>
 
-                        <div className="flex flex-col gap-2">
-
-
-                            <div className="flex gap-2 items-center">
-                                <SAvatar size="xs" username={delegation.from} />
-                                <p>{delegation.from}</p>
-                            </div>
-                            <div className="flex flex-row gap-2 items-center ms-2">
-                                <FiCornerDownRight className='text-default-900/50' />
-                                <SAvatar size="xs" username={delegation.to} />
-                                <p>{delegation.to}</p>
-
-                            </div>
-
+                        <div className="flex flex-row gap-1 items-center">
+                            <SAvatar size="xs" username={username} />
+                            <p>{username}</p>
                         </div>
                     </div>
 
@@ -223,9 +213,9 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
 
             case "vests":
                 return (
-                    <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">{vestToSteem(cellValue, globalData.steem_per_share)?.toLocaleString()} SP</p>
-                        <TimeAgoWrapper className="text-bold text-tiny capitalize text-default-600" created={delegation.time * 1000} />
+                    <div className="flex flex-col gap-2">
+                        <p className="text-bold text-xs capitalize">{vestToSteem(cellValue, globalData.steem_per_share)?.toLocaleString()} SP</p>
+                        <TimeAgoWrapper className="text-bold text-tiny text-default-500" created={delegation.time * 1000} />
                     </div>
                 );
             case "status":
@@ -311,34 +301,14 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        {/* <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex">
-                                <Button size="sm" endContent={<FaChevronDown className="text-small" />} variant="flat">
-                                    Columns
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
 
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={visibleColumns}
-                                selectionMode="multiple"
-                                onSelectionChange={setVisibleColumns}
-                            >
-                                {columns.map((column) => (
-                                    <DropdownItem key={column.uid} className="capitalize">
-                                        {capitalize(column.name)}
-                                    </DropdownItem>
-                                ))}
-                            </DropdownMenu> 
-                        </Dropdown> */}
                         <Button size="sm" onClick={() => {
                             authenticateUser();
                             if (!isAuthorized())
                                 return
                             setTransferModal({ isOpen: !transferModal.isOpen })
                         }}
+                            className="min-w-0"
                             color="primary" endContent={<FaPlus />}>
                             Add New
                         </Button>

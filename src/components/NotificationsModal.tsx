@@ -1,7 +1,7 @@
 'use client';
 
 import { capitalize } from '@/app/profile/(tabs)/wallet/(tabs)/DelegationTab';
-import { defaultNotificationFilters } from '@/libs/constants/AppConstants';
+import { DefaultNotificationFilters } from '@/libs/constants/AppConstants';
 import { fetchSds, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table';
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/dropdown';
@@ -14,7 +14,7 @@ import React, { useEffect, useState } from 'react'
 import { FaSearch } from 'react-icons/fa';
 import useSWR from 'swr';
 import SAvatar from './SAvatar';
-import TimeAgoWrapper from './wrapper/TimeAgoWrapper';
+import TimeAgoWrapper from './wrappers/TimeAgoWrapper';
 import LoadingCard from './LoadingCard';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -22,7 +22,7 @@ import { useRouter } from 'next13-progressbar';
 import { validateCommunity } from '@/libs/utils/helper';
 import { IoCheckmarkDone } from "react-icons/io5";
 import { markasRead } from '@/libs/steem/condenser';
-import { useLogin } from './useLogin';
+import { useLogin } from './AuthProvider';
 import { getCredentials, getSessionKey } from '@/libs/utils/user';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import { IoMdSettings } from "react-icons/io";
@@ -73,7 +73,7 @@ const typeOptions = [
 ];
 
 let offset = 0;
-const defFilter = defaultNotificationFilters;
+const defFilter = DefaultNotificationFilters;
 
 const filter = {
     "mention": { "exclude": defFilter.mention.status, "minSP": defFilter.mention.minSp, "minReputation": defFilter.mention.minRep },

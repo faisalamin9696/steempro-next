@@ -18,18 +18,17 @@ export default memo(function Reply(props: Props) {
             <div className='flex gap-2 '>
                 <div className='flex flex-col gap-2 items-center'>
 
-                     
-                    <SAvatar size='1xs' username={commentInfo.author} className='hidden sm:block' />
-                    <div className='w-[1px] border-default-200 h-full bg-foreground/5 '>
 
-                    </div>
+                    <SAvatar size='1xs' username={commentInfo.author} className='hidden sm:block' />
+                    {commentInfo?.depth >= 2 && !!commentInfo.children && <div className='w-[1px] border-default-200 h-full bg-foreground/5 ' />}
+
                 </div>
                 <div className=' flex items-start gap-2 w-full '>
                     {!commentInfo.link_id ? null : <ReplyForm
                         {...props} comment={commentInfo} />}
                 </div>
             </div>
-            
+
 
 
 

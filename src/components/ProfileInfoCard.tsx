@@ -12,7 +12,7 @@ import SAvatar from '@/components/SAvatar';
 import STooltip from '@/components/STooltip';
 import { abbreviateNumber } from '@/libs/utils/helper';
 import { getResizedAvatar } from '@/libs/utils/image';
-import TimeAgoWrapper from '@/components/wrapper/TimeAgoWrapper'
+import TimeAgoWrapper from '@/components/wrappers/TimeAgoWrapper'
 import { getClubStatus, getVoteData } from '@/libs/steem/sds'
 import FollowButton from './FollowButton';
 import { useRouter } from 'next13-progressbar';

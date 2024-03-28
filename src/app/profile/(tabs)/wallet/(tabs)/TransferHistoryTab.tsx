@@ -17,24 +17,19 @@ import { Pagination } from '@nextui-org/pagination';
 import {
     DropdownTrigger, Dropdown, DropdownMenu, DropdownItem
 } from '@nextui-org/dropdown';
-
-
 import { FaChevronDown, FaSearch } from "react-icons/fa";
 import useSWR from "swr";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
-import TimeAgoWrapper from "@/components/wrapper/TimeAgoWrapper";
+import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import LoadingCard from "@/components/LoadingCard";
-import { useLogin } from "@/components/useLogin";
 import moment from "moment";
-import { TransferHistoryItem } from "./_components/TransferHistoryItem";
-
-
+import { TransferHistoryCard } from "@/components/TransferHistoryCard";
 
 const INITIAL_VISIBLE_COLUMNS = ["op", 'time'];
 
 const columns = [
-    { name: "ACCOUNT", uid: "op", sortable: true },
+    { name: "OPERATION", uid: "op", sortable: false },
     { name: "TIME", uid: "time", sortable: true },
 ];
 
@@ -63,26 +58,11 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
 
     const URL = `/account_history_api/getHistoryByOpTypesTime/${data.name}/${filters}/${start_date}-${end_date}`;
     const { data: historyData, isLoading: isLoading } = useSWR(URL, fetchSds<AccountHistory[]>);
-
-    const loginInfo = useAppSelector(state => state.loginReducer.value);
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
-    const isSelf = !!loginInfo.name && (loginInfo.name === (username));
-    const { authenticateUser, isAuthorized } = useLogin();
     const [allRows, setAllRows] = useState<AccountHistory[]>([]);
-
-    if (isLoading)
-        return <LoadingCard />
-
-    useEffect(() => {
-        if (historyData) {
-            historyData.reverse();
-            setAllRows(historyData);
-        }
-    }, [historyData]);
-
-
     const [filterValue, setFilterValue] = React.useState<any>("");
     const [visibleColumns, setVisibleColumns] = React.useState<any>(new Set(INITIAL_VISIBLE_COLUMNS));
+
     const [statusFilter, setStatusFilter] = React.useState<any>("all");
     const [rowsPerPage, setRowsPerPage] = React.useState<any>(10);
     const [sortDescriptor, setSortDescriptor] = React.useState<any>({
@@ -93,11 +73,7 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
 
     const hasSearchFilter = Boolean(filterValue);
 
-    const headerColumns = React.useMemo(() => {
-        if (visibleColumns === "all") return columns;
-
-        return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
-    }, [visibleColumns]);
+    const headerColumns = columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
 
     const filteredItems = React.useMemo(() => {
         let filteredHistory = [...allRows];
@@ -139,41 +115,18 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
 
     const renderCell = React.useCallback((history: AccountHistory, columnKey) => {
         const cellValue = history[columnKey];
-        const opType = history.op[0];
-        const opData = history.op[1];
-
-        const account = opType === 'transfer_to_savings'
-
         switch (columnKey) {
             case "op":
                 return (
-                    <TransferHistoryItem op={history} context={username}
+                    <TransferHistoryCard op={history} context={username}
                         steem_per_share={globalData.steem_per_share} />
-                    // <div className="flex flex-row items-start gap-1">
-                    //     <div className="flex flex-col gap-2">
-
-
-                    //         <div className="flex gap-2 items-center">
-                    //             {/* <SAvatar size="xs" username={history.id} /> */}
-                    //             <p>{history.id}</p>
-                    //         </div>
-                    //         {/* <div className="flex flex-row gap-2 items-center ms-2">
-                    //             <FiCornerDownRight className='text-default-900/50' />
-                    //             <SAvatar size="xs" username={history.to} />
-                    //             <p>{history.to}</p>
-
-                    //         </div> */}
-
-                    //     </div>
-                    // </div>
-
-
+                   
                 );
 
             case "time":
                 return (
                     <div className="flex flex-col">
-                        <TimeAgoWrapper className="text-bold text-tiny capitalize text-default-600" created={history.time * 1000} />
+                        <TimeAgoWrapper className="text-bold text-tiny text-default-600" created={history.time * 1000} />
                     </div>
                 );
             default:
@@ -353,6 +306,16 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
     );
 
 
+    useEffect(() => {
+        if (historyData) {
+            historyData.reverse();
+            setAllRows(historyData);
+        }
+    }, [historyData]);
+
+
+    if (isLoading)
+        return <LoadingCard />
 
     return (
         <div>

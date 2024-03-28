@@ -1,4 +1,4 @@
-export const rewardTypes: Payout[] = [{ title: 'Decline Payout', shortTitle: 'Declined', payout: 0 },
+export const RewardTypes: Payout[] = [{ title: 'Decline Payout', shortTitle: 'Declined', payout: 0 },
 { title: '50% SBD / 50% SP', shortTitle: '50/50', payout: 50 },
 { title: 'Power Up 100%', shortTitle: '100%', payout: 100 }];
 
@@ -29,7 +29,7 @@ export function updateCurrentSetting(setting: Setting) {
 export const ViewCountTime = 10000;
 
 
-export const defaultNotificationFilters = {
+export const DefaultNotificationFilters = {
     'status': true,
     'vote': {
         'status': false,
@@ -60,7 +60,7 @@ export const defaultNotificationFilters = {
 };
 
 
-export const intrestingList = [
+export const IntrestingList = [
     'faisalamin',
     'bountyking5',
     'steemchiller',

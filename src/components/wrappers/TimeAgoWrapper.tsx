@@ -12,28 +12,10 @@ interface Props {
 
 
 export default function TimeAgoWrapper(props: Props) {
+    
     const { lang, created, lastUpdate, withoutUtc, className } = props;
-
     if (!created)
-        return null
-
-    // const intervalIdRef = useRef<NodeJS.Timer | undefined>();
-
-    // useEffect(() => {
-    //     setTimeAgo(getTimeFromNow(date, withoutUtc ?? false));
-
-    //     // return () => clearInterval(intervalIdRef.current);
-    // }, [date])
-    // Function to update the value in the Redux store
-    // const updateReduxValue = () => {
-    //     setTimeAgo(getTimeFromNow(date, withoutUtc ?? false));
-    // };
-
-    // Set up the interval to run the updateReduxValue function every 60 seconds
-    // useEffect(() => {
-    //     intervalIdRef.current = setInterval(updateReduxValue, 60000);
-    //     return () => clearInterval(intervalIdRef.current);
-    // }, []);
+        return null;
 
     return (
         <div>

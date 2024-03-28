@@ -1,6 +1,6 @@
 'use client';
 
-import { useLogin } from '@/components/useLogin';
+import { useLogin } from '@/components/AuthProvider';
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions'
 import { signImage, updateClient, updateProfile, uploadImage } from '@/libs/steem/condenser';
 import { toBase64 } from '@/libs/utils/helper';

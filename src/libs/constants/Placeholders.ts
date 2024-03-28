@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { rewardTypes } from './AppConstants';
+import { RewardTypes } from './AppConstants';
 import { AppStrings } from './AppStrings';
 
 export const empty_comment = (author: string, permlink: string): Post => {
@@ -171,7 +171,7 @@ export const empty_draft = (): PostDraft => {
     category: '',
     community: undefined,
     beneficiaries: [],
-    reward: rewardTypes[1],
+    reward: RewardTypes[1],
   };
 };
 

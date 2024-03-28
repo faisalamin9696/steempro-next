@@ -1,10 +1,10 @@
 import MuteDeleteModal from '@/components/MuteDeleteModal';
 import MarkdownViewer from '@/components/body/MarkdownViewer';
-import CommentFooter from '@/components/comment/component/CommentFooter';
+import CommentFooter from '@/components/comment/components/CommentFooter';
 import EditorInput from '@/components/editor/EditorInput';
-import ClearFormButton from '@/components/editor/component/ClearFormButton';
-import PublishButton from '@/components/editor/component/PublishButton';
-import { useLogin } from '@/components/useLogin';
+import ClearFormButton from '@/components/editor/components/ClearFormButton';
+import PublishButton from '@/components/editor/components/PublishButton';
+import { useLogin } from '@/components/AuthProvider';
 import { useAppSelector, useAppDispatch, awaitTimeout } from '@/libs/constants/AppFunctions';
 import { addCommentHandler } from '@/libs/redux/reducers/CommentReducer';
 import { addRepliesHandler } from '@/libs/redux/reducers/RepliesReducer';
@@ -21,6 +21,7 @@ import moment from 'moment';
 import React, { useEffect, useState } from 'react'
 import secureLocalStorage from 'react-secure-storage';
 import { toast } from 'sonner';
+import Link from 'next/link';
 
 export default function ReplyFooter({ comment, expanded, toggleExpand, className }: {
     comment: Post,
@@ -55,6 +56,7 @@ export default function ReplyFooter({ comment, expanded, toggleExpand, className
     const allowReply = Role.canComment(comment.community, comment.observer_role);
     const canReply = allowReply && comment.depth < 255;
     const { users } = JSON.parse(comment.json_metadata ?? `{}`) || [];
+    const isDeep = (comment?.depth - rootInfo?.depth) > 6;
 
     const toggleReply = () => setShowReply(!showReply);
     const toggleEdit = () => setShowEdit(!showEdit);
@@ -432,11 +434,26 @@ export default function ReplyFooter({ comment, expanded, toggleExpand, className
                 </div>
 
                 <div className='flex items-center justify-between w-full'>
-                    {!expanded && !!comment.children && <Button variant='flat'
-                        className='self-start h-6 min-w-0 px-2'
-                        color='warning' radius='full' size='sm' onClick={toggleExpand}>
-                        Reveal {comment.children} replies
-                    </Button>}
+                    {!expanded && !!comment.children &&
+                        <div>
+                            {isDeep ?
+                                <Button
+                                    target='_blank'
+                                    as={Link} href={`/${comment.category}/@${comment.author}/${comment.permlink}`}
+                                    variant='flat'
+                                    className='self-start h-6 min-w-0 px-2'
+                                    color='warning' radius='full' size='sm'>
+                                    Open thread
+                                </Button>
+                                :
+                                <Button
+
+                                    variant='flat'
+                                    className='self-start h-6 min-w-0 px-2'
+                                    color='warning' radius='full' size='sm' onClick={toggleExpand}>
+                                    Reveal {comment.children} replies
+                                </Button>}
+                        </div>}
                 </div>
 
             </div>

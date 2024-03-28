@@ -10,7 +10,7 @@ import { useMutation } from '@tanstack/react-query';
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux';
 import { toast } from 'sonner';
-import { useLogin } from './useLogin';
+import { useLogin } from './AuthProvider';
 import { getCredentials, getSessionKey } from '@/libs/utils/user';
 
 interface Props {

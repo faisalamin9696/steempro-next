@@ -1,11 +1,11 @@
 import { Card } from "@nextui-org/card";
 import { CommentProps } from "../CommentCard";
-import CommentHeader from "../component/CommentHeader";
+import CommentHeader from "../components/CommentHeader";
 import { getPostThumbnail } from "@/libs/utils/image";
-import CommentCover from "../component/CommentCover";
+import CommentCover from "../components/CommentCover";
 import BodyShort from "@/components/body/BodyShort";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
-import CommentFooter from "../component/CommentFooter";
+import CommentFooter from "../components/CommentFooter";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import clsx from "clsx";
 import Link from "next/link";

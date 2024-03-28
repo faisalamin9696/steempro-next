@@ -4,12 +4,12 @@ import React, { memo, useMemo, useState } from 'react'
 import useSWR from 'swr';
 import { Button } from '@nextui-org/button';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import CommentCard from './CommentCard';
-import CommentSkeleton from './component/CommentSkeleton';
+import CommentCard from './comment/CommentCard';
+import CommentSkeleton from './comment/components/CommentSkeleton';
 import { getSettings } from '@/libs/utils/user';
 import { useDeviceInfo } from '@/libs/utils/useDeviceInfo';
 import { twMerge } from 'tailwind-merge';
-import EmptyList from '../EmptyList';
+import EmptyList from './EmptyList';
 
 interface Props {
     endPoint: string;
@@ -18,7 +18,7 @@ interface Props {
 
 export default memo(function FeedList(props: Props) {
     const { endPoint, className } = props;
-    const { data, error, isLoading, mutate, isValidating } = useSWR(endPoint, fetchSds<Feed[]>);
+    const { data, error, isLoading } = useSWR(endPoint, fetchSds<Feed[]>);
     const [rows, setRows] = useState<Feed[]>([]);
     const [loadingMore, setLoadingMore] = useState(false);
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
@@ -28,7 +28,7 @@ export default memo(function FeedList(props: Props) {
 
     useMemo(() => {
         if (data) {
-            setRows(data.slice(0, 8));
+            setRows(data.slice(0, 15));
         }
 
     }, [data]);
@@ -36,7 +36,7 @@ export default memo(function FeedList(props: Props) {
 
     function loadMoreRows(mainData: Feed[], rowsData: Feed[]) {
         let newStart = mainData?.slice(rowsData?.length ?? 0);
-        const newRow = newStart?.slice(1, 7);
+        const newRow = newStart?.slice(1, 15);
         return newRow ?? []
     };
 

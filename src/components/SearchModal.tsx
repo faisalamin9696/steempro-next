@@ -9,12 +9,13 @@ import LoadingCard from './LoadingCard';
 import CompactPost from './CompactPost';
 import SAvatar from './SAvatar';
 import clsx from 'clsx';
-import TimeAgoWrapper from './wrapper/TimeAgoWrapper';
+import TimeAgoWrapper from './wrappers/TimeAgoWrapper';
 import { FaSearch } from 'react-icons/fa';
 import Reputation from './Reputation';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import EmptyList from './EmptyList';
 import { FeedBodyLength } from '@/libs/constants/AppConstants';
+import CommentListLayout from './comment/layouts/CommentListLayout';
 
 
 type SearchTypes = 'posts' | 'comments' | 'tags' | 'people';
@@ -144,6 +145,7 @@ export default function SearchModal(props: Props) {
             className=' mt-4'
             scrollBehavior='inside'
             backdrop='blur'
+            size='2xl'
             placement='top'>
             <ModalContent>
                 {(onClose) => (
@@ -163,6 +165,7 @@ export default function SearchModal(props: Props) {
                                         isClearable
                                         className="flex-[7]"
                                         placeholder="Search..."
+                                        autoCapitalize='off'
                                         onKeyUp={handleKeyPress}
                                         value={searchText}
                                         onClear={() => setSearchText('')}
@@ -213,9 +216,10 @@ export default function SearchModal(props: Props) {
 
                                         {rows?.map((item) => {
                                             const posting_json_metadata = JSON.parse(item?.posting_json_metadata || '{}')
-                                            return item?.['permlink'] ? <div className='' onClick={onClose}>
-                                                <CompactPost comment={item} />
-                                            </div>
+                                            return item?.['permlink'] ?
+                                                <div className='flex flex-col gap-2' onClick={onClose}>
+                                                    <CommentListLayout compact comment={item} isSearch />
+                                                </div>
                                                 : <div className={`flex items-start h-full dark:bg-foreground/10
                                                 bg-white  overflow-hidden rounded-lg shadow-lg p-2 gap-4`}>
                                                     <SAvatar onClick={onClose}

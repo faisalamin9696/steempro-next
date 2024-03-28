@@ -1,6 +1,6 @@
 "sue client";
 
-import { WitnessAccount, defaultNotificationFilters } from '@/libs/constants/AppConstants';
+import { WitnessAccount, DefaultNotificationFilters } from '@/libs/constants/AppConstants';
 import { fetchSds, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import { saveSteemGlobals } from '@/libs/redux/reducers/SteemGlobalReducer';
@@ -11,7 +11,7 @@ import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner';
 import useSWR from 'swr';
 
-const defFilter = defaultNotificationFilters;
+const defFilter = DefaultNotificationFilters;
 const filter = {
     "mention": { "exclude": defFilter.mention.status, "minSP": defFilter.mention.minSp, "minReputation": defFilter.mention.minRep },
     "vote": { "exclude": defFilter.vote.status, "minVoteAmount": defFilter.vote.minVote, "minReputation": defFilter.vote.minRep, "minSP": defFilter.vote.minSp },

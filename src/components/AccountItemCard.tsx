@@ -4,7 +4,7 @@ import { Button } from '@nextui-org/button';
 import { Card, CardBody, } from '@nextui-org/card';
 import React, { memo, useState } from 'react'
 import SAvatar from './SAvatar';
-import { useLogin } from './useLogin';
+import { useLogin } from './AuthProvider';
 import { useAppDispatch } from '@/libs/constants/AppFunctions';
 import { getAuthorExt } from '@/libs/steem/sds';
 import { getAuth, signInAnonymously } from 'firebase/auth';

@@ -8,6 +8,9 @@ import { Button } from '@nextui-org/button';
 import { DropdownMenu, DropdownItem } from '@nextui-org/dropdown';
 import React, { Key, useState } from 'react'
 import PowerDownModal from '@/components/PowerDownModal';
+import { Chip } from '@nextui-org/react';
+import { GoArrowDownLeft } from "react-icons/go";
+import { IoMdAdd, IoMdRemove } from 'react-icons/io';
 
 export type SteemTokens = 'steem' | 'steem_power' | 'steem_dollar' | 'saving';
 
@@ -149,8 +152,21 @@ export default function BalanceTab({ data }: { data: AccountExt }) {
                     description={steem_power_desc('')}
                     title={tokens.steem_power.title}
 
-                    endContent={<div className=''>
+                    endContent={<div className='flex flex-col gap-2 items-end'>
                         <p>{vestToSteem(data.vests_own, globalData.steem_per_share)?.toLocaleString()}</p>
+                        <div className='flex gap-2 items-center '>
+                            {!!data.vests_out && <Chip title='Outgoing delegation'
+                                radius='lg' className='px-0 pl-1 h-6 min-w-0' variant='flat' color='warning'
+                                startContent={<IoMdRemove size={12} />}>
+                                <p className='text-tiny'>{vestToSteem(data.vests_out, globalData.steem_per_share)?.toLocaleString()}</p>
+                            </Chip>}
+
+                            {!!data.vests_in && <Chip title='Incoming delegation' radius='lg'
+                                className='px-0 pl-1 h-6 min-w-0' variant='flat' color='success'
+                                startContent={<IoMdAdd size={14} />}>
+                                <p className='text-tiny flex'>{vestToSteem(data.vests_in, globalData.steem_per_share)?.toLocaleString()}</p>
+                            </Chip>}
+                        </div>
 
                     </div>}
 
@@ -174,7 +190,7 @@ export default function BalanceTab({ data }: { data: AccountExt }) {
                     title={tokens.steem_dollar.title}
 
                     endContent={<div>
-                        <p>${data.balance_sbd?.toLocaleString()}</p>
+                        <p>${data.balance_sbd?.toLocaleString()} SBD</p>
                     </div>}
 
                     actionContent={isSelf && <DropdownMenu
@@ -192,9 +208,9 @@ export default function BalanceTab({ data }: { data: AccountExt }) {
                     tokenKey={'saving'}
                     description={tokens.saving.description}
                     title={tokens.saving.title}
-                    endContent={<div className='flex flex-col items-end max-md:items-center'>
+                    endContent={<div className='flex flex-col items-end'>
                         <p>${data.savings_steem?.toLocaleString()} STEEM</p>
-                        <p>${data.savings_sbd?.toLocaleString()}</p>
+                        <p>${data.savings_sbd?.toLocaleString()} SBD</p>
                     </div>}
                     handleInfoClick={handleInfo}
 

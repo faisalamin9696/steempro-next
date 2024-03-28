@@ -1,28 +1,29 @@
 'use client';
 
 import React, { useMemo, useState } from 'react'
-import './header.scss';
 import { Navbar, NavbarBrand, NavbarContent } from "@nextui-org/navbar";
 import { Popover, PopoverTrigger, PopoverContent, } from '@nextui-org/popover';
 import { Button } from '@nextui-org/button';
 import { Badge } from '@nextui-org/badge';
 import { LuPencilLine } from "react-icons/lu";
-import { useLogin } from '../useLogin';
+import { useLogin } from '../AuthProvider';
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { getCredentials, saveSessionKey, sessionKey } from '@/libs/utils/user';
 import { getResizedAvatar } from '@/libs/utils/image';
 import Image from 'next/image';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import AccountsModal from '../AccountsModal';
-import AppDrawer from './AppDrawer';
+import AppDrawer from './components/Drawer';
 import NotificationsModal from '../NotificationsModal';
-import { FaRegBell } from 'react-icons/fa';
+import { FaLock, FaRegBell, FaUnlock, FaUserCircle, FaWallet } from 'react-icons/fa';
 import Link from 'next/link';
 import { Avatar } from '@nextui-org/avatar';
 import { toast } from 'sonner';
 import SearchModal from '../SearchModal';
 import { MdSearch } from 'react-icons/md';
 import { Input } from '@nextui-org/input';
+import './style.scss';
+import { PiUserSwitchFill } from 'react-icons/pi';
 
 export default function AppNavbar() {
 
@@ -78,6 +79,11 @@ export default function AppNavbar() {
         }
 
 
+    }
+
+
+    function handleItemClick() {
+        if (isPopOpen) setIsPopOpen(false);
     }
 
     return (
@@ -194,16 +200,46 @@ export default function AppNavbar() {
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent>
-                                <ul tabIndex={0} className="menu menu-sm" onClick={() => {
-                                    if (isPopOpen) setIsPopOpen(false);
-                                }}>
-                                    <li><Link href={`/@${session?.user?.name}`}>Profile</Link></li>
-                                    <li><Link href={`/@${session?.user?.name}/wallet`}>Wallet</Link></li>
-                                    <li><a onClick={() => setIsAccOpen(!isAccOpen)}>Switch Account</a></li>
-                                    <li><a onClick={handleUnlock}> {isLocked ? 'Unlock' : 'Lock'} Account</a>
-                                    </li>
+                                <div className=' flex flex-col gap-1'>
+                                    <Button size='sm' variant='light'
+                                        className='w-full justify-start items-center'
+                                        as={Link} href={`/@${session?.user?.name}`}
+                                        onClick={handleItemClick} startContent={<FaUserCircle
+                                            className='text-xl' />}>
+                                        Pofile
+                                    </Button>
 
-                                </ul>
+                                    <Button size='sm' variant='light'
+                                        className='w-full justify-start items-center'
+                                        as={Link} href={`/@${session?.user?.name}/wallet`}
+                                        onClick={handleItemClick} startContent={<FaWallet
+                                            className='text-xl' />}>
+                                        Wallet
+                                    </Button>
+
+
+                                    <Button className='w-full justify-start items-center' size='sm'
+                                        variant='light'
+                                        onClick={() => {
+                                            handleUnlock();
+                                            handleItemClick();
+                                        }}
+                                        startContent={isLocked ? <FaLock className='text-xl' /> : <FaUnlock className='text-xl' />}>
+                                        {isLocked ? 'Unlock' : 'Lock'} Account
+                                    </Button>
+
+                                    <Button className='w-full justify-start items-center' size='sm'
+                                        variant='light'
+                                        onClick={() => {
+                                            setIsAccOpen(!isAccOpen);
+                                            handleItemClick();
+                                        }}
+                                        startContent={<PiUserSwitchFill className='text-xl' />}>
+                                        Switch Account
+                                    </Button>
+
+                                </div>
+
                             </PopoverContent>
                         </Popover>
                     }

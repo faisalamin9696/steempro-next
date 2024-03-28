@@ -3,7 +3,6 @@ import './style.scss'
 import VanillaTilt from "vanilla-tilt";
 import {  Card, CardBody } from "@nextui-org/card";
 import { Button } from "@nextui-org/button";
-
 import SAvatar from "@/components/SAvatar";
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 
@@ -16,7 +15,7 @@ interface Props {
 
 
 }
-const AboutItem = (props: Props): JSX.Element => {
+const AboutCard = (props: Props): JSX.Element => {
     const { username, firstHeading, secondHeading, imageSize, imageQuality } = props;
 
     const itemCard = useRef(null);
@@ -59,4 +58,4 @@ const AboutItem = (props: Props): JSX.Element => {
     )
 }
 
-export { AboutItem }
+export { AboutCard as AboutItem }

@@ -1,7 +1,7 @@
 import { Card } from '@nextui-org/card';
 import { Button } from '@nextui-org/button';
 import React from 'react'
-import MainWrapper from './wrapper/MainWrapper'
+import MainWrapper from './wrappers/MainWrapper'
 
 interface Props {
     message?: string;

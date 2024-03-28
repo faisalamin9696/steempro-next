@@ -1,12 +1,14 @@
-import MarkdownViewer from "@/components/body/MarkdownViewer";
+import React from "react";
+
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
 import { FaClipboardQuestion } from "react-icons/fa6";
 import { MdDescription } from "react-icons/md";
 import { PiUserListBold } from "react-icons/pi";
 import CommunityRoles from "./CommunityRoles";
+import MarkdownViewer from "@/components/body/MarkdownViewer";
 import { mapSds } from "@/libs/constants/AppFunctions";
 
-export function CommunityAboutContent({ community }: { community: Community }) {
+export function CommunityAboutCard({ community }: { community: Community }) {
     return <div className='w-full flex flex-col gap-2'>
         <Accordion selectionMode='multiple' variant="splitted"
             defaultExpandedKeys={["description"]}>

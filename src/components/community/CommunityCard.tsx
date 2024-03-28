@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { Card } from "@nextui-org/card";
 import { User } from "@nextui-org/user";
 import { abbreviateNumber } from "@/libs/utils/helper";
-import TimeAgoWrapper from "./wrapper/TimeAgoWrapper";
+import TimeAgoWrapper from "../wrappers/TimeAgoWrapper";
 import { getResizedAvatar } from "@/libs/utils/image";
 import Link from "next/link";
 import clsx from "clsx";

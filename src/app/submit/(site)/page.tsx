@@ -1,12 +1,12 @@
 "use client"
 
 import React, { useEffect, useState } from 'react';
-import RewardSelectButton, { rewardTypes } from '../../../components/editor/component/RewardSelectButton';
-import CommunitySelectButton from '../../../components/editor/component/CommunitySelectButton';
-import ClearFormButton from '../../../components/editor/component/ClearFormButton';
-import BeneficiaryButton from '../../../components/editor/component/BeneficiaryButton';
-import PublishButton from '../../../components/editor/component/PublishButton';
-import { useLogin } from '../../../components/useLogin';
+import RewardSelectButton, { rewardTypes } from '../../../components/editor/components/RewardSelectButton';
+import CommunitySelectButton from '../../../components/editor/components/CommunitySelectButton';
+import ClearFormButton from '../../../components/editor/components/ClearFormButton';
+import BeneficiaryButton from '../../../components/editor/components/BeneficiaryButton';
+import PublishButton from '../../../components/editor/components/PublishButton';
+import { useLogin } from '../../../components/AuthProvider';
 import { Card } from '@nextui-org/card';
 import { Button } from '@nextui-org/button';
 import { Input } from '@nextui-org/input';
@@ -27,7 +27,7 @@ import secureLocalStorage from 'react-secure-storage';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import clsx from 'clsx';
-import CommentOptionWrapper from '@/components/wrapper/CommentOptionWrapper';
+import CommentOptionWrapper from '@/components/wrappers/CommentOptionWrapper';
 import { useDeviceInfo } from '@/libs/utils/useDeviceInfo';
 import TagsListCard from '@/components/TagsListCard';
 

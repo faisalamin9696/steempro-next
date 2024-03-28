@@ -7,7 +7,7 @@ import SAvatar from "./SAvatar";
 
 import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import { toast } from "sonner";
-import { useLogin } from "./useLogin";
+import { useLogin } from "./AuthProvider";
 import { useMutation } from "@tanstack/react-query";
 import { delegateVestingShares } from "@/libs/steem/condenser";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";

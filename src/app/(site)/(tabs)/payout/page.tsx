@@ -1,6 +1,6 @@
 "use client"
 
-import FeedList from '@/components/comment/FeedList';
+import FeedList from '@/components/FeedList';
 import { FeedBodyLength } from '@/libs/constants/AppConstants';
 // import FeedList from '@/components/comment/FeedList';
 import { useAppSelector } from '@/libs/constants/AppFunctions';

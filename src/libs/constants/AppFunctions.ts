@@ -1,7 +1,7 @@
 import { AppStrings } from "./AppStrings"
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
-import { intrestingList } from "./AppConstants";
+import { IntrestingList } from "./AppConstants";
 
 export function sdsWrapper(api: string): string {
     return AppStrings.sds_base_url + api
@@ -76,7 +76,7 @@ export function awaitTimeout(seconds: number): Promise<void> {
 }
 
 export const filterRecommendations = (following: string[], count = 4) => {
-    return intrestingList
+    return IntrestingList
         .filter(p => !following?.includes(p))
         .sort(() => 0.5 - Math.random())
         .slice(0, count)

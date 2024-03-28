@@ -24,7 +24,7 @@ import { FaChevronDown, FaSearch } from "react-icons/fa";
 import useSWR from "swr";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import SAvatar from "@/components/SAvatar";
-import TimeAgoWrapper from "@/components/wrapper/TimeAgoWrapper";
+import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import LoadingCard from "@/components/LoadingCard";
 
 const INITIAL_VISIBLE_COLUMNS = ["voter", 'rshares', 'time'];
@@ -148,7 +148,7 @@ export default function VotersCard({ comment }: { comment: Feed | Post }) {
 
             case "time":
                 return (
-                    <TimeAgoWrapper className="text-bold capitalize text-default-600" created={votes.time * 1000} />
+                    <TimeAgoWrapper className="text-bold text-default-600" created={votes.time * 1000} />
 
                 );
 

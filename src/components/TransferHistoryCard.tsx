@@ -1,4 +1,5 @@
 import SAvatar from '@/components/SAvatar';
+import MarkdownViewer from '@/components/body/MarkdownViewer';
 import { vestToSteem } from '@/libs/steem/sds';
 import Link from 'next/link';
 import React from 'react';
@@ -6,7 +7,6 @@ import React from 'react';
 interface Props {
     op: AccountHistory,
     context: any,
-    socialUrl?: any,
     steem_per_share: number;
 }
 
@@ -26,11 +26,10 @@ function TransferFromTo({ title, from, to }: { title: any, from?: string, to?: s
         </div>}
     </div>
 }
-const TransferHistoryItem = (props: Props): JSX.Element => {
+const TransferHistoryCard = (props: Props): JSX.Element => {
     let {
         op,
         context,
-        socialUrl,
         steem_per_share
     } = props;
 
@@ -43,7 +42,7 @@ const TransferHistoryItem = (props: Props): JSX.Element => {
     const amount_vesting = data?.vesting_payout?.split(' ')?.[0];
 
 
-
+    console.log(op)
     const powerdown_vests =
         type === 'withdraw_vesting'
             ? vestToSteem(data.vesting_shares, steem_per_share)?.toLocaleString()
@@ -108,7 +107,7 @@ const TransferHistoryItem = (props: Props): JSX.Element => {
                     to={data.to} /> : type === 'transfer_from_savings'
                     ? <TransferFromTo title={`Transfer from savings ${data.amount}`}
                         to={data.to} />
-                    : <TransferFromTo title={`Transfer ${data.amount}`} />;
+                    : <TransferFromTo title={`Transfer ${data.amount}`} to={data?.to} />;
 
         if (data.from === context) {
             // Semi-bad behavior - passing `type` to translation engine -- @todo better somehow?
@@ -231,11 +230,16 @@ const TransferHistoryItem = (props: Props): JSX.Element => {
     }
 
     return (<div className='flex flex-col gap-3 p-2'>
-        <div className='text-sm'>{message}</div>
+        <div className='text-sm'>
+            {message}
+        </div>
+
+        {data?.memo && <MarkdownViewer text={data.memo} className=' !prose-sm  max-w-xl' />}
+
 
     </div>
 
     );
 }
 
-export { TransferHistoryItem }
+export { TransferHistoryCard }

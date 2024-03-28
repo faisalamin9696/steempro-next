@@ -9,7 +9,7 @@ import { Card } from '@nextui-org/card';
 import ViewCountCard from './ViewCountCard';
 import Image from 'next/image';
 import SAvatar from './SAvatar';
-import TimeAgoWrapper from './wrapper/TimeAgoWrapper';
+import TimeAgoWrapper from './wrappers/TimeAgoWrapper';
 import Link from 'next/link';
 
 interface Props {

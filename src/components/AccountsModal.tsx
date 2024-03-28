@@ -3,7 +3,7 @@ import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure
 import { Button } from '@nextui-org/button';
 import { Spinner } from '@nextui-org/spinner';
 import React, { useEffect, useState } from 'react';
-import { useLogin } from './useLogin';
+import { useLogin } from './AuthProvider';
 import AccountItemCard from './AccountItemCard';
 
 

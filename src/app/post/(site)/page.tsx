@@ -1,9 +1,8 @@
-
 "use client"
 
 import MarkdownViewer from '@/components/body/MarkdownViewer';
-import CommentFooter from '@/components/comment/component/CommentFooter';
-import CommentHeader from '@/components/comment/component/CommentHeader';
+import CommentFooter from '@/components/comment/components/CommentFooter';
+import CommentHeader from '@/components/comment/components/CommentHeader';
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { addCommentHandler } from '@/libs/redux/reducers/CommentReducer';
 import { getSettings } from '@/libs/utils/user';
@@ -13,7 +12,6 @@ import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import { updatePostView } from '@/libs/firebase/firebaseApp';
-import { getAuth } from 'firebase/auth';
 import SubmitPage from '@/app/submit/(site)/page';
 import clsx from 'clsx';
 import { useRouter } from 'next13-progressbar';
@@ -21,7 +19,7 @@ import { ViewCountTime } from '@/libs/constants/AppConstants';
 import Link from 'next/link';
 import { hasNsfwTag } from '@/libs/utils/StateFunctions';
 import TagsListCard from '@/components/TagsListCard';
-const DynamicPostReplies = dynamic(() => import('../_components/PostReplies'))
+const DynamicPostReplies = dynamic(() => import('../../../components/reply/PostReplies'))
 
 
 interface Props {
@@ -128,7 +126,7 @@ export default function PostPage(props: Props) {
                             JSON.parse(commentInfo.json_metadata ?? `{}`)?.tags ?? [] : []} />
 
                         <div className='sticky bottom-2'>
-                            <CardFooter className='w-full m-[1px] p-1  overflow-visible  bg-white rounded-full dark:bg-black/90'>
+                            <CardFooter className='w-full m-[1px] p-1  overflow-visible  bg-white/90 rounded-full dark:bg-black/90'>
                                 <CommentFooter comment={commentInfo}
                                     isDetails
                                     onCommentsClick={() => {

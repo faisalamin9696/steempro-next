@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 import { persistQueryClient } from '@tanstack/react-query-persist-client'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import { compress, decompress } from 'lz-string';
-import { AuthProvider } from "@/components/useLogin";
+import { AuthProvider } from "@/components/AuthProvider";
 import AppNavbar from '@/components/navbar/AppNavbar';
 import { ThemeProvider } from 'next-themes'
 import LoadingCard from '@/components/LoadingCard';
@@ -21,7 +21,7 @@ import { initializeApp } from "firebase/app";
 import { signInAnonymously, getAuth } from "firebase/auth";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { Next13ProgressBar } from 'next13-progressbar';
-import AppWrapper from '@/components/wrapper/AppWrapper';
+import AppWrapper from '@/components/wrappers/AppWrapper';
 
 
 interface Props {

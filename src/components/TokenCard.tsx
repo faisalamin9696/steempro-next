@@ -25,20 +25,21 @@ export const TokenCard = (props: TokenCardProps) => {
     }
 
     return <Card shadow='sm' key={tokenKey}
-        className="px-2 py-10 dark:bg-foreground/10">
+        className="px-2  dark:bg-foreground/10">
         <CardBody className=' justify-between flex flex-row max-lg:flex-col  gap-4'>
             <div className='flex flex-col items-start gap-2 max-lg:flex-col w-full'>
-                <div className='flex flex-row justify-between items-center  w-full'>
-                    <div className="flex flex-row gap-1 items-center" >
-                        <p className='text-md font-bold'>{title}</p>
+                <div className="flex flex-row gap-1 items-center" >
+                    <p className='text-md font-bold'>{title}</p>
 
-                        <Button radius="full" isIconOnly size="sm" variant="light" onClick={handleInfo}>
-                            <BsInfoCircle
-                                className="text-sm" />
-                        </Button>
-                    </div>
+                    <Button radius="full" isIconOnly size="sm" variant="light" onClick={handleInfo}>
+                        <BsInfoCircle
+                            className="text-sm" />
+                    </Button>
+                </div>
+                <div className='py-6 flex flex-col justify-between items-start  w-full'>
 
-                    <div className='flex flex-row gap-2 items-center'>
+
+                    <div className='flex flex-row gap-2 items-center w-full justify-end'>
                         <div>
                             <p className="text-sm">{endContent}</p>
                         </div>

@@ -1,4 +1,4 @@
-import MainWrapper from '@/components/wrapper/MainWrapper';
+import MainWrapper from '@/components/wrappers/MainWrapper';
 import React from 'react'
 
 export default async function Layout({
