@@ -109,7 +109,7 @@ export default function NotificationsModal(props: Props) {
     useEffect(() => {
         if (data) {
             const unreadCount = data.filter(obj => obj.is_read === 0).length;
-            if (unreadCount >= 0 && unreadCount > loginInfo.unread_count) {
+            if ((unreadCount >= 0 && unreadCount > loginInfo.unread_count) || unreadCount < 20) {
                 dispatch(saveLoginHandler({ ...loginInfo, unread_count: unreadCount }));
             }
 

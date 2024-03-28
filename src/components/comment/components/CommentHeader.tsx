@@ -201,7 +201,7 @@ export default memo(function CommentHeader(props: Props) {
                 }
                 <Reputation reputation={comment.author_reputation} />
 
-                {!compact && !!comment.is_pinned && <p className='px-1 rounded-sm text-tiny bg-primary-100 dark:bg-primary'>Pinned</p>}
+                {!compact && !!comment.is_pinned && <p className='ms-1 px-1 rounded-full text-tiny bg-primary-100 dark:bg-primary'>Pinned</p>}
 
                 {(!isReply && !compact) ?
                     <Dropdown>
@@ -224,7 +224,7 @@ export default memo(function CommentHeader(props: Props) {
 
                 {isDetail && <RoleTitleCard comment={comment} />}
 
-                <div className={clsx(`time-div flex gap-2`,)}>
+                <div className={clsx(`flex items-center gap-1`,)}>
                     <TimeAgoWrapper lang={settings.lang.code} created={comment.created * 1000} lastUpdate={comment.last_update * 1000} />
                     {!isReply && <div className='flex gap-1  sm:items-center'>
                         <p className={''}>in</p>
