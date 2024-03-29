@@ -204,7 +204,7 @@ export default memo(function CommentHeader(props: Props) {
                 {!compact && !!comment.is_pinned && <p className='ms-1 px-1 rounded-full text-tiny bg-primary-100 dark:bg-primary'>Pinned</p>}
 
                 {(!isReply && !compact) ?
-                    <Dropdown>
+                    <Dropdown >
                         <DropdownTrigger>
                             <Button size='sm' radius='full'
                                 isLoading={isPending}
@@ -213,7 +213,7 @@ export default memo(function CommentHeader(props: Props) {
                                 <FaEllipsis className='text-lg' />
                             </Button>
                         </DropdownTrigger>
-                        <DropdownMenu
+                        <DropdownMenu aria-labelledby='comment options'
                             onAction={handleMenuActions} hideEmptyContent>
                             {renderedItems}
                         </DropdownMenu>

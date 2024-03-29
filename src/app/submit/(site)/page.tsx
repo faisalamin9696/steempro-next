@@ -138,7 +138,12 @@ export default function SubmitPage(props: Props) {
         mutationFn: ({ postData, options, key }:
             { postData: PostingContent, options?: any, key: string }) =>
             publishContent(postData, options, key),
-        onSuccess(data, variables) {
+        onSettled(data, error, variables, context) {
+            setPosting(false);
+            if (error) {
+                toast.error(String(error));
+                return;
+            }
             if (isEdit) {
                 let body = markdown;
 
@@ -150,20 +155,11 @@ export default function SubmitPage(props: Props) {
                 });
                 toast.success('Updated');
                 return
-
-
             }
             toast.success('Published');
-
             clearForm();
 
         },
-        onError(error) {
-            toast.error(String(error));
-        },
-        onSettled() {
-            setPosting(false);
-        }
     });
 
 
@@ -440,7 +436,7 @@ export default function SubmitPage(props: Props) {
             </div>
             {markdown ? <Card shadow='none'
                 className='p-2 lg:shadow-md space-y-2'>
-                <TagsListCard tags={tags?.trim().split(' ')} />
+                <TagsListCard tags={tags?.trim().split(' ')} isDisabled={isPosting} />
                 <div className='flex flex-col items-center'>
                     <MarkdownViewer text={markdown} />
                 </div>

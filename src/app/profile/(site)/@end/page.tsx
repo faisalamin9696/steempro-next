@@ -24,7 +24,7 @@ export default function ProfileEnd({ data }: { data?: AccountExt }) {
 
 
   return (
-    <ProfileInfoCard hideAvatar key={data?.name || username}
+    <ProfileInfoCard hideAvatar key={Math.random()}
       data={data} username={username} />
     // <div className="flex flex-col pb-60 ">
 

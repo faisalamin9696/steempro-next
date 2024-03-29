@@ -39,11 +39,11 @@ export default function SearchModal(props: Props) {
 
     const filters = `any/${loginInfo.name || null}/${FeedBodyLength}/time/DESC/100`;
     const POST_BY_TEXT_URL = `/content_search_api/getPostsByText/"${query}"/${filters}`;
-    const POST_BY_TAGS_TEXT_URL = `/content_search_api/getPostsByTagsText/${searchTags.replaceAll('@', '')?.replaceAll('#', '')}/"${query}"/${filters}`;
-    const POST_BY_AUTHOR_TEXT_URL = `/content_search_api/getPostsByAuthorText/${searchAuthor.replaceAll('@', '')?.replaceAll('#', '')}/"${query}"/${filters}`;
+    const POST_BY_TAGS_TEXT_URL = `/content_search_api/getPostsByTagsText/${searchTags.replaceAll('@', '')?.replaceAll('#', '').toLowerCase()}/"${query}"/${filters}`;
+    const POST_BY_AUTHOR_TEXT_URL = `/content_search_api/getPostsByAuthorText/${searchAuthor.replaceAll('@', '')?.replaceAll('#', '').toLowerCase()}/"${query}"/${filters}`;
 
     const COMMENTS_BY_TEXT_URL = `/content_search_api/getCommentsByText/"${query}"/${filters}`;
-    const COMMENTS_BY_AUTHOR_TEXT_URL = `/content_search_api/getCommentsByAuthorText/${searchAuthor.replaceAll('@', '')?.replaceAll('#', '')}/${filters}`;
+    const COMMENTS_BY_AUTHOR_TEXT_URL = `/content_search_api/getCommentsByAuthorText/${searchAuthor.replaceAll('@', '')?.replaceAll('#', '').toLowerCase()}/${filters}`;
     const PEOPLE_URL = `/accounts_api/getAccountsByPrefix/${query}/${loginInfo.name || 'null'}/name,reputation,posting_json_metadata,created`;
 
     const [url, setUrl] = useState<string | undefined>();
@@ -177,12 +177,14 @@ export default function SearchModal(props: Props) {
                                         value={searchAuthor}
                                         onValueChange={(value) => setSearchAuthor(value)}
                                         onKeyUp={handleKeyPress}
+                                        autoCapitalize='off'
                                         className=' flex-[3]' placeholder='Author' />
                                     }
 
                                     {searchType === 'tags' && <Input
                                         size='sm'
                                         value={searchTags}
+                                        autoCapitalize='off'
                                         onValueChange={(value) => setSearchTags(value)}
                                         onKeyUp={handleKeyPress}
                                         className=' flex-[3]' placeholder='Tags' />
@@ -250,11 +252,7 @@ export default function SearchModal(props: Props) {
 
 
                         </ModalBody>
-                        {/* <ModalFooter>
-                            <Button color="danger" variant="light" onClick={onClose}>
-                                Close
-                            </Button>
-                        </ModalFooter> */}
+                      
                     </>
                 )}
             </ModalContent>

@@ -94,17 +94,29 @@ export default memo(function BeneficiaryButton(props: Props) {
             </PopoverTrigger>
             <PopoverContent>
                 <div className="px-1 py-2">
-                    <div className='flex justify-between gap-2 max-sm:flex-col'>
-                        <div className='space-y-1'>
-                            <p className="flex text-small font-bold">{'Beneficiaries'}</p>
-                            <p className='text-default-900/60 text-tiny'>{'Who should receive any rewards?'}</p>
+                    <div className='flex sm:items-start justify-between gap-2 max-sm:flex-col'>
+
+                        <div className=' flex max-sm:justify-between max-sm:w-full'>
+                            <div className='space-y-1'>
+                                <p className="flex text-small font-bold">{'Beneficiaries'}</p>
+                                <p className='text-default-900/60 text-tiny'>{'Who should receive any rewards?'}</p>
+                            </div>
+
+                            <button className='hidden max-sm:block items-center p-2'
+                                onClick={() => { setBenePopup(false) }} >
+                                <MdClose />
+                            </button>
+
                         </div>
-                        <Card className='pe-2 gap-4 flex-row bg-secondary-800/10 max-sm:self-start
+
+
+
+                        <Card className='pe-2 gap-1 flex-row bg-secondary-800/10 max-sm:self-start
                         items-center rounded-full justify-start' >
                             <SAvatar size='xs' username={loginInfo.name} />
-                            <div className='flex space-x-2 flex-1'>
+                            <div className='flex gap-2 flex-1'>
                                 <p>{loginInfo.name}</p>
-                                <p className=' font-bold'>{availableBene}%</p>
+                                <p className=' font-semibold'>{availableBene}%</p>
                             </div>
 
                         </Card>

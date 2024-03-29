@@ -30,7 +30,7 @@ export default async function Layout({
             <MainWrapper
                 endClassName='max-h-screen'
                 endContent={<ProfileInfoCard hideAvatar
-                    key={data.account} community={data} username={data.account} />
+                    key={Math.random()} community={data} username={data.account} />
                 }>
                 <CommunityPage data={data} />
             </MainWrapper>

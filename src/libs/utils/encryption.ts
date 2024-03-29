@@ -1,4 +1,6 @@
-import CryptoJS from 'crypto-js';
+import CryptoJS, { AES } from 'crypto-js';
+import Utf8 from "crypto-js/enc-utf8";
+import getFingerprint from "react-secure-storage/src/lib/fingerprint";
 
 
 export function encryptPrivateKey(privateKey: string, password: string): string {
@@ -56,6 +58,14 @@ export function decryptPrivateKey(encryptedPrivateKey: string, password: string)
     }
 }
 
+export function decrypt(value: string) {
+    try {
+        var bytes = AES.decrypt(value, getFingerprint());
+        return bytes.toString(Utf8) || null;
+    } catch (ex) {
+        return null;
+    }
+}
 // // Usage example:
 // const privateKey = "your_private_key";
 // const password = "your_password";

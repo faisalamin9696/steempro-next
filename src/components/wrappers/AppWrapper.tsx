@@ -29,13 +29,14 @@ export default function AppWrapper({ children }: { children: React.ReactNode }) 
     const dispatch = useAppDispatch();
     const router = useRouter();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
+    const rourer = useRouter();
 
 
     function pingForWitnessVote() {
         if (!isPinged) {
             toast(`Vote for witness (${WitnessAccount})`, {
                 action: { label: 'Vote', onClick: () => { router.push('/witnesses'); } },
-                closeButton: false, duration: 30000,
+                closeButton: false, duration: 10000,
             });
             isPinged = true;
         }
@@ -55,6 +56,17 @@ export default function AppWrapper({ children }: { children: React.ReactNode }) 
         return () => clearTimeout(timeout);
 
     }, [status]);
+
+
+    useEffect(() => {
+
+        if (!!session?.user?.name) {
+            if (session.user.name !== username) {
+                setUsername(session.user.name);
+            }
+        }
+
+    }, [session?.user?.name, username]);
 
 
     const { data: globalData } = useSWR(`/steem_requests_api/getSteemProps`, fetchSds<SteemProps>, {
@@ -84,7 +96,7 @@ export default function AppWrapper({ children }: { children: React.ReactNode }) 
     useEffect(() => {
 
         if (accountData) {
-            dispatch(saveLoginHandler({ ...accountData, unread_count: (loginInfo?.unread_count ?? 0) }));
+            dispatch(saveLoginHandler({ ...accountData, unread_count: loginInfo?.name === username ? (loginInfo?.unread_count ?? 0) : 0 }));
             if (!accountData.witness_votes.includes(WitnessAccount))
                 pingForWitnessVote();
         }

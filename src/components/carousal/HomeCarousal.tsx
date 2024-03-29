@@ -8,7 +8,6 @@ import useSWR from "swr";
 import PromotionCard from "../PromotionCard";
 import './style.scss';
 import Carousel from '@itseasy21/react-elastic-carousel';
-import { memo } from "react";
 
 
 const breakPoints = [
@@ -19,7 +18,8 @@ const breakPoints = [
 ];
 
 
-const HomeCarousel = memo(() => {
+const HomeCarousel = () => {
+
     const { data } = useSWR('promotions', getPromotions);
 
     if (!data || data?.length <= 0) {
@@ -60,5 +60,5 @@ const HomeCarousel = memo(() => {
             ))}
         </Carousel>
     </div>
-})
+}
 export default HomeCarousel;

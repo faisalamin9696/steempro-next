@@ -421,6 +421,7 @@ type PostResteem = {
 
 type Delegation = {
   time: number;
+  expiration?: number
   from: string;
   to: string;
   vests: number;

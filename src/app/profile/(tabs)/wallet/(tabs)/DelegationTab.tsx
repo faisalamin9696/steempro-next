@@ -28,14 +28,14 @@ import { FaChevronDown, FaPlus, FaSearch } from "react-icons/fa";
 import useSWR from "swr";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
-import { FiCornerDownRight } from "react-icons/fi";
-import { vestToSteem } from "@/libs/steem/sds";
 import SAvatar from "@/components/SAvatar";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import TransferModal from "@/components/TransferModal";
 import LoadingCard from "@/components/LoadingCard";
 import { useLogin } from "@/components/AuthProvider";
+import { vestToSteem } from "@/libs/steem/sds";
+import moment from "moment";
 
 const statusColorMap = {
     incoming: "success",
@@ -215,7 +215,8 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                 return (
                     <div className="flex flex-col gap-2">
                         <p className="text-bold text-xs capitalize">{vestToSteem(cellValue, globalData.steem_per_share)?.toLocaleString()} SP</p>
-                        <TimeAgoWrapper className="text-bold text-tiny text-default-500" created={delegation.time * 1000} />
+                        <TimeAgoWrapper className="text-bold text-tiny text-default-500"
+                            created={(delegation.status === 'expiring' ? (delegation?.expiration ?? 0) : delegation.time) * 1000} />
                     </div>
                 );
             case "status":
@@ -445,7 +446,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                             if ((item.from === transferModal.delegation?.from &&
                                 item.to === transferModal.delegation?.to &&
                                 item.status === transferModal.delegation?.status))
-                                return { ...item, status: 'expiring' }
+                                return { ...item, status: 'expiring', expiration: moment().add(5, 'days').unix() }
                             else return item;
                         }));
 

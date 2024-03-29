@@ -4,7 +4,6 @@ import { fetchSds, useAppSelector } from '@/libs/constants/AppFunctions';
 import React from 'react'
 import useSWR from 'swr';
 import { getPostThumbnail } from '@/libs/utils/image';
-import { useRouter } from 'next13-progressbar';
 import { Card } from '@nextui-org/card';
 import ViewCountCard from './ViewCountCard';
 import Image from 'next/image';
@@ -31,7 +30,6 @@ export default function PromotionCard(props: Props) {
     // const { data, isLoading, error, isValidating } = useSWR(URL, fetchSds<Post>)
 
     const thumbnail = getPostThumbnail(data?.json_images);
-    const router = useRouter();
 
 
 

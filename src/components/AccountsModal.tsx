@@ -5,6 +5,9 @@ import { Spinner } from '@nextui-org/spinner';
 import React, { useEffect, useState } from 'react';
 import { useLogin } from './AuthProvider';
 import AccountItemCard from './AccountItemCard';
+import { getSecurePrefix } from "react-secure-storage/src/lib/utils";
+import getAllLocalStorageItems from "react-secure-storage/src/lib/localStorageHelpers";
+
 
 
 interface Props {
@@ -19,9 +22,11 @@ export default function AccountsModal(props: Props) {
     const [defaultAcc, setDefaultAcc] = useState<User>();
     const [isShow, setIsShow] = useState(true);
     const { authenticateUser } = useLogin();
+    const KEY_PREFIX = getSecurePrefix();
+
     useEffect(() => {
-        const credentials = getCredentials();
-        if (credentials?.username) {
+        const credentials = getAllLocalStorageItems()[`${KEY_PREFIX}auth`] as User | undefined;
+        if (!!credentials) {
             setDefaultAcc(credentials);
             const allCredentials = getAllCredentials();
 
@@ -34,6 +39,7 @@ export default function AccountsModal(props: Props) {
 
             setAccounts(allCredentials);
         }
+
         const timeOut = setTimeout(() => {
             setIsShow(false);
         }, 1000);

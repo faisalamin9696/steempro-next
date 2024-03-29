@@ -3,7 +3,6 @@
 import React, { memo, useEffect } from 'react'
 import { Avatar, AvatarGroup } from '@nextui-org/avatar'
 import { fetchSds, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions'
-import { useSession } from 'next-auth/react';
 import LoadingCard from '@/components/LoadingCard';
 import useSWR from 'swr';
 import { SlUserFollowing } from 'react-icons/sl';
@@ -50,12 +49,9 @@ type Props = {
 export default memo(function ProfileInfoCard(props: Props) {
 
     const { username, profile, community, data: accountExt, hideAvatar } = props;
-    const { data: session } = useSession();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
-
     const URL = `/accounts_api/getAccountExt/${username}/${loginInfo.name || 'null'}`;
     let { data, isLoading } = useSWR(accountExt ? undefined : URL, fetchSds<AccountExt>);
-    const isSelf = !!loginInfo.name && (loginInfo.name === (username || data?.name));
 
     if (accountExt)
         data = accountExt;

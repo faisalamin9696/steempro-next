@@ -218,13 +218,13 @@ const TransferModal = (props: Props): JSX.Element => {
             toast.info('Invalid amount');
             return
         }
-        if (Number(amount) < 0.001) {
+        if (!isRemove && Number(amount) < 0.001) {
             toast.info('Use only 3 digits of precison');
             return
 
         }
 
-        if (delegation && Number(amount) < 1) {
+        if (!isRemove && delegation && Number(amount) < 1) {
             toast.info(' The minimum required delegation amount is 1.000 SP');
             return
 

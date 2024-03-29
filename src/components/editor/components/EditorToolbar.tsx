@@ -26,7 +26,7 @@ const EditorToolbar = (props: ToolbarProps) => {
     const { onSelect, className, isDisabled } = props;
     const masterKey = 'Alt + ';
 
-    const HeadingItem = <Dropdown isDisabled={isDisabled} shadow='sm' size='sm' className='min-w-0'
+    const HeadingItem = <Dropdown aria-labelledby='toolbar' isDisabled={isDisabled} shadow='sm' size='sm' className='min-w-0'
         placement='bottom-end' >
         <DropdownTrigger>
             <Button isIconOnly size='sm'>
