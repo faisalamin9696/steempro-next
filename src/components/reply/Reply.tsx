@@ -1,7 +1,7 @@
-import { useAppSelector } from '@/libs/constants/AppFunctions';
 import ReplyForm from './ReplyForm';
 import { memo } from 'react';
 import SAvatar from '@/components/SAvatar';
+import { useAppSelector } from '@/libs/constants/AppFunctions';
 
 interface Props {
     comment: Post;
@@ -10,7 +10,7 @@ interface Props {
 
 export default memo(function Reply(props: Props) {
     const { comment } = props;
-    const commentInfo: Post = useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment;
+    const commentInfo: Post = (useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment) as Post;
 
     return (
         <div className='flex-col w-full relative'>

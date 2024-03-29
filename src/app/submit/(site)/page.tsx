@@ -145,8 +145,8 @@ export default function SubmitPage(props: Props) {
                 if (!checkPromotionText(body))
                     body = body + '\n\n' + AppStrings.promotion_text;
                 handleUpdateSuccess && handleUpdateSuccess({
-                    ...oldPost, ...variables.postData, body: body, title: variables.postData.title,
-                    json_metadata: variables.postData.json_metadata
+                    ...variables.postData, ...oldPost, body: body, title: variables.postData.title,
+                    json_metadata: JSON.stringify(variables.postData.json_metadata)
                 });
                 toast.success('Updated');
                 return

@@ -48,7 +48,7 @@ export default memo(function EditorInput(props: EditorProps) {
         onChange,
         users,
         rows,
-        isDisabled
+        isDisabled,
     } = props;
 
     const { authenticateUser, isAuthorized } = useLogin();
@@ -488,7 +488,10 @@ export default memo(function EditorInput(props: EditorProps) {
 
                     <ReactTextareaAutocomplete
                         style={{ fontSize: 14 }}
-                        innerRef={ref => { postInput.current = ref }}
+                        innerRef={ref => {
+                            postInput.current = ref;
+                           
+                        }}
                         value={value}
                         dropdownStyle={{ zIndex: 14, }}
                         containerStyle={{}}
@@ -513,9 +516,9 @@ export default memo(function EditorInput(props: EditorProps) {
                                             if (token?.length <= 2) {
                                                 const uniqueObjectArray = Object.values(
                                                     (users ?? [])
-                                                      .filter(name => name.trim() !== '') // Filter out empty strings
-                                                      .reduce((acc, name) => ({ ...acc, [name]: { name } }), {})
-                                                  ) as any;                                                resolve(uniqueObjectArray);
+                                                        .filter(name => name.trim() !== '') // Filter out empty strings
+                                                        .reduce((acc, name) => ({ ...acc, [name]: { name } }), {})
+                                                ) as any; resolve(uniqueObjectArray);
                                             } else {
                                                 let suggestions = await getAccountsByPrefix(token.toLowerCase());
                                                 resolve(suggestions);

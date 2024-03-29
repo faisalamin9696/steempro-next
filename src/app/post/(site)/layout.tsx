@@ -21,13 +21,13 @@ export async function generateMetadata(parent: ResolvingMetadata) {
     const { username, permlink } = usePathnameServer();
     const result = await getPost(username, permlink);
     const previousImages = (await parent).openGraph?.images || [];
-    const isPost = result.depth === 0;
+    const isPost = result?.depth === 0;
 
-    const thumbnail = isPost ? getPostThumbnail(result?.json_images) : getResizedAvatar(result.author, 'medium');
+    const thumbnail = isPost ? getPostThumbnail(result?.json_images) : getResizedAvatar(result?.author, 'medium');
 
-    const pageTitle = isPost ? result.title : `RE: ${result.root_title}`;
-    const pageDescription = isPost ? pageTitle + ` by @${result.author}` :
-        `${postSummary(result.body)} by ${result.author}`;
+    const pageTitle = isPost ? result?.title : `RE: ${result?.root_title}`;
+    const pageDescription = isPost ? pageTitle + ` by @${result?.author}` :
+        `${postSummary(result?.body)} by ${result?.author}`;
 
     return {
         title: pageTitle,

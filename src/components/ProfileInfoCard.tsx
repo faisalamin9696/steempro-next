@@ -102,43 +102,39 @@ export default memo(function ProfileInfoCard(props: Props) {
         <div
             className={clsx(`relative flex flex-col card-content border-none  rounded-lg
         bg-transparent items-start gap-4 p-2 w-full bg-white dark:bg-white/5`, props.className)}>
-            <div className="flex flex-row justify-between gap-2 w-full">
-                <div className="flex gap-2">
-                    {!hideAvatar && <SAvatar 
-                        className='cursor-pointer' size='sm'
-                        username={username || profileInfo?.name || ''} />}
-                    <div className="flex flex-col items-start justify-center">
-                        <h4 className="text-sm font-semibold leading-none text-default-600">{posting_json_metadata?.profile?.name}</h4>
-                        {/* <Link prefetch={false} href={authorLink}>{comment.author}</Link> */}
 
-                        <h5 className={clsx("text-small tracking-tight text-default-500")}>@{username || profileInfo?.name}</h5>
 
-                        <div className='flex text-sm gap-1 text-default-600 items-center'>
-                            <p className='text-default-500 text-tiny'>Joined</p>
-                            <TimeAgoWrapper className='text-tiny' created={(profileInfo?.created || 0) * 1000} />
+            <div className="flex flex-row gap-2 w-full items-start">
+                {!hideAvatar && <SAvatar
+                    className='cursor-pointer' size='sm'
+                    username={username || profileInfo?.name || ''} />}
+
+                <div className='flex flex-col items-start w-full'>
+                    <div className=' flex items-start gap-1 justify-between w-full'>
+                        <div className="flex gap-2">
+
+                            <div className="flex flex-col items-start justify-center">
+                                <h4 className="text-sm font-semibold leading-none text-default-600">{posting_json_metadata?.profile?.name}</h4>
+                                {/* <Link prefetch={false} href={authorLink}>{comment.author}</Link> */}
+
+                                <h5 className={clsx("text-small tracking-tight text-default-500")}>@{username || profileInfo?.name}</h5>
+                            </div>
                         </div>
 
+                        {profileInfo && <FollowButton account={profileInfo} community={communityInfo} />}
+
+                    </div>
+
+
+                    <div className='flex text-sm gap-1 text-default-600 items-center '>
+                        <p className='text-default-500 text-tiny'>Joined</p>
+                        <TimeAgoWrapper className='text-tiny' created={(profileInfo?.created || 0) * 1000} />
                     </div>
                 </div>
 
-
-                {profileInfo && <FollowButton account={profileInfo} community={communityInfo} />}
-                {/* <Button
-                    isDisabled={isLoading}
-                    color={data?.observer_follows_author ? 'warning' : "secondary"}
-                    radius="full"
-                    size='sm'
-                    className='min-w-0  h-6'
-                    title={data?.observer_follows_author ? 'Unfollow' : 'Follow'}
-                    variant={data?.observer_follows_author ? "bordered" : "solid"}
-                    onClick={() => { }}
-
-                >
-                    {data?.observer_follows_author ? 'Unfollow' : 'Follow'}
-
-                </Button> */}
-
             </div>
+
+
 
 
 

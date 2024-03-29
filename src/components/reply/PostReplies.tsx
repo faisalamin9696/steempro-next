@@ -6,7 +6,7 @@ import { getPostReplies } from '@/libs/steem/sds';
 import { Button } from '@nextui-org/button';
 import { Card } from '@nextui-org/card';
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import InfiniteScroll from "react-infinite-scroll-component";
 import Reply from './Reply';
 import MarkdownViewer from '@/components/body/MarkdownViewer';
@@ -23,7 +23,7 @@ import { useLogin } from '@/components/AuthProvider';
 import secureLocalStorage from 'react-secure-storage';
 import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator';
 import EmptyList from '@/components/EmptyList';
-import { Select, SelectItem } from '@nextui-org/react';
+import { Select, SelectItem } from '@nextui-org/select';
 
 interface Props {
     comment: Post | Feed;
@@ -56,15 +56,16 @@ export default memo(function PostReplies(props: Props) {
     const [showReply, setShowReply] = useState(false);
     const [isPosting, setPosting] = useState(false);
     const { authenticateUser, isAuthorized } = useLogin();
+    const editorDiv = useRef<any>(null);
 
 
     const repliesMutation = useMutation({
         mutationKey,
-        mutationFn: () => getPostReplies(comment.author, comment.permlink, loginInfo.name),
+        mutationFn: () => getPostReplies(commentInfo.author, commentInfo.permlink, loginInfo.name),
         onSuccess(data) {
             setIsLoading(false);
             dispatch(addRepliesHandler({
-                comment,
+                comment: commentInfo,
                 replies: data?.sort((a, b) => b[sorting as string] - a[sorting as string])
             }));
         }
@@ -72,7 +73,7 @@ export default memo(function PostReplies(props: Props) {
 
     useEffect(() => {
         if (showReply) {
-            document.getElementById(`editorDiv-${commentInfo.author + '-' + commentInfo.permlink}`)?.scrollIntoView({ block: "start", behavior: "smooth" });
+            editorDiv?.current?.focus();
         }
     }, [showReply]);
 
@@ -246,8 +247,7 @@ export default memo(function PostReplies(props: Props) {
     return (
         <div id='post-replies'>
 
-            <div className='flex justify-between items-center gap-2 px-2'
-                id={`editorDiv-${commentInfo.author + '-' + commentInfo.permlink}`}>
+            <div className='flex justify-between items-center gap-2 px-2'>
 
                 <Button size='sm' variant='flat'
                     color='secondary'
@@ -311,61 +311,62 @@ export default memo(function PostReplies(props: Props) {
 
                     </div>}
 
+                <div ref={editorDiv} tabIndex={-1}>
 
-                {showReply &&
-                    <div
-                        className='flex flex-col mt-2 gap-2' >
-                        <EditorInput
-                            value={markdown}
-                            users={[commentInfo.author, commentInfo.parent_author, commentInfo.root_author, ...(users ?? [])]}
-                            onChange={setMarkdown}
-                            onImageUpload={() => { }}
-                            onImageInvalid={() => { }}
-                            rows={6} />
+                    {showReply &&
+                        <div className='flex flex-col mt-2 gap-2 animate-appearance-in' >
+                            <EditorInput
+                                value={markdown}
+                                users={[commentInfo.author, commentInfo.parent_author, commentInfo.root_author, ...(users ?? [])]}
+                                onChange={setMarkdown}
+                                onImageUpload={() => { }}
+                                onImageInvalid={() => { }}
+                                rows={6} />
 
-                        <div className='flex justify-between'>
-                            <ClearFormButton
-                                onClearPress={handleClear} />
+                            <div className='flex justify-between'>
+                                <ClearFormButton
+                                    onClearPress={handleClear} />
 
-                            <div className='flex gap-2 '>
+                                <div className='flex gap-2 '>
 
-                                {<Button radius='full'
-                                    size='sm'
-                                    onClick={() => {
+                                    {<Button radius='full'
+                                        size='sm'
+                                        onClick={() => {
 
-                                        toggleReply();
+                                            toggleReply();
 
-                                    }}>
-                                    Cancel
-                                </Button>}
+                                        }}>
+                                        Cancel
+                                    </Button>}
 
-                                <PublishButton
-                                    isDisabled={isPosting}
-                                    onClick={handlePublish}
-                                    isLoading={isPosting}
-                                    tooltip=''
-                                    buttonText={'Send'} />
-                            </div>
-
-
+                                    <PublishButton
+                                        isDisabled={isPosting}
+                                        onClick={handlePublish}
+                                        isLoading={isPosting}
+                                        tooltip=''
+                                        buttonText={'Send'} />
+                                </div>
 
 
-                        </div>
 
-                        <div className='space-y-1 w-full overflow-auto p-1 m-1 mt-4'>
-
-                            <div className=' items-center flex justify-between'>
-                                <p className='float-left text-sm text-default-900/70 font-semibold'>Preview</p>
-
-                                <p className='float-right text-sm font-light text-default-900/60'>{rpm?.words} words, {rpm?.text}</p>
 
                             </div>
-                            {markdown ? <Card shadow='sm' className='p-2 lg:shadow-none space-y-2'>
-                                <MarkdownViewer text={markdown} />
-                            </Card> : null}
-                        </div>
 
-                    </div>}
+                            <div className='space-y-1 w-full overflow-auto p-1 m-1 mt-4'>
+
+                                <div className=' items-center flex justify-between'>
+                                    <p className='float-left text-sm text-default-900/70 font-semibold'>Preview</p>
+
+                                    <p className='float-right text-sm font-light text-default-900/60'>{rpm?.words} words, {rpm?.text}</p>
+
+                                </div>
+                                {markdown ? <Card shadow='sm' className='p-2 lg:shadow-none space-y-2'>
+                                    <MarkdownViewer text={markdown} />
+                                </Card> : null}
+                            </div>
+
+                        </div>}
+                </div>
                 <InfiniteScroll
 
                     dataLength={limit}
@@ -384,12 +385,10 @@ export default memo(function PostReplies(props: Props) {
 
                         {rootReplies?.map((reply: Post) => {
                             return (!reply.link_id) ? null :
-                                <div id={`editorDiv-${reply.author + '-' + reply.permlink}`}
-                                    className=''
-                                >
+                                <div>
                                     < Reply key={reply.link_id}
                                         comment={reply}
-                                        rootComment={comment} />
+                                        rootComment={commentInfo} />
 
                                 </div>
                         })}

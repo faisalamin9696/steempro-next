@@ -296,11 +296,12 @@ export default function AuthModal(props: Props) {
                                         (isLocked && !isNew) ?
                                             <form className="flex flex-col gap-4">
 
-                                                <p className="text-md font-bold flex items-center space-x-2">
+                                                <div className="text-md font-bold flex items-center space-x-2">
                                                     <p>Hi, {loginInfo.name}</p>
                                                     <Avatar
                                                         src={getResizedAvatar(loginInfo.name)}
-                                                        size="sm" /></p>
+                                                        size="sm" />
+                                                </div>
 
                                                 <Input
                                                     size="sm"

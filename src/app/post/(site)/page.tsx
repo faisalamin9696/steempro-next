@@ -60,7 +60,7 @@ export default function PostPage(props: Props) {
         // count view after ViewCountTime mili seconds
         const timeout = setTimeout(() => {
             if (commentInfo.depth === 0 && !isSelf)
-                updatePostView(data);
+                updatePostView(commentInfo);
         }, ViewCountTime);
 
         return () => clearTimeout(timeout);
@@ -69,7 +69,7 @@ export default function PostPage(props: Props) {
 
     if (editMode) {
         return <SubmitPage params={{
-            oldPost: data,
+            oldPost: commentInfo,
             handleUpdateCancel: toggleEditMode,
             handleUpdateSuccess: (post) => {
                 dispatch(addCommentHandler(post));

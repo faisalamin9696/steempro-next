@@ -7,7 +7,7 @@ import Link from 'next/link'
 import React from 'react'
 import RoleTitleCard from '../RoleTitleCard'
 
-export default function ReplyBody({ comment, rightContent }: { comment: Post, rightContent?: React.ReactNode }) {
+export default function ReplyBody({ comment, rightContent, isDeep }: { comment: Post, rightContent?: React.ReactNode, isDeep: boolean }) {
     return (
         <div className='flex gap-2 w-full '>
             <div className='flex flex-col text-sm sm:text-medium-100 w-full'>

@@ -14,26 +14,26 @@ interface Props {
 
 export default memo(function ReplyForm(props: Props) {
     const { comment, rootComment } = props;
-    const commentInfo: Post = (useAppSelector(state => state.commentReducer.values)[`${comment.author}/${comment.permlink}`] ?? comment) as Post;
-    const rootInfo = (useAppSelector(state => state.commentReducer.values)[`${commentInfo.root_author}/${commentInfo.root_permlink}`]) as Post;
-    const postReplies = useAppSelector(state => state.repliesReducer.values)[`${rootInfo?.author}/${rootInfo?.permlink}`] ?? [];
-    const [expanded, setExpanded] = useState(commentInfo.depth <= 2);
+    const postReplies = useAppSelector(state => state.repliesReducer.values)[`${rootComment.author}/${rootComment.permlink}`] ?? [];
+    const isDeep = (comment?.depth - rootComment?.depth) > 6;
+
+    const [expanded, setExpanded] = useState(!isDeep);
     const getReplies = permlink => {
         return postReplies?.filter((item) => item.parent_permlink === permlink)
     }
 
-    const replies = getReplies(commentInfo.permlink);
-
+    const replies = getReplies(comment.permlink);
 
     return (
         <div className='flex flex-col w-full gap-4'>
 
 
-            <div key={commentInfo.permlink} className='flex flex-col gap-2 p-2 bg-foreground/5 w-full rounded-lg'>
+            <div key={comment.permlink} className='flex flex-col gap-2 p-2 bg-foreground/5 w-full rounded-lg'>
 
-                <ReplyBody comment={commentInfo}
+                <ReplyBody comment={comment}
+                    isDeep={isDeep}
                     rightContent={
-                        commentInfo.children >= 1 &&
+                        (comment.children >= 1 && !isDeep) &&
                         <button title={expanded ? 'Collapse' : 'Expand'}
                             className=' hover:text-primary'
                             onClick={() => setExpanded(!expanded)}>
@@ -43,8 +43,8 @@ export default memo(function ReplyForm(props: Props) {
 
                 />
 
-                <ReplyFooter comment={commentInfo} expanded={expanded}
-                    className='mt-4'
+                <ReplyFooter comment={comment} expanded={expanded}
+                    className='mt-4' isDeep={isDeep} rootComment={rootComment}
                     toggleExpand={() => setExpanded(!expanded)} />
             </div>
 
@@ -53,7 +53,7 @@ export default memo(function ReplyForm(props: Props) {
                 {expanded && replies?.map((item: Post) => (
 
                     <Reply comment={item} rootComment={rootComment}
-                       
+
                     />
                 ))}
             </div>

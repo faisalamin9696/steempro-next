@@ -18,19 +18,22 @@ import { Button } from '@nextui-org/button';
 import { Card, Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import secureLocalStorage from 'react-secure-storage';
 import { toast } from 'sonner';
 import Link from 'next/link';
 
-export default function ReplyFooter({ comment, expanded, toggleExpand, className }: {
+export default function ReplyFooter({ comment, expanded, toggleExpand, className,
+    isDeep, rootComment
+}: {
     comment: Post,
     expanded?: boolean,
     toggleExpand?: () => void;
     className?: string;
+    isDeep: boolean;
+    rootComment: Post | Feed;
 }) {
-    const rootInfo = (useAppSelector(state => state.commentReducer.values)[`${comment.root_author}/${comment.root_permlink}`]) as Post;
-    const postReplies = useAppSelector(state => state.repliesReducer.values)[`${rootInfo?.author}/${rootInfo?.permlink}`] ?? [];
+    const postReplies = useAppSelector(state => state.repliesReducer.values)[`${rootComment?.author}/${rootComment?.permlink}`] ?? [];
     const [showReply, setShowReply] = useState(false);
     const [markdown, setMarkdown] = useState('');
     const rpm = readingTime(markdown);
@@ -38,7 +41,7 @@ export default function ReplyFooter({ comment, expanded, toggleExpand, className
     const { authenticateUser, isAuthorized } = useLogin();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const dispatch = useAppDispatch();
-    const queryKey = [`post-${rootInfo?.author}-${rootInfo?.permlink}`];
+    const queryKey = [`post-${rootComment.author}-${rootComment.permlink}`];
     const queryClient = useQueryClient();
     const [showEdit, setShowEdit] = useState(false);
     const [deletePopup, setDeletePopup] = useState(false);
@@ -48,6 +51,8 @@ export default function ReplyFooter({ comment, expanded, toggleExpand, className
         isOpen: false,
         muteNote: ''
     });
+    const editorDiv = useRef<any>(null);
+
 
     const isSelf = !!loginInfo.name && (loginInfo.name === (comment.author));
     const canMute = loginInfo.name && Role.atLeast(comment.observer_role, 'mod');
@@ -56,7 +61,6 @@ export default function ReplyFooter({ comment, expanded, toggleExpand, className
     const allowReply = Role.canComment(comment.community, comment.observer_role);
     const canReply = allowReply && comment.depth < 255;
     const { users } = JSON.parse(comment.json_metadata ?? `{}`) || [];
-    const isDeep = (comment?.depth - rootInfo?.depth) > 6;
 
     const toggleReply = () => setShowReply(!showReply);
     const toggleEdit = () => setShowEdit(!showEdit);
@@ -71,8 +75,7 @@ export default function ReplyFooter({ comment, expanded, toggleExpand, className
     useEffect(() => {
 
         if (showEdit || showReply) {
-            document.getElementById(`editorDiv-${comment.author + '-' + comment.permlink}`)?.scrollIntoView({ behavior: 'smooth' });
-
+            editorDiv?.current?.focus();
         }
         if (showEdit) {
             setMarkdown(comment.body);
@@ -109,7 +112,7 @@ export default function ReplyFooter({ comment, expanded, toggleExpand, className
                 return;
             }
             dispatch(addCommentHandler({ ...comment, link_id: undefined }));
-            dispatch(addCommentHandler({ ...rootInfo, children: rootInfo.children - 1 }));
+            dispatch(addCommentHandler({ ...rootComment, children: rootComment.children - 1 }));
 
             toast.success(`Deleted`);
 
@@ -205,8 +208,8 @@ export default function ReplyFooter({ comment, expanded, toggleExpand, className
                 author_title: comment.observer_title ?? '',
                 observer_title: comment.observer_title ?? '',
                 observer_role: comment.observer_role ?? '',
-                root_author: rootInfo?.author ?? '',
-                root_permlink: rootInfo?.permlink ?? '',
+                root_author: rootComment?.author ?? '',
+                root_permlink: rootComment?.permlink ?? '',
                 root_title: comment.root_title,
                 net_rshares: 0,
                 children: 0,
@@ -227,17 +230,17 @@ export default function ReplyFooter({ comment, expanded, toggleExpand, className
             dispatch(addCommentHandler({ ...newComment }));
 
         } else {
-            queryClient.setQueryData(queryKey, { ...rootInfo, children: rootInfo?.children + 1 })
+            queryClient.setQueryData(queryKey, { ...rootComment, children: rootComment?.children + 1 })
 
             // update the redux state for the post
-            dispatch(addCommentHandler({ ...rootInfo, children: rootInfo?.children + 1, }));
+            dispatch(addCommentHandler({ ...rootComment, children: rootComment?.children + 1, }));
 
             // update the redux state for the current comment
             dispatch(addCommentHandler({ ...comment, children: comment?.children + 1 }));
 
             // update the redux state for the root post replies
             dispatch(addRepliesHandler({
-                comment: rootInfo,
+                comment: rootComment,
                 replies: [newComment].concat(postReplies)
             }));
 
@@ -357,7 +360,7 @@ export default function ReplyFooter({ comment, expanded, toggleExpand, className
 
             <div className='flex flex-col gap-2'>
 
-                <div className='flex justify-between items-center'>
+                <div className='flex justify-between items-center' id={`editorDiv-${comment.author + '-' + comment.permlink}`}>
                     <CommentFooter isReply comment={comment} className='p-0' />
 
                     <div className='flex'>
@@ -458,9 +461,9 @@ export default function ReplyFooter({ comment, expanded, toggleExpand, className
 
             </div>
 
-            <div >
+            <div ref={editorDiv} tabIndex={-1}>
                 {(showReply || showEdit) ?
-                    <div className='flex flex-col mt-2 gap-2' id={`editorDiv-${comment.author + '-' + comment.permlink}`}>
+                    <div className='flex flex-col mt-2 gap-2 animate-appearance-in'>
                         <EditorInput
                             users={[comment.author, comment.parent_author, comment.root_author, ...(users ?? [])]}
                             value={markdown}
