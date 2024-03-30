@@ -67,7 +67,6 @@
     "@types/speakingurl": "^13.0.6",
     "@types/webscopeio__react-textarea-autocomplete": "^4.7.5",
     "autoprefixer": "^10.0.1",
-    "cypress": "^10.3.0",
     "@types/murmurhash-js": "^1.0.3",
     "postcss": "^8",
     "tailwind-scrollbar": "^3.0.5",
