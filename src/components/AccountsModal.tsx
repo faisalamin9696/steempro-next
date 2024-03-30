@@ -5,7 +5,6 @@ import { Spinner } from '@nextui-org/spinner';
 import React, { useEffect, useState } from 'react';
 import { useLogin } from './AuthProvider';
 import AccountItemCard from './AccountItemCard';
-import { getSecurePrefix } from "react-secure-storage/src/lib/utils";
 import { AES } from 'crypto-js';
 import Utf8 from 'crypto-js/enc-utf8';
 import murmurhash3_32_gc from "murmurhash-js/murmurhash3_gc";
@@ -40,10 +39,10 @@ export default function AccountsModal(props: Props) {
     const [defaultAcc, setDefaultAcc] = useState<User>();
     const [isShow, setIsShow] = useState(true);
     const { authenticateUser } = useLogin();
-    const KEY_PREFIX = getSecurePrefix();
+    const STORAGE_KEY = "@secure.j.auth";
 
     useEffect(() => {
-        const credentials = decrypt(localStorage.getItem(`${KEY_PREFIX}j.auth`) ?? '', process.env.NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY) as User | undefined;
+        const credentials = decrypt(localStorage.getItem(STORAGE_KEY) ?? '', process.env.NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY) as User | undefined;
         if (!!credentials) {
             setDefaultAcc(credentials);
             const allCredentials = getAllCredentials();
