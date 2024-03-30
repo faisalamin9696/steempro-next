@@ -5,33 +5,15 @@ import { Spinner } from '@nextui-org/spinner';
 import React, { useEffect, useState } from 'react';
 import { useLogin } from './AuthProvider';
 import AccountItemCard from './AccountItemCard';
-import { AES } from 'crypto-js';
-import Utf8 from 'crypto-js/enc-utf8';
-import murmurhash3_32_gc from "murmurhash-js/murmurhash3_gc";
+import { secureDecrypt } from '@/libs/utils/encryption';
 
 interface Props {
     isOpen: boolean;
     onOpenChange: (isOpen: boolean) => void;
 }
 
-function getFingerprint() {
-    let bar = "|";
-    let key = "";
-    if (key.endsWith(bar)) key = key.substring(0, key.length - 1);
-    let seed = 256;
-    return murmurhash3_32_gc(key, seed);
-}
 
-function decrypt(value: string, secureKey?: string) {
-    try {
-        if (!secureKey)
-            return undefined
-        var bytes = AES.decrypt(value, getFingerprint() + secureKey);
-        return bytes.toString(Utf8) || null;
-    } catch (ex) {
-        return null;
-    }
-}
+
 
 export default function AccountsModal(props: Props) {
     const { isOpen, onOpenChange } = useDisclosure();
@@ -42,7 +24,7 @@ export default function AccountsModal(props: Props) {
     const STORAGE_KEY = "@secure.j.auth";
 
     useEffect(() => {
-        const credentials = decrypt(localStorage.getItem(STORAGE_KEY) ?? '', process.env.NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY) as User | undefined;
+        const credentials = secureDecrypt(localStorage.getItem(STORAGE_KEY) ?? '', process.env.NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY) as User | undefined;
         if (!!credentials) {
             setDefaultAcc(credentials);
             const allCredentials = getAllCredentials();

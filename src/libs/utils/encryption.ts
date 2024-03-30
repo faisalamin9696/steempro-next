@@ -1,6 +1,14 @@
 import CryptoJS, { AES } from 'crypto-js';
 import Utf8 from "crypto-js/enc-utf8";
-import getFingerprint from "react-secure-storage/src/lib/fingerprint";
+import murmurhash3_32_gc from "murmurhash-js/murmurhash3_gc";
+
+function getFingerprint() {
+    let bar = "|";
+    let key = "";
+    if (key.endsWith(bar)) key = key.substring(0, key.length - 1);
+    let seed = 256;
+    return murmurhash3_32_gc(key, seed);
+}
 
 
 export function encryptPrivateKey(privateKey: string, password: string): string {
@@ -58,9 +66,11 @@ export function decryptPrivateKey(encryptedPrivateKey: string, password: string)
     }
 }
 
-export function decrypt(value: string) {
+export function secureDecrypt(value: string, secureKey?: string) {
     try {
-        var bytes = AES.decrypt(value, getFingerprint());
+        if (!secureKey)
+            return undefined
+        var bytes = AES.decrypt(value, getFingerprint() + secureKey);
         return bytes.toString(Utf8) || null;
     } catch (ex) {
         return null;
