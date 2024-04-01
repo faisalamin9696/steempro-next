@@ -9,7 +9,6 @@ import { DropdownMenu, DropdownItem } from '@nextui-org/dropdown';
 import React, { Key, useState } from 'react'
 import PowerDownModal from '@/components/PowerDownModal';
 import { Chip } from '@nextui-org/chip';
-import { GoArrowDownLeft } from "react-icons/go";
 import { IoMdAdd, IoMdRemove } from 'react-icons/io';
 
 export type SteemTokens = 'steem' | 'steem_power' | 'steem_dollar' | 'saving';
