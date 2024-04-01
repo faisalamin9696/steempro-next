@@ -77,23 +77,22 @@ export const getTimeFromNowNative = d => {
 moment.updateLocale('en', {
   relativeTime: {
     future: 'in %s',
-    past: '%s ago',
-    s: 'a few seconds',
-    ss: '%d seconds',
-    m: 'a minute',
-    mm: '%d minutes',
-    h: 'an hour',
-    hh: '%d hours',
-    d: 'a day',
-    dd: '%d days',
-    w: 'a week',
-    ww: '%d weeks',
-    M: 'a month',
-    MM: '%d months',
-    y: 'a year',
-    yy: '%d years',
+    past: '%s',
+    s: 'just now',
+    ss: '%s seconds ago',
+    m: 'a month ago',
+    mm: '%d months ago',
+    h: 'an hour ago',
+    hh: '%d hours ago',
+    d: 'a day ago',
+    dd: '%d days ago',
+    M: 'a month ago',
+    MM: '%d months ago',
+    y: 'a year ago',
+    yy: '%d years ago',
   },
-});
+});;
+
 
 moment.localeData('en').relativeTime['s'] = 'seconds';
 
