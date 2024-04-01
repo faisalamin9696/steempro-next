@@ -13,7 +13,7 @@ export default function CommunityCreatedPage() {
         bodyLength = FeedBodyLength,
         limit = 1000,
         offset = 0) {
-        const URL = `/feeds_api/getActiveCommunityPostsBy${feedType}/${community}/${'null'}/${bodyLength}/${limit}/${offset} `;
+        const URL = `/feeds_api/getCommunityPostsBy${feedType}/${community}/${'null'}/${bodyLength}/${limit}/${offset} `;
         return URL.trim();
     }
 

@@ -8,6 +8,7 @@ import React from 'react'
 import RoleTitleCard from '../RoleTitleCard'
 
 export default function ReplyBody({ comment, rightContent, isDeep }: { comment: Post, rightContent?: React.ReactNode, isDeep: boolean }) {
+
     return (
         <div className='flex gap-2 w-full '>
             <div className='flex flex-col text-sm sm:text-medium-100 w-full'>
@@ -34,7 +35,7 @@ export default function ReplyBody({ comment, rightContent, isDeep }: { comment: 
                         {rightContent}
                     </div>
                 </div>
-                <div className={clsx(comment.is_muted === 1 && 'opacity-60')}>
+                <div className={clsx(comment.is_muted === 1 && 'opacity-60', 'mt-2')}>
                     <MarkdownViewer text={comment.body}
                         className={`!prose-sm !w-full !max-w-none`} />
                 </div>

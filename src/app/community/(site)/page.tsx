@@ -8,7 +8,7 @@ import CommunityImportantTab from '../(tabs)/important/page';
 import CommunityTrendingsTab from '../(tabs)/trendings/page';
 import CommunityCreatedPage from '../(tabs)/created/page';
 import { useDeviceInfo } from '@/libs/utils/useDeviceInfo';
-import { CommunityAboutCard } from '@/components/community/CommunityAboutCard';
+import { CommunityAboutTab } from '../(tabs)/about/page';
 
 interface Props {
     data: Community;
@@ -25,7 +25,7 @@ export default function CommunityPage(props: Props) {
         { title: 'Important', key: 'important', children: <CommunityImportantTab /> },
         { title: 'Trending', key: 'trending', children: <CommunityTrendingsTab /> },
         { title: 'New', key: 'created', children: <CommunityCreatedPage /> },
-        { title: 'About', key: 'about', children: <CommunityAboutCard community={data} /> },
+        { title: 'About', key: 'about', children: <CommunityAboutTab community={data} /> },
 
     ]
 

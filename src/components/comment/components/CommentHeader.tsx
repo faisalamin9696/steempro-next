@@ -201,7 +201,7 @@ export default memo(function CommentHeader(props: Props) {
                 }
                 <Reputation reputation={comment.author_reputation} />
 
-                {!compact && !!comment.is_pinned && <p className='ms-1 px-1 rounded-full text-tiny bg-primary-100 dark:bg-primary'>Pinned</p>}
+                {!!comment.is_pinned && <p className='ms-1 px-1 rounded-full text-tiny bg-success/50'>Pinned</p>}
 
                 {(!isReply && !compact) ?
                     <Dropdown >

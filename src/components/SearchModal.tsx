@@ -38,13 +38,13 @@ export default function SearchModal(props: Props) {
     const [searchTags, setSearchTags] = useState('');
 
     const filters = `any/${loginInfo.name || null}/${FeedBodyLength}/time/DESC/100`;
-    const POST_BY_TEXT_URL = `/content_search_api/getPostsByText/"${query}"/${filters}`;
-    const POST_BY_TAGS_TEXT_URL = `/content_search_api/getPostsByTagsText/${searchTags.replaceAll('@', '')?.replaceAll('#', '').toLowerCase()}/"${query}"/${filters}`;
-    const POST_BY_AUTHOR_TEXT_URL = `/content_search_api/getPostsByAuthorText/${searchAuthor.replaceAll('@', '')?.replaceAll('#', '').toLowerCase()}/"${query}"/${filters}`;
+    const POST_BY_TEXT_URL = `/content_search_api/getPostsByText/"${query?.trim()}"/${filters}`;
+    const POST_BY_TAGS_TEXT_URL = `/content_search_api/getPostsByTagsText/${searchTags.replaceAll('@', '')?.replaceAll('#', '').toLowerCase().trim()}/"${query}"/${filters}`;
+    const POST_BY_AUTHOR_TEXT_URL = `/content_search_api/getPostsByAuthorText/${searchAuthor.replaceAll('@', '')?.replaceAll('#', '').toLowerCase().trim()}/"${query}"/${filters}`;
 
-    const COMMENTS_BY_TEXT_URL = `/content_search_api/getCommentsByText/"${query}"/${filters}`;
-    const COMMENTS_BY_AUTHOR_TEXT_URL = `/content_search_api/getCommentsByAuthorText/${searchAuthor.replaceAll('@', '')?.replaceAll('#', '').toLowerCase()}/${filters}`;
-    const PEOPLE_URL = `/accounts_api/getAccountsByPrefix/${query}/${loginInfo.name || 'null'}/name,reputation,posting_json_metadata,created`;
+    const COMMENTS_BY_TEXT_URL = `/content_search_api/getCommentsByText/"${query?.trim()}"/${filters}`;
+    const COMMENTS_BY_AUTHOR_TEXT_URL = `/content_search_api/getCommentsByAuthorText/${searchAuthor.replaceAll('@', '')?.replaceAll('#', '').toLowerCase().trim()}/${filters}`;
+    const PEOPLE_URL = `/accounts_api/getAccountsByPrefix/${query?.trim()}/${loginInfo.name || 'null'}/name,reputation,posting_json_metadata,created`;
 
     const [url, setUrl] = useState<string | undefined>();
     const [rows, setRows] = useState<any[]>([]);
@@ -252,7 +252,7 @@ export default function SearchModal(props: Props) {
 
 
                         </ModalBody>
-                      
+
                     </>
                 )}
             </ModalContent>

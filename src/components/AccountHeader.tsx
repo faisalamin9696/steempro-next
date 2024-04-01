@@ -47,9 +47,11 @@ export default function AccountHeader(props: Props) {
     }>({
         isOpen: false
     });
+
     const posting_json_metadata = JSON.parse(profileInfo?.posting_json_metadata || '{}');
     const cover_picture = isCommunity ? '/steempro-cover.png' :
-        proxifyImageUrl(posting_json_metadata?.profile?.cover_image ?? '');
+        proxifyImageUrl(posting_json_metadata?.profile?.cover_image ?? '', true);
+
 
     useEffect(() => {
 
