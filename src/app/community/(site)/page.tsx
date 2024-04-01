@@ -8,7 +8,7 @@ import CommunityImportantTab from '../(tabs)/important/page';
 import CommunityTrendingsTab from '../(tabs)/trendings/page';
 import CommunityCreatedPage from '../(tabs)/created/page';
 import { useDeviceInfo } from '@/libs/utils/useDeviceInfo';
-import { CommunityAboutTab } from '../(tabs)/about/page';
+import { CommunityAboutTab } from '../(tabs)/about/CommunityAboutTab';
 
 interface Props {
     data: Community;
