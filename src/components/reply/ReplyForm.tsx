@@ -6,7 +6,6 @@ import { useAppSelector } from '@/libs/constants/AppFunctions';
 import ReplyBody from './ReplyBody';
 import ReplyFooter from './ReplyFooter';
 import { twMerge } from 'tailwind-merge';
-import { Button } from '@nextui-org/react';
 
 interface Props {
     comment: Post;

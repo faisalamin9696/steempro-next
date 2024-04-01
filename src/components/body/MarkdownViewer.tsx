@@ -1,4 +1,6 @@
 
+"use client";
+
 import React, { memo, useState } from 'react'
 import { Remarkable } from 'remarkable';
 import { ParsedBody } from './ParsedBody';
@@ -8,7 +10,6 @@ import SanitizeConfig, { noImageText } from './SanitizeConfig';
 import HtmlReady from './htmlReady';
 import sanitize from 'sanitize-html';
 import { replaceOldDomains } from '@/libs/utils/Links';
-import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 const remarkable = new Remarkable({

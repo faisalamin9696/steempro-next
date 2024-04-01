@@ -1,8 +1,10 @@
+"use client";
+
 import ReplyForm from './ReplyForm';
 import { memo, useState } from 'react';
 import SAvatar from '@/components/SAvatar';
 import { useAppSelector } from '@/libs/constants/AppFunctions';
-import { Button } from '@nextui-org/react';
+import { Button } from '@nextui-org/button';
 
 interface Props {
     comment: Post;

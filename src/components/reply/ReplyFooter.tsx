@@ -15,7 +15,8 @@ import { createPatch, extractMetadata, generateReplyPermlink, makeJsonMetadata, 
 import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator';
 import { getCredentials, getSessionKey } from '@/libs/utils/user';
 import { Button } from '@nextui-org/button';
-import { Card, Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
+import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/popover';
+import { Card } from '@nextui-org/card';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import moment from 'moment';
 import React, { useEffect, useRef, useState } from 'react'

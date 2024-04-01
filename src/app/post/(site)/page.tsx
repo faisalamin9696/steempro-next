@@ -19,7 +19,7 @@ import { ViewCountTime } from '@/libs/constants/AppConstants';
 import Link from 'next/link';
 import { hasNsfwTag } from '@/libs/utils/StateFunctions';
 import TagsListCard from '@/components/TagsListCard';
-import { Button } from '@nextui-org/react';
+import { Button } from '@nextui-org/button';
 const DynamicPostReplies = dynamic(() => import('../../../components/reply/PostReplies'))
 
 
