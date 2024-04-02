@@ -77,19 +77,21 @@ export const getTimeFromNowNative = d => {
 moment.updateLocale('en', {
   relativeTime: {
     future: 'in %s',
-    past: '%s',
-    s: 'just now',
-    ss: '%s seconds ago',
-    m: 'a minute ago',
-    mm: '%d minutes ago',
-    h: 'an hour ago',
-    hh: '%d hours ago',
-    d: 'a day ago',
-    dd: '%d days ago',
-    M: 'a month ago',
-    MM: '%d months ago',
-    y: 'a year ago',
-    yy: '%d years ago',
+    past: '%s ago',
+    s: 'a few seconds',
+    ss: '%d seconds',
+    m: 'a minute',
+    mm: '%d minutes',
+    h: 'an hour',
+    hh: '%d hours',
+    d: 'a day',
+    dd: '%d days',
+    w: 'a week',
+    ww: '%d weeks',
+    M: 'a month',
+    MM: '%d months',
+    y: 'a year',
+    yy: '%d years',
   },
 });;
 
@@ -102,14 +104,10 @@ export const getTimeFromNow = (value, isWithoutUtc = true) => {
   }
 
   if (isWithoutUtc) {
-    return moment(value).fromNow().includes('in')
-      ? moment(value).fromNow()?.replace('ago', '')?.trim()
-      : moment(value).fromNow();
+    return moment(value).fromNow()
   }
 
-  return moment.utc(value).fromNow().includes('in')
-    ? moment.utc(value).fromNow()?.replace('ago', '')?.trim()
-    : moment.utc(value).fromNow();
+  return moment.utc(value).fromNow()
 };
 
 export const getFormatedCreatedDate = value => {
