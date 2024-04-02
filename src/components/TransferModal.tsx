@@ -189,8 +189,7 @@ const TransferModal = (props: Props): JSX.Element => {
 
             dispatch(saveLoginHandler({
                 ...loginInfo, vests_out:
-                    loginInfo.vests_out + variables.options.amount,
-
+                    loginInfo.vests_out + variables.options.amount
             }));
             props.onOpenChange(isOpen);
             toast.success(isRemove ? 'Delegation removed' : `${amount} SP delegated to ${to}`)

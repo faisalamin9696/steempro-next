@@ -459,7 +459,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                             if (item.from === transferModal.delegation?.from &&
                                 item.to === transferModal.delegation?.to &&
                                 item.status === transferModal.delegation?.status)
-                                return { ...item, vests: vests }
+                                return { ...item, vests: vests, time: moment().unix() }
                             else return item;
                         }));
 
