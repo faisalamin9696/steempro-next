@@ -1,7 +1,6 @@
 .markdown-body {
   @apply prose dark:prose-invert max-sm:prose-sm prose-a:text-blue-500 prose-a:no-underline prose-hr:clear-both;
 
-
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 
   overflow-wrap: break-word;
@@ -11,6 +10,9 @@
   -ms-hyphens: none;
   hyphens: none;
 
+  pre {
+    @apply max-sm:max-w-[calc(100vw_-_60px)];
+  }
 
   div.pull-right {
     float: right;

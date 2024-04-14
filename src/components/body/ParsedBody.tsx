@@ -58,6 +58,8 @@ export function ParsedBody({ body, isNsfw }: { body: string, isNsfw?: boolean })
                 </table>;
             }
 
+           
+
         }
 
     };
