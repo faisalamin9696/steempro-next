@@ -11,7 +11,7 @@ export default function NotFound() {
                 <h3 className="text-xl font-medium mt-4 text-gray-700 dark:text-gray-200">Page not found</h3>
                 <span className=" inline-block text-gray-500 dark:text-gray-400 mt-2 gap-1">
                     <p>No worries! Return to </p>
-                    <Link className='text-blue-500' href={'/'}>Home Page</Link>
+                    <Link className='text-blue-500' href={'/'} scroll>Home Page</Link>
                     <p> or explore some awesome posts. </p>
                 </span>
 

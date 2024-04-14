@@ -1,4 +1,4 @@
-import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure } from '@nextui-org/modal';
+import { Modal, ModalBody, ModalContent, ModalHeader, ModalFooter } from '@nextui-org/modal';
 import { Button } from '@nextui-org/button';
 import React, { useEffect, useMemo, useState } from 'react'
 import { Tab, Tabs } from '@nextui-org/tabs';
@@ -6,7 +6,6 @@ import { Input } from '@nextui-org/input';
 import { awaitTimeout, fetchSds, useAppSelector } from '@/libs/constants/AppFunctions';
 import useSWR from 'swr';
 import LoadingCard from './LoadingCard';
-import CompactPost from './CompactPost';
 import SAvatar from './SAvatar';
 import clsx from 'clsx';
 import TimeAgoWrapper from './wrappers/TimeAgoWrapper';
@@ -113,7 +112,7 @@ export default function SearchModal(props: Props) {
 
     function loadMoreRows(mainData: Feed[], rowsData: Feed[]) {
         let newStart = mainData?.slice(rowsData?.length ?? 0);
-        const newRow = newStart?.slice(1, 7);
+        const newRow = newStart?.slice(0, 8);
         return newRow ?? []
     };
 
@@ -146,6 +145,7 @@ export default function SearchModal(props: Props) {
             scrollBehavior='inside'
             backdrop='blur'
             size='2xl'
+            hideCloseButton
             placement='top'>
             <ModalContent>
                 {(onClose) => (
@@ -252,6 +252,13 @@ export default function SearchModal(props: Props) {
 
 
                         </ModalBody>
+
+                        <ModalFooter>
+                            <Button color="danger" variant="flat" onClick={onClose} size='sm'>
+                                Close
+                            </Button>
+
+                        </ModalFooter>
 
                     </>
                 )}

@@ -27,7 +27,8 @@ import { getCredentials, getSessionKey } from '@/libs/utils/user';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import { IoMdSettings } from "react-icons/io";
 import Link from 'next/link';
-import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/modal';
+import { Modal, ModalBody, ModalContent, ModalHeader, ModalFooter } from '@nextui-org/modal';
+import { useSession } from 'next-auth/react';
 
 interface Props {
     username?: string | null;
@@ -104,6 +105,8 @@ export default function NotificationsModal(props: Props) {
     const router = useRouter();
     const { authenticateUser, isAuthorized } = useLogin();
     const dispatch = useAppDispatch();
+    const { data: session } = useSession();
+
 
     const [allRows, setAllRows] = useState<SDSNotification[]>([]);
     useEffect(() => {
@@ -151,7 +154,7 @@ export default function NotificationsModal(props: Props) {
         if (!isAuthorized()) {
             return
         };
-        const credentials = getCredentials(getSessionKey());
+        const credentials = getCredentials(getSessionKey(session?.user?.name));
 
         if (!credentials?.key) {
             toast.error('Invalid credentials');
@@ -399,6 +402,7 @@ export default function NotificationsModal(props: Props) {
             onOpenChange={props.onOpenChange}
             className=' mt-4'
             scrollBehavior='inside'
+            hideCloseButton
             backdrop='blur'
             size='lg'
             placement='top-center'>
@@ -471,6 +475,13 @@ export default function NotificationsModal(props: Props) {
                                 </div>
                             </div>
                         </ModalBody>
+
+                        <ModalFooter>
+                            <Button color="danger" variant='flat' onClick={onClose} size='sm'>
+                                Close
+                            </Button>
+
+                        </ModalFooter>
                     </>
                 )}
             </ModalContent>

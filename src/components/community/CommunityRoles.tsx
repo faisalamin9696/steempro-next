@@ -29,7 +29,7 @@ export default function CommunityRoles(props: Props) {
 
     const URL = `/communities_api/getCommunityRoles/${community}`;
     const [query, setQuery] = useState('');
-    const { data, isLoading, error, mutate, isValidating } = useSWR(!roles && URL, fetchSds<Role[]>);
+    const { data, isLoading, error, mutate, isValidating, } = useSWR(!roles && URL, fetchSds<Role[]>);
     const [filteredData, setFilteredData] = useState<Role[]>([]);
     const [rows, setRows] = useState<Role[]>(roles ?? []);
     const [loadingMore, setLoadingMore] = useState(false);
@@ -56,14 +56,11 @@ export default function CommunityRoles(props: Props) {
 
     }, [data]);
 
-    function handleRefresh() {
-        mutate();
-    }
 
 
     function loadMoreRows(mainData: Role[], rowsData: Role[]) {
         let newStart = mainData?.slice(rowsData?.length ?? 0);
-        const newRow = newStart?.slice(1, 20);
+        const newRow = newStart?.slice(0, 20);
         return newRow ?? []
     };
 
@@ -100,14 +97,7 @@ export default function CommunityRoles(props: Props) {
                     className="flex items-center gap-2
              text-default-900 text-lg font-bold mb-4 z-10">
                     <p>{'Roles'}</p>
-                    <Button radius='full'
-                        color='default'
-                        size='sm'
-                        onClick={handleRefresh}
-                        isIconOnly>
-                        <IoIosRefresh
-                            className='text-lg' />
-                    </Button>
+                 
                 </div>
 
                 <div className='flex flex-row gap-2'>

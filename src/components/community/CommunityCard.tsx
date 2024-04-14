@@ -7,6 +7,8 @@ import { getResizedAvatar } from "@/libs/utils/image";
 import Link from "next/link";
 import clsx from "clsx";
 import { twMerge } from "tailwind-merge";
+import RoleTitleCard from "../RoleTitleCard";
+import { empty_comment } from "@/libs/constants/Placeholders";
 
 
 interface Props {
@@ -53,22 +55,14 @@ export const CommunityCard = memo((props: Props) => {
 
                     </div>
 
+                    {/* {!compact && <RoleTitleCard comment={{ ...empty_comment('',''), author_role: community.observer_role, author_title: community.observer_title }} />} */}
+
                 </div>}
                 description={<div className='flex flex-col'>
 
-                    {!compact && community.observer_role && community.observer_title ?
-                        <div className='flex space-x-2 items-center'>
-                            <p className='flex-none'>
-                                {community.observer_role}
-                            </p>
-                            <p className='flex-none dark:bg-default-900/30 max-sm:text-xs px-1  rounded-lg inline-block'>{community.observer_title}</p>
-                        </div> : null}
+                    {<RoleTitleCard comment={{ ...empty_comment('', ''), author_role: community.observer_role, author_title: community.observer_title }} />}
 
-                    {/* <div className='time-div flex space-x-1'>
-                        <TimeAgoWrapper lang={'en'} created={community.created * 1000} />
-                       
-                    </div> */}
-
+                 
                 </div>}
                 avatarProps={{
                     className: compact ? 'h-8 w-8' : '',

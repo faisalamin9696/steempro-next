@@ -7,10 +7,10 @@ import { validateCommunity } from './helper';
 const valid_tabs = ['blogs', 'posts', 'friends',
     'comments', 'replies', 'wallet', 'communities', 'settings'];
 
-const basic_categories = ['trending', 'created','hot',
+const basic_categories = ['trending', 'created', 'hot',
     'payout'];
 
-const valid_categories = basic_categories.concat(['important', 'about']);
+const valid_categories = basic_categories.concat(['pinned', 'about']);
 
 // Define username URL regex
 const usernameURLRegex = /@([^/]+)/;
@@ -39,7 +39,9 @@ const usePathnameServer = (): Params => {
 
     splitted_path.shift();
 
-    const [first_param, second_param, third_param] = splitted_path;
+    let [first_param, second_param, third_param] = splitted_path;
+    first_param = first_param?.toLowerCase();
+    second_param = second_param?.toLowerCase();
 
     // Check if the URL matches the pattern for a post
     if (splitted_path.length === 3 && usernameURLRegex.test(second_param)) {

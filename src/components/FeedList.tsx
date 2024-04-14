@@ -36,7 +36,7 @@ export default memo(function FeedList(props: Props) {
 
     function loadMoreRows(mainData: Feed[], rowsData: Feed[]) {
         let newStart = mainData?.slice(rowsData?.length ?? 0);
-        const newRow = newStart?.slice(1, 15);
+        const newRow = newStart?.slice(0, 15);
         return newRow ?? []
     };
 

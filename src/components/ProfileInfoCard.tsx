@@ -1,6 +1,6 @@
 "use client"
 
-import React, { memo, useEffect } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import { Avatar, AvatarGroup } from '@nextui-org/avatar'
 import { fetchSds, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions'
 import LoadingCard from '@/components/LoadingCard';
@@ -17,6 +17,8 @@ import FollowButton from './FollowButton';
 import { useRouter } from 'next13-progressbar';
 import { addProfileHandler } from '@/libs/redux/reducers/ProfileReducer';
 import Link from 'next/link';
+import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/modal';
+import FollowersCard from './FollowersCard';
 
 
 const getClubString = (clubData?: Club) => {
@@ -70,7 +72,12 @@ export default memo(function ProfileInfoCard(props: Props) {
     const voteData = profileInfo && getVoteData(profileInfo, steemProps);
     const router = useRouter();
     const dispatch = useAppDispatch();
-
+    const [followerModal, setFollowerModal] = useState<{
+        isOpen: boolean,
+        isFollowing?: boolean
+    }>({
+        isOpen: false
+    });
 
     useEffect(() => {
         if (data) {
@@ -139,13 +146,15 @@ export default memo(function ProfileInfoCard(props: Props) {
                     <p title={profile ? profileInfo?.count_followers?.toString() : profileInfo?.count_root_posts?.toString()}
                         className="font-semibold text-default-600 text-small">
                         {abbreviateNumber(profile ? profileInfo?.count_followers : profileInfo?.count_root_posts)}</p>
-                    <p className=" text-default-500 text-small">{profile ? 'Followers' : 'Posts'}</p>
+                    <button onClick={() => { if (profile) setFollowerModal({ isOpen: true }) }}
+                        className=" text-default-500 text-small">{profile ? 'Followers' : 'Posts'}</button>
                 </div>
                 <div className="flex gap-1">
                     <p title={profile ? profileInfo?.count_following?.toString() : profileInfo?.count_comments?.toString()}
                         className="font-semibold text-default-600 text-small">
                         {abbreviateNumber(profile ? profileInfo?.count_following : profileInfo?.count_comments)}</p>
-                    <p className="text-default-500 text-small">{profile ? 'Following' : 'Comments'}</p>
+                    <button onClick={() => { if (profile) setFollowerModal({ isOpen: true, isFollowing: true }) }}
+                        className="text-default-500 text-small">{profile ? 'Following' : 'Comments'}</button>
                 </div>
 
             </div>
@@ -218,6 +227,26 @@ export default memo(function ProfileInfoCard(props: Props) {
 
 
             </div>
+
+            {followerModal.isOpen && <Modal
+                isOpen={followerModal.isOpen}
+                onOpenChange={(isOpen) => setFollowerModal({ isOpen: isOpen })}
+                placement='top-center'
+                scrollBehavior='inside'
+                closeButton>
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">{followerModal.isFollowing ? 'Following' : 'Followers'}</ModalHeader>
+                            <ModalBody>
+                                <FollowersCard isFollowing={followerModal.isFollowing}
+                                    username={profileInfo.name} />
+                            </ModalBody>
+
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>}
 
         </div >
     );

@@ -27,10 +27,12 @@ import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import { IoIosSettings } from "react-icons/io";
 import { addProfileHandler } from '@/libs/redux/reducers/ProfileReducer';
+import { useSession } from 'next-auth/react';
 
 let isCover: boolean = false;
 export default function SettingsPage() {
     const { username } = usePathnameClient();
+    const { data: session } = useSession();
 
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const [parsedData, setParsedData] = useState<any>();
@@ -118,7 +120,7 @@ export default function SettingsPage() {
         if (!isAuthorized())
             return;
 
-        const credentials = getCredentials(getSessionKey());
+        const credentials = getCredentials(getSessionKey(session?.user?.name));
         if (!credentials?.key) {
             toast.error('Invalid credentials');
             return
@@ -148,7 +150,7 @@ export default function SettingsPage() {
 
     const _uploadImage = async (image) => {
 
-        const credentials = getCredentials(getSessionKey());
+        const credentials = getCredentials(getSessionKey(session?.user?.name));
         if (!credentials?.key) {
             toast.error('Invalid credentials');
             return

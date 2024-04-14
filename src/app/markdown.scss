@@ -24,20 +24,24 @@
     max-width: 50%;
   }
 
-
+  thead {
+    font-weight: 600;
+    border-style: none;
+  }
 
   table {
-
     th {
-      padding: 8px;
-      @apply backdrop-blur-[1px] bg-gray-200 dark:bg-gray-800
+      border-style: none;
+      padding: 6px;
+      word-wrap: break-word;
+      white-space: nowrap;
+      @apply bg-gray-200 dark:bg-gray-900
     }
 
     td {
-      padding: 8px;
-
+      padding: 6px;
       display: table-cell;
-      vertical-align: inherit;
+      vertical-align: middle;
       word-break: normal;
     }
 

@@ -24,6 +24,7 @@ import secureLocalStorage from 'react-secure-storage';
 import { readingTime } from '@/libs/utils/readingTime/reading-time-estimator';
 import EmptyList from '@/components/EmptyList';
 import { Select, SelectItem } from '@nextui-org/select';
+import { useSession } from 'next-auth/react';
 
 interface Props {
     comment: Post | Feed;
@@ -56,6 +57,8 @@ export default memo(function PostReplies(props: Props) {
     const [showReply, setShowReply] = useState(false);
     const [isPosting, setPosting] = useState(false);
     const { authenticateUser, isAuthorized } = useLogin();
+    const { data: session } = useSession();
+
     const editorDiv = useRef<any>(null);
 
 
@@ -205,7 +208,7 @@ export default memo(function PostReplies(props: Props) {
         authenticateUser();
         if (!isAuthorized())
             return
-        const credentials = getCredentials(getSessionKey());
+        const credentials = getCredentials(getSessionKey(session?.user?.name));
         if (!credentials?.key) {
             toast.error('Invalid credentials');
             return
@@ -311,7 +314,7 @@ export default memo(function PostReplies(props: Props) {
 
                     </div>}
 
-                <div ref={editorDiv} tabIndex={-1}>
+                <div ref={editorDiv} tabIndex={-1} className='focus:border-0 focus:ring-0 focus:outline-none' >
 
                     {showReply &&
                         <div className='flex flex-col mt-2 gap-2 animate-appearance-in' >

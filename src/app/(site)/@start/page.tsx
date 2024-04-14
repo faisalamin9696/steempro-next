@@ -59,7 +59,7 @@ export default function HomeStart() {
 
     function loadMoreRows(mainData: Community[], rowsData: Community[]) {
         let newStart = mainData?.slice(rowsData?.length ?? 0);
-        const newRow = newStart?.slice(1, 20);
+        const newRow = newStart?.slice(0, 20);
         return newRow ?? []
     };
 
@@ -114,7 +114,7 @@ export default function HomeStart() {
                                 return (<div key={annoucement.authPerm}
                                     className='bg-white rounded-lg dark:bg-white/5 text-sm px-2 py-1'>
                                     <Link className=' text-blue-400 hover:underline'
-                                        href={annoucement.authPerm}>{annoucement.title}</Link>
+                                        href={`/@${annoucement.authPerm}`}>{annoucement.title}</Link>
                                     <p className='opacity-75 text-sm line-clamp-3'>
                                         {annoucement.description}
                                     </p>

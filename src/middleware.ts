@@ -10,7 +10,7 @@ const valid_tabs = ['blogs', 'posts', 'friends',
 const basic_categories = ['trending', 'created','hot',
     'payout', ];
 
-const valid_categories = basic_categories.concat(['important', 'about']);
+const valid_categories = basic_categories.concat(['pinned', 'about']);
 
 
 // Define username URL regex

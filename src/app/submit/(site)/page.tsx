@@ -297,9 +297,7 @@ export default function SubmitPage(props: Props) {
                     options = undefined;
                 }
 
-
-                const credentials = getCredentials(getSessionKey());
-
+                const credentials = getCredentials(getSessionKey(session?.user?.name));
                 if (credentials) {
                     postingMutation.mutate({ postData, options, key: credentials.key });
                 } else {

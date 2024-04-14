@@ -15,6 +15,7 @@ import { useRouter } from 'next13-progressbar';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
 import { LuPencilLine } from 'react-icons/lu';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 type Props = {
     account: AccountExt;
@@ -32,6 +33,7 @@ export default function FollowButton(props: Props) {
     const { username } = usePathnameClient();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const communityInfo: Community = useAppSelector(state => state.communityReducer.values)[community?.account ?? ''] ?? community;
+    const { data: session } = useSession();
 
     const followingAccount = comment ? comment.author : account?.name;
     const isFollowing = comment ? comment.observer_follows_author === 1 : account?.observer_follows_author === 1;
@@ -103,7 +105,7 @@ export default function FollowButton(props: Props) {
         if (!isAuthorized())
             return
 
-        const credentials = getCredentials(getSessionKey());
+        const credentials = getCredentials(getSessionKey(session?.user?.name));
         if (!credentials?.key) {
             toast.error('Invalid credentials');
             return
@@ -179,7 +181,7 @@ export default function FollowButton(props: Props) {
 
             </Button>}
 
-          
+
         </div>
     )
 }

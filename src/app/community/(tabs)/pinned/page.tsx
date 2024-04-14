@@ -6,7 +6,7 @@ import FeedList from '@/components/FeedList';
 import { FeedTypes } from '@/libs/steem/sds';
 import { FeedBodyLength } from '@/libs/constants/AppConstants';
 
-export default function CommunityImportantTab() {
+export default function CommunityPinnedTab() {
     const { community } = usePathnameClient();
 
 

@@ -23,6 +23,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import secureLocalStorage from 'react-secure-storage';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 export default function ReplyFooter({ comment, expanded, toggleExpand, className,
     isDeep, rootComment
@@ -40,6 +41,8 @@ export default function ReplyFooter({ comment, expanded, toggleExpand, className
     const rpm = readingTime(markdown);
     const [isPosting, setPosting] = useState(false);
     const { authenticateUser, isAuthorized } = useLogin();
+    const { data: session } = useSession();
+
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const dispatch = useAppDispatch();
     const queryKey = [`post-${rootComment.author}-${rootComment.permlink}`];
@@ -142,7 +145,7 @@ export default function ReplyFooter({ comment, expanded, toggleExpand, className
         if (!isAuthorized())
             return
 
-        const credentials = getCredentials(getSessionKey());
+        const credentials = getCredentials(getSessionKey(session?.user?.name));
         if (!credentials?.key) {
             toast.error('Invalid credentials');
             return
@@ -154,7 +157,7 @@ export default function ReplyFooter({ comment, expanded, toggleExpand, className
         authenticateUser();
         if (!isAuthorized())
             return
-        const credentials = getCredentials(getSessionKey());
+        const credentials = getCredentials(getSessionKey(session?.user?.name));
         if (!credentials?.key) {
             toast.error('Invalid credentials');
             return
@@ -336,9 +339,7 @@ export default function ReplyFooter({ comment, expanded, toggleExpand, className
                     postData.parent_permlink = oldComment.parent_permlink;
                 }
 
-
-                const credentials = getCredentials(getSessionKey());
-
+                const credentials = getCredentials(getSessionKey(session?.user?.name));
                 if (credentials) {
                     // handleOnPublished(postData);
                     postingMutation.mutate({ postData, options: null, key: credentials.key });
@@ -361,7 +362,8 @@ export default function ReplyFooter({ comment, expanded, toggleExpand, className
 
             <div className='flex flex-col gap-2'>
 
-                <div className='flex justify-between items-center' id={`editorDiv-${comment.author + '-' + comment.permlink}`}>
+                <div className='flex justify-between items-center focus:border-0 focus:ring-0 focus:outline-none'
+                >
                     <CommentFooter isReply comment={comment} className='p-0' />
 
                     <div className='flex'>
@@ -462,7 +464,7 @@ export default function ReplyFooter({ comment, expanded, toggleExpand, className
 
             </div>
 
-            <div ref={editorDiv} tabIndex={-1}>
+            <div ref={editorDiv} className='focus:border-0 focus:ring-0 focus:outline-none' tabIndex={-1}>
                 {(showReply || showEdit) ?
                     <div className='flex flex-col mt-2 gap-2 animate-appearance-in'>
                         <EditorInput

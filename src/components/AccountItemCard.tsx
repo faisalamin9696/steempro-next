@@ -1,10 +1,9 @@
-import { addToCurrent, saveSessionKey } from '@/libs/utils/user';
-import {  Chip } from '@nextui-org/chip';
+import { addToCurrent, removeSessionToken, saveSessionKey } from '@/libs/utils/user';
+import { Chip } from '@nextui-org/chip';
 import { Button } from '@nextui-org/button';
 import { Card, CardBody, } from '@nextui-org/card';
 import React, { memo, useState } from 'react'
 import SAvatar from './SAvatar';
-import { useLogin } from './AuthProvider';
 import { useAppDispatch } from '@/libs/constants/AppFunctions';
 import { getAuthorExt } from '@/libs/steem/sds';
 import { getAuth, signInAnonymously } from 'firebase/auth';
@@ -36,20 +35,17 @@ export default memo(function AccountItemCard(props: Props) {
     const { defaultAccount, user, handleSwitchSuccess,
         switchText, isLogin, isDisabled } = props;
 
-    const { authenticateUser, isAuthorized } = useLogin();
     const dispatch = useAppDispatch();
     const router = useRouter();
-
     const [switching, setSwitching] = useState(false);
 
-
-
     function onComplete(error?: string | null) {
+        removeSessionToken(user.username);
+        removeSessionToken(defaultAccount?.username);
         setSwitching(false);
         if (error)
             toast.error(error);
         else router.refresh();
-
     }
 
     async function handleSwitch() {
@@ -75,17 +71,21 @@ export default memo(function AccountItemCard(props: Props) {
                             onComplete(response?.error);
                             return
                         }
-                        saveSessionKey('');
 
                         dispatch(saveLoginHandler({
                             ...account, login: true,
                             encKey: user.key
                         }));
                         handleSwitchSuccess && handleSwitchSuccess();
+                        saveSessionKey('');
                         if (isLogin)
                             toast.success(`Login successsful with private ${user.type} key`);
                         else
                             toast.success(`Successfully switched to ${user.username}`);
+
+
+
+
                         onComplete();
                     })
                     .catch((error) => {

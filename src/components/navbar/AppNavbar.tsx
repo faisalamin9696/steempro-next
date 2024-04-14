@@ -8,7 +8,7 @@ import { Badge } from '@nextui-org/badge';
 import { LuPencilLine } from "react-icons/lu";
 import { useLogin } from '../AuthProvider';
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
-import { getCredentials, saveSessionKey, sessionKey } from '@/libs/utils/user';
+import { getCredentials, removeSessionToken, saveSessionKey, sessionKey } from '@/libs/utils/user';
 import { getResizedAvatar } from '@/libs/utils/image';
 import Image from 'next/image';
 import { signIn, signOut, useSession } from 'next-auth/react';
@@ -24,10 +24,11 @@ import { MdSearch } from 'react-icons/md';
 import { Input } from '@nextui-org/input';
 import './style.scss';
 import { PiUserSwitchFill } from 'react-icons/pi';
+import secureLocalStorage from 'react-secure-storage';
 
 export default function AppNavbar() {
 
-    const { authenticateUser, isLogin, isAuthorized } = useLogin();
+    const { authenticateUser, isLogin, isAuthorized, credentials } = useLogin();
     const dispatch = useAppDispatch();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const { data: session, status } = useSession();
@@ -76,6 +77,8 @@ export default function AppNavbar() {
             saveSessionKey('');
             setLocked(true);
             toast.success('Locked');
+            removeSessionToken(credentials?.username);
+
         }
 
 

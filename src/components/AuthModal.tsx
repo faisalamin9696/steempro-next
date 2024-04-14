@@ -15,13 +15,15 @@ import { getKeyType } from "@/libs/steem/condenser";
 import { getAuthorExt } from "@/libs/steem/sds";
 import { validate_account_name } from "@/libs/utils/ChainValidation";
 import { getResizedAvatar } from "@/libs/utils/image";
-import { getSettings, getCredentials, saveSessionKey, validatePassword, saveCredentials, sessionKey, getAllCredentials } from "@/libs/utils/user";
+import { getSettings, getCredentials, saveSessionKey, validatePassword, saveCredentials, sessionKey, getAllCredentials, getUserAuth } from "@/libs/utils/user";
 import { toast } from "sonner";
 import { signIn, useSession } from 'next-auth/react'
 import { getAuth, signInAnonymously } from "firebase/auth";
 import AccountItemCard from "./AccountItemCard";
 import Link from "next/link";
 import { SignupLink } from "@/libs/constants/AppConstants";
+import secureLocalStorage from "react-secure-storage";
+import { encryptPrivateKey } from "@/libs/utils/encryption";
 
 interface Props {
     open: boolean;
@@ -48,9 +50,14 @@ export default function AuthModal(props: Props) {
     const [avatar, setAvatar] = useState('');
     const { data: session, status } = useSession();
     const [isCurrent, setIsCurrent] = React.useState(false);
+    const [remember, setRemember] = React.useState(false);
     const isLocked = status === 'authenticated' && !sessionKey;
     const [accounts, setAccounts] = useState<User[]>();
+    let [credentials, setCredentials] = useState<User>();
 
+    useEffect(() => {
+        setCredentials(getCredentials());
+    }, []);
 
     useEffect(() => {
         const timeOut = setTimeout(() => {
@@ -97,15 +104,19 @@ export default function AuthModal(props: Props) {
         setLoading(true);
         await awaitTimeout(3);
 
-        const credentials = getCredentials(password);
+        credentials = getCredentials(password);
         if (!credentials?.key) {
             toast.error('Invalid credentials');
             setLoading(false);
             return
         }
-
-
         const enc = saveSessionKey(password);
+        if (remember && (credentials.type === 'POSTING' || credentials.type === 'MEMO')) {
+            const auth = getUserAuth();
+            if (auth)
+                secureLocalStorage.setItem(`token_${credentials.username}`, encryptPrivateKey(password, auth?.toString()?.substring(0, 20)));
+        }
+
         toast.success('Unlocked');
         onLoginSuccess && onLoginSuccess({ ...credentials, key: enc });
         handleOnClose();
@@ -277,7 +288,7 @@ export default function AuthModal(props: Props) {
                 }}
                 backdrop={'opaque'}
                 isOpen={open}
-                hideCloseButton={loading}
+                hideCloseButton
                 isDismissable={!loading}
                 onClose={handleOnClose}>
 
@@ -316,6 +327,13 @@ export default function AuthModal(props: Props) {
                                                     type="password"
                                                 />
 
+                                                {(credentials?.type === 'POSTING' || credentials?.type === 'MEMO') &&
+                                                    <Checkbox isSelected={remember}
+                                                        isDisabled={loading}
+                                                        onValueChange={setRemember}>
+                                                        Remember
+                                                    </Checkbox>}
+
 
                                                 <div className="flex gap-2 items-center">
 
@@ -324,6 +342,8 @@ export default function AuthModal(props: Props) {
                                                         isDisabled={loading}>
                                                         Cancel
                                                     </Button>
+
+
 
                                                     <Button fullWidth color="primary"
                                                         isLoading={loading}
@@ -388,13 +408,14 @@ export default function AuthModal(props: Props) {
 
                                                 {isNew &&
                                                     <Checkbox isSelected={isCurrent}
+                                                        isDisabled={loading}
                                                         onValueChange={setIsCurrent}>
                                                         set as default
                                                     </Checkbox>}
 
                                                 <p className="text-start text-small text-default-600">
                                                     Need to create an account?{" "}
-                                                    <Link className="hover:text-blue-500" href={SignupLink} target='_blank'>
+                                                    <Link className="hover:text-blue-500 font-semibold" href={SignupLink} target='_blank'>
                                                         Sign up
                                                     </Link>
                                                 </p>

@@ -3,7 +3,8 @@
 import { useSession } from 'next-auth/react';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import AuthModal from './AuthModal';
-import { getCredentials, sessionKey } from '@/libs/utils/user';
+import { getCredentials, getSessionToken, sessionKey } from '@/libs/utils/user';
+import secureLocalStorage from 'react-secure-storage';
 
 // Define the type for your context value
 interface AuthContextType {
@@ -43,11 +44,12 @@ export const AuthProvider = (props: Props) => {
 
 
     function isLogin() {
-        return (status === 'authenticated' || (status === 'loading' && !!sessionKey))
+        return (status === 'authenticated' || (status === 'loading' && (!!sessionKey || !!secureLocalStorage.getItem('token'))))
     }
 
     function isAuthorized() {
-        return isLogin() && !!sessionKey
+        const token = getSessionToken(credentials?.username);
+        return isLogin() && (!!sessionKey || !!token)
     }
 
 
@@ -57,7 +59,10 @@ export const AuthProvider = (props: Props) => {
             setOpenAuth(true);
         }
 
-        if (!isLogin() || (isLogin() && !sessionKey)) {
+        const token = getSessionToken(credentials?.username);
+
+        if (!isLogin() || (isLogin() && !sessionKey) ||
+            (isLogin() && (credentials?.type === 'POSTING' || credentials?.type === 'MEMO') && !token)) {
             setOpenAuth(true);
             return
         }

@@ -16,6 +16,7 @@ import { getCredentials, getSessionKey } from '@/libs/utils/user';
 import TransferHistoryTab from './(tabs)/TransferHistoryTab';
 import { getTimeFromNow } from '@/libs/utils/time';
 import { FaArrowAltCircleDown } from 'react-icons/fa';
+import { useSession } from 'next-auth/react';
 
 
 
@@ -27,6 +28,7 @@ export default function ProfileWalletTab({ data }: { data: AccountExt }) {
   const dispatch = useAppDispatch();
   const isSelf = !!loginInfo.name && (loginInfo.name === (username));
   const { authenticateUser, isAuthorized } = useLogin();
+  const { data: session } = useSession();
 
   const claimMutation = useMutation({
     mutationFn: (key: string) => claimRewardBalance(loginInfo, key, loginInfo.rewards_steem, loginInfo.rewards_sbd, loginInfo.rewards_vests),
@@ -51,7 +53,7 @@ export default function ProfileWalletTab({ data }: { data: AccountExt }) {
     authenticateUser();
     if (!isAuthorized())
       return;
-    const credentials = getCredentials(getSessionKey());
+    const credentials = getCredentials(getSessionKey(session?.user?.name));
     if (!credentials?.key) {
       toast.error('Invalid credentials');
       return

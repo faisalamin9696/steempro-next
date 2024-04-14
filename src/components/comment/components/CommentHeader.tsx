@@ -34,6 +34,7 @@ import { useLogin } from '@/components/AuthProvider';
 import Link from 'next/link';
 import { BsPinAngleFill } from "react-icons/bs";
 import RoleTitleCard from '@/components/RoleTitleCard';
+import { useSession } from 'next-auth/react';
 
 
 interface Props {
@@ -52,15 +53,14 @@ export default memo(function CommentHeader(props: Props) {
     const dispatch = useAppDispatch();
     const username = loginInfo.name;
     const isSelf = !!loginInfo.name && (loginInfo.name === (comment.author));
-
     const canMute = username && Role.atLeast(comment.observer_role, 'mod');
     const canDelete = !comment.children && isSelf && allowDelete(comment);
     const canEdit = isSelf;
-    const allowReply = Role.canComment(comment.community, comment.observer_role);
-    const canReply = isReply && allowReply && comment['depth'] < 255;
     const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const [isRoleOpen, setIsRoleOpen] = useState(false);
     const { authenticateUser, isAuthorized } = useLogin();
+    const { data: session } = useSession();
+    const rpm = readingTime(comment.body);
 
     const [confirmationModal, setConfirmationModal] = useState<{
         isOpen: boolean, mute?: boolean, muteNote?: string
@@ -144,7 +144,7 @@ export default memo(function CommentHeader(props: Props) {
                 authenticateUser();
                 if (!isAuthorized())
                     return
-                const credentials = getCredentials(getSessionKey());
+                const credentials = getCredentials(getSessionKey(session?.user?.name));
                 if (!credentials?.key) {
                     toast.error('Invalid credentials');
                     return
@@ -173,12 +173,12 @@ export default memo(function CommentHeader(props: Props) {
             <div className='flex gap-2'>
 
                 <p className='text-tiny font-light '>
-                    {comment.word_count} words,
+                    {rpm.words} words,
                 </p>
 
 
                 <p className='text-tiny font-light '>
-                    {readingTime('', comment.word_count).text}
+                    {rpm.text}
                 </p>
 
             </div>
@@ -196,8 +196,8 @@ export default memo(function CommentHeader(props: Props) {
                 name: 'text-default-800'
             }}
             name={<div className='flex items-center gap-1'>
-                {isSelf ? <p>{comment.author}</p> :
-                    <div>{comment.author}</div>
+                {isSelf ? <Link className=' hover:text-blue-500' href={`/@${comment.author}`} >{comment.author}</Link> :
+                    <Link className=' hover:text-blue-500' href={`/@${comment.author}`} >{comment.author}</Link>
                 }
                 <Reputation reputation={comment.author_reputation} />
 

@@ -40,7 +40,6 @@ export default function PostPage(props: Props) {
     const router = useRouter();
     const isNsfw = hasNsfwTag(commentInfo) && (settings?.nsfw !== 'Always show');
     const isSelf = !!loginInfo.name && (loginInfo.name === commentInfo.author);
-    const [hidden, setHidden] = useState(!!commentInfo.is_muted);
 
     useEffect(() => {
         router.refresh();
@@ -90,11 +89,11 @@ export default function PostPage(props: Props) {
         {commentInfo ?
             <div className='card w-full card-compact gap-4'>
 
-                {hidden ? <div className=' flex items-center gap justify-between mt-2'>
+                {!!commentInfo.is_muted ? <div className=' flex items-center gap justify-between mt-2'>
                     <p>The post was hidden sue to low rating</p>
 
                     <Button onClick={() => {
-                        setHidden(false);
+                        dispatch(addCommentHandler({ ...commentInfo, is_muted: 0 }));
                     }} size='sm' variant='flat' color='warning'>Show</Button>
 
                 </div> :

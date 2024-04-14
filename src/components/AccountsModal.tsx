@@ -23,9 +23,11 @@ export default function AccountsModal(props: Props) {
     const { authenticateUser } = useLogin();
     const STORAGE_KEY = "@secure.j.auth";
 
+
     useEffect(() => {
-        const credentials = secureDecrypt(localStorage.getItem(STORAGE_KEY) ?? '', process.env.NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY) as User | undefined;
-        if (!!credentials) {
+        const credentialsString = secureDecrypt(localStorage.getItem(STORAGE_KEY) ?? '', process.env.NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY);
+        const credentials = JSON.parse(credentialsString || `{}`) as User;
+        if (!!credentials && credentials?.username) {
             setDefaultAcc(credentials);
             const allCredentials = getAllCredentials();
 
@@ -55,6 +57,7 @@ export default function AccountsModal(props: Props) {
                 isOpen={props.isOpen ?? isOpen}
                 onOpenChange={props.onOpenChange ?? onOpenChange}
                 scrollBehavior={'inside'}
+                hideCloseButton
             >
                 <ModalContent>
                     {(onClose) => (

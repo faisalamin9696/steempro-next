@@ -1,14 +1,16 @@
-import { decryptPrivateKey, encryptPrivateKey } from "./encryption";
+import { decryptPrivateKey, encryptPrivateKey, secureDecrypt } from "./encryption";
 import secureLocalStorage from "react-secure-storage";
 import { empty_settings } from "../constants/Placeholders";
 import CryptoJS from 'crypto-js';
 import { updateCurrentSetting } from "../constants/AppConstants";
+const AUTH_STORAGE_KEY = "@secure.j.auth";
 
 export function getCredentials(password?: string):
     User | undefined {
-    const credentials = secureLocalStorage.getItem('auth') as User;
+    const credentialsString = secureDecrypt(localStorage.getItem(AUTH_STORAGE_KEY) ?? '', process.env.NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY);
+    const credentials = JSON.parse(credentialsString || `{}`) as User;
     try {
-        if (credentials) {
+        if (credentials && credentials?.username) {
             const privateKey = password ?
                 decryptPrivateKey(credentials.key, password) : credentials.key;
             if (privateKey) {
@@ -77,7 +79,8 @@ export function addToCurrent(username: string,
 export function removeCredentials(credentials: User) {
     try {
         if (credentials) {
-            secureLocalStorage.removeItem('auth');
+            logoutSession();
+            removeSessionToken();
             let allAccounts = getAllCredentials();
             allAccounts = allAccounts.filter(user => !((user.username === credentials.username && user.type === credentials.type)));
             secureLocalStorage.setItem('accounts', allAccounts);
@@ -124,7 +127,7 @@ export function saveCredentials(username: string,
 
     const encryptedKey = encryptPrivateKey(privateKey, password);
     if (encryptedKey) {
-        const existAuth = secureLocalStorage.getItem('auth') as User;
+        const existAuth = getUserAuth() as User;
         if (!existAuth || current || (existAuth?.username === username)) {
             addToCurrent(username, encryptedKey, keyType);
         }
@@ -225,8 +228,34 @@ export const saveSessionKey = (userPassword: string) => {
     return enc;
 };
 
-export const getSessionKey = () => decryptPrivateKey(sessionKey, sessionAppPass);
+export const getSessionKey = (username?: string | null) => {
+    const token = getSessionToken(username);
+    if (token) {
+        const auth = getUserAuth();
+        if (auth)
+            return decryptPrivateKey(token, auth?.toString()?.substring(0, 20))
+    }
+    return decryptPrivateKey(sessionKey, sessionAppPass);
+};
 
 export const logoutSession = () => {
     secureLocalStorage.removeItem('auth');
+}
+
+export function removeSessionToken(username?: string | null) {
+    if (!!username)
+        secureLocalStorage.removeItem(`token_${username}`);
+}
+
+
+export function getSessionToken(username?: string | null) {
+    if (username) return secureDecrypt(localStorage.getItem(`@secure.s.token_${username}`) ?? '', process.env.NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY)
+    return ""
+}
+
+export function getUserAuth() {
+    const credentialsString = secureDecrypt(localStorage.getItem(AUTH_STORAGE_KEY) ?? '', process.env.NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY);
+    const credentials = JSON.parse(credentialsString || `{}`) as User;
+    if (credentials?.username)
+        return credentials;
 }

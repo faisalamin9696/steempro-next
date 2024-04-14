@@ -1,4 +1,4 @@
-import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure } from '@nextui-org/modal';
+import { Modal, ModalBody, ModalContent, ModalHeader, ModalFooter } from '@nextui-org/modal';
 import { Button } from '@nextui-org/button';
 import { Card } from '@nextui-org/card';
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/popover';
@@ -26,6 +26,7 @@ import { twMerge } from 'tailwind-merge';
 import VotersCard from '@/components/VotersCard';
 import './style.scss'
 import ClickAwayListener from 'react-click-away-listener';
+import { useSession } from 'next-auth/react';
 
 export default memo(function CommentFooter(props: CommentProps) {
     const { comment, className, isReply, onCommentsClick, compact, isDetails } = props;
@@ -34,6 +35,8 @@ export default memo(function CommentFooter(props: CommentProps) {
     const [votersModal, setVotersModal] = useState(false);
 
     const { authenticateUser, isAuthorized } = useLogin();
+    const { data: session } = useSession();
+
     const dispatch = useAppDispatch();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
 
@@ -65,8 +68,9 @@ export default memo(function CommentFooter(props: CommentProps) {
 
         await awaitTimeout(0.25);
         try {
-            const credentials = getCredentials(getSessionKey());
+            const credentials = getCredentials(getSessionKey(session?.user?.name));
             if (!credentials?.key) {
+                dispatch(addCommentHandler({ ...comment, status: 'idle' }));
                 toast.error('Invalid credentials');
                 return
             }
@@ -148,7 +152,7 @@ export default memo(function CommentFooter(props: CommentProps) {
         authenticateUser();
         if (!isAuthorized())
             return
-        const credentials = getCredentials(getSessionKey());
+        const credentials = getCredentials(getSessionKey(session?.user?.name));
         if (!credentials?.key) {
             toast.error('Invalid credentials');
             return
@@ -341,9 +345,9 @@ export default memo(function CommentFooter(props: CommentProps) {
         {votersModal && <Modal isOpen={votersModal}
             onOpenChange={setVotersModal}
             placement='top-center'
+            hideCloseButton
             scrollBehavior='inside'
-            size='lg'
-            closeButton>
+            size='lg' >
 
             <ModalContent>
                 {(onClose) => (
@@ -352,14 +356,12 @@ export default memo(function CommentFooter(props: CommentProps) {
                         <ModalBody>
                             <VotersCard comment={comment} />
                         </ModalBody>
-                        {/* <ModalFooter>
-                            <Button color="danger" variant="light" onClick={onClose}>
+                        <ModalFooter>
+                            <Button color="danger" variant="flat" size='sm'
+                                onClick={onClose}>
                                 Close
                             </Button>
-                            <Button color="primary" onClick={onClose}>
-                                Action
-                            </Button>
-                        </ModalFooter> */}
+                        </ModalFooter>
                     </>
                 )}
             </ModalContent>

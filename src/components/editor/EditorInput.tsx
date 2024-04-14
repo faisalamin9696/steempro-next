@@ -18,6 +18,7 @@ import SAvatar from '../SAvatar';
 import LoadingCard from '../LoadingCard';
 import './style.scss';
 import { getAccountsByPrefix } from '@/libs/steem/sds';
+import { useSession } from 'next-auth/react';
 
 const tableTemplete = `|	Column 1	|	Column 2	|	Column 3	|
 |	------------	|	------------	|	------------	|
@@ -52,6 +53,8 @@ export default memo(function EditorInput(props: EditorProps) {
     } = props;
 
     const { authenticateUser, isAuthorized } = useLogin();
+    const { data: session } = useSession();
+
     const postInput = useRef<any>(null);
     const postBodyRef = useRef<HTMLDivElement>(null);
     let [imagesUploadCount, setImagesUploadCount] = useState(0);
@@ -383,7 +386,7 @@ export default memo(function EditorInput(props: EditorProps) {
     const _uploadImage = async (image) => {
 
 
-        const credentials = getCredentials(getSessionKey());
+        const credentials = getCredentials(getSessionKey(session?.user?.name));
         if (!credentials?.key) {
             toast.error('Invalid credentials');
             return
@@ -490,7 +493,7 @@ export default memo(function EditorInput(props: EditorProps) {
                         style={{ fontSize: 14 }}
                         innerRef={ref => {
                             postInput.current = ref;
-                           
+
                         }}
                         value={value}
                         dropdownStyle={{ zIndex: 14, }}

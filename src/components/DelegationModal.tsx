@@ -13,6 +13,7 @@ import { delegateVestingShares } from "@/libs/steem/condenser";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { isNumeric } from "@/libs/utils/helper";
+import { useSession } from "next-auth/react";
 
 type AssetTypes = 'STEEM' | 'SBD' | 'VESTS';
 
@@ -28,6 +29,7 @@ const DelegationModal = (props: Props): JSX.Element => {
     const { delegatee } = props;
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
+    const { data: session } = useSession();
 
     const dispatch = useAppDispatch();
 
@@ -102,7 +104,7 @@ const DelegationModal = (props: Props): JSX.Element => {
             return
         }
 
-        const credentials = getCredentials(getSessionKey());
+        const credentials = getCredentials(getSessionKey(session?.user?.name));
         if (!credentials?.key) {
             toast.error('Invalid credentials');
             return
@@ -122,8 +124,8 @@ const DelegationModal = (props: Props): JSX.Element => {
 
     return (<Modal isOpen={props.isOpen || isOpen}
         placement='top-center'
-        hideCloseButton={isPending}
         isDismissable={false}
+        hideCloseButton
         onOpenChange={props.onOpenChange || onOpenChange}>
         <ModalContent>
             {(onClose) => (

@@ -235,7 +235,7 @@ export default function BalanceTab({ data }: { data: AccountExt }) {
                 onOpenChange={(isOpen) => setPowerDownModal({ isOpen: isOpen })}
             />}
 
-            {isOpen && <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+            {isOpen && <Modal isOpen={isOpen} onOpenChange={onOpenChange} hideCloseButton>
                 <ModalContent>
                     {(onClose) => (
                         key &&
@@ -247,7 +247,7 @@ export default function BalanceTab({ data }: { data: AccountExt }) {
                                 </p>
                             </ModalBody>
                             <ModalFooter>
-                                <Button color="danger" variant="light" onClick={onClose}>
+                                <Button color="danger" variant="flat" onClick={onClose} size='sm'>
                                     Close
                                 </Button>
                                 {/* <Button color="primary" onClick={onClose}>

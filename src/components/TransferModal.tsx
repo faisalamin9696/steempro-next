@@ -244,7 +244,7 @@ const TransferModal = (props: Props): JSX.Element => {
             return
         }
 
-        const credentials = getCredentials(getSessionKey());
+        const credentials = getCredentials(getSessionKey(session?.user?.name));
         if (!credentials?.key) {
             toast.error('Invalid credentials');
             return
@@ -310,7 +310,7 @@ const TransferModal = (props: Props): JSX.Element => {
 
     return (<Modal isOpen={props.isOpen || isOpen}
         placement='center'
-        hideCloseButton={isPending}
+        hideCloseButton
         isDismissable={false}
         onOpenChange={props.onOpenChange || onOpenChange}>
         <ModalContent>

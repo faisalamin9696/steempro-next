@@ -53,8 +53,8 @@ const PowerDownModal = (props: Props): JSX.Element => {
             dispatch(saveLoginHandler({
                 ...loginInfo, powerdown:
                     Number(variables.amount),
-                next_powerdown: cancel ? 0 : moment().add(5, 'days').unix(),
-                powerdown_rate: cancel ? 0 : Number(variables.amount) / 5
+                next_powerdown: cancel ? 0 : moment().add(7, 'days').unix(),
+                powerdown_rate: cancel ? 0 : Number(variables.amount) / 4
 
             }));
 
@@ -93,7 +93,7 @@ const PowerDownModal = (props: Props): JSX.Element => {
             return
         }
 
-        const credentials = getCredentials(getSessionKey());
+        const credentials = getCredentials(getSessionKey(session?.user?.name));
         if (!credentials?.key) {
             toast.error('Invalid credentials');
             return
@@ -110,7 +110,7 @@ const PowerDownModal = (props: Props): JSX.Element => {
 
     return (<Modal isOpen={props.isOpen || isOpen}
         placement='center'
-        hideCloseButton={withdrawMutation.isPending}
+        hideCloseButton
         isDismissable={false}
         onOpenChange={props.onOpenChange || onOpenChange}>
         <ModalContent>
@@ -189,7 +189,7 @@ const PowerDownModal = (props: Props): JSX.Element => {
                     <ModalFooter>
                         <Button color="danger" variant="light" onClick={onClose}
                             isDisabled={withdrawMutation.isPending}>
-                            Cancel
+                            Close
                         </Button>
 
 
@@ -206,4 +206,4 @@ const PowerDownModal = (props: Props): JSX.Element => {
     </Modal>)
 }
 
-export default PowerDownModal
+export default PowerDownModal;

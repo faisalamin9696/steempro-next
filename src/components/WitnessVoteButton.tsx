@@ -10,6 +10,7 @@ import { useState } from "react";
 import { BiSolidUpvote, BiUpvote } from "react-icons/bi";
 import { toast } from "sonner";
 import { useLogin } from "./AuthProvider";
+import { useSession } from "next-auth/react";
 
 export default function WitnessVoteButton({ witness }: {
     witness: Witness
@@ -18,6 +19,7 @@ export default function WitnessVoteButton({ witness }: {
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const dispatch = useAppDispatch();
     const { authenticateUser, isAuthorized } = useLogin();
+    const { data: session } = useSession();
 
     const isVoted = loginInfo?.witness_votes?.includes(witness.name);
 
@@ -43,7 +45,7 @@ export default function WitnessVoteButton({ witness }: {
         if (!isAuthorized())
             return
 
-        const credentials = getCredentials(getSessionKey());
+        const credentials = getCredentials(getSessionKey(session?.user?.name));
 
         if (!credentials?.key) {
             toast.error('Invalid credentials');

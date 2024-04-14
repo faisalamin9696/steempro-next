@@ -1,3 +1,5 @@
+"use client";
+
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { addCommentHandler } from '@/libs/redux/reducers/CommentReducer';
 import { deleteComment, mutePost } from '@/libs/steem/condenser';
@@ -9,6 +11,7 @@ import React from 'react'
 import { toast } from 'sonner';
 import { useLogin } from './AuthProvider';
 import { getCredentials, getSessionKey } from '@/libs/utils/user';
+import { useSession } from 'next-auth/react';
 
 interface Props {
     isOpen: boolean;
@@ -27,6 +30,7 @@ export default function MuteDeleteModal(props: Props) {
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const dispatch = useAppDispatch();
     const { authenticateUser, isAuthorized } = useLogin();
+    const { data: session } = useSession();
 
     const muteMutation = useMutation({
         mutationFn: (data: {
@@ -69,7 +73,7 @@ export default function MuteDeleteModal(props: Props) {
         authenticateUser();
         if (!isAuthorized())
             return
-        const credentials = getCredentials(getSessionKey());
+        const credentials = getCredentials(getSessionKey(session?.user?.name));
         if (!credentials?.key) {
             toast.error('Invalid credentials');
             return
@@ -86,7 +90,7 @@ export default function MuteDeleteModal(props: Props) {
 
     const isPending = deleteMutation.isPending || muteMutation.isPending;
 
-    return (<Modal isDismissable={!isPending} hideCloseButton={isPending}
+    return (<Modal isDismissable={!isPending} hideCloseButton
         isOpen={props.isOpen || isOpen} onOpenChange={props.onOpenChange || onOpenChange}>
         <ModalContent>
             {(onClose) => (

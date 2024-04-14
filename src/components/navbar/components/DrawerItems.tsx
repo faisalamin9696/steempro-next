@@ -4,7 +4,7 @@ import React, { } from 'react'
 import { FaInfoCircle, FaTools, FaUserCircle } from 'react-icons/fa';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/modal';
 import { Button } from '@nextui-org/button';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { logoutHandler } from '@/libs/redux/reducers/LoginReducer';
 import { IoLogOut } from "react-icons/io5";
@@ -26,6 +26,8 @@ export default function DrawerItems(props: Props) {
     const { onItemClick, onAccountSwitch } = props;
     const dispatch = useAppDispatch();
     const { isLogin, authenticateUser, isAuthorized } = useLogin();
+    const { data: session } = useSession();
+
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const posting_json_metadata = JSON.parse(loginInfo?.posting_json_metadata || '{}')
     const { isOpen, onOpenChange } = useDisclosure();
@@ -36,7 +38,7 @@ export default function DrawerItems(props: Props) {
             return
         }
 
-        const credentials = getCredentials(getSessionKey());
+        const credentials = getCredentials(getSessionKey(session?.user?.name));
         if (!credentials?.key) {
             toast.error('Invalid credentials');
             return
@@ -134,7 +136,7 @@ export default function DrawerItems(props: Props) {
 
 
 
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange} size='sm' closeButton>
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange} size='sm' hideCloseButton>
             <ModalContent>
                 {(onClose) => (
                     <>
@@ -144,7 +146,7 @@ export default function DrawerItems(props: Props) {
                         </ModalBody>
                         <ModalFooter>
                             <Button color="primary" variant="light" onClick={onClose}>
-                                Close
+                                Cancel
                             </Button>
                             <Button color="danger" onClick={handleLogout}>
                                 Logout

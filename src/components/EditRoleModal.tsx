@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux';
 import { toast } from 'sonner';
 import { useLogin } from './AuthProvider';
 import { getCredentials, getSessionKey } from '@/libs/utils/user';
+import { useSession } from 'next-auth/react';
 
 interface Props {
     comment: Post | Feed;
@@ -22,6 +23,7 @@ interface Props {
 export default function EditRoleModal(props: Props) {
     const { comment } = props;
     const { isOpen, onOpenChange } = useDisclosure();
+    const { data: session } = useSession();
 
     let [title, setTitle] = useState(comment.author_title);
     let [role, setRole] = useState<'muted' | 'guest' | 'member' | 'mod' | 'admin' | 'owner' | ''>(comment.author_role || 'guest');
@@ -112,7 +114,7 @@ export default function EditRoleModal(props: Props) {
             if (!isAuthorized())
                 return
 
-            const credentials = getCredentials(getSessionKey());
+            const credentials = getCredentials(getSessionKey(session?.user?.name));
             if (!credentials?.key) {
                 toast.error('Invalid credentials')
                 return
@@ -147,7 +149,7 @@ export default function EditRoleModal(props: Props) {
     const isPending = roleMutation.isPending || titleMutation.isPending || roleTitleMutation.isPending;
     return (
         <Modal isOpen={props.isOpen ?? isOpen}
-            hideCloseButton={isPending}
+            hideCloseButton
             isDismissable={!isPending}
             onOpenChange={props.onOpenChange ?? onOpenChange}>
             <ModalContent>

@@ -24,24 +24,22 @@ type ReadingTime = {
  * @param data - The text to be analyzed
  * @returns Parsed chinese, japanese and accented text
  */
-const parseWords = (data: string): string[] => {
-    if (data && data?.match) {
-        return data?.match(/[\w|\d|\s|,|.|\u00C0-\u024F|\u4E00-\u9FA5|\u3041-\u309F]+/giu) ?? [];
-    } else return []
-}
+
 /**
      * Calculates the number of words in the text
      * @param data - The text to be analyzed
      * @returns number of words in the text
      */
-const getNumberOfWords = (data: string): number =>
-    parseWords(data).reduce(
-        (accumulator, word) =>
-            accumulator +
-            (!word.trim().length ? 0 : word.trim().split(/\s+/u).length),
-        0,
-    );
-
+export const getNumberOfWords = (data: string): number => {
+    const cjkEntry = new RegExp('[\u4E00-\u9FFF]', 'g');
+    data = data.replace(cjkEntry, ' {CJK} ');
+    const splitEntry: any = data?.trim().split(/\s+/);
+    const cjkCount = splitEntry.filter((e: string) => e === '{CJK}');
+    const count: any = splitEntry.includes('{CJK}')
+        ? cjkCount.length
+        : splitEntry.length;
+    return data ? count : 0;
+}
 /**
  * Checks if the number of minutes is less than 1
  * @param minutes - Number of minutes to read the text

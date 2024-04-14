@@ -168,7 +168,9 @@ export default function AccountHeader(props: Props) {
             </div>
         </div>
 
-        {followerModal.isOpen && <Modal isOpen={followerModal.isOpen} onOpenChange={(isOpen) => setFollowerModal({ isOpen: isOpen })}
+        {followerModal.isOpen && <Modal 
+        isOpen={followerModal.isOpen} 
+        onOpenChange={(isOpen) => setFollowerModal({ isOpen: isOpen })}
             placement='top-center'
             scrollBehavior='inside'
             closeButton>

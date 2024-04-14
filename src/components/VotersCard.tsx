@@ -22,7 +22,7 @@ import {
 
 import { FaChevronDown, FaSearch } from "react-icons/fa";
 import useSWR from "swr";
-import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
+import { fetchSds } from "@/libs/constants/AppFunctions";
 import SAvatar from "@/components/SAvatar";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import LoadingCard from "@/components/LoadingCard";
@@ -48,8 +48,6 @@ export default function VotersCard({ comment }: { comment: Feed | Post }) {
         return null;
 
     const { data, isLoading } = useSWR(URL, fetchSds<PostVote[]>);
-    const loginInfo = useAppSelector(state => state.loginReducer.value);
-    const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
     const [allRows, setAllRows] = useState<PostVote[]>([]);
 
     useEffect(() => {
@@ -348,7 +346,7 @@ export default function VotersCard({ comment }: { comment: Feed | Post }) {
 
             >
                 <TableHeader columns={headerColumns}>
-                    {(column) => (
+                    {(column: any) => (
                         <TableColumn
                             key={column.uid}
                             align={column.uid === "actions" ? "center" : "start"}

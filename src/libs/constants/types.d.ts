@@ -231,8 +231,13 @@ type Community = {
   is_nsfw: number;
   settings: any;
   observer_subscribed: number;
-  observer_role: string;
-  observer_title: string;
+  observer_role:
+  | 'muted'
+  | 'guest'
+  | 'member'
+  | 'mod'
+  | 'admin'
+  | 'owner'; observer_title: string;
   status: 'joining' | 'leaving' | 'idle' = 'idle';
   roles: any
 };
@@ -542,7 +547,7 @@ type User = {
   memo: string
 }
 
-type ValidCategories = 'created' | 'trending' | 'payout' | 'important' | 'about';
+type ValidCategories = 'created' | 'trending' | 'payout' | 'pinned' | 'about';
 
 type Role = {
   created: number;

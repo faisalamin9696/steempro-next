@@ -22,10 +22,8 @@ export default function ProfileCommunitiesTab() {
     return (
         <div >
             <div className='flex flex-col space-y-2'>
-                <FeedList className='md:grid-cols-1'
-                    endPoint={getEndPoint('AccountCommunitiesFeedByCreated')} />
+                <FeedList endPoint={getEndPoint('AccountCommunitiesFeedByCreated')} />
             </div>
-
         </div>
     )
 }
