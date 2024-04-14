@@ -195,7 +195,7 @@ export const empty_community = (account: string, title?: string | null): Communi
     is_nsfw: 0,
     settings: {},
     observer_subscribed: 0,
-    observer_role: '',
+    observer_role: 'guest',
     observer_title: '',
     status: 'idle',
     roles: []
