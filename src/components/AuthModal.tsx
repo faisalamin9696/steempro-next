@@ -15,7 +15,7 @@ import { getKeyType } from "@/libs/steem/condenser";
 import { getAuthorExt } from "@/libs/steem/sds";
 import { validate_account_name } from "@/libs/utils/ChainValidation";
 import { getResizedAvatar } from "@/libs/utils/image";
-import { getSettings, getCredentials, saveSessionKey, validatePassword, saveCredentials, sessionKey, getAllCredentials, getUserAuth } from "@/libs/utils/user";
+import { getCredentials, saveSessionKey, validatePassword, saveCredentials, sessionKey, getAllCredentials, getUserAuth, getSessionToken } from "@/libs/utils/user";
 import { toast } from "sonner";
 import { signIn, useSession } from 'next-auth/react'
 import { getAuth, signInAnonymously } from "firebase/auth";
@@ -41,17 +41,15 @@ export default function AuthModal(props: Props) {
     const [loading, setLoading] = useState(false);
     let [username, setUsername] = useState('');
     const loginInfo = useAppSelector(state => state.loginReducer.value);
-
     const [key, setKey] = useState('');
     const [password, setPassword] = useState('');
     const [password2, setPassword2] = useState('');
     const dispatch = useAppDispatch();
-    const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
     const [avatar, setAvatar] = useState('');
     const { data: session, status } = useSession();
     const [isCurrent, setIsCurrent] = React.useState(false);
     const [remember, setRemember] = React.useState(false);
-    const isLocked = status === 'authenticated' && !sessionKey;
+    const isLocked = status === 'authenticated' && !sessionKey && !getSessionToken(session.user?.name);
     const [accounts, setAccounts] = useState<User[]>();
     let [credentials, setCredentials] = useState<User>();
 

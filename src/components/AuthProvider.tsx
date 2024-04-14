@@ -32,7 +32,7 @@ interface Props {
 // Create a provider component
 export const AuthProvider = (props: Props) => {
     let { children } = props;
-    const { status } = useSession();
+    const { status, data: session } = useSession();
     const [openAuth, setOpenAuth] = useState(false);
     const [credentials, setCredentials] = useState<User>();
     const [isNew, setIsNew] = useState(false);
@@ -48,7 +48,7 @@ export const AuthProvider = (props: Props) => {
     }
 
     function isAuthorized() {
-        const token = getSessionToken(credentials?.username);
+        const token = getSessionToken(session?.user?.name);
         return isLogin() && (!!sessionKey || !!token)
     }
 
@@ -59,10 +59,12 @@ export const AuthProvider = (props: Props) => {
             setOpenAuth(true);
         }
 
-        const token = getSessionToken(credentials?.username);
+        const token = getSessionToken(session?.user?.name);
 
-        if (!isLogin() || (isLogin() && !sessionKey) ||
-            (isLogin() && (credentials?.type === 'POSTING' || credentials?.type === 'MEMO') && !token)) {
+        if (isLogin() && (!sessionKey && (credentials?.type === 'POSTING' || credentials?.type === 'MEMO') && token))
+            return
+
+        if (!isLogin() || (isLogin() && !sessionKey)) {
             setOpenAuth(true);
             return
         }

@@ -7,8 +7,8 @@ import { Button } from '@nextui-org/button';
 import { Badge } from '@nextui-org/badge';
 import { LuPencilLine } from "react-icons/lu";
 import { useLogin } from '../AuthProvider';
-import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
-import { getCredentials, removeSessionToken, saveSessionKey, sessionKey } from '@/libs/utils/user';
+import { useAppSelector } from '@/libs/constants/AppFunctions';
+import { getCredentials, getSessionToken, removeSessionToken, saveSessionKey, sessionKey } from '@/libs/utils/user';
 import { getResizedAvatar } from '@/libs/utils/image';
 import Image from 'next/image';
 import { signIn, signOut, useSession } from 'next-auth/react';
@@ -24,18 +24,16 @@ import { MdSearch } from 'react-icons/md';
 import { Input } from '@nextui-org/input';
 import './style.scss';
 import { PiUserSwitchFill } from 'react-icons/pi';
-import secureLocalStorage from 'react-secure-storage';
 
 export default function AppNavbar() {
 
     const { authenticateUser, isLogin, isAuthorized, credentials } = useLogin();
-    const dispatch = useAppDispatch();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const { data: session, status } = useSession();
     const [isPopOpen, setIsPopOpen] = React.useState(false);
     const [isAccOpen, setIsAccOpen] = React.useState(false);
     const [notificationPopup, setNotificationPopup] = useState(false);
-    const [isLocked, setLocked] = useState(status === 'authenticated' && !sessionKey);
+    const [isLocked, setLocked] = useState(status === 'authenticated' && (!sessionKey && !getSessionToken(session.user?.name)));
     const [searchModal, setSearchModal] = useState(false);
 
 
@@ -43,7 +41,7 @@ export default function AppNavbar() {
     useMemo(() => {
         const credentials = getCredentials();
         if (status === 'authenticated') {
-            if (!sessionKey) {
+            if (!sessionKey && !getSessionToken(session.user?.name)) {
                 setLocked(true);
             } else {
                 setLocked(false);
