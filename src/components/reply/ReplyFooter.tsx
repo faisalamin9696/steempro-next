@@ -191,8 +191,7 @@ export default function ReplyFooter({ comment, expanded, toggleExpand, className
                 is_new: 1
             }
         } else {
-
-
+            
             newComment = {
                 ...comment,
                 link_id: time,

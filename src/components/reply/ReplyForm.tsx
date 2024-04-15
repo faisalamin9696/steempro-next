@@ -27,8 +27,6 @@ export default memo(function ReplyForm(props: Props) {
     return (
         <div className='flex flex-col w-full gap-4'>
 
-
-
             <div key={comment.permlink} className='flex flex-col gap-2 p-2 bg-foreground/5 w-full rounded-lg'>
 
                 <ReplyBody comment={comment}

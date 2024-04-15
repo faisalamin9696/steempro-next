@@ -157,7 +157,7 @@ export default memo(function PostReplies(props: Props) {
         dispatch(addCommentHandler({ ...commentInfo, children: commentInfo?.children + 1 }));
 
         // update the redux state for the current comment
-        dispatch(addCommentHandler({ ...commentInfo, children: commentInfo?.children + 1 }));
+        // dispatch(addCommentHandler({ ...commentInfo, children: commentInfo?.children + 1 }));
 
         // update the redux state for the root post replies
         dispatch(addRepliesHandler({

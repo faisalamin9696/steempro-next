@@ -34,21 +34,21 @@ export const AuthProvider = (props: Props) => {
     let { children } = props;
     const { status, data: session } = useSession();
     const [openAuth, setOpenAuth] = useState(false);
-    const [credentials, setCredentials] = useState<User>();
+    let [credentials, setCredentials] = useState<User | undefined>(getCredentials());
     const [isNew, setIsNew] = useState(false);
 
 
-    useEffect(() => {
-        setCredentials(getCredentials());
-    }, []);
+    // useEffect(() => {
+    //     setCredentials(getCredentials());
+    // }, []);
 
 
     function isLogin() {
-        return (status === 'authenticated' || (status === 'loading' && (!!sessionKey || !!secureLocalStorage.getItem('token'))))
+        return (status === 'authenticated' || (status === 'loading' && (!!sessionKey || !!getSessionToken(credentials?.username))))
     }
 
     function isAuthorized() {
-        const token = getSessionToken(session?.user?.name);
+        const token = getSessionToken(session?.user?.name ?? credentials?.username);
         return isLogin() && (!!sessionKey || !!token)
     }
 
@@ -59,7 +59,9 @@ export const AuthProvider = (props: Props) => {
             setOpenAuth(true);
         }
 
-        const token = getSessionToken(session?.user?.name);
+        credentials = getCredentials();
+
+        const token = getSessionToken(session?.user?.name ?? credentials?.username);
 
         if (isLogin() && (credentials?.type === 'POSTING' || credentials?.type === 'MEMO') && !!token)
             return

@@ -52,7 +52,7 @@ export default memo(function EditorInput(props: EditorProps) {
         isDisabled,
     } = props;
 
-    const { authenticateUser, isAuthorized } = useLogin();
+    let { authenticateUser, isAuthorized, credentials } = useLogin();
     const { data: session } = useSession();
 
     const postInput = useRef<any>(null);
@@ -385,9 +385,11 @@ export default memo(function EditorInput(props: EditorProps) {
     // upload images
     const _uploadImage = async (image) => {
 
+        const username = credentials?.username;
 
-        const credentials = getCredentials(getSessionKey(session?.user?.name));
-        if (!credentials?.key) {
+
+        const fresh_credentials = getCredentials(getSessionKey(session?.user?.name ?? username));
+        if (!fresh_credentials?.key || !fresh_credentials?.username) {
             toast.error('Invalid credentials');
             return
         }
@@ -398,9 +400,10 @@ export default memo(function EditorInput(props: EditorProps) {
                 // Testing
                 // await awaitTimeout(5);
                 // return true
+
                 const data = await toBase64(image.file);
-                let sign = await signImage(data, credentials.key);
-                const result = await uploadImage(image.file, credentials?.username, sign);
+                let sign = await signImage(data, fresh_credentials.key);
+                const result = await uploadImage(image.file, fresh_credentials?.username, sign);
                 return result;
             }, {
             closeButton: false,

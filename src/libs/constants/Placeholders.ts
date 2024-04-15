@@ -1,6 +1,5 @@
 import moment from 'moment';
 import { RewardTypes } from './AppConstants';
-import { AppStrings } from './AppStrings';
 
 export const empty_comment = (author: string, permlink: string): Post => {
   const timenow = moment().unix();

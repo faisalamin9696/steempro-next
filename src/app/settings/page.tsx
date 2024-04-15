@@ -151,6 +151,7 @@ export default function SettingsPage() {
     const _uploadImage = async (image) => {
 
         const credentials = getCredentials(getSessionKey(session?.user?.name));
+
         if (!credentials?.key) {
             toast.error('Invalid credentials');
             return
@@ -189,6 +190,7 @@ export default function SettingsPage() {
                 },
                 closeButton: false,
                 error: (error) => {
+                    console.log('Upload error', error)
                     if (error.toString().includes('code 413')) {
                         // console.log('Large file size')
                         return ('Large file size');

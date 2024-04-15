@@ -33,7 +33,7 @@ import WitnessVoteButton from '@/components/WitnessVoteButton';
 import { WitnessAccount } from '@/libs/constants/AppConstants';
 
 
-const INITIAL_VISIBLE_COLUMNS = ["name", 'last_confirmed_block', 'received_votes', "action"];
+const INITIAL_VISIBLE_COLUMNS = ["rank", "name", 'received_votes', "action"];
 
 const columns = [
   { name: "RANK", uid: "rank", sortable: true },
@@ -52,8 +52,6 @@ export default function page() {
   const URL = `/witnesses_api/getWitnessesByRank`;
   const { data, isLoading } = useSWR(URL, fetchSds<Witness[]>);
   const loginInfo = useAppSelector(state => state.loginReducer.value);
-
-
 
   const [allRows, setAllRows] = useState<Witness[]>([]);
   useEffect(() => {
