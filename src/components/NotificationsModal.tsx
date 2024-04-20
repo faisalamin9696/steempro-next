@@ -461,8 +461,12 @@ export default function NotificationsModal(props: Props) {
 
 
                                                     return (
-                                                        <TableRow as={Link} href={getTargetUrl(item)}
-                                                            onClick={onClose}
+                                                        <TableRow
+                                                            onClick={() => {
+                                                                router.push(getTargetUrl(item));
+                                                                router.refresh();
+                                                                onClose()
+                                                            }}
                                                             key={JSON.stringify(item)} className='cursor-pointer hover:bg-foreground/10'>
                                                             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                                                         </TableRow>

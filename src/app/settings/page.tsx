@@ -9,7 +9,7 @@ import { Divider, } from '@nextui-org/divider';
 import { Button } from '@nextui-org/button';
 import { Input } from '@nextui-org/input';
 import { Select, SelectItem } from '@nextui-org/select';
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FaInfoCircle, FaUpload, FaUserCircle } from "react-icons/fa";
 import { toast } from 'sonner';
 import { FaGlobe } from "react-icons/fa";
@@ -28,6 +28,7 @@ import usePathnameClient from '@/libs/utils/usePathnameClient';
 import { IoIosSettings } from "react-icons/io";
 import { addProfileHandler } from '@/libs/redux/reducers/ProfileReducer';
 import { useSession } from 'next-auth/react';
+import { useDropzone } from 'react-dropzone';
 
 let isCover: boolean = false;
 export default function SettingsPage() {
@@ -53,7 +54,7 @@ export default function SettingsPage() {
     const [nsfw, setNsfw] = useState(settings.nsfw || 'Always warn');
     const dispatch = useAppDispatch();
 
-    const { authenticateUser, isAuthorized } = useLogin();
+    let { authenticateUser, isAuthorized, credentials } = useLogin();
 
 
     useEffect(() => {
@@ -64,9 +65,25 @@ export default function SettingsPage() {
         name !== displayName || about !== userAbout || location !== userLocation || website !== userWebsite;
 
     const className = 'text-medium text-default-600';
-    const fileInputRef = useRef<any>(null);
 
+    const onDrop = useCallback((acceptedFile: any, rejectedFiles: any) => {
 
+        authenticateUser();
+        if (isAuthorized()) {
+
+            _uploadImage(acceptedFile[0]);
+        }
+    }, []);
+
+    const { open, getInputProps, } = useDropzone({
+        noClick: true, accept: {
+            'image/jpeg': [],
+            'image/png': [],
+            'image/svg+xml': [],
+            'image/webp': [],
+            'image/gif': []
+        }, multiple: false, onDrop
+    });
 
     const updateMutation = useMutation({
         mutationFn: (data: {
@@ -91,12 +108,12 @@ export default function SettingsPage() {
         },
     });
 
-    const handleOnPicked = (event) => {
-        if (event.target.files && event.target.files[0]) {
-            const image = event.target.files[0];
-            _uploadImage(image);
-        }
-    };
+    // const handleOnPicked = (event) => {
+    //     if (event.target.files && event.target.files[0]) {
+    //         const image = event.target.files[0];
+    //         _uploadImage(image);
+    //     }
+    // };
 
     function handleRpcChange(newRpc: string) {
         setRpc(newRpc);
@@ -145,26 +162,30 @@ export default function SettingsPage() {
         if (!isAuthorized())
             return;
 
-        fileInputRef?.current?.click();
+        open();
     };
 
     const _uploadImage = async (image) => {
 
-        const credentials = getCredentials(getSessionKey(session?.user?.name));
+        const username = credentials?.username;
 
-        if (!credentials?.key) {
+
+        const fresh_credentials = getCredentials(getSessionKey(session?.user?.name ?? username));
+        if (!fresh_credentials?.key || !fresh_credentials?.username) {
             toast.error('Invalid credentials');
             return
         }
+
 
         toast.promise(
             async () => {
                 // Testing
                 // await awaitTimeout(5);
                 // return true
-                const data = await toBase64(image.file);
-                let sign = await signImage(data, credentials.key);
-                const result = await uploadImage(image.file, credentials.username, sign);
+
+                const data = await toBase64(image);
+                let sign = await signImage(data, fresh_credentials.key);
+                const result = await uploadImage(image, fresh_credentials?.username, sign);
                 return result;
             },
             {
@@ -367,12 +388,11 @@ export default function SettingsPage() {
 
                 </div>
             }
+            <input style={{ width: 0, height: 0 }} {...getInputProps()} name="images"
+                hidden aria-hidden
+                id="dropzone" accept="image/png, image/gif, image/jpeg, image/jpg"
 
-            <input type="file"
-                ref={fileInputRef}
-                onChange={handleOnPicked}
-                accept="image/*"
-                style={{ display: 'none' }} />
+            />
 
         </div >
     )

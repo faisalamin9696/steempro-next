@@ -40,8 +40,13 @@ export default memo(function AccountItemCard(props: Props) {
     const [switching, setSwitching] = useState(false);
 
     function onComplete(error?: string | null) {
-        removeSessionToken(user.username);
-        removeSessionToken(defaultAccount?.username);
+
+        // remogve session token when user changed not for changing between keys
+        if (user.username !== defaultAccount?.username) {
+            removeSessionToken(user.username);
+            removeSessionToken(defaultAccount?.username);
+        }
+
         setSwitching(false);
         if (error)
             toast.error(error);
