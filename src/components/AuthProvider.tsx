@@ -63,7 +63,7 @@ export const AuthProvider = (props: Props) => {
 
         const token = getSessionToken(session?.user?.name ?? credentials?.username);
 
-        if (isLogin() && (credentials?.type === 'POSTING' || credentials?.type === 'MEMO') && !!token)
+        if (isLogin() && !!token)
             return
 
         if (!isLogin() || (isLogin() && !sessionKey)) {
