@@ -29,7 +29,6 @@ export default function AppWrapper({ children }: { children: React.ReactNode }) 
     const dispatch = useAppDispatch();
     const router = useRouter();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
-    const rourer = useRouter();
 
 
     function pingForWitnessVote() {
@@ -47,13 +46,13 @@ export default function AppWrapper({ children }: { children: React.ReactNode }) 
         if (status === 'authenticated' && session.user?.name)
             setUsername(session.user.name);
 
-        let timeout;
-        if (status === 'unauthenticated')
-            timeout = setTimeout(() => {
-                pingForWitnessVote();
-            }, 5000);
+        // let timeout;
+        // if (status === 'unauthenticated')
+        //     timeout = setTimeout(() => {
+        //         pingForWitnessVote();
+        //     }, 5000);
 
-        return () => clearTimeout(timeout);
+        // return () => clearTimeout(timeout);
 
     }, [status]);
 
@@ -97,8 +96,8 @@ export default function AppWrapper({ children }: { children: React.ReactNode }) 
 
         if (accountData) {
             dispatch(saveLoginHandler({ ...accountData, unread_count: loginInfo?.name === username ? (loginInfo?.unread_count ?? 0) : 0 }));
-            if (!accountData.witness_votes.includes(WitnessAccount))
-                pingForWitnessVote();
+            // if (!accountData.witness_votes.includes(WitnessAccount))
+            //     pingForWitnessVote();
         }
         if (globalData)
             dispatch(saveSteemGlobals(globalData));

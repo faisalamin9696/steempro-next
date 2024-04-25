@@ -195,9 +195,9 @@ export default memo(function CommentFooter(props: CommentProps) {
                             title='Upvote'
                             variant='light'
                             onClick={() => {
+                                authenticateUser();
                                 if (!isAuthorized()) {
-                                    authenticateUser();
-                                    return false
+                                    return
                                 }
                                 setUpvotePopup(!upvotePopup);
                             }}

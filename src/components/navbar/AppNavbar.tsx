@@ -27,7 +27,7 @@ import { PiUserSwitchFill } from 'react-icons/pi';
 
 export default function AppNavbar() {
 
-    const { authenticateUser, isLogin, isAuthorized, credentials } = useLogin();
+    const { authenticateUser, isAuthorized, credentials } = useLogin();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
     const { data: session, status } = useSession();
     const [isPopOpen, setIsPopOpen] = React.useState(false);

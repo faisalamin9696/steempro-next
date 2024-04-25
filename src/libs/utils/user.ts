@@ -229,8 +229,9 @@ export const saveSessionKey = (userPassword: string) => {
 };
 
 export const getSessionKey = (username?: string | null) => {
+    const credentials = getCredentials();
     const token = getSessionToken(username);
-    if (token) {
+    if (token && credentials?.type !== 'ACTIVE') {
         const auth = getUserAuth();
         if (auth)
             return decryptPrivateKey(token, auth?.toString()?.substring(0, 20))

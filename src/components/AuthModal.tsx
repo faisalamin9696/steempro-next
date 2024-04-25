@@ -49,9 +49,10 @@ export default function AuthModal(props: Props) {
     const { data: session, status } = useSession();
     const [isCurrent, setIsCurrent] = React.useState(false);
     const [remember, setRemember] = React.useState(false);
-    const isLocked = status === 'authenticated' && !sessionKey && !getSessionToken(session.user?.name);
     const [accounts, setAccounts] = useState<User[]>();
     let [credentials, setCredentials] = useState<User>();
+
+    const isLocked = status === 'authenticated' && !sessionKey && (credentials?.type === 'ACTIVE' || !getSessionToken(session.user?.name));
 
     useEffect(() => {
         setCredentials(getCredentials());
@@ -413,7 +414,8 @@ export default function AuthModal(props: Props) {
 
                                                 <p className="text-start text-small text-default-600">
                                                     Need to create an account?{" "}
-                                                    <Link className="hover:text-blue-500 font-semibold" href={SignupLink} target='_blank'>
+                                                    <Link className="hover:text-blue-500 font-semibold"
+                                                        href={SignupLink} target='_blank'>
                                                         Sign up
                                                     </Link>
                                                 </p>

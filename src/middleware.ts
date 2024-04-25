@@ -7,8 +7,8 @@ import type { NextRequest } from 'next/server';
 const valid_tabs = ['blogs', 'posts', 'friends',
     'comments', 'replies', 'wallet', 'communities', 'settings'];
 
-const basic_categories = ['trending', 'created','hot',
-    'payout', ];
+const basic_categories = ['trending', 'created', 'hot',
+    'payout',];
 
 const valid_categories = basic_categories.concat(['pinned', 'about']);
 
@@ -55,7 +55,7 @@ export function middleware(request: NextRequest) {
         return NextResponse.rewrite(new URL(`/community`, request.nextUrl), { headers: request.headers });
     }
     // Check if the URL matches the pattern for a category
-    else if (valid_categories.filter(item => item !== 'about').includes(first_param)) {
+    else if (valid_categories.filter(item => !['about', 'tools'].includes(item)).includes(first_param)) {
 
         if (basic_categories.includes(first_param) && splitted_path.length === 1) {
             return NextResponse.rewrite(new URL('/', request.nextUrl), { headers: request.headers });

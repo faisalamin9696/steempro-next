@@ -48,6 +48,10 @@ export const AuthProvider = (props: Props) => {
     }
 
     function isAuthorized() {
+        credentials = getCredentials();
+        if (isLogin() && credentials?.type === 'ACTIVE' && !sessionKey) {
+            return false;
+        }
         const token = getSessionToken(session?.user?.name ?? credentials?.username);
         return isLogin() && (!!sessionKey || !!token)
     }
@@ -60,6 +64,12 @@ export const AuthProvider = (props: Props) => {
         }
 
         credentials = getCredentials();
+
+        // if active key and not session login as for password
+        if (credentials?.type === 'ACTIVE' && !sessionKey) {
+            setOpenAuth(true);
+            return
+        }
 
         const token = getSessionToken(session?.user?.name ?? credentials?.username);
 
