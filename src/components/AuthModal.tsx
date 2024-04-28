@@ -24,6 +24,7 @@ import Link from "next/link";
 import { SignupLink } from "@/libs/constants/AppConstants";
 import secureLocalStorage from "react-secure-storage";
 import { encryptPrivateKey } from "@/libs/utils/encryption";
+import { PrivateKey } from "@hiveio/dhive";
 
 interface Props {
     open: boolean;
@@ -176,7 +177,7 @@ export default function AuthModal(props: Props) {
                             .then(async () => {
 
                                 const auth = saveCredentials(username,
-                                    key, password, keyType.type);
+                                    keyType.key, password, keyType.type);
 
                                 if (!auth) {
                                     onComplete('Something went wrong!');
@@ -215,7 +216,7 @@ export default function AuthModal(props: Props) {
                     }
                     else {
                         const auth = saveCredentials(username,
-                            key, password, keyType.type, isCurrent);
+                            keyType.type, password, keyType.type, isCurrent);
                         if (auth) {
                             if (isCurrent) {
 

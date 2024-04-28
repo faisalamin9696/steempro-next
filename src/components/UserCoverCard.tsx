@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import Image from 'next/image'
 import React from 'react'
 import { twMerge } from 'tailwind-merge'
@@ -13,7 +12,11 @@ export default function UserCoverCard(
                 className='rounded-lg'
                 fill
                 src={src}
-                alt="thumbnail"
+                onError={(e) => {
+                    e.currentTarget.style.opacity = '0';
+
+                }}
+                alt="cover"
                 sizes="(max-width: 768px,200px),80vw"
                 style={{
                     objectFit: 'cover',
