@@ -4,9 +4,11 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 Add the enviorement variables in .env file
 
+```bash
 NEXTAUTH_SECRET="AUTH_SECRET_KEY_HERE"
 NEXT_PUBLIC_SECURE_LOCAL_STORAGE_DISABLED_KEYS=UserAgent|ScreenPrint|Plugins|Fonts|LocalStorage|SessionStorage|TimeZone|Language|SystemLanguage|Cookie|Canvas|Hostname
 NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY="SECURE_LOCAL_STORAGE_HASH_KEY_HERE"
+```
 
 First, run the development server:
 
