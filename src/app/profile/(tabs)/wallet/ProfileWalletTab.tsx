@@ -17,6 +17,7 @@ import TransferHistoryTab from './(tabs)/TransferHistoryTab';
 import { getTimeFromNow } from '@/libs/utils/time';
 import { FaArrowAltCircleDown } from 'react-icons/fa';
 import { useSession } from 'next-auth/react';
+import { useState } from 'react';
 
 
 
@@ -29,6 +30,7 @@ export default function ProfileWalletTab({ data }: { data: AccountExt }) {
   const isSelf = !!loginInfo.name && (loginInfo.name === (username));
   const { authenticateUser, isAuthorized } = useLogin();
   const { data: session } = useSession();
+  const [selectedTab, setSelectedTab] = useState('balance');
 
   const claimMutation = useMutation({
     mutationFn: (key: string) => claimRewardBalance(loginInfo, key, loginInfo.rewards_steem, loginInfo.rewards_sbd, loginInfo.rewards_vests),
@@ -118,9 +120,16 @@ export default function ProfileWalletTab({ data }: { data: AccountExt }) {
       </div>
       }
 
-      <Tabs aria-label="Options" variant='underlined' size='sm'>
+      <Tabs aria-label="Options" variant='underlined' size='sm'
+        onSelectionChange={(key) => {
+          setSelectedTab(key as string);
+        }}
+        selectedKey={selectedTab}>
         <Tab key="balance" title="Balance">
-          <BalanceTab data={data} />
+          <BalanceTab data={data} onDelegationClick={() => {
+            setSelectedTab('delegation');
+
+          }} />
         </Tab>
 
         <Tab key="delegation" title="Delegation">

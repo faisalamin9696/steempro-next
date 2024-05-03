@@ -45,7 +45,7 @@ Part of ${username}'s STEEM POWER is currently delegated. Delegation is donated 
 STEEM POWER increases at an APR of approximately 2.77%, subject to blockchain variance. See FAQ for details.`;
 
 
-export default function BalanceTab({ data }: { data: AccountExt }) {
+export default function BalanceTab({ data, onDelegationClick }: { data: AccountExt, onDelegationClick?: () => void }) {
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     let { username } = usePathnameClient();
@@ -153,15 +153,15 @@ export default function BalanceTab({ data }: { data: AccountExt }) {
 
                     endContent={<div className='flex flex-col gap-2 items-end'>
                         <p>{vestToSteem(data.vests_own, globalData.steem_per_share)?.toLocaleString()}</p>
-                        <div className='flex gap-2 items-center '>
-                            {!!data.vests_out && <Chip title='Outgoing delegation'
-                                radius='lg' className='px-0 pl-1 h-6 min-w-0' variant='flat' color='warning'
+                        <div className='flex gap-2 items-center'>
+                            {!!data.vests_out && <Chip title='Outgoing delegation' onClick={onDelegationClick}
+                                radius='lg' className='px-0 pl-1 h-6 min-w-0 cursor-pointer' variant='flat' color='warning'
                                 startContent={<IoMdRemove size={12} />}>
                                 <p className='text-tiny'>{vestToSteem(data.vests_out, globalData.steem_per_share)?.toLocaleString()}</p>
                             </Chip>}
 
-                            {!!data.vests_in && <Chip title='Incoming delegation' radius='lg'
-                                className='px-0 pl-1 h-6 min-w-0' variant='flat' color='success'
+                            {!!data.vests_in && <Chip title='Incoming delegation' radius='lg' onClick={onDelegationClick}
+                                className='px-0 pl-1 h-6 min-w-0 cursor-pointer' variant='flat' color='success'
                                 startContent={<IoMdAdd size={14} />}>
                                 <p className='text-tiny flex'>{vestToSteem(data.vests_in, globalData.steem_per_share)?.toLocaleString()}</p>
                             </Chip>}

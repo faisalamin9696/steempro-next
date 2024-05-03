@@ -1,10 +1,9 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import AuthModal from './AuthModal';
 import { getCredentials, getSessionToken, sessionKey } from '@/libs/utils/user';
-import secureLocalStorage from 'react-secure-storage';
 
 // Define the type for your context value
 interface AuthContextType {

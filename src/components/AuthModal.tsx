@@ -8,7 +8,6 @@ import { Button } from '@nextui-org/button';
 import { Spinner } from '@nextui-org/spinner';
 import { Checkbox } from '@nextui-org/checkbox';
 import { Input } from '@nextui-org/input';
-
 import { useAppSelector, useAppDispatch, awaitTimeout } from "@/libs/constants/AppFunctions";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { getKeyType } from "@/libs/steem/condenser";
@@ -24,7 +23,6 @@ import Link from "next/link";
 import { SignupLink } from "@/libs/constants/AppConstants";
 import secureLocalStorage from "react-secure-storage";
 import { encryptPrivateKey } from "@/libs/utils/encryption";
-import { PrivateKey } from "@hiveio/dhive";
 
 interface Props {
     open: boolean;
@@ -66,7 +64,7 @@ export default function AuthModal(props: Props) {
         }, 1000);
 
         return () => clearTimeout(timeOut)
-    }, [username])
+    }, [username]);
 
     useEffect(() => {
 

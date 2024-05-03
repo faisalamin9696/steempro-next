@@ -4,10 +4,8 @@ import './markdown.scss';
 import { Providers } from "./providers";
 import { Toaster } from "sonner";
 import clsx from "clsx";
-import { getAuthorExt, getSteemGlobal } from "@/libs/steem/sds";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react"
-import { getServerSession } from "next-auth/next";
 import { AppStrings } from "@/libs/constants/AppStrings";
 
 // export const runtime = 'edge' // 'nodejs' (default) | 'edge'
