@@ -22,7 +22,6 @@ import { signInAnonymously, getAuth } from "firebase/auth";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { Next13ProgressBar } from 'next13-progressbar';
 import AppWrapper from '@/components/wrappers/AppWrapper';
-import secureLocalStorage from 'react-secure-storage';
 
 
 interface Props {

@@ -10,6 +10,13 @@ NEXT_PUBLIC_SECURE_LOCAL_STORAGE_DISABLED_KEYS=UserAgent|ScreenPrint|Plugins|Fon
 NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY="SECURE_LOCAL_STORAGE_HASH_KEY_HERE"
 ```
 
+Add the enviorement variables in .env.local file
+
+```bash
+FIREBASE_API_KEY="FIREBASE_API_KEY_HERE"
+
+```
+
 First, run the development server:
 
 ```bash
