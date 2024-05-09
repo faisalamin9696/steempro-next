@@ -44,6 +44,7 @@ export function ParsedBody({ body, isNsfw }: { body: string, isNsfw?: boolean })
                     <Link
                         className=''
                         {...domNode?.attribs}
+                        href={domNode.attribs.href?.replace('steemit.com', 'steempro.com')}
                     >
                         {domToReact(domNode.children)}
                     </Link>
@@ -58,7 +59,7 @@ export function ParsedBody({ body, isNsfw }: { body: string, isNsfw?: boolean })
                 </table>;
             }
 
-           
+
 
         }
 

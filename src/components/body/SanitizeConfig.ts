@@ -201,7 +201,7 @@ export default ({
             href = href.trim();
             const attys: any = { href };
             // If it's not a (relative or absolute) steemit URL...
-            if (!href.match(/^(\/(?!\/)|https:\/\/steemit.com)/)) {
+            if (!href.match(/^(\/(?!\/)|https:\/\/steempro.com)/)) {
                 // attys.target = '_blank' // pending iframe impl https://mathiasbynens.github.io/rel-noopener/
                 attys.rel = highQualityPost ? 'noopener' : 'nofollow noopener';
                 attys.title = getExternalLinkWarningMessage();

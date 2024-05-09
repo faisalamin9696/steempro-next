@@ -130,7 +130,12 @@ export function saveCredentials(username: string,
         const existAuth = getUserAuth() as User;
         if (!existAuth || current || (existAuth?.username === username)) {
             addToCurrent(username, encryptedKey, keyType);
+
+            if (username !== existAuth.username) {
+                removeSessionToken(existAuth.username);
+            }
         }
+
         addToAccounts(username, encryptedKey, keyType);
         return {
             username: username,

@@ -67,7 +67,6 @@ export default {
 
 export const OLD_DOMAINS_LIST = [
     'busy.org',
-    'steemit.com',
     'esteem.app',
     'steempeak.com',
     'partiko.app',

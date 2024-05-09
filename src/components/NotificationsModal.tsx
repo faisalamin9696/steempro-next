@@ -187,8 +187,7 @@ export default function NotificationsModal(props: Props) {
 
         if (hasSearchFilter) {
             filteredNotifications = filteredNotifications.filter((notification) =>
-                notification.account.toLowerCase().includes(filterValue.toLowerCase()) ||
-                notification.author.toLowerCase().includes(filterValue.toLowerCase()),
+                notification.account.toLowerCase().includes(filterValue.toLowerCase())
             );
         }
         if (statusFilter !== "all" && Array.from(statusFilter).length !== typeOptions.length) {
@@ -298,7 +297,7 @@ export default function NotificationsModal(props: Props) {
                     />
                     <div className="flex gap-3">
                         <Dropdown >
-                            <DropdownTrigger className="hidden sm:flex">
+                            <DropdownTrigger className="">
                                 <Button size="sm" variant="flat" isIconOnly>
                                     <IoMdSettings className='text-lg' />
                                 </Button>
@@ -462,6 +461,7 @@ export default function NotificationsModal(props: Props) {
 
                                                     return (
                                                         <TableRow
+                                                        
                                                             onClick={() => {
                                                                 router.push(getTargetUrl(item));
                                                                 router.refresh();

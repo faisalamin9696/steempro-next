@@ -78,7 +78,7 @@ export function Providers(props: Props) {
             serialize: data => compress(JSON.stringify(data)),
             deserialize: data => JSON.parse(decompress(data)),
         }),
-        maxAge: Infinity,
+        maxAge: 1000 * 60 * 60 * 24 * 1 // 1 day,
     });
 
 

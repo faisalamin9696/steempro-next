@@ -19,6 +19,7 @@ import Link from 'next/link';
 import { hasNsfwTag } from '@/libs/utils/StateFunctions';
 import NsfwOverlay from '@/components/NsfwOverlay';
 import { getSettings } from '@/libs/utils/user';
+import RoleTitleCard from '@/components/RoleTitleCard';
 
 
 export default function CommentGridLayout(props: CommentProps) {
@@ -108,6 +109,8 @@ export default function CommentGridLayout(props: CommentProps) {
 
                     </div>}
                     description={<div className='flex flex-col'>
+                        <RoleTitleCard comment={comment} />
+
                         <TimeAgoWrapper lang={'en'} created={commentInfo.created * 1000} lastUpdate={commentInfo.last_update * 1000} />
 
                     </div>}

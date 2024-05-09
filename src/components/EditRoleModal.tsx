@@ -146,6 +146,10 @@ export default function EditRoleModal(props: Props) {
 
     }
 
+    const handleRoleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setRole(e.target.value as any);
+    };
+
     const isPending = roleMutation.isPending || titleMutation.isPending || roleTitleMutation.isPending;
     return (
         <Modal isOpen={props.isOpen ?? isOpen}
@@ -174,10 +178,10 @@ export default function EditRoleModal(props: Props) {
                                         className="max-w-xs"
                                         defaultSelectedKeys={[role]}
                                         disabledKeys={[comment.author_role]}
-                                        onSelectionChange={(key) => setRole(key as any)}
+                                        onChange={handleRoleSelectionChange}
                                         classNames={{ base: 'items-center' }}
                                     >
-                                        {(item) => <SelectItem key={item?.value}>{item.item}</SelectItem>}
+                                        {(item) => <SelectItem key={item.value} value={item.value}>{item.item}</SelectItem>}
                                     </Select>}
                             </div>
 

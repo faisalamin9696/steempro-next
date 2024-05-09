@@ -14,7 +14,7 @@ function YoutubePreview(props: Props): React.ReactElement {
         width = 640,
         height = 360,
         startTime = 0,
-        dataParams = 'enablejsapi=0&rel=0&origin=https://steemit.com',
+        dataParams = 'enablejsapi=0&rel=0&origin=https://steempro.com',
     } = props;
     const [play, setPlay] = useState(true);
 

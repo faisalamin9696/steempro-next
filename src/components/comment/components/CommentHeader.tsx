@@ -222,7 +222,7 @@ export default memo(function CommentHeader(props: Props) {
             </div>}
             description={<div className='flex flex-col'>
 
-                {isDetail && <RoleTitleCard comment={comment} />}
+                <RoleTitleCard comment={comment} />
 
                 <div className={clsx(`flex items-center gap-1`,)}>
                     <TimeAgoWrapper lang={settings.lang.code} created={comment.created * 1000} lastUpdate={comment.last_update * 1000} />
