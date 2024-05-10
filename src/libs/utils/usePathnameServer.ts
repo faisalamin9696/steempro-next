@@ -56,7 +56,7 @@ const usePathnameServer = (): Params => {
         params.permlink = splitted_path[1] ?? '';
     }
     // Check if the URL matches the pattern for a profile
-    else if (pathname.startsWith('/@')) {
+    else if (pathname?.startsWith('/@')) {
         params.username = splitted_path[0]?.replace('@', '') ?? '';
         params.category = splitted_path[1]?.replace('@', '') ?? '';
 

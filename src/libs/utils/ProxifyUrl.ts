@@ -18,7 +18,7 @@ export const imageProxy = () => IMAGE_PROXY_URL;
 export const defaultSrcSet = url =>
     `${url} 1x, ${url.replace(CAPPED_SIZE, DOUBLE_CAPPED_SIZE)} 2x`;
 export const isDefaultImageSize = url =>
-    url.startsWith(`${imageProxy()}${CAPPED_SIZE}`);
+    url?.startsWith(`${imageProxy()}${CAPPED_SIZE}`);
 export const defaultWidth = () => Number.parseInt(CAPPED_SIZE.split('x')[0]);
 
 /**

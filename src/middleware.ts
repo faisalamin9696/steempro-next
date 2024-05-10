@@ -47,7 +47,7 @@ export function middleware(request: NextRequest) {
         return NextResponse.rewrite(new URL('/post', request.nextUrl), { headers: request.headers });
     }
     // Check if the URL matches the pattern for a profile
-    else if (request.nextUrl.pathname.startsWith('/@')) {
+    else if (request.nextUrl.pathname?.startsWith('/@')) {
         return NextResponse.rewrite(new URL(`/profile`, request.nextUrl), { headers: request.headers });
     }
     // Check if the URL matches the pattern for a community
