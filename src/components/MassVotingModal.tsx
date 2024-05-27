@@ -37,6 +37,11 @@ const all_links: string[] = [];
 export default function MassVotingModal(props: Props) {
   const { isOpen, data, links, onOpenChange, handleOnComplete } = props;
   const linkRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
+  const setRef = (item: string) => (el: HTMLDivElement | null) => {
+    linkRefs.current[item] = el;
+  };
+
   const [completed, setCompleted] = useState(false);
 
   const [linksStatus, setLinksStatus] = useState<
@@ -147,7 +152,7 @@ export default function MassVotingModal(props: Props) {
 
                   return (
                     <div
-                      ref={(el) => (linkRefs.current[item] = el)}
+                      ref={setRef(item)}
                       className=" flex gap-2 items-center justify-between"
                       key={item}
                     >
