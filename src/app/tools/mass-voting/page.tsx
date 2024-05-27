@@ -1,119 +1,231 @@
-'use client';
+"use client";
 
-import MainWrapper from '@/components/wrappers/MainWrapper'
-import { getKeyType } from '@/libs/steem/condenser';
-import { getAuthorExt } from '@/libs/steem/sds';
-import { getResizedAvatar } from '@/libs/utils/image';
-import { PrivKey } from '@/libs/utils/user';
-import { Avatar, Button, Input, Textarea } from '@nextui-org/react'
-import React, { useEffect, useState } from 'react'
-import { toast } from 'sonner';
+import { useLogin } from "@/components/AuthProvider";
+import MassVotingModal from "@/components/MassVotingModal";
+import MainWrapper from "@/components/wrappers/MainWrapper";
+import { useAppSelector } from "@/libs/constants/AppFunctions";
+import { getKeyType } from "@/libs/steem/condenser";
+import { getAuthorExt } from "@/libs/steem/sds";
+import { getResizedAvatar } from "@/libs/utils/image";
+import { PrivKey, getCredentials, getSessionKey } from "@/libs/utils/user";
+import { Avatar, Button, Input, Textarea } from "@nextui-org/react";
+import { useSession } from "next-auth/react";
+import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function MassVotingPage() {
+  const { authenticateUser, isAuthorized, isLogin } = useLogin();
+  const { data: session } = useSession();
+  const [advance, setAdvance] = useState(!isLogin());
+  let [username, setUsername] = useState(session?.user?.name || "");
+  let [avatar, setAvatar] = useState(session?.user?.name || "");
+  let loginInfo = useAppSelector((state) => state.loginReducer.value);
 
-    const [advance, setAdvance] = useState(false);
+  const [links, setLinks] = useState("");
+  const [weight, setWeight] = useState("");
+  let [key, setKey] = useState("");
+  const [loading, setLoading] = useState(false);
 
-    let [username, setUsername] = useState('');
-    const [links, setLinks] = useState('');
-    const [avatar, setAvatar] = useState('');
-    const [key, setKey] = useState('');
+  const [votingModal, setVotingModal] = useState<{
+    isOpen: boolean;
+    voterCredentials: {
+      voter_account: AccountExt;
+      voter_key: string;
+      weight: string;
+    };
+    links: string[];
+  }>({
+    isOpen: false,
+    voterCredentials: {
+      voter_account: loginInfo,
+      voter_key: key,
+      weight: weight,
+    },
+    links: [],
+  });
 
-    useEffect(() => {
-        const timeOut = setTimeout(() => {
-            username = username.trim().toLowerCase();
-            setAvatar(username)
-        }, 1000);
+  useEffect(() => {
+    if (!advance) {
+      setUsername(session?.user?.name || "");
+    }
+  }, [session?.user?.name]);
 
-        return () => clearTimeout(timeOut)
-    }, [username]);
+  useEffect(() => {
+    const timeOut = setTimeout(() => {
+      username = username.trim().toLowerCase();
+      setAvatar(username);
+    }, 1000);
 
+    return () => clearTimeout(timeOut);
+  }, [username]);
 
-    async function handleVoting() {
-        if (advance) {
-            if (!key) {
-                toast.info('Invalid private posting key');
-                return
-            }
-        }
+  async function handleVoting() {
+    username = username.replace("@", "").toLowerCase();
 
-        const account = await getAuthorExt(username);
-        if (account) {
-            const keyType = getKeyType(account, key);
-            if (!keyType || !PrivKey.atLeast(keyType.type, 'POSTING')) {
-                toast.info('Invalid private posting key');
-                return
-            }
+    if (advance)
+      if (!key) {
+        toast.info("Invalid private posting key");
+        return;
+      }
 
-            
-
-        }
-
-
+    if (!weight || parseFloat(weight) < 1 || parseFloat(weight) > 100) {
+      toast.info("Invalid vote weight");
+      return;
     }
 
+    const links_array = links.match(/\bhttps?:\/\/\S+/gi);
 
+    if (!links_array) {
+      toast.info("Failed to parse links data");
+      return;
+    }
 
-    return (
-        <MainWrapper>
+    if (links_array?.length <= 0) {
+      toast.info("No links found");
+      return;
+    }
+    if (advance) {
+      const account = await getAuthorExt(username);
+      if (account) {
+        try {
+          const keyType = getKeyType(account, key);
+          if (!keyType || !PrivKey.atLeast(keyType.type, "POSTING")) {
+            toast.info("Invalid private posting key");
+            return;
+          }
+        } catch {
+          toast.info("Invalid private posting key");
+          return;
+        }
 
-            <div className='flex flex-col items-center gap-8'>
+        // temporarily update loginInfo with new data
+        loginInfo = account;
+      }
+    } else {
+      authenticateUser();
 
-                <p className=' text-xl font-bold'>Mass Voting</p>
+      if (!isAuthorized()) {
+        return;
+      }
+      const credentials = getCredentials(getSessionKey(session?.user?.name));
 
-                <div className='flex flex-col gap-4 w-full'>
+      if (!credentials) {
+        toast.error("Invalid credentials");
+        return;
+      }
+      key = credentials.key;
+    }
 
-                    <div className=' flex flex-row gap-2 items-center'>
-                        <Input size="sm" isDisabled={!advance} label='Username'
-                            placeholder="Enter voter username" isRequired className='flex-1'
-                            endContent={<Avatar
-                                src={getResizedAvatar('faisalamin')}
-                                size="sm" />}
-                        />
+    setLoading(true);
 
-                        <Button size='sm' onClick={() => { setAdvance(!advance) }}
-                            variant={'flat'} color={advance ? 'primary' : 'secondary'}
-                        >Use different account</Button>
+    setVotingModal({
+      isOpen: true,
+      voterCredentials: {
+        voter_account: loginInfo,
+        voter_key: key,
+        weight: weight,
+      },
+      links: links_array,
+    });
+  }
 
-                    </div>
+  return (
+    <MainWrapper>
+      <div className="flex flex-col items-center gap-8">
+        <p className=" text-xl font-bold">Mass Voting</p>
 
-                    {advance && <Input
-                        size="sm"
-                        value={key}
-                        onValueChange={setKey}
-                        isRequired={advance}
-                        label="Private key"
-                        placeholder="Enter your private posting key"
-                        type="password"
-                    />}
+        <div className="flex flex-col gap-4 w-full">
+          <div className=" flex flex-row gap-2 items-center">
+            <Input
+              size="sm"
+              isDisabled={!advance}
+              label="Username"
+              placeholder="Enter voter username"
+              isRequired
+              className="flex-1"
+              onValueChange={setUsername}
+              value={username}
+              endContent={<Avatar src={getResizedAvatar(avatar)} size="sm" />}
+            />
 
-                    <Input
-                        size="sm"
-                        value={key}
-                        onValueChange={setKey}
-                        isRequired
-                        label="Vote weight"
-                        placeholder="Enter Vote weight 0.1-100 %"
-                        inputMode='decimal'
-                        type='number'
-                        step={0.1}
-                        max={100}
-                        min={0.1}
-                        defaultValue='100'
-                    />
+            {isLogin() && (
+              <Button
+                size="sm"
+                onClick={() => {
+                  setAdvance(!advance);
+                  setUsername(session?.user?.name || "");
+                }}
+                variant={"flat"}
+                color={advance ? "primary" : "secondary"}
+              >
+                {`Use ${advance ? "default" : "different"} account`}
+              </Button>
+            )}
+          </div>
 
-                    <Textarea label={'Links'}
-                        isMultiline
-                        placeholder='Paste the links here...'
-                        disableAutosize
-                        rows={6} />
+          {advance && (
+            <Input
+              size="sm"
+              value={key}
+              onValueChange={setKey}
+              isRequired={advance}
+              label="Private key"
+              isClearable
+              placeholder="Enter your private posting key"
+              type="password"
+            />
+          )}
 
-                    <Button className='self-start'>Start voting</Button>
+          <Input
+            size="sm"
+            value={weight}
+            onValueChange={setWeight}
+            isRequired
+            label="Vote weight"
+            placeholder="Enter vote weight 0.1-100 %"
+            inputMode="decimal"
+            type="number"
+            step={0.1}
+            isClearable
+            max={100}
+            min={0.1}
+            defaultValue="100"
+          />
 
-                </div>
+          <Textarea
+            label={"Links"}
+            isMultiline
+            value={links}
+            onValueChange={setLinks}
+            placeholder="Paste the links here (separate by space)"
+            disableAutosize
+            rows={6}
+          />
 
-            </div>
+          <Button
+            className="self-start"
+            onClick={handleVoting}
+            isLoading={loading}
+          >
+            Start Voting
+          </Button>
+        </div>
+      </div>
 
-
-        </MainWrapper>
-    )
+      {votingModal.isOpen && (
+        <MassVotingModal
+          isOpen={votingModal.isOpen}
+          handleOnComplete={() => {
+            setLoading(false);
+          }}
+          onOpenChange={(isOpen) => {
+            setVotingModal({ ...votingModal, isOpen: isOpen });
+            setLoading(false);
+          }}
+          data={votingModal.voterCredentials}
+          links={votingModal.links}
+        />
+      )}
+    </MainWrapper>
+  );
 }

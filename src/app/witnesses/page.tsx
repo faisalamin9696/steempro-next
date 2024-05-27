@@ -44,8 +44,6 @@ const columns = [
   { name: "MISS", uid: "missed_blocks", sortable: true },
   { name: "PRICE FEED", uid: "price", sortable: false },
   { name: "VOTE", uid: "action", sortable: false },
-
-
 ];
 
 export default function page() {
@@ -54,6 +52,8 @@ export default function page() {
   const loginInfo = useAppSelector(state => state.loginReducer.value);
 
   const [allRows, setAllRows] = useState<Witness[]>([]);
+
+  
   useEffect(() => {
     if (data) {
       const index = data?.findIndex(account => account.name === (WitnessAccount));

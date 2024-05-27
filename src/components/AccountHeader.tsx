@@ -155,7 +155,7 @@ export default function AccountHeader(props: Props) {
                                 </Popover>
                             </div>
                         </div>
-                        <div className="stat-desc text-default-900 line-clamp-1 max-w-xs text-white/80">{isCommunity ? communityInfo.about : posting_json_metadata?.profile?.about}</div>
+                        <div className="stat-desc text-default-900 line-clamp-2 max-w-fit overflow-clip text-white/80 text-wrap flex-nowrap">{isCommunity ? communityInfo.about : posting_json_metadata?.profile?.about}</div>
                         {/* <div>
                             <Button radius='full' variant='flat' color={communityInfo.observer_subscribed ? 'danger' : 'primary'}
                                 size='sm'>{communityInfo.observer_subscribed ? 'Leave' : "Subscribe"}</Button>

@@ -1,7 +1,8 @@
 .markdown-body {
   @apply prose dark:prose-invert max-sm:prose-sm prose-a:text-blue-500 prose-a:no-underline prose-hr:clear-both;
 
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -33,12 +34,11 @@
 
   table {
     th {
-      text-align: left;
       border-style: none;
       padding: 6px;
       word-wrap: break-word;
       white-space: nowrap;
-      @apply bg-gray-200 dark:bg-gray-900
+      @apply align-top bg-gray-200 dark:bg-gray-900 max-w-fit overflow-clip text-wrap flex-nowrap text-start;
     }
 
     td {
@@ -52,11 +52,8 @@
       tr {
         @apply odd:bg-white odd:dark:bg-gray-900 even:bg-gray-100 even:dark:bg-gray-800;
       }
-
     }
-
   }
-
 
   .table-scrollable {
     min-width: 100% !important;
@@ -84,24 +81,16 @@
       top: 0;
     }
   }
-
 }
-
 
 .phishy {
   display: inline;
-  color: rgb(194 79 79/var(--tw-text-opacity));
+  color: rgb(194 79 79 / var(--tw-text-opacity));
 
   li::marker {
-    color: rgb(194 79 79/var(--tw-text-opacity));
+    color: rgb(194 79 79 / var(--tw-text-opacity));
   }
-
-
-
 }
-
-
-
 
 // // .markdown-body {
 
@@ -149,7 +138,6 @@
 // //   --color-danger-fg: #d1242f;
 
 // // }
-
 
 // // @media (prefers-color-scheme: dark) {
 
@@ -199,9 +187,6 @@
 // //   }
 // // }
 
-
-
-
 // .markdown-body {
 //   height: 100%;
 //   overflow: hidden;
@@ -240,7 +225,6 @@
 //     background-size: cover;
 //     transition: all 200ms ease-out;
 //     cursor: pointer;
-
 
 //     .markdown-video-play {
 //       position: absolute;
@@ -287,7 +271,6 @@
 //     }
 //   }
 
-
 //   div.pull-right {
 //     float: right;
 //     padding-left: 1rem;
@@ -299,7 +282,6 @@
 //     padding-right: 1rem;
 //     max-width: 50%;
 //   }
-
 
 //   div.videoWrapper {
 //     width: 100%;
@@ -1345,14 +1327,10 @@
 //   filter: invert(50%);
 // }
 
-
-
 // /* Default styles */
 // .markdown-body table {
 //   display: table;
 //   width: 100% !important;
-
-
 
 // }
 
@@ -1367,16 +1345,11 @@
 //     @apply backdrop-blur-sm
 //   }
 
-
 // }
-
-
 
 // /* Dark theme styles */
 
-
 // .markdown-body table {
-
 
 //   th {
 //     @apply  uppercase bg-gray-200 dark:bg-gray-800;
@@ -1391,18 +1364,10 @@
 //   }
 // }
 
-
-
-
-
-
-
 //   // table,
 //   // th {
 //   //   border: 1px solid red !important;
 //   // }
-
-
 
 // }
 

@@ -27,9 +27,7 @@ export default function DrawerItems(props: Props) {
     const dispatch = useAppDispatch();
     const { isLogin, authenticateUser, isAuthorized } = useLogin();
     const { data: session } = useSession();
-
     const loginInfo = useAppSelector(state => state.loginReducer.value);
-    const posting_json_metadata = JSON.parse(loginInfo?.posting_json_metadata || '{}')
     const { isOpen, onOpenChange } = useDisclosure();
 
     function handleLogout() {
@@ -101,8 +99,7 @@ export default function DrawerItems(props: Props) {
 
                 <Button variant='light'
                     as={Link}
-                    href='https://hivelearners-bcd3c.web.app'
-                    target='_blank'
+                    href='/tools'
                     className='w-full justify-start text-inherit '
                     onClick={onItemClick}
                     startContent={<FaTools className='text-xl' />}>
