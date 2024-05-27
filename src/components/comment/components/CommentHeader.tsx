@@ -186,7 +186,7 @@ export default function CommentHeader(props: Props) {
         }
         if (key === "mute") {
           // mute option will trigger the modal that's why only mute check
-          if (comment.is_muted === 1) {
+          if (comment.is_muted !== 0) {
             unmuteMutation.mutate(credentials.key);
             return;
           }
