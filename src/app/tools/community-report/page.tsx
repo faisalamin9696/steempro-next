@@ -3,20 +3,24 @@
 import MainWrapper from "@/components/wrappers/MainWrapper";
 import { fetchSds } from "@/libs/constants/AppFunctions";
 import {
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-  Input,
-  Pagination,
   Table,
   TableBody,
   TableCell,
   TableColumn,
   TableHeader,
   TableRow,
-} from "@nextui-org/react";
+} from "@nextui-org/table";
+
+import { Button } from "@nextui-org/button";
+import { Input } from "@nextui-org/input";
+import { Pagination } from "@nextui-org/pagination";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/dropdown";
+
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -327,7 +331,6 @@ export default function CommunityReportPage() {
   );
 
   return (
-    <MainWrapper>
       <div className="flex flex-col items-center gap-8">
         <p className=" text-xl font-bold">Community Report</p>
 
@@ -397,6 +400,5 @@ export default function CommunityReportPage() {
           </Table>
         )}
       </div>
-    </MainWrapper>
   );
 }

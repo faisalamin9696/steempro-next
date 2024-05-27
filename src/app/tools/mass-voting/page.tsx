@@ -8,7 +8,9 @@ import { getKeyType } from "@/libs/steem/condenser";
 import { getAuthorExt } from "@/libs/steem/sds";
 import { getResizedAvatar } from "@/libs/utils/image";
 import { PrivKey, getCredentials, getSessionKey } from "@/libs/utils/user";
-import { Avatar, Button, Input, Textarea } from "@nextui-org/react";
+import { Input, Textarea } from "@nextui-org/input";
+import { Avatar } from "@nextui-org/avatar";
+import { Button } from "@nextui-org/button";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -130,7 +132,7 @@ export default function MassVotingPage() {
   }
 
   return (
-    <MainWrapper>
+    <div>
       <div className="flex flex-col items-center gap-8">
         <p className=" text-xl font-bold">Mass Voting</p>
 
@@ -226,6 +228,6 @@ export default function MassVotingPage() {
           links={votingModal.links}
         />
       )}
-    </MainWrapper>
+    </div>
   );
 }

@@ -3,13 +3,14 @@
 import MainWrapper from "@/components/wrappers/MainWrapper";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import { getResizedAvatar } from "@/libs/utils/image";
-import { getCredentials, getSessionKey } from "@/libs/utils/user";
-import { Avatar, Button, Input } from "@nextui-org/react";
+import { Button } from "@nextui-org/button";
+import { Avatar } from "@nextui-org/avatar";
+import { Input } from "@nextui-org/input";
 import React, { useEffect, useState } from "react";
-import PieChart from "@/components/DataChart/PieChart";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { validateCommunity } from "@/libs/utils/helper";
+import PieChart from "@/components/charts/PieChart";
 
 export default function AuthorReportPage() {
   let loginInfo = useAppSelector((state) => state.loginReducer.value);
@@ -57,43 +58,41 @@ export default function AuthorReportPage() {
     mutate({ username, community });
   }
 
-
   return (
-    <MainWrapper>
-      <div className="flex flex-col items-center gap-8">
-        <p className=" text-xl font-bold">Author Report</p>
+    <div className="flex flex-col items-center gap-8">
+      <p className=" text-xl font-bold">Author Report</p>
 
-        <div className="flex flex-col gap-4 w-full">
-          <Input
-            size="sm"
-            label="Username"
-            placeholder="Enter username"
-            isRequired
-            className="flex-1"
-            onValueChange={setUsername}
-            value={username}
-            endContent={<Avatar src={getResizedAvatar(avatar)} size="sm" />}
-          />
+      <div className="flex flex-col gap-4 w-full">
+        <Input
+          size="sm"
+          label="Username"
+          placeholder="Enter username"
+          isRequired
+          className="flex-1"
+          onValueChange={setUsername}
+          value={username}
+          endContent={<Avatar src={getResizedAvatar(avatar)} size="sm" />}
+        />
 
-          <Input
-            isClearable
-            size="sm"
-            value={community}
-            onValueChange={setCommunity}
-            isRequired
-            label="Community"
-            placeholder="Enter community account e.g. hive-144064"
-          />
+        <Input
+          isClearable
+          size="sm"
+          value={community}
+          onValueChange={setCommunity}
+          isRequired
+          label="Community"
+          placeholder="Enter community account e.g. hive-144064"
+        />
 
-          <Button
-            className="self-start"
-            onClick={getAuthorReport}
-            isLoading={isPending}
-          >
-            Get Report
-          </Button>
-        </div>
-        {/* <div className="w-full h-[350px] p-4 rounded-md bg-foreground/5">
+        <Button
+          className="self-start"
+          onClick={getAuthorReport}
+          isLoading={isPending}
+        >
+          Get Report
+        </Button>
+      </div>
+      {/* <div className="w-full h-[350px] p-4 rounded-md bg-foreground/5">
           <ResponsivePie
             data={[
               { id: "Posts", label: "Posts", value: 7 },
@@ -142,25 +141,24 @@ export default function AuthorReportPage() {
           />
         </div> */}
 
-        {data && (
-          <PieChart
-            data={[
-              { id: "Posts", label: "Posts", value: data.total_post_count },
-              {
-                id: "Comments",
-                label: "Comments",
-                value: data.total_comment_count,
-              },
-              {
-                id: "Unique Comments",
-                label: "Unique Comments",
-                value: data.unique_comment_count,
-              },
-            ]}
-            handleItemClick={() => {}}
-          />
-        )}
-      </div>
-    </MainWrapper>
+      {data && (
+        <PieChart
+          data={[
+            { id: "Posts", label: "Posts", value: data.total_post_count },
+            {
+              id: "Comments",
+              label: "Comments",
+              value: data.total_comment_count,
+            },
+            {
+              id: "Unique Comments",
+              label: "Unique Comments",
+              value: data.unique_comment_count,
+            },
+          ]}
+          handleItemClick={() => {}}
+        />
+      )}
+    </div>
   );
 }
