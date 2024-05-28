@@ -38,7 +38,7 @@ export default async function Layout({
 export async function generateMetadata() {
     let { category, username } = usePathnameServer();
     if (!category) {
-        category = 'blogs'
+        category = 'blog'
     }
     const session = await getServerSession();
     const result = await getAuthorExt(username, session?.user?.name || 'null');

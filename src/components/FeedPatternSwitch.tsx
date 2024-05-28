@@ -21,8 +21,8 @@ export default memo(function FeedPatternSwitch() {
             className={clsx('text-xl', settings.feedStyle === 'list' && 'text-secondary')}
             IconType={LuLayoutList} onClick={() => { updateStyle('list') }} />
         {/* <IconButton size='md'
-                    className={clsx('text-xl', settings.feedStyle === 'blogs' && 'text-secondary')}
-                    IconType={TbLayoutList} onClick={() => { updateStyle('blogs') }} /> */}
+                    className={clsx('text-xl', settings.feedStyle === 'blog' && 'text-secondary')}
+                    IconType={TbLayoutList} onClick={() => { updateStyle('blog') }} /> */}
         <IconButton size='md'
             className={clsx('text-xl', settings.feedStyle === 'grid' && 'text-secondary')}
             IconType={CiGrid41} onClick={() => { updateStyle('grid') }} />

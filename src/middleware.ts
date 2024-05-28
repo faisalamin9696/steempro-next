@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server';
 
 // Define valid categories
 
-const valid_tabs = ['blogs', 'posts', 'friends',
+const valid_tabs = ['blog', 'posts', 'friends',
     'comments', 'replies', 'wallet', 'communities', 'settings'];
 
 const basic_categories = ['trending', 'created', 'hot',

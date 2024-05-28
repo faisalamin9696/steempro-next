@@ -3,7 +3,7 @@
 import { Tab, Tabs } from '@nextui-org/tabs';
 import React, { useEffect } from 'react';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
-import ProfileBlogsTab from '../(tabs)/blogs/page';
+import ProfileBlogsTab from '../(tabs)/blog/page';
 import ProfileWalletTab from '../(tabs)/wallet/ProfileWalletTab';
 import FeedPatternSwitch from '@/components/FeedPatternSwitch';
 import { useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
@@ -43,7 +43,7 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
 
 
     const profileTabs = [
-        { title: 'Blogs', key: 'blogs', children: <ProfileBlogsTab /> },
+        { title: 'Blog', key: 'blog', children: <ProfileBlogsTab /> },
         { title: 'Posts', key: 'posts', children: <ProfilePostsMainTab /> },
         { title: 'Communities', key: 'communities', children: <ProfileCommunitiesMainTab /> },
         { title: 'Wallet', key: 'wallet', children: <ProfileWalletTab data={isSelf ? loginInfo : profileInfo} /> },

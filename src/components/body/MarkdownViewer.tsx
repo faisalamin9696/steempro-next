@@ -9,7 +9,6 @@ import CryptoJS from 'crypto-js';
 import SanitizeConfig, { noImageText } from './SanitizeConfig';
 import HtmlReady from './htmlReady';
 import sanitize from 'sanitize-html';
-import { replaceOldDomains } from '@/libs/utils/Links';
 import { twMerge } from 'tailwind-merge';
 
 const remarkable = new Remarkable({
@@ -90,7 +89,7 @@ export default memo(function MarkdownViewer(props: Props) {
         renderedText = '<html>' + renderedText + '</html>';
     }
 
-    renderedText = replaceOldDomains(renderedText);
+    // renderedText = replaceOldDomains(renderedText);
 
     if (renderedText)
         renderedText = HtmlReady(renderedText, {
