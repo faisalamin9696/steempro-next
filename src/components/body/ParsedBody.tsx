@@ -49,14 +49,7 @@ export function ParsedBody({
           </div>
         );
       }
-      if (domNode?.attribs && domNode?.name === "a") {
-        return (
-          <Link className="" {...domNode?.attribs} href={domNode.attribs.href}>
-            {domToReact(domNode.children)}
-          </Link>
-        );
-      }
-
+     
       if (domNode?.name === "table") {
         // Render the table content using domToReact
         return (
