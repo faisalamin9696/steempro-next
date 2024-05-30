@@ -26,7 +26,7 @@ const ToolsItemCard = (props: Props): JSX.Element => {
 
   return (
     <div
-      className=" flex flex-col items-center relative gap-4 bg-foreground/10 p-4 rounded-md"
+      className=" flex flex-col items-center relative gap-4 bg-white/50 dark:bg-foreground/10 p-4 rounded-lg"
       ref={cardRef}
       data-tilt-speed="600"
       data-tilt

@@ -9,8 +9,6 @@ import linksRe, {
 } from "@/libs/utils/Links";
 import * as Phishing from "@/libs/utils/Phishing";
 import {
-  INTERNAL_MENTION_REGEX,
-  INTERNAL_POST_REGEX,
   INTERNAL_POST_TAG_REGEX,
   MENTION_REGEX,
   POST_REGEX,
@@ -110,52 +108,52 @@ function traverse(node, state, depth = 0) {
 function link(state, child) {
   const url = child.getAttribute("href");
 
-  const tpostMatch = url.match(INTERNAL_POST_TAG_REGEX);
+  // const tpostMatch = url.match(INTERNAL_POST_TAG_REGEX);
 
-  if (
-    (tpostMatch &&
-      tpostMatch.length === 4 &&
-      WHITE_LIST.some((v) => tpostMatch[1].includes(v))) ||
-    (tpostMatch && tpostMatch.length === 4 && tpostMatch[1].indexOf("/") == 0)
-  ) {
-    // check if permlink is section or section with params ?q=xyz
-    if (SECTION_LIST.some((v) => tpostMatch[3].includes(v))) {
-      const author = tpostMatch[2].replace("@", "").toLowerCase();
-      const section = tpostMatch[3];
-      if (child.textContent === url) {
-        child.textContent = `@${author}/${section}`;
-      }
-      const h = `/@${author}/${section}`;
-      child.setAttribute("href", h);
-      return;
-    } else {
-      // check if domain is not whitelist and does contain dot (not tag e.g. `/ecency`)
-      if (
-        tpostMatch[1] &&
-        tpostMatch[1].includes(".") &&
-        !WHITE_LIST.some((v) => tpostMatch[1].includes(v))
-      ) {
-        return;
-      }
-      let tag = "post";
-      // check if tag does exist and doesn't include dot likely word/tag
-      if (tpostMatch[1] && !tpostMatch[1].includes(".")) {
-        [, tag] = tpostMatch;
-        tag = tag.replace("/", "");
-      }
+  // if (
+  //   (tpostMatch &&
+  //     tpostMatch.length === 4 &&
+  //     WHITE_LIST.some((v) => tpostMatch[1].includes(v))) ||
+  //   (tpostMatch && tpostMatch.length === 4 && tpostMatch[1].indexOf("/") == 0)
+  // ) {
+  //   // check if permlink is section or section with params ?q=xyz
+  //   if (SECTION_LIST.some((v) => tpostMatch[3].includes(v))) {
+  //     const author = tpostMatch[2].replace("@", "").toLowerCase();
+  //     const section = tpostMatch[3];
+  //     if (child.textContent === url) {
+  //       child.textContent = `@${author}/${section}`;
+  //     }
+  //     const h = `/@${author}/${section}`;
+  //     child.setAttribute("href", h);
+  //     return;
+  //   } else {
+  //     // check if domain is not whitelist and does contain dot (not tag e.g. `/ecency`)
+  //     if (
+  //       tpostMatch[1] &&
+  //       tpostMatch[1].includes(".") &&
+  //       !WHITE_LIST.some((v) => tpostMatch[1].includes(v))
+  //     ) {
+  //       return;
+  //     }
+  //     let tag = "post";
+  //     // check if tag does exist and doesn't include dot likely word/tag
+  //     if (tpostMatch[1] && !tpostMatch[1].includes(".")) {
+  //       [, tag] = tpostMatch;
+  //       tag = tag.replace("/", "");
+  //     }
 
-      const author = tpostMatch[2].replace("@", "");
-      const permlink = tpostMatch[3];
-      if (child.textContent === child) {
-        child.textContent = `@${author}/${permlink}`;
-      }
+  //     const author = tpostMatch[2].replace("@", "");
+  //     const permlink = tpostMatch[3];
+  //     if (child.textContent === child) {
+  //       child.textContent = `@${author}/${permlink}`;
+  //     }
 
-      const h = `/@${author}/${permlink}`;
-      child.setAttribute("href", h);
+  //     const h = `/@${author}/${permlink}`;
+  //     child.setAttribute("href", h);
 
-      return;
-    }
-  }
+  //     return;
+  //   }
+  // }
 
   if (url) {
     state.links.add(url);
@@ -278,7 +276,8 @@ function linkifyNode(child: any, state: any) {
     );
 
     if (mutate && content !== data) {
-      const href = child.nodeValue.trim();
+      const href = child?.nodeValue?.trim();
+
       const postMatch = href.match(POST_REGEX);
       if (postMatch && WHITE_LIST.includes(postMatch[1].replace(/www./, ""))) {
         const tag = postMatch[2];
@@ -330,7 +329,7 @@ function linkifyNode(child: any, state: any) {
           return replaceNode;
         }
       }
-      const newChild = DOMParser.parseFromString(`${content}`);
+      const newChild = DOMParser.parseFromString(`<span>${content}</span>`);
       child.parentNode.replaceChild(newChild, child);
       return newChild;
     }

@@ -26,8 +26,10 @@ import {
   createPatch,
   extractMetadata,
   generatePermlink,
+  generateReplyPermlink,
   makeJsonMetadata,
   makeJsonMetadataForUpdate,
+  makeJsonMetadataReply,
   makeOptions,
   validateCommentBody,
 } from "@/libs/utils/editor";
@@ -41,8 +43,6 @@ import secureLocalStorage from "react-secure-storage";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import clsx from "clsx";
-import CommentOptionWrapper from "@/components/wrappers/CommentOptionWrapper";
-import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 import TagsListCard from "@/components/TagsListCard";
 import moment from "moment";
 
@@ -58,7 +58,7 @@ export default function SubmitPage(props: Props) {
   const { oldPost, handleUpdateSuccess, handleUpdateCancel } =
     props?.params || {};
   const isEdit = !!oldPost?.permlink;
-  const { isMobile } = useDeviceInfo();
+  const isEditComment = !!oldPost?.depth;
 
   const searchParams = useSearchParams();
   const accountParams = searchParams.get("account");
@@ -166,7 +166,7 @@ export default function SubmitPage(props: Props) {
       if (isEdit) {
         let body = markdown;
 
-        if (!checkPromotionText(body))
+        if (!checkPromotionText(body) && !isEditComment)
           body = body + "\n\n" + AppStrings.promotion_text;
         handleUpdateSuccess &&
           handleUpdateSuccess({
@@ -185,7 +185,12 @@ export default function SubmitPage(props: Props) {
     },
   });
 
-  async function handlePublish() {
+  async function handlePostPublish() {
+    if (isEditComment) {
+      handleCommentUpdate();
+      return;
+    }
+
     if (!title) {
       toast.info("Title can not be empty");
       // AppConstants.SHOW_TOAST('Invalid title', 'Title can not be empty', 'info');
@@ -338,6 +343,87 @@ export default function SubmitPage(props: Props) {
     }
   }
 
+  async function handleCommentUpdate() {
+    if (oldPost && isEditComment) {
+      if (!markdown) {
+        toast.info("Comment can not be empty");
+        return;
+      }
+
+      const limit_check = validateCommentBody(markdown, false);
+      if (limit_check !== true) {
+        toast.info(limit_check);
+        return;
+      }
+
+      authenticateUser();
+
+      if (isAuthorized()) {
+        setPosting(true);
+
+        await awaitTimeout(1);
+        try {
+          // generating the permlink for the comment author
+          let permlink = generateReplyPermlink(oldPost.author);
+
+          const postData: PostingContent = {
+            author: loginInfo,
+            title: "",
+            body: markdown,
+            parent_author: oldPost.author,
+            parent_permlink: oldPost.permlink,
+            json_metadata: makeJsonMetadataReply(),
+            permlink: permlink,
+          };
+
+          const cbody = markdown.replace(
+            /[\x00-\x09\x0B-\x0C\x0E-\x1F\x7F-\x9F]/g,
+            ""
+          );
+
+          // check if reply is in edit mode
+          if (true) {
+            const oldComment = oldPost;
+            let newBody = cbody;
+
+            const patch = createPatch(oldComment?.body, newBody?.trim());
+            if (
+              patch &&
+              patch.length < Buffer.from(oldComment?.body, "utf-8").length
+            ) {
+              newBody = patch;
+            }
+            const meta = extractMetadata(markdown);
+            const new_json_metadata = makeJsonMetadata(meta, []);
+            postData.permlink = oldComment.permlink;
+            postData.body = newBody;
+            postData.json_metadata = "";
+            postData.parent_author = oldComment.parent_author;
+            postData.parent_permlink = oldComment.parent_permlink;
+          }
+
+          const credentials = getCredentials(
+            getSessionKey(session?.user?.name)
+          );
+          if (credentials) {
+            // handleOnPublished(postData);
+            postingMutation.mutate({
+              postData,
+              options: null,
+              key: credentials.key,
+            });
+          } else {
+            setPosting(false);
+            toast.error("Invalid credentials");
+          }
+        } catch (e) {
+          toast.error(String(e));
+          setPosting(false);
+        }
+      }
+    }
+  }
+
   return (
     <div
       className={clsx(
@@ -352,47 +438,51 @@ export default function SubmitPage(props: Props) {
             "1md:w-[50%] 1md:float-start 1md:sticky 1md:z-[1]  1md:self-start 1md:top-[70px] px-1"
         )}
       >
-        <CommunitySelectButton
-          isDisabled={isPosting}
-          community={community}
-          onlyCommunity={isEdit}
-          refCommunity={refCommunity}
-          onSelectCommunity={setCommunity}
-          handleOnClear={() => {
-            if (refCommunity) {
-              history.replaceState({}, "", "/submit");
-              setRefCommunity(undefined);
-            }
-          }}
-        />
+        {!isEditComment && (
+          <>
+            <CommunitySelectButton
+              isDisabled={isPosting}
+              community={community}
+              onlyCommunity={isEdit}
+              refCommunity={refCommunity}
+              onSelectCommunity={setCommunity}
+              handleOnClear={() => {
+                if (refCommunity) {
+                  history.replaceState({}, "", "/submit");
+                  setRefCommunity(undefined);
+                }
+              }}
+            />
 
-        <Input
-          size="sm"
-          value={title}
-          onValueChange={setTitle}
-          className="text-default-900 "
-          classNames={{
-            input: "font-bold text-md",
-            inputWrapper: "h-8",
-          }}
-          isDisabled={isPosting}
-          placeholder={"Title"}
-          maxLength={255}
-        />
+            <Input
+              size="sm"
+              value={title}
+              onValueChange={setTitle}
+              className="text-default-900 "
+              classNames={{
+                input: "font-bold text-md",
+                inputWrapper: "h-8",
+              }}
+              isDisabled={isPosting}
+              placeholder={"Title"}
+              maxLength={255}
+            />
 
-        <Input
-          size="sm"
-          value={tags}
-          className="text-default-900 "
-          onValueChange={setTags}
-          classNames={{
-            inputWrapper: "h-8",
-          }}
-          autoCapitalize="off"
-          placeholder={"Tags here..."}
-          isDisabled={isPosting}
-          maxLength={255}
-        />
+            <Input
+              size="sm"
+              value={tags}
+              className="text-default-900 "
+              onValueChange={setTags}
+              classNames={{
+                inputWrapper: "h-8",
+              }}
+              autoCapitalize="off"
+              placeholder={"Tags here..."}
+              isDisabled={isPosting}
+              maxLength={255}
+            />
+          </>
+        )}
 
         <EditorInput
           value={markdown}
@@ -406,35 +496,28 @@ export default function SubmitPage(props: Props) {
           <div className="gap-2 flex">
             <ClearFormButton onClearPress={clearForm} isDisabled={isPosting} />
 
-            <CommentOptionWrapper
-              advance={isMobile}
+            <BeneficiaryButton
               isDisabled={isEdit || isPosting}
-            >
-              <BeneficiaryButton
-                isDisabled={isEdit || isPosting}
-                onSelectBeneficiary={(bene) => {
-                  setBeneficiaries([
-                    ...beneficiaries,
-                    { ...bene, weight: bene.weight },
-                  ]);
-                }}
-                onRemove={(bene) => {
-                  setBeneficiaries(
-                    beneficiaries?.filter(
-                      (item) => item.account !== bene.account
-                    )
-                  );
-                }}
-                beneficiaries={beneficiaries}
-              />
-              <RewardSelectButton
-                isDisabled={isEdit || isPosting}
-                selectedValue={reward}
-                onSelectReward={(reward) => {
-                  setReward(reward);
-                }}
-              />
-            </CommentOptionWrapper>
+              onSelectBeneficiary={(bene) => {
+                setBeneficiaries([
+                  ...beneficiaries,
+                  { ...bene, weight: bene.weight },
+                ]);
+              }}
+              onRemove={(bene) => {
+                setBeneficiaries(
+                  beneficiaries?.filter((item) => item.account !== bene.account)
+                );
+              }}
+              beneficiaries={beneficiaries}
+            />
+            <RewardSelectButton
+              isDisabled={isEdit || isPosting}
+              selectedValue={reward}
+              onSelectReward={(reward) => {
+                setReward(reward);
+              }}
+            />
           </div>
 
           <div className="flex flex-1 justify-end gap-2 w-full">
@@ -456,7 +539,7 @@ export default function SubmitPage(props: Props) {
               isDisabled={isPosting}
               isLoading={isPosting}
               buttonText={isEdit ? "Update" : undefined}
-              onClick={handlePublish}
+              onClick={handlePostPublish}
             />
           </div>
         </div>
