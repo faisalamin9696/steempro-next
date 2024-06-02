@@ -108,53 +108,6 @@ function traverse(node, state, depth = 0) {
 function link(state, child) {
   const url = child.getAttribute("href");
 
-  // const tpostMatch = url.match(INTERNAL_POST_TAG_REGEX);
-
-  // if (
-  //   (tpostMatch &&
-  //     tpostMatch.length === 4 &&
-  //     WHITE_LIST.some((v) => tpostMatch[1].includes(v))) ||
-  //   (tpostMatch && tpostMatch.length === 4 && tpostMatch[1].indexOf("/") == 0)
-  // ) {
-  //   // check if permlink is section or section with params ?q=xyz
-  //   if (SECTION_LIST.some((v) => tpostMatch[3].includes(v))) {
-  //     const author = tpostMatch[2].replace("@", "").toLowerCase();
-  //     const section = tpostMatch[3];
-  //     if (child.textContent === url) {
-  //       child.textContent = `@${author}/${section}`;
-  //     }
-  //     const h = `/@${author}/${section}`;
-  //     child.setAttribute("href", h);
-  //     return;
-  //   } else {
-  //     // check if domain is not whitelist and does contain dot (not tag e.g. `/ecency`)
-  //     if (
-  //       tpostMatch[1] &&
-  //       tpostMatch[1].includes(".") &&
-  //       !WHITE_LIST.some((v) => tpostMatch[1].includes(v))
-  //     ) {
-  //       return;
-  //     }
-  //     let tag = "post";
-  //     // check if tag does exist and doesn't include dot likely word/tag
-  //     if (tpostMatch[1] && !tpostMatch[1].includes(".")) {
-  //       [, tag] = tpostMatch;
-  //       tag = tag.replace("/", "");
-  //     }
-
-  //     const author = tpostMatch[2].replace("@", "");
-  //     const permlink = tpostMatch[3];
-  //     if (child.textContent === child) {
-  //       child.textContent = `@${author}/${permlink}`;
-  //     }
-
-  //     const h = `/@${author}/${permlink}`;
-  //     child.setAttribute("href", h);
-
-  //     return;
-  //   }
-  // }
-
   if (url) {
     state.links.add(url);
     if (state.mutate) {
@@ -278,16 +231,16 @@ function linkifyNode(child: any, state: any) {
     if (mutate && content !== data) {
       const href = child?.nodeValue?.trim();
 
+      let newChild = DOMParser.parseFromString(`<span>${content}</span>`);
+
       const postMatch = href.match(POST_REGEX);
       if (postMatch && WHITE_LIST.includes(postMatch[1].replace(/www./, ""))) {
         const tag = postMatch[2];
         const author = postMatch[3].replace("@", "");
         const permlink = postMatch[4];
-        const replaceNode = DOMParser.parseFromString(
-          `<a href="/${tag}/@${author}/${permlink}">@${author}/${permlink}</a>`
+        newChild = DOMParser.parseFromString(
+          `<span><a href="/${tag}/@${author}/${permlink}">@${author}/${permlink}</a></span>`
         );
-        child.parentNode.replaceChild(replaceNode, child);
-        return replaceNode;
       }
 
       // If profile mention url
@@ -299,11 +252,9 @@ function linkifyNode(child: any, state: any) {
       ) {
         const author = mentionMatch[2].replace("@", "").toLowerCase();
         if (author.indexOf("/") === -1) {
-          const replaceNode = DOMParser.parseFromString(
-            `<a href="/@${author}">@${author}</a>`
+          newChild = DOMParser.parseFromString(
+            `<span><a href="/@${author}">@${author}</a></span>`
           );
-          child.parentNode.replaceChild(replaceNode, child);
-          return replaceNode;
         }
       }
 
@@ -322,14 +273,11 @@ function linkifyNode(child: any, state: any) {
           const author = tpostMatch[2].replace("@", "").toLowerCase();
           const section = tpostMatch[3];
           const href = `/@${author}/${section}`;
-          const replaceNode = DOMParser.parseFromString(
-            `<a href="${href}">@${author}/${section}</a>`
+          newChild = DOMParser.parseFromString(
+            `<span><a href="${href}">@${author}/${section}</a></span>`
           );
-          child.parentNode.replaceChild(replaceNode, child);
-          return replaceNode;
         }
       }
-      const newChild = DOMParser.parseFromString(`<span>${content}</span>`);
       child.parentNode.replaceChild(newChild, child);
       return newChild;
     }
