@@ -16,6 +16,7 @@ const dbConfig = {
   password: process.env.NEXT_DB_PASSWORD, // MySQL password
   database: process.env.NEXT_DB_DATABASE, // MySQL database name
 };
+
 let connection;
 let sshClient;
 let tunnel;
@@ -31,7 +32,10 @@ async function createTunnel() {
           dbConfig.host,
           dbConfig.port,
           (err, stream) => {
-            if (err) reject(err);
+            if (err) {
+              console.error("Error forwarding SSH tunnel:", err);
+              reject(err);
+            }
             tunnel = stream;
             resolve();
           }
@@ -40,6 +44,7 @@ async function createTunnel() {
       .connect(sshConfig);
 
     sshClient.on("error", (err) => {
+      console.error("SSH Client Error:", err);
       reject(err);
     });
   });
@@ -68,31 +73,35 @@ async function getConnection() {
 }
 
 async function closeConnection() {
-  if (connection) {
-    await connection.end();
-    connection = null;
-    console.log("MySQL connection closed");
-  }
-  if (sshClient) {
-    sshClient.end();
-    sshClient = null;
-    console.log("SSH tunnel closed");
+  try {
+    if (connection) {
+      await connection.end();
+      connection = null;
+      console.log("MySQL connection closed");
+    }
+    if (sshClient) {
+      sshClient.end();
+      sshClient = null;
+      console.log("SSH tunnel closed");
+    }
+  } catch (error) {
+    console.error("Error closing connection:", error);
   }
 }
 
 async function executeQuery(query, params) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const connection = await getConnection();
-      const [rows] = await connection.query(query, params);
-      resolve(rows);
-    } catch (error) {
-      reject(error);
-    } finally {
-      await closeConnection();
-    }
-  });
+  try {
+    const connection = await getConnection();
+    const [rows] = await connection.query(query, params);
+    return rows;
+  } catch (error) {
+    console.error("Error executing query:", error);
+    throw error;
+  } finally {
+    await closeConnection();
+  }
 }
+
 module.exports = {
   getConnection,
   closeConnection,
