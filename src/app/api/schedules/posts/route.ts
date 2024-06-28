@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import db from "@/app/config/db";
 import { getServerSession } from "next-auth";
+import { GET as authOptions } from "../../auth/[...nextauth]/route";
 
-export async function GET(req: NextRequest) {
-  const session = await getServerSession();
+export async function GET() {
+  const session: any = await getServerSession(authOptions);
   try {
     const query = "SELECT * from posts WHERE username = ? ORDER BY time DESC";
     const result = await db.executeQuery(query, [session?.user?.name]);

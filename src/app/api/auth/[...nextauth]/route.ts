@@ -2,7 +2,7 @@ import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials"
 
 
-const handler = NextAuth({
+const authOptions = NextAuth({
     secret: process.env.NEXTAUTH_SECRET,
     session: {
         strategy: 'jwt',
@@ -32,5 +32,5 @@ const handler = NextAuth({
     ],
 });
 
-export { handler as GET, handler as POST };
+export { authOptions as GET, authOptions as POST };
 
