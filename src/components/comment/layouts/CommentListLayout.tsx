@@ -28,7 +28,7 @@ export default function CommentListLayout(props: CommentProps) {
         <CommentHeader compact comment={commentInfo} className='w-full' />
 
         <Card as={Link} href={targetUrl} radius='none' shadow='none'
-            className={clsx(commentInfo.is_muted && ' opacity-80', 'bg-transparent main-comment-list w-full')}>
+            className={clsx(!!commentInfo.is_muted && ' opacity-80', 'bg-transparent main-comment-list w-full')}>
             <div className="flex items-center gap-2 w-full py-0">
                 <div className="pl-1 text-container space-y-2">
                     <div className=" text-start font-bold text-md">{commentInfo.title}</div>

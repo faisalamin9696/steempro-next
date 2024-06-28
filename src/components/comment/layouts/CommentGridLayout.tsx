@@ -42,7 +42,7 @@ export default function CommentGridLayout(props: CommentProps) {
 
             <CardBody className='flex flex-col p-0' as={Link} href={targetUrl}>
                 <>
-                    <div className={clsx(commentInfo.is_muted && ' opacity-80', "flex-shrink-0 relative ")}>
+                    <div className={clsx(!!commentInfo.is_muted && ' opacity-80', "flex-shrink-0 relative ")}>
                         {thumbnail ?
                             <div className='relative'>
                                 <Image
@@ -79,7 +79,7 @@ export default function CommentGridLayout(props: CommentProps) {
                     </div>
 
                     <div className="flex flex-1 flex-col justify-between p-4">
-                        <div className={clsx(commentInfo.is_muted && ' opacity-80', "flex-1")}>
+                        <div className={clsx(!!commentInfo.is_muted && ' opacity-80', "flex-1")}>
 
                             <Card radius='none'
                                 shadow='none'

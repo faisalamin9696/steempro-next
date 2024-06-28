@@ -36,6 +36,7 @@ import { MdSearch } from "react-icons/md";
 import { Input } from "@nextui-org/input";
 import "./style.scss";
 import { PiUserSwitchFill } from "react-icons/pi";
+import { keysColorMap } from "../AccountItemCard";
 
 export default function AppNavbar() {
   const { authenticateUser, isAuthorized, credentials } = useLogin();
@@ -219,14 +220,21 @@ export default function AppNavbar() {
             >
               <PopoverTrigger>
                 <Button
-                  isIconOnly
                   className="ms-2"
                   radius="full"
                   variant="light"
+                  isIconOnly
                 >
                   <Avatar
                     src={getResizedAvatar(session?.user?.name ?? "")}
                     className=" cursor-pointer"
+                    isBordered
+                    size="sm"
+                    color={
+                      credentials?.type
+                        ? keysColorMap[credentials.type]
+                        : undefined
+                    }
                   />
                 </Button>
               </PopoverTrigger>

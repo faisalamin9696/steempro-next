@@ -113,7 +113,7 @@ export default function AppWrapper({
 
   const { data: accountData } = useSWR(username && [username], getAuthorExt, {
     shouldRetryOnError: true,
-    refreshInterval: 300000, // 10 minutes
+    refreshInterval: 300000, 
     errorRetryInterval: 3000,
   });
 
@@ -126,7 +126,7 @@ export default function AppWrapper({
     fetchSds<number>,
     {
       shouldRetryOnError: true,
-      refreshInterval: 300000, // 10 minutes
+      refreshInterval: 300000, 
       errorRetryInterval: 10000,
     }
   );

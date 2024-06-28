@@ -68,7 +68,6 @@ export default memo(function CommunitySelectButton(props: Props) {
                     selectedKeys={
                         community ? [JSON.stringify({
                             account: community.account,
-                            title: community.title
                         })] : []}
                     size='sm'
                     isDisabled={onlyCommunity || isDisabled}
@@ -101,7 +100,7 @@ export default memo(function CommunitySelectButton(props: Props) {
 
                 >
                     {(item) => (
-                        <SelectItem key={JSON.stringify({ account: item.account, title: item.title })}
+                        <SelectItem key={JSON.stringify({ account: item.account })}
 
                             textValue={JSON.stringify(item)}
                             value={item.title}>

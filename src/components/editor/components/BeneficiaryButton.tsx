@@ -92,7 +92,7 @@ export default memo(function BeneficiaryButton(props: Props) {
             size="sm"
             isDisabled={isDisabled}
             color="default"
-            startContent={<FaUsersCog className="text-lg" />}
+            startContent={<FaUsersCog className="text-xl" />}
             className=""
             radius="lg"
             variant="shadow"
@@ -182,7 +182,7 @@ export default memo(function BeneficiaryButton(props: Props) {
             >
               {beneficiaries?.map((bene) => {
                 return (
-                  <div className="flex  w-full">
+                  <div className="flex  w-full" key={bene.account}>
                     <Card
                       className="gap-4 pe-2 w-full
                                          flex-row items-center rounded-full"

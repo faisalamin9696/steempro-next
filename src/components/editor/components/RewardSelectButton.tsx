@@ -39,7 +39,7 @@ export default memo(function RewardSelectButton(props: Props) {
           <Button
             size="sm"
             isDisabled={isDisabled}
-            startContent={<FaDollarSign className="text-lg" />}
+            startContent={<FaDollarSign className="text-xl" />}
             className="text-white  bg-teal-600"
             radius="lg"
             variant="shadow"

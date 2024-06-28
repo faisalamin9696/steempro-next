@@ -1,78 +1,74 @@
-import { headers } from 'next/headers';
-import { validateCommunity } from './helper';
+import { headers } from "next/headers";
+import { validateCommunity } from "./helper";
+import { validBasicCats, validProfileTabs } from "@/middleware";
 
-
-// Define valid categories
-
-const valid_tabs = ['blog', 'posts', 'friends',
-    'comments', 'replies', 'wallet', 'communities', 'settings'];
-
-const basic_categories = ['trending', 'created', 'hot',
-    'payout'];
-
-const valid_categories = basic_categories.concat(['pinned', 'about']);
+const valid_categories = validBasicCats.concat(["pinned", "about"]);
 
 // Define username URL regex
 const usernameURLRegex = /@([^/]+)/;
 
 interface Params {
-    category: string;
-    username: string;
-    permlink: string;
-    tag: string;
-    community: string;
+  category: string;
+  username: string;
+  permlink: string;
+  tag: string;
+  community: string;
 }
 
 const usePathnameServer = (): Params => {
+  const headersList = headers();
+  const pathname = headersList.get("pathname") ?? "";
+  const params = {
+    category: "",
+    username: "",
+    permlink: "",
+    tag: "",
+    community: "",
+  };
 
-    const headersList = headers();
-    const pathname = headersList.get("pathname") ?? '';
-    const params = {
-        category: '',
-        username: '',
-        permlink: '',
-        tag: '',
-        community: ''
-    };
+  const splitted_path = pathname.split("/");
 
-    const splitted_path = pathname.split('/');
+  splitted_path.shift();
 
-    splitted_path.shift();
+  let [first_param, second_param, third_param] = splitted_path;
+  first_param = first_param?.toLowerCase();
+  second_param = second_param?.toLowerCase();
 
-    let [first_param, second_param, third_param] = splitted_path;
-    first_param = first_param?.toLowerCase();
-    second_param = second_param?.toLowerCase();
+  // Check if the URL matches the pattern for a post
+  if (splitted_path.length === 3 && usernameURLRegex.test(second_param)) {
+    params.category = splitted_path[0]?.replace("@", "") ?? "";
+    params.username = splitted_path[1]?.replace("@", "") ?? "";
+    params.permlink = splitted_path[2] ?? "";
+  }
 
-    // Check if the URL matches the pattern for a post
-    if (splitted_path.length === 3 && usernameURLRegex.test(second_param)) {
-        params.category = splitted_path[0]?.replace('@', '') ?? '';
-        params.username = splitted_path[1]?.replace('@', '') ?? '';
-        params.permlink = splitted_path[2] ?? '';
-    }
+  if (
+    splitted_path.length === 2 &&
+    usernameURLRegex.test(first_param) &&
+    !validProfileTabs.includes(second_param)
+  ) {
+    params.username = splitted_path[0]?.replace("@", "") ?? "";
+    params.permlink = splitted_path[1] ?? "";
+  }
+  // Check if the URL matches the pattern for a profile
+  else if (pathname?.startsWith("/@")) {
+    params.username = splitted_path[0]?.replace("@", "") ?? "";
+    params.category = splitted_path[1]?.replace("@", "") ?? "";
+  }
+  // Check if the URL matches the pattern for a community
+  else if (
+    validateCommunity(second_param) &&
+    valid_categories.includes(first_param)
+  ) {
+    params.category = splitted_path[0]?.replace("@", "") ?? "";
+    params.community = splitted_path[1]?.replace("@", "") ?? "";
+  }
+  // Check if the URL matches the pattern for a category
+  else if (valid_categories.includes(first_param)) {
+    params.category = splitted_path[0]?.replace("@", "") ?? "";
+    params.tag = splitted_path[1]?.replace("@", "") ?? "";
+  }
 
-
-    if (splitted_path.length === 2 && usernameURLRegex.test(first_param) && !valid_tabs.includes(second_param)) {
-        params.username = splitted_path[0]?.replace('@', '') ?? '';
-        params.permlink = splitted_path[1] ?? '';
-    }
-    // Check if the URL matches the pattern for a profile
-    else if (pathname?.startsWith('/@')) {
-        params.username = splitted_path[0]?.replace('@', '') ?? '';
-        params.category = splitted_path[1]?.replace('@', '') ?? '';
-
-    }
-    // Check if the URL matches the pattern for a community
-    else if (validateCommunity(second_param) && valid_categories.includes(first_param)) {
-        params.category = splitted_path[0]?.replace('@', '') ?? '';
-        params.community = splitted_path[1]?.replace('@', '') ?? '';
-    }
-    // Check if the URL matches the pattern for a category
-    else if (valid_categories.includes(first_param)) {
-        params.category = splitted_path[0]?.replace('@', '') ?? '';
-        params.tag = splitted_path[1]?.replace('@', '') ?? '';
-    }
-
-    return params;
+  return params;
 };
 
 export default usePathnameServer;

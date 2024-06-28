@@ -130,7 +130,7 @@ export default function AuthModal(props: Props) {
       if (auth)
         secureLocalStorage.setItem(
           `token_${credentials.username}`,
-          encryptPrivateKey(password, auth?.toString()?.substring(0, 20))
+          encryptPrivateKey(password, auth?.key.toString()?.substring(0, 20))
         );
     }
 
@@ -238,7 +238,7 @@ export default function AuthModal(props: Props) {
           } else {
             const auth = saveCredentials(
               username,
-              keyType.type,
+              keyType.key,
               password,
               keyType.type,
               isCurrent

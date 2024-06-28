@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import './markdown.scss';
+import "./markdown.scss";
 import { Providers } from "./providers";
 import { Toaster } from "sonner";
 import clsx from "clsx";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Analytics } from "@vercel/analytics/react"
+import { Analytics } from "@vercel/analytics/react";
 import { AppStrings } from "@/libs/constants/AppStrings";
+import { Suspense } from "react";
 
 // export const runtime = 'edge' // 'nodejs' (default) | 'edge'
 
@@ -15,27 +16,28 @@ import { AppStrings } from "@/libs/constants/AppStrings";
 export const metadata: Metadata = {
   title: {
     default: "SteemPro",
-    template: '%s | SteemPro',
-    absolute: '',
+    template: "%s | SteemPro",
+    absolute: "",
   },
-  description: "Experience a social network empowered by the Steem blockchain. Explore trending discussions and share your unique perspective.",
+  keywords: "SteemPro, steem, blockchain, steempro, web3, decentralized social media, social",
+  description:
+    "Experience a social network empowered by the Steem blockchain. Explore trending discussions and share your unique perspective.",
   icons: {
-    icon: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
-    shortcut: '/apple-touch-icon.png',
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+    shortcut: "/apple-touch-icon.png",
   },
-  manifest: '/site.webmanifest',
+  manifest: "/site.webmanifest",
   openGraph: {
-    siteName: 'SteemPro',
-    url: 'https://www.steempro.com',
-    images: ['https://i.ibb.co/THNsSf4/og.jpg']
+    siteName: "SteemPro",
+    url: "https://www.steempro.com",
+    images: ["https://i.ibb.co/THNsSf4/og.jpg"],
   },
   twitter: {
-    card: 'summary_large_image',
-    site: '@steemproblogs',
-    images: ['https://i.ibb.co/THNsSf4/og.jpg']
-  }
-
+    card: "summary_large_image",
+    site: "@steemproblogs",
+    images: ["https://i.ibb.co/THNsSf4/og.jpg"],
+  },
 };
 
 export default async function RootLayout({
@@ -43,16 +45,19 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html lang="en" suppressHydrationWarning={true}>
-
-      <link rel="dns-prefetch" href="https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg" />
-      <link rel="preconnect" href="https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg" />
+      <link
+        rel="dns-prefetch"
+        href="https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg"
+      />
+      <link
+        rel="preconnect"
+        href="https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg"
+      />
       <link rel="preconnect " href={AppStrings.sds_base_url} />
 
       <body className={clsx()}>
-
         <Providers>
           {children}
           <Toaster richColors closeButton />

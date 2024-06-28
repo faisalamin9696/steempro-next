@@ -1,11 +1,11 @@
-import getSlug from 'speakingurl';
-import { diff_match_patch as diffMatchPatch } from 'diff-match-patch';
+import getSlug from "speakingurl";
+import { diff_match_patch as diffMatchPatch } from "diff-match-patch";
+import { secureDecrypt } from "./encryption";
 
-export const getWordsCount = text =>
-  text && typeof text === 'string'
-    ? text.replace(/^\s+|\s+$/g, '').split(/\s+/).length
+export const getWordsCount = (text) =>
+  text && typeof text === "string"
+    ? text.replace(/^\s+|\s+$/g, "").split(/\s+/).length
     : 0;
-
 
 const app = `steempro/${0.1}`;
 
@@ -14,19 +14,18 @@ export const generateRndStr = () =>
 
 export const generatePermlink = (title, random = false) => {
   if (!title) {
-    return '';
+    return "";
   }
 
   // TODO: check special character processing
   const slug = getSlug(title);
   let perm = slug && slug.toString();
 
-
   if (title) {
     // make shorter url if possible
-    const shortp = perm.split('-');
+    const shortp = perm.split("-");
     if (shortp.length > 5) {
-      perm = shortp.slice(0, 5)?.join('-');
+      perm = shortp.slice(0, 5)?.join("-");
     }
 
     if (random) {
@@ -40,7 +39,7 @@ export const generatePermlink = (title, random = false) => {
     }
 
     // only letters numbers and dashes
-    perm = perm?.toLowerCase().replace(/[^a-z0-9-]+/g, '');
+    perm = perm?.toLowerCase().replace(/[^a-z0-9-]+/g, "");
 
     if (perm.length === 0) {
       return generateRndStr();
@@ -60,17 +59,17 @@ export const extractWordAtIndex = (text: string, index: number) => {
 
   const textChunk = text.substring(
     _start > 0 ? _start : 0,
-    _end < _length ? _end : _length,
+    _end < _length ? _end : _length
   );
   const indexChunk =
     index < 50
       ? index
       : _length - index < 50
-        ? textChunk.length - (_length - index)
-        : RANGE;
+      ? textChunk.length - (_length - index)
+      : RANGE;
 
   const END_REGEX = /[\s,]/;
-  let word = '';
+  let word = "";
   for (
     let i = indexChunk;
     i >= 0 && (!END_REGEX.test(textChunk[i]) || i === indexChunk);
@@ -80,7 +79,7 @@ export const extractWordAtIndex = (text: string, index: number) => {
       word += textChunk[i];
     }
   }
-  word = word.split('')?.reverse()?.join('');
+  word = word.split("")?.reverse()?.join("");
 
   if (!END_REGEX.test(textChunk[indexChunk])) {
     for (
@@ -97,9 +96,9 @@ export const extractWordAtIndex = (text: string, index: number) => {
   return word;
 };
 
-export const generateReplyPermlink = (toAuthor:string) => {
+export const generateReplyPermlink = (toAuthor: string) => {
   if (!toAuthor) {
-    return '';
+    return "";
   }
 
   const t = new Date(Date.now());
@@ -110,10 +109,10 @@ export const generateReplyPermlink = (toAuthor:string) => {
     .getMinutes()
     .toString()}${t.getSeconds().toString()}${t.getMilliseconds().toString()}z`;
 
-  return `re-${toAuthor.replace(/\./g, '')}-${timeFormat}`;
+  return `re-${toAuthor.replace(/\./g, "")}-${timeFormat}`;
 };
 
-export const makeOptions = postObj => {
+export const makeOptions = (postObj) => {
   if (!postObj.author || !postObj.permlink) {
     return {};
   }
@@ -123,39 +122,39 @@ export const makeOptions = postObj => {
     allow_votes: true,
     author: postObj.author,
     permlink: postObj.permlink,
-    max_accepted_payout: '1000000.000 SBD',
+    max_accepted_payout: "1000000.000 SBD",
     percent_steem_dollars: 10000,
     extensions: [],
   };
   switch (postObj.operationType) {
     case 100:
-      a.max_accepted_payout = '1000000.000 SBD';
+      a.max_accepted_payout = "1000000.000 SBD";
       a.percent_steem_dollars = 0;
       if (postObj.beneficiaries && postObj.beneficiaries.length > 0) {
         postObj.beneficiaries.sort((a, b) =>
-          a.account.localeCompare(b.account),
+          a.account.localeCompare(b.account)
         );
         a.extensions = [[0, { beneficiaries: postObj.beneficiaries }]];
       }
       break;
 
     case 0:
-      a.max_accepted_payout = '0.000 SBD';
+      a.max_accepted_payout = "0.000 SBD";
       a.percent_steem_dollars = 10000;
       if (postObj.beneficiaries && postObj.beneficiaries.length > 0) {
         postObj.beneficiaries.sort((a, b) =>
-          a.account.localeCompare(b.account),
+          a.account.localeCompare(b.account)
         );
         a.extensions = [[0, { beneficiaries: postObj.beneficiaries }]];
       }
       break;
 
     default:
-      a.max_accepted_payout = '1000000.000 SBD';
+      a.max_accepted_payout = "1000000.000 SBD";
       a.percent_steem_dollars = 10000;
       if (postObj.beneficiaries && postObj.beneficiaries.length > 0) {
         postObj.beneficiaries.sort((a, b) =>
-          a.account.localeCompare(b.account),
+          a.account.localeCompare(b.account)
         );
         a.extensions = [[0, { beneficiaries: postObj.beneficiaries }]];
       }
@@ -167,19 +166,23 @@ export const makeOptions = postObj => {
 
 export const makeJsonMetadataReply = () => ({
   app: app,
-  format: 'markdown+html',
+  format: "markdown+html",
 });
 
 export const makeJsonMetadata = (meta, tags) =>
   Object.assign({}, meta, {
     tags,
     app: app,
-    format: 'markdown+html',
+    format: "markdown+html",
   });
 
 export const makeJsonMetadataForUpdate = (oldJson, meta, tags) => {
   const mergedMeta = Object.assign({}, oldJson, meta);
-  return Object.assign({}, oldJson, mergedMeta, { tags, app: app, format: 'markdown+html' });
+  return Object.assign({}, oldJson, mergedMeta, {
+    tags,
+    app: app,
+    format: "markdown+html",
+  });
 };
 
 const extractUrls = (body: string) => {
@@ -190,7 +193,7 @@ const extractUrls = (body: string) => {
 };
 
 export const extractImageUrls = ({
-  body = '',
+  body = "",
   urls = [],
 }: {
   body?: string;
@@ -201,7 +204,7 @@ export const extractImageUrls = ({
   const imgUrls: string[] = [];
   const mUrls = urls || extractUrls(body);
 
-  mUrls.forEach(url => {
+  mUrls.forEach((url) => {
     const isImage = url.match(imgReg);
     if (isImage) {
       imgUrls.push(url);
@@ -290,7 +293,7 @@ export const extractMetadata = (body: string) => {
   return out;
 };
 export const createPatch = (text1, text2) => {
-  if (!text1 && text1 === '') {
+  if (!text1 && text1 === "") {
     return undefined;
   }
 
@@ -302,7 +305,7 @@ export const createPatch = (text1, text2) => {
 
 export const validateCommentBody = (
   body: string,
-  isStory: boolean,
+  isStory: boolean
 ): true | string => {
   const maxKb = isStory ? 64 : 16;
   const maxLength = maxKb * 1024;
@@ -312,3 +315,19 @@ export const validateCommentBody = (
 
   return true;
 };
+
+export function getEditorDraft() {
+  const draftString = secureDecrypt(
+    localStorage.getItem("@secure.j.post_draft") ?? "",
+    process.env.NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY
+  );
+  const draft = JSON.parse(draftString || `{}`) as {
+    title: string;
+    markdown: string;
+    tags: string;
+    beneficiaries: Beneficiary[];
+    community: Community;
+  };
+
+  return draft;
+}

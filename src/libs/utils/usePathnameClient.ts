@@ -1,5 +1,6 @@
 import { usePathname } from 'next/navigation';
 import { validateCommunity } from './helper';
+import { validBasicCats, validProfileTabs } from '@/middleware';
 
 interface Params {
     category: string;
@@ -12,13 +13,7 @@ interface Params {
 
 // Define valid categories
 
-const valid_tabs = ['blog', 'posts', 'friends',
-    'comments', 'replies', 'wallet', 'communities', 'settings'];
-
-const basic_categories = ['trending', 'created','hot',
-    'payout'];
-
-const valid_categories = basic_categories.concat(['pinned', 'about']);
+const valid_categories = validBasicCats.concat(['pinned', 'about']);
 
 
 // Define username URL regex
@@ -54,7 +49,7 @@ const usePathnameClient = (): Params => {
 
 
     // check if the post without category
-    if (splitted_path.length === 2 && usernameURLRegex.test(first_param) && !valid_tabs.includes(second_param)) {
+    if (splitted_path.length === 2 && usernameURLRegex.test(first_param) && !validProfileTabs.includes(second_param)) {
         params.username = splitted_path[0]?.replace('@', '') ?? '';
         params.permlink = splitted_path[1] ?? '';
     }

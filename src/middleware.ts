@@ -1,65 +1,106 @@
-import { validateCommunity } from '@/libs/utils/helper';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { validateCommunity } from "@/libs/utils/helper";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 // Define valid categories
 
-const valid_tabs = ['blog', 'posts', 'friends',
-    'comments', 'replies', 'wallet', 'communities', 'settings'];
+export const validProfileTabs = [
+  "blog",
+  "posts",
+  "friends",
+  "comments",
+  "replies",
+  "wallet",
+  "communities",
+  "settings",
+];
 
-const basic_categories = ['trending', 'created', 'hot',
-    'payout',];
+export const validBasicCats = ["trending", "created", "hot", "payout"];
 
-const valid_categories = basic_categories.concat(['pinned', 'about']);
-
+const valid_categories = validBasicCats.concat(["pinned", "about"]);
 
 // Define username URL regex
 const usernameURLRegex = /@([^/]+)/;
 
 export function middleware(request: NextRequest) {
-    // Set pathname header
-    request.headers.set('pathname', request.nextUrl.pathname);
+  // Set pathname header
+  request.headers.set("pathname", request.nextUrl.pathname);
 
-    // Split the pathname into parts
-    const splitted_path = request.nextUrl.pathname.split('/');
+  // Split the pathname into parts
+  const splitted_path = request.nextUrl.pathname.split("/");
 
-    // remove the first empty element
-    splitted_path.shift();
-    let [first_param, second_param, third_param] = splitted_path;
+  // remove the first empty element
+  splitted_path.shift();
+  let [first_param, second_param, third_param] = splitted_path;
 
-    first_param = first_param?.toLowerCase();
-    second_param = second_param?.toLowerCase();
+  first_param = first_param?.toLowerCase();
+  second_param = second_param?.toLowerCase();
 
-    if (splitted_path.length === 1 && first_param === 'witnesses') {
-        return NextResponse.rewrite(new URL(`/witnesses`, request.nextUrl), { headers: request.headers });
-    } if (splitted_path.length === 1 && first_param === 'submit') {
-        return NextResponse.rewrite(new URL(`/submit`, request.nextUrl), { headers: request.headers });
-    }
-    if (splitted_path.length === 1 && first_param === 'about') {
-        return NextResponse.rewrite(new URL(`/about`, request.nextUrl), { headers: request.headers });
-    }
-    else if (splitted_path.length === 3 && usernameURLRegex.test(second_param)) {
-        return NextResponse.rewrite(new URL('/post', request.nextUrl), { headers: request.headers });
-    }
+  if (splitted_path.length === 1 && first_param === "witnesses") {
+    return NextResponse.rewrite(new URL(`/witnesses`, request.nextUrl), {
+      headers: request.headers,
+    });
+  }
+  if (splitted_path.length === 1 && first_param === "submit") {
+    return NextResponse.rewrite(new URL(`/submit`, request.nextUrl), {
+      headers: request.headers,
+    });
+  }
+  if (splitted_path.length === 1 && first_param === "schedules" ) {
+    return NextResponse.rewrite(new URL(`/schedules`, request.nextUrl), {
+      headers: request.headers,
+    });
+  } else if (splitted_path.length === 1 && first_param === "about") {
+    return NextResponse.rewrite(new URL(`/about`, request.nextUrl), {
+      headers: request.headers,
+    });
+  } else if (
+    splitted_path.length === 3 &&
+    usernameURLRegex.test(second_param)
+  ) {
+    return NextResponse.rewrite(new URL("/post", request.nextUrl), {
+      headers: request.headers,
+    });
+  }
 
-    // check if the post without category
-    else if (splitted_path.length === 2 && usernameURLRegex.test(first_param) && !valid_tabs.includes(second_param)) {
-        return NextResponse.rewrite(new URL('/post', request.nextUrl), { headers: request.headers });
+  // check if the post without category
+  else if (
+    splitted_path.length === 2 &&
+    usernameURLRegex.test(first_param) &&
+    !validProfileTabs.includes(second_param)
+  ) {
+    return NextResponse.rewrite(new URL("/post", request.nextUrl), {
+      headers: request.headers,
+    });
+  }
+  // Check if the URL matches the pattern for a profile
+  else if (request.nextUrl.pathname?.startsWith("/@")) {
+    return NextResponse.rewrite(new URL(`/profile`, request.nextUrl), {
+      headers: request.headers,
+    });
+  }
+  // Check if the URL matches the pattern for a community
+  else if (
+    validateCommunity(second_param) &&
+    valid_categories.includes(first_param)
+  ) {
+    return NextResponse.rewrite(new URL(`/community`, request.nextUrl), {
+      headers: request.headers,
+    });
+  }
+  // Check if the URL matches the pattern for a category
+  else if (
+    valid_categories
+      .filter((item) => !["about", "tools"].includes(item))
+      .includes(first_param)
+  ) {
+    if (validBasicCats.includes(first_param) && splitted_path.length === 1) {
+      return NextResponse.rewrite(new URL("/", request.nextUrl), {
+        headers: request.headers,
+      });
     }
-    // Check if the URL matches the pattern for a profile
-    else if (request.nextUrl.pathname?.startsWith('/@')) {
-        return NextResponse.rewrite(new URL(`/profile`, request.nextUrl), { headers: request.headers });
-    }
-    // Check if the URL matches the pattern for a community
-    else if (validateCommunity(second_param) && valid_categories.includes(first_param)) {
-        return NextResponse.rewrite(new URL(`/community`, request.nextUrl), { headers: request.headers });
-    }
-    // Check if the URL matches the pattern for a category
-    else if (valid_categories.filter(item => !['about', 'tools'].includes(item)).includes(first_param)) {
-
-        if (basic_categories.includes(first_param) && splitted_path.length === 1) {
-            return NextResponse.rewrite(new URL('/', request.nextUrl), { headers: request.headers });
-        }
-        return NextResponse.rewrite(new URL('/category', request.nextUrl), { headers: request.headers });
-    }
+    return NextResponse.rewrite(new URL("/category", request.nextUrl), {
+      headers: request.headers,
+    });
+  }
 }

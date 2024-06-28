@@ -1,16 +1,9 @@
-
 type Feed = {
   link_id: number;
   link_status: number;
   author_reputation: number;
   author_status: number;
-  author_role:
-  | 'muted'
-  | 'guest'
-  | 'member'
-  | 'mod'
-  | 'admin'
-  | 'owner';
+  author_role: "muted" | "guest" | "member" | "mod" | "admin" | "owner";
   author_title: string;
   author: string;
   permlink: string;
@@ -40,13 +33,7 @@ type Feed = {
   observer_resteem: 0 | 1 | number;
   is_author_muted: 0 | 1 | number;
   json_images: string;
-  observer_role:
-  | 'muted'
-  | 'guest'
-  | 'member'
-  | 'mod'
-  | 'admin'
-  | 'owner';
+  observer_role: "muted" | "guest" | "member" | "mod" | "admin" | "owner";
   observer_title: string;
   observer_vote: 0 | 1 | number;
   observer_vote_percent: number;
@@ -56,43 +43,40 @@ type Feed = {
   replies: Post[];
   // undefined for Feed API
   depth: number;
-  status: 'upvoting' | 'downvoting' | 'resteeming' | 'idle' = 'idle';
+  status: "upvoting" | "downvoting" | "resteeming" | "idle" = "idle";
   max_accepted_payout: number;
   percent_steem_dollars: number;
-  is_new: number = 0
-
+  is_new: number = 0;
 };
 
 type Post = Feed & {
-  parent_author: string
-  parent_permlink: string
-  root_author: string
-  root_permlink: string
-  root_title: string
-  last_sync: number
-  total_payout_value: number
-  curator_payout_value: number
-  pending_payout_value: number
-  total_vote_weight: number
-  allow_curation_rewards: number
-  allow_replies: number
-  allow_votes: number
-  depth: number
-  beneficiaries: string[]
-  votes: string[]
+  parent_author: string;
+  parent_permlink: string;
+  root_author: string;
+  root_permlink: string;
+  root_title: string;
+  last_sync: number;
+  total_payout_value: number;
+  curator_payout_value: number;
+  pending_payout_value: number;
+  total_vote_weight: number;
+  allow_curation_rewards: number;
+  allow_replies: number;
+  allow_votes: number;
+  depth: number;
+  beneficiaries: string[];
+  votes: string[];
 };
-
-
 
 type KeyTypes = {
-  POSTING: 'POSTING';
-  ACTIVE: 'ACTIVE';
-  OWNER: 'OWNER';
-  MASTER: 'MASTER';
-  MEMO: 'MEMO';
+  POSTING: "POSTING";
+  ACTIVE: "ACTIVE";
+  OWNER: "OWNER";
+  MASTER: "MASTER";
+  MEMO: "MEMO";
 };
 type AccountExt = {
-  name: string = '';
+  name: string = "";
   creator: string;
   recovery_account: string;
   reset_account: string;
@@ -208,8 +192,7 @@ type AccountExt = {
   //     minSp: number,
   //   },
   // }
-  status: 'following' | 'unfollowing' | 'idle' = 'idle'
-
+  status: "following" | "unfollowing" | "idle" = "idle";
 };
 
 type Community = {
@@ -231,15 +214,10 @@ type Community = {
   is_nsfw: number;
   settings: any;
   observer_subscribed: number;
-  observer_role:
-  | 'muted'
-  | 'guest'
-  | 'member'
-  | 'mod'
-  | 'admin'
-  | 'owner'; observer_title: string;
-  status: 'joining' | 'leaving' | 'idle' = 'idle';
-  roles: any
+  observer_role: "muted" | "guest" | "member" | "mod" | "admin" | "owner";
+  observer_title: string;
+  status: "joining" | "leaving" | "idle" = "idle";
+  roles: any;
 };
 
 type AccountHistory = {
@@ -260,38 +238,38 @@ type AccountHistoryOperation = {
 };
 
 type Notification = {
-  "id": number,
-  "time": number,
-  "type": string,
-  "is_read": number,
-  "is_update": number,
-  "link_depth": number;
-  "account": string,
-  "author": string,
-  "permlink": string,
-  "voted_rshares": number,
+  id: number;
+  time: number;
+  type: string;
+  is_read: number;
+  is_update: number;
+  link_depth: number;
+  account: string;
+  author: string;
+  permlink: string;
+  voted_rshares: number;
 };
 
 type SDSNotification = {
   id: number;
   time: number;
   type:
-  | 'new_community'
-  | 'set_role'
-  | 'set_props'
-  | 'set_label'
-  | 'mute_post'
-  | 'unmute_post'
-  | 'pin_post'
-  | 'unpin_post'
-  | 'flag_post'
-  | 'error'
-  | 'subscribe'
-  | 'reply'
-  | 'reblog'
-  | 'follow'
-  | 'mention'
-  | 'vote';
+    | "new_community"
+    | "set_role"
+    | "set_props"
+    | "set_label"
+    | "mute_post"
+    | "unmute_post"
+    | "pin_post"
+    | "unpin_post"
+    | "flag_post"
+    | "error"
+    | "subscribe"
+    | "reply"
+    | "reblog"
+    | "follow"
+    | "mention"
+    | "vote";
   is_read: number;
   is_update: number;
   account: string;
@@ -356,15 +334,15 @@ type ClubData = {
   transfer_out: number;
 };
 
-type ThemeMode = 'dark' | 'light' | 'system';
-type NSFW = 'Always show' | 'Always hide' | 'Always warn';
+type ThemeMode = "dark" | "light" | "system";
+type NSFW = "Always show" | "Always hide" | "Always warn";
 
-type LanguagesCode = 'en' | 'bn' | 'tr' | 'cn' | 'kr';
+type LanguagesCode = "en" | "bn" | "tr" | "cn" | "kr";
 
 type Language = {
   title: string;
   code: LanguagesCode;
-}
+};
 type Setting = {
   // isThemeDark: boolean;
   rpc: string;
@@ -376,13 +354,13 @@ type Setting = {
   // lastUpdateCheck: undefined;
   // languageTo: { title: string; code: string };
   feedStyle: FeedStyle;
-  lang: Language,
-  nsfw: NSFW = 'Always warn'
+  lang: Language;
+  nsfw: NSFW = "Always warn";
   // pinEnabled: boolean;
   // fingerprintEnabled: boolean;
 };
 
-type FeedStyle = 'blogs' | 'list' | 'grid';
+type FeedStyle = "blogs" | "list" | "grid";
 
 type PostingContent = {
   author: AccountExtType;
@@ -426,11 +404,11 @@ type PostResteem = {
 
 type Delegation = {
   time: number;
-  expiration?: number
+  expiration?: number;
   from: string;
   to: string;
   vests: number;
-  status?: any
+  status?: any;
 };
 
 type Witness = {
@@ -498,69 +476,69 @@ type SteemTron = {
   pending_claim_tron_reward: string;
   tip_count: string;
   trx_balance: number;
-}
+};
 
 type FirebaseNotificationSettings = {
   status: boolean;
   vote: {
-    status: boolean,
-    minRep: number,
-    minSp: number,
-    minVote: number
-  },
+    status: boolean;
+    minRep: number;
+    minSp: number;
+    minVote: number;
+  };
   reply: {
-    status: boolean,
-    minRep: number,
-    minSp: number,
-  },
+    status: boolean;
+    minRep: number;
+    minSp: number;
+  };
   follow: {
-    status: boolean,
-    minRep: number,
-    minSp: number,
-  },
+    status: boolean;
+    minRep: number;
+    minSp: number;
+  };
   mention: {
-    status: boolean,
-    minRep: number,
-    minSp: number,
-  },
+    status: boolean;
+    minRep: number;
+    minSp: number;
+  };
   resteem: {
-    status: boolean,
-    minRep: number,
-    minSp: number,
-  },
-}
+    status: boolean;
+    minRep: number;
+    minSp: number;
+  };
+};
 
 type Payout = {
-  title: string,
+  title: string;
   shortTitle: string;
   payout: number;
-}
+};
 
 type Beneficiary = {
-  account: string,
+  account: string;
   weight: number;
-}
+};
 type User = {
   username: string;
   key: string;
   type: Keys;
-  memo: string
-}
+  memo: string;
+};
 
-type ValidCategories = 'created' | 'trending' | 'payout' | 'pinned' | 'about';
+type ValidCategories = "created" | "trending" | "payout" | "pinned" | "about";
 
 type Role = {
   created: number;
   account: string;
   title: string;
   role: string;
-}
+};
 
 type Club = {
   powered_up: number;
   transfer_in: number;
   transfer_out: number;
-}
+};
 
 type Transfer = {
   time: number;
@@ -569,17 +547,16 @@ type Transfer = {
   amount: number;
   unit: string;
   memo: string;
-
-}
+};
 
 type RewardSum = {
-  author_reward: { sbd: number, steem: number, vests: number; };
-  comment_benefactor_reward: { sbd: number, steem: number, vests: number; };
+  author_reward: { sbd: number; steem: number; vests: number };
+  comment_benefactor_reward: { sbd: number; steem: number; vests: number };
   curation_reward: { vests: number };
-  liquidity_reward: { steem: number }
-  producer_reward: { vests: number }
-  interest: { sbd: number }
-}
+  liquidity_reward: { steem: number };
+  producer_reward: { vests: number };
+  interest: { sbd: number };
+};
 type Stats = {
   account: AccountExt;
   steem_props: SteemProps;
@@ -596,9 +573,20 @@ type Stats = {
   filled_conversions: any;
   filled_savings_withdrawals: any;
   filled_withdrawals: any;
+};
 
+type Schedule = {
+  id: number;
+  username: string;
+  title: string;
+  body: string;
+  tags: string;
+  parent_permlink: string;
+  options: string;
+  time: string;
+  status: number;
+  permlink?: string;
+  message?: string;
+};
 
-
-}
-
-type Keys = 'POSTING' | 'ACTIVE' | 'OWNER' | 'MASTER' | 'MEMO'
+type Keys = "POSTING" | "ACTIVE" | "OWNER" | "MASTER" | "MEMO";

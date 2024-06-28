@@ -99,7 +99,7 @@ export default function PostPage(props: Props) {
         <div className="card w-full card-compact gap-4">
           {!!commentInfo.is_muted && commentInfo.is_muted !== 2 ? (
             <div className=" flex items-center gap justify-between mt-2">
-              <p>The post was hidden sue to low rating</p>
+              <p>The post was hidden due to low rating</p>
 
               <Button
                 onClick={() => {

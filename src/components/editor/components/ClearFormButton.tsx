@@ -21,7 +21,7 @@ export default memo(function ClearFormButton(props: Props) {
                 <PopoverTrigger >
                     <Button size='sm' color='danger'
                         isDisabled={isDisabled}
-                        isIconOnly startContent={<MdDelete className='text-lg' />}
+                        isIconOnly startContent={<MdDelete className='text-xl' />}
                         className='!text-white'
                         variant='shadow' />
 

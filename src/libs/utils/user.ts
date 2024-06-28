@@ -230,7 +230,7 @@ export const getSessionKey = (username?: string | null) => {
   if (token && credentials?.type !== "ACTIVE") {
     const auth = getUserAuth();
     if (auth)
-      return decryptPrivateKey(token, auth?.toString()?.substring(0, 20));
+      return decryptPrivateKey(token, auth?.key?.toString()?.substring(0, 20));
   }
   return decryptPrivateKey(sessionKey, sessionAppPass);
 };

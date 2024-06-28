@@ -4,6 +4,7 @@ import { Client, cryptoUtils, Operation, PrivateKey } from "@hiveio/dhive";
 import { PrivKey } from "../utils/user";
 import { toast } from "sonner";
 import { CurrentSetting } from "../constants/AppConstants";
+import { getAuthorExt } from "./sds";
 global.Buffer = global.Buffer || require("buffer").Buffer;
 
 const DEFAULT_SERVER = AppStrings.rpc_servers[0];
@@ -100,7 +101,7 @@ export function getKeyType(account: AccountExt, key: string) {
         account?.posting_key_auths[0][0]
       );
       if (isvalid) {
-        // derive  the activbe key from master key
+        // derive  the active key from master key
         privKey = PrivateKey.fromLogin(account.name, key, "active").toString();
         keyType = AppStrings.key_types.active;
       } else {
@@ -192,9 +193,6 @@ export const publishContent = async (
           resolve(result);
         })
         .catch((error) => {
-          // if (error && error?.jse_info?.code === 4030100) {
-          //   error.message = getDsteemDateErrorMessage(error);
-          // }
           reject(error);
         });
     });
@@ -479,7 +477,6 @@ export const setUserRole = async (
     )
   );
 };
-
 
 export const followUser = async (
   account: AccountExt,
@@ -1038,4 +1035,82 @@ export async function withdrawVesting(
       "Check private key permission! Required posting active key or above."
     )
   );
+}
+
+export const grantPostingPermission = async (
+  account: AccountExt,
+  privateKey: string
+) => {
+  const keyData = getKeyType(account, privateKey);
+
+  const checkAuth = account.posting_account_auths;
+  // check for existing permission in the auth list
+  for (var i = 0, len = checkAuth.length; i < len; i++) {
+    if (checkAuth[i][0] === AppStrings.official_account) {
+      // official account exist in list
+      return Promise.resolve();
+    }
+  }
+
+  const newPosting = Object.assign(
+    {},
+    {
+      ...account.posting_account_auths,
+    },
+    {
+      account_auths: [
+        ...account.posting_account_auths,
+        [AppStrings.official_account, account.posting_weight_threshold],
+      ],
+    }
+  );
+  newPosting.account_auths.sort();
+
+  const opArray: any[] = [
+    [
+      "account_update",
+      {
+        account: account.name,
+        memo_key: account.memo_key,
+        json_metadata: account.posting_json_metadata,
+        posting: newPosting,
+      },
+    ],
+  ];
+
+  if (keyData && PrivKey.atLeast(keyData.type, "ACTIVE")) {
+    const key = PrivateKey.fromString(privateKey);
+    return new Promise((resolve, reject) => {
+      client.broadcast
+        .sendOperations(opArray, key)
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+
+  return Promise.reject(
+    new Error(
+      "Check private key permission! Required private active key or above."
+    )
+  );
+};
+
+export function verifyPrivKey(account: AccountExt, key: string): boolean {
+  if (!account || !key) {
+    return false;
+  }
+  const keyType = getKeyType(account, key);
+
+  if (!keyType) {
+    return false;
+  }
+
+  if (PrivKey.atLeast(keyType.type, "POSTING")) {
+    return true;
+  }
+  return false;
 }

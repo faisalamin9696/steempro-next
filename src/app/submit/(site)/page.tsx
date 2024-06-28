@@ -20,13 +20,14 @@ import {
 } from "@/libs/utils/user";
 import { awaitTimeout, useAppSelector } from "@/libs/constants/AppFunctions";
 import { readingTime } from "@/libs/utils/readingTime/reading-time-estimator";
-import { publishContent } from "@/libs/steem/condenser";
+import { grantPostingPermission, publishContent } from "@/libs/steem/condenser";
 import { toast } from "sonner";
 import {
   createPatch,
   extractMetadata,
   generatePermlink,
   generateReplyPermlink,
+  getEditorDraft,
   makeJsonMetadata,
   makeJsonMetadataForUpdate,
   makeJsonMetadataReply,
@@ -45,6 +46,11 @@ import { useSession } from "next-auth/react";
 import clsx from "clsx";
 import TagsListCard from "@/components/TagsListCard";
 import moment from "moment";
+import ScheduleButton from "@/components/editor/components/ScheduleButton";
+import axios from "axios";
+import ScheduleModal from "@/components/ScheduleModal";
+import { IoClose } from "react-icons/io5";
+import { ZonedDateTime } from "@internationalized/date";
 
 interface Props {
   params?: {
@@ -67,13 +73,7 @@ export default function SubmitPage(props: Props) {
     accountParams ? empty_community(accountParams, titleParams) : undefined
   );
 
-  const draft = secureLocalStorage.getItem("post_draft") as {
-    title: string;
-    markdown: string;
-    tags: string;
-    beneficiaries: Beneficiary[];
-    community: Community;
-  };
+  const draft = getEditorDraft();
 
   const [title, setTitle] = useState(draft?.title || "");
   const [tags, setTags] = useState(draft?.tags || "");
@@ -93,6 +93,12 @@ export default function SubmitPage(props: Props) {
     isEdit ? undefined : draft?.community
   );
   const [isPosting, setPosting] = useState(false);
+  const [isScheduling, setScheduling] = useState(false);
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
+  const [dateTime, setDateTime] = useState<ZonedDateTime>();
+
+  const isLoading = isPosting || isScheduling;
+
   // const [openAuth, setOpenAuth] = useState(false);
   const { authenticateUser, isAuthorized } = useLogin();
 
@@ -136,15 +142,8 @@ export default function SubmitPage(props: Props) {
     setBeneficiaries([]);
     setReward(rewardTypes[1]);
     setCommunity(undefined);
+    setDateTime(undefined);
   }
-
-  // async function handleSchedule() {
-  //     fetch('/api/steem', {
-  //         method: 'POST',
-  //         body: JSON.stringify({ name: 'faisalamin' })
-  //     })
-
-  // }
 
   const postingMutation = useMutation({
     mutationKey: [`publish-post`],
@@ -185,7 +184,7 @@ export default function SubmitPage(props: Props) {
     },
   });
 
-  async function handlePostPublish() {
+  async function handlePostPublish(isSchedule?: boolean) {
     if (isEditComment) {
       handleCommentUpdate();
       return;
@@ -225,7 +224,14 @@ export default function SubmitPage(props: Props) {
     }
     authenticateUser();
 
+    // check if the post is need to schedule
+
     if (isAuthorized()) {
+      if (isSchedule) {
+        handleSchedule(_tags);
+        return;
+      }
+
       setPosting(true);
 
       await awaitTimeout(1);
@@ -424,6 +430,82 @@ export default function SubmitPage(props: Props) {
     }
   }
 
+  async function handleSchedule(_tags: string[]) {
+    if (!dateTime) {
+      setIsPickerOpen(true);
+      return;
+    }
+
+    if (moment(dateTime.toDate()).isSameOrBefore(moment())) {
+      toast.info("Schedule time must be after the current time.");
+      return;
+    }
+
+    authenticateUser();
+
+    if (!isAuthorized()) {
+      return;
+    }
+
+    const credentials = getCredentials(getSessionKey(session?.user?.name));
+    if (!credentials?.key) {
+      toast.error("Invalid credentials");
+      return;
+    }
+
+    let parent_permlink = _tags[0] || "steempro";
+    if (community && community.account !== loginInfo.name) {
+      parent_permlink = community.account;
+    }
+
+    let options = makeOptions({
+      author: loginInfo.name,
+      permlink: "test",
+      operationType: reward?.payout,
+      beneficiaries: beneficiaries,
+    });
+
+    const cbody = markdown.replace(
+      /[\x00-\x09\x0B-\x0C\x0E-\x1F\x7F-\x9F]/g,
+      ""
+    );
+
+    setScheduling(true);
+    grantPostingPermission(loginInfo, credentials.key)
+      .then(() => {
+        axios
+          .post(
+            "/api/schedules/add",
+            {
+              title: title,
+              body: cbody,
+              tags: _tags.join(","),
+              parent_permlink: parent_permlink,
+              options: JSON.stringify(options),
+              time: moment(dateTime.toAbsoluteString()).format(),
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          )
+          .then((res) => {
+            toast.success("Schedule successfully");
+            clearForm();
+          })
+          .catch(function (error) {
+            toast.error(error);
+          })
+          .finally(() => {
+            setScheduling(false);
+          });
+      })
+      .catch((error) => {
+        toast.error(String(error));
+        setScheduling(false);
+      });
+  }
   return (
     <div
       className={clsx(
@@ -441,7 +523,7 @@ export default function SubmitPage(props: Props) {
         {!isEditComment && (
           <>
             <CommunitySelectButton
-              isDisabled={isPosting}
+              isDisabled={isLoading}
               community={community}
               onlyCommunity={isEdit}
               refCommunity={refCommunity}
@@ -463,7 +545,7 @@ export default function SubmitPage(props: Props) {
                 input: "font-bold text-md",
                 inputWrapper: "h-8",
               }}
-              isDisabled={isPosting}
+              isDisabled={isLoading}
               placeholder={"Title"}
               maxLength={255}
             />
@@ -478,7 +560,7 @@ export default function SubmitPage(props: Props) {
               }}
               autoCapitalize="off"
               placeholder={"Tags here..."}
-              isDisabled={isPosting}
+              isDisabled={isLoading}
               maxLength={255}
             />
           </>
@@ -486,7 +568,7 @@ export default function SubmitPage(props: Props) {
 
         <EditorInput
           value={markdown}
-          isDisabled={isPosting}
+          isDisabled={isLoading}
           onChange={setMarkdown}
           onImageUpload={() => {}}
           onImageInvalid={() => {}}
@@ -494,10 +576,13 @@ export default function SubmitPage(props: Props) {
 
         <div className="flex gap-2 relativeitems-center flex-row">
           <div className="gap-2 flex">
-            <ClearFormButton onClearPress={clearForm} isDisabled={isPosting} />
+            <ClearFormButton
+              onClearPress={clearForm}
+              isDisabled={isLoading}
+            />
 
             <BeneficiaryButton
-              isDisabled={isEdit || isPosting}
+              isDisabled={isEdit || isLoading}
               onSelectBeneficiary={(bene) => {
                 setBeneficiaries([
                   ...beneficiaries,
@@ -512,7 +597,7 @@ export default function SubmitPage(props: Props) {
               beneficiaries={beneficiaries}
             />
             <RewardSelectButton
-              isDisabled={isEdit || isPosting}
+              isDisabled={isEdit || isLoading}
               selectedValue={reward}
               onSelectReward={(reward) => {
                 setReward(reward);
@@ -520,27 +605,51 @@ export default function SubmitPage(props: Props) {
             />
           </div>
 
-          <div className="flex flex-1 justify-end gap-2 w-full">
-            {/* <ScheduleButton isDisabled={isEdit} onPress={handleSchedule} /> */}
+          <div className=" flex flex-col items-end gap-2 w-full">
+            <div className="flex flex-1 justify-end gap-2">
+              <ScheduleButton
+                isDisabled={isEdit}
+                isLoading={isScheduling}
+                buttonText={dateTime ? "Schedule" : undefined}
+                onClick={() => handlePostPublish(true)}
+              />
 
-            {isEdit && (
-              <Button
-                size="sm"
-                radius="full"
-                onClick={() => {
-                  handleUpdateCancel && handleUpdateCancel();
-                }}
-              >
-                Cancel
-              </Button>
+              {isEdit && (
+                <Button
+                  size="sm"
+                  radius="full"
+                  onClick={() => {
+                    handleUpdateCancel && handleUpdateCancel();
+                  }}
+                >
+                  Cancel
+                </Button>
+              )}
+
+              {!dateTime && (
+                <PublishButton
+                  isDisabled={isLoading}
+                  isLoading={isPosting}
+                  buttonText={isEdit ? "Update" : undefined}
+                  onClick={handlePostPublish}
+                />
+              )}
+            </div>
+
+            {dateTime && (
+              <p className="text-default-500 text-sm flex flex-row items-center gap-2">
+                <button
+                  onClick={() => {
+                    setDateTime(undefined);
+                  }}
+                >
+                  <IoClose className=" text-lg" />
+                </button>
+                {moment(dateTime.toAbsoluteString()).format(
+                  "YYYY-MM-DD HH:mm:ss"
+                )}
+              </p>
             )}
-
-            <PublishButton
-              isDisabled={isPosting}
-              isLoading={isPosting}
-              buttonText={isEdit ? "Update" : undefined}
-              onClick={handlePostPublish}
-            />
           </div>
         </div>
       </div>
@@ -564,7 +673,7 @@ export default function SubmitPage(props: Props) {
           <Card shadow="none" className="p-2 lg:shadow-md space-y-2">
             <TagsListCard
               tags={tags?.trim().split(" ")}
-              isDisabled={isPosting}
+              isDisabled={isLoading}
             />
             <div className="flex flex-col items-center">
               <MarkdownViewer text={markdown} />
@@ -572,6 +681,12 @@ export default function SubmitPage(props: Props) {
           </Card>
         ) : null}
       </div>
+
+      <ScheduleModal
+        onDateTimeChange={setDateTime}
+        isOpen={isPickerOpen}
+        onOpenChange={setIsPickerOpen}
+      />
     </div>
   );
 }
