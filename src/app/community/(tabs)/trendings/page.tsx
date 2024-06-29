@@ -3,7 +3,6 @@
 import FeedList from '@/components/FeedList';
 import { FeedBodyLength } from '@/libs/constants/AppConstants';
 import usePathnameClient from '@/libs/utils/usePathnameClient';
-import React from 'react'
 
 export default function CommunityTrendingsTab() {
     const { community } = usePathnameClient();
