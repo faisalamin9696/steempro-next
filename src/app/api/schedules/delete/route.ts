@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import db from "@/app/config/db";
+import db from "@/libs/db";
 import { getServerSession } from "next-auth/next";
 import { GET as authOptions } from "../../auth/[...nextauth]/route";
 

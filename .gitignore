@@ -39,4 +39,3 @@ next-env.d.ts
 
 yarn.lock
 package-lock.json
-.vercel

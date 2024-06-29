@@ -11,7 +11,7 @@
   "dependencies": {
     "@hiveio/dhive": "https://github.com/faisalamin9696/dhive",
     "@itseasy21/react-elastic-carousel": "^0.12.3",
-    "@nextui-org/react": "^2.4.0",
+    "@nextui-org/react": "^2.4.2",
     "@nivo/core": "^0.87.0",
     "@nivo/pie": "^0.87.0",
     "@reduxjs/toolkit": "^2.1.0",
