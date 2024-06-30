@@ -7,7 +7,7 @@ import { GET as authOptions } from "../../auth/[...nextauth]/route";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const session: any = await getServerSession({ req, ...authOptions });
+    const session: any = await getServerSession(authOptions);
 
     if (!session?.user?.name) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

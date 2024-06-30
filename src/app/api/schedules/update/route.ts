@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     // Get the server session
-    const session: any = await getServerSession({ req, ...authOptions });
+    const session: any = await getServerSession(authOptions);
 
     // Check if the session is valid
     if (!session?.user?.name) {

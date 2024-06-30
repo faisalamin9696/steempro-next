@@ -5,7 +5,7 @@ import { GET as authOptions } from "../../auth/[...nextauth]/route";
 
 export async function GET() {
   try {
-    const session: any = await getServerSession({ ...authOptions });
+    const session: any = await getServerSession(authOptions);
 
     if (!session?.user?.name) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
