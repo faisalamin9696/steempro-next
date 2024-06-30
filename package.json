@@ -59,6 +59,7 @@
     "tailwind-merge": "^2.3.0",
     "tronweb": "^5.3.2",
     "vanilla-tilt": "^1.8.1",
+    "vercel": "^34.2.5",
     "xmldom": "^0.6.0"
   },
   "devDependencies": {

@@ -590,3 +590,4 @@ type Schedule = {
 };
 
 type Keys = "POSTING" | "ACTIVE" | "OWNER" | "MASTER" | "MEMO";
+type SteemTokens = "steem" | "steem_power" | "steem_dollar" | "saving";

@@ -3,18 +3,18 @@ const { Client } = require("ssh2");
 
 // SSH and MySQL configuration
 const sshConfig = {
-  host: process.env.NEXT_SSH_HOST, // SSH server address
-  port: process.env.NEXT_SSH_PORT, // SSH port
-  username: process.env.NEXT_SSH_USERNAME, // SSH username
-  password: process.env.NEXT_SSH_PASSWORD, // SSH password
+  host: process.env.MYSQL_SSH_HOST, // SSH server address
+  port: process.env.MYSQL_SSH_PORT, // SSH port
+  username: process.env.MYSQL_SSH_USERNAME, // SSH username
+  password: process.env.MYSQL_SSH_PASSWORD, // SSH password
 };
 
 const dbConfig = {
-  host: process.env.NEXT_DB_HOST, // localhost for SSH tunnel
-  port: process.env.NEXT_DB_PORT, // MySQL port
-  user: process.env.NEXT_DB_USERNAME, // MySQL username
-  password: process.env.NEXT_DB_PASSWORD, // MySQL password
-  database: process.env.NEXT_DB_DATABASE, // MySQL database name
+  host: process.env.MYSQL_DB_HOST, // localhost for SSH tunnel
+  port: process.env.MYSQL_DB_PORT, // MySQL port
+  user: process.env.MYSQL_DB_USERNAME, // MySQL username
+  password: process.env.MYSQL_DB_PASSWORD, // MySQL password
+  database: process.env.MYSQL_DB_DATABASE, // MySQL database name
 };
 
 let connection;
@@ -27,8 +27,8 @@ async function createTunnel() {
     sshClient
       .on("ready", () => {
         sshClient.forwardOut(
-          "127.0.0.1",
-          3306,
+          process.env.MYSQL_DB_HOST,
+          process.env.MYSQL_DB_PORT,
           dbConfig.host,
           dbConfig.port,
           (err, stream) => {

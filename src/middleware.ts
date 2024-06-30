@@ -1,10 +1,11 @@
 import { validateCommunity } from "@/libs/utils/helper";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { validBasicCats, validCats } from "./libs/constants/AppConstants";
 
 // Define valid categories
 
-export const validProfileTabs = [
+const validProfileTabs = [
   "blog",
   "posts",
   "friends",
@@ -15,9 +16,6 @@ export const validProfileTabs = [
   "settings",
 ];
 
-export const validBasicCats = ["trending", "created", "hot", "payout"];
-
-const valid_categories = validBasicCats.concat(["pinned", "about"]);
 
 // Define username URL regex
 const usernameURLRegex = /@([^/]+)/;
@@ -46,7 +44,7 @@ export function middleware(request: NextRequest) {
       headers: request.headers,
     });
   }
-  if (splitted_path.length === 1 && first_param === "schedules" ) {
+  if (splitted_path.length === 1 && first_param === "schedules") {
     return NextResponse.rewrite(new URL(`/schedules`, request.nextUrl), {
       headers: request.headers,
     });
@@ -82,7 +80,7 @@ export function middleware(request: NextRequest) {
   // Check if the URL matches the pattern for a community
   else if (
     validateCommunity(second_param) &&
-    valid_categories.includes(first_param)
+    validCats.includes(first_param)
   ) {
     return NextResponse.rewrite(new URL(`/community`, request.nextUrl), {
       headers: request.headers,
@@ -90,7 +88,7 @@ export function middleware(request: NextRequest) {
   }
   // Check if the URL matches the pattern for a category
   else if (
-    valid_categories
+    validCats
       .filter((item) => !["about", "tools"].includes(item))
       .includes(first_param)
   ) {

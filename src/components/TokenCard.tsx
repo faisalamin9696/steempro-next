@@ -3,7 +3,6 @@ import { Button } from '@nextui-org/button';
 import { Card, CardBody } from '@nextui-org/card';
 import { FaSortDown } from "react-icons/fa";
 import { BsInfoCircle } from "react-icons/bs";
-import { SteemTokens } from "@/app/profile/(tabs)/wallet/(tabs)/BalanceTab";
 
 interface TokenCardProps {
     title: string;

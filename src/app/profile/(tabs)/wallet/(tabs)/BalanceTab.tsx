@@ -11,7 +11,6 @@ import PowerDownModal from '@/components/PowerDownModal';
 import { Chip } from '@nextui-org/chip';
 import { IoMdAdd, IoMdRemove } from 'react-icons/io';
 
-export type SteemTokens = 'steem' | 'steem_power' | 'steem_dollar' | 'saving';
 
 
 const tokens = {

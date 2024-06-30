@@ -1,8 +1,6 @@
 import { headers } from "next/headers";
 import { validateCommunity } from "./helper";
-import { validBasicCats, validProfileTabs } from "@/middleware";
-
-const valid_categories = validBasicCats.concat(["pinned", "about"]);
+import { validCats, validProfileTabs } from "../constants/AppConstants";
 
 // Define username URL regex
 const usernameURLRegex = /@([^/]+)/;
@@ -55,15 +53,12 @@ const usePathnameServer = (): Params => {
     params.category = splitted_path[1]?.replace("@", "") ?? "";
   }
   // Check if the URL matches the pattern for a community
-  else if (
-    validateCommunity(second_param) &&
-    valid_categories.includes(first_param)
-  ) {
+  else if (validateCommunity(second_param) && validCats.includes(first_param)) {
     params.category = splitted_path[0]?.replace("@", "") ?? "";
     params.community = splitted_path[1]?.replace("@", "") ?? "";
   }
   // Check if the URL matches the pattern for a category
-  else if (valid_categories.includes(first_param)) {
+  else if (validCats.includes(first_param)) {
     params.category = splitted_path[0]?.replace("@", "") ?? "";
     params.tag = splitted_path[1]?.replace("@", "") ?? "";
   }
