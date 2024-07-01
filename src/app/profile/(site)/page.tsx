@@ -28,9 +28,9 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
     const dispatch = useAppDispatch();
 
 
-    useEffect(() => {
-        router.refresh();
-    }, [pathname]);
+    // useEffect(() => {
+    //     router.refresh();
+    // }, [pathname]);
 
 
     useEffect(() => {

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import db from "@/libs/db";
-import { getServerSession } from "next-auth";
-import { GET as authOptions } from "../../auth/[...nextauth]/route";
+import db from "@/libs/mysql/db";
+import { auth } from "@/auth";
 
 export async function POST(req: Request) {
   try {
@@ -9,7 +8,7 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     // Get the server session
-    const session: any = await getServerSession(authOptions);
+    const session: any = await auth();
 
     // Check if the session is valid
     if (!session?.user?.name) {

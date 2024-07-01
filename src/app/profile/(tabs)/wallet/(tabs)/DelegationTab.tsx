@@ -36,6 +36,7 @@ import LoadingCard from "@/components/LoadingCard";
 import { useLogin } from "@/components/AuthProvider";
 import { vestToSteem } from "@/libs/steem/sds";
 import moment from "moment";
+import { capitalize } from "@/libs/constants/AppConstants";
 
 const statusColorMap = {
     incoming: "success",
@@ -57,10 +58,6 @@ const statusOptions = [
     { name: "Outgoing", uid: "outgoing" },
 ];
 
-
-export function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-}
 
 export default function DelegationTab({ data }: { data: AccountExt }) {
     const { username } = usePathnameClient();

@@ -2,10 +2,10 @@ import MainWrapper from "@/components/wrappers/MainWrapper";
 import { getAuthorExt } from "@/libs/steem/sds";
 import { getResizedAvatar } from "@/libs/utils/image";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
-import { getServerSession } from "next-auth/next";
 import AccountHeader from "@/components/AccountHeader";
 import ProfileEnd from "./@end/page";
 import ProfilePage from "./page";
+import { auth } from "@/auth";
 
 export default async function Layout({
   children,
@@ -13,7 +13,7 @@ export default async function Layout({
   children: React.ReactNode;
 }>) {
   const { username } = usePathnameServer();
-  const session = await getServerSession();
+  const session = await auth();
   const data = await getAuthorExt(username, session?.user?.name || "null");
 
   return (
@@ -35,7 +35,7 @@ export async function generateMetadata() {
   if (!category) {
     category = "blog";
   }
-  const session = await getServerSession();
+  const session = await auth();
   const result = await getAuthorExt(username, session?.user?.name || "null");
   const { name, about, website } =
     JSON.parse(result.posting_json_metadata || "{}")?.profile ?? {};

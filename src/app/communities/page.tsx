@@ -25,7 +25,7 @@ import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import LoadingCard from "@/components/LoadingCard";
 import CommunityCard from "@/components/community/CommunityCard";
 import FollowButton from "@/components/FollowButton";
-import { capitalize } from "../profile/(tabs)/wallet/(tabs)/DelegationTab";
+import { capitalize } from "@/libs/constants/AppConstants";
 
 const INITIAL_VISIBLE_COLUMNS = ["title"];
 const columns = [

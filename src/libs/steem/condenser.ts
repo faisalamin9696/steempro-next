@@ -1,6 +1,13 @@
 import axios from "axios";
 import { AppStrings } from "../constants/AppStrings";
-import { Client, cryptoUtils, Operation, PrivateKey } from "@hiveio/dhive";
+import {
+  Client,
+  cryptoUtils,
+  Operation,
+  PrivateKey,
+  PublicKey,
+  Signature,
+} from "@hiveio/dhive";
 import { PrivKey } from "../utils/user";
 import { toast } from "sonner";
 import { CurrentSetting } from "../constants/AppConstants";
@@ -1113,4 +1120,22 @@ export function verifyPrivKey(account: AccountExt, key: string): boolean {
     return true;
   }
   return false;
+}
+
+export function signMessage(
+  privKey: string,
+  message: string
+): { signature: Signature; hash: Buffer } {
+  const privateKey = PrivateKey.fromString(privKey);
+  const hash = cryptoUtils.sha256(message);
+  const signature = privateKey.sign(hash);
+  return { signature, hash };
+}
+
+export function verifyMessage(
+  pubKey: string,
+  hash: Buffer,
+  signature: Signature
+): boolean {
+  return PublicKey.fromString(pubKey).verify(hash, signature) || false;
 }

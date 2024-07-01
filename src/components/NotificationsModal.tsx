@@ -1,7 +1,6 @@
 'use client';
 
-import { capitalize } from '@/app/profile/(tabs)/wallet/(tabs)/DelegationTab';
-import { DefaultNotificationFilters } from '@/libs/constants/AppConstants';
+import { capitalize, DefaultNotificationFilters } from '@/libs/constants/AppConstants';
 import { fetchSds, useAppDispatch, useAppSelector } from '@/libs/constants/AppFunctions';
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table';
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/dropdown';
@@ -9,7 +8,6 @@ import { Input } from '@nextui-org/input';
 import { Spinner } from '@nextui-org/spinner';
 import { Button } from '@nextui-org/button';
 import { Chip } from '@nextui-org/chip';
-
 import React, { useEffect, useState } from 'react'
 import { FaSearch } from 'react-icons/fa';
 import useSWR from 'swr';
@@ -26,7 +24,6 @@ import { useLogin } from './AuthProvider';
 import { getCredentials, getSessionKey } from '@/libs/utils/user';
 import { saveLoginHandler } from '@/libs/redux/reducers/LoginReducer';
 import { IoMdSettings } from "react-icons/io";
-import Link from 'next/link';
 import { Modal, ModalBody, ModalContent, ModalHeader, ModalFooter } from '@nextui-org/modal';
 import { useSession } from 'next-auth/react';
 

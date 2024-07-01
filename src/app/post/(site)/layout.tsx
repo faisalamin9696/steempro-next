@@ -45,7 +45,7 @@ export async function generateMetadata(parent: ResolvingMetadata) {
   return {
     title: pageTitle,
     description: pageDescription ?? "",
-    keywords: keywords.join(", "),
+    // keywords: keywords.join(", "),
     openGraph: {
       images: [thumbnail, ...previousImages],
     },

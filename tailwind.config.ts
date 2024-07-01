@@ -1,14 +1,15 @@
 import type { Config } from "tailwindcss";
 import { nextui } from "@nextui-org/react";
 
-const defaultTheme = require('tailwindcss/defaultTheme')
+const defaultTheme = require("tailwindcss/defaultTheme");
 
 const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}"],
+    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
     extend: {
       backgroundImage: {
@@ -17,26 +18,24 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       colors: {
-        appDark: '#09090b',
-        white: '#FFFFFF',
-        black: '#000000'
-      }
+        appDark: "#09090b",
+        white: "#FFFFFF",
+        black: "#000000",
+      },
     },
     screens: {
-      '1lg': '1100px',
-      '1md': '920px',
-      '2md': '980px',
-      'xs': '350px',
+      "1lg": "1100px",
+      "1md": "920px",
+      "2md": "980px",
+      xs: "350px",
       ...defaultTheme.screens,
-
-    }
-
+    },
   },
   darkMode: "class",
   plugins: [
-    require('tailwind-scrollbar'),
+    require("tailwind-scrollbar"),
     require("daisyui"),
-    require('@tailwindcss/typography'),
+    require("@tailwindcss/typography"),
     nextui({
       themes: {
         light: {
@@ -48,10 +47,9 @@ const config: Config = {
               DEFAULT: "#006FEE",
             },
           },
-
         },
 
-        "dark": {
+        dark: {
           extend: "dark", // <- inherit default values from dark theme
           colors: {
             background: "#0F172A",
@@ -70,12 +68,11 @@ const config: Config = {
               DEFAULT: "#09090b",
               foreground: "#ffffff",
             },
-            focus: "#F182F6"
-          }
-
+            focus: "#F182F6",
+          },
         },
-      }
-    })
+      },
+    }),
   ],
 };
 export default config;

@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./markdown.scss";
-import { Providers } from "./providers";
 import { Toaster } from "sonner";
 import clsx from "clsx";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Analytics } from "@vercel/analytics/react";
 import { AppStrings } from "@/libs/constants/AppStrings";
-import { Suspense } from "react";
-
+import { SessionProvider } from "next-auth/react";
+import { auth, BASE_PATH } from "@/auth";
+import { Providers } from "./providers";
 // export const runtime = 'edge' // 'nodejs' (default) | 'edge'
 
 // const inter = Inter({ subsets: ["latin"] });
@@ -19,7 +17,8 @@ export const metadata: Metadata = {
     template: "%s | SteemPro",
     absolute: "",
   },
-  keywords: "SteemPro, steem, blockchain, steempro, web3, decentralized social media, social",
+  keywords:
+    "SteemPro, steem, blockchain, steempro, web3, decentralized social media, social",
   description:
     "Experience a social network empowered by the Steem blockchain. Explore trending discussions and share your unique perspective.",
   icons: {
@@ -45,6 +44,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+  if (session && session.user) {
+    session.user = {
+      name: session.user.name,
+      email: session.user.email,
+    };
+  }
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <link
@@ -58,12 +64,13 @@ export default async function RootLayout({
       <link rel="preconnect " href={AppStrings.sds_base_url} />
 
       <body className={clsx()}>
-        <Providers>
-          {children}
-          <Toaster richColors closeButton />
-        </Providers>
-        <Analytics />
-        <SpeedInsights />
+        <SessionProvider session={session} basePath={BASE_PATH}>
+          <Providers>
+            {children}
+            <Toaster richColors closeButton />
+          </Providers>
+        </SessionProvider>
+        <Toaster richColors closeButton />
       </body>
     </html>
   );

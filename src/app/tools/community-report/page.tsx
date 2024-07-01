@@ -26,9 +26,9 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { validateCommunity } from "@/libs/utils/helper";
 import SAvatar from "@/components/SAvatar";
-import { capitalize } from "@/components/VotersCard";
 import { FaSearch, FaChevronDown } from "react-icons/fa";
 import LoadingCard from "@/components/LoadingCard";
+import { capitalize } from "@/libs/constants/AppConstants";
 
 type CommunityReportType = {
   author: string;

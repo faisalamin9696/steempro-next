@@ -13,7 +13,6 @@ import { AuthProvider } from "@/components/AuthProvider";
 import AppNavbar from "@/components/navbar/AppNavbar";
 import { ThemeProvider } from "next-themes";
 import LoadingCard from "@/components/LoadingCard";
-import { SessionProvider } from "next-auth/react";
 import { SWRConfig } from "swr";
 import { fetchSds } from "@/libs/constants/AppFunctions";
 import { firebaseConfig } from "@/libs/firebase/firebase.config";
@@ -76,6 +75,7 @@ export function Providers(props: Props) {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
   return (
     <>
       <ReduxProvider store={store}>
@@ -83,32 +83,30 @@ export function Providers(props: Props) {
           <ThemeProvider attribute="class">
             <NextUIProvider navigate={router.push}>
               {isMounted ? (
-                <SessionProvider>
-                  <SWRConfig
-                    value={{
-                      refreshInterval: 10 * 60 * 1000,
-                      fetcher: fetchSds,
-                      revalidateOnFocus: false,
-                      errorRetryCount: 3,
-                      shouldRetryOnError: true,
-                      // onError: (error, key) => {
-                      //     if (error.status !== 403 && error.status !== 404) {
-                      //         toast.error(error);
-                      //     }
-                      // },
-                      dedupingInterval: 10000,
-                      loadingTimeout: 20000,
-                      // revalidateOnMount: false
-                    }}
-                  >
-                    <AuthProvider>
-                      <AppWrapper>
-                        <AppNavbar />
-                        {children}
-                      </AppWrapper>
-                    </AuthProvider>
-                  </SWRConfig>
-                </SessionProvider>
+                <SWRConfig
+                  value={{
+                    refreshInterval: 10 * 60 * 1000,
+                    fetcher: fetchSds,
+                    revalidateOnFocus: false,
+                    errorRetryCount: 3,
+                    shouldRetryOnError: true,
+                    // onError: (error, key) => {
+                    //     if (error.status !== 403 && error.status !== 404) {
+                    //         toast.error(error);
+                    //     }
+                    // },
+                    dedupingInterval: 10000,
+                    loadingTimeout: 20000,
+                    // revalidateOnMount: false
+                  }}
+                >
+                  <AuthProvider>
+                    <AppWrapper>
+                      <AppNavbar />
+                      {children}
+                    </AppWrapper>
+                  </AuthProvider>
+                </SWRConfig>
               ) : (
                 <LoadingCard />
               )}

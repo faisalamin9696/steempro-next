@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import db from "@/libs/db";
-import { getServerSession } from "next-auth/next";
-import { GET as authOptions } from "../../auth/[...nextauth]/route";
+import db from "@/libs/mysql/db";
+import { auth } from "@/auth";
 
 // Define the POST handler
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const session: any = await getServerSession(authOptions);
+    const session: any = await auth();
 
     if (!session?.user?.name) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import db from "@/libs/db";
-import { getServerSession } from "next-auth";
-import { GET as authOptions } from "../../auth/[...nextauth]/route";
+import db from "@/libs/mysql/db";
+import { auth } from "@/auth";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const session: any = await getServerSession(authOptions);
+  const session: any = await auth();
   try {
     const query =
       "INSERT INTO posts" +

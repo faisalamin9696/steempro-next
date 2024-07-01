@@ -3,10 +3,10 @@ import { getCommunity } from "@/libs/steem/sds";
 import { getResizedAvatar } from "@/libs/utils/image";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
 import { ResolvingMetadata } from "next";
-import { getServerSession } from "next-auth/next";
 import CommunityPage from "./page";
 import ProfileInfoCard from "@/components/ProfileInfoCard";
 import AccountHeader from "@/components/AccountHeader";
+import { auth } from "@/auth";
 
 export default async function Layout({
   children,
@@ -18,7 +18,7 @@ export default async function Layout({
   end: React.ReactNode;
 }>) {
   const { community } = usePathnameServer();
-  const session = await getServerSession();
+  const session = await auth();
 
   const data = await getCommunity(community, session?.user?.name || "null");
 

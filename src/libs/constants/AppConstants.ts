@@ -28,6 +28,10 @@ export function updateCurrentSetting(setting: Setting) {
   CurrentSetting = setting;
 }
 
+export function capitalize(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 // in ms
 export const ViewCountTime = 10000;
 

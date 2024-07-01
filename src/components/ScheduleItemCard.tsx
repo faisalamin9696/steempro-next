@@ -1,7 +1,7 @@
 "use client";
 
 import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
-import { extractImageUrls, extractMetadata } from "@/libs/utils/editor";
+import {  extractMetadata } from "@/libs/utils/editor";
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
 
 import { Chip } from "@nextui-org/chip";

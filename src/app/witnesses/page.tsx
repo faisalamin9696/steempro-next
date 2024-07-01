@@ -24,13 +24,12 @@ import {
 import React, { useEffect, useState } from 'react'
 import { FaChevronDown, FaSearch } from 'react-icons/fa';
 import useSWR from 'swr';
-import { capitalize } from '../profile/(tabs)/wallet/(tabs)/DelegationTab';
 import LoadingCard from '@/components/LoadingCard';
 import { RiLinkM } from "react-icons/ri";
 import Link from 'next/link';
 import { replaceOldDomains } from '@/libs/utils/Links';
 import WitnessVoteButton from '@/components/WitnessVoteButton';
-import { WitnessAccount } from '@/libs/constants/AppConstants';
+import { capitalize, WitnessAccount } from '@/libs/constants/AppConstants';
 
 
 const INITIAL_VISIBLE_COLUMNS = ["rank", "name", 'received_votes', "action"];

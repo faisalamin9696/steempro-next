@@ -26,6 +26,7 @@ import { fetchSds } from "@/libs/constants/AppFunctions";
 import SAvatar from "@/components/SAvatar";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import LoadingCard from "@/components/LoadingCard";
+import { capitalize } from "@/libs/constants/AppConstants";
 
 const INITIAL_VISIBLE_COLUMNS = ["voter", 'rshares', 'time'];
 
@@ -36,10 +37,6 @@ const columns = [
 
 
 ];
-
-export function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-}
 
 export default function VotersCard({ comment }: { comment: Feed | Post }) {
     const URL = `/posts_api/getVotesById/${comment.link_id}`;

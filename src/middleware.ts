@@ -1,7 +1,7 @@
 import { validateCommunity } from "@/libs/utils/helper";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { validBasicCats, validCats } from "./libs/constants/AppConstants";
+import { validBasicCats, validCats } from "@/libs/constants/AppConstants";
 
 // Define valid categories
 

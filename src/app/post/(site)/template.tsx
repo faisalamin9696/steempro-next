@@ -3,9 +3,9 @@ import MainWrapper from "@/components/wrappers/MainWrapper";
 import { getPost } from "@/libs/steem/sds";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
 import PostPage from "./page";
-import { getServerSession } from "next-auth/next";
 import PostStart from "./@start/page";
 import ProfileInfoCard from "@/components/ProfileInfoCard";
+import { auth } from "@/auth";
 
 export default async function LayoutTemplate({
     children,
@@ -17,7 +17,7 @@ export default async function LayoutTemplate({
     end: React.ReactNode;
 }>) {
     const { username, permlink } = usePathnameServer();
-    const session = await getServerSession();
+    const session = await auth();
 
     const data = await getPost(username, permlink, session?.user?.name || 'null');
     // const tag = data.community ? JSON.parse(data.json_metadata)?.['tags'][0] : data.category

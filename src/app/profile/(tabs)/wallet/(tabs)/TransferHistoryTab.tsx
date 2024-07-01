@@ -25,6 +25,7 @@ import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import LoadingCard from "@/components/LoadingCard";
 import moment from "moment";
 import { TransferHistoryCard } from "@/components/TransferHistoryCard";
+import { capitalize } from "@/libs/constants/AppConstants";
 
 const INITIAL_VISIBLE_COLUMNS = ["op", 'time'];
 
@@ -41,10 +42,6 @@ const statusOptions = [
     { name: "Claim Reward", uid: "claim_reward_balance" },
 ];
 
-
-export function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-}
 
 
 const start_date = moment().subtract(30, 'days').unix();
