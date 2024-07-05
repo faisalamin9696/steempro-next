@@ -452,69 +452,73 @@ export default function SubmitPage(props: Props) {
       return;
     }
 
-    const credentials = getCredentials(getSessionKey(session?.user?.name));
-    if (!credentials?.key) {
-      toast.error("Invalid credentials");
-      return;
-    }
+    try {
+      const credentials = getCredentials(getSessionKey(session?.user?.name));
+      if (!credentials?.key) {
+        toast.error("Invalid credentials");
+        return;
+      }
 
-    let parent_permlink = _tags[0] || "steempro";
-    if (community && community.account !== loginInfo.name) {
-      parent_permlink = community.account;
-    }
+      let parent_permlink = _tags[0] || "steempro";
+      if (community && community.account !== loginInfo.name) {
+        parent_permlink = community.account;
+      }
 
-    let options = makeOptions({
-      author: loginInfo.name,
-      permlink: "test",
-      operationType: reward?.payout,
-      beneficiaries: beneficiaries,
-    });
-
-    const cbody = markdown.replace(
-      /[\x00-\x09\x0B-\x0C\x0E-\x1F\x7F-\x9F]/g,
-      ""
-    );
-    setScheduling(true);
-
-    const { signature, hash } = signMessage(credentials.key, loginInfo.name);
-
-    grantPostingPermission(loginInfo, credentials.key)
-      .then(() => {
-        axios
-          .post(
-            "/api/schedules/add",
-            {
-              username: loginInfo.name,
-              hash: hash,
-              signature: signature.toString(),
-              title: title,
-              body: cbody,
-              tags: _tags.join(","),
-              parent_permlink: parent_permlink,
-              options: JSON.stringify(options),
-              time: moment(dateTime.toAbsoluteString()).format(),
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          )
-          .then((res) => {
-            toast.success("Schedule successfully");
-            clearForm();
-          })
-          .catch(function (error) {
-            toast.error(String(error?.message));
-          })
-          .finally(() => {
-            setScheduling(false);
-          });
-      })
-      .catch((error) => {
-        toast.error(String(error?.message));
-        setScheduling(false);
+      let options = makeOptions({
+        author: loginInfo.name,
+        permlink: "test",
+        operationType: reward?.payout,
+        beneficiaries: beneficiaries,
       });
+
+      const cbody = markdown.replace(
+        /[\x00-\x09\x0B-\x0C\x0E-\x1F\x7F-\x9F]/g,
+        ""
+      );
+      setScheduling(true);
+
+      const { signature, hash } = signMessage(credentials.key, loginInfo.name);
+
+      grantPostingPermission(loginInfo, credentials.key)
+        .then(() => {
+          axios
+            .post(
+              "/api/schedules/add",
+              {
+                username: loginInfo.name,
+                hash: hash,
+                signature: signature.toString(),
+                title: title,
+                body: cbody,
+                tags: _tags.join(","),
+                parent_permlink: parent_permlink,
+                options: JSON.stringify(options),
+                time: moment(dateTime.toAbsoluteString()).format(),
+              },
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            )
+            .then((res) => {
+              toast.success("Schedule successfully");
+              clearForm();
+            })
+            .catch(function (error) {
+              toast.error(String(error?.message));
+            })
+            .finally(() => {
+              setScheduling(false);
+            });
+        })
+        .catch((error) => {
+          toast.error(String(error?.message));
+          setScheduling(false);
+        });
+    } catch (error) {
+      toast.error("Something went wrong!");
+    }
   }
   return (
     <div

@@ -79,57 +79,62 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
       return;
     }
 
-    const credentials = getCredentials(getSessionKey(session?.user?.name));
+    try {
+      const credentials = getCredentials(getSessionKey(session?.user?.name));
 
-    if (!credentials?.key) {
-      toast.error("Invalid credentials");
-      return;
-    }
-    if (isDraft) setIsDrafting(true);
-    else setIsDeleting(true);
+      if (!credentials?.key) {
+        toast.error("Invalid credentials");
+        return;
+      }
+      if (isDraft) setIsDrafting(true);
+      else setIsDeleting(true);
 
-    const isValidKey = verifyPrivKey(loginInfo, credentials.key);
+      const isValidKey = verifyPrivKey(loginInfo, credentials.key);
 
-    if (!isValidKey) {
-      setIsUpdating(false);
-      setIsDrafting(false);
-      toast.info("Private posting key or above required");
-      return;
-    }
-    const { signature, hash } = signMessage(credentials.key, loginInfo.name);
-
-    axios
-      .post(
-        "/api/schedules/delete",
-        {
-          id: scheduleInfo.id,
-          username: loginInfo.name,
-          signature: signature.toString(),
-          hash,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-      .then((res) => {
-        if (isDraft) toast.success("Copied to draft and deleted successfully");
-        else toast.success("Deleted successfully");
-        dispatch(
-          addScheduleHandler({
-            ...scheduleInfo,
-            status: -1,
-          })
-        );
-      })
-      .catch(function (error) {
-        toast.error(String(error));
-      })
-      .finally(() => {
+      if (!isValidKey) {
         setIsUpdating(false);
         setIsDrafting(false);
-      });
+        toast.info("Private posting key or above required");
+        return;
+      }
+      const { signature, hash } = signMessage(credentials.key, loginInfo.name);
+
+      axios
+        .post(
+          "/api/schedules/delete",
+          {
+            id: scheduleInfo.id,
+            username: loginInfo.name,
+            signature: signature.toString(),
+            hash,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then((res) => {
+          if (isDraft)
+            toast.success("Copied to draft and deleted successfully");
+          else toast.success("Deleted successfully");
+          dispatch(
+            addScheduleHandler({
+              ...scheduleInfo,
+              status: -1,
+            })
+          );
+        })
+        .catch(function (error) {
+          toast.error(String(error));
+        })
+        .finally(() => {
+          setIsUpdating(false);
+          setIsDrafting(false);
+        });
+    } catch (error) {
+      toast.error("Something went wrong!");
+    }
   }
 
   async function handleOnEdit() {
@@ -159,60 +164,64 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
       return;
     }
 
-    const credentials = getCredentials(getSessionKey(session?.user?.name));
+    try {
+      const credentials = getCredentials(getSessionKey(session?.user?.name));
 
-    if (!credentials?.key) {
-      toast.error("Invalid credentials");
-      return;
-    }
+      if (!credentials?.key) {
+        toast.error("Invalid credentials");
+        return;
+      }
 
-    setIsUpdating(true);
+      setIsUpdating(true);
 
-    const isValidKey = verifyPrivKey(loginInfo, credentials.key);
+      const isValidKey = verifyPrivKey(loginInfo, credentials.key);
 
-    if (!isValidKey) {
-      setIsUpdating(false);
-      toast.info("Private posting key or above required");
-      return;
-    }
-    const time = moment(dateTime.toAbsoluteString()).format();
-
-    const { signature, hash } = signMessage(credentials.key, loginInfo.name);
-
-    axios
-      .post(
-        "/api/schedules/update",
-        {
-          time: time,
-          id: scheduleInfo.id,
-          username: loginInfo.name,
-          signature: signature.toString(),
-          hash,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-      .then((res) => {
-        toast.success("Updated successfully");
-        dispatch(
-          addScheduleHandler({
-            ...scheduleInfo,
-            time: time,
-            status: 0,
-            message: "",
-          })
-        );
-        setDateTime(undefined);
-      })
-      .catch(function (error) {
-        toast.error(String(error));
-      })
-      .finally(() => {
+      if (!isValidKey) {
         setIsUpdating(false);
-      });
+        toast.info("Private posting key or above required");
+        return;
+      }
+      const time = moment(dateTime.toAbsoluteString()).format();
+
+      const { signature, hash } = signMessage(credentials.key, loginInfo.name);
+
+      axios
+        .post(
+          "/api/schedules/update",
+          {
+            time: time,
+            id: scheduleInfo.id,
+            username: loginInfo.name,
+            signature: signature.toString(),
+            hash,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then((res) => {
+          toast.success("Updated successfully");
+          dispatch(
+            addScheduleHandler({
+              ...scheduleInfo,
+              time: time,
+              status: 0,
+              message: "",
+            })
+          );
+          setDateTime(undefined);
+        })
+        .catch(function (error) {
+          toast.error(String(error));
+        })
+        .finally(() => {
+          setIsUpdating(false);
+        });
+    } catch (error) {
+      toast.error("Something went wrong!");
+    }
   }
 
   async function handleDraft() {
