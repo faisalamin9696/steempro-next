@@ -143,7 +143,7 @@ export default function AuthModal(props: Props) {
 
   function onComplete(error?: string | null) {
     setLoading(false);
-    if (error) toast.error(error);
+    if (error) toast.error(String(error));
   }
   async function handleLogin() {
     username = username.trim().toLowerCase();

@@ -20,7 +20,12 @@ import {
 } from "@/libs/utils/user";
 import { awaitTimeout, useAppSelector } from "@/libs/constants/AppFunctions";
 import { readingTime } from "@/libs/utils/readingTime/reading-time-estimator";
-import { grantPostingPermission, publishContent } from "@/libs/steem/condenser";
+import {
+  grantPostingPermission,
+  publishContent,
+  signMessage,
+  verifyMessage,
+} from "@/libs/steem/condenser";
 import { toast } from "sonner";
 import {
   createPatch,
@@ -469,14 +474,19 @@ export default function SubmitPage(props: Props) {
       /[\x00-\x09\x0B-\x0C\x0E-\x1F\x7F-\x9F]/g,
       ""
     );
-
     setScheduling(true);
+
+    const { signature, hash } = signMessage(credentials.key, loginInfo.name);
+
     grantPostingPermission(loginInfo, credentials.key)
       .then(() => {
         axios
           .post(
             "/api/schedules/add",
             {
+              username: loginInfo.name,
+              hash: hash,
+              signature: signature.toString(),
               title: title,
               body: cbody,
               tags: _tags.join(","),
@@ -495,14 +505,14 @@ export default function SubmitPage(props: Props) {
             clearForm();
           })
           .catch(function (error) {
-            toast.error(error);
+            toast.error(String(error?.message));
           })
           .finally(() => {
             setScheduling(false);
           });
       })
       .catch((error) => {
-        toast.error(String(error));
+        toast.error(String(error?.message));
         setScheduling(false);
       });
   }
@@ -576,10 +586,7 @@ export default function SubmitPage(props: Props) {
 
         <div className="flex gap-2 relativeitems-center flex-row">
           <div className="gap-2 flex">
-            <ClearFormButton
-              onClearPress={clearForm}
-              isDisabled={isLoading}
-            />
+            <ClearFormButton onClearPress={clearForm} isDisabled={isLoading} />
 
             <BeneficiaryButton
               isDisabled={isEdit || isLoading}

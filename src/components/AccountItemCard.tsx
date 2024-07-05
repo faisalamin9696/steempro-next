@@ -55,7 +55,7 @@ export default memo(function AccountItemCard(props: Props) {
     }
 
     setSwitching(false);
-    if (error) toast.error(error);
+    if (error) toast.error(String(error));
     else router.refresh();
   }
 

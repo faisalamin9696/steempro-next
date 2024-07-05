@@ -1122,6 +1122,7 @@ export function verifyPrivKey(account: AccountExt, key: string): boolean {
   return false;
 }
 
+
 export function signMessage(
   privKey: string,
   message: string
@@ -1137,5 +1138,11 @@ export function verifyMessage(
   hash: Buffer,
   signature: Signature
 ): boolean {
-  return PublicKey.fromString(pubKey).verify(hash, signature) || false;
+  try {
+    const isValid =
+      PublicKey.from(pubKey).verify(hash, signature) || false;
+    return isValid;
+  } catch (error) {
+    return false;
+  }
 }

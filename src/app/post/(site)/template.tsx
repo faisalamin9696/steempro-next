@@ -1,4 +1,3 @@
-
 import MainWrapper from "@/components/wrappers/MainWrapper";
 import { getPost } from "@/libs/steem/sds";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
@@ -8,29 +7,32 @@ import ProfileInfoCard from "@/components/ProfileInfoCard";
 import { auth } from "@/auth";
 
 export default async function LayoutTemplate({
-    children,
-    start,
-    end,
+  children,
+  start,
+  end,
 }: Readonly<{
-    children: React.ReactNode;
-    start: React.ReactNode;
-    end: React.ReactNode;
+  children: React.ReactNode;
+  start: React.ReactNode;
+  end: React.ReactNode;
 }>) {
-    const { username, permlink } = usePathnameServer();
-    const session = await auth();
+  const { username, permlink } = usePathnameServer();
+  const session = await auth();
 
-    const data = await getPost(username, permlink, session?.user?.name || 'null');
-    // const tag = data.community ? JSON.parse(data.json_metadata)?.['tags'][0] : data.category
+  const data = await getPost(username, permlink, session?.user?.name || "null");
+  // const tag = data.community ? JSON.parse(data.json_metadata)?.['tags'][0] : data.category
 
-    return (
-        <main className="main" key={permlink}>
-            <MainWrapper
-                endClassName={'1md:block'}
-                startClassName=' max-h-screen lg:block'
-                startContent={<PostStart />}
-                endContent={<ProfileInfoCard key={Math.random()} profile username={username} />}>
-                <PostPage data={data} />
-            </MainWrapper>
-        </main>
-    );
+  return (
+    <main className="main" key={permlink}>
+      <MainWrapper
+        endClassName={"1md:block"}
+        startClassName=" max-h-screen lg:block"
+        startContent={<PostStart />}
+        endContent={
+          <ProfileInfoCard key={Math.random()} profile username={username} />
+        }
+      >
+        <PostPage data={data} />
+      </MainWrapper>
+    </main>
+  );
 }

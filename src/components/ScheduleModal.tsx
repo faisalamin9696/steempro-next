@@ -17,11 +17,12 @@ interface Props {
   isOpen: boolean;
   onOpenChange?: (isOpen: boolean) => void;
   onDateTimeChange: (datetime: ZonedDateTime) => void;
+  startTime?: ZonedDateTime;
 }
 export default function ScheduleModal(props: Props) {
   const { isOpen, onOpenChange } = useDisclosure();
   const [dateTime, setDateTime] = useState(
-    now(getLocalTimeZone()).add({ minutes: 1 })
+    props.startTime ?? now(getLocalTimeZone()).add({ minutes: 1 })
   );
 
   function handleConfirm() {

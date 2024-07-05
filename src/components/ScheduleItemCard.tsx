@@ -1,7 +1,7 @@
 "use client";
 
 import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
-import {  extractMetadata } from "@/libs/utils/editor";
+import { extractMetadata } from "@/libs/utils/editor";
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
 
 import { Chip } from "@nextui-org/chip";
@@ -25,7 +25,7 @@ import { IoClose } from "react-icons/io5";
 import axios from "axios";
 import { toast } from "sonner";
 import { useLogin } from "./AuthProvider";
-import { verifyPrivKey } from "@/libs/steem/condenser";
+import { signMessage, verifyPrivKey } from "@/libs/steem/condenser";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { useSession } from "next-auth/react";
 import { addScheduleHandler } from "@/libs/redux/reducers/ScheduleReducer";
@@ -34,6 +34,13 @@ import { validateCommunity } from "@/libs/utils/helper";
 import { empty_community } from "@/libs/constants/Placeholders";
 import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
 import STooltip from "./STooltip";
+import {
+  now,
+  parseDateTime,
+  parseZonedDateTime,
+  parseAbsolute,
+  parseAbsoluteToLocal,
+} from "@internationalized/date";
 
 const StatusData = {
   0: { title: "Pending", color: "warning" },
@@ -89,12 +96,16 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
       toast.info("Private posting key or above required");
       return;
     }
+    const { signature, hash } = signMessage(credentials.key, loginInfo.name);
 
     axios
       .post(
         "/api/schedules/delete",
         {
           id: scheduleInfo.id,
+          username: loginInfo.name,
+          signature: signature.toString(),
+          hash,
         },
         {
           headers: {
@@ -113,7 +124,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
         );
       })
       .catch(function (error) {
-        toast.error(error);
+        toast.error(String(error));
       })
       .finally(() => {
         setIsUpdating(false);
@@ -165,12 +176,18 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
       return;
     }
     const time = moment(dateTime.toAbsoluteString()).format();
+
+    const { signature, hash } = signMessage(credentials.key, loginInfo.name);
+
     axios
       .post(
         "/api/schedules/update",
         {
           time: time,
           id: scheduleInfo.id,
+          username: loginInfo.name,
+          signature: signature.toString(),
+          hash,
         },
         {
           headers: {
@@ -191,7 +208,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
         setDateTime(undefined);
       })
       .catch(function (error) {
-        toast.error(error);
+        toast.error(String(error));
       })
       .finally(() => {
         setIsUpdating(false);
@@ -389,6 +406,9 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
         isOpen={isOpen}
         onOpenChange={setIsOpen}
         onDateTimeChange={setDateTime}
+        startTime={parseZonedDateTime(
+          parseAbsoluteToLocal(scheduleInfo.time).toString()
+        )}
       />
     </div>
   );

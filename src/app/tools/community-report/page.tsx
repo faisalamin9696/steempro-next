@@ -278,35 +278,37 @@ export default function CommunityReportPage() {
 
   const bottomContent = React.useMemo(() => {
     return (
-      <div className="py-2 px-2 flex justify-between items-center">
-        <Pagination
-          isCompact
-          showControls
-          showShadow
-          color="primary"
-          page={page}
-          total={pages}
-          onChange={setPage}
-        />
-        <div className="hidden sm:flex w-[30%] justify-end gap-2">
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onClick={onPreviousPage}
-          >
-            Previous
-          </Button>
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onClick={onNextPage}
-          >
-            Next
-          </Button>
+      !!pages && (
+        <div className="py-2 px-2 flex justify-between items-center">
+          <Pagination
+            isCompact
+            showControls
+            showShadow
+            color="primary"
+            page={page}
+            total={pages}
+            onChange={setPage}
+          />
+          <div className="hidden sm:flex w-[30%] justify-end gap-2">
+            <Button
+              isDisabled={pages === 1}
+              size="sm"
+              variant="flat"
+              onClick={onPreviousPage}
+            >
+              Previous
+            </Button>
+            <Button
+              isDisabled={pages === 1}
+              size="sm"
+              variant="flat"
+              onClick={onNextPage}
+            >
+              Next
+            </Button>
+          </div>
         </div>
-      </div>
+      )
     );
   }, [items.length, page, pages, hasSearchFilter]);
 
@@ -331,74 +333,74 @@ export default function CommunityReportPage() {
   );
 
   return (
-      <div className="flex flex-col items-center gap-8">
-        <p className=" text-xl font-bold">Community Report</p>
+    <div className="flex flex-col items-center gap-8">
+      <p className=" text-xl font-bold">Community Report</p>
 
-        <div className="flex flex-col gap-4 w-full">
-          <Input
-            isClearable
-            size="sm"
-            value={community}
-            onValueChange={setCommunity}
-            isRequired
-            label="Community"
-            placeholder="Enter community account e.g. hive-144064"
-          />
+      <div className="flex flex-col gap-4 w-full">
+        <Input
+          isClearable
+          size="sm"
+          value={community}
+          onValueChange={setCommunity}
+          isRequired
+          label="Community"
+          placeholder="Enter community account e.g. hive-144064"
+        />
 
-          <Button
-            className="self-start"
-            onClick={getCommunityReport}
-            isLoading={isPending}
-          >
-            Get Report
-          </Button>
-        </div>
-
-        {isPending ? (
-          <LoadingCard />
-        ) : (
-          <Table
-            aria-label="Delegation table"
-            isHeaderSticky
-            removeWrapper
-            bottomContent={bottomContent}
-            bottomContentPlacement="outside"
-            classNames={classNames}
-            sortDescriptor={sortDescriptor}
-            topContent={topContent}
-            topContentPlacement="outside"
-            onSortChange={setSortDescriptor}
-            isCompact
-            isStriped
-          >
-            <TableHeader columns={headerColumns}>
-              {(column) => (
-                <TableColumn
-                  key={column.uid}
-                  align={column.uid === "actions" ? "center" : "start"}
-                  allowsSorting={column.sortable}
-                >
-                  {column.name}
-                </TableColumn>
-              )}
-            </TableHeader>
-            <TableBody
-              emptyContent={"No data found"}
-              items={sortedItems.slice(
-                (page - 1) * rowsPerPage,
-                page * rowsPerPage
-              )}
-            >
-              {(item) => (
-                <TableRow key={`${item.author}`}>
-                  {(columnKey) => (
-                    <TableCell>{renderCell(item, columnKey)}</TableCell>
-                  )}
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        )}
+        <Button
+          className="self-start"
+          onClick={getCommunityReport}
+          isLoading={isPending}
+        >
+          Get Report
+        </Button>
       </div>
+
+      {isPending ? (
+        <LoadingCard />
+      ) : (
+        <Table
+          aria-label="Delegation table"
+          isHeaderSticky
+          removeWrapper
+          bottomContent={bottomContent}
+          bottomContentPlacement="outside"
+          classNames={classNames}
+          sortDescriptor={sortDescriptor}
+          topContent={topContent}
+          topContentPlacement="outside"
+          onSortChange={setSortDescriptor}
+          isCompact
+          isStriped
+        >
+          <TableHeader columns={headerColumns}>
+            {(column) => (
+              <TableColumn
+                key={column.uid}
+                align={column.uid === "actions" ? "center" : "start"}
+                allowsSorting={column.sortable}
+              >
+                {column.name}
+              </TableColumn>
+            )}
+          </TableHeader>
+          <TableBody
+            emptyContent={"No data found"}
+            items={sortedItems.slice(
+              (page - 1) * rowsPerPage,
+              page * rowsPerPage
+            )}
+          >
+            {(item) => (
+              <TableRow key={`${item.author}`}>
+                {(columnKey) => (
+                  <TableCell>{renderCell(item, columnKey)}</TableCell>
+                )}
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      )}
+    </div>
   );
 }

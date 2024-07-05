@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import SAvatar from '@/components/SAvatar';
-import MainWrapper from '@/components/wrappers/MainWrapper';
-import TimeAgoWrapper from '@/components/wrappers/TimeAgoWrapper';
-import { fetchSds, useAppSelector } from '@/libs/constants/AppFunctions';
-import { abbreviateNumber } from '@/libs/utils/helper';
+import SAvatar from "@/components/SAvatar";
+import MainWrapper from "@/components/wrappers/MainWrapper";
+import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
+import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
+import { abbreviateNumber } from "@/libs/utils/helper";
 import {
   Table,
   TableHeader,
@@ -12,27 +12,28 @@ import {
   TableBody,
   TableRow,
   TableCell,
-
 } from "@nextui-org/table";
 
-import { Button } from '@nextui-org/button';
-import { Input } from '@nextui-org/input';
-import { Pagination } from '@nextui-org/pagination';
+import { Button } from "@nextui-org/button";
+import { Input } from "@nextui-org/input";
+import { Pagination } from "@nextui-org/pagination";
 import {
-  DropdownTrigger, Dropdown, DropdownMenu, DropdownItem
-} from '@nextui-org/dropdown';
-import React, { useEffect, useState } from 'react'
-import { FaChevronDown, FaSearch } from 'react-icons/fa';
-import useSWR from 'swr';
-import LoadingCard from '@/components/LoadingCard';
+  DropdownTrigger,
+  Dropdown,
+  DropdownMenu,
+  DropdownItem,
+} from "@nextui-org/dropdown";
+import React, { useEffect, useState } from "react";
+import { FaChevronDown, FaSearch } from "react-icons/fa";
+import useSWR from "swr";
+import LoadingCard from "@/components/LoadingCard";
 import { RiLinkM } from "react-icons/ri";
-import Link from 'next/link';
-import { replaceOldDomains } from '@/libs/utils/Links';
-import WitnessVoteButton from '@/components/WitnessVoteButton';
-import { capitalize, WitnessAccount } from '@/libs/constants/AppConstants';
+import Link from "next/link";
+import { replaceOldDomains } from "@/libs/utils/Links";
+import WitnessVoteButton from "@/components/WitnessVoteButton";
+import { capitalize, WitnessAccount } from "@/libs/constants/AppConstants";
 
-
-const INITIAL_VISIBLE_COLUMNS = ["rank", "name", 'received_votes', "action"];
+const INITIAL_VISIBLE_COLUMNS = ["rank", "name", "received_votes", "action"];
 
 const columns = [
   { name: "RANK", uid: "rank", sortable: true },
@@ -48,27 +49,27 @@ const columns = [
 export default function page() {
   const URL = `/witnesses_api/getWitnessesByRank`;
   const { data, isLoading } = useSWR(URL, fetchSds<Witness[]>);
-  const loginInfo = useAppSelector(state => state.loginReducer.value);
+  const loginInfo = useAppSelector((state) => state.loginReducer.value);
 
   const [allRows, setAllRows] = useState<Witness[]>([]);
 
-  
   useEffect(() => {
     if (data) {
-      const index = data?.findIndex(account => account.name === (WitnessAccount));
+      const index = data?.findIndex(
+        (account) => account.name === WitnessAccount
+      );
       if (index && index !== -1) {
         const officialCommunity = data?.splice(index, 1)[0];
-        if (officialCommunity)
-          data?.unshift(officialCommunity);
+        if (officialCommunity) data?.unshift(officialCommunity);
       }
       setAllRows(data);
     }
-
   }, [data]);
 
-
   const [filterValue, setFilterValue] = React.useState<any>("");
-  const [visibleColumns, setVisibleColumns] = React.useState<any>(new Set(INITIAL_VISIBLE_COLUMNS));
+  const [visibleColumns, setVisibleColumns] = React.useState<any>(
+    new Set(INITIAL_VISIBLE_COLUMNS)
+  );
   const [statusFilter, setStatusFilter] = React.useState<any>("all");
   const [rowsPerPage, setRowsPerPage] = React.useState<any>(10);
   const [sortDescriptor, setSortDescriptor] = React.useState<any>({
@@ -82,7 +83,9 @@ export default function page() {
   const headerColumns = React.useMemo(() => {
     if (visibleColumns === "all") return columns;
 
-    return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
+    return columns.filter((column) =>
+      Array.from(visibleColumns).includes(column.uid)
+    );
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
@@ -93,7 +96,6 @@ export default function page() {
         delegation.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
-
 
     return filteredDelegations;
   }, [allRows, filterValue]);
@@ -117,27 +119,22 @@ export default function page() {
     });
   }, [sortDescriptor, items]);
 
-
-
   const renderCell = React.useCallback((witness: Witness, columnKey) => {
-
-
-
     const cellValue = witness[columnKey];
 
     switch (columnKey) {
+
       case "name":
-        return (<div className='flex flex-row items-center'>
-          <div className="flex gap-2 items-center">
-            <SAvatar size="xs" username={witness.name} />
-            <p>{witness.name}</p>
-            <Link target='_blank' href={replaceOldDomains(witness.url)}>
-              <RiLinkM className='text-lg' />
-            </Link>
+        return (
+          <div className="flex flex-row items-center">
+            <div className="flex gap-2 items-center">
+              <SAvatar size="xs" username={witness.name} />
+              <p>{witness.name}</p>
+              <Link target="_blank" href={replaceOldDomains(witness.url)}>
+                <RiLinkM className="text-lg" />
+              </Link>
+            </div>
           </div>
-        </div>
-
-
         );
       case "received_votes":
         return (
@@ -150,34 +147,33 @@ export default function page() {
         return (
           <div className="flex flex-col gap-1 text-bold text-small">
             <p>{witness.last_confirmed_block}</p>
-            <TimeAgoWrapper className="text-bold text-tiny text-default-600" created={witness.last_sync * 1000} />
+            <TimeAgoWrapper
+              className="text-bold text-tiny text-default-600"
+              created={witness.last_sync * 1000}
+            />
           </div>
         );
       case "missed_blocks":
         return (
-          <div className="flex lfex-col gap-1 text-bold text-small">
+          <div className="flex gap-1 text-bold text-small">
             <p>{abbreviateNumber(witness.missed_blocks, 2)}</p>
           </div>
         );
 
       case "action":
-        return <WitnessVoteButton witness={witness}
-
-
-        />
+        return <WitnessVoteButton witness={witness} />;
 
       case "price":
-        return <div className="text-bold text-small">
-          <p>{witness.reported_price.base}</p>
-        </div>
-
-
+        return (
+          <div className="text-bold text-small">
+            <p>{witness.reported_price.base}</p>
+          </div>
+        );
 
       default:
         return cellValue;
     }
   }, []);
-
 
   const onNextPage = React.useCallback(() => {
     if (page < pages) {
@@ -206,15 +202,16 @@ export default function page() {
   }, []);
 
   const onClear = React.useCallback(() => {
-    setFilterValue("")
-    setPage(1)
-  }, [])
+    setFilterValue("");
+    setPage(1);
+  }, []);
 
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
         <div className="flex justify-between gap-3 items-center">
-          <Input size="sm"
+          <Input
+            size="sm"
             isClearable
             className="w-full sm:max-w-[25%]"
             placeholder="Search..."
@@ -224,15 +221,17 @@ export default function page() {
             onValueChange={onSearchChange}
           />
           <div className="flex gap-3">
-
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
-                <Button size="sm" endContent={<FaChevronDown className="text-small" />} variant="flat">
+                <Button
+                  size="sm"
+                  endContent={<FaChevronDown className="text-small" />}
+                  variant="flat"
+                >
                   Columns
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
-
                 disallowEmptySelection
                 aria-label="Table Columns"
                 closeOnSelect={false}
@@ -267,7 +266,6 @@ export default function page() {
               <option value="50">50</option>
               <option value="100">100</option>
               <option value="250">250</option>
-
             </select>
           </label>
         </div>
@@ -285,35 +283,46 @@ export default function page() {
 
   const bottomContent = React.useMemo(() => {
     return (
-      <div className="py-2 px-2 flex justify-between items-center">
-
-        <Pagination
-          isCompact
-          showControls
-          showShadow
-          color="primary"
-          page={page}
-          total={pages}
-          onChange={setPage}
-        />
-        <div className="hidden sm:flex w-[30%] justify-end gap-2">
-          <Button isDisabled={pages === 1} size="sm" variant="flat" onClick={onPreviousPage}>
-            Previous
-          </Button>
-          <Button isDisabled={pages === 1} size="sm" variant="flat" onClick={onNextPage}>
-            Next
-          </Button>
+      !!pages && (
+        <div className="py-2 px-2 flex justify-between items-center">
+          <Pagination
+            isCompact
+            showControls
+            showShadow
+            color="primary"
+            page={page}
+            total={pages}
+            onChange={setPage}
+          />
+          <div className="hidden sm:flex w-[30%] justify-end gap-2">
+            <Button
+              isDisabled={pages === 1}
+              size="sm"
+              variant="flat"
+              onClick={onPreviousPage}
+            >
+              Previous
+            </Button>
+            <Button
+              isDisabled={pages === 1}
+              size="sm"
+              variant="flat"
+              onClick={onNextPage}
+            >
+              Next
+            </Button>
+          </div>
         </div>
-      </div>
+      )
     );
   }, [items.length, page, pages, hasSearchFilter]);
-
 
   const classNames = React.useMemo(
     () => ({
       wrapper: ["max-h-[382px]", "max-w-3xl"],
       th: ["bg-transparent", "text-default-500", "border-b", "border-divider"],
-      td: ["",
+      td: [
+        "",
         // changing the rows border radius
         // first
         "group-data-[first=true]:first:before:rounded-none",
@@ -325,57 +334,67 @@ export default function page() {
         "group-data-[last=true]:last:before:rounded-none",
       ],
     }),
-    [],
+    []
   );
 
   return (
-    <div className='flex flex-col gap-4'>
-      <div className='flex flex-col gap-1'>
-        <p className='text-lg font-semibold'>Steem Witnesses (aka "Block Producers")</p>
-        <p className='text-tiny'>{`You have ${30 - (loginInfo?.witness_votes?.length || 0)} votes remaining. You can vote for a maximum of 30 witnesses.`}</p>
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1">
+        <p className="text-lg font-semibold">
+          Steem Witnesses (aka "Block Producers")
+        </p>
+        <p className="text-tiny">{`You have ${
+          30 - (loginInfo?.witness_votes?.length || 0)
+        } votes remaining. You can vote for a maximum of 30 witnesses.`}</p>
       </div>
 
-      {isLoading ? <LoadingCard />
-        : allRows && <Table
-          aria-label="Delegation table"
-          isHeaderSticky
-          removeWrapper
-          bottomContent={bottomContent}
-          bottomContentPlacement="outside"
-          classNames={classNames}
-          sortDescriptor={sortDescriptor}
-          topContent={topContent}
-          topContentPlacement="outside"
-          onSortChange={setSortDescriptor}
-          isCompact
-          isStriped
-
-        >
-          <TableHeader columns={headerColumns}>
-            {(column) => (
-              <TableColumn
-                key={column.uid}
-                align={column.uid === "actions" ? "center" : "start"}
-                allowsSorting={column.sortable}
-              >
-                {column.name}
-              </TableColumn>
-            )}
-          </TableHeader>
-          <TableBody emptyContent={"No data found"} items={sortedItems.slice((page - 1) * rowsPerPage, (page) * rowsPerPage)}>
-            {(item) => (
-              <TableRow key={`${item.rank}-${item.name}`}>
-                {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      }
-
-
-
+      {isLoading ? (
+        <LoadingCard />
+      ) : (
+        allRows && (
+          <Table
+            aria-label="Delegation table"
+            isHeaderSticky
+            removeWrapper
+            bottomContent={bottomContent}
+            bottomContentPlacement="outside"
+            classNames={classNames}
+            sortDescriptor={sortDescriptor}
+            topContent={topContent}
+            topContentPlacement="outside"
+            onSortChange={setSortDescriptor}
+            isCompact
+            isStriped
+          >
+            <TableHeader columns={headerColumns}>
+              {(column) => (
+                <TableColumn
+                  key={column.uid}
+                  align={column.uid === "actions" ? "center" : "start"}
+                  allowsSorting={column.sortable}
+                >
+                  {column.name}
+                </TableColumn>
+              )}
+            </TableHeader>
+            <TableBody
+              emptyContent={"No data found"}
+              items={sortedItems.slice(
+                (page - 1) * rowsPerPage,
+                page * rowsPerPage
+              )}
+            >
+              {(item) => (
+                <TableRow key={`${item.rank}-${item.name}`}>
+                  {(columnKey) => (
+                    <TableCell>{renderCell(item, columnKey)}</TableCell>
+                  )}
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        )
+      )}
     </div>
-  )
+  );
 }
-
-

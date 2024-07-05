@@ -1,18 +1,27 @@
 import { NextResponse } from "next/server";
 import db from "@/libs/mysql/db";
-import { auth } from "@/auth";
+import { verifyMessage } from "@/libs/steem/condenser";
+import { getAuthorExt } from "@/libs/steem/sds";
+import { Signature } from "@hiveio/dhive";
 
 export async function POST(req: Request) {
   try {
-    // Parse the request body
     const body = await req.json();
+    const bufferObj = body.hash;
+    const account = await getAuthorExt(body.username);
+    const pubKey = account?.posting_key_auths?.[0]?.[0];
 
-    // Get the server session
-    const session: any = await auth();
+    const isValid = verifyMessage(
+      pubKey,
+      Buffer.from(bufferObj?.data),
+      Signature.fromString(body.signature)
+    );
 
-    // Check if the session is valid
-    if (!session?.user?.name) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!isValid) {
+      return NextResponse.json(
+        { message: "Unauthorized" },
+        { status: 401, statusText: "Unauthorized Access" }
+      );
     }
 
     // Construct the SQL query
@@ -25,12 +34,9 @@ export async function POST(req: Request) {
     // Execute the query
     const result = await db.executeQuery(query, [
       body.time,
-      session.user.name,
+      body.username,
       body.id,
     ]);
-
-    console.log("Query result:", result);
-
     // Check if any rows were affected
     if (result?.affectedRows) {
       return NextResponse.json({ ...result });
@@ -41,7 +47,6 @@ export async function POST(req: Request) {
       );
     }
   } catch (error) {
-    console.error("Failed to execute query", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

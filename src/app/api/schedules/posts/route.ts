@@ -12,8 +12,7 @@ export async function GET() {
 
     const query = "SELECT * FROM posts WHERE username = ? ORDER BY time DESC";
     const result = await db.executeQuery(query, [session.user.name]);
-
-    console.log("Query result:", result ? result : []);
+    
     return NextResponse.json(result ? result : []);
   } catch (error) {
     console.error("Failed to execute query", error);

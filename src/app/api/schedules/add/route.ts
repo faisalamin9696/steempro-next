@@ -1,18 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
 import db from "@/libs/mysql/db";
-import { auth } from "@/auth";
+import { getAuthorExt } from "@/libs/steem/sds";
+import { verifyMessage } from "@/libs/steem/condenser";
+import { Signature } from "@hiveio/dhive";
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const session: any = await auth();
   try {
+    const body = await req.json();
+    const bufferObj = body.hash;
+    const account = await getAuthorExt(body.username);
+    const pubKey = account?.posting_key_auths?.[0]?.[0];
+
+    const isValid = verifyMessage(
+      pubKey,
+      Buffer.from(bufferObj?.data),
+      Signature.fromString(body.signature)
+    );
+
+    if (!isValid) {
+      return NextResponse.json(
+        { message: "Unauthorized" },
+        { status: 401, statusText: "Unauthorized Access" }
+      );
+    }
     const query =
       "INSERT INTO posts" +
       "(username, title, body, tags, parent_permlink, options, time, status) " +
       "VALUES (? ,?, ?, ?, ?, ?, ?, ?)";
 
     const result = await db.executeQuery(query, [
-      session?.user?.name,
+      body.username,
       body.title,
       body.body,
       body.tags,
@@ -21,11 +38,9 @@ export async function POST(req: NextRequest) {
       body.time,
       0,
     ]);
-    console.log("Query result:", result);
     if (!!result?.["affectedRows"]) return NextResponse.json({ ...result });
     else return NextResponse.error();
   } catch (error) {
-    console.log("Failed to execute query", error);
     return NextResponse.error();
   } finally {
     await db.closeConnection();

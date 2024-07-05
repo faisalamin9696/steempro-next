@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     "src/app/api/auth/[...nextAuth]",
     "src/app/api/schedules"
-  ],
+, "src/libs/mysql/db.JS"  ],
   "exclude": ["node_modules"]
 }

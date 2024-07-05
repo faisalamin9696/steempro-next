@@ -70,7 +70,6 @@ export default async function RootLayout({
             <Toaster richColors closeButton />
           </Providers>
         </SessionProvider>
-        <Toaster richColors closeButton />
       </body>
     </html>
   );
