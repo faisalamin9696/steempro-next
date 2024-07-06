@@ -650,7 +650,7 @@ export default function SubmitPage(props: Props) {
                   isDisabled={isLoading}
                   isLoading={isPosting}
                   buttonText={isEdit ? "Update" : undefined}
-                  onClick={() => handlePostPublish(true)}
+                  onClick={() => handlePostPublish(false)}
                 />
               )}
             </div>
