@@ -255,7 +255,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
         <div className=" absolute right-2 flex items-center gap-2">
           {scheduleInfo?.permlink && (
             <Link
-              className=" text-blue-500"
+              className=" text-blue-500 text-sm"
               href={`/@${scheduleInfo.username}/${scheduleInfo.permlink}`}
             >
               Visit

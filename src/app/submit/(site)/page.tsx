@@ -592,38 +592,46 @@ export default function SubmitPage(props: Props) {
           <div className="gap-2 flex">
             <ClearFormButton onClearPress={clearForm} isDisabled={isLoading} />
 
-            <BeneficiaryButton
-              isDisabled={isEdit || isLoading}
-              onSelectBeneficiary={(bene) => {
-                setBeneficiaries([
-                  ...beneficiaries,
-                  { ...bene, weight: bene.weight },
-                ]);
-              }}
-              onRemove={(bene) => {
-                setBeneficiaries(
-                  beneficiaries?.filter((item) => item.account !== bene.account)
-                );
-              }}
-              beneficiaries={beneficiaries}
-            />
-            <RewardSelectButton
-              isDisabled={isEdit || isLoading}
-              selectedValue={reward}
-              onSelectReward={(reward) => {
-                setReward(reward);
-              }}
-            />
+            {!isEdit && (
+              <BeneficiaryButton
+                isDisabled={isEdit || isLoading}
+                onSelectBeneficiary={(bene) => {
+                  setBeneficiaries([
+                    ...beneficiaries,
+                    { ...bene, weight: bene.weight },
+                  ]);
+                }}
+                onRemove={(bene) => {
+                  setBeneficiaries(
+                    beneficiaries?.filter(
+                      (item) => item.account !== bene.account
+                    )
+                  );
+                }}
+                beneficiaries={beneficiaries}
+              />
+            )}
+            {!isEdit && (
+              <RewardSelectButton
+                isDisabled={isEdit || isLoading}
+                selectedValue={reward}
+                onSelectReward={(reward) => {
+                  setReward(reward);
+                }}
+              />
+            )}
           </div>
 
           <div className=" flex flex-col items-end gap-2 w-full">
             <div className="flex flex-1 justify-end gap-2">
-              <ScheduleButton
-                isDisabled={isEdit}
-                isLoading={isScheduling}
-                buttonText={dateTime ? "Schedule" : undefined}
-                onClick={() => handlePostPublish(true)}
-              />
+              {!isEdit && (
+                <ScheduleButton
+                  isDisabled={isEdit}
+                  isLoading={isScheduling}
+                  buttonText={dateTime ? "Schedule" : undefined}
+                  onClick={() => handlePostPublish(true)}
+                />
+              )}
 
               {isEdit && (
                 <Button
@@ -642,7 +650,7 @@ export default function SubmitPage(props: Props) {
                   isDisabled={isLoading}
                   isLoading={isPosting}
                   buttonText={isEdit ? "Update" : undefined}
-                  onClick={handlePostPublish}
+                  onClick={() => handlePostPublish(true)}
                 />
               )}
             </div>
