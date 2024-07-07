@@ -55,6 +55,20 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <head>
+        <script
+          async
+          src="https://fundingchoicesmessages.google.com/i/pub-4510618528305465?ers=1"
+          nonce="V5q4IVTc0xC-fb0IjVrw6g"
+        ></script>
+
+        <script
+          nonce="V5q4IVTc0xC-fb0IjVrw6g"
+          type="text/javascript"
+          src="/static/script_1.js"
+        ></script>
+
+        <script type="text/javascript" src="/static/script_2.js"></script>
+
         <AdSense pId="ca-pub-4510618528305465" />
       </head>
 

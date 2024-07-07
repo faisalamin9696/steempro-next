@@ -1,4 +1,3 @@
-import Script from "next/script";
 import React from "react";
 
 interface Props {
@@ -8,11 +7,10 @@ interface Props {
 export default function AdSense(props: Props) {
   const { pId } = props;
   return (
-    <Script
+    <script
       async
-      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-${pId}`}
+      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${pId}`}
       crossOrigin="anonymous"
-      strategy="afterInteractive"
-    />
+    ></script>
   );
 }
