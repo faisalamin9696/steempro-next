@@ -25,7 +25,7 @@ export default async function LayoutTemplate({
     <main className="main" key={permlink}>
       <MainWrapper
         endClassName={"1md:block"}
-        startClassName=" max-h-screen lg:block"
+        startClassName=" max-h-screen lg:block lg:mr-4"
         startContent={<PostStart />}
         endContent={
           <ProfileInfoCard key={Math.random()} profile username={username} />

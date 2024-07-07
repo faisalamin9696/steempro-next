@@ -344,20 +344,13 @@ type Language = {
   code: LanguagesCode;
 };
 type Setting = {
-  // isThemeDark: boolean;
   rpc: string;
   theme: ThemeMode;
   // language: string;
-  // currency: string;
-  // notification: FirebaseNotificationSettings;
-  // nsfw: string;
-  // lastUpdateCheck: undefined;
-  // languageTo: { title: string; code: string };
   feedStyle: FeedStyle;
   lang: Language;
   nsfw: NSFW = "Always warn";
-  // pinEnabled: boolean;
-  // fingerprintEnabled: boolean;
+  readMore: boolean;
 };
 
 type FeedStyle = "blogs" | "list" | "grid";

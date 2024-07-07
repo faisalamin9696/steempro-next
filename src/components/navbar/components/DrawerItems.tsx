@@ -34,6 +34,7 @@ import {
 import { toast } from "sonner";
 import { HiMiniUserGroup } from "react-icons/hi2";
 import { LuCalendarRange } from "react-icons/lu";
+import { MdPrivacyTip } from "react-icons/md";
 
 interface Props {
   onItemClick?: () => void;
@@ -137,6 +138,17 @@ export default function DrawerItems(props: Props) {
             startContent={<RiUserStarFill className="text-xl" />}
           >
             Witnesses
+          </Button>
+
+          <Button
+            variant="light"
+            className="w-full justify-start text-inherit "
+            as={Link}
+            href={`/policy`}
+            onClick={onItemClick}
+            startContent={<MdPrivacyTip className="text-xl" />}
+          >
+            Privacy Policy
           </Button>
           <Button
             variant="light"

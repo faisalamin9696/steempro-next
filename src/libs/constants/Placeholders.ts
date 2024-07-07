@@ -1,5 +1,5 @@
-import moment from 'moment';
-import { RewardTypes } from './AppConstants';
+import moment from "moment";
+import { RewardTypes } from "./AppConstants";
 
 export const empty_comment = (author: string, permlink: string): Post => {
   const timenow = moment().unix();
@@ -8,15 +8,15 @@ export const empty_comment = (author: string, permlink: string): Post => {
     link_status: 1,
     author_reputation: 0,
     author_status: 1,
-    author_role: 'guest',
-    author_title: '',
+    author_role: "guest",
+    author_title: "",
     author: author,
     permlink: permlink,
-    parent_author: '',
-    parent_permlink: '',
-    root_author: '',
-    root_permlink: '',
-    root_title: '',
+    parent_author: "",
+    parent_permlink: "",
+    root_author: "",
+    root_permlink: "",
+    root_title: "",
     created: timenow - 150000,
     payout_comments: 0,
     downvote_weight: 0,
@@ -44,26 +44,26 @@ export const empty_comment = (author: string, permlink: string): Post => {
     word_count: 0,
     is_muted: 0,
     is_pinned: 0,
-    category: '',
-    community: '',
-    json_metadata: '',
-    title: '',
-    body: '',
+    category: "",
+    community: "",
+    json_metadata: "",
+    title: "",
+    body: "",
     beneficiaries: [],
     votes: [],
     observer_follows_author: 0,
     observer_ignores_author: 0,
     observer_resteem: 0,
-    observer_role: 'guest',
-    observer_title: '',
+    observer_role: "guest",
+    observer_title: "",
     observer_vote: 0,
     observer_vote_percent: 0,
     observer_vote_rshares: 0,
     replies: [],
-    json_images: '',
+    json_images: "",
     is_author_muted: 0,
-    status: 'idle',
-    is_new: 1
+    status: "idle",
+    is_new: 1,
   };
 };
 
@@ -71,12 +71,12 @@ export const empty_profile = (name: string): AccountExt => {
   const timenow = moment().unix();
   return {
     name: name,
-    creator: '',
-    recovery_account: '',
-    reset_account: '',
-    proxy: '',
-    json_metadata: '',
-    posting_json_metadata: '{}',
+    creator: "",
+    recovery_account: "",
+    reset_account: "",
+    proxy: "",
+    json_metadata: "",
+    posting_json_metadata: "{}",
     created: 0,
     last_action: 0,
     last_comment: 0,
@@ -149,35 +149,37 @@ export const empty_profile = (name: string): AccountExt => {
     posting_account_auths: [],
     posting_key_auths: [],
     posting_weight_threshold: 0,
-    memo_key: '',
+    memo_key: "",
     login: false,
     communities: [],
     last_fetch: timenow,
     observer_follows_author: 0,
     observer_ignores_author: 0,
-    encKey: '',
-    status: 'idle',
-    unread_count: 0
-
+    encKey: "",
+    status: "idle",
+    unread_count: 0,
   };
 };
 
 export const empty_draft = (): PostDraft => {
   return {
-    title: '',
-    body: '',
+    title: "",
+    body: "",
     tags: [],
-    category: '',
+    category: "",
     community: undefined,
     beneficiaries: [],
     reward: RewardTypes[1],
   };
 };
 
-export const empty_community = (account: string, title?: string | null): Community => {
+export const empty_community = (
+  account: string,
+  title?: string | null
+): Community => {
   return {
     id: 0,
-    type: 'topic',
+    type: "topic",
     account: account,
     account_reputation: 25,
     created: 0,
@@ -186,28 +188,28 @@ export const empty_community = (account: string, title?: string | null): Communi
     count_pending: 0,
     count_authors: 0,
     count_subs: 0,
-    lang: '',
-    title: title || '',
-    about: '',
-    description: '',
-    flag_text: '',
+    lang: "",
+    title: title || "",
+    about: "",
+    description: "",
+    flag_text: "",
     is_nsfw: 0,
     settings: {},
     observer_subscribed: 0,
-    observer_role: 'guest',
-    observer_title: '',
-    status: 'idle',
-    roles: []
+    observer_role: "guest",
+    observer_title: "",
+    status: "idle",
+    roles: [],
   };
 };
 
 export const empty_settings = (): Setting => {
   return {
-    lang: { code: 'en', title: 'English' },
-    nsfw: 'Always warn',
-    feedStyle: 'list',
-    rpc: 'https://api.steemit.com',
-    theme: 'system'
+    lang: { code: "en", title: "English" },
+    nsfw: "Always warn",
+    feedStyle: "list",
+    rpc: "https://api.steemit.com",
+    theme: "system",
+    readMore: true
   };
 };
-

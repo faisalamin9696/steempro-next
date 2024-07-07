@@ -1,70 +1,100 @@
-"use client"
+"use client";
 
-import { Accordion, AccordionItem } from '@nextui-org/accordion';
-import { Button } from '@nextui-org/button';
-import React, { useState } from 'react';
-import { IoIosRefresh } from 'react-icons/io';
-import useSWR from 'swr';
-import LoadingCard from '@/components/LoadingCard';
-import CompactPost from '@/components/CompactPost';
-import { fetchSds, awaitTimeout, useAppSelector } from '@/libs/constants/AppFunctions';
-import usePathnameClient from '@/libs/utils/usePathnameClient';
+import { Accordion, AccordionItem } from "@nextui-org/accordion";
+import { Button } from "@nextui-org/button";
+import React, { useState } from "react";
+import { IoIosRefresh } from "react-icons/io";
+import useSWR from "swr";
+import LoadingCard from "@/components/LoadingCard";
+import CompactPost from "@/components/CompactPost";
+import {
+  fetchSds,
+  awaitTimeout,
+  useAppSelector,
+  useAppDispatch,
+} from "@/libs/constants/AppFunctions";
+import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { GrBlog } from "react-icons/gr";
-import { FeedBodyLength } from '@/libs/constants/AppConstants';
-
+import { FeedBodyLength } from "@/libs/constants/AppConstants";
+import { getSettings, updateSettings } from "@/libs/utils/user";
+import { updateSettingsHandler } from "@/libs/redux/reducers/SettingsReducer";
 
 export default function PostStart() {
   const { username, permlink } = usePathnameClient();
   const [offset, setOffset] = useState(0);
   const [muting, setMuting] = useState(false);
-  const loginInfo = useAppSelector(state => state.loginReducer.value);
+  const loginInfo = useAppSelector((state) => state.loginReducer.value);
+  const settings =
+    useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
 
+  const dispatch = useAppDispatch();
 
-  const URL = `/feeds_api/getPostsByAuthor/${username}/${loginInfo.name || 'null'}/${FeedBodyLength}/5/${offset}`
-  const { data, mutate, isLoading, isValidating } = useSWR(muting ? null : URL, fetchSds<Feed[]>)
+  const URL = `/feeds_api/getPostsByAuthor/${username}/${
+    loginInfo.name || "null"
+  }/${FeedBodyLength}/5/${offset}`;
+  const { data, mutate, isLoading, isValidating } = useSWR(
+    muting || !settings.readMore ? null : URL,
+    fetchSds<Feed[]>
+  );
 
   async function handlePromotionRefresh() {
     setMuting(true);
     setOffset(offset + 2);
-    await awaitTimeout(0.2)
+    await awaitTimeout(0.2);
     mutate();
     setMuting(false);
   }
 
-
   return (
     <div className="flex flex-col rounded-lg pb-32">
-
-
-      <Accordion defaultExpandedKeys={['end']}>
+      <Accordion
+        onExpandedChange={(keys) => {
+          const newSetting = updateSettings({
+            ...settings,
+            readMore: !!keys?.size,
+          });
+          dispatch(updateSettingsHandler(newSetting));
+        }}
+        defaultExpandedKeys={settings.readMore ? ["end"] : []}
+        isCompact
+      >
         <AccordionItem
-          startContent={<GrBlog   className="text-primary text-xl" />}
-          key="end" aria-label="posts"
-          title={<div
-            className="flex items-center gap-2 text-lg font-bold">
-            <p>{'Read more'}</p>
-            <Button radius='full'
-              variant='light'
-              color='default'
-              size='sm'
-              onClick={handlePromotionRefresh}
-              isIconOnly>
-              <IoIosRefresh
-                className='text-lg' />
-            </Button>
-          </div>}>
-          {isLoading || isValidating ? <LoadingCard /> :
-            <div className='flex flex-col gap-4'>
-              {data?.filter(item => item.permlink !== permlink).map((comment) => {
-                return (
-                  <CompactPost key={comment.permlink} comment={comment} />
-                )
-              })}
-            </div>}
+          startContent={<GrBlog className="text-primary text-xl" />}
+          key="end"
+          aria-label="posts"
+          title={
+            <div className="flex items-center gap-2 text-lg font-bold">
+              <p>{"Read more"}</p>
+              <Button 
+                radius="full"
+                variant="light"
+                color="default"
+                size="sm"
+                onClick={handlePromotionRefresh}
+                isIconOnly
+              >
+                <IoIosRefresh className="text-lg" />
+              </Button>
+            </div>
+          }
+        >
+          {isLoading || isValidating ? (
+            <LoadingCard />
+          ) : (
+            <div className="flex flex-col gap-4">
+              {data
+                ?.filter((item) => item.permlink !== permlink)
+                .map((comment) => {
+                  return (
+                    <CompactPost key={comment.permlink} comment={comment} />
+                  );
+                })}
+            </div>
+          )}
         </AccordionItem>
       </Accordion>
-    </div >
-  )
+    </div>
+  );
 }
 
 // export default function PostStart() {
@@ -73,7 +103,6 @@ export default function PostStart() {
 // const annoucements = data?.['posts'];
 
 // if (error) return <ErrorCard message={error?.message} onClick={mutate} />
-
 
 // function handleRefresh() {
 //   mutate();
@@ -112,8 +141,6 @@ export default function PostStart() {
 //           )
 //         })}
 //       </div>}
-
-
 
 //   </div >
 // )

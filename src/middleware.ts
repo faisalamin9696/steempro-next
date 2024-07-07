@@ -16,7 +16,6 @@ const validProfileTabs = [
   "settings",
 ];
 
-
 // Define username URL regex
 const usernameURLRegex = /@([^/]+)/;
 
@@ -33,6 +32,12 @@ export function middleware(request: NextRequest) {
 
   first_param = first_param?.toLowerCase();
   second_param = second_param?.toLowerCase();
+
+  if (splitted_path.length === 1 && first_param === "policy") {
+    return NextResponse.rewrite(new URL(`/policy`, request.nextUrl), {
+      headers: request.headers,
+    });
+  }
 
   if (splitted_path.length === 1 && first_param === "witnesses") {
     return NextResponse.rewrite(new URL(`/witnesses`, request.nextUrl), {
@@ -78,10 +83,7 @@ export function middleware(request: NextRequest) {
     });
   }
   // Check if the URL matches the pattern for a community
-  else if (
-    validateCommunity(second_param) &&
-    validCats.includes(first_param)
-  ) {
+  else if (validateCommunity(second_param) && validCats.includes(first_param)) {
     return NextResponse.rewrite(new URL(`/community`, request.nextUrl), {
       headers: request.headers,
     });

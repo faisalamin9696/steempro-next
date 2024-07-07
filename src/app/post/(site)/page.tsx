@@ -148,9 +148,9 @@ export default function PostPage(props: Props) {
               <div className="flex flex-col px-1 items-center">
                 <Card
                   shadow="none"
-                  className="w-full gap-4 bg-transparent overflow-visible"
+                  className="w-full gap-4 bg-transparent overflow-visible "
                 >
-                  <div className="space-y-4 flex-col">
+                  <div className="space-y-4 flex-col lg:ml-4">
                     <>
                       <CommentHeader
                         isDetail
@@ -164,7 +164,7 @@ export default function PostPage(props: Props) {
                       {commentInfo.title}
                     </h2>
                   </div>
-                  <div className={clsx("flex flex-col items-center")}>
+                  <div className={clsx("flex flex-col items-center lg:ml-4")}>
                     <MarkdownViewer
                       isNsfw={isNsfw}
                       noImage={!!commentInfo.is_muted}

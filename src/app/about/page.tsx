@@ -12,7 +12,7 @@ import "./style.scss";
 
 export default function AboutPage() {
   const { data } = useSession();
-  
+
   return (
     <div className="flex flex-col gap-10 justify-between h-full pb-10">
       <div>
@@ -38,6 +38,7 @@ export default function AboutPage() {
           <AboutItem
             username={"steempro.com"}
             firstHeading={"Official Account"}
+            href="mailto:steempro.official@gmail.com"
             secondHeading={"steempro.official@gmail.com"}
           />
         </div>

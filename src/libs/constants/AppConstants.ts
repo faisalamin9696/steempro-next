@@ -20,6 +20,7 @@ export let CurrentSetting: Setting = {
   feedStyle: "list",
   rpc: "https://api.steemit.com",
   theme: "system",
+  readMore: true,
 };
 
 export const WitnessAccount = "faisalamin";
