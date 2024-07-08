@@ -288,6 +288,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
                     {moment(scheduleInfo.time).format("YYYY-MM-DD HH:mm")}
 
                     <STag
+                      onlyText
                       className="text-sm ms-2 !text-blue-500"
                       tag={scheduleInfo.parent_permlink ?? scheduleInfo.tags[0]}
                     />

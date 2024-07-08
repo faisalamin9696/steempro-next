@@ -294,6 +294,7 @@ export default function CommentHeader(props: Props) {
 
                   <STag
                     className="text-md font-bold  hover:text-blue-500"
+                    onlyText
                     content={
                       comment.community ||
                       (validateCommunity(comment.category)
