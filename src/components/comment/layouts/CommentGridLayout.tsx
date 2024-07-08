@@ -70,8 +70,7 @@ export default function CommentGridLayout(props: CommentProps) {
                         }
 
 
-                        <STag className={`text-tiny rounded-full border bg-background/90 backdrop-blur-lg 
-                        py-1 px-2  absolute m-2 top-0 right-0`}
+                        <STag className={`text-tiny rounded-full bg-background/60 backdrop-blur-lg absolute m-2 top-0 right-0 hover:bg-default/100 px-2 py-1`}
                             content={commentInfo.community ||
                                 (validateCommunity(commentInfo.category) ? commentInfo.category :
                                     `#${commentInfo.category}`)} tag={commentInfo.category} />

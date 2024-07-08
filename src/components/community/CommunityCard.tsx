@@ -10,83 +10,100 @@ import { twMerge } from "tailwind-merge";
 import RoleTitleCard from "../RoleTitleCard";
 import { empty_comment } from "@/libs/constants/Placeholders";
 
-
 interface Props {
-    community: Community;
-    compact?: boolean;
-    className?: string;
-    endContent?: React.ReactNode;
-
-
+  community: Community;
+  compact?: boolean;
+  className?: string;
+  endContent?: React.ReactNode;
 }
 
-
 export const CommunityCard = memo((props: Props) => {
-    const { community, compact, endContent } = props;
+  const { community, compact, endContent } = props;
 
+  return (
+    <Card
+      shadow="sm"
+      className={twMerge(
+        `relative flex flex-col items-start gap-2 w-full bg-white
+             dark:bg-white/5`,
+        compact ? "p-2" : "p-4",
+        props.className
+      )}
+    >
+      <div className="top-2 right-3 absolute">{endContent}</div>
 
+      <User
+        classNames={{
+          description: "text-default-900/60 dark:text-gray-200 text-sm mt-1",
+          name: "text-default-800",
+        }}
+        name={
+          <div className="flex flex-col items-start gap-1">
+            <Link
+              className="hover:text-blue-500 font-semibold"
+              href={`/trending/${community.account}`}
+            >
+              {community.title}
+            </Link>
 
-    return (
-        <Card
-
-            className={twMerge(`relative flex flex-col items-start gap-2 w-full bg-white
-             dark:bg-white/5`, compact ? 'p-2' : 'p-4', props.className)}>
-
-            <div className="top-2 right-3 absolute">
-                {endContent}
+            <div className="flex gap-2 items-center text-xs">
+              {<p>{community.account} </p>}
+              •
+              <TimeAgoWrapper lang={"en"} created={community.created * 1000} />
+              {/* <Reputation {...props} reputation={community.account_reputation} /> */}
             </div>
 
-
-            <User
-
-                classNames={{
-                    description: 'text-default-900/60 dark:text-gray-200 text-sm mt-1',
-                    name: 'text-default-800'
+            {/* {!compact && <RoleTitleCard comment={{ ...empty_comment('',''), author_role: community.observer_role, author_title: community.observer_title }} />} */}
+          </div>
+        }
+        description={
+          <div className="flex flex-col">
+            {
+              <RoleTitleCard
+                comment={{
+                  ...empty_comment("", ""),
+                  author_role: community.observer_role,
+                  author_title: community.observer_title,
                 }}
-                name={<div className='flex flex-col items-start gap-1'>
-
-                    <Link className="hover:text-blue-500 font-semibold" href={`/trending/${community.account}`}>{community.title}</Link>
-
-                    <div className="flex gap-2 items-center text-xs">
-                        {<p>{community.account} </p>}
-                        •
-                        <TimeAgoWrapper lang={'en'} created={community.created * 1000} />
-                        {/* <Reputation {...props} reputation={community.account_reputation} /> */}
-
-                    </div>
-
-                    {/* {!compact && <RoleTitleCard comment={{ ...empty_comment('',''), author_role: community.observer_role, author_title: community.observer_title }} />} */}
-
-                </div>}
-                description={<div className='flex flex-col'>
-
-                    {<RoleTitleCard comment={{ ...empty_comment('', ''), author_role: community.observer_role, author_title: community.observer_title }} />}
-
-                 
-                </div>}
-                avatarProps={{
-                    className: compact ? 'h-8 w-8' : '',
-                    src: getResizedAvatar(community.account),
-                    as: Link,
-                    href: `/trending/${community.account}`
-                } as any}
-            />
-            <p title={community.about} className={clsx(compact ? 'text-tiny line-clamp-2' : '')}>
-                {community.about}
-            </p>
-            <div className={clsx("flex flex-row gap-4", compact ? 'text-tiny' : '')}>
-                <div className="flex gap-1">
-                    <p className="font-semibold text-default-600 ">{abbreviateNumber(community.count_subs)}</p>
-                    <p className=" text-default-500">{compact ? 'Subs' : 'Subscribers'}</p>
-                </div>
-                <div className="flex gap-1">
-                    <p className="font-semibold text-default-600 ">${abbreviateNumber(community.count_pending)}</p>
-                    <p className="text-default-500">{compact ? 'Reward' : 'Pending Reward'}</p>
-                </div>
-            </div>
-
-        </Card >
-    );
+              />
+            }
+          </div>
+        }
+        avatarProps={
+          {
+            className: compact ? "h-8 w-8" : "",
+            src: getResizedAvatar(community.account),
+            as: Link,
+            href: `/trending/${community.account}`,
+          } as any
+        }
+      />
+      <p
+        title={community.about}
+        className={clsx(compact ? "text-tiny line-clamp-2" : "")}
+      >
+        {community.about}
+      </p>
+      <div className={clsx("flex flex-row gap-4", compact ? "text-tiny" : "")}>
+        <div className="flex gap-1">
+          <p className="font-semibold text-default-600 ">
+            {abbreviateNumber(community.count_subs)}
+          </p>
+          <p className=" text-default-500">
+            {compact ? "Subs" : "Subscribers"}
+          </p>
+        </div>
+        <div className="flex gap-1">
+          <p className="font-semibold text-default-600 ">
+            ${abbreviateNumber(community.count_pending)}
+          </p>
+          <p className="text-default-500">
+            {compact ? "Reward" : "Pending Reward"}
+          </p>
+        </div>
+      </div>
+    </Card>
+  );
 });
 
-export default CommunityCard
+export default CommunityCard;

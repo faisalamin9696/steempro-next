@@ -26,10 +26,10 @@ export default async function LayoutTemplate({
       <MainWrapper
         endClassName={"1md:block"}
         startClassName=" max-h-screen lg:block lg:mr-4"
-        startContent={<PostStart />}
-        endContent={
-          <ProfileInfoCard key={Math.random()} profile username={username} />
+        startContent={
+          <ProfileInfoCard hideAvatar key={Math.random()} profile username={username} />
         }
+        endContent={<PostStart />}
       >
         <PostPage data={data} />
       </MainWrapper>

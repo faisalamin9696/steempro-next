@@ -23,6 +23,7 @@ import { addProfileHandler } from "@/libs/redux/reducers/ProfileReducer";
 import Link from "next/link";
 import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/modal";
 import FollowersCard from "./FollowersCard";
+import { twMerge } from "tailwind-merge";
 
 const getClubString = (clubData?: Club) => {
   if (!clubData) return "";
@@ -116,9 +117,9 @@ export default memo(function ProfileInfoCard(props: Props) {
 
   return (
     <div
-      className={clsx(
+      className={twMerge(
         `relative flex flex-col card-content border-none  rounded-lg
-        bg-transparent items-start gap-4 p-2 w-full bg-white dark:bg-white/5`,
+        bg-transparent items-start gap-4 w-full bg-white dark:bg-white/5 p-4`,
         props.className
       )}
     >

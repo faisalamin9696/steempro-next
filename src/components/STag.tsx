@@ -13,7 +13,7 @@ export default function STag({
   return (
     <Link
       title={tag}
-      className={clsx("text-default-900 ", className)}
+      className={clsx("text-default-900 transition-all delay-75", className)}
       href={`/trending/${tag}`}
     >
       {content ?? tag}

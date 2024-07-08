@@ -1,10 +1,6 @@
-import MainWrapper from "@/components/wrappers/MainWrapper";
 import { getAuthorExt } from "@/libs/steem/sds";
 import { getResizedAvatar } from "@/libs/utils/image";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
-import AccountHeader from "@/components/AccountHeader";
-import ProfileEnd from "./@end/page";
-import ProfilePage from "./page";
 import { auth } from "@/auth";
 
 export default async function Layout({
@@ -12,22 +8,7 @@ export default async function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { username } = usePathnameServer();
-  const session = await auth();
-  const data = await getAuthorExt(username, session?.user?.name || "null");
-
-  return (
-    <main className="main flex flex-col">
-      <AccountHeader account={data} />
-
-      <MainWrapper
-        endClassName="max-h-screen"
-        endContent={<ProfileEnd data={data} />}
-      >
-        <ProfilePage data={data} />
-      </MainWrapper>
-    </main>
-  );
+  return children;
 }
 
 export async function generateMetadata() {

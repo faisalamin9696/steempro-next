@@ -293,7 +293,7 @@ export default function CommentHeader(props: Props) {
                   <p className={""}>in</p>
 
                   <STag
-                    className="text-md font-bold "
+                    className="text-md font-bold  hover:text-blue-500"
                     content={
                       comment.community ||
                       (validateCommunity(comment.category)

@@ -64,8 +64,8 @@ export default function PostStart() {
           aria-label="posts"
           title={
             <div className="flex items-center gap-2 text-lg font-bold">
-              <p>{"Read more"}</p>
-              <Button 
+              <p className="text-medium font-semibold">{"Read more"}</p>
+              <Button
                 radius="full"
                 variant="light"
                 color="default"
