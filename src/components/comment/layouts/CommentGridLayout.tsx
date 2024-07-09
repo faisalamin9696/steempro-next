@@ -78,7 +78,7 @@ export default function CommentGridLayout(props: CommentProps) {
             )}
 
             <STag
-              className={`absolute m-2 top-0 right-0 `}
+              className={`absolute m-2 top-0 right-0 font-semibold `}
               content={
                 commentInfo.community ||
                 (validateCommunity(commentInfo.category)
@@ -160,10 +160,10 @@ export default function CommentGridLayout(props: CommentProps) {
           {" "}
           {!!commentInfo.resteem_count && (
             <span
-              title={commentInfo.resteem_count + " Resteem"}
+              title={commentInfo.resteem_count + " Resteems"}
               className="py-1 text-xs font-regular text-default-600 mr-1 flex flex-row items-center"
             >
-              {abbreviateNumber(commentInfo.resteem_count)} Resteem
+              {abbreviateNumber(commentInfo.resteem_count)} Resteems
             </span>
           )}
         </div>

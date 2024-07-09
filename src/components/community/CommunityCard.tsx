@@ -24,66 +24,71 @@ export const CommunityCard = memo((props: Props) => {
     <Card
       shadow="sm"
       className={twMerge(
-        `relative flex flex-col items-start gap-2 w-full bg-white
+        `relative flex flex-col items-start gap-2 w-full bg-white justify-between
              dark:bg-white/5`,
         compact ? "p-2" : "p-4",
         props.className
       )}
     >
-      <div className="top-2 right-3 absolute">{endContent}</div>
+      <div className=" flex-col">
+        <div className="top-2 right-3 absolute">{endContent}</div>
 
-      <User
-        classNames={{
-          description: "text-default-900/60 dark:text-gray-200 text-sm mt-1",
-          name: "text-default-800",
-        }}
-        name={
-          <div className="flex flex-col items-start gap-1">
-            <Link
-              className="hover:text-blue-500 font-semibold"
-              href={`/trending/${community.account}`}
-            >
-              {community.title}
-            </Link>
+        <User
+          classNames={{
+            description: "text-default-900/60 dark:text-gray-200 text-sm mt-1",
+            name: "text-default-800",
+          }}
+          name={
+            <div className="flex flex-col items-start gap-1">
+              <Link
+                className="hover:text-blue-500 font-semibold"
+                href={`/trending/${community.account}`}
+              >
+                {community.title}
+              </Link>
 
-            <div className="flex gap-2 items-center text-xs">
-              {<p>{community.account} </p>}
-              •
-              <TimeAgoWrapper lang={"en"} created={community.created * 1000} />
-              {/* <Reputation {...props} reputation={community.account_reputation} /> */}
+              <div className="flex gap-2 items-center text-xs">
+                {<p>{community.account} </p>}
+                •
+                <TimeAgoWrapper
+                  lang={"en"}
+                  created={community.created * 1000}
+                />
+                {/* <Reputation {...props} reputation={community.account_reputation} /> */}
+              </div>
+
+              {/* {!compact && <RoleTitleCard comment={{ ...empty_comment('',''), author_role: community.observer_role, author_title: community.observer_title }} />} */}
             </div>
-
-            {/* {!compact && <RoleTitleCard comment={{ ...empty_comment('',''), author_role: community.observer_role, author_title: community.observer_title }} />} */}
-          </div>
-        }
-        description={
-          <div className="flex flex-col">
+          }
+          description={
+            <div className="flex flex-col">
+              {
+                <RoleTitleCard
+                  comment={{
+                    ...empty_comment("", ""),
+                    author_role: community.observer_role,
+                    author_title: community.observer_title,
+                  }}
+                />
+              }
+            </div>
+          }
+          avatarProps={
             {
-              <RoleTitleCard
-                comment={{
-                  ...empty_comment("", ""),
-                  author_role: community.observer_role,
-                  author_title: community.observer_title,
-                }}
-              />
-            }
-          </div>
-        }
-        avatarProps={
-          {
-            className: compact ? "h-8 w-8" : "",
-            src: getResizedAvatar(community.account),
-            as: Link,
-            href: `/trending/${community.account}`,
-          } as any
-        }
-      />
-      <p
-        title={community.about}
-        className={clsx(compact ? "text-tiny line-clamp-2" : "")}
-      >
-        {community.about}
-      </p>
+              className: compact ? "h-8 w-8" : "",
+              src: getResizedAvatar(community.account),
+              as: Link,
+              href: `/trending/${community.account}`,
+            } as any
+          }
+        />
+        <p
+          title={community.about}
+          className={clsx(compact ? "text-tiny line-clamp-2" : "")}
+        >
+          {community.about}
+        </p>
+      </div>
       <div className={clsx("flex flex-row gap-4", compact ? "text-tiny" : "")}>
         <div className="flex gap-1">
           <p className="font-semibold text-default-600 ">

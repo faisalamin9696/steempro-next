@@ -5,8 +5,9 @@ import { getEndPoint, useAppSelector } from "@/libs/constants/AppFunctions";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import React from "react";
 
-export default function ProfileBlogsTab() {
-  const { username } = usePathnameClient();
+export default function CategoryHotTab() {
+  const { tag } = usePathnameClient();
+
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
 
   return (
@@ -14,8 +15,8 @@ export default function ProfileBlogsTab() {
       <div className="flex flex-col space-y-2">
         <FeedList
           endPoint={getEndPoint(
-            "AccountBlog",
-            `${username}/${loginInfo.name || null}`
+            "ActivePostsByTagHot",
+            `${tag}/${loginInfo.name || "null"}`
           )}
         />
       </div>

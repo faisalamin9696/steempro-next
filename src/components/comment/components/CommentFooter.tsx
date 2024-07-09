@@ -46,10 +46,23 @@ import VotersCard from "@/components/VotersCard";
 import "./style.scss";
 import ClickAwayListener from "react-click-away-listener";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { As } from "@nextui-org/react";
+
+interface WrapperProps {
+  children: React.ReactNode;
+  className?: string;
+  title?: string;
+  onClick?: (event) => void;
+  hoverable?: boolean;
+  isDisabled?: boolean;
+  as?: As;
+  href?: string;
+  passHref?: boolean;
+}
 
 export default memo(function CommentFooter(props: CommentProps) {
-  const { comment, className, isReply, onCommentsClick, compact, isDetails } =
-    props;
+  const { comment, className, isReply, compact, isDetails } = props;
 
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
   const [votersModal, setVotersModal] = useState(false);
@@ -192,31 +205,6 @@ export default memo(function CommentFooter(props: CommentProps) {
 
     reblogMutation.mutate(credentials.key);
   }
-  const CustomCard = ({
-    children,
-    className,
-    title,
-    onClick,
-  }: {
-    children: React.ReactNode;
-    className?: string;
-    title?: string;
-    onClick?: (event) => void;
-  }) => {
-    return (
-      <Card
-        title={title}
-        isPressable={!!onClick}
-        onClick={onClick}
-        className={clsx(
-          `dark:bg-foreground/10 flex flex-row items-center gap-1 rounded-full`,
-          className
-        )}
-      >
-        {children}
-      </Card>
-    );
-  };
 
   return (
     <div className={twMerge("flex flex-col p-1 gap-1 w-full ", className)}>
@@ -239,7 +227,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                 </div>
               </ClickAwayListener>
             )}
-            <CustomCard>
+            <ButtonWrapper>
               <Button
                 radius="full"
                 title="Upvote"
@@ -296,21 +284,31 @@ export default memo(function CommentFooter(props: CommentProps) {
                   <BiDownvote className="text-lg" />
                 )}
               </Button>
-            </CustomCard>
+            </ButtonWrapper>
 
             {!isReply && !compact && (
-              <CustomCard
-                className={twMerge(
-                  "px-2",
-                  isDetails && "hover:bg-default/40 hover:cursor-pointer"
-                )}
-                onClick={onCommentsClick}
+              <ButtonWrapper
+                href={
+                  isDetails
+                    ? undefined
+                    : `/${comment.category}/@${comment.author}/${comment.permlink}#comments`
+                }
+                as={isDetails ? undefined : Link}
+                passHref={!isDetails}
+                hoverable
+                className={twMerge("px-2")}
+                onClick={() =>
+                  isDetails &&
+                  document
+                    .getElementById(`comments`)
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
                 title={`${comment.children} Comments`}
               >
                 <Button
                   className=" cursor-default disabled:text-default-foreground disabled:opacity-90"
-                  isDisabled
                   title="Comments"
+                  isDisabled
                   radius="full"
                   isIconOnly
                   size="sm"
@@ -324,11 +322,15 @@ export default memo(function CommentFooter(props: CommentProps) {
                     {abbreviateNumber(comment.children)}
                   </div>
                 )}
-              </CustomCard>
+              </ButtonWrapper>
             )}
 
             {!isReply && (
-              <CustomCard>
+              <ButtonWrapper
+                hoverable
+                onClick={() => setResteemPopup(!resteemPopup)}
+                isDisabled={reblogMutation.isPending}
+              >
                 <Popover
                   isOpen={resteemPopup}
                   onOpenChange={setResteemPopup}
@@ -338,15 +340,14 @@ export default memo(function CommentFooter(props: CommentProps) {
                     <Button
                       title="Resteem"
                       className={twMerge(
-                        "min-w-0  shadow-lg text-default-900 flex flex-row items-center gap-2",
+                        "min-w-0  shadow-lg cursor-default disabled:text-default-foreground disabled:opacity-90 flex flex-row items-center gap-2",
                         " px-3",
-                        compact && "px-4",
-                        !isResteemd && "bg-white dark:bg-foreground/10"
+                        compact && "px-4"
                       )}
                       variant={isResteemd ? "flat" : "light"}
                       radius="full"
                       color={isResteemd ? "success" : undefined}
-                      isDisabled={reblogMutation.isPending}
+                      isDisabled={true}
                       isLoading={reblogMutation.isPending}
                       size="sm"
                     >
@@ -396,15 +397,16 @@ export default memo(function CommentFooter(props: CommentProps) {
                     </div>
                   </PopoverContent>
                 </Popover>
-              </CustomCard>
+              </ButtonWrapper>
             )}
           </div>
         </div>
 
         {!!comment.payout && (
-          <CustomCard
+          <ButtonWrapper
+            hoverable
             onClick={() => setBreakdownModal(!breakdownModal)}
-            className="pr-2 hover:bg-default/40"
+            className="pr-2"
             title={`$${comment.payout?.toLocaleString()} Payout`}
           >
             <Popover
@@ -418,7 +420,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                   isDisabled
                   isIconOnly
                   size="sm"
-                  variant="flat"
+                  variant="light"
                 >
                   <PiCurrencyCircleDollarFill className="text-lg" />
                 </Button>
@@ -429,7 +431,7 @@ export default memo(function CommentFooter(props: CommentProps) {
             </Popover>
 
             <div className="text-tiny">{comment.payout?.toFixed(2)}</div>
-          </CustomCard>
+          </ButtonWrapper>
         )}
       </div>
 
@@ -469,3 +471,35 @@ export default memo(function CommentFooter(props: CommentProps) {
     </div>
   );
 });
+
+const ButtonWrapper = (props: WrapperProps) => {
+  const {
+    children,
+    className,
+    title,
+    onClick,
+    hoverable,
+    isDisabled,
+    as,
+    href,
+    passHref,
+  } = props;
+  return (
+    <Card
+      title={title}
+      as={as}
+      href={href}
+      passHref={passHref}
+      isPressable={!!onClick && !href}
+      onClick={(e) => !href && onClick && onClick(e)}
+      isDisabled={isDisabled}
+      className={twMerge(
+        `flex flex-row items-center gap-1 rounded-full dark:bg-foreground/15`,
+        hoverable ? "hover:!bg-default/40 hover:!cursor-pointer" : "",
+        className
+      )}
+    >
+      {children}
+    </Card>
+  );
+};

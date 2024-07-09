@@ -26,7 +26,6 @@ export interface CommentProps {
     onDeleteClick?: (comment: Feed | Post) => void;
     onMuteClick?: (comment: Feed | Post) => void;
     onPinClick?: (comment: Feed | Post) => void;
-    onCommentsClick?: () => void;
     onPublishClick?: (comment: Feed | Post) => void;
     isSearch?: boolean;
 }

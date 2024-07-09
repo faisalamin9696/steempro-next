@@ -70,6 +70,17 @@ export default function PostPage(props: Props) {
     return () => clearTimeout(timeout);
   }, []);
 
+  useEffect(() => {
+    if (data) {
+      const section = document.getElementById(
+        window.location.hash.replace("#", "")
+      );
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [data]);
+
   if (editMode) {
     return (
       <SubmitPage
@@ -186,11 +197,6 @@ export default function PostPage(props: Props) {
                       <CommentFooter
                         comment={commentInfo}
                         isDetails
-                        onCommentsClick={() => {
-                          document
-                            .getElementById(`post-replies`)
-                            ?.scrollIntoView({ behavior: "smooth" });
-                        }}
                         className={"w-full"}
                       />
                     </CardFooter>
@@ -200,7 +206,9 @@ export default function PostPage(props: Props) {
             </>
           )}
 
-          <DynamicPostReplies comment={commentInfo} />
+          <div id="comments">
+            <DynamicPostReplies comment={commentInfo} />
+          </div>
         </div>
       ) : null}
     </div>

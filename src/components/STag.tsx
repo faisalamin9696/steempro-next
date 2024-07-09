@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
 
@@ -18,7 +17,7 @@ export default function STag(props: Props) {
         isDisabled ? "pointer-events-none" : "",
         "text-default-900 transition-all delay-75",
         onlyText
-          ? " hover:text-blue-500"
+          ? " hover:underline"
           : "text-tiny rounded-full bg-background/60 backdrop-blur-lg hover:bg-default/100 px-2 py-1",
         className
       )}

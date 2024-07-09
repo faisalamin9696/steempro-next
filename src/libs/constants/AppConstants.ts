@@ -12,6 +12,8 @@ export const MObileAppLink =
   "https://play.google.com/store/apps/details?id=com.steempro.mobile";
 
 export const FeedBodyLength = 500;
+export const FeedFetchLimit = 1000;
+
 // export const isDev = false;
 
 export let CurrentSetting: Setting = {

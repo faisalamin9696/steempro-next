@@ -12,6 +12,7 @@ import {
   awaitTimeout,
   useAppSelector,
   useAppDispatch,
+  getEndPoint,
 } from "@/libs/constants/AppFunctions";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { GrBlog } from "react-icons/gr";
@@ -29,11 +30,16 @@ export default function PostStart() {
 
   const dispatch = useAppDispatch();
 
-  const URL = `/feeds_api/getPostsByAuthor/${username}/${
-    loginInfo.name || "null"
-  }/${FeedBodyLength}/5/${offset}`;
   const { data, mutate, isLoading, isValidating } = useSWR(
-    muting || !settings.readMore ? null : URL,
+    muting || !settings.readMore
+      ? null
+      : getEndPoint(
+          "PostsByAuthor",
+          `${username}/${loginInfo.name || "null"}`,
+          FeedBodyLength,
+          5,
+          offset
+        ),
     fetchSds<Feed[]>
   );
 
@@ -81,7 +87,7 @@ export default function PostStart() {
           {isLoading || isValidating ? (
             <LoadingCard />
           ) : (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
               {data
                 ?.filter((item) => item.permlink !== permlink)
                 .map((comment) => {

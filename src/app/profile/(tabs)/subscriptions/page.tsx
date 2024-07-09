@@ -24,10 +24,8 @@ export default function ProfileSubsribtionsTab() {
         <div >
             <div className='flex-col grid md:grid-cols-2 gap-4'>
                 {data?.map(community => {
-                    return <div key={community.id} className={`grid-footer w-full card card-compact h-full dark:bg-background/90
-                    bg-white flex flex-col overflow-hidden rounded-lg shadow-lg`}>
-                        <CommunityCard community={community} compact
-
+                    return <div key={community.id} className={`w-full`}>
+                        <CommunityCard className=' h-full' community={community} compact
                             endContent={<div className='flex gap-1 items-center'>
                                 {isSelf && <Button size='sm' isIconOnly variant='flat'
 
@@ -56,8 +54,6 @@ export default function ProfileSubsribtionsTab() {
                         />
                     </div>
                 })}
-
-                {/* <DynamicFeedList endPoint={getEndPoint('AccountBlog')} /> */}
             </div>
 
         </div >

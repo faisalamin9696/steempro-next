@@ -25,7 +25,7 @@ export default async function LayoutTemplate({
     <main className="main" key={permlink}>
       <MainWrapper
         endClassName={"1md:block"}
-        startClassName=" max-h-screen lg:block lg:mr-4 !relative !top-0"
+        startClassName=" max-h-screen lg:block lg:mr-4" // non-sticky classes !relative !top-0
         startContent={
           <ProfileInfoCard hideAvatar key={Math.random()} profile username={username} />
         }

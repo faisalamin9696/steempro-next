@@ -626,7 +626,7 @@ export default function SubmitPage(props: Props) {
             <div className="flex flex-1 justify-end gap-2">
               {!isEdit && (
                 <ScheduleButton
-                  isDisabled={isEdit}
+                  isDisabled={isEdit || isLoading}
                   isLoading={isScheduling}
                   buttonText={dateTime ? "Schedule" : undefined}
                   onClick={() => handlePostPublish(true)}
@@ -637,6 +637,7 @@ export default function SubmitPage(props: Props) {
                 <Button
                   size="sm"
                   radius="full"
+                  isDisabled={isLoading}
                   onClick={() => {
                     handleUpdateCancel && handleUpdateCancel();
                   }}

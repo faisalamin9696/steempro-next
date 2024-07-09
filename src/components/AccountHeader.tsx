@@ -118,7 +118,11 @@ export default function AccountHeader(props: Props) {
                   onClick={() => {
                     if (!isCommunity) setFollowerModal({ isOpen: true });
                   }}
-                  className={twMerge("stat-value", "max-md:text-lg")}
+                  className={twMerge(
+                    "stat-value",
+                    "text-3xl max-md:text-lg",
+                    isCommunity && "pointer-events-none"
+                  )}
                   title={
                     isCommunity
                       ? communityInfo.rank?.toString()
@@ -135,7 +139,7 @@ export default function AccountHeader(props: Props) {
               </div>
 
               <div className="stat">
-                <div className="stat-figure text-secondary text-2xl max-md:text-xl">
+                <div className="stat-figure text-secondary text-xl">
                   {isCommunity ? <PiUserListBold /> : <IoFlashOutline />}
                   {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> */}
                 </div>
@@ -147,7 +151,7 @@ export default function AccountHeader(props: Props) {
                     if (!isCommunity)
                       setFollowerModal({ isOpen: true, isFollowing: true });
                   }}
-                  className="stat-value text-secondary max-md:text-lg"
+                  className="stat-value text-secondary text-3xl max-md:text-lg"
                   title={
                     isCommunity
                       ? communityInfo.count_subs?.toString()
@@ -165,12 +169,12 @@ export default function AccountHeader(props: Props) {
 
               {isCommunity && (
                 <div className="stat">
-                  <div className="stat-figure text-info text-2xl max-md:text-xl">
+                  <div className="stat-figure text-info text-xl">
                     <FaDollarSign />
                   </div>
                   <div className="stat-title text-white/60">{"Reward"}</div>
                   <div
-                    className="stat-value text-info max-md:text-lg"
+                    className="stat-value text-info text-3xl max-md:text-lg"
                     title={communityInfo.sum_pending?.toString()}
                   >
                     {abbreviateNumber(communityInfo.sum_pending)}
@@ -203,7 +207,7 @@ export default function AccountHeader(props: Props) {
                     ? communityInfo.title
                     : posting_json_metadata?.profile?.name
                 }
-                className="stat-value text-white dark:text-white/90 text-xl sm:text-3xl max-w-fit overflow-clip text-wrap flex-nowrap line-clamp-1"
+                className="stat-value text-white dark:text-white/90 text-xl sm:text-2xl max-w-fit overflow-clip text-wrap flex-nowrap line-clamp-1"
               >
                 {isCommunity
                   ? communityInfo.title

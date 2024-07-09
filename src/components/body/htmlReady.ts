@@ -217,6 +217,7 @@ function linkifyNode(child: any, state: any) {
     child = embedDTubeNode(child, state.images);
     child = embedThreeSpeakNode(child, state.links, state.images);
 
+    // child = DOMParser.parseFromString(`<span>${child}</span>`);
     const data = XMLSerializer.serializeToString(child);
 
     const content = linkify(
