@@ -181,7 +181,7 @@ const TransferHistoryCard = (props: Props): JSX.Element => {
             steem_payout = ', ' + data.steem_payout;
         message = <TransferFromTo title={
             <div className='flex gap-2'>
-                <p>Claim {author_reward} SP, {steem_payout} and {data.sbd_payout} for</p>
+                <p>Claim {author_reward} SP {steem_payout} and {data.sbd_payout} for</p>
 
                 <PostLink author={data.author} permlink={data.permlink} />
             </div>} />

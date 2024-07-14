@@ -47,7 +47,12 @@ export default function CommentBlogLayout(props: CommentProps) {
         </h2>
 
         {isReply ? null : (
-          <CommentCover isNsfw={isNsfw} thumbnail src={thumbnail} />
+          <CommentCover
+            isNsfw={isNsfw}
+            thumbnail
+            src={thumbnail}
+            targetUrl={targetUrl}
+          />
         )}
 
         <p className="card-content line-clamp-2 overflow-hidden text-start w-full h-full max-sm:text-sm">

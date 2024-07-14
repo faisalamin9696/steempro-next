@@ -227,6 +227,7 @@ export default function CommentHeader(props: Props) {
         classNames={{
           description: "text-default-900/60 dark:text-gray-200 text-sm",
           name: "text-default-800",
+          wrapper:"gap-1",
         }}
         name={
           <div className="flex items-center gap-1">

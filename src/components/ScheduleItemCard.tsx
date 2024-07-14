@@ -11,7 +11,7 @@ import clsx from "clsx";
 import React, { useState } from "react";
 import CommentCover from "./comment/components/CommentCover";
 import BodyShort from "./body/BodyShort";
-import { RiDraftFill, RiDraftLine } from "react-icons/ri";
+import { RiDraftLine } from "react-icons/ri";
 import { TbClockEdit } from "react-icons/tb";
 import { MdDelete } from "react-icons/md";
 import Link from "next/link";
@@ -35,10 +35,7 @@ import { empty_community } from "@/libs/constants/Placeholders";
 import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
 import STooltip from "./STooltip";
 import {
-  now,
-  parseDateTime,
   parseZonedDateTime,
-  parseAbsolute,
   parseAbsoluteToLocal,
 } from "@internationalized/date";
 
@@ -67,6 +64,9 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
   const [deletePopup, setDeletePopup] = useState(false);
 
   const metadata = extractMetadata(scheduleInfo.body);
+  const targetUrl = scheduleInfo?.permlink
+    ? `/@${scheduleInfo.username}/${scheduleInfo.permlink}`
+    : undefined;
   const images = metadata?.["image"] ?? [];
   const dispatch = useAppDispatch();
 
@@ -247,17 +247,13 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
     bg-white/60 dark:bg-white/10"
     >
       <Card
-        as={undefined}
         radius="none"
         shadow="none"
         className={clsx("w-full bg-transparent gap-4 p-2 relative")}
       >
         <div className=" absolute right-2 flex items-center gap-2">
-          {scheduleInfo?.permlink && (
-            <Link
-              className=" text-blue-500 text-sm"
-              href={`/@${scheduleInfo.username}/${scheduleInfo.permlink}`}
-            >
+          {targetUrl && (
+            <Link className=" text-blue-500 text-sm" href={targetUrl}>
               Visit
             </Link>
           )}
@@ -406,6 +402,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
             <CommentCover
               className="max-h-36 max-w-36 self-center object-contain"
               thumbnail
+              targetUrl={targetUrl}
               isNsfw={false}
               src={proxifyImageUrl(images[0])}
             />

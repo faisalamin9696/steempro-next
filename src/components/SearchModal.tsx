@@ -229,12 +229,12 @@ export default function SearchModal(props: Props) {
 
                                                         username={item?.name || ''} />
                                                     <div className="flex flex-col items-start justify-center">
-                                                        <div className='flex items-start  gap-3'>
+                                                        <div className='flex items-start  gap-2'>
                                                             <div className=' flex-col items-start'>
                                                                 <h4 className="text-sm font-semibold leading-none text-default-600">{posting_json_metadata?.profile?.name}</h4>
                                                                 <h5 className={clsx("text-sm tracking-tight text-default-500")}>@{item?.name}</h5>
                                                             </div>
-                                                            <Reputation reputation={item?.reputation} />
+                                                            <Reputation  reputation={item?.reputation} />
                                                         </div>
                                                         <div className='flex text-sm gap-1 text-default-600 items-center'>
                                                             <p className='text-default-500 text-tiny'>Joined</p>

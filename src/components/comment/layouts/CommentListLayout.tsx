@@ -44,7 +44,7 @@ export default function CommentListLayout(props: CommentProps) {
             shadow="none"
             className={clsx(
               !!commentInfo.is_muted && " opacity-80",
-              "bg-transparent main-comment-list w-full !p-0 w-full"
+              "bg-transparent main-comment-list w-full !p-0"
             )}
           >
             <div className="flex items-center gap-2 w-full py-0">
@@ -70,6 +70,7 @@ export default function CommentListLayout(props: CommentProps) {
                     isNsfw={isNsfw}
                     size={isSearch ? "xs" : undefined}
                     src={thumbnail}
+                    targetUrl={targetUrl}
                   />
                 )}
               </div>
@@ -80,7 +81,7 @@ export default function CommentListLayout(props: CommentProps) {
         {!isSearch && (
           <div className="h-max">
             {isReply ? null : (
-              <CommentCover isNsfw={isNsfw} size="sm" src={thumbnail} />
+              <CommentCover isNsfw={isNsfw} size="sm" src={thumbnail}  targetUrl={targetUrl}/>
             )}
           </div>
         )}

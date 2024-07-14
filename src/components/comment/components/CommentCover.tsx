@@ -2,6 +2,7 @@ import NsfwOverlay from "@/components/NsfwOverlay";
 import { Card } from "@nextui-org/card";
 import clsx from "clsx";
 import Image from "next/image";
+import Link from "next/link";
 import { memo, useState } from "react";
 
 interface Props {
@@ -13,9 +14,11 @@ interface Props {
   noCard?: boolean;
   alt?: string;
   isNsfw?: boolean;
+  targetUrl?: string;
 }
 export default memo(function CommentCover(props: Props) {
-  let { size, src, thumbnail, className, noCard, alt, isNsfw } = props;
+  let { size, src, thumbnail, className, noCard, alt, isNsfw, targetUrl } =
+    props;
   const [isFetching, setIsFetching] = useState(true);
   const [show, setShow] = useState(!isNsfw);
 
@@ -48,6 +51,8 @@ export default memo(function CommentCover(props: Props) {
       </div>
     ) : (
       <Card
+        as={targetUrl ? Link : undefined}
+        href={targetUrl}
         className={clsx(
           isFetching ? "bg-background/50" : "bg-transparent",
           className
@@ -61,7 +66,7 @@ export default memo(function CommentCover(props: Props) {
               height={640}
               width={640}
               quality={60}
-              className={show ? "" : "blur-md"}
+              className={show ? "" : "blur-lg"}
               onLoad={onLoadCompleted}
               onError={onLoadCompleted}
               style={{

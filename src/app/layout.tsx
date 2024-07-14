@@ -54,9 +54,8 @@ export default async function RootLayout({
   }
   return (
     <html lang="en" suppressHydrationWarning={true}>
+      
       <head>
-  
-
         <AdSense pId="ca-pub-4510618528305465" />
       </head>
 
