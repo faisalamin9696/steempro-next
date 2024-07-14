@@ -30,7 +30,7 @@ export const CommunityCard = memo((props: Props) => {
         props.className
       )}
     >
-      <div className=" flex-col">
+      <div className="flex flex-col items-start">
         <div className="top-2 right-3 absolute">{endContent}</div>
 
         <User

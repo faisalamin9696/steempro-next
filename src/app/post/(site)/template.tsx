@@ -22,7 +22,7 @@ export default async function LayoutTemplate({
   // const tag = data.community ? JSON.parse(data.json_metadata)?.['tags'][0] : data.category
 
   return (
-    <main className="main" key={permlink}>
+    <main className="main">
       <MainWrapper
         endClassName={"1md:block"}
         startClassName=" max-h-screen lg:block lg:mr-4" // non-sticky classes !relative !top-0

@@ -28,31 +28,29 @@ export default memo(function CompactPost(props: Props) {
   const thumbnail = getPostThumbnail(commentInfo?.json_images);
 
   return (
-    <div className="card card-compact rounded-lg overflow-hidden shadow-lg flex flex-col bg-white dark:bg-white/5 p-2">
+    <Card
+      as={Link}
+      onClick={onClick}
+      radius="none"
+      href={`/${commentInfo.category}/@${commentInfo.author}/${commentInfo.permlink}`}
+      className="overflow-hidden rounded-lg shadow-sm flex flex-col bg-white dark:bg-white/5 p-2"
+      shadow="none"
+      // className=" text-start p-0 bg-transparent px-0 py-2 mb-auto"
+    >
+      {/* <div className="card card-compact rounded-lg overflow-hidden shadow-lg flex flex-col bg-white dark:bg-white/5 p-2"> */}
       <div className="relative">
         <CommentCover className="max-h-40" thumbnail src={thumbnail} />
-        <div className="rounded-lg hover:bg-transparent transition duration-300 absolute bottom-0 top-0 right-0 left-0 bg-gray-900 opacity-25"></div>
-        {/* 
-    <Link href={`/trending/${'hive-144064'}`}
-      className="border rounded-full text-tiny absolute top-0 right-0
-         px-2 py-1 m-3
-          backdrop-blur-lg">
-      Beauty of Creativity
-    </Link> */}
+        {/* <div className="rounded-lg hover:bg-transparent transition duration-300 absolute bottom-0 top-0 right-0 left-0 bg-gray-900 opacity-25"></div> */}
+      
       </div>
-      <Card
-        as={Link}
-        onClick={onClick}
-        href={`/${commentInfo.category}/@${commentInfo.author}/${commentInfo.permlink}`}
-        shadow="none"
-        radius="none"
-        className=" text-start p-0 bg-transparent px-0 py-2 mb-auto"
-      >
-        <p className="font-medium text-md mb-2 text-default-600 line-clamp-2">{commentInfo?.title}</p>
+      <div className=" text-start p-0 py-2 mb-auto">
+        <p className="font-medium text-md mb-2 text-default-600 line-clamp-2">
+          {commentInfo?.title}
+        </p>
         <p className="text-default-900/50 text-tiny line-clamp-2">
           <BodyShort body={commentInfo?.body} />
         </p>
-      </Card>
+      </div>
       <div className="px-0 py-0 flex flex-row items-center justify-between">
         <span className="py-1 text-xs font-regular  mr-1 flex flex-row items-center">
           {
@@ -91,6 +89,6 @@ export default memo(function CompactPost(props: Props) {
           </span>
         </div>
       </div>
-    </div>
+    </Card>
   );
 });

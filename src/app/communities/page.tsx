@@ -26,11 +26,14 @@ import LoadingCard from "@/components/LoadingCard";
 import CommunityCard from "@/components/community/CommunityCard";
 import FollowButton from "@/components/FollowButton";
 import { capitalize } from "@/libs/constants/AppConstants";
+import { IoMdSettings } from "react-icons/io";
+import { getTimeFromNow } from "@/libs/utils/time";
 
-const INITIAL_VISIBLE_COLUMNS = ["title"];
+const INITIAL_VISIBLE_COLUMNS = ["community"];
+
 const columns = [
   { name: "RANK", uid: "rank", sortable: true },
-  { name: "COMMUNITY", uid: "title", sortable: true },
+  { name: "COMMUNITY", uid: "community", sortable: true },
   { name: "SUBSCRIBERS", uid: "count_subs", sortable: true },
   { name: "REWARD", uid: "count_pending", sortable: true },
   { name: "CREATED", uid: "created", sortable: true },
@@ -110,7 +113,7 @@ export default function CommunitiesPage() {
     const cellValue = community[columnKey];
 
     switch (columnKey) {
-      case "title":
+      case "community":
         return (
           <CommunityCard
             community={community}
@@ -122,6 +125,15 @@ export default function CommunitiesPage() {
             }
           />
         );
+
+      case "count_subs":
+        return <p>{community.count_subs.toLocaleString()}</p>;
+
+      case "count_pending":
+        return <p>$ {community.count_pending.toLocaleString()}</p>;
+
+      case "created":
+        return <p>{getTimeFromNow(community.created * 1000)}</p>;
 
       default:
         return cellValue;
@@ -176,7 +188,7 @@ export default function CommunitiesPage() {
               onValueChange={onSearchChange}
             />
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-3 max-sm:hidden">
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button
@@ -202,14 +214,6 @@ export default function CommunitiesPage() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            {/* <Button size="sm" onClick={() => {
-              authenticateUser();
-              if (!isAuthorized())
-                return
-            }}
-              color="primary" endContent={<FaPlus />}>
-              Create Community
-            </Button> */}
           </div>
         </div>
         <div className="flex justify-between items-center">

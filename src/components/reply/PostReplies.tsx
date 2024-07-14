@@ -102,6 +102,21 @@ export default memo(function PostReplies(props: Props) {
     }
   }, [showReply]);
 
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    const docId = window.location.hash.replace("#", "");
+    const section = document.getElementById(docId);
+    if (docId === "comments" && section) {
+      timeout = setTimeout(() => {
+        handleLoadComments();
+      }, 1500);
+    }
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, []);
+
   const toggleReply = () => setShowReply(!showReply);
 
   function handleLoadComments() {
@@ -410,11 +425,11 @@ export default memo(function PostReplies(props: Props) {
           endMessage={repliesMutation.isSuccess && <EmptyList />}
         >
           <div className="flex flex-col ">
-            {rootReplies?.map((reply: Post) => {
+            {rootReplies?.map((reply: Post, index) => {
               return !reply.link_id ? null : (
                 <div>
                   <Reply
-                    key={reply.link_id}
+                    key={index ?? reply.link_id}
                     comment={reply}
                     rootComment={commentInfo}
                   />

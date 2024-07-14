@@ -118,7 +118,7 @@ export default memo(function ProfileInfoCard(props: Props) {
   return (
     <div
       className={twMerge(
-        `relative flex flex-col card-content border-none  rounded-lg
+        `relative flex flex-col card-content border-none rounded-lg
         bg-transparent items-start gap-4 w-full bg-white dark:bg-white/5 p-4`,
         props.className
       )}

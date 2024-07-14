@@ -145,7 +145,7 @@ export default function MassVotingModal(props: Props) {
             </ModalHeader>
             <ModalBody className="flex flex-col gap-6">
               <div className=" flex flex-col gap-4">
-                {links.map((item) => {
+                {links.map((item, index) => {
                   const itemStatus = getItemStatus(item);
                   const status = itemStatus?.status || "pending";
                   const error = itemStatus?.error;
@@ -154,7 +154,7 @@ export default function MassVotingModal(props: Props) {
                     <div
                       ref={setRef(item)}
                       className=" flex gap-2 items-center justify-between"
-                      key={item}
+                      key={index ?? item}
                     >
                       <a className=" text-tiny">{item}</a>
                       <STooltip content={error}>

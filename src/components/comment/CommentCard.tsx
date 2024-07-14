@@ -1,51 +1,63 @@
-"use client"
+"use client";
 
-import { memo } from 'react';
-import './style.scss';
+import { memo } from "react";
+import "./style.scss";
 
-import { useAppSelector } from '@/libs/constants/AppFunctions';
-import { getSettings } from '@/libs/utils/user';
-import CommentListLayout from './layouts/CommentListLayout';
-import CommentBlogLayout from './layouts/CommentBlogsLayout';
-import CommentGridLayout from './layouts/CommentGridLayout';
-import { useDeviceInfo } from '@/libs/utils/useDeviceInfo';
+import { useAppSelector } from "@/libs/constants/AppFunctions";
+import { getSettings } from "@/libs/utils/user";
+import CommentListLayout from "./layouts/CommentListLayout";
+import CommentBlogLayout from "./layouts/CommentBlogsLayout";
+import CommentGridLayout from "./layouts/CommentGridLayout";
+import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 
 interface Props {
-    comment: Feed | Post;
-    isReply?: boolean;
+  comment: Feed | Post;
+  isReply?: boolean;
 }
 
-
 export interface CommentProps {
-    comment: Feed | Post;
-    className?: string;
-    isReply?: boolean;
-    compact?: boolean;
-    isDetails?: boolean;
-    onEditClick?: (comment: Feed | Post) => void;
-    onDeleteClick?: (comment: Feed | Post) => void;
-    onMuteClick?: (comment: Feed | Post) => void;
-    onPinClick?: (comment: Feed | Post) => void;
-    onPublishClick?: (comment: Feed | Post) => void;
-    isSearch?: boolean;
+  comment: Feed | Post;
+  className?: string;
+  isReply?: boolean;
+  compact?: boolean;
+  isDetails?: boolean;
+  onEditClick?: (comment: Feed | Post) => void;
+  onDeleteClick?: (comment: Feed | Post) => void;
+  onMuteClick?: (comment: Feed | Post) => void;
+  onPinClick?: (comment: Feed | Post) => void;
+  onPublishClick?: (comment: Feed | Post) => void;
+  isSearch?: boolean;
 }
 
 export default memo(function CommentCard(props: Props) {
-    const { comment } = props;
-    const commentInfo = useAppSelector(state => state.commentReducer.values)[`${comment?.author}/${comment?.permlink}`] ?? comment;
-    const settings = useAppSelector(state => state.settingsReducer.value) ?? getSettings();
-    const { isMobile } = useDeviceInfo();
+  const { comment } = props;
+  const commentInfo =
+    useAppSelector((state) => state.commentReducer.values)[
+      `${comment?.author}/${comment?.permlink}`
+    ] ?? comment;
+  const settings =
+    useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
+  const { isMobile } = useDeviceInfo();
 
+  let commentLayout: React.ReactNode;
 
-    const commentLayout =
-        isMobile ? <CommentBlogLayout {...props} comment={commentInfo} /> :
-            settings.feedStyle === 'list' ?
-                <CommentListLayout {...props} comment={commentInfo} /> :
-                settings.feedStyle === 'grid' ? <CommentGridLayout comment={comment} /> :
-                    settings.feedStyle === 'blogs' ? <CommentBlogLayout {...props} comment={commentInfo} /> :
-                        <CommentListLayout {...props} comment={commentInfo} />
+  if (isMobile) {
+    commentLayout = <CommentBlogLayout {...props} comment={commentInfo} />;
+  } else {
+    switch (settings.feedStyle) {
+      case "list":
+        commentLayout = <CommentListLayout {...props} comment={commentInfo} />;
+        break;
+      case "grid":
+        commentLayout = <CommentGridLayout comment={comment} />;
+        break;
+      case "blogs":
+        commentLayout = <CommentBlogLayout {...props} comment={commentInfo} />;
+        break;
+      default:
+        commentLayout = <CommentListLayout {...props} comment={commentInfo} />;
+    }
+  }
 
-
-    return (commentLayout)
-}
-)
+  return commentLayout;
+});

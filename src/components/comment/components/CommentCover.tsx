@@ -5,7 +5,7 @@ import Image from "next/image";
 import { memo, useState } from "react";
 
 interface Props {
-  sm?: boolean;
+  size?: "xs" | "sm";
   src?: string | null;
   transparent?: boolean;
   thumbnail?: boolean;
@@ -15,7 +15,7 @@ interface Props {
   isNsfw?: boolean;
 }
 export default memo(function CommentCover(props: Props) {
-  let { sm, src, thumbnail, className, noCard, alt, isNsfw } = props;
+  let { size, src, thumbnail, className, noCard, alt, isNsfw } = props;
   const [isFetching, setIsFetching] = useState(true);
   const [show, setShow] = useState(!isNsfw);
 
@@ -76,8 +76,8 @@ export default memo(function CommentCover(props: Props) {
           <div className="relative">
             <Image
               src={src}
-              width={sm ? 220 : 200}
-              height={sm ? 120 : 160}
+              width={size === "xs" ? 130 : size === "sm" ? 220 : 200}
+              height={size === "xs" ? 70 : size === "sm" ? 120 : 160}
               alt={alt || "image"}
               onLoad={onLoadCompleted}
               onError={onLoadCompleted}
@@ -86,9 +86,12 @@ export default memo(function CommentCover(props: Props) {
               //    (max-width: 1200px) 50vw,
               //    33vw`}
               style={{
-                width: sm ? "220px" : undefined,
-                height: sm ? "120px" : undefined,
-                objectFit: sm ? "cover" : undefined,
+                width:
+                  size === "xs" ? "130" : size === "sm" ? "220px" : undefined,
+                height:
+                  size === "xs" ? "70" : size === "sm" ? "120px" : undefined,
+
+                objectFit: size ? "cover" : undefined,
               }}
             />
             {!show && <NsfwOverlay onOpen={setShow} />}

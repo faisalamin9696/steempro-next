@@ -72,10 +72,9 @@ export default function PostPage(props: Props) {
 
   useEffect(() => {
     if (data) {
-      const section = document.getElementById(
-        window.location.hash.replace("#", "")
-      );
-      if (section) {
+      const docId = window.location.hash.replace("#", "");
+      const section = document.getElementById(docId);
+      if (docId === "comments" && section) {
         section.scrollIntoView({ behavior: "smooth" });
       }
     }
@@ -102,7 +101,6 @@ export default function PostPage(props: Props) {
 
   return (
     <div
-      key={pathname}
       className="flex-col bg-white dark:bg-white/5
     backdrop-blur-md rounded-lg p-4 w-full mb-10"
     >

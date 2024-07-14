@@ -119,10 +119,10 @@ export default function HomeStart() {
             <ErrorCard message={error?.message} onClick={mutate} />
           ) : (
             <div className="flex flex-col gap-4">
-              {annoucements?.map((annoucement) => {
+              {annoucements?.map((annoucement, index) => {
                 return (
                   <div
-                    key={annoucement.authPerm}
+                    key={index ?? annoucement.authPerm}
                     className="bg-white rounded-lg dark:bg-white/5 text-sm px-2 py-1"
                   >
                     <Link
@@ -183,10 +183,10 @@ export default function HomeStart() {
                 endMessage={<EmptyList />}
               >
                 <div className="flex flex-col gap-2">
-                  {filteredData?.map((community) => {
+                  {filteredData?.map((community, index) => {
                     return (
                       <CommunityCard
-                        key={community.id}
+                        key={index ?? community.id}
                         community={community}
                         compact
                       />
