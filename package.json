@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "yarn add https://github.com/faisalamin9696/dhive && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
