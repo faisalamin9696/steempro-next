@@ -30,7 +30,12 @@ export default function ReplyBody({
 
               <div className="flex flex-col items-start">
                 <div className="flex gap-1 items-center">
-                  <p>{comment.author}</p>
+                  <Link
+                    className=" hover:text-blue-500"
+                    href={`/@${comment.author}`}
+                  >
+                    {comment.author}
+                  </Link>
                   <Reputation reputation={comment.author_reputation} />
                   <Link
                     href={`/${comment.category}/@${comment.author}/${comment.permlink}`}

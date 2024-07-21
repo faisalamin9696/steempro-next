@@ -10,12 +10,12 @@ import React, { memo, useState } from "react";
 import SAvatar from "./SAvatar";
 import { useAppDispatch } from "@/libs/constants/AppFunctions";
 import { getAuthorExt } from "@/libs/steem/sds";
-import { getAuth, signInAnonymously } from "firebase/auth";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { twMerge } from "tailwind-merge";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/libs/supabase";
 
 interface Props {
   user: User;
@@ -65,9 +65,8 @@ export default memo(function AccountItemCard(props: Props) {
     try {
       const account = await getAuthorExt(user.username);
       if (account) {
-        const firebaseAuth = getAuth();
 
-        signInAnonymously(firebaseAuth)
+        supabase.auth.signInAnonymously()
           .then(async () => {
             addToCurrent(account.name, user.key, user.type);
 

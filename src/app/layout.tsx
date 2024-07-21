@@ -7,7 +7,7 @@ import { AppStrings } from "@/libs/constants/AppStrings";
 import { SessionProvider } from "next-auth/react";
 import { auth, BASE_PATH } from "@/auth";
 import { Providers } from "./providers";
-import AdSense from "@/components/AdSense";
+// import AdSense from "@/components/AdSense";
 // export const runtime = 'edge' // 'nodejs' (default) | 'edge'
 
 // const inter = Inter({ subsets: ["latin"] });
@@ -55,9 +55,9 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true}>
       
-      <head>
+      {/* <head>
         <AdSense pId="ca-pub-4510618528305465" />
-      </head>
+      </head> */}
 
       <link
         rel="dns-prefetch"

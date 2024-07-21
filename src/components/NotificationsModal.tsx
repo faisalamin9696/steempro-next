@@ -51,6 +51,7 @@ import {
   ModalFooter,
 } from "@nextui-org/modal";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 interface Props {
   username?: string | null;
@@ -288,7 +289,12 @@ export default function NotificationsModal(props: Props) {
               <div className="flex gap-2">
                 <SAvatar size="xs" username={notification.account} />
                 <div>
-                  <p>{notification.account}</p>
+                  <Link
+                    className=" hover:text-blue-500"
+                    href={`/@${notification.account}`}
+                  >
+                    {notification.account}
+                  </Link>
                   {notification.type === "vote" && (
                     <p className="text-tiny">${voteValue?.toLocaleString()}</p>
                   )}

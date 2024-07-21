@@ -442,12 +442,12 @@ type CommunityReport = {
   unique_comment_count: number;
 };
 
-type FirestoreUser = {
-  name: string;
-  userId: string;
-  timestamp: number;
-  snippets: Snippet[];
-};
+// type FirestoreUser = {
+//   name: string;
+//   userId: string;
+//   timestamp: number;
+//   snippets: Snippet[];
+// };
 
 type Snippet = {
   id: string;

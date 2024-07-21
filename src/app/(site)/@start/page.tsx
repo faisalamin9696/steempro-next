@@ -8,7 +8,6 @@ import {
   fetchSds,
   useAppSelector,
 } from "@/libs/constants/AppFunctions";
-import { getAnnouncements } from "@/libs/firebase/firebaseApp";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import { Button } from "@nextui-org/button";
 
@@ -21,12 +20,14 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import EmptyList from "@/components/EmptyList";
 import { Accordion, AccordionItem } from "@nextui-org/react";
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 export default function HomeStart() {
   const { data, error, mutate, isLoading, isValidating } = useSWR(
-    "annoucements",
-    getAnnouncements
+    "/api/steem/announcement",
+    fetcher
   );
-  const annoucements = data?.["posts"];
+
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
 
   const URL = `/communities_api/getCommunitiesByRank/${
@@ -43,8 +44,6 @@ export default function HomeStart() {
   const [filteredData, setFilteredData] = useState<Community[]>([]);
   const [rows, setRows] = useState<Community[]>(allCommunities ?? []);
   const [loadingMore, setLoadingMore] = useState(false);
-
-  if (error) return;
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -119,24 +118,26 @@ export default function HomeStart() {
             <ErrorCard message={error?.message} onClick={mutate} />
           ) : (
             <div className="flex flex-col gap-4">
-              {annoucements?.map((annoucement, index) => {
-                return (
-                  <div
-                    key={index ?? annoucement.authPerm}
-                    className="bg-white rounded-lg dark:bg-white/5 text-sm px-2 py-1"
-                  >
-                    <Link
-                      className=" text-blue-400 hover:underline font-semibold"
-                      href={`/@${annoucement.authPerm}`}
-                    >
-                      {annoucement.title}
-                    </Link>
-                    <p className="opacity-75 text-sm line-clamp-3 font-normal">
-                      {annoucement.description}
-                    </p>
-                  </div>
-                );
-              })}
+              {error
+                ? null
+                : data?.map?.((annoucement, index) => {
+                    return (
+                      <div
+                        key={index ?? annoucement.authPerm}
+                        className="bg-white rounded-lg dark:bg-white/5 text-sm px-2 py-1"
+                      >
+                        <Link
+                          className=" text-blue-400 hover:underline font-semibold"
+                          href={`/@${annoucement.authPerm}`}
+                        >
+                          {annoucement.title}
+                        </Link>
+                        <p className="opacity-75 text-sm line-clamp-3 font-normal">
+                          {annoucement.description}
+                        </p>
+                      </div>
+                    );
+                  })}
             </div>
           )}
         </AccordionItem>

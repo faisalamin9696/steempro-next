@@ -27,6 +27,7 @@ import SAvatar from "@/components/SAvatar";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import LoadingCard from "@/components/LoadingCard";
 import { capitalize } from "@/libs/constants/AppConstants";
+import Link from "next/link";
 
 const INITIAL_VISIBLE_COLUMNS = ["voter", "rshares", "time"];
 
@@ -116,7 +117,12 @@ export default function VotersCard({ comment }: { comment: Feed | Post }) {
             <div className="flex flex-col gap-2">
               <div className="flex gap-2 items-center">
                 <SAvatar size="xs" username={votes.voter} />
-                <p>{votes.voter}</p>
+                <Link
+                  className=" hover:text-blue-500"
+                  href={`/@${votes.voter}`}
+                >
+                  {votes.voter}
+                </Link>
               </div>
             </div>
           </div>

@@ -17,7 +17,7 @@ import { validateCommunity } from "@/libs/utils/helper";
 import { getCredentials, getSessionKey, getSettings } from "@/libs/utils/user";
 import STag from "@/components/STag";
 
-import { Key, memo, useState } from "react";
+import { Key, useEffect, useMemo, useState } from "react";
 import { MdDelete } from "react-icons/md";
 import { GrAnnounce } from "react-icons/gr";
 import ViewCountCard from "@/components/ViewCountCard";
@@ -227,7 +227,7 @@ export default function CommentHeader(props: Props) {
         classNames={{
           description: "text-default-900/60 dark:text-gray-200 text-sm",
           name: "text-default-800",
-          wrapper:"gap-1",
+          wrapper: "gap-1",
         }}
         name={
           <div className="flex items-center gap-1">

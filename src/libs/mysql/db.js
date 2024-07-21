@@ -17,9 +17,10 @@ const dbConfig = {
   database: process.env.MYSQL_DB_DATABASE, // MySQL database name
 };
 
-let connection;
+let pool;
 let sshClient;
 let tunnel;
+let connectionTimeout;
 
 async function createTunnel() {
   return new Promise((resolve, reject) => {
@@ -27,8 +28,8 @@ async function createTunnel() {
     sshClient
       .on("ready", () => {
         sshClient.forwardOut(
-          process.env.MYSQL_DB_HOST,
-          process.env.MYSQL_DB_PORT,
+          "127.0.0.1",
+          dbConfig.port,
           dbConfig.host,
           dbConfig.port,
           (err, stream) => {
@@ -50,60 +51,76 @@ async function createTunnel() {
   });
 }
 
-async function createConnection() {
+async function createPool(dbName) {
   try {
     await createTunnel();
-    connection = await mysql.createConnection({
+    pool = mysql.createPool({
       ...dbConfig,
       stream: tunnel,
+      database: dbName || dbConfig.database,
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0,
     });
-    console.log("Connected to the MySQL database through SSH tunnel");
-    return connection;
+    console.log("Connection pool created");
+
+    // Set a timeout to automatically close the connection pool after 5 minutes
+    connectionTimeout = setTimeout(async () => {
+      await closePool();
+    }, 2 * 60 * 1000); // 2 minutes in milliseconds
+
+    return pool;
   } catch (error) {
-    console.error("Error creating connection:", error);
+    console.error("Error creating connection pool:", error);
     throw error;
   }
 }
 
-async function getConnection() {
-  if (!connection) {
-    connection = await createConnection();
+async function getPool(dbName) {
+  if (!pool) {
+    pool = await createPool(dbName);
   }
-  return connection;
+  return pool;
 }
 
-async function closeConnection() {
+async function closePool() {
   try {
-    if (connection) {
-      await connection.end();
-      connection = null;
-      console.log("MySQL connection closed");
+    if (pool) {
+      await pool.end();
+      pool = null;
+      console.log("MySQL connection pool closed");
     }
     if (sshClient) {
       sshClient.end();
       sshClient = null;
       console.log("SSH tunnel closed");
     }
+    if (connectionTimeout) {
+      clearTimeout(connectionTimeout);
+      connectionTimeout = null;
+    }
   } catch (error) {
-    console.error("Error closing connection:", error);
+    console.error("Error closing connection pool:", error);
   }
 }
 
-async function executeQuery(query, params) {
+async function executeQuery(dbName, query, params) {
+  let connection;
   try {
-    const connection = await getConnection();
+    const pool = await getPool(dbName);
+    connection = await pool.getConnection();
     const [rows] = await connection.query(query, params);
     return rows;
   } catch (error) {
     console.error("Error executing query:", error);
     throw error;
   } finally {
-    await closeConnection();
+    if (connection) connection.release();
   }
 }
 
 module.exports = {
-  getConnection,
-  closeConnection,
+  getPool,
+  closePool,
   executeQuery,
 };

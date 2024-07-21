@@ -11,7 +11,6 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
-import { updatePostView } from "@/libs/firebase/firebaseApp";
 import SubmitPage from "@/app/submit/(site)/page";
 import clsx from "clsx";
 import { useRouter } from "next13-progressbar";
@@ -20,6 +19,7 @@ import Link from "next/link";
 import { hasNsfwTag } from "@/libs/utils/StateFunctions";
 import TagsListCard from "@/components/TagsListCard";
 import { Button } from "@nextui-org/button";
+import { updatePostView } from "@/libs/mysql/database";
 const DynamicPostReplies = dynamic(
   () => import("../../../components/reply/PostReplies")
 );

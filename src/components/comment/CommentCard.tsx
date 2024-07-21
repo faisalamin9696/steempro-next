@@ -6,7 +6,7 @@ import "./style.scss";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import { getSettings } from "@/libs/utils/user";
 import CommentListLayout from "./layouts/CommentListLayout";
-import CommentBlogLayout from "./layouts/CommentBlogsLayout";
+import CommentBlogLayout from "./layouts/CommentBlogLayout";
 import CommentGridLayout from "./layouts/CommentGridLayout";
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 

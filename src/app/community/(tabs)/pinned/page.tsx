@@ -13,10 +13,9 @@ export default function CommunityPinnedTab() {
     <div>
       <div className="flex flex-col space-y-2">
         <FeedList
-          endPoint={getEndPoint(
-            "CommunityPinnedPosts",
-            `${community}/${loginInfo.name || "null"}`
-          )}
+          endPoint={`/communities_api/getCommunityPinnedPosts/${community}/${
+            loginInfo.name || "null"
+          }/500`}
         />
       </div>
     </div>

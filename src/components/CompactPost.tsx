@@ -5,7 +5,6 @@ import { Card } from "@nextui-org/card";
 import React, { memo } from "react";
 import { getPostThumbnail } from "@/libs/utils/image";
 import BodyShort from "@/components/body/BodyShort";
-import ViewCountCard from "./ViewCountCard";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import Link from "next/link";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
@@ -41,7 +40,6 @@ export default memo(function CompactPost(props: Props) {
       <div className="relative">
         <CommentCover className="max-h-40" thumbnail src={thumbnail} />
         {/* <div className="rounded-lg hover:bg-transparent transition duration-300 absolute bottom-0 top-0 right-0 left-0 bg-gray-900 opacity-25"></div> */}
-      
       </div>
       <div className=" text-start p-0 py-2 mb-auto">
         <p className="font-medium text-md mb-2 text-default-600 line-clamp-2">
@@ -62,11 +60,10 @@ export default memo(function CompactPost(props: Props) {
         </span>
 
         <div className=" flex items-center gap-2">
-          <ViewCountCard
+          {/* <ViewCountCard
             comment={commentInfo}
             className="text-tiny font-light"
-          />
-
+          /> */}
           <span className="py-1 text-xs font-regular gap-1 text-default-900/80 mr-1 flex flex-row items-center">
             <svg
               className="h-5"

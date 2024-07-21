@@ -33,12 +33,12 @@ import {
 } from "@/libs/utils/user";
 import { toast } from "sonner";
 import { signIn, useSession } from "next-auth/react";
-import { getAuth, signInAnonymously } from "firebase/auth";
 import AccountItemCard from "./AccountItemCard";
 import Link from "next/link";
 import { SignupLink } from "@/libs/constants/AppConstants";
 import secureLocalStorage from "react-secure-storage";
 import { encryptPrivateKey } from "@/libs/utils/encryption";
+import { supabase } from "@/libs/supabase";
 
 interface Props {
   open: boolean;
@@ -185,9 +185,9 @@ export default function AuthModal(props: Props) {
 
         if (keyType) {
           if (!isNew) {
-            const firebaseAuth = getAuth();
 
-            signInAnonymously(firebaseAuth)
+            supabase.auth
+              .signInAnonymously()
               .then(async () => {
                 const auth = saveCredentials(
                   username,

@@ -17,18 +17,16 @@ import { SWRConfig } from "swr";
 import { fetchSds } from "@/libs/constants/AppFunctions";
 import { firebaseConfig } from "@/libs/firebase/firebase.config";
 import { initializeApp } from "firebase/app";
-import { signInAnonymously, getAuth } from "firebase/auth";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { Next13ProgressBar } from "next13-progressbar";
 import AppWrapper from "@/components/wrappers/AppWrapper";
+import { supabase } from "@/libs/supabase";
 
 interface Props {
   children: React.ReactNode;
 }
 export function Providers(props: Props) {
   const { children } = props;
-
-  // const app = initializeApp(firebaseConfig);
 
   let app;
   let analytics;
@@ -39,11 +37,15 @@ export function Providers(props: Props) {
 
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
-  const auth = getAuth();
 
   useEffect(() => {
     try {
-      if (!auth.currentUser) signInAnonymously(auth);
+      async () => {
+        const { data } = await supabase.auth.getUser();
+        const uid = data.user?.id;
+
+        if (!uid) await supabase.auth.signInAnonymously();
+      };
     } catch (error) {
       // failed silently
     }
@@ -76,39 +78,39 @@ export function Providers(props: Props) {
     setIsMounted(true);
   }, []);
 
-  useEffect(() => {
-    const loadScript = async () => {
-      const response_1 = await fetch("/static/script_1.js");
-      const scriptContent_1 = await response_1.text();
+  // useEffect(() => {
+  //   const loadScript = async () => {
+  //     const response_1 = await fetch("/static/script_1.js");
+  //     const scriptContent_1 = await response_1.text();
 
-      const response_2 = await fetch("/static/script_2.js");
-      const scriptContent_2 = await response_2.text();
+  //     const response_2 = await fetch("/static/script_2.js");
+  //     const scriptContent_2 = await response_2.text();
 
-      const script1: HTMLScriptElement = document.createElement("script");
-      script1.src =
-        "https://fundingchoicesmessages.google.com/i/pub-4510618528305465?ers=1";
-      script1.async = true;
-      script1.nonce = "5RbzTXlClMTfa0ge67HxzA";
+  //     const script1: HTMLScriptElement = document.createElement("script");
+  //     script1.src =
+  //       "https://fundingchoicesmessages.google.com/i/pub-4510618528305465?ers=1";
+  //     script1.async = true;
+  //     script1.nonce = "5RbzTXlClMTfa0ge67HxzA";
 
-      const script2: HTMLScriptElement = document.createElement("script");
-      script2.nonce = "5RbzTXlClMTfa0ge67HxzA";
-      script2.innerHTML = scriptContent_1;
+  //     const script2: HTMLScriptElement = document.createElement("script");
+  //     script2.nonce = "5RbzTXlClMTfa0ge67HxzA";
+  //     script2.innerHTML = scriptContent_1;
 
-      const script3: HTMLScriptElement = document.createElement("script");
-      script3.innerHTML = scriptContent_2;
+  //     const script3: HTMLScriptElement = document.createElement("script");
+  //     script3.innerHTML = scriptContent_2;
 
-      document.head.appendChild(script1);
-      document.head.appendChild(script2);
-      document.head.appendChild(script3);
+  //     document.head.appendChild(script1);
+  //     document.head.appendChild(script2);
+  //     document.head.appendChild(script3);
 
-      return () => {
-        document.head.removeChild(script1);
-        document.head.removeChild(script2);
-      };
-    };
+  //     return () => {
+  //       document.head.removeChild(script1);
+  //       document.head.removeChild(script2);
+  //     };
+  //   };
 
-    loadScript();
-  }, []);
+  //   loadScript();
+  // }, []);
 
   return (
     <>

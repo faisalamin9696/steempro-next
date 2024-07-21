@@ -42,7 +42,5 @@ export async function POST(req: NextRequest) {
     else return NextResponse.error();
   } catch (error) {
     return NextResponse.error();
-  } finally {
-    await db.closeConnection();
-  }
+  } 
 }
