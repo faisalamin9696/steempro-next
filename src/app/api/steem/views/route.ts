@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const query = "SELECT COUNT(*) AS views FROM views WHERE authPerm = ?";
+    const query = `SELECT COUNT(*) AS views FROM ${process.env.MYSQL_VIEWS_TABLE} WHERE authPerm = ?`;
     const [result] = await db.executeQuery(process.env.MYSQL_DB_DATABASE_2, query, [body.authPerm]);
 
     return NextResponse.json(result ? result?.views || 0 : 0);

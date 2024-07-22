@@ -1,7 +1,7 @@
 "use client";
 
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
-import React, {  } from "react";
+import React from "react";
 import useSWR from "swr";
 import { getPostThumbnail } from "@/libs/utils/image";
 import { Card } from "@nextui-org/card";
@@ -73,7 +73,7 @@ export default function PromotionCard(props: Props) {
       </Card>
 
       <div className="absolute right-0 m-2 rounded-lg backdrop-blur-xl px-1">
-        <ViewCountCard comment={data} compact views={views} />;
+        <ViewCountCard comment={data} compact views={views} />
       </div>
     </div>
   );

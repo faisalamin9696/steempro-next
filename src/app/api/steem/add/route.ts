@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
         { status: 401, statusText: "Unauthorized Access" }
       );
     }
-    const query = "INSERT IGNORE INTO views (authPerm, uid) VALUES (?, ?)";
+    const query = `INSERT IGNORE INTO ${process.env.MYSQL_VIEWS_TABLE} (authPerm, uid) VALUES (?, ?)`;
 
     const result = await db.executeQuery(process.env.MYSQL_DB_DATABASE_2, query, [
       body.authPerm,

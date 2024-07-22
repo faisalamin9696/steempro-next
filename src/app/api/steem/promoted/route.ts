@@ -14,8 +14,8 @@ export async function POST(req: NextRequest) {
 
   try {
     const query =
-      "SELECT p.*, (SELECT COUNT(*) FROM views WHERE authPerm = p.authPerm) AS views " +
-      "FROM steem.promoted p " +
+      `SELECT p.*, (SELECT COUNT(*) FROM ${process.env.MYSQL_VIEWS_TABLE} WHERE authPerm = p.authPerm) AS views ` +
+      `FROM ${process.env.MYSQL_PROMOTIONS_TABLE} p ` +
       "ORDER BY p.id";
     const result = await db.executeQuery(
       process.env.MYSQL_DB_DATABASE_2,

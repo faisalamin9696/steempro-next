@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
       );
     }
     const query =
-      "INSERT INTO posts" +
+      `INSERT INTO ${process.env.MYSQL_SCHEDULES_TABLE}` +
       "(username, title, body, tags, parent_permlink, options, time, status) " +
       "VALUES (? ,?, ?, ?, ?, ?, ?, ?)";
 
@@ -42,5 +42,5 @@ export async function POST(req: NextRequest) {
     else return NextResponse.error();
   } catch (error) {
     return NextResponse.error();
-  } 
+  }
 }

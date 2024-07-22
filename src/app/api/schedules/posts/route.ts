@@ -10,9 +10,9 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const query = "SELECT * FROM posts WHERE username = ? ORDER BY time DESC";
+    const query = `SELECT * FROM ${process.env.MYSQL_SCHEDULES_TABLE} WHERE username = ? ORDER BY time DESC`;
     const result = await db.executeQuery(query, [session.user.name]);
-    
+
     return NextResponse.json(result ? result : []);
   } catch (error) {
     console.error("Failed to execute query", error);
@@ -20,5 +20,5 @@ export async function GET() {
       { error: "Internal Server Error" },
       { status: 500 }
     );
-  } 
+  }
 }

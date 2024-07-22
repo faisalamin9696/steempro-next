@@ -139,7 +139,7 @@ export default function VotersCard({ comment }: { comment: Feed | Post }) {
             </p>
             <p className="text-bold text-small capitalize">
               {votes.percent / 100}%
-            </p>{" "}
+            </p>
           </div>
         );
 

@@ -26,7 +26,7 @@ export async function POST(req: Request) {
 
     // Construct the SQL query
     const query = `
-      UPDATE posts
+      UPDATE ${process.env.MYSQL_SCHEDULES_TABLE}
       SET time = ?, status = 0
       WHERE username = ? AND id = ? AND status <> 1
     `;

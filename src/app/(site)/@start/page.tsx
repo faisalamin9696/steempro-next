@@ -152,7 +152,7 @@ export default function HomeStart() {
             <div className="flex items-center gap-2 ">
               <Link className="text-medium font-semibold" href={"/communities"}>
                 {"Top Communities"}
-              </Link>{" "}
+              </Link>
             </div>
           }
         >

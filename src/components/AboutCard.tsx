@@ -47,7 +47,6 @@ const AboutCard = (props: Props): JSX.Element => {
             <h3 className="mt-2 font-bold">{username}</h3>
             <p className=" font-light">{firstHeading}</p>
             <p className=" mt-2 font-extralight text-default-600 ">
-              {" "}
               {secondHeading}
             </p>
           </div>

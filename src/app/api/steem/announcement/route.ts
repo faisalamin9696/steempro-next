@@ -3,7 +3,7 @@ import db from "@/libs/mysql/db";
 
 export async function GET() {
   try {
-    const query = "SELECT * FROM announcement ORDER BY id";
+    const query = `SELECT * FROM ${process.env.MYSQL_ANNOUNCEMENTS_TABLE} ORDER BY id`;
     const result = await db.executeQuery(process.env.MYSQL_DB_DATABASE_2, query);
 
     return NextResponse.json(result ? result : []);

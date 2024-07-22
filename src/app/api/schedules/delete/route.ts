@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
         { status: 401, statusText: "Unauthorized Access" }
       );
     }
-    const query = "DELETE FROM posts WHERE username = ? and id = ?";
+    const query = `DELETE FROM ${process.env.MYSQL_SCHEDULES_TABLE} WHERE username = ? and id = ?`;
     const result = await db.executeQuery(query, [body.username, body.id]);
 
     if (result?.affectedRows) {
@@ -40,5 +40,5 @@ export async function POST(req: NextRequest) {
       { error: "Internal Server Error" },
       { status: 500 }
     );
-  } 
+  }
 }

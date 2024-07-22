@@ -157,7 +157,6 @@ export default function CommentGridLayout(props: CommentProps) {
       </div>
       <div className="px-4 flex flex-row items-center justify-between ">
         <div>
-          {" "}
           {!!commentInfo.resteem_count && (
             <span
               title={commentInfo.resteem_count + " Resteems"}
