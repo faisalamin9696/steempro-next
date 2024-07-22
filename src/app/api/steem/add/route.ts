@@ -15,10 +15,11 @@ export async function POST(req: NextRequest) {
     }
     const query = `INSERT IGNORE INTO ${process.env.MYSQL_VIEWS_TABLE} (authPerm, uid) VALUES (?, ?)`;
 
-    const result = await db.executeQuery(process.env.MYSQL_DB_DATABASE_2, query, [
-      body.authPerm,
-      user.data.user.id,
-    ]);
+    const result = await db.executeQuery(
+      query,
+      [body.authPerm, user.data.user.id],
+      process.env.MYSQL_DB_DATABASE_2
+    );
     if (!!result?.["affectedRows"]) return NextResponse.json({ ...result });
     else return NextResponse.error();
   } catch (error) {

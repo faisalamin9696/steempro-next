@@ -1,10 +1,24 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import db from "@/libs/mysql/db";
+import { validateHost } from "@/libs/utils/helper";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const host = req.headers.get("host");
+
+    if (!validateHost(host)) {
+      return NextResponse.json(
+        { message: "Unauthorized" },
+        { status: 401, statusText: "Unauthorized Access" }
+      );
+    }
+
     const query = `SELECT * FROM ${process.env.MYSQL_ANNOUNCEMENTS_TABLE} ORDER BY id`;
-    const result = await db.executeQuery(process.env.MYSQL_DB_DATABASE_2, query);
+    const result = await db.executeQuery(
+      query,
+      [],
+      process.env.MYSQL_DB_DATABASE_2
+    );
 
     return NextResponse.json(result ? result : []);
   } catch (error) {
@@ -13,5 +27,5 @@ export async function GET() {
       { error: "Internal Server Error" },
       { status: 500 }
     );
-  } 
+  }
 }

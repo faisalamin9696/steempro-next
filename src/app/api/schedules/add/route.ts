@@ -25,8 +25,8 @@ export async function POST(req: NextRequest) {
     }
     const query =
       `INSERT INTO ${process.env.MYSQL_SCHEDULES_TABLE}` +
-      "(username, title, body, tags, parent_permlink, options, time, status) " +
-      "VALUES (? ,?, ?, ?, ?, ?, ?, ?)";
+      "(username,title,body,tags,parent_permlink,options,time)" +
+      "VALUES(?,?,?,?,?,?,?)";
 
     const result = await db.executeQuery(query, [
       body.username,
@@ -36,7 +36,6 @@ export async function POST(req: NextRequest) {
       body.parent_permlink,
       body.options,
       body.time,
-      0,
     ]);
     if (!!result?.["affectedRows"]) return NextResponse.json({ ...result });
     else return NextResponse.error();

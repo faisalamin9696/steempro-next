@@ -33,14 +33,19 @@ export default function PromotionCard(props: Props) {
 
   const thumbnail = getPostThumbnail(data?.json_images);
 
+  const targetLink = `/${data?.category}/@${data?.author}/${data?.permlink}`;
   return (
-    <div className="card card-compact text-white p-0 rounded-xl overflow-hidden shadow-lg flex flex-col h-[210px]">
+    <Card
+      as={Link}
+      href={targetLink}
+      className="card card-compact text-white p-0 rounded-xl overflow-hidden shadow-lg flex flex-col h-[170px]"
+    >
       {thumbnail && (
         <Image
           className="bg-blue-800 "
           alt={"image"}
           src={thumbnail}
-          height={170}
+          height={150}
           width={200}
           style={{
             objectFit: "cover",
@@ -53,12 +58,10 @@ export default function PromotionCard(props: Props) {
                 className="rounded-lg hover:bg-transparent transition duration-300 absolute bottom-0 top-0 right-0 left-0 bg-gray-900 opacity-25">
             </div> */}
       <Card
-        as={Link}
-        href={`/${data?.category}/@${data?.author}/${data?.permlink}`}
         shadow="none"
         radius="none"
         className="text-white text-start  p-2 w-full
-                mb-auto absolute bottom-0 self-end left-0 gap-2 bg-black/50 rounded-t-lg
+                mb-auto absolute bottom-0 self-end left-0 gap-1 bg-black/50 rounded-t-lg
                 backdrop-blur-sm"
       >
         <p className="text-start font-bold  text-sm line-clamp-1">
@@ -72,9 +75,9 @@ export default function PromotionCard(props: Props) {
         </div>
       </Card>
 
-      <div className="absolute right-0 m-2 rounded-lg backdrop-blur-xl px-1">
+      <div className="shadow-sm shadow-foreground/10   absolute right-0 m-2 rounded-lg backdrop-blur-xl dark:bg-default/30 bg-foreground/20 px-1">
         <ViewCountCard comment={data} compact views={views} />
       </div>
-    </div>
+    </Card>
   );
 }

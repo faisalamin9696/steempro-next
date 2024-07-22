@@ -61,6 +61,7 @@ async function createPool(dbName) {
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
+      connectTimeout: 120,
     });
     console.log("Connection pool created");
 
@@ -104,7 +105,7 @@ async function closePool() {
   }
 }
 
-async function executeQuery(dbName, query, params) {
+async function executeQuery(query, params, dbName) {
   let connection;
   try {
     const pool = await getPool(dbName);

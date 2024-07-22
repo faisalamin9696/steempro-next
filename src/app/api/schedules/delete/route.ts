@@ -40,5 +40,5 @@ export async function POST(req: NextRequest) {
       { error: "Internal Server Error" },
       { status: 500 }
     );
-  }
+  } 
 }
