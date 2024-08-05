@@ -14,32 +14,39 @@ import {
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import { useMutation } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 import { useLogin } from "./AuthProvider";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { useSession } from "next-auth/react";
+import { validate_account_name } from "@/libs/utils/ChainValidation";
+import { getResizedAvatar } from "@/libs/utils/image";
+import { Avatar } from "@nextui-org/avatar";
 
 interface Props {
-  comment: Post | Feed;
+  community?: Community;
   isOpen: boolean;
   onOpenChange?: (isOpen: boolean) => void;
-  handleOnUpdate?: (role: RoleTypes, title: string) => void;
 }
-export default function EditRoleModal(props: Props) {
-  const { comment, handleOnUpdate } = props;
+export default function AddRoleModal(props: Props) {
+  let { community } = props;
   const { isOpen, onOpenChange } = useDisclosure();
   const { data: session } = useSession();
+  let [username, setUsername] = useState("");
+  let [avatar, setAvatar] = useState("");
 
-  let [title, setTitle] = useState(comment.author_title);
-  let [role, setRole] = useState<RoleTypes>(comment.author_role || "guest");
+  if (!community) return null;
+
+  let [title, setTitle] = useState("");
+  let [role, setRole] = useState<
+    "muted" | "guest" | "member" | "mod" | "admin" | "owner" | ""
+  >("guest");
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
-  const observerRole = comment.observer_role;
-  const dispatch = useDispatch();
+
   const { authenticateUser, isAuthorized } = useLogin();
 
-  let items = Role.atLeast(observerRole, "owner")
+  let items = Role.atLeast(community.observer_role, "owner")
     ? [
         { item: "Admin", value: "admin" },
         { item: "Moderator", value: "mod" },
@@ -47,13 +54,13 @@ export default function EditRoleModal(props: Props) {
         { item: "Guest", value: "guest" },
         { item: "Muted", value: "muted" },
       ]
-    : Role.atLeast(observerRole, "admin")
+    : Role.atLeast(community.observer_role, "admin")
     ? [
         { item: "Moderator", value: "mod" },
         { item: "Guest", value: "guest" },
         { item: "Muted", value: "muted" },
       ]
-    : Role.atLeast(observerRole, "mod")
+    : Role.atLeast(community.observer_role, "mod")
     ? [
         { item: "Member", value: "member" },
         { item: "Guest", value: "guest" },
@@ -61,15 +68,15 @@ export default function EditRoleModal(props: Props) {
       ]
     : [];
 
+  useEffect(() => {
+    const timeOut = setTimeout(() => {
+      username = username.trim().toLowerCase();
+      setAvatar(username);
+    }, 1000);
+    return () => clearTimeout(timeOut);
+  }, [username]);
+
   function handleSuccess() {
-    dispatch(
-      addCommentHandler({
-        ...comment,
-        author_role: role,
-        author_title: title,
-      })
-    );
-    handleOnUpdate && handleOnUpdate(role, title);
     toast.success("Updated");
     props.onOpenChange && props.onOpenChange(false);
     onOpenChange();
@@ -81,13 +88,13 @@ export default function EditRoleModal(props: Props) {
     mutationFn: (key: string) =>
       Promise.all([
         setUserRole(loginInfo, key, {
-          communityId: comment.category,
-          account: comment.author,
+          communityId: community.account,
+          account: username,
           role: role || "guest",
         }),
         setUserTitle(loginInfo, key, {
-          communityId: comment.category,
-          account: comment.author,
+          communityId: community.account,
+          account: username,
           title: title,
         }),
       ]),
@@ -102,8 +109,8 @@ export default function EditRoleModal(props: Props) {
   const roleMutation = useMutation({
     mutationFn: (key: string) =>
       setUserRole(loginInfo, key, {
-        communityId: comment.category,
-        account: comment.author,
+        communityId: community.account,
+        account: username,
         role: role || "guest",
       }),
     onSuccess() {
@@ -117,8 +124,8 @@ export default function EditRoleModal(props: Props) {
   const titleMutation = useMutation({
     mutationFn: (key: string) =>
       setUserTitle(loginInfo, key, {
-        communityId: comment.category,
-        account: comment.author,
+        communityId: community.account,
+        account: username,
         title: title,
       }),
     onSuccess() {
@@ -127,9 +134,16 @@ export default function EditRoleModal(props: Props) {
   });
 
   function handleUpdate() {
+    username = username?.replaceAll("@", "").toLowerCase().trim();
+
+    if (validate_account_name(username)) {
+      toast.info("Invalid username");
+      return;
+    }
+
     title = title?.trim();
-    const isTitleChanged = title !== comment.author_title;
-    const isRoleChanged = role !== (comment.author_role || "guest");
+    const isTitleChanged = title !== "";
+    const isRoleChanged = role !== "guest";
 
     if (isTitleChanged || isRoleChanged) {
       authenticateUser();
@@ -186,10 +200,23 @@ export default function EditRoleModal(props: Props) {
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              Update title, role
+              Set role, title
             </ModalHeader>
             <ModalBody>
               <div className="flex flex-col gap-4">
+                <Input
+                  className="w-full"
+                  maxLength={32}
+                  label="Username"
+                  size="sm"
+                  classNames={{ base: "items-center" }}
+                  value={username}
+                  onValueChange={setUsername}
+                  endContent={
+                    <Avatar src={getResizedAvatar(avatar)} size="sm" />
+                  }
+                />
+
                 <Input
                   className="w-full"
                   maxLength={32}
@@ -200,28 +227,22 @@ export default function EditRoleModal(props: Props) {
                   onValueChange={setTitle}
                 />
 
-                {!(
-                  Role.level(comment.observer_role) <=
-                  Role.level(comment.author_role)
-                ) && (
-                  <Select
-                    size="sm"
-                    aria-label="Select role"
-                    items={items}
-                    label="Role"
-                    className="max-w-xs"
-                    defaultSelectedKeys={[role]}
-                    disabledKeys={[comment.author_role]}
-                    onChange={handleRoleSelectionChange}
-                    classNames={{ base: "items-center" }}
-                  >
-                    {(item) => (
-                      <SelectItem key={item.value} value={item.value}>
-                        {item.item}
-                      </SelectItem>
-                    )}
-                  </Select>
-                )}
+                <Select
+                  size="sm"
+                  aria-label="Select role"
+                  items={items}
+                  label="Role"
+                  className="max-w-xs"
+                  defaultSelectedKeys={[role]}
+                  onChange={handleRoleSelectionChange}
+                  classNames={{ base: "items-center" }}
+                >
+                  {(item) => (
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.item}
+                    </SelectItem>
+                  )}
+                </Select>
               </div>
             </ModalBody>
             <ModalFooter>

@@ -1,6 +1,11 @@
 "use client";
 import React, { Suspense, useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
+import {
+  mapSds,
+  useAppDispatch,
+  useAppSelector,
+  validateSds,
+} from "@/libs/constants/AppFunctions";
 import UserCoverCard from "@/components/UserCoverCard";
 import { abbreviateNumber } from "@/libs/utils/helper";
 import Reputation from "@/components/Reputation";
@@ -24,6 +29,8 @@ import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/modal";
 import FollowersCard from "./FollowersCard";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next13-progressbar";
+import CommunityMembers from "./community/CommunityMembers";
+import MarkdownViewer from "./body/MarkdownViewer";
 
 type Props =
   | {
@@ -51,6 +58,13 @@ export default function AccountHeader(props: Props) {
     ] ?? account;
 
   const [followerModal, setFollowerModal] = useState<{
+    isOpen: boolean;
+    isFollowing?: boolean;
+  }>({
+    isOpen: false,
+  });
+
+  const [membersModal, setMembersModal] = useState<{
     isOpen: boolean;
     isFollowing?: boolean;
   }>({
@@ -139,7 +153,7 @@ export default function AccountHeader(props: Props) {
               </div>
 
               <div className="stat">
-                <div className="stat-figure text-secondary text-xl">
+                <div className="stat-figure text-secondary text-2xl">
                   {isCommunity ? <PiUserListBold /> : <IoFlashOutline />}
                   {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> */}
                 </div>
@@ -148,10 +162,13 @@ export default function AccountHeader(props: Props) {
                 </div>
                 <button
                   onClick={() => {
-                    if (!isCommunity)
-                      setFollowerModal({ isOpen: true, isFollowing: true });
+                    if (isCommunity)
+                      setMembersModal({ isOpen: true, isFollowing: true });
+                    else setFollowerModal({ isOpen: true, isFollowing: true });
                   }}
-                  className="stat-value text-secondary text-3xl max-md:text-lg"
+                  className={twMerge(
+                    "stat-value text-secondary text-3xl max-md:text-lg"
+                  )}
                   title={
                     isCommunity
                       ? communityInfo.count_subs?.toString()
@@ -260,17 +277,22 @@ export default function AccountHeader(props: Props) {
                   </Popover>
                 </div>
               </div>
+
               <div
                 title={
                   isCommunity
                     ? communityInfo.about
                     : posting_json_metadata?.profile?.about
                 }
-                className="stat-desc text-default-900 line-clamp-2 max-w-fit overflow-clip text-white/80 text-wrap flex-nowrap"
               >
-                {isCommunity
-                  ? communityInfo.about
-                  : posting_json_metadata?.profile?.about}
+                <MarkdownViewer
+                  className="!stat-desc !text-default-900 !line-clamp-2 max-sm:!line-clamp-3 !max-w-fit !overflow-clip !text-white/80 !text-wrap !flex-nowrap"
+                  text={
+                    isCommunity
+                      ? communityInfo.about
+                      : posting_json_metadata?.profile?.about
+                  }
+                />
               </div>
               {/* <div>
                             <Button radius='full' variant='flat' color={communityInfo.observer_subscribed ? 'danger' : 'primary'}
@@ -303,6 +325,29 @@ export default function AccountHeader(props: Props) {
                       isCommunity ? communityInfo.account : profileInfo.name
                     }
                   />
+                </ModalBody>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+      )}
+
+      {membersModal.isOpen && (
+        <Modal
+          isOpen={membersModal.isOpen}
+          onOpenChange={(isOpen) => setMembersModal({ isOpen: isOpen })}
+          placement="top-center"
+          scrollBehavior="inside"
+          closeButton
+        >
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  {"Members"}
+                </ModalHeader>
+                <ModalBody>
+                  <CommunityMembers community={communityInfo} />
                 </ModalBody>
               </>
             )}

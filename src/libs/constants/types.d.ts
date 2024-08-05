@@ -1,9 +1,11 @@
+type RoleTypes = "muted" | "guest" | "member" | "mod" | "admin" | "owner";
+
 type Feed = {
   link_id: number;
   link_status: number;
   author_reputation: number;
   author_status: number;
-  author_role: "muted" | "guest" | "member" | "mod" | "admin" | "owner";
+  author_role: RoleTypes;
   author_title: string;
   author: string;
   permlink: string;
@@ -33,7 +35,7 @@ type Feed = {
   observer_resteem: 0 | 1 | number;
   is_author_muted: 0 | 1 | number;
   json_images: string;
-  observer_role: "muted" | "guest" | "member" | "mod" | "admin" | "owner";
+  observer_role: RoleTypes;
   observer_title: string;
   observer_vote: 0 | 1 | number;
   observer_vote_percent: number;
@@ -214,7 +216,7 @@ type Community = {
   is_nsfw: number;
   settings: any;
   observer_subscribed: number;
-  observer_role: "muted" | "guest" | "member" | "mod" | "admin" | "owner";
+  observer_role: RoleTypes;
   observer_title: string;
   status: "joining" | "leaving" | "idle" = "idle";
   roles: any;
@@ -524,7 +526,7 @@ type Role = {
   created: number;
   account: string;
   title: string;
-  role: string;
+  role: RoleTypes;
 };
 
 type Club = {
@@ -584,3 +586,21 @@ type Schedule = {
 
 type Keys = "POSTING" | "ACTIVE" | "OWNER" | "MASTER" | "MEMO";
 type SteemTokens = "steem" | "steem_power" | "steem_dollar" | "saving";
+
+type CommunityLog = {
+  id: number;
+  created: number;
+  type:
+    | "subscribe"
+    | "unsubscribe"
+    | "setRole"
+    | "setUserTitle"
+    | "updateProps"
+    | "pinPost"
+    | "unpinPost"
+    | "flagPost"
+    | "mutePost"
+    | "unmutePost";
+  account: string;
+  data: string;
+};

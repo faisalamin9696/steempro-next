@@ -81,12 +81,12 @@ export default function WitnessVoteButton({ witness }: {
 
                     <div className="text-tiny flex mt-2 space-x-2">
                         <Button onClick={() => setIsOpen(false)}
-                            size='sm' color='default'>CANCEL</Button>
+                            size='sm' color='default'>Cancel</Button>
                         <Button size='sm' color={isVoted ? 'danger' : 'success'} variant='solid'
                             onClick={() => {
                                 setIsOpen(false);
                                 handleVote();
-                            }}>{isVoted ? 'REMOVE' : 'APPROVE'}</Button>
+                            }}>{isVoted ? 'Remove' : 'Approve'}</Button>
 
                     </div>
                 </div>

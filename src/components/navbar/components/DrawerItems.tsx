@@ -33,8 +33,8 @@ import {
 } from "@/libs/utils/user";
 import { toast } from "sonner";
 import { HiMiniUserGroup } from "react-icons/hi2";
-import { LuCalendarRange } from "react-icons/lu";
 import { MdPrivacyTip } from "react-icons/md";
+import { Accordion, AccordionItem } from "@nextui-org/accordion";
 
 interface Props {
   onItemClick?: () => void;
@@ -71,121 +71,155 @@ export default function DrawerItems(props: Props) {
       <>
         <div className="flex flex-col gap-2 h-full text-default-600">
           {isLogin() && (
-            <Button
-              className="w-full justify-start text-inherit "
-              variant="light"
-              as={Link}
-              href={`/@${loginInfo.name}`}
-              onClick={onItemClick}
-              startContent={<FaUserCircle className="text-xl" />}
-            >
-              Profile
-            </Button>
+            <Accordion isCompact defaultExpandedKeys={["profile"]}>
+              <AccordionItem
+                key="profile"
+                aria-label="Profile"
+                title="Profile"
+                classNames={{ title: " text-sm text-default-600" }}
+              >
+                <div className=" flex flex-col">
+                  <Button
+                    className="w-full justify-start text-inherit "
+                    variant="light"
+                    as={Link}
+                    href={`/@${loginInfo.name}`}
+                    onClick={onItemClick}
+                    startContent={<FaUserCircle className="text-xl" />}
+                  >
+                    Profile
+                  </Button>
+
+                  <Button
+                    className="w-full justify-start text-inherit "
+                    variant="light"
+                    as={Link}
+                    href={`/schedules`}
+                    onClick={onItemClick}
+                    startContent={<FaCalendarAlt className="text-xl" />}
+                  >
+                    Schedules
+                  </Button>
+
+                  <Button
+                    className="w-full justify-start text-inherit "
+                    variant="light"
+                    onClick={() => {
+                      onAccountSwitch && onAccountSwitch();
+                      onItemClick && onItemClick();
+                    }}
+                    startContent={<PiUserSwitchFill className="text-xl" />}
+                  >
+                    Switch/Add Account
+                  </Button>
+
+                  <Button
+                    className="w-full justify-start text-danger "
+                    variant="light"
+                    onClick={() => {
+                      authenticateUser();
+                      if (!isAuthorized()) {
+                        return;
+                      }
+                      onOpenChange();
+                    }}
+                    startContent={
+                      <IoLogOut className="text-xl text-default-600" />
+                    }
+                  >
+                    Logout
+                  </Button>
+                </div>
+              </AccordionItem>
+            </Accordion>
           )}
 
-          {isLogin() && (
-            <Button
-              className="w-full justify-start text-inherit "
-              variant="light"
-              as={Link}
-              href={`/schedules`}
-              onClick={onItemClick}
-              startContent={<FaCalendarAlt className="text-xl" />}
+          <Accordion isCompact defaultExpandedKeys={["explore"]}>
+            <AccordionItem
+              key="explore"
+              aria-label="Explore"
+              title="Explore"
+              classNames={{ title: " text-sm text-default-600" }}
             >
-              Schedules
-            </Button>
-          )}
+              <div className=" flex flex-col">
+                <Button
+                  variant="light"
+                  as={Link}
+                  href={`/settings`}
+                  className="w-full justify-start text-inherit "
+                  onClick={onItemClick}
+                  startContent={<IoMdSettings className="text-xl" />}
+                >
+                  Settings
+                </Button>
 
-          {isLogin() && (
-            <Button
-              className="w-full justify-start text-inherit "
-              variant="light"
-              onClick={() => {
-                onAccountSwitch && onAccountSwitch();
-                onItemClick && onItemClick();
-              }}
-              startContent={<PiUserSwitchFill className="text-xl" />}
-            >
-              Switch Account
-            </Button>
-          )}
-          <Button
-            variant="light"
-            as={Link}
-            href={`/settings`}
-            className="w-full justify-start text-inherit "
-            onClick={onItemClick}
-            startContent={<IoMdSettings className="text-xl" />}
-          >
-            Settings
-          </Button>
-          <Button
-            variant="light"
-            className="w-full justify-start text-inherit "
-            as={Link}
-            href={`/communities`}
-            onClick={onItemClick}
-            startContent={<HiMiniUserGroup className="text-xl" />}
-          >
-            Communities
-          </Button>
-          <Button
-            variant="light"
-            className="w-full justify-start text-inherit "
-            as={Link}
-            href={`/witnesses`}
-            onClick={onItemClick}
-            startContent={<RiUserStarFill className="text-xl" />}
-          >
-            Witnesses
-          </Button>
+                <Button
+                  variant="light"
+                  className="w-full justify-start text-inherit "
+                  as={Link}
+                  href={`/communities`}
+                  onClick={onItemClick}
+                  startContent={<HiMiniUserGroup className="text-xl" />}
+                >
+                  Communities
+                </Button>
+                <Button
+                  variant="light"
+                  className="w-full justify-start text-inherit "
+                  as={Link}
+                  href={`/witnesses`}
+                  onClick={onItemClick}
+                  startContent={<RiUserStarFill className="text-xl" />}
+                >
+                  Witnesses
+                </Button>
 
-          <Button
-            variant="light"
-            className="w-full justify-start text-inherit "
-            as={Link}
-            href={`/policy`}
-            onClick={onItemClick}
-            startContent={<MdPrivacyTip className="text-xl" />}
-          >
-            Privacy Policy
-          </Button>
-          <Button
-            variant="light"
-            as={Link}
-            href="/tools"
-            className="w-full justify-start text-inherit "
-            onClick={onItemClick}
-            startContent={<FaTools className="text-xl" />}
-          >
-            Tools
-          </Button>
-          <Button
-            variant="light"
-            className="w-full justify-start text-inherit "
-            as={Link}
-            href={"/about"}
-            onClick={onItemClick}
-            startContent={<FaInfoCircle className="text-xl" />}
-          >
-            About
-          </Button>
-          {isLogin() && (
-            <Button
-              className="w-full justify-start text-danger "
-              variant="light"
-              onClick={() => {
-                authenticateUser();
-                if (!isAuthorized()) {
-                  return;
-                }
-                onOpenChange();
-              }}
-              startContent={<IoLogOut className="text-xl text-default-600" />}
+                <Button
+                  variant="light"
+                  as={Link}
+                  href="/tools"
+                  className="w-full justify-start text-inherit "
+                  onClick={onItemClick}
+                  startContent={<FaTools className="text-xl" />}
+                >
+                  Tools
+                </Button>
+              </div>
+            </AccordionItem>
+          </Accordion>
+
+          <Accordion isCompact defaultExpandedKeys={["contact"]}>
+            <AccordionItem
+              key="contact"
+              aria-label="Contact"
+              title="Contact"
+              classNames={{ title: " text-sm text-default-600" }}
             >
-              Logout
-            </Button>
-          )}
+              <div className=" flex flex-col">
+                <Button
+                  variant="light"
+                  className="w-full justify-start text-inherit "
+                  as={Link}
+                  href={`/policy`}
+                  onClick={onItemClick}
+                  startContent={<MdPrivacyTip className="text-xl" />}
+                >
+                  Privacy Policy
+                </Button>
+
+                <Button
+                  variant="light"
+                  className="w-full justify-start text-inherit "
+                  as={Link}
+                  href={"/about"}
+                  onClick={onItemClick}
+                  startContent={<FaInfoCircle className="text-xl" />}
+                >
+                  About
+                </Button>
+              </div>
+            </AccordionItem>
+          </Accordion>
         </div>
       </>
 

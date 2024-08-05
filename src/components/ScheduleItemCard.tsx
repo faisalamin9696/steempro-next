@@ -389,7 +389,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
                         variant="solid"
                         onClick={() => handleDelete()}
                       >
-                        YES
+                        Yes
                       </Button>
                     </div>
                   </div>

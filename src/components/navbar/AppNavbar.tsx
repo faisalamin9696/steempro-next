@@ -274,9 +274,9 @@ export default function AppNavbar() {
                     }}
                     startContent={
                       isLocked ? (
-                        <FaLock className="text-xl" />
-                      ) : (
                         <FaUnlock className="text-xl" />
+                      ) : (
+                        <FaLock className="text-xl" />
                       )
                     }
                   >
@@ -293,7 +293,7 @@ export default function AppNavbar() {
                     }}
                     startContent={<PiUserSwitchFill className="text-xl" />}
                   >
-                    Switch Account
+                    Switch/Add Account
                   </Button>
                 </div>
               </PopoverContent>

@@ -1,6 +1,6 @@
 "use client";
 
-import CommunityCard from "@/components/community/CommunityCard";
+import CommunityCard from "@/components/community/components/CommunityCard";
 import ErrorCard from "@/components/ErrorCard";
 import LoadingCard from "@/components/LoadingCard";
 import {
@@ -18,7 +18,7 @@ import { HiMiniUserGroup } from "react-icons/hi2";
 import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import EmptyList from "@/components/EmptyList";
-import { Accordion, AccordionItem } from "@nextui-org/react";
+import { Accordion, AccordionItem } from "@nextui-org/accordion";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 

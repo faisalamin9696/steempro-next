@@ -1,6 +1,6 @@
 "use client";
 
-import CommunityCard from "@/components/community/CommunityCard";
+import CommunityCard from "@/components/community/components/CommunityCard";
 // import FeedList from '@/components/comment/FeedList';
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import usePathnameClient from "@/libs/utils/usePathnameClient";

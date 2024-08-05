@@ -23,7 +23,7 @@ import { FaChevronDown, FaSearch } from "react-icons/fa";
 import useSWR from "swr";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import LoadingCard from "@/components/LoadingCard";
-import CommunityCard from "@/components/community/CommunityCard";
+import CommunityCard from "@/components/community/components/CommunityCard";
 import FollowButton from "@/components/FollowButton";
 import { capitalize } from "@/libs/constants/AppConstants";
 import { IoMdSettings } from "react-icons/io";

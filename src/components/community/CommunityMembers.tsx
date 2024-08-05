@@ -1,0 +1,182 @@
+"use client";
+
+import EmptyList from "@/components/EmptyList";
+import ErrorCard from "@/components/ErrorCard";
+import LoadingCard from "@/components/LoadingCard";
+import CommunityMemberItem from "@/components/community/components/CommunityMemberItem";
+import {
+  awaitTimeout,
+  fetchSds,
+  mapSds,
+  useAppSelector,
+} from "@/libs/constants/AppFunctions";
+import usePathnameClient from "@/libs/utils/usePathnameClient";
+import { Button } from "@nextui-org/button";
+import { Input } from "@nextui-org/input";
+import { Card } from "@nextui-org/card";
+
+import clsx from "clsx";
+import React, { useEffect, useState } from "react";
+import { FaSearch } from "react-icons/fa";
+import useSWR from "swr";
+import { twMerge } from "tailwind-merge";
+import AddRoleModal from "../AddRoleModal";
+import { ScrollShadow } from "@nextui-org/scroll-shadow";
+import InfiniteScroll from "react-infinite-scroll-component";
+
+interface Props {
+  large?: boolean;
+  community?: Community;
+  stickyHeader?: boolean;
+}
+export default function CommunityMembers(props: Props) {
+  const { large, stickyHeader } = props;
+  const [communityInfo, setCommunityInfo] = useState<Community>();
+  const loginInfo = useAppSelector((state) => state.loginReducer.value);
+  const [query, setQuery] = useState("");
+  const [filteredData, setFilteredData] = useState<Role[]>();
+  const [isAddRoleOpen, setIsAddRoleOpen] = useState(false);
+  const [limit, setLimit] = useState(30);
+
+  const URL = `/communities_api/getCommunity/${usePathnameClient().community}/${
+    loginInfo.name || "null"
+  }`;
+  const { data, isLoading, error, isValidating } = useSWR(
+    !communityInfo && URL,
+    fetchSds<Community>
+  );
+
+  useEffect(() => {
+    if (props.community) setCommunityInfo(props.community);
+    else if (data) setCommunityInfo(data);
+  }, [props.community, data]);
+
+  const members: Role[] = mapSds(communityInfo?.roles) ?? [];
+
+  useEffect(() => {
+    let timeout;
+    if (members) {
+      timeout = setTimeout(() => {
+        setFilteredData(
+          members.filter(
+            (role) =>
+              role.account?.toLowerCase().includes(query.toLowerCase()) ||
+              role.title?.toLowerCase().includes(query.toLowerCase()) ||
+              role.role?.toLowerCase().includes(query.toLowerCase())
+          )
+        );
+      }, 500);
+    }
+    return () => clearTimeout(timeout);
+  }, [query, communityInfo?.roles]);
+
+  function ListLoader(): JSX.Element {
+    return (
+      <div className="md:absolute md:bottom-0 flex justify-center items-center md:w-full">
+        <Button
+          color="default"
+          variant="light"
+          className="self-center"
+          isIconOnly
+          isLoading={true}
+          isDisabled
+        ></Button>
+      </div>
+    );
+  }
+
+  async function handleEndReached() {
+    if (communityInfo?.roles) {
+      await awaitTimeout(2.5);
+      setLimit((prevLimit) => prevLimit + 30);
+    }
+  }
+  return (
+    <div className="flex flex-col gap-2 max-h-[500px] pb-10 overflow-auto">
+      <div
+        className={twMerge(
+          "gap-2",
+          stickyHeader && "sticky top-0 z-10 backdrop-blur-sm"
+        )}
+      >
+        {/* <div
+          className="flex items-center gap-2
+             text-default-900 text-lg font-bold mb-4 z-10"
+        >
+          <p>{"Roles"}</p>
+        </div> */}
+
+        <div className="flex flex-row gap-2 items-center p-1">
+          <Input
+            variant="flat"
+            size="sm"
+            isClearable
+            value={query}
+            inputMode="search"
+            onValueChange={setQuery}
+            startContent={<FaSearch className=" text-default-600" />}
+            placeholder={"Search..."}
+            autoCapitalize="off"
+          />
+
+          <Button
+            size="sm"
+            variant="flat"
+            color="success"
+            onClick={() => {
+              setIsAddRoleOpen(!isAddRoleOpen);
+            }}
+          >
+            Add new
+          </Button>
+        </div>
+      </div>
+
+      {isLoading || isValidating ? (
+        <LoadingCard />
+      ) : error ? (
+        <ErrorCard message={error.message} />
+      ) : !members?.length ? (
+        <EmptyList />
+      ) : (
+        <ScrollShadow className="flex flex-col gap-2" id="scrollDiv">
+          <InfiniteScroll
+            className={clsx(
+              "relative grid grid-cols-1 gap-4  p-2 md:pb-16",
+              large && "md:grid-cols-2"
+            )}
+            dataLength={limit}
+            next={handleEndReached}
+            hasMore={limit < (members?.length ?? 0)}
+            loader={<ListLoader />}
+            scrollableTarget="scrollDiv"
+            endMessage={
+              !isLoading && (
+                <EmptyList text={data ? undefined : "Search anything"} />
+              )
+            }
+          >
+            {filteredData?.slice(0, limit)?.map((item) => {
+              return (
+                <Card
+                  key={item.account}
+                  className="border compact border-gray-100/10 shadow-md shadow-gray-400 dark:shadow-default-500 bg-transparent backdrop-blur-md"
+                >
+                  <CommunityMemberItem item={item} community={communityInfo} />
+                </Card>
+              );
+            })}
+          </InfiniteScroll>
+        </ScrollShadow>
+      )}
+
+      {isAddRoleOpen && (
+        <AddRoleModal
+          community={communityInfo}
+          isOpen={isAddRoleOpen}
+          onOpenChange={setIsAddRoleOpen}
+        />
+      )}
+    </div>
+  );
+}

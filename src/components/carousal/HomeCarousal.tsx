@@ -35,7 +35,7 @@ const HomeCarousel = () => {
   }
 
   return (
-    <div className="w-full min-h-[210px] home-carousel">
+    <div className="w-full home-carousel">
       <Carousel
         isRTL={false}
         breakPoints={breakPoints}

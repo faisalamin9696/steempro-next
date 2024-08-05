@@ -254,6 +254,7 @@ export default memo(function CommentFooter(props: CommentProps) {
 
               {!!comment.upvote_count && (
                 <button
+                  title={`${comment.upvote_count} Votes`}
                   className="text-tiny"
                   onClick={() => setVotersModal(!votersModal)}
                 >
@@ -327,6 +328,7 @@ export default memo(function CommentFooter(props: CommentProps) {
 
             {!isReply && (
               <ButtonWrapper
+                title={`${comment.resteem_count} Resteems`}
                 hoverable
                 onClick={() => setResteemPopup(!resteemPopup)}
                 isDisabled={reblogMutation.isPending}
@@ -391,7 +393,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                             handleResteem();
                           }}
                         >
-                          YES
+                          Yes
                         </Button>
                       </div>
                     </div>
@@ -490,7 +492,7 @@ const ButtonWrapper = (props: WrapperProps) => {
       as={as}
       href={href}
       passHref={passHref}
-      isPressable={!!onClick && !href}
+      isPressable={!isDisabled && !!onClick && !href}
       onClick={(e) => !href && onClick && onClick(e)}
       isDisabled={isDisabled}
       className={twMerge(

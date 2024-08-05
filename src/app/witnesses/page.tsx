@@ -32,6 +32,7 @@ import Link from "next/link";
 import { replaceOldDomains } from "@/libs/utils/Links";
 import WitnessVoteButton from "@/components/WitnessVoteButton";
 import { capitalize, WitnessAccount } from "@/libs/constants/AppConstants";
+import { validate_account_name } from "@/libs/utils/ChainValidation";
 
 const INITIAL_VISIBLE_COLUMNS = ["rank", "name", "received_votes", "action"];
 
@@ -50,17 +51,21 @@ export default function page() {
   const URL = `/witnesses_api/getWitnessesByRank`;
   const { data, isLoading } = useSWR(URL, fetchSds<Witness[]>);
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
-
   const [allRows, setAllRows] = useState<Witness[]>([]);
+  let [witnessRef, setWitnessRef] = useState("");
 
   useEffect(() => {
     if (data) {
-      const index = data?.findIndex(
-        (account) => account.name === WitnessAccount
-      );
-      if (index && index !== -1) {
-        const officialCommunity = data?.splice(index, 1)[0];
-        if (officialCommunity) data?.unshift(officialCommunity);
+      const hashRef = window.location.hash.replace("#", "");
+      const witnessRef = !validate_account_name(hashRef) ? hashRef : "";
+      setWitnessRef(witnessRef);
+
+      if (witnessRef) {
+        const index = data?.findIndex((account) => account.name === witnessRef);
+        if (index && index !== -1) {
+          const targetWitness = data?.splice(index, 1)[0];
+          if (targetWitness) data?.unshift(targetWitness);
+        }
       }
       setAllRows(data);
     }
@@ -123,13 +128,14 @@ export default function page() {
     const cellValue = witness[columnKey];
 
     switch (columnKey) {
-
       case "name":
         return (
           <div className="flex flex-row items-center">
             <div className="flex gap-2 items-center">
               <SAvatar size="xs" username={witness.name} />
-              <p>{witness.name}</p>
+              <Link className=" hover:text-blue-500" href={`/@${witness.name}`}>
+                {witness.name}
+              </Link>
               <Link target="_blank" href={replaceOldDomains(witness.url)}>
                 <RiLinkM className="text-lg" />
               </Link>
@@ -385,7 +391,14 @@ export default function page() {
               )}
             >
               {(item) => (
-                <TableRow key={`${item.rank}-${item.name}`}>
+                <TableRow
+                  key={`${item.rank}-${item.name}`}
+                  className={
+                    item.name === witnessRef
+                      ? "bg-green-600/20  animate-appearance-in !rounded-2xl"
+                      : ""
+                  }
+                >
                   {(columnKey) => (
                     <TableCell>{renderCell(item, columnKey)}</TableCell>
                   )}

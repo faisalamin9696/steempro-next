@@ -40,7 +40,7 @@ export default memo(function ClearFormButton(props: Props) {
                                 onClick={() => {
                                     setClearPopup(false);
                                     onClearPress && onClearPress();
-                                }}>YES</Button>
+                                }}>Yes</Button>
 
                         </div>
                     </div>

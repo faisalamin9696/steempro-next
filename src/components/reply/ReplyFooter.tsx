@@ -462,7 +462,7 @@ export default function ReplyFooter({
                             handleDelete();
                           }}
                         >
-                          YES
+                          Yes
                         </Button>
                       </div>
                     </div>
