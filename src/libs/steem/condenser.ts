@@ -11,13 +11,11 @@ import {
 import { PrivKey } from "../utils/user";
 import { toast } from "sonner";
 import { CurrentSetting } from "../constants/AppConstants";
-import { getAuthorExt } from "./sds";
 global.Buffer = global.Buffer || require("buffer").Buffer;
 
-const DEFAULT_SERVER = AppStrings.rpc_servers[0];
 const IMAGE_API = AppStrings.image_hosting[0];
 
-export let client = new Client(CurrentSetting.rpc, {
+export let client = new Client(AppStrings.rpc_servers, {
   timeout: AppStrings.chain_timeout,
   addressPrefix: AppStrings.chain_prefix,
   chainId: AppStrings.chain_id,
@@ -26,8 +24,24 @@ export let client = new Client(CurrentSetting.rpc, {
 });
 
 export function updateClient() {
-  client.address = CurrentSetting.rpc;
+  const updatedList = AppStrings.rpc_servers;
+  const server = CurrentSetting.rpc;
+  const index = updatedList.indexOf(server);
+  if (server && index !== -1) {
+    updatedList.splice(index, 1);
+    updatedList.unshift(server);
+  }
+
+  client = new Client(updatedList, {
+    timeout: AppStrings.chain_timeout,
+    addressPrefix: AppStrings.chain_prefix,
+    chainId: AppStrings.chain_id,
+    failoverThreshold: 10,
+    consoleOnFailover: true,
+  });
 }
+
+updateClient();
 
 // get public wif from private wif
 export const wifToPublic = (privWif: string) => {
@@ -43,8 +57,15 @@ export const wifIsValid = (privWif: string, pubWif: string) => {
 //// sign image to upload
 export const signImage = async (photo, password) => {
   try {
-    const photoBuf = Buffer.from(photo, "base64");
-    const prefix = Buffer.from("ImageSigningChallenge");
+    // Convert the photo to a Uint8Array
+    const photoBuf = new Uint8Array(Buffer.from(photo, "base64"));
+    if (photoBuf.length === 0) {
+      throw new Error("Something went wrong");
+    }
+
+    // Create a prefix as a Uint8Array
+    const prefix = new Uint8Array(Buffer.from("ImageSigningChallenge"));
+
     const data = Buffer.concat([prefix, photoBuf]);
     const privateKey = PrivateKey.fromString(password);
     const hash = cryptoUtils.sha256(data);
@@ -1122,7 +1143,6 @@ export function verifyPrivKey(account: AccountExt, key: string): boolean {
   return false;
 }
 
-
 export function signMessage(
   privKey: string,
   message: string
@@ -1139,8 +1159,7 @@ export function verifyMessage(
   signature: Signature
 ): boolean {
   try {
-    const isValid =
-      PublicKey.from(pubKey).verify(hash, signature) || false;
+    const isValid = PublicKey.from(pubKey).verify(hash, signature) || false;
     return isValid;
   } catch (error) {
     return false;
