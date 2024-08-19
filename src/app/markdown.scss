@@ -56,7 +56,6 @@
 
   table td {
     @apply align-top bg-gray-200 dark:bg-gray-900 max-w-fit overflow-clip text-wrap flex-nowrap text-start;
-
   }
 
   table thead th {
@@ -91,13 +90,10 @@
   }
 }
 
-.phishy * {
+.phishy {
+  @apply text-red-500 prose-headings:text-red-500  prose-ol:text-red-500 prose-ul:text-red-500 prose-li:text-red-500 marker:text-red-500;
   display: inline;
-  color: rgb(194 79 79 / var(--tw-text-opacity));
 
-  li::marker {
-    color: rgb(194 79 79 / var(--tw-text-opacity));
-  }
 }
 
 // // .markdown-body {
