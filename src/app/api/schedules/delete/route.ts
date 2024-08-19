@@ -25,11 +25,10 @@ export async function POST(req: NextRequest) {
       );
     }
     const query = `DELETE FROM ${process.env.MYSQL_SCHEDULES_TABLE} WHERE username = ? and id = ?`;
-    const result = await db.executeQuery(
-      query,
-      [body.username, body.id],
-      process.env.MYSQL_DB_DATABASE
-    );
+    const result = await db.executeQuery(process.env.MYSQL_DB_DATABASE, query, [
+      body.username,
+      body.id,
+    ]);
 
     if (result?.affectedRows) {
       return NextResponse.json({ ...result });

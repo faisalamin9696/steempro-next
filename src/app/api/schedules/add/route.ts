@@ -28,19 +28,15 @@ export async function POST(req: NextRequest) {
       "(username,title,body,tags,parent_permlink,options,time)" +
       "VALUES(?,?,?,?,?,?,?)";
 
-    const result = await db.executeQuery(
-      query,
-      [
-        body.username,
-        body.title,
-        body.body,
-        body.tags,
-        body.parent_permlink,
-        body.options,
-        body.time,
-      ],
-      process.env.MYSQL_DB_DATABASE
-    );
+    const result = await db.executeQuery(process.env.MYSQL_DB_DATABASE, query, [
+      body.username,
+      body.title,
+      body.body,
+      body.tags,
+      body.parent_permlink,
+      body.options,
+      body.time,
+    ]);
     if (!!result?.["affectedRows"]) return NextResponse.json({ ...result });
     else return NextResponse.error();
   } catch (error) {

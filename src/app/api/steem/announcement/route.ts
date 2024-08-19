@@ -15,9 +15,8 @@ export async function GET(req: NextRequest) {
 
     const query = `SELECT * FROM ${process.env.MYSQL_ANNOUNCEMENTS_TABLE} ORDER BY id`;
     const result = await db.executeQuery(
-      query,
-      [],
-      process.env.MYSQL_DB_DATABASE_2
+      process.env.MYSQL_DB_DATABASE_2,
+      query
     );
 
     return NextResponse.json(result ? result : []);

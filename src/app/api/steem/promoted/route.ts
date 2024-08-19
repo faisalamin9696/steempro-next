@@ -18,9 +18,8 @@ export async function POST(req: NextRequest) {
       `FROM ${process.env.MYSQL_PROMOTIONS_TABLE} p ` +
       "ORDER BY p.id";
     const result = await db.executeQuery(
-      query,
-      [],
-      process.env.MYSQL_DB_DATABASE_2
+      process.env.MYSQL_DB_DATABASE_2,
+      query
     );
 
     return NextResponse.json(result ? result : []);

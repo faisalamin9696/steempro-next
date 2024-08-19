@@ -11,11 +11,9 @@ export async function GET() {
     }
 
     const query = `SELECT * FROM ${process.env.MYSQL_SCHEDULES_TABLE} WHERE username = ? ORDER BY time DESC`;
-    const result = await db.executeQuery(
-      query,
-      [session.user.name],
-      process.env.MYSQL_DB_DATABASE
-    );
+    const result = await db.executeQuery(process.env.MYSQL_DB_DATABASE, query, [
+      session.user.name,
+    ]);
 
     return NextResponse.json(result ? result : []);
   } catch (error) {

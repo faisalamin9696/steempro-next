@@ -14,13 +14,12 @@ const dbConfig = {
   port: process.env.MYSQL_DB_PORT, // MySQL port
   user: process.env.MYSQL_DB_USERNAME, // MySQL username
   password: process.env.MYSQL_DB_PASSWORD, // MySQL password
-  database: process.env.MYSQL_DB_DATABASE, // MySQL database name
+  // database: process.env.MYSQL_DB_DATABASE, // MySQL database name
 };
 
 let pool;
 let sshClient;
 let tunnel;
-let connectionTimeout;
 
 async function createTunnel() {
   return new Promise((resolve, reject) => {
@@ -65,11 +64,6 @@ async function createPool(dbName) {
     });
     console.log("Connection pool created");
 
-    // Set a timeout to automatically close the connection pool after 5 minutes
-    connectionTimeout = setTimeout(async () => {
-      await closePool();
-    }, 2 * 60 * 1000); // 2 minutes in milliseconds
-
     return pool;
   } catch (error) {
     console.error("Error creating connection pool:", error);
@@ -96,16 +90,12 @@ async function closePool() {
       sshClient = null;
       console.log("SSH tunnel closed");
     }
-    if (connectionTimeout) {
-      clearTimeout(connectionTimeout);
-      connectionTimeout = null;
-    }
   } catch (error) {
     console.error("Error closing connection pool:", error);
   }
 }
 
-async function executeQuery(query, params, dbName) {
+async function executeQuery(dbName, query, params) {
   let connection;
   try {
     const pool = await getPool(dbName);
@@ -117,6 +107,7 @@ async function executeQuery(query, params, dbName) {
     throw error;
   } finally {
     if (connection) connection.release();
+    await closePool();
   }
 }
 
