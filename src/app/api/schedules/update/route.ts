@@ -32,11 +32,11 @@ export async function POST(req: Request) {
     `;
 
     // Execute the query
-    const result = await db.executeQuery(query, [
-      body.time,
-      body.username,
-      body.id,
-    ]);
+    const result = await db.executeQuery(
+      query,
+      [body.time, body.username, body.id],
+      process.env.MYSQL_DB_DATABASE
+    );
     // Check if any rows were affected
     if (result?.affectedRows) {
       return NextResponse.json({ ...result });

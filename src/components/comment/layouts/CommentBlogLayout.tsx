@@ -55,13 +55,13 @@ export default function CommentBlogLayout(props: CommentProps) {
           />
         )}
 
-        <p className="card-content line-clamp-2 overflow-hidden text-start w-full h-full max-sm:text-sm">
+        <div className="line-clamp-2 overflow-hidden text-start w-full h-full max-sm:text-sm">
           {isReply ? (
             <MarkdownViewer text={commentInfo?.body} />
           ) : (
             <BodyShort body={commentInfo.body} />
           )}
-        </p>
+        </div>
       </Card>
 
       <CommentFooter comment={commentInfo} className="w-full px-2 py-2" />

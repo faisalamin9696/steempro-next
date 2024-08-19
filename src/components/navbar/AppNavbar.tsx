@@ -227,7 +227,7 @@ export default function AppNavbar() {
                 >
                   <Avatar
                     src={getResizedAvatar(session?.user?.name ?? "")}
-                    className=" cursor-pointer bg-default-900"
+                    className="shadow-lg cursor-pointer bg-foreground-900/40"
                     isBordered
                     size="sm"
                     color={

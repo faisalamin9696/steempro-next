@@ -47,7 +47,12 @@ export default function CommentListLayout(props: CommentProps) {
               "bg-transparent main-comment-list w-full !p-0"
             )}
           >
-            <div className="flex items-center gap-2 w-full py-0">
+            <div
+              className={twMerge(
+                "flex items-center gap-2 w-full py-0",
+                comment.is_muted ? " blur-[2px]" : ""
+              )}
+            >
               <div className="pl-1 text-container space-y-2">
                 <div className=" text-start font-bold text-md">
                   {commentInfo.title}
@@ -64,7 +69,7 @@ export default function CommentListLayout(props: CommentProps) {
                 )}
               </div>
 
-              <div>
+              <div className={twMerge(comment.is_muted ? " blur-[2px]" : "")}>
                 {isReply || !isSearch ? null : (
                   <CommentCover
                     isNsfw={isNsfw}
@@ -79,9 +84,16 @@ export default function CommentListLayout(props: CommentProps) {
         </div>
 
         {!isSearch && (
-          <div className="h-max">
+          <div
+            className={twMerge("h-max", comment.is_muted ? " blur-[2px]" : "")}
+          >
             {isReply ? null : (
-              <CommentCover isNsfw={isNsfw} size="sm" src={thumbnail}  targetUrl={targetUrl}/>
+              <CommentCover
+                isNsfw={isNsfw}
+                size="sm"
+                src={thumbnail}
+                targetUrl={targetUrl}
+              />
             )}
           </div>
         )}

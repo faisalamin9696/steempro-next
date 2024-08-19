@@ -44,7 +44,7 @@ export default function AboutPage() {
         </div>
       </div>
 
-      <div className=" justify-center flex items-center gap-4 max-sm:flex-col">
+      {/* <div className=" justify-center flex items-center gap-4 max-sm:flex-col">
         <div className="flex justify-end max-sm:justify-center  w-[217px]">
           <Image
             height={80}
@@ -67,7 +67,7 @@ export default function AboutPage() {
             />
           </Link>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

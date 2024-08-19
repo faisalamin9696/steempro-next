@@ -57,7 +57,7 @@ async function createPool(dbName) {
     pool = mysql.createPool({
       ...dbConfig,
       stream: tunnel,
-      database: dbName || dbConfig.database,
+      database: dbName,
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,

@@ -40,7 +40,7 @@ export default function SchedulesPage() {
           <EmptyList />
         ) : (
           data?.map((item) => {
-            return <ScheduleItemCard item={item} />;
+            return <ScheduleItemCard key={item.id} item={item} />;
           })
         )}
       </div>

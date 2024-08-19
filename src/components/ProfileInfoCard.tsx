@@ -137,7 +137,9 @@ export default memo(function ProfileInfoCard(props: Props) {
             <div className="flex gap-2">
               <div className="flex flex-col items-start justify-center">
                 <h4 className="text-sm font-semibold leading-none text-default-600">
-                  {posting_json_metadata?.profile?.name}
+                  {community
+                    ? communityInfo.title
+                    : posting_json_metadata?.profile?.name}
                 </h4>
                 {/* <Link prefetch={false} href={authorLink}>{comment.author}</Link> */}
 

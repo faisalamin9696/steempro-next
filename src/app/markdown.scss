@@ -45,7 +45,6 @@
       padding: 6px;
       display: table-cell;
       vertical-align: middle;
-      word-break: normal;
     }
 
     tbody {
@@ -53,6 +52,15 @@
         @apply odd:bg-white odd:dark:bg-gray-900 even:bg-gray-100 even:dark:bg-gray-800;
       }
     }
+  }
+
+  table td {
+    @apply align-top bg-gray-200 dark:bg-gray-900 max-w-fit overflow-clip text-wrap flex-nowrap text-start;
+
+  }
+
+  table thead th {
+    word-break: normal;
   }
 
   .table-scrollable {
@@ -83,7 +91,7 @@
   }
 }
 
-.phishy {
+.phishy * {
   display: inline;
   color: rgb(194 79 79 / var(--tw-text-opacity));
 

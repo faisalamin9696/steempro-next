@@ -25,7 +25,11 @@ export async function POST(req: NextRequest) {
       );
     }
     const query = `DELETE FROM ${process.env.MYSQL_SCHEDULES_TABLE} WHERE username = ? and id = ?`;
-    const result = await db.executeQuery(query, [body.username, body.id]);
+    const result = await db.executeQuery(
+      query,
+      [body.username, body.id],
+      process.env.MYSQL_DB_DATABASE
+    );
 
     if (result?.affectedRows) {
       return NextResponse.json({ ...result });
@@ -40,5 +44,5 @@ export async function POST(req: NextRequest) {
       { error: "Internal Server Error" },
       { status: 500 }
     );
-  } 
+  }
 }

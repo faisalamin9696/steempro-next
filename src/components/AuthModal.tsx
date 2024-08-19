@@ -185,7 +185,6 @@ export default function AuthModal(props: Props) {
 
         if (keyType) {
           if (!isNew) {
-
             supabase.auth
               .signInAnonymously()
               .then(async () => {
@@ -328,6 +327,7 @@ export default function AuthModal(props: Props) {
                       <div className="text-md font-bold flex items-center space-x-2">
                         <p>Hi, {loginInfo.name}</p>
                         <Avatar
+                          className="shadow-lg cursor-pointer bg-foreground-900/40"
                           src={getResizedAvatar(loginInfo.name)}
                           size="sm"
                         />
