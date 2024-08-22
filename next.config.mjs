@@ -27,9 +27,6 @@ const nextConfig = {
       },
     ],
   },
-  env: {
-    FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
-  },
   webpack: (config, context) => {
     config.module.rules.push({
       test: /\.node$/,

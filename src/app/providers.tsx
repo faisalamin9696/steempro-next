@@ -15,12 +15,10 @@ import { ThemeProvider } from "next-themes";
 import LoadingCard from "@/components/LoadingCard";
 import { SWRConfig } from "swr";
 import { fetchSds } from "@/libs/constants/AppFunctions";
-import { firebaseConfig } from "@/libs/firebase/firebase.config";
-import { initializeApp } from "firebase/app";
-import { getAnalytics, isSupported } from "firebase/analytics";
 import { Next13ProgressBar } from "next13-progressbar";
 import AppWrapper from "@/components/wrappers/AppWrapper";
 import { supabase } from "@/libs/supabase";
+import PiwikPro from "@piwikpro/react-piwik-pro";
 
 interface Props {
   children: React.ReactNode;
@@ -28,12 +26,10 @@ interface Props {
 export function Providers(props: Props) {
   const { children } = props;
 
-  let app;
-  let analytics;
-  if (typeof window != undefined) {
-    app = initializeApp(firebaseConfig);
-    analytics = isSupported().then((yes) => (yes ? getAnalytics(app) : null));
-  }
+  PiwikPro.initialize(
+    "70c8840a-d55a-4a1f-a3af-d1a06b46a5dc",
+    "https://steempro.piwik.pro"
+  );
 
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);

@@ -20,7 +20,6 @@ add these enviorement variables
 AUTH_TRUST_HOST = "http://localhost:3000/api/auth/session"
 NEXT_PUBLIC_SECURE_LOCAL_STORAGE_DISABLED_KEYS=UserAgent|ScreenPrint|Plugins|Fonts|LocalStorage|SessionStorage|TimeZone|Language|SystemLanguage|Cookie|Canvas|Hostname
 NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY="SECRET_KEY_HERE"
-FIREBASE_API_KEY="SECRET_KEY_HERE"
 MYSQL_DB_HOST = "DB_HOST_HERE"
 MYSQL_DB_PORT = DB_PORT_HERE
 MYSQL_DB_USERNAME = "DB_USERNAME_HERE"
@@ -40,10 +39,6 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY= SUPABASE_ANON_KEY_HERE
 NEXT_PUBLIC_ALLOWED_ORIGINS=["localhost:3000" "https://www.steempro.com", "https:steempro.com","steempro.com","www.steempro.com","steempro-next.vercel.app"]
 
 ```
-
-other firebase configurations in 
-
-```src\libs\firebase\firebase.config.ts```
 
 For MySQL database configuration create databases, tables for post scheduling, views, promotion and annoucements
 

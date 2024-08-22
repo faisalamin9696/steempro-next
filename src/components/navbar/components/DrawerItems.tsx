@@ -35,6 +35,8 @@ import { toast } from "sonner";
 import { HiMiniUserGroup } from "react-icons/hi2";
 import { MdPrivacyTip } from "react-icons/md";
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
+import { BsGithub } from "react-icons/bs";
+import { GitHubLink } from "@/libs/constants/AppConstants";
 
 interface Props {
   onItemClick?: () => void;
@@ -205,6 +207,18 @@ export default function DrawerItems(props: Props) {
                   startContent={<MdPrivacyTip className="text-xl" />}
                 >
                   Privacy Policy
+                </Button>
+
+                <Button
+                  variant="light"
+                  className="w-full justify-start text-inherit "
+                  as={Link}
+                  target="_blank"
+                  href={GitHubLink}
+                  onClick={onItemClick}
+                  startContent={<BsGithub className="text-xl" />}
+                >
+                  GitHub
                 </Button>
 
                 <Button

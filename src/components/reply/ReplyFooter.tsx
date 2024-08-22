@@ -39,6 +39,7 @@ import secureLocalStorage from "react-secure-storage";
 import { toast } from "sonner";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { CustomEvent } from "@piwikpro/react-piwik-pro";
 
 export default function ReplyFooter({
   comment,
@@ -282,6 +283,7 @@ export default function ReplyFooter({
     setPosting(false);
     handleClear();
     toast.success(showEdit ? "Updated" : "Sent");
+    CustomEvent.trackEvent("comment_submit_form", newComment.author, "Sent");
   }
 
   const postingMutation = useMutation({

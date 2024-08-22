@@ -56,6 +56,7 @@ import axios from "axios";
 import ScheduleModal from "@/components/ScheduleModal";
 import { IoClose } from "react-icons/io5";
 import { ZonedDateTime } from "@internationalized/date";
+import { CustomEvent } from "@piwikpro/react-piwik-pro";
 
 interface Props {
   params?: {
@@ -186,6 +187,11 @@ export default function SubmitPage(props: Props) {
       }
       toast.success("Published");
       clearForm();
+      CustomEvent.trackEvent(
+        "post_submit_page",
+        variables.postData.author,
+        "Published"
+      );
     },
   });
 

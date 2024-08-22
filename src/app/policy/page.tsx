@@ -1,8 +1,10 @@
 import MainWrapper from "@/components/wrappers/MainWrapper";
 import { AppStrings } from "@/libs/constants/AppStrings";
+import { Button } from "@nextui-org/react";
 import { Metadata } from "next";
 import Link from "next/link";
 import React from "react";
+import { twMerge } from "tailwind-merge";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -31,19 +33,31 @@ export default function page() {
             limited to:
           </p>
           <ul className="list-disc list-inside mb-4 text-default-500">
-            <li>
-              Personal identification information (Name, email address, phone
-              number, etc.)
-            </li>
+            <li>Personal identification information (username, email, etc.)</li>
             <li>Usage data (pages visited, time spent on site, etc.)</li>
             <li>Cookies and tracking technologies</li>
           </ul>
           <h3 className="text-xl font-semibold mb-2">
             How We Use Your Information
           </h3>
-          <p className="mb-4">
-            We use the information we collect for various purposes, including:
-          </p>
+          <div className=" flex flex-col items-start  mb-4">
+            <p className="mb-4">
+              We collect and process your data on this site to better understand
+              how it is used. We always ask you for consent to do that. You can
+              change your privacy settings here:
+            </p>
+
+            <div id="ppms_cm_privacy_settings">
+              <Button
+                size="sm"
+                variant="solid"
+                color="primary"
+                id="ppms_cm_privacy_settings_button"
+              >
+                Manage Privacy Settings
+              </Button>
+            </div>
+          </div>
           <ul className="list-disc list-inside mb-4 text-default-500">
             <li>To provide and maintain our service</li>
             <li>To notify you about changes to our service</li>
@@ -259,6 +273,33 @@ export default function page() {
               </Link>
             </li>
           </ul>
+
+          <div
+            className={twMerge("", "!bg-transparent border-none")}
+            data-editor-centralize="true"
+            data-main-container="true"
+            data-root="true"
+          >
+            <div
+              className="ppms_cm_privacy_settings_widget_content "
+              data-disable-select="true"
+            >
+              <h1
+                className="ppms_cm_privacy_settings_form_link_header"
+                id="ppms_cm_privacy_settings_form_link_header_id"
+              >
+                Privacy settings
+              </h1>
+              <p
+                className="ppms_cm_privacy_settings_form_link_text !text-default-500"
+                id="ppms_cm_privacy_settings_form_link_text_id"
+              >
+                We collect and process your data on this site to better
+                understand how it is used. We always ask you for consent to do
+                that. You can change your privacy settings here.
+              </p>
+            </div>
+          </div>
         </div>
       </MainWrapper>
       <footer className="bg-gray-800 text-white py-4 mt-10 text-center">

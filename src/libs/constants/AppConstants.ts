@@ -12,6 +12,8 @@ export const SignupLink = "https://signup.steemit.com/";
 export const MObileAppLink =
   "https://play.google.com/store/apps/details?id=com.steempro.mobile";
 
+export const GitHubLink = "https://github.com/faisalamin9696/steempro-next";
+
 export const FeedBodyLength = 500;
 export const FeedFetchLimit = 1000;
 

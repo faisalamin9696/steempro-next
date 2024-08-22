@@ -473,7 +473,7 @@ type SteemTron = {
   trx_balance: number;
 };
 
-type FirebaseNotificationSettings = {
+type NotificationSettings = {
   status: boolean;
   vote: {
     status: boolean;
