@@ -20,7 +20,7 @@ import { supabase } from "@/libs/supabase";
 interface Props {
   user: User;
   defaultAccount?: User;
-  handleSwitchSuccess?: () => void;
+  handleSwitchSuccess?: (user?: User) => void;
   className?: string;
   switchText?: string;
   isLogin?: boolean;
@@ -65,8 +65,8 @@ export default memo(function AccountItemCard(props: Props) {
     try {
       const account = await getAuthorExt(user.username);
       if (account) {
-
-        supabase.auth.signInAnonymously()
+        supabase.auth
+          .signInAnonymously()
           .then(async () => {
             addToCurrent(account.name, user.key, user.type);
 
@@ -87,7 +87,7 @@ export default memo(function AccountItemCard(props: Props) {
                 encKey: user.key,
               })
             );
-            handleSwitchSuccess && handleSwitchSuccess();
+            handleSwitchSuccess && handleSwitchSuccess(user);
             saveSessionKey("");
             if (isLogin)
               toast.success(`Login successsful with private ${user.type} key`);

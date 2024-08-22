@@ -39,7 +39,8 @@ import { PiUserSwitchFill } from "react-icons/pi";
 import { keysColorMap } from "../AccountItemCard";
 
 export default function AppNavbar() {
-  const { authenticateUser, isAuthorized, credentials } = useLogin();
+  const { authenticateUser, isAuthorized, credentials, setCredentials } =
+    useLogin();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { data: session, status } = useSession();
   const [isPopOpen, setIsPopOpen] = React.useState(false);
@@ -306,7 +307,13 @@ export default function AppNavbar() {
         )}
 
         {isAccOpen && (
-          <AccountsModal isOpen={isAccOpen} onOpenChange={setIsAccOpen} />
+          <AccountsModal
+            isOpen={isAccOpen}
+            onOpenChange={setIsAccOpen}
+            handleSwitchSuccess={(user) => {
+              if (user) setCredentials(user);
+            }}
+          />
         )}
 
         {notificationPopup && (

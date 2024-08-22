@@ -7,6 +7,7 @@ import { empty_comment } from "@/libs/constants/Placeholders";
 import { Button } from "@nextui-org/react";
 import { FaPencil } from "react-icons/fa6";
 import EditRoleModal from "../../EditRoleModal";
+import { Role as RoleCheck } from "@/libs/utils/community";
 
 interface Props {
   item: Role;
@@ -76,28 +77,30 @@ export const CommunityMemberItem = (props: Props) => {
           } as any
         }
       />
-      <Button
-        title="Edit role, title"
-        size="sm"
-        variant="flat"
-        color="secondary"
-        isIconOnly
-        onClick={() => {
-          setEditRoleModal({
-            isOpen: !editRoleModal.isOpen,
-            comment: {
-              ...empty_comment(item.account, ""),
-              observer_role: community?.observer_role ?? "guest",
-              observer_title: community?.observer_title ?? "",
-              category: community?.account ?? "",
-              author_role: roleTitle.role,
-              author_title: roleTitle.title,
-            },
-          });
-        }}
-      >
-        <FaPencil className="text-sm" />
-      </Button>
+      {RoleCheck.atLeast(community?.observer_role, "mod") && (
+        <Button
+          title="Edit role, title"
+          size="sm"
+          variant="flat"
+          color="secondary"
+          isIconOnly
+          onClick={() => {
+            setEditRoleModal({
+              isOpen: !editRoleModal.isOpen,
+              comment: {
+                ...empty_comment(item.account, ""),
+                observer_role: community?.observer_role ?? "guest",
+                observer_title: community?.observer_title ?? "",
+                category: community?.account ?? "",
+                author_role: roleTitle.role,
+                author_title: roleTitle.title,
+              },
+            });
+          }}
+        >
+          <FaPencil className="text-sm" />
+        </Button>
+      )}
 
       {editRoleModal.isOpen && editRoleModal.comment && (
         <EditRoleModal

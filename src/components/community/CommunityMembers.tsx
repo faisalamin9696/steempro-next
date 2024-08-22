@@ -23,6 +23,7 @@ import { twMerge } from "tailwind-merge";
 import AddRoleModal from "../AddRoleModal";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { Role as RoleCheck } from "@/libs/utils/community";
 
 interface Props {
   large?: boolean;
@@ -119,16 +120,18 @@ export default function CommunityMembers(props: Props) {
             autoCapitalize="off"
           />
 
-          <Button
-            size="sm"
-            variant="flat"
-            color="success"
-            onClick={() => {
-              setIsAddRoleOpen(!isAddRoleOpen);
-            }}
-          >
-            Add new
-          </Button>
+          {RoleCheck.atLeast(communityInfo?.observer_role, "mod") && (
+            <Button
+              size="sm"
+              variant="flat"
+              color="success"
+              onClick={() => {
+                setIsAddRoleOpen(!isAddRoleOpen);
+              }}
+            >
+              Add new
+            </Button>
+          )}
         </div>
       </div>
 

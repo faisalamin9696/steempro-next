@@ -1,38 +1,42 @@
-import striptags from 'striptags';
-import { Remarkable } from 'remarkable';
+import striptags from "striptags";
+import { Remarkable } from "remarkable";
 
 const remarkable = new Remarkable({ html: true });
-import textEllipsis from '@/libs/utils/ellibsis';
-import { FeedBodyLength } from '@/libs/constants/AppConstants';
-
+import textEllipsis from "@/libs/utils/ellibsis";
+import { FeedBodyLength } from "@/libs/constants/AppConstants";
 
 function decodeEntities(body: string): string {
-    return body?.replace(/&lt;/g, '<')?.replace(/&gt;/g, '>');
+  return body?.replace(/&lt;/g, "<")?.replace(/&gt;/g, ">");
 }
 
 interface BodyShortProps {
-    className?: string;
-    body?: string;
-    length?: number;
+  className?: string;
+  body?: string;
+  length?: number;
 }
 
 const BodyShort = (props: BodyShortProps): JSX.Element => {
+  let body = striptags(
+    remarkable.render(striptags(decodeEntities(props.body || "")))
+  );
+  body = body?.replace(/(?:https?|ftp):\/\/[\S]+/g, "");
 
-    let body = striptags(remarkable.render(striptags(decodeEntities(props.body || ''))));
-    body = body?.replace(/(?:https?|ftp):\/\/[\S]+/g, '');
+  // If body consists of whitespace characters only skip it.
+  if (!body?.replace(/\s/g, "")?.length) {
+    return <></>;
+  }
 
-    // If body consists of whitespace characters only skip it.
-    if (!body?.replace(/\s/g, '')?.length) {
-        return <></>;
-    }
-
-    /* eslint-disable react/no-danger */
-    return (
-        <div className={props.className}>
-            <div dangerouslySetInnerHTML={{ __html: textEllipsis(body, props?.length || FeedBodyLength) }} />
-        </div>
-    )
+  /* eslint-disable react/no-danger */
+  return (
+    <div className={props.className}>
+      <p
+        style={{ wordBreak: "break-word" }}
+        dangerouslySetInnerHTML={{
+          __html: textEllipsis(body, props?.length || FeedBodyLength),
+        }}
+      />
+    </div>
+  );
 };
-
 
 export default BodyShort;

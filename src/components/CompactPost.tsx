@@ -45,9 +45,9 @@ export default memo(function CompactPost(props: Props) {
         <p className="font-medium text-md mb-2 text-default-600 line-clamp-2">
           {commentInfo?.title}
         </p>
-        <p className="text-default-900/50 text-tiny line-clamp-2">
+        <div className="text-default-900/50 text-tiny line-clamp-2">
           <BodyShort body={commentInfo?.body} />
-        </p>
+        </div>
       </div>
       <div className="px-0 py-0 flex flex-row items-center justify-between">
         <span className="py-1 text-xs font-regular  mr-1 flex flex-row items-center">
