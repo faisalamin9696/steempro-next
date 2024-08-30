@@ -27,7 +27,7 @@ import {
   makeJsonMetadataReply,
 } from "@/libs/utils/editor";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
-import { useLogin } from "@/components/AuthProvider";
+import { useLogin } from "@/components/auth/AuthProvider";
 import secureLocalStorage from "react-secure-storage";
 import { readingTime } from "@/libs/utils/readingTime/reading-time-estimator";
 import EmptyList from "@/components/EmptyList";
@@ -45,16 +45,25 @@ export default memo(function PostReplies(props: Props) {
   const commentInfo: Post = (useAppSelector(
     (state) => state.commentReducer.values
   )[`${comment.author}/${comment.permlink}`] ?? comment) as Post;
-  const postReplies =
+  const postReplies: Post[] =
     useAppSelector((state) => state.repliesReducer.values)[
       `${commentInfo.author}/${commentInfo.permlink}`
     ] ?? [];
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
 
   const [limit, setLimit] = useState(15);
-  const rootReplies = postReplies
-    ?.slice(0, limit)
-    ?.filter((item: Post) => item.depth === commentInfo.depth + 1);
+
+  const [rootReplies, setRootReplies] = useState<Post[]>([]);
+
+  useEffect(() => {
+    if (!!postReplies?.length) {
+      setRootReplies(
+        postReplies
+          ?.slice(0, limit)
+          ?.filter((item: Post) => item.depth === commentInfo.depth + 1)
+      );
+    }
+  }, [postReplies]);
 
   const dispatch = useAppDispatch();
 
@@ -212,14 +221,16 @@ export default memo(function PostReplies(props: Props) {
       postData,
       options,
       key,
+      isKeychain,
     }: {
       postData: PostingContent;
       options?: any;
       key: string;
-    }) => publishContent(postData, options, key),
+      isKeychain?: boolean;
+    }) => publishContent(postData, options, key, isKeychain),
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(error.message);
+        toast.error(error.message || JSON.stringify(error));
         return;
       }
       const { postData } = variables;
@@ -265,9 +276,14 @@ export default memo(function PostReplies(props: Props) {
         permlink: permlink,
       };
 
-      postingMutation.mutate({ postData, options: null, key: credentials.key });
-    } catch (e) {
-      toast.error(String(e));
+      postingMutation.mutate({
+        postData,
+        options: null,
+        key: credentials.key,
+        isKeychain: credentials.keychainLogin,
+      });
+    } catch (error: any) {
+      toast.error(error.message || JSON.stringify(error));
       setPosting(false);
     }
   }
@@ -301,8 +317,13 @@ export default memo(function PostReplies(props: Props) {
                 classNames={{ base: "items-center" }}
                 selectionMode="single"
                 onChange={(key) => {
-                  setSorting(key.target.value as any);
-                  repliesMutation.mutate();
+                  const sortBy = key.target.value as string;
+                  setSorting(sortBy as any);
+                  setRootReplies((prevData) =>
+                    prevData?.sort((a, b) => b[sortBy] - a[sortBy])
+                  );
+
+                  // repliesMutation.mutate();
                 }}
               >
                 <SelectItem key={"created"} value={"created"}>

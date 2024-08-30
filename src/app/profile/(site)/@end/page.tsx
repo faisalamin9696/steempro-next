@@ -1,9 +1,8 @@
-"use client"
+"use client";
 
-import React, { } from 'react'
-import usePathnameClient from '@/libs/utils/usePathnameClient'
-import ProfileInfoCard from '@/components/ProfileInfoCard'
-
+import React from "react";
+import usePathnameClient from "@/libs/utils/usePathnameClient";
+import ProfileInfoCard from "@/components/ProfileInfoCard";
 
 export default function ProfileEnd({ data }: { data?: AccountExt }) {
   const { username } = usePathnameClient();
@@ -16,16 +15,17 @@ export default function ProfileEnd({ data }: { data?: AccountExt }) {
   //   setRecomendations(filterRecommendations(followingList));
   // }, []);
 
-
   // function handlePeopleRefresh() {
   //   setRecomendations(filterRecommendations(followingList));
   // }
 
-
-
   return (
-    <ProfileInfoCard hideAvatar key={Math.random()}
-      data={data} username={username} />
+    <ProfileInfoCard
+      hideAvatar
+      key={Math.random()}
+      data={data}
+      username={username}
+    />
     // <div className="flex flex-col pb-60 ">
 
     //   <div className='sticky top-0 z-10 backdrop-blur-lg'>
@@ -44,7 +44,6 @@ export default function ProfileEnd({ data }: { data?: AccountExt }) {
     //     </div>
     //   </div>
 
-
     //   <div className='flex flex-col gap-2 px-1 pb-1'>
     //     {recomendations?.map(people => {
     //       return <Card className='border compact border-gray-100/10 shadow-md shadow-gray-400 dark:shadow-default-500 bg-transparent backdrop-blur-md'>
@@ -53,7 +52,5 @@ export default function ProfileEnd({ data }: { data?: AccountExt }) {
     //     })}
     //   </div>
     // </div>
-
-
-  )
+  );
 }

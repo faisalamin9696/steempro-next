@@ -24,6 +24,7 @@ import Link from "next/link";
 import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/modal";
 import FollowersCard from "./FollowersCard";
 import { twMerge } from "tailwind-merge";
+import { useSession } from "next-auth/react";
 
 const getClubString = (clubData?: Club) => {
   if (!clubData) return "";
@@ -48,6 +49,7 @@ type Props = {
 } & ({ username: string } | { data: AccountExt } | { community: Community });
 
 export default memo(function ProfileInfoCard(props: Props) {
+  const session = useSession();
   const { username, profile, community, data: accountExt, hideAvatar } = props;
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const URL = `/accounts_api/getAccountExt/${username}/${
@@ -64,6 +66,8 @@ export default memo(function ProfileInfoCard(props: Props) {
     useAppSelector((state) => state.profileReducer.value)[
       username ?? data?.name ?? ""
     ] ?? data;
+
+
   const communityInfo =
     useAppSelector((state) => state.communityReducer.values)[
       community?.account ?? ""

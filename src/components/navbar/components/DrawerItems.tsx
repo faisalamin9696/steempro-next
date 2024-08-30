@@ -22,7 +22,7 @@ import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import { logoutHandler } from "@/libs/redux/reducers/LoginReducer";
 import { IoLogOut } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
-import { useLogin } from "../../AuthProvider";
+import { useLogin } from "../../auth/AuthProvider";
 import Link from "next/link";
 import { PiUserSwitchFill } from "react-icons/pi";
 import { RiUserStarFill } from "react-icons/ri";

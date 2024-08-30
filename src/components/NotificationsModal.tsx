@@ -39,7 +39,7 @@ import { useRouter } from "next13-progressbar";
 import { validateCommunity } from "@/libs/utils/helper";
 import { IoCheckmarkDone } from "react-icons/io5";
 import { markasRead } from "@/libs/steem/condenser";
-import { useLogin } from "./AuthProvider";
+import { useLogin } from "./auth/AuthProvider";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { IoMdSettings } from "react-icons/io";
@@ -171,7 +171,7 @@ export default function NotificationsModal(props: Props) {
       fetchSds<SDSNotification[]>(URL_OFFSET(offset)),
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(error.message);
+        toast.error(error.message || JSON.stringify(error));
         return;
       }
       if (data) setAllRows((prev) => [...prev, ...data]);
@@ -179,10 +179,11 @@ export default function NotificationsModal(props: Props) {
   });
 
   const markMutation = useMutation({
-    mutationFn: (key: string) => markasRead(loginInfo, key),
+    mutationFn: (data: { key: string; isKeychain?: boolean }) =>
+      markasRead(loginInfo, data.key, data.isKeychain),
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(error.message);
+        toast.error(error.message || JSON.stringify(error));
         return;
       }
       setAllRows((prev) =>
@@ -206,7 +207,10 @@ export default function NotificationsModal(props: Props) {
       return;
     }
 
-    markMutation.mutate(credentials.key);
+    markMutation.mutate({
+      key: credentials.key,
+      isKeychain: credentials.keychainLogin,
+    });
   }
 
   const [filterValue, setFilterValue] = React.useState<any>("");

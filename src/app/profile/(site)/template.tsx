@@ -18,7 +18,6 @@ export default async function LayoutTemplate({
   const { username } = usePathnameServer();
   const session = await auth();
   const data = await getAuthorExt(username, session?.user?.name || "null");
-
   return (
     <main className="main">
       <AccountHeader account={data} />

@@ -7,7 +7,7 @@ import { Chip } from "@nextui-org/chip";
 import { Button } from "@nextui-org/button";
 import { Card, CardBody } from "@nextui-org/card";
 import React, { memo, useState } from "react";
-import SAvatar from "./SAvatar";
+import SAvatar from "../SAvatar";
 import { useAppDispatch } from "@/libs/constants/AppFunctions";
 import { getAuthorExt } from "@/libs/steem/sds";
 import { signIn } from "next-auth/react";
@@ -47,7 +47,7 @@ export default memo(function AccountItemCard(props: Props) {
   const router = useRouter();
   const [switching, setSwitching] = useState(false);
 
-  function onComplete(error?: string | null) {
+  function onComplete(error?: any | null) {
     // remogve session token when user changed not for changing between keys
     if (user.username !== defaultAccount?.username) {
       removeSessionToken(user.username);
@@ -55,7 +55,7 @@ export default memo(function AccountItemCard(props: Props) {
     }
 
     setSwitching(false);
-    if (error) toast.error(String(error));
+    if (error) toast.error(error.message || JSON.stringify(error));
     else router.refresh();
   }
 
@@ -76,7 +76,7 @@ export default memo(function AccountItemCard(props: Props) {
             });
 
             if (!response?.ok) {
-              onComplete(response?.error);
+              onComplete(response);
               return;
             }
 
@@ -96,11 +96,11 @@ export default memo(function AccountItemCard(props: Props) {
             onComplete();
           })
           .catch((error) => {
-            onComplete(String(error));
+            onComplete(error);
           });
       }
     } catch (e) {
-      onComplete(String(e));
+      onComplete(e);
     }
   }
 

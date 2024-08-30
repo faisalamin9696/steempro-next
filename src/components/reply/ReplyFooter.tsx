@@ -4,7 +4,7 @@ import CommentFooter from "@/components/comment/components/CommentFooter";
 import EditorInput from "@/components/editor/EditorInput";
 import ClearFormButton from "@/components/editor/components/ClearFormButton";
 import PublishButton from "@/components/editor/components/PublishButton";
-import { useLogin } from "@/components/AuthProvider";
+import { useLogin } from "@/components/auth/AuthProvider";
 import {
   useAppSelector,
   useAppDispatch,
@@ -125,11 +125,16 @@ export default function ReplyFooter({
   }, [markdown]);
 
   const deleteMutation = useMutation({
-    mutationFn: (key: string) =>
-      deleteComment(loginInfo, key, {
-        author: comment.author,
-        permlink: comment.permlink,
-      }),
+    mutationFn: (data: { key: string; isKeychain?: boolean }) =>
+      deleteComment(
+        loginInfo,
+        data.key,
+        {
+          author: comment.author,
+          permlink: comment.permlink,
+        },
+        data.isKeychain
+      ),
     onSettled(data, error, variables, context) {
       if (error) {
         toast.error(error.message);
@@ -148,15 +153,21 @@ export default function ReplyFooter({
   });
 
   const unmuteMutation = useMutation({
-    mutationFn: (key: string) =>
-      mutePost(loginInfo, key, false, {
-        community: comment.category,
-        account: comment.author,
-        permlink: comment.permlink,
-      }),
+    mutationFn: (data: { key: string; isKeychain?: boolean }) =>
+      mutePost(
+        loginInfo,
+        data.key,
+        false,
+        {
+          community: comment.category,
+          account: comment.author,
+          permlink: comment.permlink,
+        },
+        data.isKeychain
+      ),
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(error.message);
+        toast.error(error.message || JSON.stringify(error));
         return;
       }
       dispatch(addCommentHandler({ ...comment, is_muted: 0 }));
@@ -173,7 +184,10 @@ export default function ReplyFooter({
       toast.error("Invalid credentials");
       return;
     }
-    deleteMutation.mutate(credentials.key);
+    deleteMutation.mutate({
+      key: credentials.key,
+      isKeychain: credentials.keychainLogin,
+    });
   }
 
   function handleMute() {
@@ -185,7 +199,10 @@ export default function ReplyFooter({
       return;
     }
     if (comment.is_muted !== 0) {
-      unmuteMutation.mutate(credentials.key);
+      unmuteMutation.mutate({
+        key: credentials.key,
+        isKeychain: credentials.keychainLogin,
+      });
       return;
     }
     setConfirmationModal({ ...confirmationModal, isOpen: true });
@@ -292,14 +309,16 @@ export default function ReplyFooter({
       postData,
       options,
       key,
+      isKeychain,
     }: {
       postData: PostingContent;
       options?: any;
       key: string;
-    }) => publishContent(postData, options, key),
+      isKeychain?: boolean;
+    }) => publishContent(postData, options, key, isKeychain),
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(error.message);
+        toast.error(error.message || JSON.stringify(error));
         return;
       }
       const { postData } = variables;
@@ -373,13 +392,14 @@ export default function ReplyFooter({
             postData,
             options: null,
             key: credentials.key,
+            isKeychain: credentials.keychainLogin,
           });
         } else {
           setPosting(false);
           toast.error("Invalid credentials");
         }
-      } catch (e) {
-        toast.error(String(e));
+      } catch (error: any) {
+        toast.error(error.message || JSON.stringify(error));
         setPosting(false);
       }
     }
@@ -504,7 +524,7 @@ export default function ReplyFooter({
                   radius="full"
                   size="sm"
                 >
-                  Open thread
+                  Open thread ({comment.children})
                 </Button>
               ) : (
                 <Button

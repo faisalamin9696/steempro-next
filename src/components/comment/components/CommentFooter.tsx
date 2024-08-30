@@ -23,7 +23,7 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "@/libs/constants/AppFunctions";
-import { useLogin } from "@/components/AuthProvider";
+import { useLogin } from "@/components/auth/AuthProvider";
 import { addCommentHandler } from "@/libs/redux/reducers/CommentReducer";
 import { toast } from "sonner";
 import { reblogPost, voteComment } from "@/libs/steem/condenser";
@@ -90,41 +90,21 @@ export default memo(function CommentFooter(props: CommentProps) {
     if (upvotePopup) setUpvotePopup(false);
     if (downvotePopup) setDownvotePopup(false);
   }
-  async function castVote(weight: number, downvote?: boolean) {
-    closeVotingModal();
-
-    if (downvote) {
-      weight = -weight;
-    }
-
-    dispatch(
-      addCommentHandler({
-        ...comment,
-        status: downvote ? "downvoting" : "upvoting",
-      })
-    );
-
-    await awaitTimeout(0.25);
-    try {
-      const credentials = getCredentials(getSessionKey(session?.user?.name));
-      if (!credentials?.key) {
-        dispatch(addCommentHandler({ ...comment, status: "idle" }));
-        toast.error("Invalid credentials");
-        return;
-      }
-      voteMutation.mutate({ key: credentials.key, weight });
-    } catch (err) {
-      toast.error(String(err));
-    }
-  }
 
   const voteMutation = useMutation({
-    mutationFn: ({ key, weight }: { key: string; weight: number }) =>
-      voteComment(loginInfo, comment, key, weight),
+    mutationFn: ({
+      key,
+      weight,
+      isKeychain,
+    }: {
+      key: string;
+      weight: number;
+      isKeychain?: boolean;
+    }) => voteComment(loginInfo, comment, key, weight, isKeychain),
     onSettled(data, error, variables, context) {
       const { weight } = variables;
       if (error) {
-        toast.error(String(error));
+        toast.error(error.message || JSON.stringify(error));
         dispatch(addCommentHandler({ ...comment, status: "idle" }));
         return;
       }
@@ -178,15 +158,52 @@ export default memo(function CommentFooter(props: CommentProps) {
     },
   });
 
+  async function castVote(weight: number, downvote?: boolean) {
+    closeVotingModal();
+
+    if (downvote) {
+      weight = -weight;
+    }
+
+    dispatch(
+      addCommentHandler({
+        ...comment,
+        status: downvote ? "downvoting" : "upvoting",
+      })
+    );
+
+    await awaitTimeout(0.25);
+    try {
+      const credentials = getCredentials(getSessionKey(session?.user?.name));
+      if (!credentials?.key) {
+        dispatch(addCommentHandler({ ...comment, status: "idle" }));
+        toast.error("Invalid credentials");
+        return;
+      }
+      voteMutation.mutate({
+        key: credentials.key,
+        weight,
+        isKeychain: credentials.keychainLogin,
+      });
+    } catch (error: any) {
+      toast.error(error.message || JSON.stringify(error));
+    }
+  }
+
   const reblogMutation = useMutation({
-    mutationFn: (key: string) =>
-      reblogPost(loginInfo, key, {
-        author: comment.author,
-        permlink: comment.permlink,
-      }),
+    mutationFn: (data: { key: string; isKeychain?: boolean }) =>
+      reblogPost(
+        loginInfo,
+        data.key,
+        {
+          author: comment.author,
+          permlink: comment.permlink,
+        },
+        data.isKeychain
+      ),
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(error.message);
+        toast.error(error.message || JSON.stringify(error));
         return;
       }
       dispatch(addCommentHandler({ ...comment, observer_resteem: 1 }));
@@ -203,7 +220,10 @@ export default memo(function CommentFooter(props: CommentProps) {
       return;
     }
 
-    reblogMutation.mutate(credentials.key);
+    reblogMutation.mutate({
+      key: credentials.key,
+      isKeychain: credentials.keychainLogin,
+    });
   }
 
   return (

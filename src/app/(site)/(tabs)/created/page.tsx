@@ -2,7 +2,6 @@
 
 import FeedList from "@/components/FeedList";
 import { getEndPoint, useAppSelector } from "@/libs/constants/AppFunctions";
-import { FeedTypes } from "@/libs/steem/sds";
 import React from "react";
 
 export default function HomeCreatedTab() {

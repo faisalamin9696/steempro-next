@@ -1,6 +1,6 @@
 import MainWrapper from "@/components/wrappers/MainWrapper";
 import { AppStrings } from "@/libs/constants/AppStrings";
-import { Button } from "@nextui-org/react";
+import { Button } from "@nextui-org/button";
 import { Metadata } from "next";
 import Link from "next/link";
 import React from "react";

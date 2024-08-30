@@ -16,7 +16,7 @@ import SAvatar from "./SAvatar";
 import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
-import { useLogin } from "./AuthProvider";
+import { useLogin } from "./auth/AuthProvider";
 import { useMutation } from "@tanstack/react-query";
 import {
   delegateVestingShares,
@@ -31,6 +31,7 @@ import { steemToVest, vestToSteem } from "@/libs/steem/sds";
 import { isNumeric } from "@/libs/utils/helper";
 import clsx from "clsx";
 import { validate_account_name } from "@/libs/utils/ChainValidation";
+import KeychainButton from "./KeychainButton";
 
 type AssetTypes = "STEEM" | "SBD" | "VESTS";
 
@@ -117,11 +118,14 @@ const TransferModal = (props: Props): JSX.Element => {
   }, [to]);
 
   const transferMutation = useMutation({
-    mutationFn: (data: { key: string; options: Transfer }) =>
-      transferAsset(loginInfo, data.key, data.options),
+    mutationFn: (data: {
+      key: string;
+      options: Transfer;
+      isKeychain?: boolean;
+    }) => transferAsset(loginInfo, data.key, data.options, data.isKeychain),
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(error.message);
+        toast.error(error.message || JSON.stringify(error));
         return;
       }
 
@@ -151,11 +155,14 @@ const TransferModal = (props: Props): JSX.Element => {
   });
 
   const savingsMutation = useMutation({
-    mutationFn: (data: { key: string; options: Transfer }) =>
-      transferToSavings(loginInfo, data.key, data.options),
+    mutationFn: (data: {
+      key: string;
+      options: Transfer;
+      isKeychain?: boolean;
+    }) => transferToSavings(loginInfo, data.key, data.options, data.isKeychain),
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(error.message);
+        toast.error(error.message || JSON.stringify(error));
         return;
       }
 
@@ -183,11 +190,14 @@ const TransferModal = (props: Props): JSX.Element => {
   });
 
   const vestingMutation = useMutation({
-    mutationFn: (data: { key: string; options: Transfer }) =>
-      transferToVesting(loginInfo, data.key, data.options),
+    mutationFn: (data: {
+      key: string;
+      options: Transfer;
+      isKeychain?: boolean;
+    }) => transferToVesting(loginInfo, data.key, data.options, data.isKeychain),
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(error.message);
+        toast.error(error.message || JSON.stringify(error));
         return;
       }
       dispatch(
@@ -212,10 +222,12 @@ const TransferModal = (props: Props): JSX.Element => {
         delegatee: string;
         amount: number;
       };
-    }) => delegateVestingShares(loginInfo, data.key, data.options),
+      isKeychain?: boolean;
+    }) =>
+      delegateVestingShares(loginInfo, data.key, data.options, data.isKeychain),
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(error.message);
+        toast.error(error.message || JSON.stringify(error));
         return;
       }
       onDelegationSuccess && onDelegationSuccess(variables.options.amount);
@@ -233,7 +245,7 @@ const TransferModal = (props: Props): JSX.Element => {
     },
   });
 
-  async function handleTransfer() {
+  async function handleTransfer(isKeychain?: boolean) {
     from = from.trim().toLowerCase();
     to = to.trim().toLowerCase();
     amount = amount.trim();
@@ -252,15 +264,6 @@ const TransferModal = (props: Props): JSX.Element => {
       toast.info("Invalid amount");
       return;
     }
-    if (!isRemove && Number(amount) < 0.001) {
-      toast.info("Use only 3 digits of precison");
-      return;
-    }
-
-    if (!isRemove && delegation && Number(amount) < 1) {
-      toast.info(" The minimum required delegation amount is 1.000 SP");
-      return;
-    }
 
     if (delegation && from === to) {
       toast.info(" You cannot delegate SP to yourself");
@@ -271,9 +274,22 @@ const TransferModal = (props: Props): JSX.Element => {
       toast.info("Insufficient funds");
       return;
     }
-    authenticateUser();
-    if (!isAuthorized()) {
+
+    if (!isRemove && delegation && Number(amount) < 1) {
+      toast.info(" The minimum required delegation amount is 1.000 SP");
       return;
+    }
+
+    if (!isRemove && Number(amount) < 0.001) {
+      toast.info("Use only 3 digits of precison");
+      return;
+    }
+
+    if (!isKeychain) {
+      authenticateUser();
+      if (!isAuthorized()) {
+        return;
+      }
     }
 
     const credentials = getCredentials(getSessionKey(session?.user?.name));
@@ -284,7 +300,7 @@ const TransferModal = (props: Props): JSX.Element => {
 
     if (savings) {
       savingsMutation.mutate({
-        key: credentials.key,
+        key: credentials?.key ?? "",
         options: {
           from,
           to,
@@ -293,13 +309,14 @@ const TransferModal = (props: Props): JSX.Element => {
           unit: asset,
           time: moment.now(),
         },
+        isKeychain: isKeychain || credentials.keychainLogin,
       });
       return;
     }
 
     if (powewrup) {
       vestingMutation.mutate({
-        key: credentials.key,
+        key: credentials?.key ?? "",
         options: {
           from,
           to,
@@ -308,26 +325,26 @@ const TransferModal = (props: Props): JSX.Element => {
           unit: asset,
           time: moment.now(),
         },
+        isKeychain: isKeychain || credentials.keychainLogin,
       });
       return;
     }
 
     if (delegation) {
       delegateMutation.mutate({
-        key: credentials.key,
+        key: credentials?.key ?? "",
         options: {
           delegatee: to,
-          amount: isRemove
-            ? 0
-            : steemToVest(Number(amount), globalData.steem_per_share),
+          amount: isRemove ? 0 : Number(amount),
         },
+        isKeychain: isKeychain || credentials.keychainLogin,
       });
       return;
     }
 
     if (!savings && !powewrup && !delegation)
       transferMutation.mutate({
-        key: credentials.key,
+        key: credentials?.key ?? "",
         options: {
           from,
           to,
@@ -336,6 +353,7 @@ const TransferModal = (props: Props): JSX.Element => {
           unit: asset,
           time: moment.now(),
         },
+        isKeychain: isKeychain || credentials.keychainLogin,
       });
   }
 
@@ -470,45 +488,61 @@ const TransferModal = (props: Props): JSX.Element => {
                 onValueChange={setConfirmCheck}
               >
                 Confirm{" "}
-                {powewrup ? "Power Up" : isRemove ? "Remove" : `Transfer`}
+                {powewrup
+                  ? "Power Up"
+                  : isRemove
+                  ? "Remove"
+                  : delegation
+                  ? "Delegation"
+                  : `Transfer`}
               </Checkbox>
             </ModalBody>
-            <ModalFooter>
-              <Button
-                color="danger"
-                variant="light"
-                onClick={onClose}
-                isDisabled={isPending}
-              >
-                Cancel
-              </Button>
+            <ModalFooter className=" justify-between">
+              <KeychainButton
+                isDisabled={!confirmCheck || isPending}
+                onClick={() => handleTransfer(true)}
+              />
 
-              {(savings || powewrup) && (
+              <div className=" flex items-center gap-2">
                 <Button
-                  onClick={() => setBasic(!basic)}
-                  variant="flat"
+                  size="sm"
+                  color="danger"
+                  variant="light"
+                  onClick={onClose}
                   isDisabled={isPending}
                 >
-                  {basic ? "Advance" : "Basic"}
+                  Cancel
                 </Button>
-              )}
 
-              <Button
-                color="primary"
-                onClick={handleTransfer}
-                isLoading={isPending}
-                isDisabled={!confirmCheck || isPending}
-              >
-                {delegation
-                  ? isRemove
-                    ? "Remove"
-                    : !!oldDelegation
-                    ? "Update"
-                    : "Delegate"
-                  : powewrup
-                  ? "Power Up"
-                  : "Transfer"}
-              </Button>
+                {(savings || powewrup) && (
+                  <Button
+                    size="sm"
+                    onClick={() => setBasic(!basic)}
+                    variant="flat"
+                    isDisabled={isPending}
+                  >
+                    {basic ? "Advance" : "Basic"}
+                  </Button>
+                )}
+
+                <Button
+                  size="sm"
+                  color="primary"
+                  onClick={() => handleTransfer()}
+                  isLoading={isPending}
+                  isDisabled={!confirmCheck || isPending}
+                >
+                  {delegation
+                    ? isRemove
+                      ? "Remove"
+                      : !!oldDelegation
+                      ? "Update"
+                      : "Delegate"
+                    : powewrup
+                    ? "Power Up"
+                    : "Transfer"}
+                </Button>
+              </div>
             </ModalFooter>
           </>
         )}

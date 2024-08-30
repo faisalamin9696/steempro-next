@@ -24,7 +24,7 @@ import { ZonedDateTime } from "@internationalized/date";
 import { IoClose } from "react-icons/io5";
 import axios from "axios";
 import { toast } from "sonner";
-import { useLogin } from "./AuthProvider";
+import { useLogin } from "./auth/AuthProvider";
 import { signMessage, verifyPrivKey } from "@/libs/steem/condenser";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { useSession } from "next-auth/react";
@@ -38,6 +38,7 @@ import {
   parseZonedDateTime,
   parseAbsoluteToLocal,
 } from "@internationalized/date";
+import { cryptoUtils, Signature } from "@hiveio/dhive";
 
 const StatusData = {
   0: { title: "Pending", color: "warning" },
@@ -72,6 +73,44 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
 
   const isLoading = isUpdating || isDeleting || isDrafting;
 
+  function deleteSchedule(
+    hash: Buffer,
+    signature: Signature,
+    isDraft?: boolean
+  ) {
+    axios
+      .post(
+        "/api/schedules/delete",
+        {
+          id: scheduleInfo.id,
+          username: loginInfo.name,
+          signature: signature.toString(),
+          hash,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((res) => {
+        if (isDraft) toast.success("Copied to draft and deleted successfully");
+        else toast.success("Deleted successfully");
+        dispatch(
+          addScheduleHandler({
+            ...scheduleInfo,
+            status: -1,
+          })
+        );
+      })
+      .catch(function (error) {
+        toast.error(error.message || JSON.stringify(error));
+      })
+      .finally(() => {
+        setIsUpdating(false);
+        setIsDrafting(false);
+      });
+  }
   async function handleDelete(isDraft?: boolean) {
     authenticateUser();
 
@@ -89,54 +128,86 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
       if (isDraft) setIsDrafting(true);
       else setIsDeleting(true);
 
-      const isValidKey = verifyPrivKey(loginInfo, credentials.key);
+      if (credentials.keychainLogin) {
+        const hash = cryptoUtils.sha256(loginInfo.name);
 
-      if (!isValidKey) {
-        setIsUpdating(false);
-        setIsDrafting(false);
-        toast.info("Private posting key or above required");
-        return;
-      }
-      const { signature, hash } = signMessage(credentials.key, loginInfo.name);
-
-      axios
-        .post(
-          "/api/schedules/delete",
-          {
-            id: scheduleInfo.id,
-            username: loginInfo.name,
-            signature: signature.toString(),
-            hash,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
+        window.steem_keychain.requestSignBuffer(
+          loginInfo.name,
+          loginInfo.name,
+          "Posting",
+          function (response) {
+            if (response.success) {
+              const signature = response.result;
+              deleteSchedule(hash, signature, isDraft);
+            } else {
+              toast.error(response.message);
+            }
           }
-        )
-        .then((res) => {
-          if (isDraft)
-            toast.success("Copied to draft and deleted successfully");
-          else toast.success("Deleted successfully");
-          dispatch(
-            addScheduleHandler({
-              ...scheduleInfo,
-              status: -1,
-            })
-          );
-        })
-        .catch(function (error) {
-          toast.error(String(error));
-        })
-        .finally(() => {
+        );
+      } else {
+        const isValidKey = verifyPrivKey(loginInfo, credentials.key);
+
+        if (!isValidKey) {
           setIsUpdating(false);
           setIsDrafting(false);
-        });
-    } catch (error) {
-      toast.error("Something went wrong!");
+          toast.info("Private posting key or above required");
+          return;
+        }
+
+        const { signature, hash } = signMessage(
+          credentials.key,
+          loginInfo.name
+        );
+
+        deleteSchedule(hash, signature, isDraft);
+      }
+    } catch (error: any) {
+      toast.error(error?.message);
     }
   }
 
+  function updateSchedule(
+    hash: Buffer,
+    signature: Signature,
+    isDraft?: boolean
+  ) {
+    const time = moment(dateTime!.toAbsoluteString()).format();
+
+    axios
+      .post(
+        "/api/schedules/update",
+        {
+          time: time,
+          id: scheduleInfo.id,
+          username: loginInfo.name,
+          signature: signature.toString(),
+          hash,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((res) => {
+        toast.success("Updated successfully");
+        dispatch(
+          addScheduleHandler({
+            ...scheduleInfo,
+            time: time,
+            status: 0,
+            message: "",
+          })
+        );
+        setDateTime(undefined);
+      })
+      .catch(function (error) {
+        toast.error(error.message || JSON.stringify(error));
+      })
+      .finally(() => {
+        setIsUpdating(false);
+      });
+  }
   async function handleOnEdit() {
     if (moment(scheduleInfo.time).isSameOrBefore(moment())) {
       toast.info("You can not edit time of the published post");
@@ -174,53 +245,41 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
 
       setIsUpdating(true);
 
-      const isValidKey = verifyPrivKey(loginInfo, credentials.key);
+      if (credentials.keychainLogin) {
+        const hash = cryptoUtils.sha256(loginInfo.name);
 
-      if (!isValidKey) {
-        setIsUpdating(false);
-        toast.info("Private posting key or above required");
-        return;
-      }
-      const time = moment(dateTime.toAbsoluteString()).format();
-
-      const { signature, hash } = signMessage(credentials.key, loginInfo.name);
-
-      axios
-        .post(
-          "/api/schedules/update",
-          {
-            time: time,
-            id: scheduleInfo.id,
-            username: loginInfo.name,
-            signature: signature.toString(),
-            hash,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
+        window.steem_keychain.requestSignBuffer(
+          loginInfo.name,
+          loginInfo.name,
+          "Posting",
+          function (response) {
+            if (response.success) {
+              const signature = response.result;
+              updateSchedule(hash, signature);
+            } else {
+              toast.error(response.message);
+            }
           }
-        )
-        .then((res) => {
-          toast.success("Updated successfully");
-          dispatch(
-            addScheduleHandler({
-              ...scheduleInfo,
-              time: time,
-              status: 0,
-              message: "",
-            })
-          );
-          setDateTime(undefined);
-        })
-        .catch(function (error) {
-          toast.error(String(error));
-        })
-        .finally(() => {
+        );
+      } else {
+        const isValidKey = verifyPrivKey(loginInfo, credentials.key);
+
+        if (!isValidKey) {
           setIsUpdating(false);
-        });
-    } catch (error) {
-      toast.error("Something went wrong!");
+          toast.info("Private posting key or above required");
+          return;
+        }
+
+        const { signature, hash } = signMessage(
+          credentials.key,
+          loginInfo.name
+        );
+
+        updateSchedule(hash, signature);
+      }
+    } catch (error: any) {
+      toast.error(error?.message);
+      setIsUpdating(false);
     }
   }
 
@@ -387,7 +446,10 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
                         size="sm"
                         color="danger"
                         variant="solid"
-                        onClick={() => handleDelete()}
+                        onClick={() => {
+                          setDeletePopup(false);
+                          handleDelete();
+                        }}
                       >
                         Yes
                       </Button>

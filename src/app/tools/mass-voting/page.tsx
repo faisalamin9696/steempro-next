@@ -1,6 +1,6 @@
 "use client";
 
-import { useLogin } from "@/components/AuthProvider";
+import { useLogin } from "@/components/auth/AuthProvider";
 import MassVotingModal from "@/components/MassVotingModal";
 import MainWrapper from "@/components/wrappers/MainWrapper";
 import { useAppSelector } from "@/libs/constants/AppFunctions";

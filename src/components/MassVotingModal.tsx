@@ -38,6 +38,8 @@ export default function MassVotingModal(props: Props) {
   const { isOpen, data, links, onOpenChange, handleOnComplete } = props;
   const linkRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
+  const isKeychain = data.voter_key === "keychain";
+
   const setRef = (item: string) => (el: HTMLDivElement | null) => {
     linkRefs.current[item] = el;
   };
@@ -83,7 +85,8 @@ export default function MassVotingModal(props: Props) {
           data.voter_account,
           empty_comment(author, permlink),
           data.voter_key,
-          parseFloat(data.weight)
+          parseFloat(data.weight),
+          isKeychain
         );
 
         if (response) {
@@ -184,7 +187,7 @@ export default function MassVotingModal(props: Props) {
                           title="Retry"
                           isIconOnly
                           size="sm"
-                          onPress={() => {
+                          onClick={() => {
                             let [permlink, author] = item?.split("/").reverse();
                             setCompleted(false);
                             updateStatus(item, "pending");
@@ -193,7 +196,8 @@ export default function MassVotingModal(props: Props) {
                               data.voter_account,
                               empty_comment(author, permlink),
                               data.voter_key,
-                              parseFloat(data.weight)
+                              parseFloat(data.weight),
+                              isKeychain
                             )
                               .then(() => {
                                 updateStatus(item, "success");

@@ -141,9 +141,9 @@ export default function AuthModal(props: Props) {
     setLoading(false);
   }
 
-  function onComplete(error?: string | null) {
+  function onComplete(error?: any | null) {
     setLoading(false);
-    if (error) toast.error(String(error));
+    if (error) toast.error(error.message || JSON.stringify(error));
   }
   async function handleLogin() {
     username = username.trim().toLowerCase();
@@ -196,7 +196,7 @@ export default function AuthModal(props: Props) {
                 );
 
                 if (!auth) {
-                  onComplete("Something went wrong!");
+                  onComplete(new Error("Something went wrong!"));
                   return;
                 }
 
@@ -206,7 +206,7 @@ export default function AuthModal(props: Props) {
                 });
 
                 if (!response?.ok) {
-                  onComplete(response?.error);
+                  onComplete(response);
                   return;
                 }
                 saveSessionKey(password);
@@ -232,7 +232,7 @@ export default function AuthModal(props: Props) {
                 onComplete();
               })
               .catch((error) => {
-                onComplete(String(error));
+                onComplete(error);
               });
           } else {
             const auth = saveCredentials(
@@ -250,7 +250,7 @@ export default function AuthModal(props: Props) {
                 });
 
                 if (!response?.ok) {
-                  onComplete(response?.error);
+                  onComplete(response);
                   return;
                 }
                 saveSessionKey(password);
@@ -277,15 +277,15 @@ export default function AuthModal(props: Props) {
               clearAll();
               onComplete();
             } else {
-              onComplete("Something went wrong!");
+              onComplete(new Error("Something went wrong!"));
             }
           }
         } else {
-          onComplete(`Invalid credentials`);
+          onComplete(new Error(`Invalid credentials`))
         }
       }
     } catch (e) {
-      onComplete(String(e));
+      onComplete(e);
     }
   }
 

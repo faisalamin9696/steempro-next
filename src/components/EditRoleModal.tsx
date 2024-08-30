@@ -17,7 +17,7 @@ import { useMutation } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
-import { useLogin } from "./AuthProvider";
+import { useLogin } from "./auth/AuthProvider";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { useSession } from "next-auth/react";
 
@@ -75,21 +75,31 @@ export default function EditRoleModal(props: Props) {
     onOpenChange();
   }
   function handleFailed(error: any) {
-    toast.error("Failed: " + String(error));
+    toast.error(error.message || JSON.stringify(error));
   }
   const roleTitleMutation = useMutation({
-    mutationFn: (key: string) =>
+    mutationFn: (data: { key: string; isKeychain?: boolean }) =>
       Promise.all([
-        setUserRole(loginInfo, key, {
-          communityId: comment.category,
-          account: comment.author,
-          role: role || "guest",
-        }),
-        setUserTitle(loginInfo, key, {
-          communityId: comment.category,
-          account: comment.author,
-          title: title,
-        }),
+        setUserRole(
+          loginInfo,
+          data.key,
+          {
+            communityId: comment.category,
+            account: comment.author,
+            role: role || "guest",
+          },
+          data.isKeychain
+        ),
+        setUserTitle(
+          loginInfo,
+          data.key,
+          {
+            communityId: comment.category,
+            account: comment.author,
+            title: title,
+          },
+          data.isKeychain
+        ),
       ]),
     onSuccess() {
       handleSuccess();
@@ -100,12 +110,17 @@ export default function EditRoleModal(props: Props) {
   });
 
   const roleMutation = useMutation({
-    mutationFn: (key: string) =>
-      setUserRole(loginInfo, key, {
-        communityId: comment.category,
-        account: comment.author,
-        role: role || "guest",
-      }),
+    mutationFn: (data: { key: string; isKeychain?: boolean }) =>
+      setUserRole(
+        loginInfo,
+        data.key,
+        {
+          communityId: comment.category,
+          account: comment.author,
+          role: role || "guest",
+        },
+        data.isKeychain
+      ),
     onSuccess() {
       handleSuccess();
     },
@@ -115,12 +130,17 @@ export default function EditRoleModal(props: Props) {
   });
 
   const titleMutation = useMutation({
-    mutationFn: (key: string) =>
-      setUserTitle(loginInfo, key, {
-        communityId: comment.category,
-        account: comment.author,
-        title: title,
-      }),
+    mutationFn: (data: { key: string; isKeychain?: boolean }) =>
+      setUserTitle(
+        loginInfo,
+        data.key,
+        {
+          communityId: comment.category,
+          account: comment.author,
+          title: title,
+        },
+        data.isKeychain
+      ),
     onSuccess() {
       handleSuccess();
     },
@@ -145,19 +165,28 @@ export default function EditRoleModal(props: Props) {
 
       // update both title and role
       if (isTitleChanged && isRoleChanged) {
-        roleTitleMutation.mutate(credentials.key);
+        roleTitleMutation.mutate({
+          key: credentials.key,
+          isKeychain: credentials.keychainLogin,
+        });
         return;
       }
 
       // update only title
       if (isTitleChanged && !isRoleChanged) {
-        titleMutation.mutate(credentials.key);
+        titleMutation.mutate({
+          key: credentials.key,
+          isKeychain: credentials.keychainLogin,
+        });
         return;
       }
 
       // update only role
       if (isRoleChanged && !isTitleChanged) {
-        roleMutation.mutate(credentials.key);
+        roleMutation.mutate({
+          key: credentials.key,
+          isKeychain: credentials.keychainLogin,
+        });
         return;
       }
     } else {

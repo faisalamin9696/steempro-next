@@ -2,8 +2,12 @@ import EmptyList from "@/components/EmptyList";
 import ErrorCard from "@/components/ErrorCard";
 import LoadingCard from "@/components/LoadingCard";
 import { awaitTimeout, fetchSds } from "@/libs/constants/AppFunctions";
-import { Button, Card, Input, ScrollShadow } from "@nextui-org/react";
-import React, { useEffect, useMemo, useState } from "react";
+import { Button } from "@nextui-org/button";
+import { Card } from "@nextui-org/card";
+import { Input } from "@nextui-org/input";
+import { ScrollShadow } from "@nextui-org/scroll-shadow";
+
+import React, { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import useSWR from "swr";
 import { twMerge } from "tailwind-merge";

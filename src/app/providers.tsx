@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 import { persistQueryClient } from "@tanstack/react-query-persist-client";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import { compress, decompress } from "lz-string";
-import { AuthProvider } from "@/components/AuthProvider";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 import AppNavbar from "@/components/navbar/AppNavbar";
 import { ThemeProvider } from "next-themes";
 import LoadingCard from "@/components/LoadingCard";
@@ -25,11 +25,6 @@ interface Props {
 }
 export function Providers(props: Props) {
   const { children } = props;
-
-  PiwikPro.initialize(
-    "70c8840a-d55a-4a1f-a3af-d1a06b46a5dc",
-    "https://steempro.piwik.pro"
-  );
 
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
@@ -72,6 +67,10 @@ export function Providers(props: Props) {
 
   useEffect(() => {
     setIsMounted(true);
+    PiwikPro.initialize(
+      "70c8840a-d55a-4a1f-a3af-d1a06b46a5dc",
+      "https://steempro.piwik.pro"
+    );
   }, []);
 
   // useEffect(() => {

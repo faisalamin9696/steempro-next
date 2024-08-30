@@ -1,5 +1,6 @@
 import { getResizedAvatar } from "@/libs/utils/image";
-import { Link, User } from "@nextui-org/react";
+import { Link } from "@nextui-org/link";
+import { User } from "@nextui-org/user";
 import React from "react";
 import { twMerge } from "tailwind-merge";
 import TimeAgoWrapper from "../../wrappers/TimeAgoWrapper";

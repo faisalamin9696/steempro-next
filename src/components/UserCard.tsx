@@ -6,7 +6,6 @@ import { abbreviateNumber } from "@/libs/utils/helper";
 import clsx from "clsx";
 import { SlUserFollowing } from "react-icons/sl";
 import useSWR from "swr";
-import { useSession } from "next-auth/react";
 import { getResizedAvatar } from "@/libs/utils/image";
 import STooltip from "./STooltip";
 import LoadingCard from "./LoadingCard";
@@ -24,7 +23,6 @@ interface Props {
 export const UserCard = memo((props: Props) => {
     const { username, compact } = props;
     // const [isFollowed, setIsFollowed] = React.useState(comment.observer_follows_author === 1);
-    const { data: session } = useSession();
     const loginInfo = useAppSelector(state => state.loginReducer.value);
 
     const URL = `/accounts_api/getAccountExt/${username}/${loginInfo.name || 'null'}`;

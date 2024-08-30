@@ -4,7 +4,7 @@ import { getResizedAvatar } from "@/libs/utils/image";
 import clsx from "clsx";
 import Link from "next/link";
 import { empty_comment } from "@/libs/constants/Placeholders";
-import { Button } from "@nextui-org/react";
+import { Button } from "@nextui-org/button";
 import { FaPencil } from "react-icons/fa6";
 import EditRoleModal from "../../EditRoleModal";
 import { Role as RoleCheck } from "@/libs/utils/community";

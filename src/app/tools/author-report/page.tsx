@@ -26,7 +26,7 @@ export default function AuthorReportPage() {
       ),
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(String(error));
+        toast.error(error.message || JSON.stringify(error));
         return;
       }
       if (data) setData(data);

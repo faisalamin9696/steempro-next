@@ -16,7 +16,7 @@ import { Button } from "@nextui-org/button";
 import { useMutation } from "@tanstack/react-query";
 import React from "react";
 import { toast } from "sonner";
-import { useLogin } from "./AuthProvider";
+import { useLogin } from "./auth/AuthProvider";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { useSession } from "next-auth/react";
 
@@ -52,7 +52,7 @@ export default function MuteDeleteModal(props: Props) {
       }),
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(error.message);
+        toast.error(error.message || JSON.stringify(error));
         return;
       }
       dispatch(addCommentHandler({ ...comment, is_muted: 1 }));
@@ -62,14 +62,19 @@ export default function MuteDeleteModal(props: Props) {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (key: string) =>
-      deleteComment(loginInfo, key, {
-        author: comment.author,
-        permlink: comment.permlink,
-      }),
+    mutationFn: (data: { key: string; isKeychain?: boolean }) =>
+      deleteComment(
+        loginInfo,
+        data.key,
+        {
+          author: comment.author,
+          permlink: comment.permlink,
+        },
+        data.isKeychain
+      ),
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(error.message);
+        toast.error(error.message || JSON.stringify(error));
         return;
       }
       dispatch(addCommentHandler({ ...comment, link_id: undefined }));
@@ -95,7 +100,10 @@ export default function MuteDeleteModal(props: Props) {
       return;
     }
 
-    deleteMutation.mutate(credentials.key);
+    deleteMutation.mutate({
+      key: credentials.key,
+      isKeychain: credentials.keychainLogin,
+    });
   }
 
   const isPending = deleteMutation.isPending || muteMutation.isPending;

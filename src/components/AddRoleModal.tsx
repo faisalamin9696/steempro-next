@@ -17,7 +17,7 @@ import { useMutation } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
-import { useLogin } from "./AuthProvider";
+import { useLogin } from "./auth/AuthProvider";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { useSession } from "next-auth/react";
 import { validate_account_name } from "@/libs/utils/ChainValidation";
@@ -82,21 +82,31 @@ export default function AddRoleModal(props: Props) {
     onOpenChange();
   }
   function handleFailed(error: any) {
-    toast.error("Failed: " + String(error));
+    toast.error(error.message || JSON.stringify(error));
   }
   const roleTitleMutation = useMutation({
-    mutationFn: (key: string) =>
+    mutationFn: (data: { key: string; isKeychain?: boolean }) =>
       Promise.all([
-        setUserRole(loginInfo, key, {
-          communityId: community.account,
-          account: username,
-          role: role || "guest",
-        }),
-        setUserTitle(loginInfo, key, {
-          communityId: community.account,
-          account: username,
-          title: title,
-        }),
+        setUserRole(
+          loginInfo,
+          data.key,
+          {
+            communityId: community.account,
+            account: username,
+            role: role || "guest",
+          },
+          data.isKeychain
+        ),
+        setUserTitle(
+          loginInfo,
+          data.key,
+          {
+            communityId: community.account,
+            account: username,
+            title: title,
+          },
+          data.isKeychain
+        ),
       ]),
     onSuccess() {
       handleSuccess();
@@ -122,12 +132,17 @@ export default function AddRoleModal(props: Props) {
   });
 
   const titleMutation = useMutation({
-    mutationFn: (key: string) =>
-      setUserTitle(loginInfo, key, {
-        communityId: community.account,
-        account: username,
-        title: title,
-      }),
+    mutationFn: (data: { key: string; isKeychain?: boolean }) =>
+      setUserTitle(
+        loginInfo,
+        data.key,
+        {
+          communityId: community.account,
+          account: username,
+          title: title,
+        },
+        data.isKeychain
+      ),
     onSuccess() {
       handleSuccess();
     },
@@ -159,13 +174,19 @@ export default function AddRoleModal(props: Props) {
 
       // update both title and role
       if (isTitleChanged && isRoleChanged) {
-        roleTitleMutation.mutate(credentials.key);
+        roleTitleMutation.mutate({
+          key: credentials.key,
+          isKeychain: credentials.keychainLogin,
+        });
         return;
       }
 
       // update only title
       if (isTitleChanged && !isRoleChanged) {
-        titleMutation.mutate(credentials.key);
+        titleMutation.mutate({
+          key: credentials.key,
+          isKeychain: credentials.keychainLogin,
+        });
         return;
       }
 

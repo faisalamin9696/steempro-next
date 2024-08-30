@@ -6,7 +6,7 @@ import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
 import { Button } from "@nextui-org/button";
 import { Badge } from "@nextui-org/badge";
 import { LuPencilLine } from "react-icons/lu";
-import { useLogin } from "../AuthProvider";
+import { useLogin } from "../auth/AuthProvider";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import {
   getCredentials,
@@ -18,7 +18,7 @@ import {
 import { getResizedAvatar } from "@/libs/utils/image";
 import Image from "next/image";
 import { signIn, signOut, useSession } from "next-auth/react";
-import AccountsModal from "../AccountsModal";
+import AccountsModal from "../auth/AccountsModal";
 import AppDrawer from "./components/Drawer";
 import NotificationsModal from "../NotificationsModal";
 import {
@@ -36,7 +36,7 @@ import { MdSearch } from "react-icons/md";
 import { Input } from "@nextui-org/input";
 import "./style.scss";
 import { PiUserSwitchFill } from "react-icons/pi";
-import { keysColorMap } from "../AccountItemCard";
+import { keysColorMap } from "../auth/AccountItemCard";
 
 export default function AppNavbar() {
   const { authenticateUser, isAuthorized, credentials, setCredentials } =

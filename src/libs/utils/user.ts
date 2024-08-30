@@ -18,6 +18,18 @@ export function getCredentials(password?: string): User | undefined {
   const credentials = JSON.parse(credentialsString || `{}`) as User;
   try {
     if (credentials && credentials?.username) {
+      const isKeychain = credentials.key === "keychain";
+
+      if (isKeychain) {
+        return {
+          username: credentials.username,
+          key: credentials.key,
+          type: credentials.type,
+          memo: "",
+          keychainLogin: credentials.key === "keychain",
+        };
+      }
+
       const privateKey = password
         ? decryptPrivateKey(credentials.key, password)
         : credentials.key;
@@ -122,11 +134,31 @@ export function saveCredentials(
   privateKey: string,
   password: string,
   keyType: Keys,
-  current?: boolean
+  current?: boolean,
+  isKeychain?: boolean
 ): User | undefined {
+  const existAuth = getUserAuth() as User;
+
+  if (isKeychain) {
+    if (!existAuth || current || existAuth?.username === username) {
+      addToCurrent(username, privateKey, keyType);
+
+      if (username !== existAuth?.username) {
+        removeSessionToken(existAuth?.username);
+      }
+    }
+
+    addToAccounts(username, privateKey, keyType);
+    return {
+      username: username,
+      key: privateKey,
+      type: keyType,
+      memo: "",
+    };
+  }
+
   const encryptedKey = encryptPrivateKey(privateKey, password);
   if (encryptedKey) {
-    const existAuth = getUserAuth() as User;
     if (!existAuth || current || existAuth?.username === username) {
       addToCurrent(username, encryptedKey, keyType);
 

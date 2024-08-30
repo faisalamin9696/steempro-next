@@ -1,6 +1,6 @@
 "use client";
 
-import { useLogin } from "@/components/AuthProvider";
+import { useLogin } from "@/components/auth/AuthProvider";
 import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import {
   signImage,
@@ -123,7 +123,8 @@ export default function SettingsPage() {
         cover_image: string;
         version?: number | undefined;
       };
-    }) => updateProfile(loginInfo, data.key, data.params),
+      isKeychain?: boolean;
+    }) => updateProfile(loginInfo, data.key, data.params, data.isKeychain),
     onSettled(data, error, variables, context) {
       if (error) {
         toast.error(error.message);
@@ -187,6 +188,7 @@ export default function SettingsPage() {
         location: location,
         cover_image: coverImage,
       },
+      isKeychain: credentials.keychainLogin,
     });
   }
 

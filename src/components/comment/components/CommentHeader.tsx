@@ -35,7 +35,7 @@ import MuteDeleteModal from "@/components/MuteDeleteModal";
 import { useMutation } from "@tanstack/react-query";
 import { mutePost, pinPost } from "@/libs/steem/condenser";
 import { addCommentHandler } from "@/libs/redux/reducers/CommentReducer";
-import { useLogin } from "@/components/AuthProvider";
+import { useLogin } from "@/components/auth/AuthProvider";
 import Link from "next/link";
 import { BsPinAngleFill } from "react-icons/bs";
 import RoleTitleCard from "@/components/RoleTitleCard";
@@ -121,15 +121,21 @@ export default function CommentHeader(props: Props) {
     ));
 
   const unmuteMutation = useMutation({
-    mutationFn: (key: string) =>
-      mutePost(loginInfo, key, !!!comment.is_muted, {
-        community: comment.category,
-        account: comment.author,
-        permlink: comment.permlink,
-      }),
+    mutationFn: (data: { key: string; isKeychain?: boolean }) =>
+      mutePost(
+        loginInfo,
+        data.key,
+        !!!comment.is_muted,
+        {
+          community: comment.category,
+          account: comment.author,
+          permlink: comment.permlink,
+        },
+        data.isKeychain
+      ),
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(error.message);
+        toast.error(error.message || JSON.stringify(error));
         return;
       }
       dispatch(addCommentHandler({ ...comment, is_muted: 0 }));
@@ -138,15 +144,21 @@ export default function CommentHeader(props: Props) {
   });
 
   const pinMutation = useMutation({
-    mutationFn: (key: string) =>
-      pinPost(loginInfo, key, !!!comment.is_pinned, {
-        community: comment.category,
-        account: comment.author,
-        permlink: comment.permlink,
-      }),
+    mutationFn: (data: { key: string; isKeychain?: boolean }) =>
+      pinPost(
+        loginInfo,
+        data.key,
+        !!!comment.is_pinned,
+        {
+          community: comment.category,
+          account: comment.author,
+          permlink: comment.permlink,
+        },
+        data.isKeychain
+      ),
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(error.message);
+        toast.error(error.message || JSON.stringify(error));
         return;
       }
       dispatch(
@@ -187,7 +199,10 @@ export default function CommentHeader(props: Props) {
         if (key === "mute") {
           // mute option will trigger the modal that's why only mute check
           if (comment.is_muted !== 0) {
-            unmuteMutation.mutate(credentials.key);
+            unmuteMutation.mutate({
+              key: credentials.key,
+              isKeychain: credentials.keychainLogin,
+            });
             return;
           }
 
@@ -195,7 +210,11 @@ export default function CommentHeader(props: Props) {
           setConfirmationModal({ isOpen: true, mute: true });
           return;
         }
-        if (key === "pin") pinMutation.mutate(credentials.key);
+        if (key === "pin")
+          pinMutation.mutate({
+            key: credentials.key,
+            isKeychain: credentials.keychainLogin,
+          });
         break;
     }
   }

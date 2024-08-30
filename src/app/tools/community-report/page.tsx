@@ -61,7 +61,7 @@ export default function CommunityReportPage() {
       fetchSds(`/feeds_api/getActiveCommunityReport/${data.community}`),
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(String(error));
+        toast.error(error.message || JSON.stringify(error));
         return;
       }
       if (data) setAllRows(data as any);

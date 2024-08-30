@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import React, { createContext, useContext, useState } from "react";
 import AuthModal from "./AuthModal";
 import { getCredentials, getSessionToken, sessionKey } from "@/libs/utils/user";
+import AuthModal2 from "./AuthModal2";
 
 // Define the type for your context value
 interface AuthContextType {
@@ -53,6 +54,9 @@ export const AuthProvider = (props: Props) => {
 
   function isAuthorized() {
     credentials = getCredentials();
+
+    if (credentials?.keychainLogin) return true;
+
     if (isLogin() && credentials?.type === "ACTIVE" && !sessionKey) {
       return false;
     }
@@ -67,6 +71,10 @@ export const AuthProvider = (props: Props) => {
     }
 
     credentials = getCredentials();
+
+    if (credentials?.keychainLogin) {
+      return true;
+    }
 
     // if active key and not session login as for password
     if (credentials?.type === "ACTIVE" && !sessionKey) {
@@ -97,7 +105,7 @@ export const AuthProvider = (props: Props) => {
       {children}
 
       {openAuth && (
-        <AuthModal
+        <AuthModal2
           isNew={isNew}
           open={openAuth}
           onClose={() => {

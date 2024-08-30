@@ -43,6 +43,23 @@ export function updateClient() {
 
 updateClient();
 
+export async function validateKeychain() {
+  return new Promise((resolve, reject) => {
+    if (window.steem_keychain) {
+      try {
+        window.steem_keychain.requestHandshake(function (e) {
+          resolve(window.steem_keychain);
+        });
+      } catch {
+        reject(new Error("SteemKeychain connection failed"));
+      }
+    } else {
+      toast.error("SteemKeychain connection failed");
+      reject(new Error("SteemKeychain connection failed"));
+    }
+  });
+}
+
 // get public wif from private wif
 export const wifToPublic = (privWif: string) => {
   const privateKey = PrivateKey.fromString(privWif);
@@ -55,7 +72,7 @@ export const wifIsValid = (privWif: string, pubWif: string) => {
 };
 
 //// sign image to upload
-export const signImage = async (photo, password) => {
+export const signImage = async (photo: any, key: string) => {
   try {
     // Convert the photo to a Uint8Array
     const photoBuf = new Uint8Array(Buffer.from(photo, "base64"));
@@ -67,7 +84,7 @@ export const signImage = async (photo, password) => {
     const prefix = new Uint8Array(Buffer.from("ImageSigningChallenge"));
 
     const data = Buffer.concat([prefix, photoBuf]);
-    const privateKey = PrivateKey.fromString(password);
+    const privateKey = PrivateKey.fromString(key);
     const hash = cryptoUtils.sha256(data);
     const signature = privateKey.sign(hash);
     if (!privateKey.createPublic().verify(hash, signature)) {
@@ -174,31 +191,50 @@ export const publishContent = async (
   postingContent: PostingContent,
   options = null,
   key: string,
-  voteWeight = null
+  isKeychain?: boolean
 ) => {
+  const opArray: any = [
+    [
+      "comment",
+      {
+        parent_author: postingContent.parent_author,
+        parent_permlink: postingContent.parent_permlink,
+        author: postingContent.author.name,
+        permlink: postingContent.permlink,
+        title: postingContent.title,
+        body: postingContent.body,
+        json_metadata: JSON.stringify(postingContent.json_metadata),
+      },
+    ],
+  ];
+
+  if (options) {
+    const e = ["comment_options", options];
+    opArray.push(e);
+  }
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestBroadcast(
+        postingContent.author.name,
+        opArray,
+        "Posting",
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
   const keyData = getKeyType(postingContent.author, key);
 
   if (keyData && PrivKey.atLeast(keyData.type, "POSTING")) {
-    const opArray: any = [
-      [
-        "comment",
-        {
-          parent_author: postingContent.parent_author,
-          parent_permlink: postingContent.parent_permlink,
-          author: keyData.account,
-          permlink: postingContent.permlink,
-          title: postingContent.title,
-          body: postingContent.body,
-          json_metadata: JSON.stringify(postingContent.json_metadata),
-        },
-      ],
-    ];
-
-    if (options) {
-      const e = ["comment_options", options];
-      opArray.push(e);
-    }
-
     // if (voteWeight) {
     //   const e = [
     //     'vote',
@@ -233,23 +269,44 @@ export const publishContent = async (
   );
 };
 
-export const deleteComment = (
+export const deleteComment = async (
   account: AccountExt,
   key: string,
-  data: { author: string; permlink: string }
+  data: { author: string; permlink: string },
+  isKeychain?: boolean
 ) => {
+  const opArray: any = [
+    [
+      "delete_comment",
+      {
+        author: data.author,
+        permlink: data.permlink,
+      },
+    ],
+  ];
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestBroadcast(
+        data.author,
+        opArray,
+        "Posting",
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
   const keyData = getKeyType(account, key);
   if (keyData && PrivKey.atLeast(keyData.type, "POSTING")) {
     const privateKey = PrivateKey.fromString(key);
-    const opArray: any = [
-      [
-        "delete_comment",
-        {
-          author: data.author,
-          permlink: data.permlink,
-        },
-      ],
-    ];
 
     return new Promise((resolve, reject) => {
       client.broadcast
@@ -278,29 +335,50 @@ export const mutePost = async (
     account: string;
     permlink: string;
     notes?: string;
-  }
+  },
+  isKeychain?: boolean
 ) => {
+  const action = mute ? "mutePost" : "unmutePost";
+  const json = [
+    action,
+    {
+      community: data.community,
+      account: data.account,
+      permlink: data.permlink,
+      notes: data.notes || "mute",
+    },
+  ];
+  const custom_json = {
+    id: "community",
+    json: JSON.stringify(json),
+    required_auths: [],
+    required_posting_auths: [account.name],
+  };
+  const opArray: any = [["custom_json", custom_json]];
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestBroadcast(
+        data.account,
+        opArray,
+        "Posting",
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
   const keyData = getKeyType(account, key);
 
   if (keyData && PrivKey.atLeast(keyData.type, "POSTING")) {
     const privateKey = PrivateKey.fromString(key);
-    const action = mute ? "mutePost" : "unmutePost";
-    const json = [
-      action,
-      {
-        community: data.community,
-        account: data.account,
-        permlink: data.permlink,
-        notes: data.notes || "mute",
-      },
-    ];
-    const custom_json = {
-      id: "community",
-      json: JSON.stringify(json),
-      required_auths: [],
-      required_posting_auths: [keyData.account],
-    };
-    const opArray: any = [["custom_json", custom_json]];
 
     return new Promise((resolve, reject) => {
       client.broadcast
@@ -325,23 +403,44 @@ export const voteComment = async (
   account: AccountExt,
   comment: Feed | Post,
   key: string,
-  weight: number
+  weight: number,
+  isKeychain?: boolean
 ) => {
+  if (weight > 100 || weight < -100) {
+    throw new Error("Invalid weight");
+  }
+
+  const voteData = {
+    voter: account.name,
+    author: comment.author,
+    permlink: comment.permlink,
+    weight: weight * 100,
+  };
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestVote(
+        account.name,
+        voteData.permlink,
+        voteData.author,
+        voteData.weight,
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
   const keyData = getKeyType(account, key);
 
   if (keyData && PrivKey.atLeast(keyData.type, "POSTING")) {
     const privateKey = PrivateKey.fromString(key);
-
-    if (weight > 100 || weight < -100) {
-      throw new Error("Invalid weight");
-    }
-
-    const voteData = {
-      voter: keyData.account,
-      author: comment.author,
-      permlink: comment.permlink,
-      weight: weight * 100,
-    };
 
     return new Promise((resolve, reject) => {
       client.broadcast
@@ -370,28 +469,48 @@ export const pinPost = async (
     community: string;
     account: string;
     permlink: string;
-  }
+  },
+  isKeychain?: boolean
 ) => {
+  const action = pin ? "pinPost" : "unpinPost";
+  const json = [
+    action,
+    {
+      community: data.community,
+      account: data.account,
+      permlink: data.permlink,
+    },
+  ];
+  const custom_json = {
+    id: "community",
+    json: JSON.stringify(json),
+    required_auths: [],
+    required_posting_auths: [account.name],
+  };
+  const opArray: any = [["custom_json", custom_json]];
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestBroadcast(
+        data.account,
+        opArray,
+        "Posting",
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
   const keyData = getKeyType(account, key);
 
   if (keyData && PrivKey.atLeast(keyData.type, "POSTING")) {
     const privateKey = PrivateKey.fromString(key);
-    const action = pin ? "pinPost" : "unpinPost";
-    const json = [
-      action,
-      {
-        community: data.community,
-        account: data.account,
-        permlink: data.permlink,
-      },
-    ];
-    const custom_json = {
-      id: "community",
-      json: JSON.stringify(json),
-      required_auths: [],
-      required_posting_auths: [keyData.account],
-    };
-    const opArray: any = [["custom_json", custom_json]];
 
     return new Promise((resolve, reject) => {
       client.broadcast
@@ -415,28 +534,47 @@ export const pinPost = async (
 export const setUserTitle = async (
   account: AccountExt,
   key: string,
-  data: { communityId: string; account: string; title: string }
+  data: { communityId: string; account: string; title: string },
+  isKeychain?: boolean
 ) => {
+  const action = "setUserTitle";
+  const json = [
+    action,
+    {
+      community: data.communityId,
+      account: data.account,
+      title: data.title,
+    },
+  ];
+  const custom_json = {
+    id: "community",
+    json: JSON.stringify(json),
+    required_auths: [],
+    required_posting_auths: [account.name],
+  };
+  const opArray: any = [["custom_json", custom_json]];
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestBroadcast(
+        data.account,
+        opArray,
+        "Posting",
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
   const keyData = getKeyType(account, key);
 
   if (keyData && PrivKey.atLeast(keyData.type, "POSTING")) {
     const privateKey = PrivateKey.fromString(key);
-    const action = "setUserTitle";
-    const json = [
-      action,
-      {
-        community: data.communityId,
-        account: data.account,
-        title: data.title,
-      },
-    ];
-    const custom_json = {
-      id: "community",
-      json: JSON.stringify(json),
-      required_auths: [],
-      required_posting_auths: [keyData.account],
-    };
-    const opArray: any = [["custom_json", custom_json]];
 
     return new Promise((resolve, reject) => {
       client.broadcast
@@ -464,28 +602,49 @@ export const setUserRole = async (
     communityId: string;
     account: string;
     role: "muted" | "guest" | "member" | "mod" | "admin" | "owner";
-  }
+  },
+  isKeychain?: boolean
 ) => {
+  const action = "setRole";
+  const json = [
+    action,
+    {
+      community: data.communityId,
+      account: data.account,
+      role: data.role,
+    },
+  ];
+  const custom_json = {
+    id: "community",
+    json: JSON.stringify(json),
+    required_auths: [],
+    required_posting_auths: [account.name],
+  };
+  const opArray: any = [["custom_json", custom_json]];
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestBroadcast(
+        data.account,
+        opArray,
+        "Posting",
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
   const keyData = getKeyType(account, key);
 
   if (keyData && PrivKey.atLeast(keyData.type, "POSTING")) {
     const privateKey = PrivateKey.fromString(key);
-    const action = "setRole";
-    const json = [
-      action,
-      {
-        community: data.communityId,
-        account: data.account,
-        role: data.role,
-      },
-    ];
-    const custom_json = {
-      id: "community",
-      json: JSON.stringify(json),
-      required_auths: [],
-      required_posting_auths: [keyData.account],
-    };
-    const opArray: any = [["custom_json", custom_json]];
 
     return new Promise((resolve, reject) => {
       client.broadcast
@@ -509,26 +668,47 @@ export const setUserRole = async (
 export const followUser = async (
   account: AccountExt,
   key: string,
-  data: { follower: string; following: string }
+  data: { follower: string; following: string },
+  isKeychain?: boolean
 ) => {
+  const json = {
+    id: "follow",
+    json: JSON.stringify([
+      "follow",
+      {
+        follower: `${data.follower}`,
+        following: `${data.following}`,
+        what: ["blog"],
+      },
+    ]),
+    required_auths: [],
+    required_posting_auths: [`${data.follower}`],
+  };
+  const opArray: any = [["custom_json", json]];
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestBroadcast(
+        account.name,
+        opArray,
+        "Posting",
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
   const keyData = getKeyType(account, key);
 
   if (keyData && PrivKey.atLeast(keyData.type, "POSTING")) {
     const privateKey = PrivateKey.fromString(key);
-    const json = {
-      id: "follow",
-      json: JSON.stringify([
-        "follow",
-        {
-          follower: `${data.follower}`,
-          following: `${data.following}`,
-          what: ["blog"],
-        },
-      ]),
-      required_auths: [],
-      required_posting_auths: [`${data.follower}`],
-    };
-    const opArray: any = [["custom_json", json]];
 
     return new Promise((resolve, reject) => {
       client.broadcast
@@ -552,27 +732,48 @@ export const followUser = async (
 export const unfollowUser = async (
   account: AccountExt,
   key: string,
-  data: { follower: string; following: string }
+  data: { follower: string; following: string },
+  isKeychain?: boolean
 ) => {
+  const json = {
+    id: "follow",
+    json: JSON.stringify([
+      "follow",
+      {
+        follower: `${data.follower}`,
+        following: `${data.following}`,
+        what: [],
+      },
+    ]),
+    required_auths: [],
+    required_posting_auths: [`${data.follower}`],
+  };
+  const opArray: any = [["custom_json", json]];
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestBroadcast(
+        account.name,
+        opArray,
+        "Posting",
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
   const keyData = getKeyType(account, key);
 
   if (keyData && PrivKey.atLeast(keyData.type, "POSTING")) {
     const privateKey = PrivateKey.fromString(key);
 
-    const json = {
-      id: "follow",
-      json: JSON.stringify([
-        "follow",
-        {
-          follower: `${data.follower}`,
-          following: `${data.following}`,
-          what: [],
-        },
-      ]),
-      required_auths: [],
-      required_posting_auths: [`${data.follower}`],
-    };
-    const opArray: any = [["custom_json", json]];
     return new Promise((resolve, reject) => {
       client.broadcast
         .sendOperations(opArray, privateKey)
@@ -595,23 +796,44 @@ export const unfollowUser = async (
 export const subscribeCommunity = async (
   account: AccountExt,
   key: string,
-  data: { community: string; subscribe: boolean }
+  data: { community: string; subscribe: boolean },
+  isKeychain?: boolean
 ) => {
+  const json = [
+    data.subscribe ? "subscribe" : "unsubscribe",
+    { community: data.community },
+  ];
+  const custom_json = {
+    id: "community",
+    json: JSON.stringify(json),
+    required_auths: [],
+    required_posting_auths: [account.name],
+  };
+  const opArray: any = [["custom_json", custom_json]];
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestBroadcast(
+        account.name,
+        opArray,
+        "Posting",
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
   const keyData = getKeyType(account, key);
 
   if (keyData && PrivKey.atLeast(keyData.type, "POSTING")) {
     const privateKey = PrivateKey.fromString(key);
-    const json = [
-      data.subscribe ? "subscribe" : "unsubscribe",
-      { community: data.community },
-    ];
-    const custom_json = {
-      id: "community",
-      json: JSON.stringify(json),
-      required_auths: [],
-      required_posting_auths: [keyData.account],
-    };
-    const opArray: any = [["custom_json", custom_json]];
 
     return new Promise((resolve, reject) => {
       client.broadcast
@@ -632,42 +854,142 @@ export const subscribeCommunity = async (
   );
 };
 
-export const voteForWitness = async (
+export const reblogPost = async (
   account: AccountExt,
   key: string,
-  options: { witness: string; approved: boolean }
+  data: { author: string; permlink: string },
+  isKeychain?: boolean
 ) => {
+  const follower = account.name;
+
+  const json = {
+    id: "follow",
+    json: JSON.stringify([
+      "reblog",
+      {
+        account: follower,
+        author: data.author,
+        permlink: data.permlink,
+      },
+    ]),
+    required_auths: [],
+    required_posting_auths: [follower],
+  };
+
+  const opArray: any = [["custom_json", json]];
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestBroadcast(
+        follower,
+        opArray,
+        "Posting",
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
   const keyData = getKeyType(account, key);
 
-  if (keyData && PrivKey.atLeast(keyData.type, "ACTIVE")) {
+  if (keyData && PrivKey.atLeast(keyData.type, "POSTING")) {
     const privateKey = PrivateKey.fromString(key);
 
-    const args: any = [
-      [
-        "account_witness_vote",
-        {
-          account: keyData.account,
-          witness: options.witness,
-          approve: options.approved,
-        },
-      ],
-    ];
     return new Promise((resolve, reject) => {
       client.broadcast
-        .sendOperations(args, privateKey)
+        .sendOperations(opArray, privateKey)
         .then((result) => {
           resolve(result);
         })
         .catch((err) => {
           reject(err);
-          console.log("PowerUp error", err);
         });
     });
   }
 
   return Promise.reject(
     new Error(
-      "Check private key permission! Required private active key or above."
+      "Check private key permission! Required private posting key or above."
+    )
+  );
+};
+
+export const updateProfile = async (
+  account: AccountExt,
+  key: string,
+  params: {
+    name: string;
+    about: string;
+    profile_image: string;
+    website: string;
+    location: string;
+    cover_image: string;
+    version?: number;
+  },
+  isKeychain?: boolean
+) => {
+  params.version = 2;
+
+  const opArray: any = [
+    [
+      "account_update2",
+      {
+        account: account.name,
+        json_metadata: "",
+        posting_json_metadata: JSON.stringify({ profile: params }),
+        extensions: [],
+      },
+    ],
+  ];
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestBroadcast(
+        account.name,
+        opArray,
+        "Posting",
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
+  const keyData = getKeyType(account, key);
+  if (keyData && PrivKey.atLeast(keyData.type, "POSTING")) {
+    const privateKey = PrivateKey.fromString(key);
+
+    return new Promise((resolve, reject) => {
+      client.broadcast
+        .sendOperations(opArray, privateKey)
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((error) => {
+          // if (error && get(error, 'jse_info.code') === 4030100) {
+          //   error.message = getDsteemDateErrorMessage(error);
+          // }
+          reject(error);
+        });
+    });
+  }
+
+  return Promise.reject(
+    new Error(
+      "Check private key permission! Required private posting key or above."
     )
   );
 };
@@ -677,23 +999,43 @@ export const claimRewardBalance = async (
   key: string,
   rewardSteem: number,
   rewardSbd: number,
-  rewardVests: number
+  rewardVests: number,
+  isKeychain?: boolean
 ) => {
+  const opArray: any = [
+    [
+      "claim_reward_balance",
+      {
+        account: account.name,
+        reward_steem: rewardSteem?.toFixed(3) + " STEEM",
+        reward_sbd: rewardSbd?.toFixed(3) + " SBD",
+        reward_vests: rewardVests?.toFixed(6) + " VESTS",
+      },
+    ],
+  ];
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestBroadcast(
+        account.name,
+        opArray,
+        "Posting",
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
   const keyData = getKeyType(account, key);
   if (keyData && PrivKey.atLeast(keyData.type, "POSTING")) {
     const privateKey = PrivateKey.fromString(key);
-
-    const opArray: any = [
-      [
-        "claim_reward_balance",
-        {
-          account: keyData.account,
-          reward_steem: rewardSteem?.toFixed(3) + " STEEM",
-          reward_sbd: rewardSbd?.toFixed(3) + " SBD",
-          reward_vests: rewardVests?.toFixed(6) + " VESTS",
-        },
-      ],
-    ];
 
     return new Promise((resolve, reject) => {
       client.broadcast
@@ -715,11 +1057,159 @@ export const claimRewardBalance = async (
   );
 };
 
+export const markasRead = async (
+  account: AccountExt,
+  key: string,
+  isKeychain?: boolean
+) => {
+  let date = new Date().toISOString().slice(0, 19);
+
+  const params = {
+    id: "notify",
+    required_auths: [],
+    required_posting_auths: [account.name],
+    json: JSON.stringify(["setLastRead", { date }]),
+  };
+  const params1 = {
+    id: "steempro_notify",
+    required_auths: [],
+    required_posting_auths: [account.name],
+    json: JSON.stringify(["setLastRead", { date }]),
+  };
+
+  const opArray: Operation[] = [
+    ["custom_json", params],
+    ["custom_json", params1],
+  ];
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestBroadcast(
+        account.name,
+        opArray,
+        "Posting",
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
+  const keyData = getKeyType(account, key);
+  if (keyData && PrivKey.atLeast(keyData.type, "POSTING")) {
+    const privateKey = PrivateKey.fromString(key);
+    return new Promise((resolve, reject) => {
+      client.broadcast
+        .sendOperations(opArray, privateKey)
+        .then(async (result) => {
+          resolve(result);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  }
+
+  return Promise.reject(
+    new Error(
+      "Check private key permission! Required private posting key or above."
+    )
+  );
+};
+
+// active operations
+
+export const voteForWitness = async (
+  account: AccountExt,
+  key: string,
+  options: { witness: string; approved: boolean },
+  isKeychain?: boolean
+) => {
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestWitnessVote(
+        account.name,
+        options.witness,
+        options.approved,
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
+  const keyData = getKeyType(account, key);
+
+  if (keyData && PrivKey.atLeast(keyData.type, "ACTIVE")) {
+    const privateKey = PrivateKey.fromString(key);
+
+    const operation: any = [
+      [
+        "account_witness_vote",
+        {
+          account: keyData.account,
+          witness: options.witness,
+          approve: options.approved,
+        },
+      ],
+    ];
+    return new Promise((resolve, reject) => {
+      client.broadcast
+        .sendOperations(operation, privateKey)
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((err) => {
+          reject(err);
+          console.log("PowerUp error", err);
+        });
+    });
+  }
+
+  return Promise.reject(
+    new Error(
+      "Check private key permission! Required private active key or above."
+    )
+  );
+};
+
 export const transferToVesting = async (
   account: AccountExt,
   key: string,
-  options: { to: string; amount: number }
+  options: { to: string; amount: number },
+  isKeychain?: boolean
 ) => {
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestPowerUp(
+        account.name,
+        options.to,
+        options.amount.toFixed(3),
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
   const keyData = getKeyType(account, key);
 
   if (keyData && PrivKey.atLeast(keyData.type, "ACTIVE")) {
@@ -760,14 +1250,34 @@ export const transferToVesting = async (
 export const delegateVestingShares = async (
   account: AccountExt,
   key: string,
-  options: { delegatee: string; amount: number }
+  options: { delegatee: string; amount: number },
+  isKeychain?: boolean
 ) => {
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestDelegation(
+        account.name,
+        options.delegatee,
+        options.amount.toFixed(3).toString(),
+        "SP",
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
   const keyData = getKeyType(account, key);
 
   if (keyData && PrivKey.atLeast(keyData.type, "ACTIVE")) {
     const privateKey = PrivateKey.fromString(key);
-
-    const transferAmount = options.amount.toFixed(6).toString() + " " + "VESTS";
+    const transferAmount = options.amount.toFixed(3).toString() + " " + "STEEM";
 
     return new Promise((resolve, reject) => {
       client.broadcast
@@ -796,127 +1306,175 @@ export const delegateVestingShares = async (
   );
 };
 
-export const reblogPost = async (
+export async function transferAsset(
   account: AccountExt,
-  key: string,
-  data: { author: string; permlink: string }
-) => {
-  const keyData = getKeyType(account, key);
+  privateKey: string,
+  options: Transfer,
+  isKeychain?: boolean
+) {
+  let { from, amount, to, memo, unit } = options;
 
-  if (keyData && PrivKey.atLeast(keyData.type, "POSTING")) {
-    const privateKey = PrivateKey.fromString(key);
-    const follower = keyData.account;
+  const transferAmount = amount.toFixed(3).toString() + " " + unit;
 
-    const json = {
-      id: "follow",
-      json: JSON.stringify([
-        "reblog",
-        {
-          account: follower,
-          author: data.author,
-          permlink: data.permlink,
-        },
-      ]),
-      required_auths: [],
-      required_posting_auths: [follower],
-    };
+  const transferOp: any = [
+    "transfer",
+    {
+      from,
+      to,
+      amount: transferAmount,
+      memo,
+    },
+  ];
 
-    const opArray: any = [["custom_json", json]];
+  if (isKeychain) {
+    await validateKeychain();
 
     return new Promise((resolve, reject) => {
+      window.steem_keychain.requestTransfer(
+        from,
+        to,
+        amount.toFixed(3).toString(),
+        memo,
+        unit,
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        },
+        true
+      );
+    });
+  }
+
+  const keyData = getKeyType(account, privateKey);
+  if (keyData && PrivKey.atLeast(keyData.type, "ACTIVE")) {
+    const key = PrivateKey.fromString(privateKey);
+    return new Promise((resolve, reject) => {
       client.broadcast
-        .sendOperations(opArray, privateKey)
+        .sendOperations([transferOp], key)
         .then((result) => {
           resolve(result);
         })
         .catch((err) => {
           reject(err);
+          console.log("Transfer error", err);
         });
     });
   }
-
   return Promise.reject(
     new Error(
-      "Check private key permission! Required private posting key or above."
+      "Check private key permission! Required posting active key or above."
     )
   );
-};
+}
 
-export const updateProfile = async (
-  account: AccountExt,
-  key: string,
-  params: {
-    name: string;
-    about: string;
-    profile_image: string;
-    website: string;
-    location: string;
-    cover_image: string;
-    version?: number;
-  }
-) => {
-  const keyData = getKeyType(account, key);
-  if (keyData && PrivKey.atLeast(keyData.type, "POSTING")) {
-    const privateKey = PrivateKey.fromString(key);
-    params.version = 2;
-
-    const opArray: any = [
-      [
-        "account_update2",
-        {
-          account: keyData.account,
-          json_metadata: "",
-          posting_json_metadata: JSON.stringify({ profile: params }),
-          extensions: [],
-        },
-      ],
-    ];
-
-    return new Promise((resolve, reject) => {
-      client.broadcast
-        .sendOperations(opArray, privateKey)
-        .then((result) => {
-          resolve(result);
-        })
-        .catch((error) => {
-          // if (error && get(error, 'jse_info.code') === 4030100) {
-          //   error.message = getDsteemDateErrorMessage(error);
-          // }
-          reject(error);
-        });
-    });
-  }
-
-  return Promise.reject(
-    new Error(
-      "Check private key permission! Required private posting key or above."
-    )
-  );
-};
-
-export async function transferAsset(
+export const transferToSavings = async (
   account: AccountExt,
   privateKey: string,
-  options: Transfer
-) {
-  const keyData = getKeyType(account, privateKey);
+  options: Transfer,
+  isKeychain?: boolean
+) => {
+  let { amount, to, memo, from, unit } = options;
 
-  if (keyData && PrivKey.atLeast(keyData.type, "ACTIVE")) {
-    const key = PrivateKey.fromString(privateKey);
-
-    let { from, amount, to, memo, unit } = options;
-
-    const transferAmount = amount.toFixed(3).toString() + " " + unit;
-
-    const transferOp: any = [
-      "transfer",
+  const transferAmount = amount.toFixed(3).toString() + " " + unit;
+  const transferOp: any = [
+    [
+      "transfer_to_savings",
       {
         from,
         to,
         amount: transferAmount,
         memo,
       },
-    ];
+    ],
+  ];
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestBroadcast(
+        from,
+        transferOp,
+        "Active",
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
+  const keyData = getKeyType(account, privateKey);
+
+  if (keyData && PrivKey.atLeast(keyData.type, "ACTIVE")) {
+    const key = PrivateKey.fromString(privateKey);
+    let { amount, to, memo, from, unit } = options;
+
+    if (typeof amount === "string") {
+      amount = parseFloat(amount);
+    }
+
+    return new Promise((resolve, reject) => {
+      client.broadcast
+        .sendOperations(transferOp, key)
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((err) => {
+          reject(err);
+          console.log("Transfer error", err);
+        });
+    });
+  }
+  return Promise.reject(
+    new Error(
+      "Check private key permission! Required posting active key or above."
+    )
+  );
+};
+
+export async function withdrawVesting(
+  account: AccountExt,
+  privateKey: string,
+  amount: number,
+  isKeychain?: boolean
+) {
+  const transferOp: Operation = [
+    "withdraw_vesting",
+    {
+      account: account.name,
+      vesting_shares: amount?.toFixed(3) + " STEEM",
+    },
+  ];
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestPowerDown(
+        account.name,
+        amount?.toFixed(3),
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
+  const keyData = getKeyType(account, privateKey);
+
+  if (keyData && PrivKey.atLeast(keyData.type, "ACTIVE")) {
+    const key = PrivateKey.fromString(privateKey);
 
     return new Promise((resolve, reject) => {
       client.broadcast
@@ -937,140 +1495,11 @@ export async function transferAsset(
   );
 }
 
-export const transferToSavings = (
-  account: AccountExt,
-  privateKey: string,
-  options: Transfer
-) => {
-  const keyData = getKeyType(account, privateKey);
-
-  if (keyData && PrivKey.atLeast(keyData.type, "ACTIVE")) {
-    const key = PrivateKey.fromString(privateKey);
-    let { amount, to, memo, from, unit } = options;
-
-    if (typeof amount === "string") {
-      amount = parseFloat(amount);
-    }
-
-    const transferAmount = amount.toFixed(3).toString() + " " + unit;
-
-    const args: any = [
-      [
-        "transfer_to_savings",
-        {
-          from,
-          to,
-          amount: transferAmount,
-          memo,
-        },
-      ],
-    ];
-
-    return new Promise((resolve, reject) => {
-      client.broadcast
-        .sendOperations(args, key)
-        .then((result) => {
-          resolve(result);
-        })
-        .catch((err) => {
-          reject(err);
-          console.log("Transfer error", err);
-        });
-    });
-  }
-  return Promise.reject(
-    new Error(
-      "Check private key permission! Required posting active key or above."
-    )
-  );
-};
-
-export const markasRead = async (account: AccountExt, key: string) => {
-  const keyData = getKeyType(account, key);
-  if (keyData && PrivKey.atLeast(keyData.type, "POSTING")) {
-    let date = new Date().toISOString().slice(0, 19);
-
-    const params = {
-      id: "notify",
-      required_auths: [],
-      required_posting_auths: [account.name],
-      json: JSON.stringify(["setLastRead", { date }]),
-    };
-    const params1 = {
-      id: "steempro_notify",
-      required_auths: [],
-      required_posting_auths: [account.name],
-      json: JSON.stringify(["setLastRead", { date }]),
-    };
-
-    const opArray: Operation[] = [
-      ["custom_json", params],
-      ["custom_json", params1],
-    ];
-
-    const privateKey = PrivateKey.fromString(key);
-    return new Promise((resolve, reject) => {
-      client.broadcast
-        .sendOperations(opArray, privateKey)
-        .then(async (result) => {
-          resolve(result);
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
-  }
-
-  return Promise.reject(
-    new Error(
-      "Check private key permission! Required private posting key or above."
-    )
-  );
-};
-
-export async function withdrawVesting(
-  account: AccountExt,
-  privateKey: string,
-  amount: number
-) {
-  const keyData = getKeyType(account, privateKey);
-
-  if (keyData && PrivKey.atLeast(keyData.type, "ACTIVE")) {
-    const key = PrivateKey.fromString(privateKey);
-
-    const op: Operation = [
-      "withdraw_vesting",
-      {
-        account: keyData.account,
-        vesting_shares: amount?.toFixed(6) + " VESTS",
-      },
-    ];
-
-    return new Promise((resolve, reject) => {
-      client.broadcast
-        .sendOperations([op], key)
-        .then((result) => {
-          resolve(result);
-        })
-        .catch((err) => {
-          reject(err);
-          console.log("Transfer error", err);
-        });
-    });
-  }
-  return Promise.reject(
-    new Error(
-      "Check private key permission! Required posting active key or above."
-    )
-  );
-}
-
 export const grantPostingPermission = async (
   account: AccountExt,
-  privateKey: string
+  privateKey: string,
+  isKeychain?: boolean
 ) => {
-  const keyData = getKeyType(account, privateKey);
-
   const checkAuth = account.posting_account_auths;
   // check for existing permission in the auth list
   for (var i = 0, len = checkAuth.length; i < len; i++) {
@@ -1079,6 +1508,28 @@ export const grantPostingPermission = async (
       return Promise.resolve();
     }
   }
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestAddAccountAuthority(
+        account.name,
+        AppStrings.official_account,
+        "Posting",
+        1,
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
+  const keyData = getKeyType(account, privateKey);
 
   const newPosting = Object.assign(
     {},
@@ -1126,6 +1577,8 @@ export const grantPostingPermission = async (
     )
   );
 };
+
+// others
 
 export function verifyPrivKey(account: AccountExt, key: string): boolean {
   if (!account || !key) {

@@ -31,7 +31,7 @@ import { RiLinkM } from "react-icons/ri";
 import Link from "next/link";
 import { replaceOldDomains } from "@/libs/utils/Links";
 import WitnessVoteButton from "@/components/WitnessVoteButton";
-import { capitalize, WitnessAccount } from "@/libs/constants/AppConstants";
+import { capitalize } from "@/libs/constants/AppConstants";
 import { validate_account_name } from "@/libs/utils/ChainValidation";
 
 const INITIAL_VISIBLE_COLUMNS = ["rank", "name", "received_votes", "action"];

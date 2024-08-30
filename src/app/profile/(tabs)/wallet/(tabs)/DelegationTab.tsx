@@ -32,7 +32,7 @@ import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import TransferModal from "@/components/TransferModal";
 import LoadingCard from "@/components/LoadingCard";
-import { useLogin } from "@/components/AuthProvider";
+import { useLogin } from "@/components/auth/AuthProvider";
 import { vestToSteem } from "@/libs/steem/sds";
 import moment from "moment";
 import { capitalize } from "@/libs/constants/AppConstants";

@@ -3,15 +3,9 @@
 import React from "react";
 import { AboutItem } from "../../components/AboutCard";
 import { Card } from "@nextui-org/card";
-import Image from "next/image";
-import Link from "next/link";
-import { Divider } from "@nextui-org/divider";
-import { MObileAppLink } from "@/libs/constants/AppConstants";
-import { useSession } from "next-auth/react";
 import "./style.scss";
 
 export default function AboutPage() {
-  const { data } = useSession();
 
   return (
     <div className="flex flex-col gap-10 justify-between h-full pb-10">

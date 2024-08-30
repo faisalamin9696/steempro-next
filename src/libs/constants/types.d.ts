@@ -1,5 +1,8 @@
 type RoleTypes = "muted" | "guest" | "member" | "mod" | "admin" | "owner";
 
+interface Window {
+  steem_keychain: any;
+}
 type Feed = {
   link_id: number;
   link_status: number;
@@ -358,7 +361,7 @@ type Setting = {
 type FeedStyle = "blogs" | "list" | "grid";
 
 type PostingContent = {
-  author: AccountExtType;
+  author: AccountExt;
   title: string;
   body: string;
   parent_author: string;
@@ -518,6 +521,7 @@ type User = {
   key: string;
   type: Keys;
   memo: string;
+  keychainLogin?: boolean;
 };
 
 type ValidCategories = "created" | "trending" | "payout" | "pinned" | "about";
