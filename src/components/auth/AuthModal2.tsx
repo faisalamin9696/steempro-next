@@ -342,8 +342,6 @@ export default function AuthModal2(props: Props) {
           "Posting",
           function (response) {
             if (response?.success && response?.result) {
-              const token = response.result;
-
               getAuthenticate(
                 account,
                 formData.username,

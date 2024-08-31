@@ -72,7 +72,12 @@ export const wifIsValid = (privWif: string, pubWif: string) => {
 };
 
 //// sign image to upload
-export const signImage = async (photo: any, key: string) => {
+export const signImage = async (
+  account: string,
+  photo: any,
+  key: string,
+  isKeychain?: boolean
+) => {
   try {
     // Convert the photo to a Uint8Array
     const photoBuf = new Uint8Array(Buffer.from(photo, "base64"));
@@ -82,17 +87,37 @@ export const signImage = async (photo: any, key: string) => {
 
     // Create a prefix as a Uint8Array
     const prefix = new Uint8Array(Buffer.from("ImageSigningChallenge"));
-
     const data = Buffer.concat([prefix, photoBuf]);
-    const privateKey = PrivateKey.fromString(key);
     const hash = cryptoUtils.sha256(data);
-    const signature = privateKey.sign(hash);
-    if (!privateKey.createPublic().verify(hash, signature)) {
-      toast.error("Invalid Key");
-      console.error("signature is invalid");
-      return null;
+
+    if (isKeychain) {
+      await validateKeychain();
+      return new Promise((resolve, reject) => {
+        window.steem_keychain.requestSignBuffer(
+          account,
+          JSON.stringify(data),
+          "Posting",
+          function (response) {
+            if (response.success) {
+              const signature = Signature.fromString(response.result);
+              resolve(signature);
+            } else {
+              reject(response);
+            }
+          }
+        );
+      });
+    } else {
+      const privateKey = PrivateKey.fromString(key);
+      const signature = privateKey.sign(hash);
+
+      if (!privateKey.createPublic().verify(hash, signature)) {
+        toast.error("Invalid Key");
+        console.error("signature is invalid");
+        return null;
+      }
+      return signature;
     }
-    return signature;
   } catch (error) {
     // console.log('failed to sign images', error);
     return null;
@@ -113,18 +138,22 @@ export const uploadImage = (file: File, username: string, sign) => {
 };
 
 const _upload = (fd, username: string, signature) => {
-  const image = axios.create({
-    baseURL: `${IMAGE_API}/${username}/${signature}`,
-    onUploadProgress: (progressEvent) => {
-      // console.log(progressEvent.loaded)
-    },
-    headers: {
-      Authorization: IMAGE_API,
-      "Content-Type": "multipart/form-data",
-    },
-    timeout: 30000,
-  });
-  return image.post("", fd);
+  try {
+    const image = axios.create({
+      baseURL: `${IMAGE_API}/${username}/${signature}`,
+      onUploadProgress: (progressEvent) => {
+        // console.log(progressEvent.loaded)
+      },
+      headers: {
+        Authorization: IMAGE_API,
+        "Content-Type": "multipart/form-data",
+      },
+      timeout: 50000,
+    });
+    return image.post("", fd);
+  } catch (error: any) {
+    return new Error(error);
+  }
 };
 
 export function getKeyType(account: AccountExt, key: string) {

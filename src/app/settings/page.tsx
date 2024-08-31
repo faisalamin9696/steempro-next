@@ -217,7 +217,12 @@ export default function SettingsPage() {
         // return true
 
         const data = await toBase64(image);
-        let sign = await signImage(data, fresh_credentials.key);
+        let sign = await signImage(
+          fresh_credentials.username,
+          data,
+          fresh_credentials.key,
+          fresh_credentials?.keychainLogin
+        );
         const result = await uploadImage(
           image,
           fresh_credentials?.username,

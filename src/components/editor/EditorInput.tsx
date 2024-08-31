@@ -404,9 +404,14 @@ export default memo(function EditorInput(props: EditorProps) {
         // Testing
         // await awaitTimeout(5);
         // return true
-
         const data = await toBase64(image.file);
-        let sign = await signImage(data, fresh_credentials.key);
+        let sign = await signImage(
+          fresh_credentials.username,
+          data,
+          fresh_credentials.key,
+          fresh_credentials?.keychainLogin
+        );
+
         const result = await uploadImage(
           image.file,
           fresh_credentials?.username,
@@ -455,7 +460,7 @@ export default memo(function EditorInput(props: EditorProps) {
             // console.log('Invalid Image', error)
             return "Invalid Image";
           } else {
-            return "Failed: " + String(error);
+            return error?.message || JSON.stringify(error);
           }
         },
         finally() {
