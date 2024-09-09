@@ -424,13 +424,13 @@ export default memo(function EditorInput(props: EditorProps) {
         loading: "Uploading...",
         success: (res: any) => {
           // Testing
-          const url = `https://cdn.steemitimages.com/DQmdyoAZ8pJGUSsqPjuKqYU4LBXeP75h8awmh964PVaE7zc/IMG_0.9163441659792777.jpeg`
-          const Image_name = image.file.name;
-          const imageMd = `![${Image_name}](${url})`;
-          insertImage({ url: image.temporaryTag, isPlaceholder: false, imgMd: imageMd })
-          // Replace temporary image MD tag with the real one
-          uploadNextImage();
-          return `Uploaded`;
+          // const url = `https://cdn.steemitimages.com/DQmdyoAZ8pJGUSsqPjuKqYU4LBXeP75h8awmh964PVaE7zc/IMG_0.9163441659792777.jpeg`
+          // const Image_name = image.file.name;
+          // const imageMd = `![${Image_name}](${url})`;
+          // insertImage({ url: image.temporaryTag, isPlaceholder: false, imgMd: imageMd })
+          // // Replace temporary image MD tag with the real one
+          // uploadNextImage();
+          // return `Uploaded`;
 
           if (res.data && res.data.url) {
             const Image_name: string = image.file.name;
