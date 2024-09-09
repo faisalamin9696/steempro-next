@@ -9,8 +9,7 @@ import Image from "next/image";
 import SAvatar from "./SAvatar";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import Link from "next/link";
-import { extractImageLink } from "@/libs/utils/extractContent";
-import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
+import { getThumbnail } from "@/libs/utils/image";
 
 interface Props {
   authPerm: string;
@@ -32,7 +31,7 @@ export default function PromotionCard(props: Props) {
   // const URL = `/posts_api/getPost/${authPerm}`
   // const { data, isLoading, error, isValidating } = useSWR(URL, fetchSds<Post>)
 
-  const thumbnail = proxifyImageUrl(extractImageLink(data.json_metadata, data.body),'256x512');
+  const thumbnail = getThumbnail(data.json_images, "256x512");
 
   const targetLink = `/${data?.category}/@${data?.author}/${data?.permlink}`;
   return (

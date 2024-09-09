@@ -10,8 +10,7 @@ import clsx from "clsx";
 import Link from "next/link";
 import { hasNsfwTag } from "@/libs/utils/StateFunctions";
 import { getSettings } from "@/libs/utils/user";
-import { extractImageLink } from "@/libs/utils/extractContent";
-import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
+import { getThumbnail } from "@/libs/utils/image";
 
 export default function CommentBlogLayout(props: CommentProps) {
   const { comment, isReply } = props;
@@ -19,10 +18,7 @@ export default function CommentBlogLayout(props: CommentProps) {
     useAppSelector((state) => state.commentReducer.values)[
       `${comment.author}/${comment.permlink}`
     ] ?? comment;
-  const thumbnail = proxifyImageUrl(
-    extractImageLink(commentInfo.json_metadata, commentInfo.body),
-    "640x480"
-  );
+  const thumbnail = getThumbnail(commentInfo.json_images, "640x480");
   const targetUrl = `/${comment.category}/@${comment.author}/${comment.permlink}`;
   const settings =
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();

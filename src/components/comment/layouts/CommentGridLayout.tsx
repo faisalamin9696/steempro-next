@@ -3,9 +3,7 @@
 import React from "react";
 import BodyShort from "../../body/BodyShort";
 import Image from "next/image";
-import {
-  getResizedAvatar,
-} from "@/libs/utils/image";
+import { getResizedAvatar, getThumbnail } from "@/libs/utils/image";
 import TimeAgoWrapper from "../../wrappers/TimeAgoWrapper";
 import { Card, CardBody } from "@nextui-org/card";
 import { User } from "@nextui-org/user";
@@ -22,8 +20,6 @@ import { hasNsfwTag } from "@/libs/utils/StateFunctions";
 import NsfwOverlay from "@/components/NsfwOverlay";
 import { getSettings } from "@/libs/utils/user";
 import RoleTitleCard from "@/components/RoleTitleCard";
-import { extractImageLink } from "@/libs/utils/extractContent";
-import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
 
 export default function CommentGridLayout(props: CommentProps) {
   const { comment, isReply } = props;
@@ -34,10 +30,7 @@ export default function CommentGridLayout(props: CommentProps) {
   const settings =
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
-  const thumbnail = proxifyImageUrl(
-    extractImageLink(comment.json_metadata, comment.body),
-    "640x480"
-  );
+  const thumbnail = getThumbnail(comment.json_images);
   const isSelf = !!loginInfo.name && loginInfo.name === commentInfo.author;
   // const json_metadata = JSON.parse(comment?.json_metadata ?? '{}') as { tags?: string[], image?: string[], app?: string, format?: string }
   const targetUrl = `/${comment.category}/@${comment.author}/${comment.permlink}`;

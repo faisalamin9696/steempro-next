@@ -39,6 +39,7 @@ import {
   parseAbsoluteToLocal,
 } from "@internationalized/date";
 import { cryptoUtils, Signature } from "@hiveio/dhive";
+import { extractImageLink } from "@/libs/utils/extractContent";
 
 const StatusData = {
   0: { title: "Pending", color: "warning" },
@@ -466,7 +467,10 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
               thumbnail
               targetUrl={targetUrl}
               isNsfw={false}
-              src={proxifyImageUrl(images[0])}
+              src={proxifyImageUrl(
+                extractImageLink(scheduleInfo.body),
+                "256x512"
+              )}
             />
           )}
         </div>

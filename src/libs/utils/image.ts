@@ -69,6 +69,7 @@ export const getProxyImageURL = (
   url: string,
   type: "preview" | "small" | "large" = "preview"
 ) => {
+  url = url.replaceAll("amp;", "");
   if (
     url?.indexOf("https://ipfs.busy.org") === 0 ||
     url?.indexOf("https://gateway.ipfs.io") === 0
@@ -82,6 +83,15 @@ export const getProxyImageURL = (
   return `${IMG_PROXY}${url}`;
 };
 
+export const getThumbnail = (json_images: string, size?: string): string => {
+  try {
+    let image = JSON.parse(json_images ?? "{}")?.[0] ?? [];
+    if (image) return proxifyImageUrl(image, size ?? "640x480");
+    else return "";
+  } catch (error) {
+    return "";
+  }
+};
 export const isValidImage = (file: any) =>
   file.type.match("image/.*") && file.size <= MAXIMUM_UPLOAD_SIZE;
 

@@ -8,8 +8,7 @@ import { useAppSelector } from "@/libs/constants/AppFunctions";
 import Link from "next/link";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import { MdAccessTime } from "react-icons/md";
-import { extractImageLink } from "@/libs/utils/extractContent";
-import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
+import { getThumbnail } from "@/libs/utils/image";
 
 interface Props {
   comment: Feed;
@@ -25,7 +24,7 @@ export default memo(function CompactPost(props: Props) {
 
   // const URL = `/posts_api/getPost/${authPerm}`
   // const { data, isLoading, error, isValidating } = useSWR(URL, fetchSds<Post>)
-  const thumbnail = proxifyImageUrl(extractImageLink(commentInfo.json_metadata, commentInfo.body))
+  const thumbnail = getThumbnail(commentInfo.json_images, "256x512");
 
   return (
     <Card

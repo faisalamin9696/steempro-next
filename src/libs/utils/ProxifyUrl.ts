@@ -30,10 +30,11 @@ export const defaultWidth = () => Number.parseInt(CAPPED_SIZE.split("x")[0]);
  *                                          if true, preserves the first {int}x{int} in a proxy url. If not found, uses 0x0
  * @returns string
  */
-export function proxifyImageUrl(url, dimensions = "") {
+export function proxifyImageUrl(url: string, dimensions = "") {
   if (!url) return "";
-  const proxyList = url?.match(rProxyDomainsDimensions);
-  let respUrl = url;
+  const proxyList = url.match(rProxyDomainsDimensions);
+  let respUrl = url.replaceAll("amp;", "");
+
   if (proxyList) {
     const lastProxy = proxyList[proxyList.length - 1];
     respUrl = url.substring(url.lastIndexOf(lastProxy) + lastProxy.length);
@@ -42,7 +43,7 @@ export function proxifyImageUrl(url, dimensions = "") {
     let dims = dimensions + "/";
     if (typeof dimensions !== "string") {
       dims = proxyList
-        ? proxyList.shift().match(/([0-9]+x[0-9]+)\//g)[0]
+        ? proxyList?.shift()?.match(/([0-9]+x[0-9]+)\//g)?.[0] ?? ""
         : NATURAL_SIZE;
     }
 

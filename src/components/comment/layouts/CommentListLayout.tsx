@@ -11,8 +11,7 @@ import Link from "next/link";
 import { hasNsfwTag } from "@/libs/utils/StateFunctions";
 import { getSettings } from "@/libs/utils/user";
 import { twMerge } from "tailwind-merge";
-import { extractImageLink } from "@/libs/utils/extractContent";
-import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
+import { getThumbnail } from "@/libs/utils/image";
 
 export default function CommentListLayout(props: CommentProps) {
   const { comment, isReply, isSearch } = props;
@@ -22,8 +21,8 @@ export default function CommentListLayout(props: CommentProps) {
     ] ?? comment;
   const settings =
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
-    const thumbnail = proxifyImageUrl(extractImageLink(commentInfo.json_metadata, commentInfo.body),'256x512');
-    const targetUrl = `/${comment.category}/@${comment.author}/${comment.permlink}`;
+  const thumbnail = getThumbnail(commentInfo.json_images, "256x512");
+  const targetUrl = `/${comment.category}/@${comment.author}/${comment.permlink}`;
   const isNsfw = hasNsfwTag(comment) && settings?.nsfw !== "Always show";
 
   return (
