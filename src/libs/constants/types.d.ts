@@ -71,6 +71,7 @@ type Post = Feed & {
   depth: number;
   beneficiaries: string[];
   votes: string[];
+  parent_link_id: number;
 };
 
 type KeyTypes = {
@@ -146,11 +147,11 @@ type AccountExt = {
   witness_votes: string[];
   withdraw_routes: number;
   savings_withdraw_requests: number;
-  pending_claimed_accounts: string[];
-  sbd_seconds: number;
+  pending_claimed_accounts: number;
+  sbd_seconds: string;
   sbd_seconds_last_update: number;
   sbd_last_interest_payment: number;
-  savings_sbd_seconds: number;
+  savings_sbd_seconds: string;
   savings_sbd_seconds_last_update: number;
   savings_sbd_last_interest_payment: number;
   owner_account_auths: string[];

@@ -76,7 +76,10 @@ export default function AccountHeader(props: Props) {
   );
   const cover_picture = isCommunity
     ? "/steempro-cover.png"
-    : proxifyImageUrl(posting_json_metadata?.profile?.cover_image ?? "", true);
+    : proxifyImageUrl(
+        posting_json_metadata?.profile?.cover_image ?? "",
+        "2048x512"
+      );
 
   useEffect(() => {
     if (isCommunity) {

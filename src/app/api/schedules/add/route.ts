@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import db from "@/libs/mysql/db";
 import { getAuthorExt } from "@/libs/steem/sds";
 import { verifyMessage } from "@/libs/steem/condenser";
 import { Signature } from "@hiveio/dhive";
+import { executeQuery } from "@/libs/mysql/db";
 
 export async function POST(req: NextRequest) {
   try {
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       "(username,title,body,tags,parent_permlink,options,time)" +
       "VALUES(?,?,?,?,?,?,?)";
 
-    const result = await db.executeQuery(process.env.MYSQL_DB_DATABASE, query, [
+    const result = await executeQuery(process.env.MYSQL_DB_DATABASE, query, [
       body.username,
       body.title,
       body.body,

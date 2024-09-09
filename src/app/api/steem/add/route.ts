@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import db from "@/libs/mysql/db";
 import { supabase } from "@/libs/supabase";
+import { executeQuery } from "@/libs/mysql/db";
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     }
     const query = `INSERT IGNORE INTO ${process.env.MYSQL_VIEWS_TABLE} (authPerm, uid) VALUES (?, ?)`;
 
-    const result = await db.executeQuery(
+    const result = await executeQuery(
       process.env.MYSQL_DB_DATABASE_2,
       query,
       [body.authPerm, user.data.user.id]

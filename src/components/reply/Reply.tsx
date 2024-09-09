@@ -20,7 +20,7 @@ export default memo(function Reply(props: Props) {
         <div className='flex-col w-full relative'>
 
             {hidden ? <div className=' flex items-center gap justify-between mt-2'>
-                <p>The comment was hidden sue to low rating</p>
+                <p>The comment was hidden due to low rating</p>
 
                 <Button onClick={() => {
                     setHidden(false);

@@ -10,7 +10,8 @@ const KeychainButton = (props: ButtonProps) => {
         {!props?.isLoading && (
           <Image alt="keychain" src={keuchainImg} height={30} width={30} />
         )}
-        SteemKeychain
+        <p className="hidden sm:flex">SteemKeychain</p>
+        <p className="flex sm:hidden">Keychain</p>
       </div>
     </Button>
   );

@@ -185,34 +185,6 @@ export const makeJsonMetadataForUpdate = (oldJson, meta, tags) => {
   });
 };
 
-const extractUrls = (body: string) => {
-  const urlReg =
-    /(\b(https?|ftp):\/\/[A-Z0-9+&@#/%?=~_|!:,.;-]*[-A-Z0-9+&@#/%=~_|])/gim;
-  const mUrls = body && body.match(urlReg);
-  return mUrls || [];
-};
-
-export const extractImageUrls = ({
-  body = "",
-  urls = [],
-}: {
-  body?: string;
-  urls?: string[];
-}) => {
-  const imgReg = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|heic|webp))/gim;
-
-  const imgUrls: string[] = [];
-  const mUrls = urls || extractUrls(body);
-
-  mUrls.forEach((url) => {
-    const isImage = url.match(imgReg);
-    if (isImage) {
-      imgUrls.push(url);
-    }
-  });
-
-  return imgUrls;
-};
 
 // export const extractFilenameFromPath = ({
 //   path,

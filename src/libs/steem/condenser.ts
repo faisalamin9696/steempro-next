@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { CurrentSetting } from "../constants/AppConstants";
 global.Buffer = global.Buffer || require("buffer").Buffer;
 
-const IMAGE_API = AppStrings.image_hosting[0];
+const IMAGE_API = AppStrings.image_hostings[0];
 
 export let client = new Client(AppStrings.rpc_servers, {
   timeout: AppStrings.chain_timeout,
@@ -54,7 +54,6 @@ export async function validateKeychain() {
         reject(new Error("SteemKeychain connection failed"));
       }
     } else {
-      toast.error("SteemKeychain connection failed");
       reject(new Error("SteemKeychain connection failed"));
     }
   });

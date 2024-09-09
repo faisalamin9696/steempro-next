@@ -1,7 +1,6 @@
 import { Card } from "@nextui-org/card";
 import { CommentProps } from "../CommentCard";
 import CommentHeader from "../components/CommentHeader";
-import { getPostThumbnail } from "@/libs/utils/image";
 import CommentCover from "../components/CommentCover";
 import BodyShort from "@/components/body/BodyShort";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
@@ -11,6 +10,8 @@ import clsx from "clsx";
 import Link from "next/link";
 import { hasNsfwTag } from "@/libs/utils/StateFunctions";
 import { getSettings } from "@/libs/utils/user";
+import { extractImageLink } from "@/libs/utils/extractContent";
+import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
 
 export default function CommentBlogLayout(props: CommentProps) {
   const { comment, isReply } = props;
@@ -18,7 +19,10 @@ export default function CommentBlogLayout(props: CommentProps) {
     useAppSelector((state) => state.commentReducer.values)[
       `${comment.author}/${comment.permlink}`
     ] ?? comment;
-  const thumbnail = getPostThumbnail(commentInfo.json_images);
+  const thumbnail = proxifyImageUrl(
+    extractImageLink(commentInfo.json_metadata, commentInfo.body),
+    "640x480"
+  );
   const targetUrl = `/${comment.category}/@${comment.author}/${comment.permlink}`;
   const settings =
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();

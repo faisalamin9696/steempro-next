@@ -1,4 +1,4 @@
-"sue client";
+"use client";
 
 import {
   WitnessAccount,

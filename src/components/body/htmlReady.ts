@@ -195,7 +195,7 @@ function proxifyImages(doc) {
     const url = node.getAttribute("src");
 
     if (url && !linksRe.local.test(url)) {
-      const proxifiedUrl = proxifyImageUrl(url, true);
+      const proxifiedUrl = proxifyImageUrl(url, "640x480");
       node.setAttribute("src", proxifiedUrl);
     }
   });

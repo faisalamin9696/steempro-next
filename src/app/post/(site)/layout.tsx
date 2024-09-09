@@ -1,6 +1,8 @@
 import { getPost } from "@/libs/steem/sds";
-import { getPostThumbnail, getResizedAvatar } from "@/libs/utils/image";
+import { extractImageLink } from "@/libs/utils/extractContent";
+import { getResizedAvatar } from "@/libs/utils/image";
 import { postSummary } from "@/libs/utils/postSummary";
+import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
 import { ResolvingMetadata } from "next";
 import React from "react";
@@ -20,7 +22,7 @@ export async function generateMetadata(parent: ResolvingMetadata) {
   const isPost = result?.depth === 0;
 
   const thumbnail = isPost
-    ? getPostThumbnail(result?.json_images)
+    ? proxifyImageUrl(extractImageLink(result.json_metadata, result.body))
     : getResizedAvatar(result?.author, "medium");
 
   const pageTitle = isPost ? result?.title : `RE: ${result?.root_title}`;

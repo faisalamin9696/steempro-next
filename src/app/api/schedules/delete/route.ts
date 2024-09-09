@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import db from "@/libs/mysql/db";
 import { verifyMessage } from "@/libs/steem/condenser";
 import { Signature } from "@hiveio/dhive";
 import { getAuthorExt } from "@/libs/steem/sds";
+import { executeQuery } from "@/libs/mysql/db";
 
 // Define the POST handler
 export async function POST(req: NextRequest) {
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
       );
     }
     const query = `DELETE FROM ${process.env.MYSQL_SCHEDULES_TABLE} WHERE username = ? and id = ?`;
-    const result = await db.executeQuery(process.env.MYSQL_DB_DATABASE, query, [
+    const result = await executeQuery(process.env.MYSQL_DB_DATABASE, query, [
       body.username,
       body.id,
     ]);

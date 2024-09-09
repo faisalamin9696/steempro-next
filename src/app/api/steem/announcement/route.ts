@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import db from "@/libs/mysql/db";
 import { validateHost } from "@/libs/utils/helper";
+import { executeQuery } from "@/libs/mysql/db";
 
 export async function GET(req: NextRequest) {
   try {
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     }
 
     const query = `SELECT * FROM ${process.env.MYSQL_ANNOUNCEMENTS_TABLE} ORDER BY id`;
-    const result = await db.executeQuery(
+    const result = await executeQuery(
       process.env.MYSQL_DB_DATABASE_2,
       query
     );

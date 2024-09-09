@@ -5,7 +5,7 @@ export const AppStrings = {
   steempro_base_url: "https://steempro.com",
   steemit_base_url: "https://steemit.com",
   sds_base_url: "https://sds0.steemworld.org",
-  image_hosting: ["https://steemitimages.com"],
+  image_hostings: ["https://steemitimages.com"],
   rpc_servers: [
     "https://api.steemit.com",
     "https://api.steemyy.com",

@@ -17,7 +17,7 @@ export function ParsedBody({
   function handleOpenImage(url?: string) {
     if (url && window)
       window
-        .open(getProxyImageURL(proxifyImageUrl(url, false), "large"), "_blank")
+        .open(getProxyImageURL(proxifyImageUrl(url), "large"), "_blank")
         ?.focus();
   }
   const options = {

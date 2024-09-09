@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import db from "@/libs/mysql/db";
 import { auth } from "@/auth";
+import { executeQuery } from "@/libs/mysql/db";
 
 export async function GET() {
   try {
@@ -11,7 +11,7 @@ export async function GET() {
     }
 
     const query = `SELECT * FROM ${process.env.MYSQL_SCHEDULES_TABLE} WHERE username = ? ORDER BY time DESC`;
-    const result = await db.executeQuery(process.env.MYSQL_DB_DATABASE, query, [
+    const result = await executeQuery(process.env.MYSQL_DB_DATABASE, query, [
       session.user.name,
     ]);
 

@@ -2,8 +2,7 @@ import striptags from "striptags";
 import { Remarkable } from "remarkable";
 
 const remarkable = new Remarkable({ html: true });
-import textEllipsis from "@/libs/utils/ellibsis";
-import { FeedBodyLength } from "@/libs/constants/AppConstants";
+import { extractBodySummary } from "@/libs/utils/extractContent";
 
 function decodeEntities(body: string): string {
   return body?.replace(/&lt;/g, "<")?.replace(/&gt;/g, ">");
@@ -29,12 +28,7 @@ const BodyShort = (props: BodyShortProps): JSX.Element => {
   /* eslint-disable react/no-danger */
   return (
     <div className={props.className}>
-      <p
-        style={{ wordBreak: "break-word" }}
-        dangerouslySetInnerHTML={{
-          __html: textEllipsis(body, props?.length || FeedBodyLength),
-        }}
-      />
+      <p style={{ wordBreak: "break-word" }}>{extractBodySummary(body)}</p>
     </div>
   );
 };

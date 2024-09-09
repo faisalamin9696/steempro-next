@@ -58,6 +58,7 @@ import { IoClose } from "react-icons/io5";
 import { ZonedDateTime } from "@internationalized/date";
 import { CustomEvent } from "@piwikpro/react-piwik-pro";
 import { cryptoUtils, Signature } from "@hiveio/dhive";
+import { validateCommunity } from "@/libs/utils/helper";
 
 interface Props {
   params?: {
@@ -79,28 +80,25 @@ export default function SubmitPage(props: Props) {
   const [refCommunity, setRefCommunity] = useState(
     accountParams ? empty_community(accountParams, titleParams) : undefined
   );
-
   const draft = getEditorDraft();
 
-  const [formData, setFormData] = useState<{
-    title: string;
-    tags: string;
-    markdown: string;
-    reward: Payout;
-    beneficiaries: Beneficiary[];
-    community?: Community;
-  }>({
-    title: draft?.title || "",
-    tags: draft?.tags || "",
-    markdown: isEdit ? oldPost?.body : draft?.markdown || "",
-    reward: rewardTypes[1],
-    beneficiaries: isEdit ? [] : draft?.beneficiaries || [],
-    community: isEdit ? undefined : draft?.community,
-  });
+  const [title, setTitle] = useState(draft?.title || "");
+  const [tags, setTags] = useState(draft?.tags || "");
+  const [markdown, setMarkdown] = useState(
+    isEdit ? oldPost?.body : draft?.markdown || ""
+  );
+
+  const [reward, setReward] = React.useState(rewardTypes[1]);
+  const [beneficiaries, setBeneficiaries] = React.useState<Beneficiary[]>(
+    isEdit ? [] : draft?.beneficiaries || []
+  );
+  const [community, setCommunity] = useState<Community | undefined>(
+    isEdit ? undefined : draft?.community
+  );
 
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { data: session } = useSession();
-  const rpm = readingTime(formData.markdown);
+  const rpm = readingTime(markdown);
   const [isPosting, setPosting] = useState(false);
   const [isScheduling, setScheduling] = useState(false);
   const [isPickerOpen, setIsPickerOpen] = useState(false);
@@ -118,25 +116,21 @@ export default function SubmitPage(props: Props) {
   useEffect(() => {
     if (isEdit && oldPost) {
       if (oldPost.community)
-        setFormData({
-          ...formData,
-          community: empty_community(oldPost.category, oldPost.community),
-          title: oldPost.title,
-          markdown: oldPost.body,
-          tags:
-            JSON.parse(oldPost.json_metadata ?? "{}")?.tags?.join(" ") || "",
-        });
+        setCommunity(empty_community(oldPost.category, oldPost.community));
+      setTitle(oldPost.title);
+      setMarkdown(oldPost.body);
+      setTags(JSON.parse(oldPost.json_metadata ?? "{}")?.tags?.join(" ") || "");
     }
   }, [oldPost]);
 
   function saveDraft() {
     if (!isEdit)
       secureLocalStorage.setItem("post_draft", {
-        title: formData.title,
-        markdown: formData.markdown,
-        tags: formData.tags,
-        beneficiaries: formData.beneficiaries,
-        community: formData.community,
+        title: title,
+        markdown: markdown,
+        tags: tags,
+        beneficiaries: beneficiaries,
+        community: community,
       });
   }
 
@@ -146,23 +140,15 @@ export default function SubmitPage(props: Props) {
     }, 1000);
 
     return () => clearTimeout(timeout);
-  }, [
-    formData.title,
-    formData.markdown,
-    formData.tags,
-    formData.beneficiaries,
-    formData.community,
-  ]);
+  }, [title, markdown, tags, beneficiaries, community]);
 
   function clearForm() {
-    setFormData({
-      title: "",
-      tags: "",
-      markdown: "",
-      reward: rewardTypes[1],
-      beneficiaries: [],
-      community: undefined,
-    });
+    setTitle("");
+    setMarkdown("");
+    setTags("");
+    setBeneficiaries([]);
+    setReward(rewardTypes[1]);
+    setCommunity(undefined);
     setDateTime(undefined);
   }
 
@@ -186,7 +172,7 @@ export default function SubmitPage(props: Props) {
         return;
       }
       if (isEdit) {
-        let body = formData.markdown;
+        let body = markdown;
 
         if (!checkPromotionText(body) && !isEditComment)
           body = body + "\n\n" + AppStrings.promotion_text;
@@ -218,24 +204,22 @@ export default function SubmitPage(props: Props) {
       return;
     }
 
-    if (!formData.title) {
+    if (!title) {
       toast.info("Title can not be empty");
       // AppConstants.SHOW_TOAST('Invalid title', 'Title can not be empty', 'info');
       return;
     }
-    if (!formData.markdown) {
+    if (!markdown) {
       toast.info("Post can not be empty");
       // AppConstants.SHOW_TOAST('Invalid description', 'Description can not be empty', 'info');
       return;
     }
 
-    const _tags = formData.tags
+    const _tags = tags
       .split(" ")
-      .filter(
-        (tag) => tag && tag !== " " && tag !== formData.community?.account
-      );
+      .filter((tag) => tag && tag !== " " && tag !== community?.account);
 
-    if (_tags.length <= 0 && !formData.community) {
+    if (_tags.length <= 0 && !community) {
       toast.info("Add a tag or select community");
       // AppConstants.SHOW_TOAST('Invalid tags', 'Add a tag or select community', 'info');
       return;
@@ -246,7 +230,7 @@ export default function SubmitPage(props: Props) {
       return;
     }
 
-    const limit_check = validateCommentBody(formData.markdown, true);
+    const limit_check = validateCommentBody(markdown, true);
     if (limit_check !== true) {
       toast.info(limit_check);
       // AppConstants.SHOW_TOAST('Failed', limit_check, 'info');
@@ -269,7 +253,7 @@ export default function SubmitPage(props: Props) {
 
     await awaitTimeout(1);
     try {
-      let permlink = generatePermlink(formData.title);
+      let permlink = generatePermlink(title);
       let simplePost;
       if (!isEdit) {
         if (!!loginInfo.name)
@@ -289,32 +273,32 @@ export default function SubmitPage(props: Props) {
 
         // if exist create new permlink
         if (simplePost && simplePost?.permlink === permlink) {
-          permlink = generatePermlink(formData.title, true);
+          permlink = generatePermlink(title, true);
         }
       }
 
       let options = makeOptions({
         author: loginInfo.name,
         permlink,
-        operationType: formData.reward?.payout,
-        beneficiaries: formData.beneficiaries,
+        operationType: reward?.payout,
+        beneficiaries: beneficiaries,
       });
 
       // if community is selected
 
       let parent_permlink = _tags[0] || "steempro";
-      if (formData.community && formData.community.account !== loginInfo.name) {
-        parent_permlink = formData.community.account;
+      if (community && community.account !== loginInfo.name) {
+        parent_permlink = community.account;
       }
 
-      const cbody = formData.markdown.replace(
+      const cbody = markdown.replace(
         /[\x00-\x09\x0B-\x0C\x0E-\x1F\x7F-\x9F]/g,
         ""
       );
 
       let postData: PostingContent = {
         author: loginInfo,
-        title: formData.title,
+        title: title,
         body: cbody,
         parent_author: "",
         parent_permlink: parent_permlink,
@@ -322,7 +306,7 @@ export default function SubmitPage(props: Props) {
         permlink: permlink,
       };
 
-      if (!checkPromotionText(formData.markdown))
+      if (!checkPromotionText(markdown))
         postData.body = postData.body + "\n\n" + AppStrings.promotion_text;
 
       const meta = extractMetadata(postData.body);
@@ -337,7 +321,7 @@ export default function SubmitPage(props: Props) {
           ? oldPost?.category
           : parent_permlink || "steempro";
 
-        if (!checkPromotionText(formData.markdown))
+        if (!checkPromotionText(markdown))
           newBody = newBody + "\n\n" + AppStrings.promotion_text;
 
         const patch = createPatch(oldPost?.body, newBody?.trim());
@@ -345,7 +329,7 @@ export default function SubmitPage(props: Props) {
           newBody = patch;
         }
 
-        let newTitle = formData.title?.trim();
+        let newTitle = title?.trim();
         // const patch2 = createPatch(oldComment?.title, newTitle.trim());
         // if (patch2 && patch2.length < Buffer.from(oldComment?.title, "utf-8").length) {
         //     newTitle = patch2;
@@ -386,12 +370,12 @@ export default function SubmitPage(props: Props) {
 
   async function handleCommentUpdate() {
     if (oldPost && isEditComment) {
-      if (!formData.markdown) {
+      if (!markdown) {
         toast.info("Comment can not be empty");
         return;
       }
 
-      const limit_check = validateCommentBody(formData.markdown, false);
+      const limit_check = validateCommentBody(markdown, false);
       if (limit_check !== true) {
         toast.info(limit_check);
         return;
@@ -410,14 +394,14 @@ export default function SubmitPage(props: Props) {
           const postData: PostingContent = {
             author: loginInfo,
             title: "",
-            body: formData.markdown,
+            body: markdown,
             parent_author: oldPost.author,
             parent_permlink: oldPost.permlink,
             json_metadata: makeJsonMetadataReply(),
             permlink: permlink,
           };
 
-          const cbody = formData.markdown.replace(
+          const cbody = markdown.replace(
             /[\x00-\x09\x0B-\x0C\x0E-\x1F\x7F-\x9F]/g,
             ""
           );
@@ -434,7 +418,7 @@ export default function SubmitPage(props: Props) {
             ) {
               newBody = patch;
             }
-            const meta = extractMetadata(formData.markdown);
+            const meta = extractMetadata(markdown);
             const new_json_metadata = makeJsonMetadata(meta, []);
             postData.permlink = oldComment.permlink;
             postData.body = newBody;
@@ -467,14 +451,13 @@ export default function SubmitPage(props: Props) {
   }
 
   async function schedulePost(
-    hash:Buffer,
-    signature:Signature,
+    hash: Buffer,
+    signature: Signature,
     body: string,
     tags: string[],
     parent_permlink: string,
     options: any
   ) {
-
     axios
       .post(
         "/api/schedules/add",
@@ -482,7 +465,7 @@ export default function SubmitPage(props: Props) {
           username: loginInfo.name,
           hash: hash,
           signature: signature.toString(),
-          title: formData.title,
+          title: title,
           body: body,
           tags: tags.join(","),
           parent_permlink: parent_permlink,
@@ -531,18 +514,18 @@ export default function SubmitPage(props: Props) {
       }
 
       let parent_permlink = _tags[0] || "steempro";
-      if (formData.community && formData.community.account !== loginInfo.name) {
-        parent_permlink = formData.community.account;
+      if (community && community.account !== loginInfo.name) {
+        parent_permlink = community.account;
       }
 
       let options = makeOptions({
         author: loginInfo.name,
         permlink: "test",
-        operationType: formData.reward?.payout,
-        beneficiaries: formData.beneficiaries,
+        operationType: reward?.payout,
+        beneficiaries: beneficiaries,
       });
 
-      const cbody = formData.markdown.replace(
+      const cbody = markdown.replace(
         /[\x00-\x09\x0B-\x0C\x0E-\x1F\x7F-\x9F]/g,
         ""
       );
@@ -621,12 +604,10 @@ export default function SubmitPage(props: Props) {
           <>
             <CommunitySelectButton
               isDisabled={isLoading}
-              community={formData.community}
+              community={community}
               onlyCommunity={isEdit}
               refCommunity={refCommunity}
-              onSelectCommunity={(value) =>
-                setFormData({ ...formData, community: value })
-              }
+              onSelectCommunity={setCommunity}
               handleOnClear={() => {
                 if (refCommunity) {
                   history.replaceState({}, "", "/submit");
@@ -637,10 +618,8 @@ export default function SubmitPage(props: Props) {
 
             <Input
               size="sm"
-              value={formData.title}
-              onValueChange={(value) =>
-                setFormData({ ...formData, title: value })
-              }
+              value={title}
+              onValueChange={setTitle}
               className="text-default-900 "
               classNames={{
                 input: "font-bold text-md",
@@ -653,11 +632,9 @@ export default function SubmitPage(props: Props) {
 
             <Input
               size="sm"
-              value={formData.tags}
+              value={tags}
               className="text-default-900 "
-              onValueChange={(value) =>
-                setFormData({ ...formData, tags: value })
-              }
+              onValueChange={setTags}
               classNames={{
                 inputWrapper: "h-8",
               }}
@@ -670,9 +647,9 @@ export default function SubmitPage(props: Props) {
         )}
 
         <EditorInput
-          value={formData.markdown}
+          value={markdown}
           isDisabled={isLoading}
-          onChange={(value) => setFormData({ ...formData, markdown: value })}
+          onChange={setMarkdown}
           onImageUpload={() => {}}
           onImageInvalid={() => {}}
         />
@@ -685,35 +662,26 @@ export default function SubmitPage(props: Props) {
               <BeneficiaryButton
                 isDisabled={isEdit || isLoading}
                 onSelectBeneficiary={(bene) => {
-                  setFormData({
-                    ...formData,
-                    beneficiaries: [
-                      ...formData.beneficiaries,
-                      { ...bene, weight: bene.weight },
-                    ],
-                  });
+                  setBeneficiaries([
+                    ...beneficiaries,
+                    { ...bene, weight: bene.weight },
+                  ]);
                 }}
                 onRemove={(bene) => {
-                  setFormData({
-                    ...formData,
-                    beneficiaries: formData.beneficiaries?.filter(
+                  setBeneficiaries(
+                    beneficiaries?.filter(
                       (item) => item.account !== bene.account
-                    ),
-                  });
+                    )
+                  );
                 }}
-                beneficiaries={formData.beneficiaries}
+                beneficiaries={beneficiaries}
               />
             )}
             {!isEdit && (
               <RewardSelectButton
                 isDisabled={isEdit || isLoading}
-                selectedValue={formData.reward}
-                onSelectReward={(reward) => {
-                  setFormData({
-                    ...formData,
-                    reward: reward,
-                  });
-                }}
+                selectedValue={reward}
+                onSelectReward={setReward}
               />
             )}
           </div>
@@ -786,14 +754,14 @@ export default function SubmitPage(props: Props) {
             {rpm?.words} words, {rpm?.text}
           </p>
         </div>
-        {formData.markdown ? (
+        {markdown ? (
           <Card shadow="none" className="p-2 lg:shadow-md space-y-2">
             <TagsListCard
-              tags={formData.tags?.trim().split(" ")}
+              tags={tags?.trim().split(" ")}
               isDisabled={isLoading}
             />
             <div className="flex flex-col items-center">
-              <MarkdownViewer text={formData.markdown} />
+              <MarkdownViewer text={markdown} />
             </div>
           </Card>
         ) : null}

@@ -250,7 +250,7 @@ export default function AppNavbar() {
                     onClick={handleItemClick}
                     startContent={<FaUserCircle className="text-xl" />}
                   >
-                    Pofile
+                    Profile
                   </Button>
 
                   <Button

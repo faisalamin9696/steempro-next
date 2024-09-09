@@ -114,7 +114,7 @@ export default memo(function ProfileInfoCard(props: Props) {
     { title: "Vote Value", desc: `$${voteData?.full_vote?.toFixed(3)}` },
     { title: "VP", desc: `${profileInfo?.upvote_mana_percent}%` },
     { title: "Self Voting", desc: `${profileInfo?.selfvote_rate}%` },
-    { title: "CSI", desc: `${profileInfo?.voting_csi}%` },
+    { title: "CSI", desc: `${profileInfo?.voting_csi}` },
     { title: "RC", desc: `${profileInfo?.rc_mana_percent}%` },
     { title: "Club", desc: getClubString(clubData) },
   ];

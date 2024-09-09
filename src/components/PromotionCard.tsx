@@ -3,13 +3,14 @@
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import React from "react";
 import useSWR from "swr";
-import { getPostThumbnail } from "@/libs/utils/image";
 import { Card } from "@nextui-org/card";
 import ViewCountCard from "./ViewCountCard";
 import Image from "next/image";
 import SAvatar from "./SAvatar";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import Link from "next/link";
+import { extractImageLink } from "@/libs/utils/extractContent";
+import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
 
 interface Props {
   authPerm: string;
@@ -31,7 +32,7 @@ export default function PromotionCard(props: Props) {
   // const URL = `/posts_api/getPost/${authPerm}`
   // const { data, isLoading, error, isValidating } = useSWR(URL, fetchSds<Post>)
 
-  const thumbnail = getPostThumbnail(data?.json_images);
+  const thumbnail = proxifyImageUrl(extractImageLink(data.json_metadata, data.body),'256x512');
 
   const targetLink = `/${data?.category}/@${data?.author}/${data?.permlink}`;
   return (

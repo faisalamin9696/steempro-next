@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import db from "@/libs/mysql/db";
 import { verifyMessage } from "@/libs/steem/condenser";
 import { getAuthorExt } from "@/libs/steem/sds";
 import { Signature } from "@hiveio/dhive";
+import { executeQuery } from "@/libs/mysql/db";
 
 export async function POST(req: Request) {
   try {
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     `;
 
     // Execute the query
-    const result = await db.executeQuery(process.env.MYSQL_DB_DATABASE, query, [
+    const result = await executeQuery(process.env.MYSQL_DB_DATABASE, query, [
       body.time,
       body.username,
       body.id,

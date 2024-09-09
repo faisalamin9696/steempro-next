@@ -210,6 +210,7 @@ export default function EditRoleModal(props: Props) {
       hideCloseButton
       isDismissable={!isPending}
       onOpenChange={props.onOpenChange ?? onOpenChange}
+      placement="top-center"
     >
       <ModalContent>
         {(onClose) => (

@@ -3,12 +3,13 @@
 import CommentCover from "@/components/comment/components/CommentCover";
 import { Card } from "@nextui-org/card";
 import React, { memo } from "react";
-import { getPostThumbnail } from "@/libs/utils/image";
 import BodyShort from "@/components/body/BodyShort";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import Link from "next/link";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import { MdAccessTime } from "react-icons/md";
+import { extractImageLink } from "@/libs/utils/extractContent";
+import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
 
 interface Props {
   comment: Feed;
@@ -24,7 +25,7 @@ export default memo(function CompactPost(props: Props) {
 
   // const URL = `/posts_api/getPost/${authPerm}`
   // const { data, isLoading, error, isValidating } = useSWR(URL, fetchSds<Post>)
-  const thumbnail = getPostThumbnail(commentInfo?.json_images);
+  const thumbnail = proxifyImageUrl(extractImageLink(commentInfo.json_metadata, commentInfo.body))
 
   return (
     <Card

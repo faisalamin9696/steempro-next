@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import db from "@/libs/mysql/db";
 import { validateHost } from "@/libs/utils/helper";
+import { executeQuery } from "@/libs/mysql/db";
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     }
 
     const query = `SELECT COUNT(*) AS views FROM ${process.env.MYSQL_VIEWS_TABLE} WHERE authPerm = ?`;
-    const [result] = await db.executeQuery(
+    const [result] = await executeQuery(
       process.env.MYSQL_DB_DATABASE_2,
       query,
       [body.authPerm]

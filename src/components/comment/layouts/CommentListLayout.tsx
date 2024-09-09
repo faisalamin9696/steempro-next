@@ -5,13 +5,14 @@ import CommentFooter from "../components/CommentFooter";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
 import BodyShort from "@/components/body/BodyShort";
 import CommentCover from "../components/CommentCover";
-import { getPostThumbnail } from "@/libs/utils/image";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import clsx from "clsx";
 import Link from "next/link";
 import { hasNsfwTag } from "@/libs/utils/StateFunctions";
 import { getSettings } from "@/libs/utils/user";
 import { twMerge } from "tailwind-merge";
+import { extractImageLink } from "@/libs/utils/extractContent";
+import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
 
 export default function CommentListLayout(props: CommentProps) {
   const { comment, isReply, isSearch } = props;
@@ -21,8 +22,8 @@ export default function CommentListLayout(props: CommentProps) {
     ] ?? comment;
   const settings =
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
-  const thumbnail = getPostThumbnail(commentInfo.json_images);
-  const targetUrl = `/${comment.category}/@${comment.author}/${comment.permlink}`;
+    const thumbnail = proxifyImageUrl(extractImageLink(commentInfo.json_metadata, commentInfo.body),'256x512');
+    const targetUrl = `/${comment.category}/@${comment.author}/${comment.permlink}`;
   const isNsfw = hasNsfwTag(comment) && settings?.nsfw !== "Always show";
 
   return (

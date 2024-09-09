@@ -9,17 +9,18 @@
  * @type {RegExp}
  */
 const rProxyDomain = /^http(s)?:\/\/steemit(dev|stage)?images.com\//g;
-const rProxyDomainsDimensions = /http(s)?:\/\/steemit(dev|stage)?images.com\/([0-9]+x[0-9]+)\//g;
-const NATURAL_SIZE = '0x0/';
-const CAPPED_SIZE = '640x0/';
-const DOUBLE_CAPPED_SIZE = '1280x0/';
-const IMAGE_PROXY_URL = 'https://steemitimages.com/'
+const rProxyDomainsDimensions =
+  /http(s)?:\/\/steemit(dev|stage)?images.com\/([0-9]+x[0-9]+)\//g;
+const NATURAL_SIZE = "0x0/";
+const CAPPED_SIZE = "640x0/";
+const DOUBLE_CAPPED_SIZE = "1280x0/";
+const IMAGE_PROXY_URL = "https://steemitimages.com/";
 export const imageProxy = () => IMAGE_PROXY_URL;
-export const defaultSrcSet = url =>
-    `${url} 1x, ${url.replace(CAPPED_SIZE, DOUBLE_CAPPED_SIZE)} 2x`;
-export const isDefaultImageSize = url =>
-    url?.startsWith(`${imageProxy()}${CAPPED_SIZE}`);
-export const defaultWidth = () => Number.parseInt(CAPPED_SIZE.split('x')[0]);
+export const defaultSrcSet = (url) =>
+  `${url} 1x, ${url.replace(CAPPED_SIZE, DOUBLE_CAPPED_SIZE)} 2x`;
+export const isDefaultImageSize = (url) =>
+  url?.startsWith(`${imageProxy()}${CAPPED_SIZE}`);
+export const defaultWidth = () => Number.parseInt(CAPPED_SIZE.split("x")[0]);
 
 /**
  * Strips all proxy domains from the beginning of the url. Adds the global proxy if dimension is specified
@@ -29,33 +30,34 @@ export const defaultWidth = () => Number.parseInt(CAPPED_SIZE.split('x')[0]);
  *                                          if true, preserves the first {int}x{int} in a proxy url. If not found, uses 0x0
  * @returns string
  */
-export function proxifyImageUrl(url, dimensions = false) {
-    const proxyList = url.match(rProxyDomainsDimensions);
-    let respUrl = url;
-    if (proxyList) {
-        const lastProxy = proxyList[proxyList.length - 1];
-        respUrl = url.substring(url.lastIndexOf(lastProxy) + lastProxy.length);
+export function proxifyImageUrl(url, dimensions = "") {
+  if (!url) return "";
+  const proxyList = url?.match(rProxyDomainsDimensions);
+  let respUrl = url;
+  if (proxyList) {
+    const lastProxy = proxyList[proxyList.length - 1];
+    respUrl = url.substring(url.lastIndexOf(lastProxy) + lastProxy.length);
+  }
+  if (dimensions) {
+    let dims = dimensions + "/";
+    if (typeof dimensions !== "string") {
+      dims = proxyList
+        ? proxyList.shift().match(/([0-9]+x[0-9]+)\//g)[0]
+        : NATURAL_SIZE;
     }
-    if (dimensions) {
-        let dims = dimensions + '/';
-        if (typeof dimensions !== 'string') {
-            dims = proxyList
-                ? proxyList.shift().match(/([0-9]+x[0-9]+)\//g)[0]
-                : NATURAL_SIZE;
-        }
 
-        // NOTE: This forces the dimensions to be `CAPPED_SIZE` to save on
-        // bandwidth costs. Do not modify gifs.
-        if (!respUrl.match(/\.gif$/) && dims === NATURAL_SIZE) {
-            dims = CAPPED_SIZE;
-        }
-
-        if (
-            (NATURAL_SIZE !== dims && CAPPED_SIZE !== dims) ||
-            !rProxyDomain.test(respUrl)
-        ) {
-            return IMAGE_PROXY_URL + dims + respUrl;
-        }
+    // NOTE: This forces the dimensions to be `CAPPED_SIZE` to save on
+    // bandwidth costs. Do not modify gifs.
+    if (!respUrl?.match(/\.gif$/) && dims === NATURAL_SIZE) {
+      dims = CAPPED_SIZE;
     }
-    return respUrl;
+
+    if (
+      (NATURAL_SIZE !== dims && CAPPED_SIZE !== dims) ||
+      !rProxyDomain.test(respUrl)
+    ) {
+      return IMAGE_PROXY_URL + dims + respUrl;
+    }
+  }
+  return respUrl;
 }

@@ -64,6 +64,7 @@ export const empty_comment = (author: string, permlink: string): Post => {
     is_author_muted: 0,
     status: "idle",
     is_new: 1,
+    parent_link_id: 0,
   };
 };
 
@@ -133,11 +134,11 @@ export const empty_profile = (name: string): AccountExt => {
     witness_votes: [],
     withdraw_routes: 0,
     savings_withdraw_requests: 0,
-    pending_claimed_accounts: [],
-    sbd_seconds: 0,
+    pending_claimed_accounts: 0,
+    sbd_seconds: "0",
     sbd_seconds_last_update: 0,
     sbd_last_interest_payment: 0,
-    savings_sbd_seconds: 0,
+    savings_sbd_seconds: "0",
     savings_sbd_seconds_last_update: 0,
     savings_sbd_last_interest_payment: 0,
     owner_account_auths: [],
@@ -210,6 +211,6 @@ export const empty_settings = (): Setting => {
     feedStyle: "list",
     rpc: "https://api.steemit.com",
     theme: "system",
-    readMore: true
+    readMore: true,
   };
 };
