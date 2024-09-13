@@ -224,18 +224,29 @@ const TransferModal = (props: Props): JSX.Element => {
       };
       isKeychain?: boolean;
     }) =>
-      delegateVestingShares(loginInfo, data.key, data.options, data.isKeychain),
+      delegateVestingShares(
+        loginInfo,
+        data.key,
+        data.options,
+        data.isKeychain,
+        globalData
+      ),
     onSettled(data, error, variables, context) {
       if (error) {
         toast.error(error.message || JSON.stringify(error));
         return;
       }
-      onDelegationSuccess && onDelegationSuccess(variables.options.amount);
+      const outVests = steemToVest(
+        variables.options.amount,
+        globalData.steem_per_share
+      );
+
+      onDelegationSuccess && onDelegationSuccess(outVests);
 
       dispatch(
         saveLoginHandler({
           ...loginInfo,
-          vests_out: loginInfo.vests_out + variables.options.amount,
+          vests_out: loginInfo.vests_out + outVests,
         })
       );
       props.onOpenChange(isOpen);

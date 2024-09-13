@@ -57,7 +57,7 @@ import ScheduleModal from "@/components/ScheduleModal";
 import { IoClose } from "react-icons/io5";
 import { ZonedDateTime } from "@internationalized/date";
 import { CustomEvent } from "@piwikpro/react-piwik-pro";
-import { cryptoUtils, Signature } from "@hiveio/dhive";
+import { cryptoUtils, PrivateKey, Signature } from "@hiveio/dhive";
 import { validateCommunity } from "@/libs/utils/helper";
 
 interface Props {
@@ -525,10 +525,14 @@ export default function SubmitPage(props: Props) {
         beneficiaries: beneficiaries,
       });
 
-      const cbody = markdown.replace(
+      let cbody = markdown.replace(
         /[\x00-\x09\x0B-\x0C\x0E-\x1F\x7F-\x9F]/g,
         ""
       );
+
+      if (!checkPromotionText(markdown))
+        cbody = cbody + "\n\n" + AppStrings.promotion_text;
+
       setScheduling(true);
 
       grantPostingPermission(

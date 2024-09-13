@@ -303,6 +303,15 @@ export default function AuthModal2(props: Props) {
         const keyType = getKeyType(account, formData.key);
 
         if (keyType) {
+          if (["MASTER", "OWNER"].includes(keyType.type)) {
+            toast.info(
+              "Higher-level keys are prohibited to protect your account."
+            );
+            setLoading(false);
+
+            return;
+          }
+
           await getAuthenticate(
             account,
             formData.username,
@@ -392,7 +401,8 @@ export default function AuthModal2(props: Props) {
                   ) : (
                     <div className=" flex flex-row gap-2 justify-between">
                       <p>Log in</p>
-                      <KeychainButton size="md"
+                      <KeychainButton
+                        size="md"
                         isDisabled={loading}
                         onClick={() => {
                           handleKeychainLogin();

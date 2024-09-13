@@ -11,6 +11,7 @@ import {
 import { PrivKey } from "../utils/user";
 import { toast } from "sonner";
 import { CurrentSetting } from "../constants/AppConstants";
+import { steemToVest } from "./sds";
 global.Buffer = global.Buffer || require("buffer").Buffer;
 
 const IMAGE_API = AppStrings.image_hostings[0];
@@ -1279,7 +1280,8 @@ export const delegateVestingShares = async (
   account: AccountExt,
   key: string,
   options: { delegatee: string; amount: number },
-  isKeychain?: boolean
+  isKeychain?: boolean,
+  globalData?: SteemProps
 ) => {
   if (isKeychain) {
     await validateKeychain();
@@ -1305,7 +1307,8 @@ export const delegateVestingShares = async (
 
   if (keyData && PrivKey.atLeast(keyData.type, "ACTIVE")) {
     const privateKey = PrivateKey.fromString(key);
-    const transferAmount = options.amount.toFixed(3).toString() + " " + "STEEM";
+    const vests = steemToVest(options.amount, globalData?.steem_per_share ?? 0);
+    const transferAmountVests = vests.toFixed(6).toString() + " " + "VESTS";
 
     return new Promise((resolve, reject) => {
       client.broadcast
@@ -1313,7 +1316,7 @@ export const delegateVestingShares = async (
           {
             delegator: keyData.account,
             delegatee: options.delegatee,
-            vesting_shares: transferAmount,
+            vesting_shares: transferAmountVests,
           },
           privateKey
         )
@@ -1321,8 +1324,9 @@ export const delegateVestingShares = async (
           resolve(result);
         })
         .catch((err) => {
-          reject(err);
           console.log("PowerUp error", err);
+
+          reject(err);
         });
     });
   }
@@ -1471,7 +1475,8 @@ export async function withdrawVesting(
   account: AccountExt,
   privateKey: string,
   amount: number,
-  isKeychain?: boolean
+  isKeychain?: boolean,
+  globalData?: SteemProps
 ) {
   const transferOp: Operation = [
     "withdraw_vesting",
@@ -1504,6 +1509,10 @@ export async function withdrawVesting(
   if (keyData && PrivKey.atLeast(keyData.type, "ACTIVE")) {
     const key = PrivateKey.fromString(privateKey);
 
+    const vests = steemToVest(amount, globalData?.steem_per_share ?? 0);
+    const withdrawAmountVests = vests.toFixed(6).toString() + " " + "VESTS";
+    transferOp[1].vesting_shares = withdrawAmountVests;
+    
     return new Promise((resolve, reject) => {
       client.broadcast
         .sendOperations([transferOp], key)

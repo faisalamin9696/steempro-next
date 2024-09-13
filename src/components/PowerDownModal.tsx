@@ -22,7 +22,7 @@ import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import moment from "moment";
 import { isNumeric } from "@/libs/utils/helper";
 import { Slider } from "@nextui-org/slider";
-import { vestToSteem } from "@/libs/steem/sds";
+import { steemToVest, vestToSteem } from "@/libs/steem/sds";
 import KeychainButton from "./KeychainButton";
 
 interface Props {
@@ -49,19 +49,30 @@ const PowerDownModal = (props: Props): JSX.Element => {
 
   const withdrawMutation = useMutation({
     mutationFn: (data: { key: string; amount: number; isKeychain?: boolean }) =>
-      withdrawVesting(loginInfo, data.key, data.amount, data.isKeychain),
+      withdrawVesting(
+        loginInfo,
+        data.key,
+        data.amount,
+        data.isKeychain,
+        globalData
+      ),
     onSettled(data, error, variables, context) {
       if (error) {
         toast.error(error.message || JSON.stringify(error));
         return;
       }
 
+      const withdrawVests = steemToVest(
+        variables.amount,
+        globalData.steem_per_share
+      );
+
       dispatch(
         saveLoginHandler({
           ...loginInfo,
-          powerdown: Number(variables.amount),
+          powerdown: withdrawVests,
           next_powerdown: cancel ? 0 : moment().add(7, "days").unix(),
-          powerdown_rate: cancel ? 0 : Number(variables.amount) / 4,
+          powerdown_rate: cancel ? 0 : Number(withdrawVests) / 4,
         })
       );
 
@@ -69,10 +80,7 @@ const PowerDownModal = (props: Props): JSX.Element => {
       if (cancel) toast.success(`Power down canceled`);
       else
         toast.success(
-          `${vestToSteem(
-            variables.amount,
-            globalData.steem_per_share
-          )?.toLocaleString()} Steem power down started`
+          `${variables.amount?.toLocaleString()} Steem power down started`
         );
     },
   });

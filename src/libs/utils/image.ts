@@ -15,8 +15,6 @@ export const catchImageFromMetadata = (
   meta = JSON.parse(JSON.stringify(meta));
   if (meta && meta.image) {
     const images = meta.image;
-    // console.log('images : ',images);
-
     if (thumbnail) {
       return proxifyImageUrl(images[0]);
     }

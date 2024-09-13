@@ -11,7 +11,6 @@ const remarkableStripper = (md) => {
       if (tokens[i].type === "inline") {
         str += md.renderer.render(tokens[i].children, options, env);
       } else {
-        // console.log('content', tokens[i])
         const content = tokens[i].content;
         str += (content || "") + " ";
       }
