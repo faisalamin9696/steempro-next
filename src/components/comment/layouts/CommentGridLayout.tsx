@@ -74,7 +74,7 @@ export default function CommentGridLayout(props: CommentProps) {
                 {isNsfw && <NsfwOverlay />}
               </div>
             ) : (
-              <div className={`h-44   bg-foreground/30  w-full`} />
+              <div className={`h-44 bg-foreground/20 dark:bg-foreground/5  w-full`} />
             )}
 
             <STag
@@ -124,9 +124,19 @@ export default function CommentGridLayout(props: CommentProps) {
           name={
             <div className="flex items-center space-x-2">
               {isSelf ? (
-                <p>{commentInfo.author}</p>
+                <Link
+                  className=" hover:text-blue-500"
+                  href={`/@${commentInfo.author}`}
+                >
+                  {comment.author}
+                </Link>
               ) : (
-                <div>{commentInfo.author}</div>
+                <Link
+                  className=" hover:text-blue-500"
+                  href={`/@${commentInfo.author}`}
+                >
+                  {comment.author}
+                </Link>
               )}
               <Reputation
                 {...props}

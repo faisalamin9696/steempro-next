@@ -20,7 +20,7 @@ import {
   DropdownItem,
 } from "@nextui-org/dropdown";
 
-import { FaChevronDown, FaSearch } from "react-icons/fa";
+import { FaChevronDown } from "react-icons/fa";
 import useSWR from "swr";
 import { fetchSds } from "@/libs/constants/AppFunctions";
 import SAvatar from "@/components/SAvatar";
@@ -196,7 +196,6 @@ export default function VotersCard({ comment }: { comment: Feed | Post }) {
             isClearable
             className="w-full sm:max-w-[50%]"
             placeholder="Search..."
-            startContent={<FaSearch />}
             value={filterValue}
             onClear={() => onClear()}
             onValueChange={onSearchChange}

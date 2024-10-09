@@ -28,7 +28,6 @@ import { Spinner } from "@nextui-org/spinner";
 import { Button } from "@nextui-org/button";
 import { Chip } from "@nextui-org/chip";
 import React, { useEffect, useState } from "react";
-import { FaSearch } from "react-icons/fa";
 import useSWR from "swr";
 import SAvatar from "./SAvatar";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
@@ -356,7 +355,6 @@ export default function NotificationsModal(props: Props) {
             isClearable
             className="w-full"
             placeholder="Search..."
-            startContent={<FaSearch />}
             value={filterValue}
             onClear={() => onClear()}
             onValueChange={onSearchChange}

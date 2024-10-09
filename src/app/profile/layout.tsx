@@ -2,13 +2,32 @@ import { getAuthorExt } from "@/libs/steem/sds";
 import { getResizedAvatar } from "@/libs/utils/image";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
 import { auth } from "@/auth";
+import AccountHeader from "@/components/AccountHeader";
+import MainWrapper from "@/components/wrappers/MainWrapper";
+import ProfileEnd from "./(site)/@end/page";
+import ProfilePage from "./(site)/page";
 
 export default async function Layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return children;
+  const { username } = usePathnameServer();
+  const session = await auth();
+  const data = await getAuthorExt(username, session?.user?.name || "null");
+
+  return (
+    <main className="main">
+      <AccountHeader account={data} />
+
+      <MainWrapper
+        endClassName="max-h-screen"
+        endContent={<ProfileEnd data={data} />}
+      >
+        <ProfilePage data={data} />
+      </MainWrapper>
+    </main>
+  );
 }
 
 export async function generateMetadata() {

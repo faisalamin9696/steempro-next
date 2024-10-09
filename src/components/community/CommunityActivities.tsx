@@ -6,9 +6,7 @@ import { Button } from "@nextui-org/button";
 import { Card } from "@nextui-org/card";
 import { Input } from "@nextui-org/input";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
-
 import React, { useEffect, useState } from "react";
-import { FaSearch } from "react-icons/fa";
 import useSWR from "swr";
 import { twMerge } from "tailwind-merge";
 import CommunityActivityItem from "./components/CommunityActivityItem";
@@ -71,7 +69,6 @@ export function CommunityActivities({ community }: { community: Community }) {
           <Input
             variant="flat"
             size="sm"
-            startContent={<FaSearch className=" text-default-600" />}
             isClearable
             value={query}
             inputMode="search"

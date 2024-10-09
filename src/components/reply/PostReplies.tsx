@@ -55,16 +55,6 @@ export default memo(function PostReplies(props: Props) {
 
   const [rootReplies, setRootReplies] = useState<Post[]>([]);
 
-  useEffect(() => {
-    if (!!postReplies?.length) {
-      setRootReplies(
-        postReplies
-          ?.slice(0, limit)
-          ?.filter((item: Post) => item.depth === commentInfo.depth + 1)
-      );
-    }
-  }, [postReplies]);
-
   const dispatch = useAppDispatch();
 
   const queryKey = [`post-${commentInfo.author}-${commentInfo.permlink}`];
@@ -94,6 +84,11 @@ export default memo(function PostReplies(props: Props) {
       getPostReplies(commentInfo.author, commentInfo.permlink, loginInfo.name),
     onSuccess(data) {
       setIsLoading(false);
+      setRootReplies(
+        data
+          ?.slice(0, limit)
+          ?.filter((item: Post) => item.depth === commentInfo.depth + 1)
+      );
       dispatch(
         addRepliesHandler({
           comment: commentInfo,
@@ -229,13 +224,14 @@ export default memo(function PostReplies(props: Props) {
       isKeychain?: boolean;
     }) => publishContent(postData, options, key, isKeychain),
     onSettled(data, error, variables, context) {
+      setPosting(false);
+
       if (error) {
         toast.error(error.message || JSON.stringify(error));
         return;
       }
       const { postData } = variables;
       handleOnPublished(postData);
-      setPosting(false);
     },
   });
 
@@ -344,7 +340,9 @@ export default memo(function PostReplies(props: Props) {
       </div>
 
       <div className=" mt-4 flex flex-col py-4 gap-4">
-        {repliesMutation.isSuccess ? null : (
+        {repliesMutation.isSuccess ? null : !commentInfo.children ? (
+          <EmptyList />
+        ) : (
           <div className="flex flex-row gap-2 items-center justify-center">
             <Button
               color="default"
@@ -425,40 +423,43 @@ export default memo(function PostReplies(props: Props) {
             </div>
           )}
         </div>
-        <InfiniteScroll
-          dataLength={limit}
-          next={handleLoadMore}
-          hasMore={(repliesMutation?.data?.length ?? 0) > limit}
-          loader={
-            <div className="flex justify-center items-center">
-              <Button
-                color="default"
-                variant="flat"
-                className="self-center"
-                onClick={handleLoadMore}
-                isLoading
-                isDisabled
-              >
-                Loading...
-              </Button>
+
+        {repliesMutation.isSuccess && (
+          <InfiniteScroll
+            dataLength={limit}
+            next={handleLoadMore}
+            hasMore={(repliesMutation?.data?.length ?? 0) > limit}
+            loader={
+              <div className="flex justify-center items-center">
+                <Button
+                  color="default"
+                  variant="flat"
+                  className="self-center"
+                  onClick={handleLoadMore}
+                  isLoading
+                  isDisabled
+                >
+                  Loading...
+                </Button>
+              </div>
+            }
+            endMessage={repliesMutation.isSuccess && <EmptyList />}
+          >
+            <div className="flex flex-col ">
+              {rootReplies?.map((reply: Post, index) => {
+                return !reply.link_id ? null : (
+                  <div>
+                    <Reply
+                      key={index ?? reply.link_id}
+                      comment={reply}
+                      rootComment={commentInfo}
+                    />
+                  </div>
+                );
+              })}
             </div>
-          }
-          endMessage={repliesMutation.isSuccess && <EmptyList />}
-        >
-          <div className="flex flex-col ">
-            {rootReplies?.map((reply: Post, index) => {
-              return !reply.link_id ? null : (
-                <div>
-                  <Reply
-                    key={index ?? reply.link_id}
-                    comment={reply}
-                    rootComment={commentInfo}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </InfiniteScroll>
+          </InfiniteScroll>
+        )}
       </div>
     </div>
   );

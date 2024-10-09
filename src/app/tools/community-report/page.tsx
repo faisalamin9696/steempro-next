@@ -1,6 +1,5 @@
 "use client";
 
-import MainWrapper from "@/components/wrappers/MainWrapper";
 import { fetchSds } from "@/libs/constants/AppFunctions";
 import {
   Table,
@@ -26,7 +25,7 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { validateCommunity } from "@/libs/utils/helper";
 import SAvatar from "@/components/SAvatar";
-import { FaSearch, FaChevronDown } from "react-icons/fa";
+import { FaChevronDown } from "react-icons/fa";
 import LoadingCard from "@/components/LoadingCard";
 import { capitalize } from "@/libs/constants/AppConstants";
 
@@ -207,7 +206,6 @@ export default function CommunityReportPage() {
             isClearable
             className="w-full sm:max-w-[25%]"
             placeholder="Search..."
-            startContent={<FaSearch />}
             value={filterValue}
             onClear={() => onClear()}
             onValueChange={onSearchChange}

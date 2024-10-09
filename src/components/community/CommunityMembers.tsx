@@ -17,7 +17,6 @@ import { Card } from "@nextui-org/card";
 
 import clsx from "clsx";
 import React, { useEffect, useState } from "react";
-import { FaSearch } from "react-icons/fa";
 import useSWR from "swr";
 import { twMerge } from "tailwind-merge";
 import AddRoleModal from "../AddRoleModal";
@@ -115,7 +114,6 @@ export default function CommunityMembers(props: Props) {
             value={query}
             inputMode="search"
             onValueChange={setQuery}
-            startContent={<FaSearch className=" text-default-600" />}
             placeholder={"Search..."}
             autoCapitalize="off"
           />

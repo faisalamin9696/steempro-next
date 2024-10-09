@@ -19,7 +19,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@nextui-org/dropdown";
-import { FaChevronDown, FaSearch } from "react-icons/fa";
+import { FaChevronDown } from "react-icons/fa";
 import useSWR from "swr";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import LoadingCard from "@/components/LoadingCard";
@@ -182,7 +182,6 @@ export default function CommunitiesPage() {
               isClearable
               className=""
               placeholder="Search..."
-              startContent={<FaSearch />}
               value={filterValue}
               onClear={() => onClear()}
               onValueChange={onSearchChange}

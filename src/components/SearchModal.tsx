@@ -32,7 +32,6 @@ interface Props {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
 }
-const SPECIAL_TERMS = ["NOT", "AND", "OR"];
 
 export default function SearchModal(props: Props) {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
@@ -209,7 +208,7 @@ export default function SearchModal(props: Props) {
                       onValueChange={(value) => setSearchTags(value)}
                       onKeyUp={handleKeyPress}
                       className=" flex-[3]"
-                      placeholder="Tags"
+                      placeholder="Hashtag"
                     />
                   )}
                 </div>
@@ -225,7 +224,7 @@ export default function SearchModal(props: Props) {
                 >
                   <Tab key="posts" title="Posts" />
                   <Tab key="comments" title="Comments" />
-                  <Tab key="tags" title="Tags" />
+                  <Tab key="tags" title="Tag" />
                   <Tab key="people" title="People" />
                 </Tabs>
 

@@ -24,7 +24,6 @@ import Link from "next/link";
 import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/modal";
 import FollowersCard from "./FollowersCard";
 import { twMerge } from "tailwind-merge";
-import { useSession } from "next-auth/react";
 
 const getClubString = (clubData?: Club) => {
   if (!clubData) return "";
@@ -49,7 +48,6 @@ type Props = {
 } & ({ username: string } | { data: AccountExt } | { community: Community });
 
 export default memo(function ProfileInfoCard(props: Props) {
-  const session = useSession();
   const { username, profile, community, data: accountExt, hideAvatar } = props;
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const URL = `/accounts_api/getAccountExt/${username}/${
@@ -66,7 +64,6 @@ export default memo(function ProfileInfoCard(props: Props) {
     useAppSelector((state) => state.profileReducer.value)[
       username ?? data?.name ?? ""
     ] ?? data;
-
 
   const communityInfo =
     useAppSelector((state) => state.communityReducer.values)[
@@ -274,33 +271,6 @@ export default memo(function ProfileInfoCard(props: Props) {
           })}
         </div>
 
-        {/* {voteData &&
-                    <div className='text-default-600 flex flex-row  mt-4'>
-
-                        <div className='flex flex-col gap-1 text-sm flex-1'>
-                            <p className='text-default-500'>VP</p>
-                            <p>{data?.upvote_mana_percent}</p>
-                        </div>
-
-                        <div className='flex flex-col gap-1 text-sm  flex-1'>
-                            <p className='text-default-500'>Vote Value</p>
-                            <p>{voteData.full_vote.toFixed(2)}</p>
-                        </div>
-
-                    </div>}
-
-                <div className='text-default-600 flex flex-row mt-4'>
-                    {voteData && <div className='flex flex-col gap-1 text-sm flex-1'>
-                        <p className='text-default-500'>RC</p>
-                        <p>{data?.rc_mana_percent}</p>
-                    </div>}
-
-                    <div className='flex flex-col gap-1 text-sm flex-1'>
-                        <p className='text-default-500'>CLUB Status</p>
-                        <p>{'5050'}</p>
-                    </div>
-
-                </div> */}
       </div>
 
       {followerModal.isOpen && (

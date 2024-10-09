@@ -1,11 +1,12 @@
 "use client";
 
 import FeedList from "@/components/FeedList";
-import { getEndPoint } from "@/libs/constants/AppFunctions";
+import { getEndPoint, useAppSelector } from "@/libs/constants/AppFunctions";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 
 export default function CommunityCreatedPage() {
   const { community } = usePathnameClient();
+  const loginInfo = useAppSelector((state) => state.loginReducer.value);
 
   return (
     <div>
@@ -13,7 +14,7 @@ export default function CommunityCreatedPage() {
         <FeedList
           endPoint={getEndPoint(
             "CommunityPostsByCreated",
-            `${community}/${"null"}`
+            `${community}/${loginInfo.name || "null"}`
           )}
         />
       </div>

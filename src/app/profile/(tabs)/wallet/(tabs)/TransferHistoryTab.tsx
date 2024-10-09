@@ -19,7 +19,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@nextui-org/dropdown";
-import { FaChevronDown, FaSearch } from "react-icons/fa";
+import { FaChevronDown } from "react-icons/fa";
 import useSWR from "swr";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
@@ -186,7 +186,6 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
             isClearable
             className="w-full sm:max-w-[25%]"
             placeholder="Search..."
-            startContent={<FaSearch />}
             value={filterValue}
             onClear={() => onClear()}
             onValueChange={onSearchChange}

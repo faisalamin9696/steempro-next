@@ -23,7 +23,7 @@ import {
 
 import { Chip } from "@nextui-org/chip";
 
-import { FaChevronDown, FaPlus, FaSearch } from "react-icons/fa";
+import { FaChevronDown, FaPlus } from "react-icons/fa";
 import useSWR from "swr";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
@@ -320,7 +320,6 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
             isClearable
             className="w-full sm:max-w-[25%]"
             placeholder="Search..."
-            startContent={<FaSearch />}
             value={filterValue}
             onClear={() => onClear()}
             onValueChange={onSearchChange}

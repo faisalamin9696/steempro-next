@@ -24,7 +24,7 @@ import {
   DropdownItem,
 } from "@nextui-org/dropdown";
 import React, { useEffect, useState } from "react";
-import { FaChevronDown, FaSearch } from "react-icons/fa";
+import { FaChevronDown } from "react-icons/fa";
 import useSWR from "swr";
 import LoadingCard from "@/components/LoadingCard";
 import { RiLinkM } from "react-icons/ri";
@@ -221,7 +221,6 @@ export default function page() {
             isClearable
             className="w-full sm:max-w-[25%]"
             placeholder="Search..."
-            startContent={<FaSearch />}
             value={filterValue}
             onClear={() => onClear()}
             onValueChange={onSearchChange}

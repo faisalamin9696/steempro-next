@@ -15,7 +15,7 @@ export default function ProfileBlogsTab() {
         <FeedList
           endPoint={getEndPoint(
             "AccountBlog",
-            `${username}/${loginInfo.name || null}`
+            `${username}/${loginInfo.name || "null"}`
           )}
         />
       </div>

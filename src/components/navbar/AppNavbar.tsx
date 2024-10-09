@@ -142,11 +142,11 @@ export default function AppNavbar() {
               inputWrapper:
                 "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
             }}
-            placeholder="Type to search..."
+            placeholder="Search"
             size="sm"
             isReadOnly
             onClick={() => setSearchModal(true)}
-            startContent={<MdSearch size={18} />}
+            endContent={<MdSearch size={20} />}
             type="search"
           />
 

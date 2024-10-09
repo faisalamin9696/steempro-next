@@ -3,7 +3,7 @@ import { getCommunity } from "@/libs/steem/sds";
 import { getResizedAvatar } from "@/libs/utils/image";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
 import { ResolvingMetadata } from "next";
-import CommunityPage from "./page";
+import CommunityPage from "./(site)/page";
 import ProfileInfoCard from "@/components/ProfileInfoCard";
 import AccountHeader from "@/components/AccountHeader";
 import { auth } from "@/auth";

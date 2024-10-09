@@ -12,8 +12,6 @@ import {
 
 import { Pagination } from "@nextui-org/pagination";
 import { Input } from "@nextui-org/input";
-
-import { FaSearch } from "react-icons/fa";
 import useSWR from "swr";
 import { fetchSds } from "@/libs/constants/AppFunctions";
 import SAvatar from "@/components/SAvatar";
@@ -114,7 +112,6 @@ export default function FollowersCard({
             isClearable
             className="w-full sm:max-w-[50%]"
             placeholder="Search..."
-            startContent={<FaSearch />}
             value={filterValue}
             onClear={() => onClear()}
             onValueChange={onSearchChange}

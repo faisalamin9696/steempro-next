@@ -8,8 +8,14 @@ export function sdsWrapper(api: string): string {
   return AppStrings.sds_base_url + api;
 }
 
-export async function fetchSds<T>(api: string): Promise<T> {
-  const response = await fetch(sdsWrapper(api), { keepalive: true });
+export async function fetchSds<T>(
+  api: string,
+  options?: RequestInit
+): Promise<T> {
+  const response = await fetch(sdsWrapper(api), {
+    keepalive: true,
+    ...options,
+  });
 
   // If the status code is not in the range 200-299,
   // we still try to parse and throw it.
