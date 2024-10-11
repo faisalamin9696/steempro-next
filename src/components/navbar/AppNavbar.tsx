@@ -22,6 +22,7 @@ import AccountsModal from "../auth/AccountsModal";
 import AppDrawer from "./components/Drawer";
 import NotificationsModal from "../NotificationsModal";
 import {
+  FaEdgeLegacy,
   FaLock,
   FaRegBell,
   FaUnlock,
@@ -37,6 +38,7 @@ import { Input } from "@nextui-org/input";
 import "./style.scss";
 import { PiUserSwitchFill } from "react-icons/pi";
 import { keysColorMap } from "../auth/AccountItemCard";
+import { Divider } from "@nextui-org/react";
 
 export default function AppNavbar() {
   const { authenticateUser, isAuthorized, credentials, setCredentials } =
@@ -241,6 +243,19 @@ export default function AppNavbar() {
               </PopoverTrigger>
               <PopoverContent>
                 <div className=" flex flex-col gap-1">
+                  <div className="flex justify-between gap-2 w-full">
+                    <div className="flex items-center gap-1 bg-foreground/10 px-1 rounded-md">
+                      <p className=" text-tiny opacity-80">VP</p>
+                      <p> {loginInfo.upvote_mana_percent}%</p>
+                    </div>
+
+                    <div className="flex items-center gap-1 bg-foreground/10 px-1 rounded-md">
+                      <p className=" text-tiny opacity-80">RC</p>
+                      <p>{loginInfo.rc_mana_percent}%</p>
+                    </div>
+                  </div>
+
+                  <Divider className=" my-2" />
                   <Button
                     size="sm"
                     variant="light"

@@ -101,6 +101,10 @@ export default memo(function PostReplies(props: Props) {
   });
 
   useEffect(() => {
+    if (repliesMutation.isSuccess) setRootReplies(postReplies);
+  }, [postReplies]);
+
+  useEffect(() => {
     if (showReply) {
       editorDiv?.current?.focus();
     }
@@ -123,8 +127,11 @@ export default memo(function PostReplies(props: Props) {
 
   const toggleReply = () => setShowReply(!showReply);
 
-  function handleLoadComments() {
+  async function handleLoadComments() {
     setIsLoading(true);
+    if (!!postReplies?.length) {
+      await awaitTimeout(2);
+    }
     repliesMutation.mutate();
   }
 
@@ -210,7 +217,7 @@ export default memo(function PostReplies(props: Props) {
     setPosting(false);
   }
 
-  const postingMutation = useMutation({
+  const replyMutation = useMutation({
     mutationKey: [`publish-reply`],
     mutationFn: ({
       postData,
@@ -272,7 +279,11 @@ export default memo(function PostReplies(props: Props) {
         permlink: permlink,
       };
 
-      postingMutation.mutate({
+      // test case
+      // handleOnPublished(postData);
+      // return
+
+      replyMutation.mutate({
         postData,
         options: null,
         key: credentials.key,
