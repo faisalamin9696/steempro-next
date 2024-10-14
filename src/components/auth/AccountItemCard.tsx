@@ -16,6 +16,7 @@ import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { twMerge } from "tailwind-merge";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/libs/supabase";
+import { addCommentHandler, clearCommentHandler } from "@/libs/redux/reducers/CommentReducer";
 
 interface Props {
   user: User;
@@ -87,6 +88,9 @@ export default memo(function AccountItemCard(props: Props) {
                 encKey: user.key,
               })
             );
+            // clear redux comments cache
+            dispatch(clearCommentHandler());
+
             handleSwitchSuccess && handleSwitchSuccess(user);
             saveSessionKey("");
             if (isLogin)

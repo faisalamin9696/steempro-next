@@ -130,7 +130,7 @@ export default memo(function PostReplies(props: Props) {
   async function handleLoadComments() {
     setIsLoading(true);
     if (!!postReplies?.length) {
-      await awaitTimeout(2);
+      await awaitTimeout(3.5);
     }
     repliesMutation.mutate();
   }

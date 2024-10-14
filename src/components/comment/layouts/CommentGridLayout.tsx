@@ -20,6 +20,7 @@ import { hasNsfwTag } from "@/libs/utils/StateFunctions";
 import NsfwOverlay from "@/components/NsfwOverlay";
 import { getSettings } from "@/libs/utils/user";
 import RoleTitleCard from "@/components/RoleTitleCard";
+import { twMerge } from "tailwind-merge";
 
 export default function CommentGridLayout(props: CommentProps) {
   const { comment, isReply } = props;
@@ -47,9 +48,10 @@ export default function CommentGridLayout(props: CommentProps) {
       <CardBody className="flex flex-col p-0" as={Link} href={targetUrl}>
         <>
           <div
-            className={clsx(
+            className={twMerge(
               !!commentInfo.is_muted && " opacity-80",
-              "flex-shrink-0 relative "
+              "flex-shrink-0 relative ",
+              commentInfo.is_muted ? " blur-[2px]" : ""
             )}
           >
             {thumbnail ? (
@@ -74,7 +76,9 @@ export default function CommentGridLayout(props: CommentProps) {
                 {isNsfw && <NsfwOverlay />}
               </div>
             ) : (
-              <div className={`h-44 bg-foreground/20 dark:bg-foreground/5  w-full`} />
+              <div
+                className={`h-44 bg-foreground/20 dark:bg-foreground/5  w-full`}
+              />
             )}
 
             <STag
@@ -101,10 +105,20 @@ export default function CommentGridLayout(props: CommentProps) {
                 shadow="none"
                 className={clsx("bg-transparent  w-full text-start")}
               >
-                <p className="text-md font-semibold text-default-900">
+                <p
+                  className={twMerge(
+                    "text-md font-semibold text-default-900",
+                    commentInfo.is_muted ? " blur-[2px]" : ""
+                  )}
+                >
                   {commentInfo.title}
                 </p>
-                <p className="mt-3 text-sm text-default-900/60">
+                <p
+                  className={twMerge(
+                    "mt-3 text-sm text-default-900/60",
+                    commentInfo.is_muted ? " blur-[2px]" : ""
+                  )}
+                >
                   <BodyShort
                     body={commentInfo.body}
                     className=" line-clamp-2"

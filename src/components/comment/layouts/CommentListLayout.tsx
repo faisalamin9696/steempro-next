@@ -50,7 +50,7 @@ export default function CommentListLayout(props: CommentProps) {
             <div
               className={twMerge(
                 "flex items-center gap-2 w-full py-0",
-                comment.is_muted ? " blur-[2px]" : ""
+                commentInfo.is_muted ? " blur-[2px]" : ""
               )}
             >
               <div className="pl-1 text-container space-y-2">
@@ -69,7 +69,7 @@ export default function CommentListLayout(props: CommentProps) {
                 )}
               </div>
 
-              <div className={twMerge(comment.is_muted ? " blur-[2px]" : "")}>
+              <div className={twMerge(commentInfo.is_muted ? " blur-[2px]" : "")}>
                 {isReply || !isSearch ? null : (
                   <CommentCover
                     isNsfw={isNsfw}

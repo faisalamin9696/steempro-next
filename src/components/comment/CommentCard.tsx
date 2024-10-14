@@ -49,7 +49,7 @@ export default memo(function CommentCard(props: Props) {
         commentLayout = <CommentListLayout {...props} comment={commentInfo} />;
         break;
       case "grid":
-        commentLayout = <CommentGridLayout comment={comment} />;
+        commentLayout = <CommentGridLayout comment={commentInfo} />;
         break;
       case "blogs":
         commentLayout = <CommentBlogLayout {...props} comment={commentInfo} />;

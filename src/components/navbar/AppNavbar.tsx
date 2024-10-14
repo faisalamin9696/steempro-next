@@ -7,10 +7,12 @@ import { Button } from "@nextui-org/button";
 import { Badge } from "@nextui-org/badge";
 import { LuPencilLine } from "react-icons/lu";
 import { useLogin } from "../auth/AuthProvider";
-import { useAppSelector } from "@/libs/constants/AppFunctions";
+import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import {
   getCredentials,
+  getSessionKey,
   getSessionToken,
+  removeCredentials,
   removeSessionToken,
   saveSessionKey,
   sessionKey,
@@ -22,6 +24,7 @@ import AccountsModal from "../auth/AccountsModal";
 import AppDrawer from "./components/Drawer";
 import NotificationsModal from "../NotificationsModal";
 import {
+  FaCoins,
   FaEdgeLegacy,
   FaLock,
   FaRegBell,
@@ -39,6 +42,9 @@ import "./style.scss";
 import { PiUserSwitchFill } from "react-icons/pi";
 import { keysColorMap } from "../auth/AccountItemCard";
 import { Divider } from "@nextui-org/react";
+import { IoFlash, IoLogOut } from "react-icons/io5";
+import { logoutHandler } from "@/libs/redux/reducers/LoginReducer";
+import { addCommentHandler } from "@/libs/redux/reducers/CommentReducer";
 
 export default function AppNavbar() {
   const { authenticateUser, isAuthorized, credentials, setCredentials } =
@@ -48,6 +54,7 @@ export default function AppNavbar() {
   const [isPopOpen, setIsPopOpen] = React.useState(false);
   const [isAccOpen, setIsAccOpen] = React.useState(false);
   const [notificationPopup, setNotificationPopup] = useState(false);
+  const dispatch = useAppDispatch();
   const [isLocked, setLocked] = useState(
     status === "authenticated" &&
       !sessionKey &&
@@ -99,13 +106,34 @@ export default function AppNavbar() {
     if (isPopOpen) setIsPopOpen(false);
   }
 
+  function handleLogout() {
+    authenticateUser();
+    if (!isAuthorized()) {
+      return;
+    }
+
+    const credentials = getCredentials(getSessionKey(session?.user?.name));
+    if (!credentials?.key) {
+      toast.error("Invalid credentials");
+      return;
+    }
+
+    removeCredentials(credentials);
+    dispatch(logoutHandler());
+    signOut();
+    toast.success(`${credentials.username} logged out successfully`);
+  }
+
   return (
     <Navbar
       className="shadow-xl w-full h-16  !px-0 !p-0"
       shouldHideOnScroll={false}
     >
       <NavbarContent justify="start" className=" !grow-0">
-        <AppDrawer onAccountSwitch={() => setIsAccOpen(!isAccOpen)} />
+        <AppDrawer
+          onAccountSwitch={() => setIsAccOpen(!isAccOpen)}
+          handleLogout={handleLogout}
+        />
       </NavbarContent>
 
       <NavbarBrand className="">
@@ -241,25 +269,35 @@ export default function AppNavbar() {
                   />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent>
-                <div className=" flex flex-col gap-1">
+              <PopoverContent className="p-0">
+                <div className=" flex flex-col gap-1 px-2 py-2">
                   <div className="flex justify-between gap-2 w-full">
-                    <div className="flex items-center gap-1 bg-foreground/10 px-1 rounded-md">
-                      <p className=" text-tiny opacity-80">VP</p>
+                    <div
+                      title="Voting power"
+                      className="flex items-center gap-1 bg-foreground/10 px-1 rounded-lg"
+                    >
+                      <p className=" text-tiny opacity-80">
+                        <IoFlash />
+                      </p>
                       <p> {loginInfo.upvote_mana_percent}%</p>
                     </div>
 
-                    <div className="flex items-center gap-1 bg-foreground/10 px-1 rounded-md">
-                      <p className=" text-tiny opacity-80">RC</p>
+                    <div
+                      title="Resource credits"
+                      className="flex items-center gap-1 bg-foreground/10 px-1 rounded-lg"
+                    >
+                      <p className=" text-tiny opacity-80">
+                        <FaCoins />
+                      </p>
                       <p>{loginInfo.rc_mana_percent}%</p>
                     </div>
                   </div>
 
-                  <Divider className=" my-2" />
+                  <Divider className=" mt-2" />
                   <Button
                     size="sm"
                     variant="light"
-                    className="w-full justify-start items-center"
+                    className="w-full justify-start items-center px-1"
                     as={Link}
                     href={`/@${session?.user?.name}`}
                     onClick={handleItemClick}
@@ -271,7 +309,7 @@ export default function AppNavbar() {
                   <Button
                     size="sm"
                     variant="light"
-                    className="w-full justify-start items-center"
+                    className="w-full justify-start items-center px-1"
                     as={Link}
                     href={`/@${session?.user?.name}/wallet`}
                     onClick={handleItemClick}
@@ -281,7 +319,7 @@ export default function AppNavbar() {
                   </Button>
 
                   <Button
-                    className="w-full justify-start items-center"
+                    className="w-full justify-start items-center px-1"
                     size="sm"
                     variant="light"
                     onClick={() => {
@@ -300,7 +338,7 @@ export default function AppNavbar() {
                   </Button>
 
                   <Button
-                    className="w-full justify-start items-center"
+                    className="w-full justify-start items-center px-1"
                     size="sm"
                     variant="light"
                     onClick={() => {
@@ -310,6 +348,19 @@ export default function AppNavbar() {
                     startContent={<PiUserSwitchFill className="text-xl" />}
                   >
                     Switch/Add Account
+                  </Button>
+
+                  <Button
+                    className="w-full justify-start items-center px-1"
+                    size="sm"
+                    variant="light"
+                    onClick={() => {
+                      handleLogout();
+                      handleItemClick();
+                    }}
+                    startContent={<IoLogOut className="text-xl" />}
+                  >
+                    Logout
                   </Button>
                 </div>
               </PopoverContent>

@@ -11,6 +11,7 @@ import Link from "next/link";
 import { hasNsfwTag } from "@/libs/utils/StateFunctions";
 import { getSettings } from "@/libs/utils/user";
 import { getThumbnail } from "@/libs/utils/image";
+import { twMerge } from "tailwind-merge";
 
 export default function CommentBlogLayout(props: CommentProps) {
   const { comment, isReply } = props;
@@ -42,20 +43,32 @@ export default function CommentBlogLayout(props: CommentProps) {
           "w-full bg-transparent gap-4 px-2"
         )}
       >
-        <h2 className="card-content font-bold text-lg max-sm:text-medium text-start ">
+        <h2
+          className={twMerge(
+            "card-content font-bold text-lg max-sm:text-medium text-start ",
+            commentInfo.is_muted ? " blur-[2px]" : ""
+          )}
+        >
           {commentInfo.title}
         </h2>
 
-        {isReply ? null : (
-          <CommentCover
-            isNsfw={isNsfw}
-            thumbnail
-            src={thumbnail}
-            targetUrl={targetUrl}
-          />
-        )}
+        <div className={twMerge(commentInfo.is_muted ? " blur-[2px]" : "")}>
+          {isReply ? null : (
+            <CommentCover
+              isNsfw={isNsfw}
+              thumbnail
+              src={thumbnail}
+              targetUrl={targetUrl}
+            />
+          )}
+        </div>
 
-        <div className="line-clamp-2 overflow-hidden text-start w-full h-full max-sm:text-sm">
+        <div
+          className={twMerge(
+            "line-clamp-2 overflow-hidden text-start w-full h-full max-sm:text-sm",
+            commentInfo.is_muted ? " blur-[2px]" : ""
+          )}
+        >
           {isReply ? (
             <MarkdownViewer text={commentInfo?.body} />
           ) : (

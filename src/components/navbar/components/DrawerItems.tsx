@@ -2,7 +2,6 @@
 
 import React from "react";
 import {
-  FaCalendar,
   FaCalendarAlt,
   FaInfoCircle,
   FaTools,
@@ -17,21 +16,14 @@ import {
   useDisclosure,
 } from "@nextui-org/modal";
 import { Button } from "@nextui-org/button";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
-import { logoutHandler } from "@/libs/redux/reducers/LoginReducer";
 import { IoLogOut } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
 import { useLogin } from "../../auth/AuthProvider";
 import Link from "next/link";
 import { PiUserSwitchFill } from "react-icons/pi";
 import { RiUserStarFill } from "react-icons/ri";
-import {
-  getCredentials,
-  getSessionKey,
-  removeCredentials,
-} from "@/libs/utils/user";
-import { toast } from "sonner";
 import { HiMiniUserGroup } from "react-icons/hi2";
 import { MdPrivacyTip } from "react-icons/md";
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
@@ -41,32 +33,15 @@ import { GitHubLink } from "@/libs/constants/AppConstants";
 interface Props {
   onItemClick?: () => void;
   onAccountSwitch?: () => void;
+  handleLogout: () => void;
 }
 export default function DrawerItems(props: Props) {
-  const { onItemClick, onAccountSwitch } = props;
+  const { onItemClick, onAccountSwitch, handleLogout } = props;
   const dispatch = useAppDispatch();
   const { isLogin, authenticateUser, isAuthorized } = useLogin();
   const { data: session } = useSession();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { isOpen, onOpenChange } = useDisclosure();
-
-  function handleLogout() {
-    authenticateUser();
-    if (!isAuthorized()) {
-      return;
-    }
-
-    const credentials = getCredentials(getSessionKey(session?.user?.name));
-    if (!credentials?.key) {
-      toast.error("Invalid credentials");
-      return;
-    }
-    onOpenChange();
-    removeCredentials(credentials);
-    dispatch(logoutHandler());
-    signOut();
-    toast.success(`${credentials.username} logged out successfully`);
-  }
 
   return (
     <div className="flex flex-col gap-4 w-full h-full justify-between overflow-y-auto scrollbar-thin">
@@ -256,7 +231,13 @@ export default function DrawerItems(props: Props) {
                 <Button color="primary" variant="light" onClick={onClose}>
                   Cancel
                 </Button>
-                <Button color="danger" onClick={handleLogout}>
+                <Button
+                  color="danger"
+                  onClick={() => {
+                    onOpenChange();
+                    handleLogout();
+                  }}
+                >
                   Logout
                 </Button>
               </ModalFooter>
