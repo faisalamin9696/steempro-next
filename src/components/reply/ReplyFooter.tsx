@@ -388,7 +388,7 @@ export default function ReplyFooter({
         const credentials = getCredentials(getSessionKey(session?.user?.name));
         if (credentials) {
           // test case
-          // handleOnPublished(postData);.
+          // handleOnPublished(postData);
           // return
 
           postingMutation.mutate({

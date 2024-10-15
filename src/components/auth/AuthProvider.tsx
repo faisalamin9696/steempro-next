@@ -106,6 +106,9 @@ export const AuthProvider = (props: Props) => {
 
       {openAuth && (
         <AuthModal2
+          onForget={() => {
+            authenticateUser(true);
+          }}
           isNew={isNew}
           open={openAuth}
           onClose={() => {

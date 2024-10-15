@@ -37,11 +37,8 @@ interface Props {
 }
 export default function DrawerItems(props: Props) {
   const { onItemClick, onAccountSwitch, handleLogout } = props;
-  const dispatch = useAppDispatch();
   const { isLogin, authenticateUser, isAuthorized } = useLogin();
-  const { data: session } = useSession();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
-  const { isOpen, onOpenChange } = useDisclosure();
 
   return (
     <div className="flex flex-col gap-4 w-full h-full justify-between overflow-y-auto scrollbar-thin">
@@ -94,11 +91,7 @@ export default function DrawerItems(props: Props) {
                     className="w-full justify-start text-danger "
                     variant="light"
                     onClick={() => {
-                      authenticateUser();
-                      if (!isAuthorized()) {
-                        return;
-                      }
-                      onOpenChange();
+                      handleLogout();
                     }}
                     startContent={
                       <IoLogOut className="text-xl text-default-600" />
@@ -211,40 +204,6 @@ export default function DrawerItems(props: Props) {
           </Accordion>
         </div>
       </>
-
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        size="sm"
-        hideCloseButton
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Confirmation
-              </ModalHeader>
-              <ModalBody>
-                <p>Do you really want to logout {loginInfo.name}?</p>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="primary" variant="light" onClick={onClose}>
-                  Cancel
-                </Button>
-                <Button
-                  color="danger"
-                  onClick={() => {
-                    onOpenChange();
-                    handleLogout();
-                  }}
-                >
-                  Logout
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
     </div>
   );
 }

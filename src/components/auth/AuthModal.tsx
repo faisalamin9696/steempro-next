@@ -438,7 +438,7 @@ export default function AuthModal(props: Props) {
                         </Checkbox>
                       )}
 
-                      <p className="text-start text-small text-default-600">
+                      <div className="text-start text-small text-default-600">
                         Need to create an account?{" "}
                         <Link
                           className="hover:text-blue-500 font-semibold"
@@ -447,7 +447,7 @@ export default function AuthModal(props: Props) {
                         >
                           Sign up
                         </Link>
-                      </p>
+                      </div>
                       <div className="flex flex-row gap-2 overflow-x-auto p-1">
                         {!!!loginInfo.name &&
                           accounts?.map((user) => {

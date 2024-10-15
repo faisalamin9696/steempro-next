@@ -45,12 +45,13 @@ import { useRouter } from "next/navigation";
 interface Props {
   open: boolean;
   onClose: () => void;
+  onForget?: (username: string) => void;
   onLoginSuccess?: (auth: User) => void;
   isNew?: boolean;
 }
 
 export default function AuthModal2(props: Props) {
-  let { open, onLoginSuccess, isNew } = props;
+  let { open, onLoginSuccess, isNew, onForget } = props;
 
   const [isShow, setIsShow] = useState(true);
   const { isOpen, onClose } = useDisclosure();
@@ -452,6 +453,17 @@ export default function AuthModal2(props: Props) {
                         </Checkbox>
                       )}
 
+                      <div className="text-start text-small text-default-600">
+                        <button
+                          className="hover:text-blue-500 font-semibold"
+                          onClick={() => {
+                            onForget && onForget(loginInfo.name);
+                          }}
+                        >
+                          Forget password?
+                        </button>
+                      </div>
+
                       <div className="flex gap-2 items-center">
                         <Button
                           color="danger"
@@ -542,7 +554,7 @@ export default function AuthModal2(props: Props) {
                         </Checkbox>
                       )}
 
-                      <p className="text-start text-small text-default-600">
+                      <div className="text-start text-small text-default-600">
                         Need to create an account?{" "}
                         <Link
                           className="hover:text-blue-500 font-semibold"
@@ -551,7 +563,7 @@ export default function AuthModal2(props: Props) {
                         >
                           Sign up
                         </Link>
-                      </p>
+                      </div>
                       <div className="flex flex-row gap-2 overflow-x-auto p-1">
                         {!!!loginInfo.name &&
                           accounts?.map((user) => {

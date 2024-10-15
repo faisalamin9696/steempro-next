@@ -41,7 +41,15 @@ import { Input } from "@nextui-org/input";
 import "./style.scss";
 import { PiUserSwitchFill } from "react-icons/pi";
 import { keysColorMap } from "../auth/AccountItemCard";
-import { Divider } from "@nextui-org/react";
+import {
+  Divider,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure,
+} from "@nextui-org/react";
 import { IoFlash, IoLogOut } from "react-icons/io5";
 import { logoutHandler } from "@/libs/redux/reducers/LoginReducer";
 import { addCommentHandler } from "@/libs/redux/reducers/CommentReducer";
@@ -61,6 +69,7 @@ export default function AppNavbar() {
       !getSessionToken(session.user?.name)
   );
   const [searchModal, setSearchModal] = useState(false);
+  const { isOpen, onOpenChange } = useDisclosure();
 
   // validate the local storage auth
   useMemo(() => {
@@ -132,7 +141,7 @@ export default function AppNavbar() {
       <NavbarContent justify="start" className=" !grow-0">
         <AppDrawer
           onAccountSwitch={() => setIsAccOpen(!isAccOpen)}
-          handleLogout={handleLogout}
+          handleLogout={onOpenChange}
         />
       </NavbarContent>
 
@@ -279,7 +288,7 @@ export default function AppNavbar() {
                       <p className=" text-tiny opacity-80">
                         <IoFlash />
                       </p>
-                      <p> {loginInfo.upvote_mana_percent}%</p>
+                      <p> {loginInfo.upvote_mana_percent?.toLocaleString()}%</p>
                     </div>
 
                     <div
@@ -289,7 +298,7 @@ export default function AppNavbar() {
                       <p className=" text-tiny opacity-80">
                         <FaCoins />
                       </p>
-                      <p>{loginInfo.rc_mana_percent}%</p>
+                      <p>{loginInfo.rc_mana_percent?.toLocaleString()}%</p>
                     </div>
                   </div>
 
@@ -351,11 +360,12 @@ export default function AppNavbar() {
                   </Button>
 
                   <Button
-                    className="w-full justify-start items-center px-1"
+                    className="w-full justify-start items-center px-1 text-foreground"
                     size="sm"
                     variant="light"
+                    color="danger"
                     onClick={() => {
-                      handleLogout();
+                      onOpenChange();
                       handleItemClick();
                     }}
                     startContent={<IoLogOut className="text-xl" />}
@@ -390,6 +400,40 @@ export default function AppNavbar() {
           />
         )}
       </NavbarContent>
+
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        size="sm"
+        hideCloseButton
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Confirmation
+              </ModalHeader>
+              <ModalBody>
+                <p>Do you really want to logout {loginInfo.name}?</p>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="primary" variant="light" onClick={onClose}>
+                  Cancel
+                </Button>
+                <Button
+                  color="danger"
+                  onClick={() => {
+                    onOpenChange();
+                    handleLogout();
+                  }}
+                >
+                  Logout
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </Navbar>
   );
 }
