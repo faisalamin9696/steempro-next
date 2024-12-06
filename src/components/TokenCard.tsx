@@ -6,7 +6,7 @@ import { BsInfoCircle } from "react-icons/bs";
 
 interface TokenCardProps {
   title: string;
-  description?: string;
+  description?: string | React.ReactNode;
   endContent?: React.ReactNode;
   actionContent?: React.ReactNode;
   symbol?: string;

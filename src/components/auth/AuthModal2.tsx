@@ -454,14 +454,16 @@ export default function AuthModal2(props: Props) {
                       )}
 
                       <div className="text-start text-small text-default-600">
-                        <button
-                          className="hover:text-blue-500 font-semibold"
+                        <Button
+                          size="sm"
+                          variant="light"
+                          isDisabled={loading}
                           onClick={() => {
                             onForget && onForget(loginInfo.name);
                           }}
                         >
                           Forget password?
-                        </button>
+                        </Button>
                       </div>
 
                       <div className="flex gap-2 items-center">

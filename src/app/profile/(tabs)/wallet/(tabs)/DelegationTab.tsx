@@ -36,6 +36,7 @@ import { useLogin } from "@/components/auth/AuthProvider";
 import { vestToSteem } from "@/libs/steem/sds";
 import moment from "moment";
 import { capitalize } from "@/libs/constants/AppConstants";
+import Link from "next/link";
 
 const statusColorMap = {
   incoming: "success",
@@ -212,16 +213,10 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
         const username =
           delegation.status === "incoming" ? delegation.from : delegation.to;
         return (
-          <div className="flex flex-row items-center">
+          <div className="flex flex-row items-center gap-2">
             <Dropdown>
               <DropdownTrigger>
-                <Button
-                  isIconOnly
-                  size="sm"
-                  variant="light"
-                  radius="full"
-                  className="min-w-0 h-8 w-6"
-                >
+                <Button isIconOnly size="sm" variant="light" radius="full">
                   <BiDotsVerticalRounded className="text-default-600 text-xl" />
                 </Button>
               </DropdownTrigger>
@@ -236,9 +231,11 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
               </DropdownMenu>
             </Dropdown>
 
-            <div className="flex flex-row gap-1 items-center">
+            <div className="flex gap-2 items-center">
               <SAvatar size="xs" username={username} />
-              <p>{username}</p>
+              <Link className=" hover:text-blue-500" href={`/@${username}`}>
+                {username}
+              </Link>
             </div>
           </div>
         );

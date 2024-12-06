@@ -7,7 +7,7 @@ export default function UserCoverCard(
     { src, large }: { src: string, large?: boolean }
 ) {
     return (
-        <div className={twMerge('rounded-md z-0 w-full h-44 relative', large ? ' max-1md:h-[18rem] ' : ' max-[720px]:h-[17rem] ')}>
+        <div className={twMerge('rounded-md z-0 w-full h-44 relative max-1md:h-[16rem]', large ? ' max-1md:h-[16rem] ' : ' max-[720px]:h-[18rem] ')}>
             {src && <Image
                 className='rounded-lg'
                 fill

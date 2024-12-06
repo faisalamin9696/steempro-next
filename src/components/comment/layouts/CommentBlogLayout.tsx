@@ -53,7 +53,7 @@ export default function CommentBlogLayout(props: CommentProps) {
         </h2>
 
         <div className={twMerge(commentInfo.is_muted ? " blur-[2px]" : "")}>
-          {isReply ? null : (
+          {isNsfw ? null : isReply ? null : (
             <CommentCover
               isNsfw={isNsfw}
               thumbnail

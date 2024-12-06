@@ -55,26 +55,28 @@ export default function CommentGridLayout(props: CommentProps) {
             )}
           >
             {thumbnail ? (
-              <div className="relative">
-                <Image
-                  src={thumbnail}
-                  width={imageWidth}
-                  height={imageHeight}
-                  className={isNsfw ? "blur-[2px]" : ""}
-                  alt={""}
-                  sizes="(max-width: 768px) 100vw,
+              isNsfw ? null : (
+                <div className="relative">
+                  <Image
+                    src={thumbnail}
+                    width={imageWidth}
+                    height={imageHeight}
+                    className={isNsfw ? "blur-[2px]" : ""}
+                    alt={""}
+                    sizes="(max-width: 768px) 100vw,
                         (max-width: 1200px) 50vw,
                         33vw"
-                  style={{
-                    width: "100%",
-                    objectFit: "cover",
-                    minHeight: imageHeight,
-                    maxHeight: imageHeight,
-                  }}
-                />
+                    style={{
+                      width: "100%",
+                      objectFit: "cover",
+                      minHeight: imageHeight,
+                      maxHeight: imageHeight,
+                    }}
+                  />
 
-                {isNsfw && <NsfwOverlay />}
-              </div>
+                  {isNsfw && <NsfwOverlay />}
+                </div>
+              )
             ) : (
               <div
                 className={`h-44 bg-foreground/20 dark:bg-foreground/5  w-full`}

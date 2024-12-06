@@ -5,6 +5,7 @@ import useSWR from "swr";
 import LoadingCard from "./LoadingCard";
 import clsx from "clsx";
 import "./style.scss";
+import Link from "next/link";
 
 interface Props {
   comment: Feed | Post;
@@ -114,7 +115,13 @@ export class EntryPayoutDetail extends Component<DetailProps> {
             <span className="value">
               {beneficiary.map((x: any, i) => (
                 <Fragment key={i}>
-                  {x[0]}: {(x[1] / 100).toFixed(0)}% <br />
+                  <Link 
+                    className=" hover:text-blue-500 hover:underline"
+                    href={`/@${x[0]}/blogs`}
+                  >
+                    {x[0]}
+                  </Link>
+                  : {(x[1] / 100).toFixed(0)}% <br />
                 </Fragment>
               ))}
             </span>

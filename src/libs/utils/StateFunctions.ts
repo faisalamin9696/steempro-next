@@ -1,7 +1,7 @@
-import {parsePostMeta} from './user';
+import { parsePostMeta } from "./user";
 
-export const numberWithCommas = x =>
-  String(x).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+export const numberWithCommas = (x) =>
+  String(x).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
 export function allowDelete(comment: Post | Feed) {
   const hasPayout = comment.cashout_time === 0;
@@ -29,19 +29,20 @@ export function normalizeTags(metadata, category: string) {
 }
 
 export function parseJsonTags(post) {
-  return normalizeTags(post['json_metadata'], post['category']);
+  return normalizeTags(post["json_metadata"], post["category"]);
 }
 
 export function hasNsfwTag(content: Feed | Post) {
-  const nsfwRegex = /\b(nsfw|adult|explicit|fuck|dick|anal|cock|penis|ass)\b/i; // Add more NSFW words here
+  const nsfwRegex =
+    /\b(nsfw|adult|fuck|dick|anal|cock|penis|ass|porn|pornhub|xxx|hentai|hardcore|softcore|fetish|sexual|nude|naked|bdsm|camgirl|sext|sex|vagina|anus|boobs|booty|pussy|tits|blowjob|oral|masturbation|handjob|fingering|threesome|foursome|gangbang|intercourse|orgasm|cum|suck|lick|booty|titties|tittie|horny|sexy|seduce|lust|nude|kink|milf)\b/i; // Add more NSFW words here
   const parsed = parsePostMeta(content.json_metadata);
   return nsfwRegex.test(
-    content.title?.toLowerCase() + JSON.stringify(parsed.tags),
+    content.title?.toLowerCase() + JSON.stringify(parsed.tags) + content.body
   );
 }
 
 export function filterTags(tags) {
   return tags
-    .filter(tag => typeof tag === 'string')
+    .filter((tag) => typeof tag === "string")
     .filter((value, index, self) => value && self.indexOf(value) === index);
 }

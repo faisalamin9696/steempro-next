@@ -573,3 +573,22 @@ export const getAccountsByPrefix = async (
     throw new Error(error);
   }
 };
+
+export const getCommentHistory = async (
+  author: string,
+  permlink: string
+): Promise<string[]> => {
+  try {
+    const R_API = `/content_history_api/getContentHistory/${author}/${permlink}`;
+    console.log(R_API);
+    const response = await fetchSds<any>(R_API);
+    if (response) {
+      return (response ?? []) as string[];
+    } else {
+      throw new Error(response);
+    }
+  } catch (error: any) {
+    console.error("Failed to fetch global variables:", error);
+    throw new Error(error);
+  }
+};

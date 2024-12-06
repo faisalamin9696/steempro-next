@@ -4,8 +4,21 @@ import MarkdownViewer from "@/components/body/MarkdownViewer";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import clsx from "clsx";
 import Link from "next/link";
-import React from "react";
+import React, { Key, useState } from "react";
 import RoleTitleCard from "../RoleTitleCard";
+import {
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/react";
+import { BsClipboard2Minus } from "react-icons/bs";
+import { LuHistory } from "react-icons/lu";
+import { FaEllipsis } from "react-icons/fa6";
+import { toast } from "sonner";
+import { AppStrings } from "@/libs/constants/AppStrings";
+import CommentEditHistory from "../CommentHistoryViewer";
 
 export default function ReplyBody({
   comment,
@@ -16,6 +29,40 @@ export default function ReplyBody({
   rightContent?: React.ReactNode;
   isDeep: boolean;
 }) {
+  const menuItems = [
+    { show: true, key: "copy", name: "Copy Link", icon: BsClipboard2Minus },
+    { show: true, key: "history", name: "Edit History", icon: LuHistory },
+  ];
+
+  const [showHistory, setShowHistory] = useState(false);
+
+  const renderedItems = menuItems
+    .filter((item) => item.show)
+    .map((item) => (
+      <DropdownItem
+        key={item.key}
+        color={"default"}
+        startContent={<item.icon className={"text-lg"} />}
+      >
+        {item.name}
+      </DropdownItem>
+    ));
+
+  async function handleMenuActions(key: Key) {
+    switch (key) {
+      case "history":
+        setShowHistory(!showHistory);
+        break;
+
+      case "copy":
+        navigator.clipboard.writeText(
+          `${AppStrings.steempro_base_url}/@${comment.author}/${comment.permlink}`
+        );
+        toast.success("Copied");
+        break;
+    }
+  }
+
   return (
     <div className="flex gap-2 w-full ">
       <div className="flex flex-col text-sm sm:text-medium-100 w-full">
@@ -41,11 +88,33 @@ export default function ReplyBody({
                     href={`/${comment.category}/@${comment.author}/${comment.permlink}`}
                   >
                     <TimeAgoWrapper
+                      handleEditClick={() => setShowHistory(!showHistory)}
                       created={comment.created * 1000}
                       lastUpdate={comment.last_update * 1000}
                     />
                   </Link>
+
+                  <Dropdown>
+                    <DropdownTrigger>
+                      <Button
+                        size="sm"
+                        radius="full"
+                        isIconOnly
+                        variant="light"
+                      >
+                        <FaEllipsis className="text-lg" />
+                      </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu
+                      aria-labelledby="comment options"
+                      onAction={handleMenuActions}
+                      hideEmptyContent
+                    >
+                      {renderedItems}
+                    </DropdownMenu>
+                  </Dropdown>
                 </div>
+
                 <RoleTitleCard
                   comment={comment}
                   className="text-default-500 gap-1 text-tiny"
@@ -63,6 +132,15 @@ export default function ReplyBody({
           />
         </div>
       </div>
+
+      {showHistory && (
+        <CommentEditHistory
+          isOpen={showHistory}
+          onOpenChange={setShowHistory}
+          author={comment.author}
+          permlink={comment.permlink}
+        />
+      )}
     </div>
   );
 }

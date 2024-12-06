@@ -100,7 +100,7 @@ export default function AccountHeader(props: Props) {
 
   return (
     <div className="w-full p-1 relative">
-      <div className="card flex items-center w-full relative  shadow-none">
+      <div className="flex justify-center items-center w-full  shadow-none">
         <UserCoverCard large={isCommunity} src={cover_picture} />
 
         <div
@@ -111,8 +111,8 @@ export default function AccountHeader(props: Props) {
           data-tilt-perspective="600"
           data-tilt-glare
           data-tilt-max-glare={0.5}
-          className={`account-header self-center backdrop-blur-sm shadow-md m-auto top-5 absolute mx-2  
-            bg-black/20  rounded-xl`}
+          className={`account-header self-center backdrop-blur-sm shadow-md m-auto absolute mx-2  
+            bg-black/20  rounded-xl  max-w-1md `}
         >
           <div
             className={twMerge(
@@ -126,7 +126,6 @@ export default function AccountHeader(props: Props) {
               <div className="stat">
                 <div className="stat-figure text-2xl max-md:text-xl">
                   {isCommunity ? <FaRankingStar /> : <FaRegHeart />}
-                  {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg> */}
                 </div>
                 <div className="stat-title text-white/60">
                   {isCommunity ? "Rank" : "Followers"}
@@ -137,7 +136,7 @@ export default function AccountHeader(props: Props) {
                   }}
                   className={twMerge(
                     "stat-value",
-                    "text-3xl max-md:text-lg",
+                    "text-3xl max-md:text-lg max-1md:text-start",
                     isCommunity && "pointer-events-none"
                   )}
                   title={
@@ -158,7 +157,6 @@ export default function AccountHeader(props: Props) {
               <div className="stat">
                 <div className="stat-figure text-secondary text-2xl">
                   {isCommunity ? <PiUserListBold /> : <IoFlashOutline />}
-                  {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> */}
                 </div>
                 <div className="stat-title text-white/60">
                   {isCommunity ? "Members" : "Followings"}
@@ -170,7 +168,7 @@ export default function AccountHeader(props: Props) {
                     else setFollowerModal({ isOpen: true, isFollowing: true });
                   }}
                   className={twMerge(
-                    "stat-value text-secondary text-3xl max-md:text-lg"
+                    "stat-value text-secondary text-3xl max-md:text-lg max-1md:text-start"
                   )}
                   title={
                     isCommunity
@@ -194,7 +192,7 @@ export default function AccountHeader(props: Props) {
                   </div>
                   <div className="stat-title text-white/60">{"Reward"}</div>
                   <div
-                    className="stat-value text-info text-3xl max-md:text-lg"
+                    className="stat-value text-info text-3xl max-md:text-lg max-1md:text-start"
                     title={communityInfo.sum_pending?.toString()}
                   >
                     {abbreviateNumber(communityInfo.sum_pending)}
@@ -213,13 +211,6 @@ export default function AccountHeader(props: Props) {
                   size="lg"
                   quality="medium"
                 />
-
-                {/* <BadgeAvatar {...props} username={communityInfo.account} size={'lg'} quality='medium'
-                                badge={'Subscribe'} /> */}
-                {/* <Avatar {...props}
-
-                        src={communityInfo.name} xl size={'lg'} quality='medium' sizeNumber={60}
-                        badge={profileInfo?.reputation} /> */}
               </div>
               <div
                 title={
@@ -227,7 +218,7 @@ export default function AccountHeader(props: Props) {
                     ? communityInfo.title
                     : posting_json_metadata?.profile?.name
                 }
-                className="stat-value text-white dark:text-white/90 text-xl sm:text-2xl max-w-fit overflow-clip text-wrap flex-nowrap line-clamp-1"
+                className="stat-value text-white dark:text-white/90 text-xl max-sm:text-xl max-w-fit overflow-clip text-wrap flex-nowrap line-clamp-1"
               >
                 {isCommunity
                   ? communityInfo.title
@@ -289,7 +280,7 @@ export default function AccountHeader(props: Props) {
                 }
               >
                 <MarkdownViewer
-                  className="!stat-desc !text-default-900 !line-clamp-2 max-sm:!line-clamp-3 !max-w-fit !overflow-clip !text-white/80 !text-wrap !flex-nowrap"
+                  className="!stat-desc !text-default-900 !overflow-clip !text-white/80 !text-wrap !flex-nowrap"
                   text={
                     isCommunity
                       ? communityInfo.about
@@ -297,11 +288,6 @@ export default function AccountHeader(props: Props) {
                   }
                 />
               </div>
-              {/* <div>
-                            <Button radius='full' variant='flat' color={communityInfo.observer_subscribed ? 'danger' : 'primary'}
-                                size='sm'>{communityInfo.observer_subscribed ? 'Leave' : "Subscribe"}</Button>
-
-                        </div> */}
             </div>
           </div>
         </div>

@@ -14,10 +14,11 @@ import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { useLogin } from "@/components/auth/AuthProvider";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import TransferHistoryTab from "./(tabs)/TransferHistoryTab";
-import { getTimeFromNow } from "@/libs/utils/time";
 import { FaArrowAltCircleDown } from "react-icons/fa";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
+import PowerDownModal from "@/components/PowerDownModal";
 
 export default function ProfileWalletTab({ data }: { data: AccountExt }) {
   const { username } = usePathnameClient();
@@ -29,6 +30,12 @@ export default function ProfileWalletTab({ data }: { data: AccountExt }) {
   const { authenticateUser, isAuthorized } = useLogin();
   const { data: session } = useSession();
   const [selectedTab, setSelectedTab] = useState("balance");
+  const [powerDownModal, setPowerDownModal] = useState<{
+    isOpen: boolean;
+    cancel?: boolean;
+  }>({
+    isOpen: false,
+  });
 
   const claimMutation = useMutation({
     mutationFn: (data: { key: string; isKeychain?: boolean }) =>
@@ -155,18 +162,30 @@ export default function ProfileWalletTab({ data }: { data: AccountExt }) {
               STEEM
             </p>
           </div>
-          <p className="text-tiny">
-            Next power down {getTimeFromNow(data.next_powerdown * 1000)}: ~
+          <div className="text-tiny flex items-center gap-1">
+            <p>Next power down</p>
+            <TimeAgoWrapper created={data.next_powerdown * 1000} />: ~
             {vestToSteem(
               data.powerdown_rate,
               globalData.steem_per_share
             )?.toLocaleString()}{" "}
             STEEM
-          </p>
+          </div>
+          {!!data.powerdown && isSelf && (
+            <Button
+              size="sm"
+              onClick={() => {
+                setPowerDownModal({ isOpen: true, cancel: true });
+              }}
+            >
+              Cancel Power Down
+            </Button>
+          )}{" "}
         </div>
       )}
 
       <Tabs
+        destroyInactiveTabPanel={false}
         aria-label="Options"
         variant="underlined"
         size="sm"
@@ -192,6 +211,14 @@ export default function ProfileWalletTab({ data }: { data: AccountExt }) {
           <TransferHistoryTab data={data} />
         </Tab>
       </Tabs>
+
+      {powerDownModal.isOpen && (
+        <PowerDownModal
+          isOpen={powerDownModal.isOpen}
+          cancel={powerDownModal.cancel}
+          onOpenChange={(isOpen) => setPowerDownModal({ isOpen: isOpen })}
+        />
+      )}
     </div>
   );
 }

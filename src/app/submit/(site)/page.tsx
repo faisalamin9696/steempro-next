@@ -38,6 +38,7 @@ import {
   makeJsonMetadataReply,
   makeOptions,
   validateCommentBody,
+  validateTagInput,
 } from "@/libs/utils/editor";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
 import { AppStrings } from "@/libs/constants/AppStrings";
@@ -209,24 +210,27 @@ export default function SubmitPage(props: Props) {
       // AppConstants.SHOW_TOAST('Invalid title', 'Title can not be empty', 'info');
       return;
     }
-    if (!markdown) {
-      toast.info("Post can not be empty");
-      // AppConstants.SHOW_TOAST('Invalid description', 'Description can not be empty', 'info');
-      return;
-    }
 
     const _tags = tags
       .split(" ")
       .filter((tag) => tag && tag !== " " && tag !== community?.account);
 
-    if (_tags.length <= 0 && !community) {
-      toast.info("Add a tag or select community");
-      // AppConstants.SHOW_TOAST('Invalid tags', 'Add a tag or select community', 'info');
+
+    if (!tags && !community?.account) {
+      toast.info(`Add a tag or select community`);
       return;
     }
-    if (_tags.length > 8) {
-      toast.info("Please use only 8 tags");
-      // AppConstants.SHOW_TOAST('Limit reached', 'Please use only 8 tags', 'info');
+
+    const tagsCheck = validateTagInput(tags);
+
+    if (tagsCheck) {
+      toast.info(tagsCheck);
+      return;
+    }
+
+    if (!markdown) {
+      toast.info("Post can not be empty");
+      // AppConstants.SHOW_TOAST('Invalid description', 'Description can not be empty', 'info');
       return;
     }
 
@@ -236,6 +240,9 @@ export default function SubmitPage(props: Props) {
       // AppConstants.SHOW_TOAST('Failed', limit_check, 'info');
       return;
     }
+
+    return;
+
     authenticateUser();
 
     if (!isAuthorized()) {

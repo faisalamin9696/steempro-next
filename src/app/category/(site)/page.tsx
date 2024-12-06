@@ -23,6 +23,7 @@ export default function CategoryPage() {
   return (
     <div className={clsx("relative items-center flex-row w-full")}>
       <Tabs
+        destroyInactiveTabPanel={false}
         size="sm"
         disableAnimation
         disableCursorAnimation

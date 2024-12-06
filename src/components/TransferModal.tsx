@@ -101,7 +101,7 @@ const TransferModal = (props: Props): JSX.Element => {
   const availableBalance =
     asset === "VESTS"
       ? vestToSteem(
-          loginInfo.vests_own - loginInfo.vests_out,
+          loginInfo.vests_own - loginInfo.vests_out - loginInfo.powerdown,
           globalData.steem_per_share
         ) + (oldSpDelegation ?? 0)
       : asset === "STEEM"

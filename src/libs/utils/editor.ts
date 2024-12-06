@@ -2,6 +2,8 @@ import getSlug from "speakingurl";
 import { diff_match_patch as diffMatchPatch } from "diff-match-patch";
 import { secureDecrypt } from "./encryption";
 
+const MAX_TAGS = 8;
+
 export const getWordsCount = (text) =>
   text && typeof text === "string"
     ? text.replace(/^\s+|\s+$/g, "").split(/\s+/).length
@@ -185,36 +187,6 @@ export const makeJsonMetadataForUpdate = (oldJson, meta, tags) => {
   });
 };
 
-
-// export const extractFilenameFromPath = ({
-//   path,
-//   mimeType,
-// }: {
-//   path: string;
-//   mimeType?: string;
-// }) => {
-//   try {
-//     if (!path) {
-//       throw new Error('path not provided');
-//     }
-//     const filenameIndex = path.lastIndexOf('/') + 1;
-//     const extensionIndex = path.lastIndexOf('.');
-//     if (filenameIndex < 0 || extensionIndex <= filenameIndex) {
-//       throw new Error('file name not present with extension');
-//     }
-//     return path.substring(path.lastIndexOf('/') + 1);
-//   } catch (err) {
-//     let _ext: string | boolean = 'jpg';
-//     if (mimeType) {
-//       _ext = MimeTypes.extension(mimeType);
-//       if (!_ext) {
-//         _ext = 'jpg';
-//       }
-//     }
-//     return `${generateRndStr()}.${_ext}`;
-//   }
-// };
-
 export const extractMetadata = (body: string) => {
   const urlReg =
     /(\b(https?|ftp):\/\/[A-Z0-9+&@#/%?=~_|!:,.;-]*[-A-Z0-9+&@#/%=~_|])/gim;
@@ -302,4 +274,28 @@ export function getEditorDraft() {
   };
 
   return draft;
+}
+
+export function validateTagInput(value) {
+  const cats = value.trim().replace(/#/g, "").split(/ +/);
+
+  return cats.length > MAX_TAGS
+    ? `Please use only ${MAX_TAGS} tags`
+    : cats.find((c) => c.length > 24)
+    ? `Maximum tag length is 24 characters`
+    : cats.find((c) => c.split("-").length > 2)
+    ? `Use only one dash in tag`
+    : cats.find((c) => c.indexOf(",") >= 0)
+    ? `Use spaces to separate tags`
+    : cats.find((c) => /[A-Z]/.test(c))
+    ? `Use only lowercase letters in tags`
+    : cats.find((c) => !/^[a-z0-9-#]+$/.test(c))
+    ? `Use only lowercase letters, digits and one dash in tags`
+    : cats.find((c) => !/^[a-z-#]/.test(c))
+    ? `Tag must start with a letter`
+    : cats.find((c) => !/[a-z0-9]$/.test(c))
+    ? `Tag must end with a letter or number`
+    : cats.filter((c) => c.substring(0, 5) === "hive-").length >= 1
+    ? `Post already has community tag by default, please do not include another 'hive-' tag.`
+    : null;
 }

@@ -9,6 +9,8 @@ import Link from "next/link";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import { MdAccessTime } from "react-icons/md";
 import { getThumbnail } from "@/libs/utils/image";
+import { hasNsfwTag } from "@/libs/utils/StateFunctions";
+import { getSettings } from "@/libs/utils/user";
 
 interface Props {
   comment: Feed;
@@ -22,9 +24,12 @@ export default memo(function CompactPost(props: Props) {
       `${comment.author}/${comment.permlink}`
     ] ?? comment;
 
+  const settings =
+    useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
   // const URL = `/posts_api/getPost/${authPerm}`
   // const { data, isLoading, error, isValidating } = useSWR(URL, fetchSds<Post>)
   const thumbnail = getThumbnail(commentInfo.json_images, "256x512");
+  const isNsfw = hasNsfwTag(commentInfo) && settings?.nsfw !== "Always show";
 
   return (
     <Card
@@ -37,10 +42,17 @@ export default memo(function CompactPost(props: Props) {
       // className=" text-start p-0 bg-transparent px-0 py-2 mb-auto"
     >
       {/* <div className="card card-compact rounded-lg overflow-hidden shadow-lg flex flex-col bg-white dark:bg-white/5 p-2"> */}
-      <div className="relative">
-        <CommentCover className="max-h-40" thumbnail src={thumbnail} />
-        {/* <div className="rounded-lg hover:bg-transparent transition duration-300 absolute bottom-0 top-0 right-0 left-0 bg-gray-900 opacity-25"></div> */}
-      </div>
+      {isNsfw ? null : (
+        <div className="relative">
+          <CommentCover
+            className="max-h-40"
+            thumbnail
+            src={thumbnail}
+            isNsfw={isNsfw}
+          />
+          {/* <div className="rounded-lg hover:bg-transparent transition duration-300 absolute bottom-0 top-0 right-0 left-0 bg-gray-900 opacity-25"></div> */}
+        </div>
+      )}
       <div className=" text-start p-0 py-2 mb-auto">
         <p className="font-medium text-md mb-2 text-default-600 line-clamp-2">
           {commentInfo?.title}

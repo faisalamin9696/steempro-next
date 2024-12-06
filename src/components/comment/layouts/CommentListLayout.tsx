@@ -69,8 +69,10 @@ export default function CommentListLayout(props: CommentProps) {
                 )}
               </div>
 
-              <div className={twMerge(commentInfo.is_muted ? " blur-[2px]" : "")}>
-                {isReply || !isSearch ? null : (
+              <div
+                className={twMerge(commentInfo.is_muted ? " blur-[2px]" : "")}
+              >
+                {isReply || !isSearch ? null : isNsfw ? null : (
                   <CommentCover
                     isNsfw={isNsfw}
                     size={isSearch ? "xs" : undefined}
@@ -87,7 +89,7 @@ export default function CommentListLayout(props: CommentProps) {
           <div
             className={twMerge("h-max", comment.is_muted ? " blur-[2px]" : "")}
           >
-            {isReply ? null : (
+            {isReply ? null : isNsfw ? null : (
               <CommentCover
                 isNsfw={isNsfw}
                 size="sm"

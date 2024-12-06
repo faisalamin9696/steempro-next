@@ -31,6 +31,7 @@ export default function CommunityPage(props: Props) {
   return (
     <div className="relative items-center flex-row w-full">
       <Tabs
+        destroyInactiveTabPanel={false}
         size="sm"
         disableAnimation
         disableCursorAnimation

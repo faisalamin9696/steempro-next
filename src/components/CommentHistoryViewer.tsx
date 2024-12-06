@@ -1,0 +1,216 @@
+import { useEffect, useState } from "react";
+import diff_match_patch from "diff-match-patch";
+import { useQuery } from "@tanstack/react-query";
+import { getCommentHistory } from "@/libs/steem/sds";
+import { toast } from "sonner";
+import LoadingCard from "./LoadingCard";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  Tabs,
+  Tab,
+  ModalFooter,
+  Button,
+  Checkbox,
+} from "@nextui-org/react";
+import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
+import MarkdownViewer from "./body/MarkdownViewer";
+import { FaHistory, FaTags } from "react-icons/fa";
+import { MdTitle } from "react-icons/md";
+import moment from "moment";
+
+interface Props {
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  author: string;
+  permlink: string;
+}
+
+interface CommentHistoryItem {
+  title: string;
+  titleDiff?: string;
+  body: string;
+  bodyDiff?: string;
+  tags: string;
+  tagsDiff?: string;
+  time: string;
+}
+
+const dmp = new diff_match_patch();
+
+const calculateDiff = (oldStr: string, newStr: string): string => {
+  const diffs = dmp.diff_main(oldStr || "", newStr || "");
+  dmp.diff_cleanupSemantic(diffs);
+  return dmp.diff_prettyHtml(diffs).replace(/&para;/g, "&nbsp;");
+};
+
+const processHistoryData = (rawData: string[]): CommentHistoryItem[] => {
+  const history: CommentHistoryItem[] = [];
+  let previousBody = "";
+
+  rawData.forEach((entry: any, index) => {
+    const currentBody = entry.body.startsWith("@@")
+      ? dmp.patch_apply(dmp.patch_fromText(entry.body), previousBody)[0]
+      : entry.body;
+    previousBody = currentBody;
+
+    const metadata = entry.json_metadata ? JSON.parse(entry.json_metadata) : {};
+    history.push({
+      title: entry.title,
+      body: currentBody,
+      time: entry.time,
+      tags: metadata.tags?.join(", ") || "",
+      titleDiff:
+        index > 0 ? calculateDiff(history[index - 1].title, entry.title) : "",
+      tagsDiff:
+        index > 0
+          ? calculateDiff(history[index - 1].tags, metadata.tags?.join(", "))
+          : "",
+      bodyDiff:
+        index > 0 ? calculateDiff(history[index - 1].body, currentBody) : "",
+    });
+  });
+
+  return history;
+};
+
+const CommentEditHistory: React.FC<Props> = ({
+  isOpen,
+  onOpenChange,
+  author,
+  permlink,
+}) => {
+  const {
+    data: historyData,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: [`comment_history_${author}_${permlink}`],
+    queryFn: () => getCommentHistory(author, permlink),
+  });
+
+  const [history, setHistory] = useState<CommentHistoryItem[]>([]);
+  const [showDiff, setShowDiff] = useState<boolean[]>([]);
+
+  useEffect(() => {
+    if (historyData) {
+      const processedData = processHistoryData(historyData);
+      setHistory(processedData);
+      setShowDiff(Array(processedData.length).fill(false));
+    }
+    if (isError) {
+      toast.error(`Failed to load history: ${error}`);
+    }
+  }, [historyData, isError, error]);
+
+  const toggleDiff = (index: number, checked: boolean) => {
+    setShowDiff((prev) =>
+      prev.map((value, i) => (i === index ? checked : value))
+    );
+  };
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      className="mt-4"
+      scrollBehavior="inside"
+      backdrop="blur"
+      size="2xl"
+      hideCloseButton
+      placement="top"
+    >
+      <ModalContent>
+        {(onClose) => (
+          <>
+            <ModalHeader className="flex flex-col gap-1">
+              Edit History
+            </ModalHeader>
+            <ModalBody className="pb-4 overflow-x-clip">
+              {isLoading && <LoadingCard />}
+              {!isLoading && (
+                <Tabs
+                  variant="light"
+                  radius="full"
+                  size="sm"
+                  aria-label="Edit History Tabs"
+                >
+                  {history.map((item: any, index) => (
+                    <Tab key={index} title={`Version ${index + 1}`}>
+                      <div className="flex flex-col gap-2">
+                        <Checkbox
+                          isSelected={showDiff[index]}
+                          checked={showDiff[index]}
+                          onValueChange={(checked) =>
+                            toggleDiff(index, checked)
+                          }
+                          title="Show difference"
+                        >
+                          Show difference
+                        </Checkbox>
+                        <div className="w-full p-4 bg-foreground/20 rounded-md flex flex-row gap-2 items-center">
+                          <FaHistory className="text-sm" />
+                          {moment(item.time * 1000)
+                            .locale("en")
+                            .format("lll")}
+                        </div>
+                        <div className="flex flex-col text-gray-500 gap-2">
+                          {item.titleDiff && (
+                            <div className=" flex flex-row items-center justify-start gap-2">
+                              <MdTitle className=" text-foreground" />
+                              <MarkdownViewer
+                                className="text-lg"
+                                text={
+                                  showDiff[index]
+                                    ? item.titleDiff || ""
+                                    : item.title
+                                }
+                              />
+                            </div>
+                          )}
+
+                          {item.tagsDiff && (
+                            <div className=" flex flex-row items-center justify-start  gap-2">
+                              <FaTags className=" text-foreground" />
+                              <MarkdownViewer
+                                text={
+                                  showDiff[index]
+                                    ? item.tagsDiff || ""
+                                    : item.tags || ""
+                                }
+                              />
+                            </div>
+                          )}
+
+                          {showDiff[index] ? (
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: item.bodyDiff || "",
+                              }}
+                            />
+                          ) : (
+                            <MarkdownViewer text={item.body} />
+                          )}
+                        </div>
+                      </div>
+                    </Tab>
+                  ))}
+                </Tabs>
+              )}
+            </ModalBody>
+            <ModalFooter>
+              <Button color="danger" variant="flat" onClick={onClose} size="sm">
+                Close
+              </Button>
+            </ModalFooter>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
+  );
+};
+
+export default CommentEditHistory;

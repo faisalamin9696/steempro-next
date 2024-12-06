@@ -17,7 +17,7 @@ import { validateCommunity } from "@/libs/utils/helper";
 import { getCredentials, getSessionKey, getSettings } from "@/libs/utils/user";
 import STag from "@/components/STag";
 
-import { Key, useEffect, useMemo, useState } from "react";
+import { Key, useState } from "react";
 import { MdDelete } from "react-icons/md";
 import { GrAnnounce } from "react-icons/gr";
 import ViewCountCard from "@/components/ViewCountCard";
@@ -40,6 +40,8 @@ import Link from "next/link";
 import { BsPinAngleFill } from "react-icons/bs";
 import RoleTitleCard from "@/components/RoleTitleCard";
 import { useSession } from "next-auth/react";
+import { AppStrings } from "@/libs/constants/AppStrings";
+import CommentEditHistory from "@/components/CommentHistoryViewer";
 
 interface Props {
   comment: Post | Feed;
@@ -65,6 +67,8 @@ export default function CommentHeader(props: Props) {
   const { authenticateUser, isAuthorized } = useLogin();
   const { data: session } = useSession();
   const rpm = readingTime(comment.body);
+
+  const [showHistory, setShowHistory] = useState(false);
 
   const [confirmationModal, setConfirmationModal] = useState<{
     isOpen: boolean;
@@ -106,7 +110,7 @@ export default function CommentHeader(props: Props) {
     },
     { show: true, key: "copy", name: "Copy Link", icon: BsClipboard2Minus },
     { show: false, key: "promote", name: "Promote", icon: GrAnnounce },
-    { show: false, key: "history", name: "Edit History", icon: LuHistory },
+    { show: true, key: "history", name: "Edit History", icon: LuHistory },
   ];
   const renderedItems = menuItems
     .filter((item) => item.show)
@@ -176,9 +180,15 @@ export default function CommentHeader(props: Props) {
         handleEdit && handleEdit();
         break;
 
+      case "history":
+        setShowHistory(!showHistory);
+        break;
+
       case "copy":
         navigator.clipboard.writeText(window.location.href);
-        toast.success("Copied");
+        navigator.clipboard.writeText(
+          `${AppStrings.steempro_base_url}/@${comment.author}/${comment.permlink}`
+        );
         break;
       case "role":
         setIsRoleOpen(!isRoleOpen);
@@ -304,6 +314,9 @@ export default function CommentHeader(props: Props) {
 
             <div className={clsx(`flex items-center gap-1`)}>
               <TimeAgoWrapper
+                handleEditClick={() => {
+                  setShowHistory(!showHistory);
+                }}
                 lang={settings.lang.code}
                 created={comment.created * 1000}
                 lastUpdate={comment.last_update * 1000}
@@ -455,6 +468,15 @@ export default function CommentHeader(props: Props) {
           onNoteChange={(value) => {
             setConfirmationModal({ ...confirmationModal, muteNote: value });
           }}
+        />
+      )}
+
+      {showHistory && (
+        <CommentEditHistory
+          isOpen={showHistory}
+          onOpenChange={setShowHistory}
+          author={comment.author}
+          permlink={comment.permlink}
         />
       )}
     </div>

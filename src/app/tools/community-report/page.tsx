@@ -28,6 +28,7 @@ import SAvatar from "@/components/SAvatar";
 import { FaChevronDown } from "react-icons/fa";
 import LoadingCard from "@/components/LoadingCard";
 import { capitalize } from "@/libs/constants/AppConstants";
+import Link from "next/link";
 
 type CommunityReportType = {
   author: string;
@@ -138,11 +139,14 @@ export default function CommunityReportPage() {
       switch (columnKey) {
         case "author":
           return (
-            <div className="flex flex-row items-center">
-              <div className="flex gap-2 items-center">
-                <SAvatar size="xs" username={report.author} />
-                <p>{report.author}</p>
-              </div>
+            <div className="flex gap-2 items-center">
+              <SAvatar size="xs" username={report.author} />
+              <Link
+                className=" hover:text-blue-500"
+                href={`/@${report.author}`}
+              >
+                {report.author}
+              </Link>
             </div>
           );
 
