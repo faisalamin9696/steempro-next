@@ -24,7 +24,6 @@ import {
   grantPostingPermission,
   publishContent,
   signMessage,
-  verifyMessage,
 } from "@/libs/steem/condenser";
 import { toast } from "sonner";
 import {
@@ -58,8 +57,7 @@ import ScheduleModal from "@/components/ScheduleModal";
 import { IoClose } from "react-icons/io5";
 import { ZonedDateTime } from "@internationalized/date";
 import { CustomEvent } from "@piwikpro/react-piwik-pro";
-import { cryptoUtils, PrivateKey, Signature } from "@hiveio/dhive";
-import { validateCommunity } from "@/libs/utils/helper";
+import { cryptoUtils, Signature } from "@hiveio/dhive";
 
 interface Props {
   params?: {
@@ -215,7 +213,6 @@ export default function SubmitPage(props: Props) {
       .split(" ")
       .filter((tag) => tag && tag !== " " && tag !== community?.account);
 
-
     if (!tags && !community?.account) {
       toast.info(`Add a tag or select community`);
       return;
@@ -240,8 +237,6 @@ export default function SubmitPage(props: Props) {
       // AppConstants.SHOW_TOAST('Failed', limit_check, 'info');
       return;
     }
-
-    return;
 
     authenticateUser();
 
