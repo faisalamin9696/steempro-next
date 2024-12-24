@@ -8,6 +8,7 @@ import { Tab, Tabs } from "@nextui-org/tabs";
 import { clsx } from "clsx";
 import ProfilePostsTab from "../posts/page";
 import ProfileFriendsTab from "../friends/page";
+import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 
 export default function ProfilePostsMainTab() {
   let { username, category } = usePathnameClient();
@@ -18,17 +19,18 @@ export default function ProfilePostsMainTab() {
     { title: "Comments", key: "comments", children: <ProfileCommentsTab /> },
     { title: "Replies", key: "replies", children: <ProfileRepliesTab /> },
   ];
+  const { isMobile } = useDeviceInfo();
 
   return (
     <div className={clsx("relative items-center flex-row w-full")}>
       <Tabs
         destroyInactiveTabPanel={false}
         size="sm"
-        variant="underlined"
         disableAnimation
         disableCursorAnimation
-        color={"secondary"}
-        radius="full"
+        variant={isMobile ? "underlined" : "solid"}
+        color={"primary"}
+        radius={isMobile ? "full" : "sm"}
         className="justify-center"
         defaultSelectedKey={category}
         selectedKey={category}
@@ -37,7 +39,7 @@ export default function ProfilePostsMainTab() {
           else history.pushState({}, "", `/@${username}/${key}`);
         }}
         classNames={{
-          tabList: "max-sm:gap-0 bg-transparent p-0",
+          tabList: "max-sm:gap-0 max-sm:bg-transparent max-sm:p-0",
           tab: "max-sm:max-w-prose max-sm:px-2 max-sm:h-5",
         }}
       >

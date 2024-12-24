@@ -214,26 +214,28 @@ export default function AppNavbar() {
             <LuPencilLine className="text-xl text-default-600" />
           </Button>
 
-          <Badge
-            size="sm"
-            content={
-              loginInfo.unread_count > 99
-                ? "99+"
-                : loginInfo.unread_count > 0 && loginInfo.unread_count
-            }
-            className="opacity-80"
-            color="primary"
-          >
-            <Button
-              onClick={() => setNotificationPopup(true)}
-              radius="lg"
-              isIconOnly
-              variant="light"
+          {status === "authenticated" && (
+            <Badge
               size="sm"
+              content={
+                loginInfo.unread_count > 99
+                  ? "99+"
+                  : loginInfo.unread_count > 0 && loginInfo.unread_count
+              }
+              className="opacity-80"
+              color="primary"
             >
-              <FaRegBell className="text-xl text-default-600" />
-            </Button>
-          </Badge>
+              <Button
+                onClick={() => setNotificationPopup(true)}
+                radius="lg"
+                isIconOnly
+                variant="light"
+                size="sm"
+              >
+                <FaRegBell className="text-xl text-default-600" />
+              </Button>
+            </Badge>
+          )}
 
           {status !== "authenticated" && (
             <Button
@@ -396,7 +398,7 @@ export default function AppNavbar() {
           <NotificationsModal
             isOpen={notificationPopup}
             onOpenChange={setNotificationPopup}
-            username={session?.user?.name}
+            username={session?.user?.name ?? ""}
           />
         )}
       </NavbarContent>

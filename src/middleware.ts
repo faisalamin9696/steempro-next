@@ -1,20 +1,13 @@
 import { validateCommunity } from "@/libs/utils/helper";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { validBasicCats, validCats } from "@/libs/constants/AppConstants";
+import {
+  validBasicCats,
+  validCats,
+  validProfileTabs,
+} from "@/libs/constants/AppConstants";
 
 // Define valid categories
-
-const validProfileTabs = [
-  "blog",
-  "posts",
-  "friends",
-  "comments",
-  "replies",
-  "wallet",
-  "communities",
-  "settings",
-];
 
 // Define username URL regex
 const usernameURLRegex = /@([^/]+)/;

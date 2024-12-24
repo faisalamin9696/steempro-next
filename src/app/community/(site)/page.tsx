@@ -20,7 +20,7 @@ export default function CommunityPage(props: Props) {
   const profileTabs = [
     { title: "Trending", key: "trending", children: <CommunityTrendingsTab /> },
     { title: "New", key: "created", children: <CommunityCreatedPage /> },
-    { title: "Pinned", key: "pinned", children: <CommunityPinnedTab /> },
+    // { title: "Pinned", key: "pinned", children: <CommunityPinnedTab /> },
     {
       title: "About",
       key: "about",

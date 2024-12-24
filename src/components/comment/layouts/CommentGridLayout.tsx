@@ -21,9 +21,11 @@ import NsfwOverlay from "@/components/NsfwOverlay";
 import { getSettings } from "@/libs/utils/user";
 import RoleTitleCard from "@/components/RoleTitleCard";
 import { twMerge } from "tailwind-merge";
+import usePathnameClient from "@/libs/utils/usePathnameClient";
 
 export default function CommentGridLayout(props: CommentProps) {
   const { comment, isReply } = props;
+  const { community } = usePathnameClient();
   const commentInfo: Feed | Post =
     useAppSelector((state) => state.commentReducer.values)[
       `${comment.author}/${comment.permlink}`
@@ -39,6 +41,7 @@ export default function CommentGridLayout(props: CommentProps) {
   const imageWidth = 200;
   const imageHeight = 176;
   const isNsfw = hasNsfwTag(comment) && settings.nsfw !== "Always show";
+  const isCommunity = validateCommunity(community);
 
   return (
     <Card
@@ -83,16 +86,18 @@ export default function CommentGridLayout(props: CommentProps) {
               />
             )}
 
-            <STag
-              className={`absolute m-2 top-0 right-0 font-semibold `}
-              content={
-                commentInfo.community ||
-                (validateCommunity(commentInfo.category)
-                  ? commentInfo.category
-                  : `#${commentInfo.category}`)
-              }
-              tag={commentInfo.category}
-            />
+            {!isCommunity && (
+              <STag
+                className={`absolute m-2 top-0 right-0 font-semibold `}
+                content={
+                  commentInfo.community ||
+                  (validateCommunity(commentInfo.category)
+                    ? commentInfo.category
+                    : `#${commentInfo.category}`)
+                }
+                tag={commentInfo.category}
+              />
+            )}
           </div>
 
           <div className="flex flex-1 flex-col justify-between p-4">

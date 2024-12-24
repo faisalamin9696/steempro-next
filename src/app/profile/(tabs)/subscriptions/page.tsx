@@ -1,6 +1,9 @@
 "use client";
 
+import notFound from "@/app/not-found";
+import CommentSkeleton from "@/components/comment/components/CommentSkeleton";
 import CommunityCard from "@/components/community/components/CommunityCard";
+import LoadingCard from "@/components/LoadingCard";
 // import FeedList from '@/components/comment/FeedList';
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
@@ -18,8 +21,18 @@ export default function ProfileSubsribtionsTab() {
   const URL = `/communities_api/getCommunitiesBySubscriber/${username}/${
     loginInfo.name || "null"
   }`;
-  const { data } = useSWR(URL, fetchSds<Community[]>);
+  const { data, isLoading, error } = useSWR(URL, fetchSds<Community[]>);
   const isSelf = !!loginInfo.name && loginInfo.name === username;
+
+  if (isLoading)
+    return (
+      <div className="flex flex-col gap-2 md:grid md:grid-cols-2">
+        <CommentSkeleton />
+        <CommentSkeleton />
+      </div>
+    );
+
+  if (error) return notFound();
 
   return (
     <div>

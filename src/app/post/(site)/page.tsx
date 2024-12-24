@@ -21,7 +21,6 @@ import TagsListCard from "@/components/TagsListCard";
 import { Button } from "@nextui-org/button";
 import { updatePostView } from "@/libs/mysql/database";
 import { addRepliesHandler } from "@/libs/redux/reducers/RepliesReducer";
-import { comment } from "postcss";
 const DynamicPostReplies = dynamic(
   () => import("../../../components/reply/PostReplies")
 );

@@ -13,6 +13,17 @@ import ProfileSettingsTab from "../(tabs)/settings/page";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { addProfileHandler } from "@/libs/redux/reducers/ProfileReducer";
 import ProfileCommunitiesMainTab from "../(tabs)/CommunitiesMain/page";
+import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import ProfileNotificationsTab from "../(tabs)/notifications/page";
+import { FaBlogger } from "react-icons/fa6";
+import {
+  MdFeed,
+  MdGroups,
+  MdNotifications,
+  MdRssFeed,
+  MdSettings,
+  MdWallet,
+} from "react-icons/md";
 
 export default function ProfilePage({ data }: { data: AccountExt }) {
   let { username, category } = usePathnameClient();
@@ -23,6 +34,8 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
 
   const isSelf = !!loginInfo.name && loginInfo.name === username;
   const dispatch = useAppDispatch();
+
+  const { isMobile } = useDeviceInfo();
 
   // useEffect(() => {
   //     router.refresh();
@@ -38,17 +51,36 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
   }, [data]);
 
   const profileTabs = [
-    { title: "Blog", key: "blog", children: <ProfileBlogsTab /> },
-    { title: "Posts", key: "posts", children: <ProfilePostsMainTab /> },
+    {
+      title: "Blog",
+      key: "blog",
+      children: <ProfileBlogsTab />,
+      icon: <MdRssFeed size={24} />,
+      priority: 0,
+    },
+    {
+      title: "Posts",
+      key: "posts",
+      children: <ProfilePostsMainTab />,
+      icon: <MdFeed size={24} />,
+      priority: 1,
+    },
+
     {
       title: "Communities",
       key: "communities",
       children: <ProfileCommunitiesMainTab />,
+      icon: <MdGroups size={24} />,
+
+      priority: 3,
     },
     {
       title: "Wallet",
       key: "wallet",
       children: <ProfileWalletTab data={isSelf ? loginInfo : profileInfo} />,
+      icon: <MdWallet size={24} />,
+
+      priority: 4,
     },
   ];
 
@@ -57,17 +89,29 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
       title: "Settings",
       key: "settings",
       children: <ProfileSettingsTab />,
+      icon: <MdSettings size={24} />,
+
+      priority: 5,
     });
+  else
+    profileTabs.push({
+      title: "Notifications",
+      key: "notifications",
+      icon: <MdNotifications size={24} />,
+
+      children: <ProfileNotificationsTab />,
+      priority: 2,
+    });
+
+  const sortedProfileTabs = profileTabs.sort((a, b) => a.priority - b.priority);
 
   return (
     <div className={clsx("relative items-center flex-row w-full")}>
       <Tabs
-        size="sm"
-        disableAnimation
-        disableCursorAnimation
+        isVertical={!isMobile}
+        size={isMobile ? "sm" : "md"}
         color={"secondary"}
-        radius="full"
-        hidden={true}
+        radius={isMobile ? "full" : "sm"}
         selectedKey={
           ["comments", "replies", "friends"].includes(category)
             ? "posts"
@@ -86,16 +130,27 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
         classNames={{
           tabList: "max-sm:gap-0 main-tab-list",
           tab: "max-sm:max-w-prose max-sm:px-2 max-sm:h-5",
+          panel: "w-full",
+          tabContent: " w-full",
         }}
       >
-        {profileTabs.map((tab) => (
-          <Tab hidden key={tab.key} title={tab.title}>
+        {sortedProfileTabs.map((tab) => (
+          <Tab
+            hidden
+            key={tab.key}
+            title={
+              <div className="flex items-center space-x-2">
+                {!isMobile && tab?.icon}
+                <span>{tab.title}</span>
+              </div>
+            }
+          >
             {tab.children}
           </Tab>
         ))}
       </Tabs>
 
-      {!["wallet", "settings"].includes(category) && (
+      {!["notifications", "wallet", "settings"].includes(category) && (
         <div className="absolute  top-0 right-0 max-sm:hidden">
           <FeedPatternSwitch />
         </div>

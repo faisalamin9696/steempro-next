@@ -78,10 +78,10 @@ export const validProfileTabs = [
   "comments",
   "replies",
   "wallet",
+  "notifications",
   "communities",
   "settings",
 ];
-
 export const validBasicCats = ["trending", "created", "hot", "payout"];
 
 export const validCats = validBasicCats.concat(["pinned", "about"]);

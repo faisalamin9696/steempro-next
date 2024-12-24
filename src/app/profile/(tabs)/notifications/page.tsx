@@ -1,14 +1,9 @@
-"use client"
-import React from 'react'
+"use client";
+import NotificationsTable from "@/components/NotificationsTable";
+import usePathnameClient from "@/libs/utils/usePathnameClient";
+import React from "react";
 
 export default function ProfileNotificationsTab() {
-
-    return (
-        <div >
-            <div className='flex flex-col space-y-2'>
-                Notifications
-            </div>
-
-        </div>
-    )
+  const { username } = usePathnameClient();
+  return <NotificationsTable username={username} />;
 }

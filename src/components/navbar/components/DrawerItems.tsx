@@ -7,17 +7,8 @@ import {
   FaTools,
   FaUserCircle,
 } from "react-icons/fa";
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  useDisclosure,
-} from "@nextui-org/modal";
 import { Button } from "@nextui-org/button";
-import { useSession } from "next-auth/react";
-import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
+import { useAppSelector } from "@/libs/constants/AppFunctions";
 import { IoLogOut } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
 import { useLogin } from "../../auth/AuthProvider";
@@ -45,11 +36,11 @@ export default function DrawerItems(props: Props) {
       <>
         <div className="flex flex-col gap-2 h-full text-default-600">
           {isLogin() && (
-            <Accordion isCompact defaultExpandedKeys={["profile"]}>
+            <Accordion isCompact defaultExpandedKeys={["user"]}>
               <AccordionItem
-                key="profile"
-                aria-label="Profile"
-                title="Profile"
+                key="user"
+                aria-label="User"
+                title="User"
                 classNames={{ title: " text-sm text-default-600" }}
               >
                 <div className=" flex flex-col">
@@ -84,12 +75,13 @@ export default function DrawerItems(props: Props) {
                     }}
                     startContent={<PiUserSwitchFill className="text-xl" />}
                   >
-                    Switch/Add Account
+                    Switch/Add
                   </Button>
 
                   <Button
                     className="w-full justify-start text-danger "
                     variant="light"
+                    color="danger"
                     onClick={() => {
                       handleLogout();
                     }}
@@ -114,17 +106,6 @@ export default function DrawerItems(props: Props) {
               <div className=" flex flex-col">
                 <Button
                   variant="light"
-                  as={Link}
-                  href={`/settings`}
-                  className="w-full justify-start text-inherit "
-                  onClick={onItemClick}
-                  startContent={<IoMdSettings className="text-xl" />}
-                >
-                  Settings
-                </Button>
-
-                <Button
-                  variant="light"
                   className="w-full justify-start text-inherit "
                   as={Link}
                   href={`/communities`}
@@ -142,6 +123,17 @@ export default function DrawerItems(props: Props) {
                   startContent={<RiUserStarFill className="text-xl" />}
                 >
                   Witnesses
+                </Button>
+
+                <Button
+                  variant="light"
+                  as={Link}
+                  href={`/settings`}
+                  className="w-full justify-start text-inherit "
+                  onClick={onItemClick}
+                  startContent={<IoMdSettings className="text-xl" />}
+                >
+                  Settings
                 </Button>
 
                 <Button

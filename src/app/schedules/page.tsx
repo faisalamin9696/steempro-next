@@ -5,7 +5,7 @@ import React from "react";
 import ScheduleItemCard from "@/components/ScheduleItemCard";
 import useSWR from "swr";
 import { useSession } from "next-auth/react";
-import { notFound } from "next/navigation";
+import notFound from "@/app/not-found";
 import EmptyList from "@/components/EmptyList";
 import CommentSkeleton from "@/components/comment/components/CommentSkeleton";
 

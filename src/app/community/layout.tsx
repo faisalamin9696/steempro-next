@@ -7,6 +7,7 @@ import CommunityPage from "./(site)/page";
 import ProfileInfoCard from "@/components/ProfileInfoCard";
 import AccountHeader from "@/components/AccountHeader";
 import { auth } from "@/auth";
+import CommunityCarousel from "@/components/carousal/CommunityCarousal";
 
 export default async function Layout({
   children,
@@ -36,6 +37,7 @@ export default async function Layout({
           />
         }
       >
+        <CommunityCarousel />
         <CommunityPage data={data} />
       </MainWrapper>
     </main>

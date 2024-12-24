@@ -14,10 +14,11 @@ import { getThumbnail } from "@/libs/utils/image";
 interface Props {
   authPerm: string;
   views?: number;
+  topChildren?: React.ReactNode;
 }
 
 export default function PromotionCard(props: Props) {
-  const { authPerm, views } = props;
+  const { authPerm, views, topChildren } = props;
   const [author, permlink] = authPerm.split("/");
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
 
@@ -77,6 +78,9 @@ export default function PromotionCard(props: Props) {
 
       <div className="shadow-sm shadow-foreground/10   absolute right-0 m-2 rounded-lg backdrop-blur-xl dark:bg-default/30 bg-foreground/20 px-1">
         <ViewCountCard comment={data} compact views={views} />
+      </div>
+      <div className="absolute right-0 m-2">
+        {topChildren}
       </div>
     </Card>
   );

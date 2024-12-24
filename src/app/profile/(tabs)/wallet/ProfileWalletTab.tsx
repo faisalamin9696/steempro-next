@@ -19,6 +19,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import PowerDownModal from "@/components/PowerDownModal";
+import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 
 export default function ProfileWalletTab({ data }: { data: AccountExt }) {
   const { username } = usePathnameClient();
@@ -36,6 +37,8 @@ export default function ProfileWalletTab({ data }: { data: AccountExt }) {
   }>({
     isOpen: false,
   });
+
+  const { isMobile } = useDeviceInfo();
 
   const claimMutation = useMutation({
     mutationFn: (data: { key: string; isKeychain?: boolean }) =>
@@ -186,9 +189,11 @@ export default function ProfileWalletTab({ data }: { data: AccountExt }) {
 
       <Tabs
         destroyInactiveTabPanel={false}
-        aria-label="Options"
-        variant="underlined"
+        aria-label="Wallet"
+        color={"primary"}
         size="sm"
+        variant={isMobile ? "underlined" : "solid"}
+        radius={isMobile ? "full" : "sm"}
         onSelectionChange={(key) => {
           setSelectedTab(key as string);
         }}
