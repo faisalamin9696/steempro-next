@@ -450,6 +450,8 @@ export default memo(function EditorInput(props: EditorProps) {
           }
         },
         error: (error) => {
+          console.log("Upload error", error);
+
           if (error.toString().includes("code 413")) {
             // console.log('Large file size')
             return "Large file size";
