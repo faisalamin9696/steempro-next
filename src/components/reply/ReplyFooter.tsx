@@ -418,7 +418,7 @@ export default function ReplyFooter({
             {canReply && (
               <Button
                 size="sm"
-                onClick={() => {
+                onPress={() => {
                   toggleReply();
                 }}
                 variant="light"
@@ -432,7 +432,7 @@ export default function ReplyFooter({
             {canEdit && (
               <Button
                 size="sm"
-                onClick={() => {
+                onPress={() => {
                   toggleEdit();
                 }}
                 variant="light"
@@ -472,7 +472,7 @@ export default function ReplyFooter({
 
                       <div className="text-tiny flex mt-2 space-x-2">
                         <Button
-                          onClick={() => setDeletePopup(false)}
+                          onPress={() => setDeletePopup(false)}
                           size="sm"
                           color="default"
                         >
@@ -482,7 +482,7 @@ export default function ReplyFooter({
                           size="sm"
                           color="danger"
                           variant="solid"
-                          onClick={() => {
+                          onPress={() => {
                             setDeletePopup(false);
                             handleDelete();
                           }}
@@ -500,7 +500,7 @@ export default function ReplyFooter({
               <Button
                 size="sm"
                 isLoading={unmuteMutation.isPending}
-                onClick={() => {
+                onPress={() => {
                   handleMute();
                 }}
                 variant="light"
@@ -536,7 +536,7 @@ export default function ReplyFooter({
                   color="warning"
                   radius="full"
                   size="sm"
-                  onClick={toggleExpand}
+                  onPress={toggleExpand}
                 >
                   Reveal {comment.children} replies
                 </Button>
@@ -575,7 +575,7 @@ export default function ReplyFooter({
                   <Button
                     radius="full"
                     size="sm"
-                    onClick={() => {
+                    onPress={() => {
                       if (showReply) toggleReply();
                       else toggleEdit();
                     }}
@@ -586,7 +586,7 @@ export default function ReplyFooter({
 
                 <PublishButton
                   isDisabled={isPosting}
-                  onClick={handlePublish}
+                  onPress={handlePublish}
                   isLoading={isPosting}
                   tooltip=""
                   buttonText={showEdit ? "Update" : "Send"}

@@ -101,7 +101,7 @@ export default function SubmitPage(props: Props) {
   const [isPosting, setPosting] = useState(false);
   const [isScheduling, setScheduling] = useState(false);
   const [isPickerOpen, setIsPickerOpen] = useState(false);
-  const [dateTime, setDateTime] = useState<ZonedDateTime>();
+  const [dateTime, setDateTime] = useState<ZonedDateTime | null>();
 
   const isLoading = isPosting || isScheduling;
 
@@ -699,7 +699,7 @@ export default function SubmitPage(props: Props) {
                   isDisabled={isEdit || isLoading}
                   isLoading={isScheduling}
                   buttonText={dateTime ? "Schedule" : undefined}
-                  onClick={() => handlePostPublish(true)}
+                  onPress={() => handlePostPublish(true)}
                 />
               )}
 
@@ -708,7 +708,7 @@ export default function SubmitPage(props: Props) {
                   size="sm"
                   radius="full"
                   isDisabled={isLoading}
-                  onClick={() => {
+                  onPress={() => {
                     handleUpdateCancel && handleUpdateCancel();
                   }}
                 >
@@ -721,7 +721,7 @@ export default function SubmitPage(props: Props) {
                   isDisabled={isLoading}
                   isLoading={isPosting}
                   buttonText={isEdit ? "Update" : undefined}
-                  onClick={() => handlePostPublish(false)}
+                  onPress={() => handlePostPublish(false)}
                 />
               )}
             </div>

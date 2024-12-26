@@ -53,7 +53,7 @@ export default memo(function CommunitySelectButton(props: Props) {
   );
   const dispatch = useAppDispatch();
 
-  const commmunities =
+  const commmunities: Community[] =
     onlyCommunity && community
       ? [{ ...community }]
       : loginInfo.communities ?? [];
@@ -154,7 +154,7 @@ export default memo(function CommunitySelectButton(props: Props) {
           radius="full"
           variant="light"
           isDisabled={isDisabled}
-          onClick={() => {
+          onPress={() => {
             handleOnClear && handleOnClear();
             onSelectCommunity(undefined);
           }}

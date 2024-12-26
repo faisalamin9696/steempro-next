@@ -69,7 +69,7 @@ function CarousalMain(props: Props) {
             <Button
               size="sm"
               isDisabled={isEdge}
-              onClick={onClick}
+              onPress={onClick}
               isIconOnly
               variant="flat"
               radius="full"

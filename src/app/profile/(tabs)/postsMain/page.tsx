@@ -26,8 +26,6 @@ export default function ProfilePostsMainTab() {
       <Tabs
         destroyInactiveTabPanel={false}
         size="sm"
-        disableAnimation
-        disableCursorAnimation
         variant={isMobile ? "underlined" : "solid"}
         color={"primary"}
         radius={isMobile ? "full" : "sm"}

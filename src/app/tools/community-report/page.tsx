@@ -296,7 +296,7 @@ export default function CommunityReportPage() {
               isDisabled={pages === 1}
               size="sm"
               variant="flat"
-              onClick={onPreviousPage}
+              onPress={onPreviousPage}
             >
               Previous
             </Button>
@@ -304,7 +304,7 @@ export default function CommunityReportPage() {
               isDisabled={pages === 1}
               size="sm"
               variant="flat"
-              onClick={onNextPage}
+              onPress={onNextPage}
             >
               Next
             </Button>
@@ -351,7 +351,7 @@ export default function CommunityReportPage() {
 
         <Button
           className="self-start"
-          onClick={getCommunityReport}
+          onPress={getCommunityReport}
           isLoading={isPending}
         >
           Get Report

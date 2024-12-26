@@ -6,13 +6,13 @@ import Link from "next/link";
 interface Props {
   username: string;
   quality?: "small" | "large" | "medium";
-  onClick?: (event) => void;
+  onPress?: (event) => void;
   border?: boolean;
   className?: string;
   size?: "xs" | "1xs" | "sm" | "md" | "lg" | "xl";
 }
 export default function SAvatar(props: Props) {
-  const { username, size, quality, onClick, border, className } = props;
+  const { username, size, quality, onPress, border, className } = props;
   const imageSize =
     size === "xl"
       ? 160
@@ -31,7 +31,7 @@ export default function SAvatar(props: Props) {
   if (!username) return null;
 
   return (
-    <Link href={`/@${username}`} onClick={onClick}>
+    <Link href={`/@${username}`} onClick={onPress}>
       <Image
         title={username}
         onError={(e) => {

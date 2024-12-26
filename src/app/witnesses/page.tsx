@@ -304,7 +304,7 @@ export default function page() {
               isDisabled={pages === 1}
               size="sm"
               variant="flat"
-              onClick={onPreviousPage}
+              onPress={onPreviousPage}
             >
               Previous
             </Button>
@@ -312,7 +312,7 @@ export default function page() {
               isDisabled={pages === 1}
               size="sm"
               variant="flat"
-              onClick={onNextPage}
+              onPress={onNextPage}
             >
               Next
             </Button>

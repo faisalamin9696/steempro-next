@@ -192,7 +192,7 @@ export default function FollowButton(props: Props) {
           title="Edit profile"
           className={clsx("min-w-0  h-6")}
           color="primary"
-          onClick={handleAccountEdit}
+          onPress={handleAccountEdit}
           startContent={<FaPencil />}
           radius="full"
         >
@@ -204,7 +204,7 @@ export default function FollowButton(props: Props) {
         <Button
           size="sm"
           isIconOnly
-          variant="flat"
+          variant="solid"
           title="Create post"
           className={clsx("min-w-0  h-6")}
           color="primary"
@@ -221,7 +221,7 @@ export default function FollowButton(props: Props) {
           }
           radius="full"
         >
-          <LuPencilLine />
+          <LuPencilLine size={15} />
         </Button>
       )}
 
@@ -251,7 +251,7 @@ export default function FollowButton(props: Props) {
               : "Follow"
           }
           variant={"flat"}
-          onClick={handleFollow}
+          onPress={handleFollow}
           isIconOnly={isPending}
         >
           {isPending

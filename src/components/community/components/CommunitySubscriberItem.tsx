@@ -14,7 +14,7 @@ interface Props {
   community?: Community;
 }
 
-export const CommunityMemberItem = (props: Props) => {
+export const CommunitySubscriberItem = (props: Props) => {
   const { item, community } = props;
   const [roleTitle, setRoleTitle] = useState({
     role: item.role,
@@ -46,11 +46,11 @@ export const CommunityMemberItem = (props: Props) => {
               <p
                 className={clsx(
                   roleTitle.role === "owner"
-                    ? "text-green-400"
+                    ? "text-green-500"
                     : roleTitle.role === "admin"
                     ? "text-blue-400"
                     : roleTitle.role === "mod"
-                    ? "text-yellow-400"
+                    ? "text-yellow-500"
                     : roleTitle.role === "muted"
                     ? "text-red-400"
                     : ""
@@ -84,7 +84,7 @@ export const CommunityMemberItem = (props: Props) => {
           variant="flat"
           color="secondary"
           isIconOnly
-          onClick={() => {
+          onPress={() => {
             setEditRoleModal({
               isOpen: !editRoleModal.isOpen,
               comment: {
@@ -118,4 +118,4 @@ export const CommunityMemberItem = (props: Props) => {
   );
 };
 
-export default CommunityMemberItem;
+export default CommunitySubscriberItem;

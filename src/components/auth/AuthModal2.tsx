@@ -405,7 +405,7 @@ export default function AuthModal2(props: Props) {
                       <KeychainButton
                         size="md"
                         isDisabled={loading}
-                        onClick={() => {
+                        onPress={() => {
                           handleKeychainLogin();
                         }}
                       />
@@ -458,7 +458,7 @@ export default function AuthModal2(props: Props) {
                           size="sm"
                           variant="light"
                           isDisabled={loading}
-                          onClick={() => {
+                          onPress={() => {
                             onForget && onForget(loginInfo.name);
                           }}
                         >
@@ -470,7 +470,7 @@ export default function AuthModal2(props: Props) {
                         <Button
                           color="danger"
                           variant="light"
-                          onClick={onClose}
+                          onPress={onClose}
                           isDisabled={loading}
                         >
                           Cancel
@@ -480,7 +480,7 @@ export default function AuthModal2(props: Props) {
                           fullWidth
                           color="primary"
                           isLoading={loading}
-                          onClick={handleUnlock}
+                          onPress={handleUnlock}
                           isDisabled={loading}
                         >
                           Unlock
@@ -595,7 +595,7 @@ export default function AuthModal2(props: Props) {
                         <Button
                           color="danger"
                           variant="light"
-                          onClick={onClose}
+                          onPress={onClose}
                           isDisabled={loading}
                         >
                           Cancel
@@ -605,7 +605,7 @@ export default function AuthModal2(props: Props) {
                           fullWidth
                           color="primary"
                           isLoading={loading}
-                          onClick={handleLogin}
+                          onPress={handleLogin}
                           isDisabled={loading}
                         >
                           {isNew ? "Add account" : "Login"}

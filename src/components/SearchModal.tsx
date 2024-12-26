@@ -25,6 +25,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import EmptyList from "./EmptyList";
 import { FeedBodyLength } from "@/libs/constants/AppConstants";
 import CommentListLayout from "./comment/layouts/CommentListLayout";
+import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 
 type SearchTypes = "posts" | "comments" | "tags" | "people";
 
@@ -38,6 +39,7 @@ export default function SearchModal(props: Props) {
   const [searchType, setSearchType] = useState<SearchTypes>("posts");
   let [searchText, setSearchText] = useState("");
   let [query, setQuery] = useState("");
+  const { isMobile } = useDeviceInfo();
 
   const [searchAuthor, setSearchAuthor] = useState("");
   const [searchTags, setSearchTags] = useState("");
@@ -117,7 +119,7 @@ export default function SearchModal(props: Props) {
           isIconOnly
           isLoading={loadingMore}
           isDisabled
-          onClick={handleEndReached}
+          onPress={handleEndReached}
         ></Button>
       </div>
     );
@@ -169,7 +171,7 @@ export default function SearchModal(props: Props) {
                 <div className=" flex items-center gap-2">
                   <Button
                     isIconOnly
-                    onClick={handleSearch}
+                    onPress={handleSearch}
                     size="sm"
                     color="primary"
                     variant="flat"
@@ -215,7 +217,7 @@ export default function SearchModal(props: Props) {
 
                 <Tabs
                   variant={"light"}
-                  radius="full"
+                  radius={isMobile ? "full" : "sm"}
                   size="sm"
                   onSelectionChange={(key) => {
                     setSearchType(key?.toString() as SearchTypes);
@@ -258,7 +260,7 @@ export default function SearchModal(props: Props) {
                                                 bg-white  overflow-hidden rounded-lg shadow-lg p-2 gap-4`}
                         >
                           <SAvatar
-                            onClick={onClose}
+                            onPress={onClose}
                             className="cursor-pointer"
                             size="sm"
                             username={item?.name || ""}
@@ -298,7 +300,7 @@ export default function SearchModal(props: Props) {
             </ModalBody>
 
             <ModalFooter>
-              <Button color="danger" variant="flat" onClick={onClose} size="sm">
+              <Button color="danger" variant="flat" onPress={onClose} size="sm">
                 Close
               </Button>
             </ModalFooter>

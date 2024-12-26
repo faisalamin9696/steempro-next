@@ -307,7 +307,7 @@ export default memo(function PostReplies(props: Props) {
           variant="flat"
           color="secondary"
           radius="full"
-          onClick={toggleReply}
+          onPress={toggleReply}
           isDisabled={showReply}
           className="text-tiny min-h-0"
         >
@@ -377,7 +377,7 @@ export default memo(function PostReplies(props: Props) {
               variant="flat"
               isDisabled={repliesMutation.isPending}
               className="self-center"
-              onClick={handleLoadComments}
+              onPress={handleLoadComments}
               isLoading={isLoading || repliesMutation.isPending}
             >
               Load comments
@@ -414,7 +414,7 @@ export default memo(function PostReplies(props: Props) {
                     <Button
                       radius="full"
                       size="sm"
-                      onClick={() => {
+                      onPress={() => {
                         toggleReply();
                       }}
                     >
@@ -424,7 +424,7 @@ export default memo(function PostReplies(props: Props) {
 
                   <PublishButton
                     isDisabled={isPosting}
-                    onClick={handlePublish}
+                    onPress={handlePublish}
                     isLoading={isPosting}
                     tooltip=""
                     buttonText={"Send"}
@@ -462,7 +462,7 @@ export default memo(function PostReplies(props: Props) {
                 color="default"
                 variant="flat"
                 className="self-center"
-                onClick={handleLoadMore}
+                onPress={handleLoadMore}
                 isLoading
                 isDisabled
               >

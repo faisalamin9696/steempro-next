@@ -37,18 +37,18 @@ export function ParsedBody({
               isIconOnly
               title="Open image"
               variant="flat"
-              onClick={() => handleOpenImage(domNode?.attribs?.src)}
+              onPress={() => handleOpenImage(domNode?.attribs?.src)}
               radius="full"
               className="open-button  absolute top-0 right-0 m-1"
             >
-              <MdOpenInNew className="text-xl" />
+              <MdOpenInNew size={18} />
             </Button>
 
             {/* <NsfwOverlay /> */}
           </div>
         );
       }
-     
+
       if (domNode?.name === "table") {
         // Render the table content using domToReact
         return (

@@ -511,7 +511,7 @@ const TransferModal = (props: Props): JSX.Element => {
             <ModalFooter className=" justify-between">
               <KeychainButton
                 isDisabled={!confirmCheck || isPending}
-                onClick={() => handleTransfer(true)}
+                onPress={() => handleTransfer(true)}
               />
 
               <div className=" flex items-center gap-2">
@@ -519,7 +519,7 @@ const TransferModal = (props: Props): JSX.Element => {
                   size="sm"
                   color="danger"
                   variant="light"
-                  onClick={onClose}
+                  onPress={onClose}
                   isDisabled={isPending}
                 >
                   Cancel
@@ -528,7 +528,7 @@ const TransferModal = (props: Props): JSX.Element => {
                 {(savings || powewrup) && (
                   <Button
                     size="sm"
-                    onClick={() => setBasic(!basic)}
+                    onPress={() => setBasic(!basic)}
                     variant="flat"
                     isDisabled={isPending}
                   >
@@ -539,7 +539,7 @@ const TransferModal = (props: Props): JSX.Element => {
                 <Button
                   size="sm"
                   color="primary"
-                  onClick={() => handleTransfer()}
+                  onPress={() => handleTransfer()}
                   isLoading={isPending}
                   isDisabled={!confirmCheck || isPending}
                 >

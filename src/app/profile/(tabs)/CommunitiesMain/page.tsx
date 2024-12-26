@@ -24,8 +24,6 @@ export default function ProfileCommunitiesMainTab() {
       <Tabs
         size="sm"
         color={"primary"}
-        disableAnimation
-        disableCursorAnimation
         variant={isMobile ? "underlined" : "solid"}
         radius={isMobile ? "full" : "sm"}
         className="justify-center"

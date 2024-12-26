@@ -49,7 +49,7 @@ export default function DrawerItems(props: Props) {
                     variant="light"
                     as={Link}
                     href={`/@${loginInfo.name}`}
-                    onClick={onItemClick}
+                    onPress={onItemClick}
                     startContent={<FaUserCircle className="text-xl" />}
                   >
                     Profile
@@ -60,7 +60,7 @@ export default function DrawerItems(props: Props) {
                     variant="light"
                     as={Link}
                     href={`/schedules`}
-                    onClick={onItemClick}
+                    onPress={onItemClick}
                     startContent={<FaCalendarAlt className="text-xl" />}
                   >
                     Schedules
@@ -69,7 +69,7 @@ export default function DrawerItems(props: Props) {
                   <Button
                     className="w-full justify-start text-inherit "
                     variant="light"
-                    onClick={() => {
+                    onPress={() => {
                       onAccountSwitch && onAccountSwitch();
                       onItemClick && onItemClick();
                     }}
@@ -82,7 +82,7 @@ export default function DrawerItems(props: Props) {
                     className="w-full justify-start text-danger "
                     variant="light"
                     color="danger"
-                    onClick={() => {
+                    onPress={() => {
                       handleLogout();
                     }}
                     startContent={
@@ -109,7 +109,7 @@ export default function DrawerItems(props: Props) {
                   className="w-full justify-start text-inherit "
                   as={Link}
                   href={`/communities`}
-                  onClick={onItemClick}
+                  onPress={onItemClick}
                   startContent={<HiMiniUserGroup className="text-xl" />}
                 >
                   Communities
@@ -119,7 +119,7 @@ export default function DrawerItems(props: Props) {
                   className="w-full justify-start text-inherit "
                   as={Link}
                   href={`/witnesses`}
-                  onClick={onItemClick}
+                  onPress={onItemClick}
                   startContent={<RiUserStarFill className="text-xl" />}
                 >
                   Witnesses
@@ -130,7 +130,7 @@ export default function DrawerItems(props: Props) {
                   as={Link}
                   href={`/settings`}
                   className="w-full justify-start text-inherit "
-                  onClick={onItemClick}
+                  onPress={onItemClick}
                   startContent={<IoMdSettings className="text-xl" />}
                 >
                   Settings
@@ -141,7 +141,7 @@ export default function DrawerItems(props: Props) {
                   as={Link}
                   href="/tools"
                   className="w-full justify-start text-inherit "
-                  onClick={onItemClick}
+                  onPress={onItemClick}
                   startContent={<FaTools className="text-xl" />}
                 >
                   Tools
@@ -163,7 +163,7 @@ export default function DrawerItems(props: Props) {
                   className="w-full justify-start text-inherit "
                   as={Link}
                   href={`/policy`}
-                  onClick={onItemClick}
+                  onPress={onItemClick}
                   startContent={<MdPrivacyTip className="text-xl" />}
                 >
                   Privacy Policy
@@ -175,7 +175,7 @@ export default function DrawerItems(props: Props) {
                   as={Link}
                   target="_blank"
                   href={GitHubLink}
-                  onClick={onItemClick}
+                  onPress={onItemClick}
                   startContent={<BsGithub className="text-xl" />}
                 >
                   GitHub
@@ -186,7 +186,7 @@ export default function DrawerItems(props: Props) {
                   className="w-full justify-start text-inherit "
                   as={Link}
                   href={"/about"}
-                  onClick={onItemClick}
+                  onPress={onItemClick}
                   startContent={<FaInfoCircle className="text-xl" />}
                 >
                   About

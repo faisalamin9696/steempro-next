@@ -41,7 +41,7 @@ export const TokenCard = (props: TokenCardProps) => {
               isIconOnly
               size="sm"
               variant="light"
-              onClick={handleInfo}
+              onPress={handleInfo}
             >
               <BsInfoCircle className="text-sm" />
             </Button>

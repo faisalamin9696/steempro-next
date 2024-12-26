@@ -3,7 +3,7 @@
 import EmptyList from "@/components/EmptyList";
 import ErrorCard from "@/components/ErrorCard";
 import LoadingCard from "@/components/LoadingCard";
-import CommunityMemberItem from "@/components/community/components/CommunityMemberItem";
+import CommunitySubscriberItem from "@/components/community/components/CommunitySubscriberItem";
 import {
   awaitTimeout,
   fetchSds,
@@ -29,7 +29,7 @@ interface Props {
   community?: Community;
   stickyHeader?: boolean;
 }
-export default function CommunityMembers(props: Props) {
+export default function CommunitySubscribers(props: Props) {
   const { large, stickyHeader } = props;
   const [communityInfo, setCommunityInfo] = useState<Community>();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
@@ -106,7 +106,7 @@ export default function CommunityMembers(props: Props) {
           <p>{"Roles"}</p>
         </div> */}
 
-        <div className="flex flex-row gap-2 items-center p-1">
+        <div className="flex flex-row gap-2 items-center px-1">
           <Input
             variant="flat"
             size="sm"
@@ -123,7 +123,7 @@ export default function CommunityMembers(props: Props) {
               size="sm"
               variant="flat"
               color="success"
-              onClick={() => {
+              onPress={() => {
                 setIsAddRoleOpen(!isAddRoleOpen);
               }}
             >
@@ -163,7 +163,7 @@ export default function CommunityMembers(props: Props) {
                   key={item.account}
                   className="border compact border-gray-100/10 shadow-md shadow-gray-400 dark:shadow-default-500 bg-transparent backdrop-blur-md"
                 >
-                  <CommunityMemberItem item={item} community={communityInfo} />
+                  <CommunitySubscriberItem item={item} community={communityInfo} />
                 </Card>
               );
             })}

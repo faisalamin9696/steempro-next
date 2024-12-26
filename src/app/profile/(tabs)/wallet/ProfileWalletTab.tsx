@@ -134,7 +134,7 @@ export default function ProfileWalletTab({ data }: { data: AccountExt }) {
           </p>
           {isSelf && (
             <Button
-              onClick={handleClaimReward}
+              onPress={handleClaimReward}
               isDisabled={claimMutation.isPending}
               isLoading={claimMutation.isPending}
               size="sm"
@@ -177,7 +177,7 @@ export default function ProfileWalletTab({ data }: { data: AccountExt }) {
           {!!data.powerdown && isSelf && (
             <Button
               size="sm"
-              onClick={() => {
+              onPress={() => {
                 setPowerDownModal({ isOpen: true, cancel: true });
               }}
             >

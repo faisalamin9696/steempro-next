@@ -26,7 +26,7 @@ export default memo(function CommentCover(props: Props) {
     if (isFetching) setIsFetching(false);
   }
 
-  return src ? (
+  return src != null ? (
     noCard ? (
       <div className="relative">
         <Image
@@ -37,7 +37,7 @@ export default memo(function CommentCover(props: Props) {
           )}
           alt={alt || "image"}
           src={src}
-          height={640}
+          height={0}
           width={640}
           onLoad={onLoadCompleted}
           onError={onLoadCompleted}
@@ -63,7 +63,7 @@ export default memo(function CommentCover(props: Props) {
             <Image
               alt={alt || "image"}
               src={src}
-              height={640}
+              height={0}
               width={640}
               quality={60}
               className={show ? "" : "blur-lg"}

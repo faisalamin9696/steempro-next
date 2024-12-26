@@ -36,7 +36,7 @@ export default memo(function Drawer(props: Props) {
       ></button>
 
       {/* Drawer button */}
-      <Button isIconOnly variant="light" className="" onClick={toggleDrawer}>
+      <Button isIconOnly variant="light" className="" onPress={toggleDrawer}>
         <RxHamburgerMenu className="text-xl" />
       </Button>
 
@@ -57,7 +57,7 @@ export default memo(function Drawer(props: Props) {
           <Button
             variant="light"
             isIconOnly
-            onClick={toggleDrawer}
+            onPress={toggleDrawer}
             radius="full"
             size="sm"
           >

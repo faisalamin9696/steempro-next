@@ -194,10 +194,10 @@ function proxifyImages(doc) {
   Array.from(imageNodes).forEach((node: any) => {
     const url = node.getAttribute("src");
 
-    if (url && !linksRe.local.test(url)) {
+    if (url != null && !linksRe.local.test(url)) {
       const proxifiedUrl = proxifyImageUrl(url, "640x480");
       node.setAttribute("src", proxifiedUrl);
-    }
+    } 
   });
 }
 

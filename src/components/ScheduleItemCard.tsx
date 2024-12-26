@@ -56,7 +56,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
   const { data: session } = useSession();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { authenticateUser, isAuthorized } = useLogin();
-  const [dateTime, setDateTime] = useState<ZonedDateTime>();
+  const [dateTime, setDateTime] = useState<ZonedDateTime | null>();
   const [isOpen, setIsOpen] = useState(false);
 
   const [isUpdating, setIsUpdating] = useState(false);
@@ -374,7 +374,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
                 color="primary"
                 isDisabled={isLoading}
                 isLoading={isDrafting}
-                onClick={handleDraft}
+                onPress={handleDraft}
                 startContent={<RiDraftLine className=" text-xl" />}
               >
                 Draft and Delete
@@ -405,7 +405,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
                     color="warning"
                     isDisabled={isLoading}
                     isLoading={isUpdating}
-                    onClick={handleOnEdit}
+                    onPress={handleOnEdit}
                   >
                     {!dateTime ? "Change time" : "Update"}
                   </Button>
@@ -439,7 +439,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
                       <Button
                         size="sm"
                         color="default"
-                        onClick={() => setDeletePopup(false)}
+                        onPress={() => setDeletePopup(false)}
                       >
                         No
                       </Button>
@@ -447,7 +447,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
                         size="sm"
                         color="danger"
                         variant="solid"
-                        onClick={() => {
+                        onPress={() => {
                           setDeletePopup(false);
                           handleDelete();
                         }}

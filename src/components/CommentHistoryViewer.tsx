@@ -15,11 +15,13 @@ import {
   Button,
   Checkbox,
 } from "@nextui-org/react";
-import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import MarkdownViewer from "./body/MarkdownViewer";
 import { FaHistory, FaTags } from "react-icons/fa";
-import { MdTitle } from "react-icons/md";
+
+import { MdSubject } from "react-icons/md";
 import moment from "moment";
+import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { PiHashFill } from "react-icons/pi";
 
 interface Props {
   isOpen: boolean;
@@ -94,6 +96,7 @@ const CommentEditHistory: React.FC<Props> = ({
 
   const [history, setHistory] = useState<CommentHistoryItem[]>([]);
   const [showDiff, setShowDiff] = useState<boolean[]>([]);
+  const { isMobile } = useDeviceInfo();
 
   useEffect(() => {
     if (historyData) {
@@ -134,7 +137,7 @@ const CommentEditHistory: React.FC<Props> = ({
               {!isLoading && (
                 <Tabs
                   variant="light"
-                  radius="full"
+                  radius={isMobile ? "full" : "sm"}
                   size="sm"
                   aria-label="Edit History Tabs"
                 >
@@ -160,7 +163,10 @@ const CommentEditHistory: React.FC<Props> = ({
                         <div className="flex flex-col text-gray-500 gap-2">
                           {item.titleDiff && (
                             <div className=" flex flex-row items-center justify-start gap-2">
-                              <MdTitle className=" text-foreground" />
+                              <MdSubject
+                                size={24}
+                                className=" text-foreground"
+                              />
                               <MarkdownViewer
                                 className="text-lg"
                                 text={
@@ -174,7 +180,10 @@ const CommentEditHistory: React.FC<Props> = ({
 
                           {item.tagsDiff && (
                             <div className=" flex flex-row items-center justify-start  gap-2">
-                              <FaTags className=" text-foreground" />
+                              <PiHashFill
+                                size={24}
+                                className=" text-foreground"
+                              />
                               <MarkdownViewer
                                 text={
                                   showDiff[index]
@@ -202,7 +211,7 @@ const CommentEditHistory: React.FC<Props> = ({
               )}
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="flat" onClick={onClose} size="sm">
+              <Button color="danger" variant="flat" onPress={onClose} size="sm">
                 Close
               </Button>
             </ModalFooter>

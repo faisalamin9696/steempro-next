@@ -53,7 +53,7 @@ interface WrapperProps {
   children: React.ReactNode;
   className?: string;
   title?: string;
-  onClick?: (event) => void;
+  onPress?: (event) => void;
   hoverable?: boolean;
   isDisabled?: boolean;
   as?: As;
@@ -252,7 +252,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                 radius="full"
                 title="Upvote"
                 variant="light"
-                onClick={() => {
+                onPress={() => {
                   authenticateUser();
                   if (!isAuthorized()) {
                     return;
@@ -289,7 +289,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                 title="Downvote"
                 isDisabled={isVoting}
                 isLoading={comment.status === "downvoting"}
-                onClick={() => {
+                onPress={() => {
                   if (!isAuthorized()) {
                     authenticateUser();
                     return false;
@@ -318,7 +318,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                 passHref={!isDetails}
                 hoverable
                 className={twMerge("px-2")}
-                onClick={() =>
+                onPress={() =>
                   isDetails &&
                   document
                     .getElementById(`comments`)
@@ -350,7 +350,7 @@ export default memo(function CommentFooter(props: CommentProps) {
               <ButtonWrapper
                 title={`${comment.resteem_count} Resteems`}
                 hoverable
-                onClick={() => setResteemPopup(!resteemPopup)}
+                onPress={() => setResteemPopup(!resteemPopup)}
                 isDisabled={reblogMutation.isPending}
               >
                 <Popover
@@ -394,7 +394,7 @@ export default memo(function CommentFooter(props: CommentProps) {
 
                       <div className="text-tiny flex mt-2 space-x-2">
                         <Button
-                          onClick={() => setResteemPopup(false)}
+                          onPress={() => setResteemPopup(false)}
                           size="sm"
                           color="default"
                         >
@@ -404,7 +404,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                           size="sm"
                           color="secondary"
                           variant="solid"
-                          onClick={() => {
+                          onPress={() => {
                             setResteemPopup(false);
                             if (isResteemd) {
                               toast.success("Already resteem");
@@ -427,7 +427,7 @@ export default memo(function CommentFooter(props: CommentProps) {
         {!!comment.payout && (
           <ButtonWrapper
             hoverable
-            onClick={() => setBreakdownModal(!breakdownModal)}
+            onPress={() => setBreakdownModal(!breakdownModal)}
             className="pr-2"
             title={`$${comment.payout?.toLocaleString()} Payout`}
           >
@@ -480,7 +480,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                     color="danger"
                     variant="flat"
                     size="sm"
-                    onClick={onClose}
+                    onPress={onClose}
                   >
                     Close
                   </Button>
@@ -499,7 +499,7 @@ const ButtonWrapper = (props: WrapperProps) => {
     children,
     className,
     title,
-    onClick,
+    onPress,
     hoverable,
     isDisabled,
     as,
@@ -512,8 +512,8 @@ const ButtonWrapper = (props: WrapperProps) => {
       as={as}
       href={href}
       passHref={passHref}
-      isPressable={!isDisabled && !!onClick && !href}
-      onClick={(e) => !href && onClick && onClick(e)}
+      isPressable={!isDisabled && !!onPress && !href}
+      onPress={(e) => !href && onPress && onPress(e)}
       isDisabled={isDisabled}
       className={twMerge(
         `flex flex-row items-center gap-1 rounded-full dark:bg-foreground/15`,

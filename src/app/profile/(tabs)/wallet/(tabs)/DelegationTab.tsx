@@ -350,7 +350,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
 
             <Button
               size="sm"
-              onClick={() => {
+              onPress={() => {
                 authenticateUser();
                 if (!isAuthorized()) return;
                 setTransferModal({ isOpen: !transferModal.isOpen });
@@ -411,7 +411,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
               isDisabled={pages === 1}
               size="sm"
               variant="flat"
-              onClick={onPreviousPage}
+              onPress={onPreviousPage}
             >
               Previous
             </Button>
@@ -419,7 +419,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
               isDisabled={pages === 1}
               size="sm"
               variant="flat"
-              onClick={onNextPage}
+              onPress={onNextPage}
             >
               Next
             </Button>

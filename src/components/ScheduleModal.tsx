@@ -16,12 +16,12 @@ import { ZonedDateTime } from "@internationalized/date";
 interface Props {
   isOpen: boolean;
   onOpenChange?: (isOpen: boolean) => void;
-  onDateTimeChange: (datetime: ZonedDateTime) => void;
+  onDateTimeChange: (datetime: ZonedDateTime | null) => void;
   startTime?: ZonedDateTime;
 }
 export default function ScheduleModal(props: Props) {
   const { isOpen, onOpenChange } = useDisclosure();
-  const [dateTime, setDateTime] = useState(
+  const [dateTime, setDateTime] = useState<ZonedDateTime | null>(
     props.startTime ?? now(getLocalTimeZone()).add({ minutes: 1 })
   );
 
@@ -57,10 +57,10 @@ export default function ScheduleModal(props: Props) {
               </div>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onClick={onClose}>
+              <Button color="danger" variant="light" onPress={onClose}>
                 Close
               </Button>
-              <Button color="primary" onClick={handleConfirm}>
+              <Button color="primary" onPress={handleConfirm}>
                 Confirm
               </Button>
             </ModalFooter>

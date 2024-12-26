@@ -111,7 +111,7 @@ export default function WitnessVoteButton({ witness }: { witness: Witness }) {
           <div className=" flex flex-col items-start gap-2">
             <div className="text-tiny flex mt-2 space-x-2">
               <Button
-                onClick={() => setIsOpen(false)}
+                onPress={() => setIsOpen(false)}
                 size="sm"
                 color="default"
               >
@@ -121,7 +121,7 @@ export default function WitnessVoteButton({ witness }: { witness: Witness }) {
                 size="sm"
                 color={isVoted ? "danger" : "success"}
                 variant="solid"
-                onClick={() => {
+                onPress={() => {
                   setIsOpen(false);
                   handleVote();
                 }}
@@ -131,7 +131,7 @@ export default function WitnessVoteButton({ witness }: { witness: Witness }) {
             </div>
 
             <KeychainButton
-              onClick={() => {
+              onPress={() => {
                 setIsOpen(false);
                 handleVote(true);
               }}

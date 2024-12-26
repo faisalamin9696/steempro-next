@@ -86,7 +86,7 @@ export default function AuthorReportPage() {
 
         <Button
           className="self-start"
-          onClick={getAuthorReport}
+          onPress={getAuthorReport}
           isLoading={isPending}
         >
           Get Report

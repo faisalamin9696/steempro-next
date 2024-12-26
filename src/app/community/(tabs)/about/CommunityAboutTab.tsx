@@ -3,30 +3,19 @@ import React from "react";
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
 import { FaClipboardQuestion } from "react-icons/fa6";
 import { MdDescription } from "react-icons/md";
-import { PiUserListBold } from "react-icons/pi";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
-import CommunityMembers from "@/components/community/CommunityMembers";
 import { CommunityActivities } from "@/components/community/CommunityActivities";
 import { RxActivityLog } from "react-icons/rx";
 
 export function CommunityAboutTab({ community }: { community: Community }) {
   return (
-    <div className="w-full flex flex-col gap-2">
+    <div className="w-full flex flex-col gap-2 pb-10">
       <Accordion
         isCompact
         selectionMode="multiple"
         variant="splitted"
         defaultExpandedKeys={["description", "rules"]}
       >
-        <AccordionItem
-          key="members"
-          aria-label="Members"
-          title="Members"
-          startContent={<PiUserListBold className="text-primary text-xl" />}
-        >
-          <CommunityMembers large community={community} stickyHeader />
-        </AccordionItem>
-
         <AccordionItem
           key="activities"
           aria-label="Activities"

@@ -153,7 +153,7 @@ export default function MassVotingPage() {
             {isLogin() && (
               <Button
                 size="sm"
-                onClick={() => {
+                onPress={() => {
                   setAdvance(!advance);
                   setUsername(session?.user?.name || "");
                 }}
@@ -206,7 +206,7 @@ export default function MassVotingPage() {
 
           <Button
             className="self-start"
-            onClick={handleVoting}
+            onPress={handleVoting}
             isLoading={loading}
           >
             Start Voting

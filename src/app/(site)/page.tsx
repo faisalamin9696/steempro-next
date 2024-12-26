@@ -9,9 +9,11 @@ import HomeTrendingsTab from "./(tabs)/trendings/page";
 import HomeCreatedTab from "./(tabs)/created/page";
 import HomePayoutTab from "./(tabs)/payout/page";
 import HomeHotTab from "./(tabs)/hot/page";
+import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 
 export default function HomePage() {
   let { category } = usePathnameClient();
+  const { isMobile } = useDeviceInfo();
 
   let homeTabs = [
     { title: "Trending", key: "trending", children: <HomeTrendingsTab /> },
@@ -25,10 +27,8 @@ export default function HomePage() {
       <Tabs
         destroyInactiveTabPanel={false}
         size="sm"
-        disableAnimation
-        disableCursorAnimation
         color={"secondary"}
-        radius="full"
+        radius={isMobile ? "full" : "sm"}
         className="justify-center"
         defaultSelectedKey={category ?? "trending"}
         onSelectionChange={(key) => {

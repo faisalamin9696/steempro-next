@@ -34,10 +34,10 @@ export default memo(function ClearFormButton(props: Props) {
                         </div>
 
                         <div className="text-tiny flex mt-2 space-x-2">
-                            <Button onClick={() => setClearPopup(false)}
+                            <Button onPress={() => setClearPopup(false)}
                                 size='sm' color='default'>No</Button>
                             <Button size='sm' color='danger' variant='solid'
-                                onClick={() => {
+                                onPress={() => {
                                     setClearPopup(false);
                                     onClearPress && onClearPress();
                                 }}>Yes</Button>

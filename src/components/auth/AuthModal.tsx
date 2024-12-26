@@ -360,7 +360,7 @@ export default function AuthModal(props: Props) {
                         <Button
                           color="danger"
                           variant="light"
-                          onClick={onClose}
+                          onPress={onClose}
                           isDisabled={loading}
                         >
                           Cancel
@@ -370,7 +370,7 @@ export default function AuthModal(props: Props) {
                           fullWidth
                           color="primary"
                           isLoading={loading}
-                          onClick={handleUnlock}
+                          onPress={handleUnlock}
                           isDisabled={loading}
                         >
                           Unlock
@@ -477,7 +477,7 @@ export default function AuthModal(props: Props) {
                         <Button
                           color="danger"
                           variant="light"
-                          onClick={onClose}
+                          onPress={onClose}
                           isDisabled={loading}
                         >
                           Cancel
@@ -487,7 +487,7 @@ export default function AuthModal(props: Props) {
                           fullWidth
                           color="primary"
                           isLoading={loading}
-                          onClick={handleLogin}
+                          onPress={handleLogin}
                           isDisabled={loading}
                         >
                           {isNew ? "Add account" : "Login"}

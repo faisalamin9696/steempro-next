@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@nextui-org/button";
-import React, {  } from "react";
+import React from "react";
 import {
   Modal,
   ModalBody,
@@ -41,11 +41,11 @@ export default function NotificationsModal(props: Props) {
               Notifications
             </ModalHeader>
             <ModalBody id="scrollDiv" className=" pb-4">
-              <NotificationsTable username={username} />
+              <NotificationsTable username={username} onClose={onClose} />
             </ModalBody>
 
             <ModalFooter>
-              <Button color="danger" variant="flat" onClick={onClose} size="sm">
+              <Button color="danger" variant="flat" onPress={onClose} size="sm">
                 Close
               </Button>
             </ModalFooter>

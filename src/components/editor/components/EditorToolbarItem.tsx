@@ -15,7 +15,7 @@ export const ToolbarItem = memo((props: ToolbarItemProps) => {
 
     return <Button size={size ?? 'sm'} isDisabled={isDisabled}
         title={description + ` (${shortcut})`}
-        isIconOnly className='border-none' onClick={() =>
+        isIconOnly className='border-none' onPress={() =>
             onSelect && onSelect('b')}>
         <IconType className='text-lg rounded-none' />
     </Button>

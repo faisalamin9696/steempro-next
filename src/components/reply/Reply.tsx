@@ -25,7 +25,7 @@ export default memo(function Reply(props: Props) {
           <p>The comment was hidden due to low rating</p>
 
           <Button
-            onClick={() => {
+            onPress={() => {
               setHidden(false);
             }}
             size="sm"

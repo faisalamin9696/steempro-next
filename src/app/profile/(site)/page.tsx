@@ -15,7 +15,6 @@ import { addProfileHandler } from "@/libs/redux/reducers/ProfileReducer";
 import ProfileCommunitiesMainTab from "../(tabs)/CommunitiesMain/page";
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 import ProfileNotificationsTab from "../(tabs)/notifications/page";
-import { FaBlogger } from "react-icons/fa6";
 import {
   MdFeed,
   MdGroups,

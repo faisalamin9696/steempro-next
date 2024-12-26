@@ -72,7 +72,7 @@ export default memo(function FeedList(props: Props) {
           isIconOnly
           isLoading={loadingMore}
           isDisabled
-          onClick={handleEndReached}
+          onPress={handleEndReached}
         ></Button>
       </div>
     );
@@ -92,7 +92,7 @@ export default memo(function FeedList(props: Props) {
           isGridStyle
             ? className
               ? className
-              : "gap-6 grid 1lg:grid-cols-3  lg:grid-cols-2 md:grid-cols-2"
+              : "grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-6"
             : "flex flex-col gap-2"
         )}
       >

@@ -4,18 +4,18 @@ import { FaCalendarAlt } from "react-icons/fa";
 interface Props {
   buttonText?: string;
   isLoading?: boolean;
-  onClick?: () => void;
+  onPress?: () => void;
   isDisabled?: boolean;
 }
 
 export default function ScheduleButton(props: Props) {
-  const { buttonText, isLoading, onClick, isDisabled } = props;
+  const { buttonText, isLoading, onPress, isDisabled } = props;
 
   return (
     <Button
       size="sm"
       title="Schedule post"
-      onClick={onClick}
+      onPress={onPress}
       color="secondary"
       isDisabled={isDisabled}
       isLoading={isLoading}

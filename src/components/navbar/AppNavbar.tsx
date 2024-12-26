@@ -195,7 +195,7 @@ export default function AppNavbar() {
             radius="lg"
             variant="light"
             className="1md:hidden"
-            onClick={(e) => {
+            onPress={(e) => {
               setSearchModal(true);
             }}
           >
@@ -226,7 +226,7 @@ export default function AppNavbar() {
               color="primary"
             >
               <Button
-                onClick={() => setNotificationPopup(true)}
+                onPress={() => setNotificationPopup(true)}
                 radius="lg"
                 isIconOnly
                 variant="light"
@@ -243,7 +243,7 @@ export default function AppNavbar() {
               radius="lg"
               variant="flat"
               color="success"
-              onClick={handleLogin}
+              onPress={handleLogin}
               size="sm"
               isDisabled={status === "loading"}
               isLoading={status === "loading"}
@@ -311,7 +311,7 @@ export default function AppNavbar() {
                     className="w-full justify-start items-center px-1"
                     as={Link}
                     href={`/@${session?.user?.name}`}
-                    onClick={handleItemClick}
+                    onPress={handleItemClick}
                     startContent={<FaUserCircle className="text-xl" />}
                   >
                     Profile
@@ -323,7 +323,7 @@ export default function AppNavbar() {
                     className="w-full justify-start items-center px-1"
                     as={Link}
                     href={`/@${session?.user?.name}/wallet`}
-                    onClick={handleItemClick}
+                    onPress={handleItemClick}
                     startContent={<FaWallet className="text-xl" />}
                   >
                     Wallet
@@ -333,7 +333,7 @@ export default function AppNavbar() {
                     className="w-full justify-start items-center px-1"
                     size="sm"
                     variant="light"
-                    onClick={() => {
+                    onPress={() => {
                       handleUnlock();
                       handleItemClick();
                     }}
@@ -352,7 +352,7 @@ export default function AppNavbar() {
                     className="w-full justify-start items-center px-1"
                     size="sm"
                     variant="light"
-                    onClick={() => {
+                    onPress={() => {
                       setIsAccOpen(!isAccOpen);
                       handleItemClick();
                     }}
@@ -366,7 +366,7 @@ export default function AppNavbar() {
                     size="sm"
                     variant="light"
                     color="danger"
-                    onClick={() => {
+                    onPress={() => {
                       onOpenChange();
                       handleItemClick();
                     }}
@@ -419,12 +419,12 @@ export default function AppNavbar() {
                 <p>Do you really want to logout {loginInfo.name}?</p>
               </ModalBody>
               <ModalFooter>
-                <Button color="primary" variant="light" onClick={onClose}>
+                <Button color="primary" variant="light" onPress={onClose}>
                   Cancel
                 </Button>
                 <Button
                   color="danger"
-                  onClick={() => {
+                  onPress={() => {
                     onOpenChange();
                     handleLogout();
                   }}

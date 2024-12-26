@@ -4,7 +4,7 @@ import FeedList from "@/components/FeedList";
 import { getEndPoint, useAppSelector } from "@/libs/constants/AppFunctions";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 
-export default function CommunityCreatedPage() {
+export default function CommunityCreatedTab() {
   const { community } = usePathnameClient();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
 

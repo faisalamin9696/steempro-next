@@ -9,9 +9,11 @@ import CategoryTrendingsTab from "./(tabs)/trendings/page";
 import CategoryCreatedTab from "./(tabs)/created/page";
 import CategoryPayoutTab from "./(tabs)/payout/page";
 import CategoryHotTab from "./(tabs)/hot/page";
+import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 
 export default function CategoryPage() {
   let { category, tag } = usePathnameClient();
+  const { isMobile } = useDeviceInfo();
 
   let homeTabs = [
     { title: "Trending", key: "trending", children: <CategoryTrendingsTab /> },
@@ -25,10 +27,8 @@ export default function CategoryPage() {
       <Tabs
         destroyInactiveTabPanel={false}
         size="sm"
-        disableAnimation
-        disableCursorAnimation
         color={"secondary"}
-        radius="full"
+        radius={isMobile ? "full" : "sm"}
         className="justify-center"
         defaultSelectedKey={category}
         onSelectionChange={(key) => {

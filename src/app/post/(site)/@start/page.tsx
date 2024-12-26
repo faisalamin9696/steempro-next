@@ -76,7 +76,7 @@ export default function PostStart() {
                 variant="light"
                 color="default"
                 size="sm"
-                onClick={handlePromotionRefresh}
+                onPress={handlePromotionRefresh}
                 isIconOnly
               >
                 <IoIosRefresh className="text-lg" />
@@ -127,7 +127,7 @@ export default function PostStart() {
 //         color='default'
 //         variant='light'
 //         size='sm'
-//         onClick={handleRefresh}
+//         onPress={handleRefresh}
 //         isIconOnly>
 //         <IoIosRefresh
 //           className='text-lg' />

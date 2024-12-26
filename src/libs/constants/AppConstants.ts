@@ -84,7 +84,11 @@ export const validProfileTabs = [
 ];
 export const validBasicCats = ["trending", "created", "hot", "payout"];
 
-export const validCats = validBasicCats.concat(["pinned", "about"]);
+export const validCats = validBasicCats.concat([
+  "pinned",
+  "about",
+  "roles",
+]);
 
 export const IntrestingList = [
   "faisalamin",

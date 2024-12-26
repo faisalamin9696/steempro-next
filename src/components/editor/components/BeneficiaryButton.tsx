@@ -172,7 +172,7 @@ export default memo(function BeneficiaryButton(props: Props) {
                 variant="flat"
                 size="sm"
                 IconType={MdAdd}
-                onClick={handleAddBeneficiary}
+                onPress={handleAddBeneficiary}
                 iconClassName="text-xl"
               />
             </div>
@@ -198,7 +198,7 @@ export default memo(function BeneficiaryButton(props: Props) {
                                             min-w-0 !w-5 !h-5"
                           IconType={MdClose}
                           size="sm"
-                          onClick={() => {
+                          onPress={() => {
                             handleRemveBeneficiary(bene);
                           }}
                           iconClassName="text-white"

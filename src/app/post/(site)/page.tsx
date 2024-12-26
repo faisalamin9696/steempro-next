@@ -115,7 +115,7 @@ export default function PostPage(props: Props) {
               <p>The post was hidden due to low rating</p>
 
               <Button
-                onClick={() => {
+                onPress={() => {
                   // temporary set the is_muted status to 2
                   dispatch(addCommentHandler({ ...commentInfo, is_muted: 2 }));
                 }}

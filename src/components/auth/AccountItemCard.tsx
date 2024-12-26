@@ -145,7 +145,7 @@ export default memo(function AccountItemCard(props: Props) {
               isLoading={switching}
               isDisabled={switching || isDisabled}
               radius="full"
-              onClick={handleSwitch}
+              onPress={handleSwitch}
               className="min-w-0  h-6 bg-foreground/20"
             >
               {switchText ?? "Switch"}

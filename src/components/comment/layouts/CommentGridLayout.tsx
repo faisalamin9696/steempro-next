@@ -22,6 +22,7 @@ import { getSettings } from "@/libs/utils/user";
 import RoleTitleCard from "@/components/RoleTitleCard";
 import { twMerge } from "tailwind-merge";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
+import { MdDisabledVisible } from "react-icons/md";
 
 export default function CommentGridLayout(props: CommentProps) {
   const { comment, isReply } = props;
@@ -58,7 +59,15 @@ export default function CommentGridLayout(props: CommentProps) {
             )}
           >
             {thumbnail ? (
-              isNsfw ? null : (
+              isNsfw ? (
+                <div
+                  className={`h-44 bg-foreground/20 dark:bg-foreground/5  w-full justify-center items-center flex flex-col`}
+                >
+                  <MdDisabledVisible
+                    className={twMerge("text-xl")}
+                  />
+                </div>
+              ) : (
                 <div className="relative">
                   <Image
                     src={thumbnail}

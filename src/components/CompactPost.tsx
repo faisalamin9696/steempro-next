@@ -14,11 +14,11 @@ import { getSettings } from "@/libs/utils/user";
 
 interface Props {
   comment: Feed;
-  onClick?: () => void;
+  onPress?: () => void;
 }
 
 export default memo(function CompactPost(props: Props) {
-  const { comment, onClick } = props;
+  const { comment, onPress } = props;
   const commentInfo =
     useAppSelector((state) => state.commentReducer.values)[
       `${comment.author}/${comment.permlink}`
@@ -34,7 +34,7 @@ export default memo(function CompactPost(props: Props) {
   return (
     <Card
       as={Link}
-      onClick={onClick}
+      onPress={onPress}
       radius="none"
       href={`/${commentInfo.category}/@${commentInfo.author}/${commentInfo.permlink}`}
       className="overflow-hidden rounded-lg shadow-sm flex flex-col bg-white dark:bg-white/5 p-2"

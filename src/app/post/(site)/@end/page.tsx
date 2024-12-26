@@ -42,7 +42,7 @@ export default function PostEnd() {
           <Button radius='full' variant='light'
             color='default'
             size='sm'
-            onClick={handlePeopleRefresh}
+            onPress={handlePeopleRefresh}
             isIconOnly>
             <IoIosRefresh
               className='text-lg' />

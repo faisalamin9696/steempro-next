@@ -238,7 +238,7 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
                                 ))}
                             </DropdownMenu> 
                         </Dropdown> */}
-            {/* <Button size="sm" onClick={() => {
+            {/* <Button size="sm" onPress={() => {
                             authenticateUser();
                             if (!isAuthorized())
                                 return
@@ -296,7 +296,7 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
               isDisabled={pages === 1}
               size="sm"
               variant="flat"
-              onClick={onPreviousPage}
+              onPress={onPreviousPage}
             >
               Previous
             </Button>
@@ -304,7 +304,7 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
               isDisabled={pages === 1}
               size="sm"
               variant="flat"
-              onClick={onNextPage}
+              onPress={onNextPage}
             >
               Next
             </Button>

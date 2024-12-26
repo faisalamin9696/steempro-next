@@ -19,13 +19,13 @@ export default memo(function FeedPatternSwitch() {
     return (<div className='flex space-x-1'>
         <IconButton size='md'
             className={clsx('text-xl', settings.feedStyle === 'list' && 'text-secondary')}
-            IconType={LuLayoutList} onClick={() => { updateStyle('list') }} />
+            IconType={LuLayoutList} onPress={() => { updateStyle('list') }} />
         {/* <IconButton size='md'
                     className={clsx('text-xl', settings.feedStyle === 'blog' && 'text-secondary')}
                     IconType={TbLayoutList} onClick={() => { updateStyle('blog') }} /> */}
         <IconButton size='md'
             className={clsx('text-xl', settings.feedStyle === 'grid' && 'text-secondary')}
-            IconType={CiGrid41} onClick={() => { updateStyle('grid') }} />
+            IconType={CiGrid41} onPress={() => { updateStyle('grid') }} />
         {/* <IconButton
                 className={clsx('text-xl', settings.feedStyle === 'grid' && 'text-secondary')}
                 IconType={BsFillGrid3X3GapFill} onClick={() => { updateStyle('grid') }} /> */}

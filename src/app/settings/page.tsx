@@ -379,7 +379,7 @@ export default function SettingsPage() {
               endContent={
                 <Button
                   title="Upload"
-                  onClick={() => {
+                  onPress={() => {
                     isCover = false;
                     handleImageUpload();
                   }}
@@ -402,7 +402,7 @@ export default function SettingsPage() {
               endContent={
                 <Button
                   title="Upload"
-                  onClick={() => {
+                  onPress={() => {
                     isCover = true;
                     handleImageUpload();
                   }}
@@ -453,7 +453,7 @@ export default function SettingsPage() {
             size="sm"
             isLoading={updateMutation.isPending}
             isDisabled={!isChanged || updateMutation.isPending}
-            onClick={handleUpdate}
+            onPress={handleUpdate}
             className="self-start"
           >
             Update

@@ -187,7 +187,7 @@ export default function MassVotingModal(props: Props) {
                           title="Retry"
                           isIconOnly
                           size="sm"
-                          onClick={() => {
+                          onPress={() => {
                             let [permlink, author] = item?.split("/").reverse();
                             setCompleted(false);
                             updateStatus(item, "pending");
@@ -220,7 +220,7 @@ export default function MassVotingModal(props: Props) {
             </ModalBody>
 
             <ModalFooter>
-              <Button color="danger" variant="light" onClick={onClose}>
+              <Button color="danger" variant="light" onPress={onClose}>
                 Close
               </Button>
             </ModalFooter>

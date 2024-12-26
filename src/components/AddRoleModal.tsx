@@ -271,7 +271,7 @@ export default function AddRoleModal(props: Props) {
                 color="danger"
                 isDisabled={isPending}
                 variant="light"
-                onClick={onClose}
+                onPress={onClose}
               >
                 Close
               </Button>
@@ -279,7 +279,7 @@ export default function AddRoleModal(props: Props) {
                 color="primary"
                 isDisabled={isPending}
                 isLoading={isPending}
-                onClick={handleUpdate}
+                onPress={handleUpdate}
               >
                 Update
               </Button>

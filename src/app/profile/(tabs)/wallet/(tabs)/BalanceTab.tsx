@@ -330,7 +330,7 @@ export default function BalanceTab({
                     <Button
                       color="danger"
                       variant="flat"
-                      onClick={onClose}
+                      onPress={onClose}
                       size="sm"
                     >
                       Close

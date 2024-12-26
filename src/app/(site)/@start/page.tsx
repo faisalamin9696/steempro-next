@@ -93,7 +93,7 @@ export default function HomeStart() {
           isIconOnly
           isLoading={loadingMore}
           isDisabled
-          onClick={handleEndReached}
+          onPress={handleEndReached}
         ></Button>
       </div>
     );
@@ -115,7 +115,7 @@ export default function HomeStart() {
           {isLoading || isValidating ? (
             <LoadingCard />
           ) : error ? (
-            <ErrorCard message={error?.message} onClick={mutate} />
+            <ErrorCard message={error?.message} onPress={mutate} />
           ) : (
             <div className="flex flex-col gap-4">
               {error
@@ -161,7 +161,7 @@ export default function HomeStart() {
           ) : communitiesError ? (
             <ErrorCard
               message={communitiesError?.message}
-              onClick={mutateCommunities}
+              onPress={mutateCommunities}
             />
           ) : (
             <ScrollShadow

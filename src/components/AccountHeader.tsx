@@ -1,11 +1,6 @@
 "use client";
-import React, { Suspense, useEffect, useRef, useState } from "react";
-import {
-  mapSds,
-  useAppDispatch,
-  useAppSelector,
-  validateSds,
-} from "@/libs/constants/AppFunctions";
+import React, { useEffect, useRef, useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import UserCoverCard from "@/components/UserCoverCard";
 import { abbreviateNumber } from "@/libs/utils/helper";
 import Reputation from "@/components/Reputation";
@@ -29,8 +24,9 @@ import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/modal";
 import FollowersCard from "./FollowersCard";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next13-progressbar";
-import CommunityMembers from "./community/CommunityMembers";
+import CommunitySubscribers from "./community/CommunityMembers";
 import MarkdownViewer from "./body/MarkdownViewer";
+import usePathnameClient from "@/libs/utils/usePathnameClient";
 
 type Props =
   | {
@@ -43,6 +39,7 @@ type Props =
     };
 export default function AccountHeader(props: Props) {
   const { community, account } = props;
+  const { username, community: communityName } = usePathnameClient();
   const cardRef = useRef<HTMLElement | undefined | any>();
   const { isDesktop } = useDeviceInfo();
   const isCommunity = !!community;
@@ -92,11 +89,11 @@ export default function AccountHeader(props: Props) {
       VanillaTilt.init(cardRef.current);
   }, []);
 
-  const pathname = usePathname();
+  // const pathname = usePathname();
 
   useEffect(() => {
     router.refresh();
-  }, [pathname]);
+  }, [username, communityName]);
 
   return (
     <div className="w-full p-1 relative">
@@ -151,7 +148,6 @@ export default function AccountHeader(props: Props) {
                       : profileInfo.count_followers
                   )}
                 </button>
-                <div className="stat-desc"></div>
               </div>
 
               <div className="stat">
@@ -159,7 +155,7 @@ export default function AccountHeader(props: Props) {
                   {isCommunity ? <PiUserListBold /> : <IoFlashOutline />}
                 </div>
                 <div className="stat-title text-white/60">
-                  {isCommunity ? "Members" : "Followings"}
+                  {isCommunity ? "Subscribers" : "Followings"}
                 </div>
                 <button
                   onClick={() => {
@@ -168,7 +164,7 @@ export default function AccountHeader(props: Props) {
                     else setFollowerModal({ isOpen: true, isFollowing: true });
                   }}
                   className={twMerge(
-                    "stat-value text-secondary text-3xl max-md:text-lg max-1md:text-start"
+                    "stat-value flex flex-row items-center gap-1 text-secondary text-3xl max-md:text-lg max-1md:text-start"
                   )}
                   title={
                     isCommunity
@@ -180,6 +176,11 @@ export default function AccountHeader(props: Props) {
                     isCommunity
                       ? communityInfo.count_subs
                       : profileInfo.count_following
+                  )}
+                  {communityInfo && (
+                    <p title="Active authors" className=" text-sm">
+                      ({communityInfo.count_authors})
+                    </p>
                   )}
                 </button>
                 <div className="stat-desc"></div>
@@ -195,7 +196,9 @@ export default function AccountHeader(props: Props) {
                     className="stat-value text-info text-3xl max-md:text-lg max-1md:text-start"
                     title={communityInfo.sum_pending?.toString()}
                   >
-                    {abbreviateNumber(communityInfo.sum_pending)}
+                    {communityInfo.sum_pending < 1
+                      ? 0
+                      : abbreviateNumber(communityInfo.sum_pending)}
                   </div>
                   <div className="stat-desc"></div>
                 </div>
@@ -333,10 +336,10 @@ export default function AccountHeader(props: Props) {
             {(onClose) => (
               <>
                 <ModalHeader className="flex flex-col gap-1">
-                  {"Members"}
+                  {"Subscribers"}
                 </ModalHeader>
                 <ModalBody>
-                  <CommunityMembers community={communityInfo} />
+                  <CommunitySubscribers community={communityInfo} />
                 </ModalBody>
               </>
             )}

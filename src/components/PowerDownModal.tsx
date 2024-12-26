@@ -216,7 +216,7 @@ const PowerDownModal = (props: Props): JSX.Element => {
             </ModalBody>
             <ModalFooter className=" justify-between">
               <KeychainButton
-                onClick={() => handleWithdraw(true)}
+                onPress={() => handleWithdraw(true)}
                 isDisabled={!confirmCheck || withdrawMutation.isPending}
               />
 
@@ -225,7 +225,7 @@ const PowerDownModal = (props: Props): JSX.Element => {
                   size="sm"
                   color="danger"
                   variant="light"
-                  onClick={onClose}
+                  onPress={onClose}
                   isDisabled={withdrawMutation.isPending}
                 >
                   Close
@@ -234,7 +234,7 @@ const PowerDownModal = (props: Props): JSX.Element => {
                 <Button
                   size="sm"
                   color="primary"
-                  onClick={() => handleWithdraw()}
+                  onPress={() => handleWithdraw()}
                   isLoading={withdrawMutation.isPending}
                   isDisabled={!confirmCheck || withdrawMutation.isPending}
                 >

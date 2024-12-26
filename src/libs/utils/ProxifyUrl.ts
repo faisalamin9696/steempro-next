@@ -31,7 +31,7 @@ export const defaultWidth = () => Number.parseInt(CAPPED_SIZE.split("x")[0]);
  * @returns string
  */
 export function proxifyImageUrl(url: string, dimensions = "") {
-  if (!url) return "";
+  if (url == null) return "";
   const proxyList = url.match(rProxyDomainsDimensions);
   let respUrl = url.replaceAll("amp;", "");
 

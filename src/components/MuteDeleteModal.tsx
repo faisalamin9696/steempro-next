@@ -145,14 +145,14 @@ export default function MuteDeleteModal(props: Props) {
               <Button
                 color="danger"
                 variant="light"
-                onClick={onClose}
+                onPress={onClose}
                 isDisabled={isPending}
               >
                 Close
               </Button>
               <Button
                 color="primary"
-                onClick={handleAction}
+                onPress={handleAction}
                 isLoading={isPending}
                 isDisabled={(mute && !muteNote) || isPending}
               >

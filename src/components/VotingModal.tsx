@@ -60,14 +60,14 @@ export default function VotingModal(props: Props) {
             <div className=' flex items-center w-full pr-3'>
                 <div className='flex gap-1 items-center'>
                     {downvote ?
-                        <Button onClick={castVote} color='danger' isIconOnly
+                        <Button onPress={castVote} color='danger' isIconOnly
                             size='sm'
                             className=' min-w-0 h-6 w-6'
                             radius='full' variant='flat'>
                             <IoChevronDownCircleSharp className='text-xl' />
                         </Button>
                         :
-                        <Button onClick={castVote} color='success' isIconOnly
+                        <Button onPress={castVote} color='success' isIconOnly
                             className=' min-w-0 h-6 w-6'
 
                             variant='flat' radius='full' size='sm'>

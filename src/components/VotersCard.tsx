@@ -247,7 +247,7 @@ export default function VotersCard({ comment }: { comment: Feed | Post }) {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            {/* <Button size="sm" onClick={() => {
+            {/* <Button size="sm" onPress={() => {
                             authenticateUser();
                             if (!isAuthorized())
                                 return
@@ -300,10 +300,10 @@ export default function VotersCard({ comment }: { comment: Feed | Post }) {
             onChange={setPage}
           />
           {/* <div className="hidden sm:flex w-[30%] justify-end gap-2">
-                    <Button isDisabled={pages === 1} size="sm" variant="flat" onClick={onPreviousPage}>
+                    <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onPreviousPage}>
                         Previous
                     </Button>
-                    <Button isDisabled={pages === 1} size="sm" variant="flat" onClick={onNextPage}>
+                    <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onNextPage}>
                         Next
                     </Button>
                 </div> */}
