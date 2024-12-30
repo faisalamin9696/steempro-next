@@ -10,15 +10,13 @@ export default function ProfileCommentsTab() {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
 
   return (
-    <div>
-      <div className="flex flex-col space-y-2">
-        <FeedList
-          endPoint={getEndPoint(
-            "CommentsByAuthor",
-            `${username}/${loginInfo.name || "null"}`
-          )}
-        />
-      </div>
+    <div className="flex flex-col space-y-2">
+      <FeedList
+        endPoint={getEndPoint(
+          "CommentsByAuthor",
+          `${username}/${loginInfo.name || "null"}`
+        )}
+      />
     </div>
   );
 }

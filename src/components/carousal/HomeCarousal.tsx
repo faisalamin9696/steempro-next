@@ -24,7 +24,7 @@ const HomeCarousel = () => {
   }
 
   return (
-    <CarousalMain enableAutoPlay>
+    <CarousalMain enableAutoPlay={false}>
       {data?.map?.((item, index) => (
         <div className="w-full" key={`${index}`}>
           <PromotionCard authPerm={item.authPerm} views={item.views} />

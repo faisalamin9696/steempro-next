@@ -13,15 +13,13 @@ export default function ProfileBlogsTab() {
   const { isMobile } = useDeviceInfo();
 
   return (
-    <div>
-      <div className={twMerge("flex flex-col space-y-2", !isMobile && "mt-12")}>
-        <FeedList
-          endPoint={getEndPoint(
-            "AccountBlog",
-            `${username}/${loginInfo.name || "null"}`
-          )}
-        />
-      </div>
+    <div className={twMerge("flex flex-col space-y-2", !isMobile && "mt-12")}>
+      <FeedList
+        endPoint={getEndPoint(
+          "AccountBlog",
+          `${username}/${loginInfo.name || "null"}`
+        )}
+      />
     </div>
   );
 }

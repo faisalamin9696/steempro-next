@@ -297,6 +297,7 @@ export default function SettingsPage() {
             aria-label="Select RPC Node"
             variant="flat"
             label="Select RPC Node"
+            disallowEmptySelection
             onChange={(key) => {
               handleRpcChange(key.target.value as string);
             }}

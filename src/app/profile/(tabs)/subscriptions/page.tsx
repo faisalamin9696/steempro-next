@@ -35,56 +35,54 @@ export default function ProfileSubsribtionsTab() {
   if (error) return notFound();
 
   return (
-    <div>
-      <div className="flex-col grid md:grid-cols-2 gap-4">
-        {data?.map((community, index) => {
-          return (
-            <div key={index ?? community.id} className={`w-full`}>
-              <CommunityCard
-                className=" h-full"
-                community={community}
-                compact
-                endContent={
-                  <div className="flex gap-1 items-center">
-                    {isSelf && (
-                      <Button
-                        size="sm"
-                        isIconOnly
-                        variant="flat"
-                        title="Create post"
-                        className={clsx("min-w-0  h-6")}
-                        as={Link}
-                        href={
-                          {
-                            pathname: `/submit`,
-                            query: {
-                              account: community?.account,
-                              title: community?.title,
-                            },
-                          } as any
-                        }
-                        color="primary"
-                        radius="full"
-                      >
-                        <LuPencilLine className="text-lg" />
-                      </Button>
-                    )}
+    <div className="flex-col grid md:grid-cols-2 gap-4">
+      {data?.map((community, index) => {
+        return (
+          <div key={index ?? community.id} className={`w-full`}>
+            <CommunityCard
+              className=" h-full"
+              community={community}
+              compact
+              endContent={
+                <div className="flex gap-1 items-center">
+                  {isSelf && (
                     <Button
-                      as={Link}
-                      href={`/trending/${community.account}`}
                       size="sm"
+                      isIconOnly
+                      variant="flat"
+                      title="Create post"
+                      className={clsx("min-w-0  h-6")}
+                      as={Link}
+                      href={
+                        {
+                          pathname: `/submit`,
+                          query: {
+                            account: community?.account,
+                            title: community?.title,
+                          },
+                        } as any
+                      }
                       color="primary"
                       radius="full"
                     >
-                      Explore
+                      <LuPencilLine className="text-lg" />
                     </Button>
-                  </div>
-                }
-              />
-            </div>
-          );
-        })}
-      </div>
+                  )}
+                  <Button
+                    as={Link}
+                    href={`/trending/${community.account}`}
+                    size="sm"
+                    color="primary"
+                    radius="full"
+                  >
+                    Explore
+                  </Button>
+                </div>
+              }
+            />
+          </div>
+        );
+      })}
     </div>
   );
 }

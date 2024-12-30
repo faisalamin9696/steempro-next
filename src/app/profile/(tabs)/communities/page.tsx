@@ -10,15 +10,13 @@ export default function ProfileCommunitiesTab() {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
 
   return (
-    <div>
-      <div className="flex flex-col space-y-2">
-        <FeedList
-          endPoint={getEndPoint(
-            "AccountCommunitiesFeedByCreated",
-            `${username}/${loginInfo.name || "null"}`
-          )}
-        />
-      </div>
+    <div className="flex flex-col space-y-2">
+      <FeedList
+        endPoint={getEndPoint(
+          "AccountCommunitiesFeedByCreated",
+          `${username}/${loginInfo.name || "null"}`
+        )}
+      />
     </div>
   );
 }

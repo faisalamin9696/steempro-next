@@ -41,7 +41,7 @@ export const CommunitySubscriberItem = (props: Props) => {
         name={
           <div className="flex flex-col items-start gap-2">
             <div className="flex gap-2 items-center">
-              {<p>{item.account}</p>}
+              <Link className="hover:text-blue-500" href={`/@${item.account}/posts`}>{item.account}</Link>
 
               <p
                 className={clsx(

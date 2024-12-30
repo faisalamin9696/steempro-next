@@ -82,7 +82,7 @@ export default function CommunityPage(props: Props) {
               </div>
             }
           >
-            {tab.children}s
+            {tab.children}
           </Tab>
         ))}
       </Tabs>

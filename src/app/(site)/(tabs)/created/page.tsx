@@ -8,12 +8,10 @@ export default function HomeCreatedTab() {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
 
   return (
-    <div>
       <div className="flex flex-col space-y-2">
         <FeedList
           endPoint={getEndPoint("ActivePostsByCreated", loginInfo.name)}
         />
-      </div>
     </div>
   );
 }

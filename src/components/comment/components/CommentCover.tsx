@@ -26,7 +26,7 @@ export default memo(function CommentCover(props: Props) {
     if (isFetching) setIsFetching(false);
   }
 
-  return src != null ? (
+  return !!src ? (
     noCard ? (
       <div className="relative">
         <Image

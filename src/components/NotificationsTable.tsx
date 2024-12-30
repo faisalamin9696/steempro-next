@@ -262,7 +262,6 @@ export default function NotificationsTable(props: Props) {
     });
   }, [sortDescriptor, items]);
 
-  
   const renderCell = React.useCallback(
     (notification: SDSNotification, columnKey) => {
       const cellValue = notification[columnKey];
@@ -508,17 +507,18 @@ export default function NotificationsTable(props: Props) {
               {(item) => {
                 return (
                   <TableRow
-                    // onClick={() => {
-                    //   router.push(getTargetUrl(item));
-                    //   router.refresh();
-                    //   props?.onClose && props.onClose();
-                    // }}
+                    onClick={() => {
+                      router.push(getTargetUrl(item));
+                      router.refresh();
+                      props?.onClose && props.onClose();
+                    }}
                     key={JSON.stringify(item)}
                     className="cursor-pointer hover:bg-foreground/10"
                   >
                     {(columnKey) => (
                       <TableCell>
                         <Link
+                          prefetch={false}
                           href={getTargetUrl(item)}
                           onClick={() => {
                             props?.onClose && props.onClose();

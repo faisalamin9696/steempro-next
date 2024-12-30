@@ -10,7 +10,6 @@ export default function ProfilePostsTab() {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
 
   return (
-    <div>
       <div className="flex flex-col space-y-2">
         <FeedList
           endPoint={getEndPoint(
@@ -19,6 +18,5 @@ export default function ProfilePostsTab() {
           )}
         />
       </div>
-    </div>
   );
 }
