@@ -27,7 +27,7 @@ const CommunityCarousel = () => {
   }
 
   return (
-    <CarousalMain enableAutoPlay>
+    <CarousalMain enableAutoPlay enabllePagination>
       {data?.map?.((item, index) => (
         <div className="w-full" key={`${index}`}>
           <PromotionCard

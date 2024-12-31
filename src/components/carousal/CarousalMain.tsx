@@ -17,7 +17,7 @@ interface Props {
   children: React.ReactNode;
   enableAutoPlay?: boolean;
   autoPlaySpeed?: number;
-  pagination?: boolean;
+  enabllePagination?: boolean;
   className?: string;
 }
 function CarousalMain(props: Props) {
@@ -30,13 +30,13 @@ function CarousalMain(props: Props) {
         isRTL={false}
         breakPoints={breakPoints}
         showArrows
-        enableAutoPlay
+        enableAutoPlay={props.enableAutoPlay ?? false}
         autoPlaySpeed={5000}
         className={twMerge(
           "w-full mb-2 relative flex flex-row items-center",
           props.className
         )}
-        pagination={true}
+        pagination={props.enabllePagination ?? false}
         focusOnSelect={true}
         itemPadding={[4]}
         renderPagination={({ pages, activePage, onClick }) => {

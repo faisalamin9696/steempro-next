@@ -188,7 +188,7 @@ export default function FollowButton(props: Props) {
       {isSelf && (
         <Button
           size="sm"
-          variant="flat"
+          variant="solid"
           title="Edit profile"
           className={clsx("min-w-0  h-6")}
           color="primary"
