@@ -5,9 +5,9 @@ import usePathnameServer from "@/libs/utils/usePathnameServer";
 import { ResolvingMetadata } from "next";
 import CommunityPage from "./(site)/page";
 import ProfileInfoCard from "@/components/ProfileInfoCard";
-import AccountHeader from "@/components/AccountHeader";
 import { auth } from "@/auth";
 import CommunityCarousel from "@/components/carousal/CommunityCarousal";
+import CommunityHeader from "@/components/CommunityHeader";
 
 export default async function Layout({
   children,
@@ -25,7 +25,7 @@ export default async function Layout({
 
   return (
     <main className="main flex flex-col">
-      <AccountHeader community={data} />
+      <CommunityHeader community={data} />
       <MainWrapper
         endClassName="max-h-screen"
         endContent={

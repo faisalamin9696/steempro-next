@@ -35,7 +35,7 @@ export default function ProfileSubsribtionsTab() {
   if (error) return notFound();
 
   return (
-    <div className="flex-col grid md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6">
       {data?.map((community, index) => {
         return (
           <div key={index ?? community.id} className={`w-full`}>
@@ -62,7 +62,7 @@ export default function ProfileSubsribtionsTab() {
                           },
                         } as any
                       }
-                      color="primary"
+                      color="secondary"
                       radius="full"
                     >
                       <LuPencilLine className="text-lg" />

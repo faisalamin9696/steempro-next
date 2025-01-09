@@ -91,7 +91,10 @@ export default function ReplyFooter({
   const { users } = JSON.parse(comment.json_metadata ?? `{}`) || [];
 
   const toggleReply = () => setShowReply(!showReply);
-  const toggleEdit = () => setShowEdit(!showEdit);
+  const toggleEdit = () => {
+    setShowEdit(!showEdit);
+    dispatch(addCommentHandler({ ...comment, isEdit: !showEdit }));
+  };
 
   function handleClear() {
     secureLocalStorage.removeItem("comment_draft");
@@ -411,107 +414,109 @@ export default function ReplyFooter({
   return (
     <div className={className}>
       <div className="flex flex-col gap-2">
-        <div className="flex justify-between items-center focus:border-0 focus:ring-0 focus:outline-none">
-          <CommentFooter isReply comment={comment} className="p-0" />
+        {!comment.isEdit && (
+          <div className="flex justify-between items-center focus:border-0 focus:ring-0 focus:outline-none">
+            <CommentFooter isReply comment={comment} className="p-0" />
 
-          <div className="flex">
-            {canReply && (
-              <Button
-                size="sm"
-                onPress={() => {
-                  toggleReply();
-                }}
-                variant="light"
-                isDisabled={showReply || showEdit}
-                className="text-tiny min-w-0 min-h-0"
-              >
-                Reply
-              </Button>
-            )}
-
-            {canEdit && (
-              <Button
-                size="sm"
-                onPress={() => {
-                  toggleEdit();
-                }}
-                variant="light"
-                isDisabled={showReply || showEdit}
-                className="text-tiny min-w-0 min-h-0"
-              >
-                Edit
-              </Button>
-            )}
-
-            {canDelete && (
-              <div>
-                <Popover
-                  isOpen={deletePopup}
-                  onOpenChange={(open) => setDeletePopup(open)}
-                  placement={"top-start"}
+            <div className="flex">
+              {canReply && (
+                <Button
+                  size="sm"
+                  onPress={() => {
+                    toggleReply();
+                  }}
+                  variant="light"
+                  isDisabled={showReply || showEdit}
+                  className="text-tiny min-w-0 min-h-0"
                 >
-                  <PopoverTrigger>
-                    <Button
-                      size="sm"
-                      variant="light"
-                      isLoading={deleteMutation.isPending}
-                      isDisabled={deleteMutation.isPending}
-                      className="text-tiny min-w-0 min-h-0"
-                    >
-                      Delete
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <div className="px-1 py-2">
-                      <div className="text-small font-bold">
-                        {"Confirmation"}
-                      </div>
-                      <div className="text-tiny flex">
-                        {"Do you really want to delete?"}
-                      </div>
+                  Reply
+                </Button>
+              )}
 
-                      <div className="text-tiny flex mt-2 space-x-2">
-                        <Button
-                          onPress={() => setDeletePopup(false)}
-                          size="sm"
-                          color="default"
-                        >
-                          No
-                        </Button>
-                        <Button
-                          size="sm"
-                          color="danger"
-                          variant="solid"
-                          onPress={() => {
-                            setDeletePopup(false);
-                            handleDelete();
-                          }}
-                        >
-                          Yes
-                        </Button>
-                      </div>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
-            )}
+              {canEdit && (
+                <Button
+                  size="sm"
+                  onPress={() => {
+                    toggleEdit();
+                  }}
+                  variant="light"
+                  isDisabled={showReply || showEdit}
+                  className="text-tiny min-w-0 min-h-0"
+                >
+                  Edit
+                </Button>
+              )}
 
-            {canMute && (
-              <Button
-                size="sm"
-                isLoading={unmuteMutation.isPending}
-                onPress={() => {
-                  handleMute();
-                }}
-                variant="light"
-                isDisabled={unmuteMutation.isPending}
-                className="text-tiny min-w-0 min-h-0"
-              >
-                {comment.is_muted ? "Unmute" : "Mute"}
-              </Button>
-            )}
+              {canDelete && (
+                <div>
+                  <Popover
+                    isOpen={deletePopup}
+                    onOpenChange={(open) => setDeletePopup(open)}
+                    placement={"top-start"}
+                  >
+                    <PopoverTrigger>
+                      <Button
+                        size="sm"
+                        variant="light"
+                        isLoading={deleteMutation.isPending}
+                        isDisabled={deleteMutation.isPending}
+                        className="text-tiny min-w-0 min-h-0"
+                      >
+                        Delete
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <div className="px-1 py-2">
+                        <div className="text-small font-bold">
+                          {"Confirmation"}
+                        </div>
+                        <div className="text-tiny flex">
+                          {"Do you really want to delete?"}
+                        </div>
+
+                        <div className="text-tiny flex mt-2 space-x-2">
+                          <Button
+                            onPress={() => setDeletePopup(false)}
+                            size="sm"
+                            color="default"
+                          >
+                            No
+                          </Button>
+                          <Button
+                            size="sm"
+                            color="danger"
+                            variant="solid"
+                            onPress={() => {
+                              setDeletePopup(false);
+                              handleDelete();
+                            }}
+                          >
+                            Yes
+                          </Button>
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              )}
+
+              {canMute && (
+                <Button
+                  size="sm"
+                  isLoading={unmuteMutation.isPending}
+                  onPress={() => {
+                    handleMute();
+                  }}
+                  variant="light"
+                  isDisabled={unmuteMutation.isPending}
+                  className="text-tiny min-w-0 min-h-0"
+                >
+                  {comment.is_muted ? "Unmute" : "Mute"}
+                </Button>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="flex items-center justify-between w-full">
           {!expanded && !!comment.children && (

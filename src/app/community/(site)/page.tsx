@@ -8,10 +8,11 @@ import CommunityTrendingsTab from "../(tabs)/trendings/page";
 import CommunityCreatedTab from "../(tabs)/created/page";
 import { CommunityAboutTab } from "../(tabs)/about/CommunityAboutTab";
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
-import { MdInfo, MdNewLabel } from "react-icons/md";
+import { MdInfo, MdNewLabel, MdPin } from "react-icons/md";
 import { FaFire } from "react-icons/fa";
 import { RiUserStarFill } from "react-icons/ri";
 import { CommunityRolesTab } from "../(tabs)/roles/CommunityRolesTab";
+import CommunityPinnedTab from "../(tabs)/pinned/page";
 
 interface Props {
   data: Community;
@@ -22,34 +23,49 @@ export default function CommunityPage(props: Props) {
   let { community, category } = usePathnameClient();
   const { isMobile } = useDeviceInfo();
 
-  const profileTabs = [
+  const communityTabs = [
     {
       title: "Trending",
       key: "trending",
       children: <CommunityTrendingsTab />,
       icon: <FaFire size={24} />,
+      priority: 1,
     },
     {
       title: "New",
       key: "created",
       children: <CommunityCreatedTab />,
       icon: <MdNewLabel size={24} />,
+      priority: 2,
     },
     {
       title: "Roles",
       key: "roles",
       children: <CommunityRolesTab community={data} />,
       icon: <RiUserStarFill size={24} />,
+      priority: 4,
     },
 
-    // { title: "Pinned", key: "pinned", children: <CommunityPinnedTab /> },
     {
       title: "About",
       key: "about",
       children: <CommunityAboutTab community={data} />,
       icon: <MdInfo size={24} />,
+      priority: 5,
     },
   ];
+  if (isMobile) {
+    communityTabs.push({
+      title: "Pinned",
+      key: "pinned",
+      children: <CommunityPinnedTab />,
+      icon: <MdPin size={24} />,
+      priority: 3,
+    });
+  }
+  const sortedCommunityTabs = communityTabs.sort(
+    (a, b) => a.priority - b.priority
+  );
 
   return (
     <div className="relative items-center flex-row w-full">
@@ -72,7 +88,7 @@ export default function CommunityPage(props: Props) {
           tabContent: " w-full",
         }}
       >
-        {profileTabs.map((tab) => (
+        {communityTabs.map((tab) => (
           <Tab
             key={tab.key}
             title={

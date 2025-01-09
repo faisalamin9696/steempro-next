@@ -125,12 +125,14 @@ export default function ReplyBody({
 
           <div>{rightContent}</div>
         </div>
-        <div className={clsx(comment.is_muted === 1 && "opacity-60", "mt-2")}>
-          <MarkdownViewer
-            text={comment.body}
-            className={`!prose-sm !w-full !max-w-none`}
-          />
-        </div>
+        {!comment.isEdit && (
+          <div className={clsx(comment.is_muted === 1 && "opacity-60", "mt-2")}>
+            <MarkdownViewer
+              text={comment.body}
+              className={`!prose-sm !w-full !max-w-none`}
+            />
+          </div>
+        )}
       </div>
 
       {showHistory && (

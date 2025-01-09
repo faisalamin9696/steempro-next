@@ -188,10 +188,10 @@ export default function FollowButton(props: Props) {
       {isSelf && (
         <Button
           size="sm"
-          variant="solid"
+          variant="flat"
           title="Edit profile"
           className={clsx("min-w-0  h-6")}
-          color="primary"
+          color="secondary"
           onPress={handleAccountEdit}
           startContent={<FaPencil />}
           radius="full"

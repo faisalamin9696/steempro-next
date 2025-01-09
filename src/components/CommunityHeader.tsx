@@ -11,56 +11,46 @@ import { BsInfoCircleFill } from "react-icons/bs";
 import VanillaTilt from "vanilla-tilt";
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 import SAvatar from "@/components/SAvatar";
-import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
-import { addProfileHandler } from "@/libs/redux/reducers/ProfileReducer";
+import { FaDollarSign } from "react-icons/fa";
+import { addCommunityHandler } from "@/libs/redux/reducers/CommunityReducer";
 import { twMerge } from "tailwind-merge";
-import { FaRegHeart } from "react-icons/fa";
-import { IoFlashOutline } from "react-icons/io5";
+import { FaRankingStar } from "react-icons/fa6";
+import { PiUserListBold } from "react-icons/pi";
 import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/modal";
-import FollowersCard from "./FollowersCard";
 import { useRouter } from "next13-progressbar";
+import CommunitySubscribers from "./community/CommunityMembers";
 import MarkdownViewer from "./body/MarkdownViewer";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 
 type Props = {
-  account: AccountExt;
+  community: Community;
 };
 export default function AccountHeader(props: Props) {
-  const { account } = props;
+  const { community } = props;
   const { username, community: communityName } = usePathnameClient();
   const cardRef = useRef<HTMLElement | undefined | any>();
   const { isDesktop } = useDeviceInfo();
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const communityInfo: Community =
+    useAppSelector((state) => state.communityReducer.values)[
+      community?.account ?? ""
+    ] ?? community;
 
-  const profileInfo: AccountExt =
-    useAppSelector((state) => state.profileReducer.value)[
-      account?.name ?? ""
-    ] ?? account;
-
-  const [followerModal, setFollowerModal] = useState<{
+  const [membersModal, setMembersModal] = useState<{
     isOpen: boolean;
     isFollowing?: boolean;
   }>({
     isOpen: false,
   });
 
-  const posting_json_metadata = JSON.parse(
-    profileInfo?.posting_json_metadata || "{}"
-  );
-  const cover_picture = proxifyImageUrl(
-    posting_json_metadata?.profile?.cover_image ?? "",
-    "2048x512"
-  );
+  const cover_picture = "/steempro-cover.png";
 
   useEffect(() => {
-    dispatch(addProfileHandler(account));
-
+    dispatch(addCommunityHandler({ ...community }));
     if (isDesktop && cardRef && cardRef.current)
       VanillaTilt.init(cardRef.current);
   }, []);
-
-  // const pathname = usePathname();
 
   useEffect(() => {
     router.refresh();
@@ -69,7 +59,7 @@ export default function AccountHeader(props: Props) {
   return (
     <div className="w-full p-1 relative">
       <div className="flex justify-center items-center w-full  shadow-none">
-        <UserCoverCard large={false} src={cover_picture} />
+        <UserCoverCard large={true} src={cover_picture} />
 
         <div
           ref={cardRef}
@@ -80,50 +70,70 @@ export default function AccountHeader(props: Props) {
           data-tilt-glare
           data-tilt-max-glare={0.5}
           className={`account-header self-center backdrop-blur-sm shadow-md m-auto absolute mx-2  
-            bg-black/20 rounded-xl max-w-1md `}
+            bg-white/15 rounded-xl max-w-1md `}
         >
           <div
             className={twMerge(
               " flex shadow-md px-0 text-white dark:text-white/90 ",
-              "max-[720px]:flex max-[720px]:flex-col"
+              "max-1md:flex max-1md:flex-col"
             )}
           >
             <div className="flex ">
               <div className="stat">
                 <div className="stat-figure text-2xl max-md:text-xl">
-                  <FaRegHeart />
+                  <FaRankingStar />
                 </div>
-                <div className="stat-title text-white/60">Followers</div>
+                <div className="stat-title text-white/60">Rank</div>
                 <button
-                  onClick={() => {
-                    setFollowerModal({ isOpen: true });
-                  }}
+                  onClick={() => {}}
                   className={twMerge(
                     "stat-value",
-                    "text-3xl max-md:text-lg max-1md:text-start"
+                    "text-3xl max-md:text-lg max-1md:text-start",
+                    "pointer-events-none"
                   )}
-                  title={profileInfo.count_followers?.toString()}
+                  title={communityInfo.rank?.toString()}
                 >
-                  {abbreviateNumber(profileInfo.count_followers)}
+                  {abbreviateNumber(communityInfo.rank)}
                 </button>
               </div>
 
               <div className="stat">
                 <div className="stat-figure text-secondary text-2xl">
-                  {<IoFlashOutline />}
+                  <PiUserListBold />
                 </div>
-                <div className="stat-title text-white/60">{"Followings"}</div>
+                <div className="stat-title text-white/60">Subscribers</div>
                 <button
                   onClick={() => {
-                    setFollowerModal({ isOpen: true, isFollowing: true });
+                    setMembersModal({ isOpen: true, isFollowing: true });
                   }}
                   className={twMerge(
                     "stat-value flex flex-row items-center gap-1 text-secondary text-3xl max-md:text-lg max-1md:text-start"
                   )}
-                  title={profileInfo.count_following?.toString()}
+                  title={communityInfo.count_subs?.toString()}
                 >
-                  {abbreviateNumber(profileInfo.count_following)}
+                  {abbreviateNumber(communityInfo.count_subs)}
+                  {communityInfo && (
+                    <p title="Active authors" className=" text-sm">
+                      ({communityInfo.count_authors})
+                    </p>
+                  )}
                 </button>
+                <div className="stat-desc"></div>
+              </div>
+
+              <div className="stat">
+                <div className="stat-figure text-info text-xl">
+                  <FaDollarSign />
+                </div>
+                <div className="stat-title text-white/60">{"Reward"}</div>
+                <div
+                  className="stat-value flex flex-row items-center gap-1 text-info text-3xl max-md:text-lg max-1md:text-start"
+                  title={communityInfo.sum_pending?.toString()}
+                >
+                  {communityInfo.sum_pending < 1
+                    ? 0
+                    : abbreviateNumber(communityInfo.sum_pending)}
+                </div>
                 <div className="stat-desc"></div>
               </div>
             </div>
@@ -131,21 +141,21 @@ export default function AccountHeader(props: Props) {
             <div className="profile-card stat">
               <div className="stat-figure text-secondary relative">
                 <SAvatar
-                  username={profileInfo.name}
+                  username={communityInfo.account}
                   size="lg"
                   quality="medium"
                 />
               </div>
               <div
-                title={posting_json_metadata?.profile?.name}
+                title={communityInfo.title}
                 className="stat-value text-white dark:text-white/90 text-xl max-sm:text-xl max-w-fit overflow-clip text-wrap flex-nowrap line-clamp-1"
               >
-                {posting_json_metadata?.profile?.name}
+                {communityInfo.title}
               </div>
               <div className="stat-title flex space-x-2 items-center">
                 <div className="stat-title flex flex-row items-center text-white/90 gap-2">
-                  <p>@{profileInfo.name}</p>
-                  <Reputation reputation={profileInfo.reputation} />
+                  <p>@{communityInfo.account}</p>
+                  <Reputation reputation={communityInfo.account_reputation} />
                 </div>
 
                 <div className="">
@@ -168,19 +178,20 @@ export default function AccountHeader(props: Props) {
                     <PopoverContent>
                       <ProfileInfoCard
                         hideAvatar
-                        key={`info-profile-card-${profileInfo.name}`}
+                        key={`info-profile-card-${communityInfo?.account}`}
                         className="!bg-transparent"
-                        username={profileInfo.name}
+                        community={communityInfo}
+                        username={communityInfo.account}
                       />
                     </PopoverContent>
                   </Popover>
                 </div>
               </div>
 
-              <div title={posting_json_metadata?.profile?.about}>
+              <div title={communityInfo.about}>
                 <MarkdownViewer
                   className="!stat-desc !text-default-900 !overflow-clip !text-white/80 !text-wrap !flex-nowrap"
-                  text={posting_json_metadata?.profile?.about}
+                  text={communityInfo.about}
                 />
               </div>
             </div>
@@ -188,10 +199,10 @@ export default function AccountHeader(props: Props) {
         </div>
       </div>
 
-      {followerModal.isOpen && (
+      {membersModal.isOpen && (
         <Modal
-          isOpen={followerModal.isOpen}
-          onOpenChange={(isOpen) => setFollowerModal({ isOpen: isOpen })}
+          isOpen={membersModal.isOpen}
+          onOpenChange={(isOpen) => setMembersModal({ isOpen: isOpen })}
           placement="top-center"
           scrollBehavior="inside"
           closeButton
@@ -200,13 +211,10 @@ export default function AccountHeader(props: Props) {
             {(onClose) => (
               <>
                 <ModalHeader className="flex flex-col gap-1">
-                  {followerModal.isFollowing ? "Following" : "Followers"}
+                  {"Subscribers"}
                 </ModalHeader>
                 <ModalBody>
-                  <FollowersCard
-                    isFollowing={followerModal.isFollowing}
-                    username={profileInfo.name}
-                  />
+                  <CommunitySubscribers community={communityInfo} />
                 </ModalBody>
               </>
             )}

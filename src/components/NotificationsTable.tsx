@@ -43,6 +43,7 @@ import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { Badge } from "@nextui-org/react";
 
 interface Props {
   username: string | null;
@@ -116,6 +117,7 @@ const filter = {
   },
 };
 
+let tempLastRead = 0;
 export default function NotificationsTable(props: Props) {
   const { username } = props;
 
@@ -187,6 +189,7 @@ export default function NotificationsTable(props: Props) {
       );
       dispatch(saveLoginHandler({ ...loginInfo, unread_count: undefined }));
       toast.success("Marked as read");
+      tempLastRead = allRows?.[0]?.time;
     },
   });
   async function handleMarkRead() {
@@ -275,17 +278,21 @@ export default function NotificationsTable(props: Props) {
 
           return (
             <div className="flex flex-row items-center">
-              {!notification.is_read && (
-                <Chip
+              <div className="flex gap-2 items-center">
+                <Badge
+                  showOutline={false}
+                  color="success"
                   size="sm"
-                  className="border-none gap-1 text-default-600 p-0 w-6 h-6"
-                  variant="dot"
-                  color="default"
-                />
-              )}
-
-              <div className="flex gap-2">
-                <SAvatar size="xs" username={notification.account} />
+                  content={
+                    notification.is_read || notification.time < tempLastRead
+                      ? undefined
+                      : ""
+                  }
+                  placement="bottom-right"
+                  shape="circle"
+                >
+                  <SAvatar size="sm" username={notification.account} />
+                </Badge>
                 <div>
                   <Link
                     className=" hover:text-blue-500"
@@ -402,13 +409,14 @@ export default function NotificationsTable(props: Props) {
             {isSelf && (
               <Button
                 size="sm"
+                variant="solid"
                 onPress={handleMarkRead}
                 isLoading={markMutation.isPending}
                 isDisabled={markMutation.isPending || !loginInfo.unread_count}
                 color="primary"
-                endContent={<IoCheckmarkDone className="text-lg" />}
+                // endContent={<IoCheckmarkDone className="text-lg" />}
               >
-                Mark as read
+                Mark all as read
               </Button>
             )}
           </div>
@@ -465,7 +473,6 @@ export default function NotificationsTable(props: Props) {
             // bottomContent={bottomContent}
             classNames={{
               base: "w-full overflow-auto mb-4 h-full",
-              table: "min-h-[420px]",
             }}
             sortDescriptor={sortDescriptor}
             topContent={topContent}

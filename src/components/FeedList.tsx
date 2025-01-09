@@ -32,13 +32,13 @@ export default memo(function FeedList(props: Props) {
 
   useMemo(() => {
     if (data) {
-      setRows(data.slice(0, 15));
+      setRows(data.slice(0, 16));
     }
   }, [data]);
 
   function loadMoreRows(mainData: Feed[], rowsData: Feed[]) {
     let newStart = mainData?.slice(rowsData?.length ?? 0);
-    const newRow = newStart?.slice(0, 15);
+    const newRow = newStart?.slice(0, 16);
     return newRow ?? [];
   }
 

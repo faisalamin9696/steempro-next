@@ -52,6 +52,7 @@ type Feed = {
   max_accepted_payout: number;
   percent_steem_dollars: number;
   is_new: number = 0;
+  isEdit?: boolean = false;
 };
 
 type Post = Feed & {

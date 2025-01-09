@@ -89,7 +89,6 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
       key: "settings",
       children: <ProfileSettingsTab />,
       icon: <MdSettings size={24} />,
-
       priority: 5,
     });
   else
@@ -97,7 +96,6 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
       title: "Notifications",
       key: "notifications",
       icon: <MdNotifications size={24} />,
-
       children: <ProfileNotificationsTab />,
       priority: 2,
     });

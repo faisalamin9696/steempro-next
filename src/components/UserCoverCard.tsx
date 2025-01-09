@@ -7,9 +7,9 @@ export default function UserCoverCard(
     { src, large }: { src: string, large?: boolean }
 ) {
     return (
-        <div className={twMerge('rounded-md z-0 w-full h-44 relative max-1md:h-[16rem]', large ? ' max-1md:h-[16rem] ' : ' max-[720px]:h-[18rem] ')}>
+        <div className={twMerge('rounded-xl z-0 w-full h-44 relative max-1md:h-[16rem]', large ? ' max-1md:h-[17rem] ' : ' max-[720px]:h-[18rem] ')}>
             {src && <Image
-                className='rounded-lg'
+                className='rounded-xl'
                 fill
                 src={src}
                 onError={(e) => {
