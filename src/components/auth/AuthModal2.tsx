@@ -41,6 +41,7 @@ import { encryptPrivateKey } from "@/libs/utils/encryption";
 import { supabase } from "@/libs/supabase";
 import KeychainButton from "../KeychainButton";
 import { useRouter } from "next/navigation";
+import SAvatar from "../SAvatar";
 
 interface Props {
   open: boolean;
@@ -396,9 +397,27 @@ export default function AuthModal2(props: Props) {
           {(onClose) => (
             <>
               {isShow ? null : (
-                <ModalHeader className="flex flex-col gap-1">
+                <ModalHeader className="text-2xl flex flex-col gap-1">
                   {isLocked && !isNew ? (
-                    "Locked"
+                    <div className=" flex flex-col gap-2">
+                      <p>Unlock your account</p>
+                      <div className="text-small text-default-500 items-center flex flex-row gap-1">
+                        <p>to continue to</p>
+                        <div className="flex items-center space-x-2">
+                          <Link
+                            className=" underline hover:text-blue-500"
+                            href={`/@${loginInfo.name}`}
+                          >
+                            {loginInfo.name}
+                          </Link>
+                          <SAvatar
+                            username={loginInfo.name}
+                            className="shadow-lg cursor-pointer bg-foreground-900/40"
+                            size="xs"
+                          />
+                        </div>
+                      </div>
+                    </div>
                   ) : (
                     <div className=" flex flex-row gap-2 justify-between">
                       <p>Log in</p>
@@ -413,21 +432,13 @@ export default function AuthModal2(props: Props) {
                   )}
                 </ModalHeader>
               )}
+
               <ModalBody>
                 <div className="flex flex-col w-full">
                   {isShow ? (
                     <Spinner className=" self-center m-auto" />
                   ) : isLocked && !isNew ? (
                     <form className="flex flex-col gap-4">
-                      <div className="text-md font-bold flex items-center space-x-2">
-                        <p>Hi, {loginInfo.name}</p>
-                        <Avatar
-                          className="shadow-lg cursor-pointer bg-foreground-900/40"
-                          src={getResizedAvatar(loginInfo.name)}
-                          size="sm"
-                        />
-                      </div>
-
                       <Input
                         size="sm"
                         autoFocus
@@ -442,27 +453,28 @@ export default function AuthModal2(props: Props) {
                         type="password"
                       />
 
-                      {(credentials?.type === "POSTING" ||
-                        credentials?.type === "MEMO") && (
-                        <Checkbox
-                          isSelected={remember}
-                          isDisabled={loading}
-                          onValueChange={setRemember}
-                        >
-                          Remember
-                        </Checkbox>
-                      )}
+                      <div className="flex flex-row justify-between items-center">
+                        {(credentials?.type === "POSTING" ||
+                          credentials?.type === "MEMO") && (
+                          <Checkbox
+                            size="sm"
+                            isSelected={remember}
+                            isDisabled={loading}
+                            onValueChange={setRemember}
+                          >
+                            Remember me
+                          </Checkbox>
+                        )}
 
-                      <div className="text-start text-small text-default-600">
                         <Button
-                          size="sm"
+                          className="text-default-500"
                           variant="light"
                           isDisabled={loading}
                           onPress={() => {
                             onForget && onForget(loginInfo.name);
                           }}
                         >
-                          Forget password?
+                          Forgot password?
                         </Button>
                       </div>
 
@@ -552,7 +564,7 @@ export default function AuthModal2(props: Props) {
                           isDisabled={loading}
                           onValueChange={setIsCurrent}
                         >
-                          set as default
+                          Set as default
                         </Checkbox>
                       )}
 

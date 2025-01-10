@@ -1,4 +1,4 @@
-import { Button } from "@nextui-org/react";
+import { Button } from "@nextui-org/button";
 import clsx from "clsx";
 import React, { useRef } from "react";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";

@@ -27,6 +27,7 @@ export default function HomePage() {
       <Tabs
         destroyInactiveTabPanel={false}
         size="sm"
+        disableAnimation={isMobile}
         color={"secondary"}
         radius={isMobile ? "full" : "sm"}
         className="justify-center"

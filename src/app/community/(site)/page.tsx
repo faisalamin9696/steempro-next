@@ -72,6 +72,7 @@ export default function CommunityPage(props: Props) {
       <Tabs
         destroyInactiveTabPanel={false}
         size={isMobile ? "sm" : "md"}
+        disableAnimation={isMobile}
         isVertical={!isMobile}
         color={"secondary"}
         radius={isMobile ? "full" : "sm"}
@@ -88,7 +89,7 @@ export default function CommunityPage(props: Props) {
           tabContent: " w-full",
         }}
       >
-        {communityTabs.map((tab) => (
+        {sortedCommunityTabs.map((tab) => (
           <Tab
             key={tab.key}
             title={

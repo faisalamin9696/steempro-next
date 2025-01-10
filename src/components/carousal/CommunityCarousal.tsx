@@ -6,7 +6,7 @@ import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import CarousalMain from "./CarousalMain";
 import { AiFillPushpin } from "react-icons/ai";
-import { Button } from "@nextui-org/react";
+import { Button } from "@nextui-org/button";
 import { twMerge } from "tailwind-merge";
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 

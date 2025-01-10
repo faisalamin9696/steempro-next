@@ -7,12 +7,12 @@ import Link from "next/link";
 import React, { Key, useState } from "react";
 import RoleTitleCard from "../RoleTitleCard";
 import {
-  Button,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/react";
+} from "@nextui-org/dropdown";
+import { Button } from "@nextui-org/button";
 import { BsClipboard2Minus } from "react-icons/bs";
 import { LuHistory } from "react-icons/lu";
 import { FaEllipsis } from "react-icons/fa6";

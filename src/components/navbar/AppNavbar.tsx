@@ -42,17 +42,16 @@ import "./style.scss";
 import { PiUserSwitchFill } from "react-icons/pi";
 import { keysColorMap } from "../auth/AccountItemCard";
 import {
-  Divider,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@nextui-org/modal";
+import { Divider } from "@nextui-org/divider";
 import { IoFlash, IoLogOut } from "react-icons/io5";
 import { logoutHandler } from "@/libs/redux/reducers/LoginReducer";
-import { addCommentHandler } from "@/libs/redux/reducers/CommentReducer";
 
 export default function AppNavbar() {
   const { authenticateUser, isAuthorized, credentials, setCredentials } =

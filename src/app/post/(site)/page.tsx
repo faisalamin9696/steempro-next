@@ -21,9 +21,10 @@ import TagsListCard from "@/components/TagsListCard";
 import { Button } from "@nextui-org/button";
 import { updatePostView } from "@/libs/mysql/database";
 import { addRepliesHandler } from "@/libs/redux/reducers/RepliesReducer";
-const DynamicPostReplies = dynamic(
-  () => import("../../../components/reply/PostReplies")
-);
+import PostReplies from "@/components/reply/PostReplies";
+// const DynamicPostReplies = dynamic(
+//   () => import("../../../components/reply/PostReplies")
+// );
 
 interface Props {
   data: Post;
@@ -209,7 +210,7 @@ export default function PostPage(props: Props) {
           )}
 
           <div id="comments">
-            <DynamicPostReplies comment={commentInfo} />
+            <PostReplies comment={commentInfo} />
           </div>
         </div>
       ) : null}

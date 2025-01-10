@@ -192,6 +192,7 @@ export default function ProfileWalletTab({ data }: { data: AccountExt }) {
         aria-label="Wallet"
         color={"primary"}
         size="sm"
+        disableAnimation={isMobile}
         variant={isMobile ? "underlined" : "solid"}
         radius={isMobile ? "full" : "sm"}
         onSelectionChange={(key) => {

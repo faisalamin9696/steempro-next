@@ -28,6 +28,7 @@ export default function CategoryPage() {
         destroyInactiveTabPanel={false}
         size="sm"
         color={"secondary"}
+        disableAnimation={isMobile}
         radius={isMobile ? "full" : "sm"}
         className="justify-center"
         defaultSelectedKey={category}

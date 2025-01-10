@@ -218,6 +218,7 @@ export default function SearchModal(props: Props) {
                 <Tabs
                   variant={"light"}
                   radius={isMobile ? "full" : "sm"}
+                  disableAnimation={isMobile}
                   size="sm"
                   onSelectionChange={(key) => {
                     setSearchType(key?.toString() as SearchTypes);

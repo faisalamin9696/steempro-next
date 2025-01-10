@@ -107,6 +107,7 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
       <Tabs
         isVertical={!isMobile}
         size={isMobile ? "sm" : "md"}
+        disableAnimation={isMobile}
         color={"secondary"}
         radius={isMobile ? "full" : "sm"}
         selectedKey={

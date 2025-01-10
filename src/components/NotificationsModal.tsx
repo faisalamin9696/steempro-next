@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@nextui-org/button";
-import React, { useState } from "react";
+import React from "react";
 import {
   Modal,
   ModalBody,
@@ -10,7 +10,6 @@ import {
   ModalFooter,
 } from "@nextui-org/modal";
 import NotificationsTable from "./NotificationsTable";
-import { Badge, Chip } from "@nextui-org/react";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 
 interface Props {

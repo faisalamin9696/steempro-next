@@ -9,14 +9,14 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  Tabs,
-  Tab,
   ModalFooter,
-  Button,
-  Checkbox,
-} from "@nextui-org/react";
+} from "@nextui-org/modal";
+import { Checkbox } from "@nextui-org/checkbox";
+import { Button } from "@nextui-org/button";
+import { Tabs, Tab } from "@nextui-org/tabs";
+
 import MarkdownViewer from "./body/MarkdownViewer";
-import { FaHistory, FaTags } from "react-icons/fa";
+import { FaHistory } from "react-icons/fa";
 
 import { MdSubject } from "react-icons/md";
 import moment from "moment";
@@ -138,6 +138,7 @@ const CommentEditHistory: React.FC<Props> = ({
                 <Tabs
                   variant="light"
                   radius={isMobile ? "full" : "sm"}
+                  disableAnimation={isMobile}
                   size="sm"
                   aria-label="Edit History Tabs"
                 >

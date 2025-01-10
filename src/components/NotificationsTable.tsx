@@ -43,7 +43,7 @@ import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { Badge } from "@nextui-org/react";
+import { Badge } from "@nextui-org/badge";
 
 interface Props {
   username: string | null;
@@ -280,18 +280,17 @@ export default function NotificationsTable(props: Props) {
             <div className="flex flex-row items-center">
               <div className="flex gap-2 items-center">
                 <Badge
+                  className="h-2 w-2"
                   showOutline={false}
                   color="success"
                   size="sm"
-                  content={
-                    notification.is_read || notification.time < tempLastRead
-                      ? undefined
-                      : ""
+                  isInvisible={
+                    !!notification.is_read || notification.time < tempLastRead
                   }
                   placement="bottom-right"
                   shape="circle"
                 >
-                  <SAvatar size="sm" username={notification.account} />
+                  <SAvatar size="xs" username={notification.account} />
                 </Badge>
                 <div>
                   <Link
