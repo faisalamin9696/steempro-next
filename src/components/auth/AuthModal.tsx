@@ -339,12 +339,10 @@ export default function AuthModal(props: Props) {
       return;
     }
 
-    await validateKeychain();
-
-    setLoading(true);
-    await awaitTimeout(1);
-
     try {
+      await validateKeychain();
+      setLoading(true);
+      await awaitTimeout(1);
       const account = await getAuthorExt(formData.username);
       if (account) {
         window.steem_keychain.requestSignBuffer(
@@ -373,262 +371,261 @@ export default function AuthModal(props: Props) {
     }
   }
   return (
-    <>
-      <Modal
-        className=" mt-4"
-        scrollBehavior="inside"
-        placement="top-center"
-        size="md"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (isLocked && !isNew) {
-            handleUnlock();
-            return;
-          }
-          handleLogin();
-        }}
-        backdrop={"opaque"}
-        isOpen={open}
-        hideCloseButton
-        isDismissable={!loading}
-        onClose={handleOnClose}
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              {isShow ? null : (
-                <ModalHeader className="text-2xl flex flex-col gap-1">
-                  {isLocked && !isNew ? (
-                    <div className=" flex flex-col gap-2">
-                      <p>Unlock your account</p>
-                      <div className="text-small text-default-500 items-center flex flex-row gap-1">
-                        <p>to continue to</p>
-                        <div className="flex items-center space-x-2">
-                          <Link
-                            prefetch={false}
-                            className=" underline hover:text-blue-500"
-                            href={`/@${loginInfo.name}`}
-                          >
-                            {loginInfo.name}
-                          </Link>
-                          <SAvatar
-                            username={loginInfo.name}
-                            className="shadow-lg cursor-pointer bg-foreground-900/40"
-                            size="xs"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className=" flex flex-row gap-2 justify-between">
-                      <p>Log in</p>
-                      <KeychainButton
-                        size="md"
-                        isDisabled={loading}
-                        onPress={() => {
-                          handleKeychainLogin();
-                        }}
-                      />
-                    </div>
-                  )}
-                </ModalHeader>
-              )}
-
-              <ModalBody>
-                <div className="flex flex-col w-full">
-                  {isShow ? (
-                    <Spinner className=" self-center m-auto" />
-                  ) : isLocked && !isNew ? (
-                    <form className="flex flex-col gap-4">
-                      <Input
-                        size="sm"
-                        autoFocus
-                        value={formData.password}
-                        isRequired
-                        onValueChange={(value) =>
-                          setFormData({ ...formData, password: value })
-                        }
-                        isDisabled={loading}
-                        label="Encryption password"
-                        placeholder="Enter password to unlock account"
-                        type="password"
-                      />
-
-                      <div className="flex flex-row justify-between items-center">
-                        {(credentials?.type === "POSTING" ||
-                          credentials?.type === "MEMO") && (
-                          <Checkbox
-                            size="sm"
-                            isSelected={remember}
-                            isDisabled={loading}
-                            onValueChange={setRemember}
-                          >
-                            Remember me
-                          </Checkbox>
-                        )}
-
-                        <Button
-                          className="text-default-500"
-                          variant="light"
-                          isDisabled={loading}
-                          onPress={() => {
-                            onForget && onForget(loginInfo.name);
-                          }}
+    <Modal
+      className=" mt-4"
+      scrollBehavior="inside"
+      placement="top-center"
+      size="md"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (isLocked && !isNew) {
+          handleUnlock();
+          return;
+        }
+        handleLogin();
+      }}
+      backdrop={"opaque"}
+      isOpen={open}
+      hideCloseButton
+      isDismissable={!loading}
+      onClose={handleOnClose}
+    >
+      <ModalContent>
+        {(onClose) => (
+          <>
+            {isShow ? null : (
+              <ModalHeader className="text-2xl flex flex-col gap-1">
+                {isLocked && !isNew ? (
+                  <div className=" flex flex-col gap-2">
+                    <p>Unlock your account</p>
+                    <div className="text-small text-default-500 items-center flex flex-row gap-1">
+                      <p>to continue to</p>
+                      <div className="flex items-center space-x-2">
+                        <Link
+                          prefetch={false}
+                          className=" underline hover:text-blue-500"
+                          href={`/@${loginInfo.name}`}
                         >
-                          Forgot password?
-                        </Button>
-                      </div>
-
-                      <div className="flex gap-2 items-center">
-                        <Button
-                          color="danger"
-                          variant="light"
-                          onPress={onClose}
-                          isDisabled={loading}
-                        >
-                          Cancel
-                        </Button>
-
-                        <Button
-                          fullWidth
-                          color="primary"
-                          isLoading={loading}
-                          onPress={handleUnlock}
-                          isDisabled={loading}
-                        >
-                          Unlock
-                        </Button>
-                      </div>
-                    </form>
-                  ) : (
-                    <form className="flex flex-col gap-4">
-                      <Input
-                        isRequired
-                        size="sm"
-                        label="Username"
-                        autoFocus
-                        value={formData.username}
-                        endContent={
-                          <Avatar src={getResizedAvatar(avatar)} size="sm" />
-                        }
-                        onValueChange={(value) =>
-                          setFormData({ ...formData, username: value })
-                        }
-                        isDisabled={loading}
-                        placeholder="Enter your username"
-                        type="text"
-                      />
-                      <Input
-                        size="sm"
-                        value={formData.key}
-                        onValueChange={(value) =>
-                          setFormData({ ...formData, key: value })
-                        }
-                        isDisabled={loading}
-                        // isRequired
-                        label="Private key"
-                        placeholder="Enter your private posting key"
-                        type="password"
-                      />
-
-                      <div className="flex flex-row gap-2 items-center">
-                        <Input
-                          size="sm"
-                          value={formData.password}
-                          isRequired
-                          isDisabled={loading}
-                          onValueChange={(value) =>
-                            setFormData({ ...formData, password: value })
-                          }
-                          label="Encryption password"
-                          placeholder="Enter enc. password"
-                          type="password"
-                        />
-
-                        <Input
-                          size="sm"
-                          value={formData.password2}
-                          onValueChange={(value) =>
-                            setFormData({ ...formData, password2: value })
-                          }
-                          isRequired
-                          isDisabled={loading}
-                          label="Confirm password"
-                          placeholder="Re-enter password"
-                          type="password"
+                          {loginInfo.name}
+                        </Link>
+                        <SAvatar
+                          username={loginInfo.name}
+                          className="shadow-lg cursor-pointer bg-foreground-900/40"
+                          size="xs"
                         />
                       </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className=" flex flex-row gap-2 justify-between">
+                    <p>Log in</p>
+                    <KeychainButton
+                      size="md"
+                      isDisabled={loading}
+                      onPress={() => {
+                        handleKeychainLogin();
+                      }}
+                    />
+                  </div>
+                )}
+              </ModalHeader>
+            )}
 
-                      {isNew && (
+            <ModalBody>
+              <div className="flex flex-col w-full">
+                {isShow ? (
+                  <Spinner className=" self-center m-auto" />
+                ) : isLocked && !isNew ? (
+                  <form className="flex flex-col gap-4">
+                    <Input
+                      size="sm"
+                      autoFocus
+                      value={formData.password}
+                      isRequired
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, password: value })
+                      }
+                      isDisabled={loading}
+                      label="Encryption password"
+                      placeholder="Enter password to unlock account"
+                      type="password"
+                    />
+
+                    <div className="flex flex-row justify-between items-center">
+                      {(credentials?.type === "POSTING" ||
+                        credentials?.type === "MEMO") && (
                         <Checkbox
-                          isSelected={isCurrent}
+                          size="sm"
+                          isSelected={remember}
                           isDisabled={loading}
-                          onValueChange={setIsCurrent}
+                          onValueChange={setRemember}
                         >
-                          Set as default
+                          Remember me
                         </Checkbox>
                       )}
 
-                      <div className="text-start text-small text-default-600">
-                        Need to create an account?{" "}
-                        <Link
-                          prefetch={false}
-                          className="hover:text-blue-500 font-semibold"
-                          href={SignupLink}
-                          target="_blank"
-                        >
-                          Sign up
-                        </Link>
-                      </div>
-                      <div className="flex flex-row gap-2 overflow-x-auto p-1">
-                        {!!!loginInfo.name &&
-                          accounts?.map((user) => {
-                            return (
-                              <div
-                                className="w-fit"
-                                key={`${user?.username}-${user.type}`}
-                              >
-                                <AccountItemCard
-                                  switchText="Login"
-                                  isDisabled={loading}
-                                  user={user}
-                                  isLogin
-                                  className="px-[2px] py-1 rounded-lg shadow-none"
-                                  handleSwitchSuccess={() => {
-                                    {
-                                      handleOnClose();
-                                      clearAll();
-                                    }
-                                  }}
-                                />
-                              </div>
-                            );
-                          })}
-                      </div>
-                      <div className="flex gap-2 justify-end">
-                        <Button
-                          color="danger"
-                          variant="light"
-                          onPress={onClose}
-                          isDisabled={loading}
-                        >
-                          Cancel
-                        </Button>
+                      <Button
+                        className="text-default-500"
+                        variant="light"
+                        isDisabled={loading}
+                        onPress={() => {
+                          onForget && onForget(loginInfo.name);
+                        }}
+                      >
+                        Forgot password?
+                      </Button>
+                    </div>
 
-                        <Button
-                          fullWidth
-                          color="primary"
-                          isLoading={loading}
-                          onPress={handleLogin}
-                          isDisabled={loading}
-                        >
-                          {isNew ? "Add account" : "Login"}
-                        </Button>
-                      </div>
-                    </form>
-                  )}
+                    <div className="flex gap-2 items-center">
+                      <Button
+                        color="danger"
+                        variant="light"
+                        onPress={onClose}
+                        isDisabled={loading}
+                      >
+                        Cancel
+                      </Button>
 
-                  {/* <Tab key="sign-up" title="Sign up">
+                      <Button
+                        fullWidth
+                        color="primary"
+                        isLoading={loading}
+                        onPress={handleUnlock}
+                        isDisabled={loading}
+                      >
+                        Unlock
+                      </Button>
+                    </div>
+                  </form>
+                ) : (
+                  <form className="flex flex-col gap-4">
+                    <Input
+                      isRequired
+                      size="sm"
+                      label="Username"
+                      autoFocus
+                      value={formData.username}
+                      endContent={
+                        <Avatar src={getResizedAvatar(avatar)} size="sm" />
+                      }
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, username: value })
+                      }
+                      isDisabled={loading}
+                      placeholder="Enter your username"
+                      type="text"
+                    />
+                    <Input
+                      size="sm"
+                      value={formData.key}
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, key: value })
+                      }
+                      isDisabled={loading}
+                      // isRequired
+                      label="Private key"
+                      placeholder="Enter your private posting key"
+                      type="password"
+                    />
+
+                    <div className="flex flex-row gap-2 items-center">
+                      <Input
+                        size="sm"
+                        value={formData.password}
+                        isRequired
+                        isDisabled={loading}
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, password: value })
+                        }
+                        label="Encryption password"
+                        placeholder="Enter enc. password"
+                        type="password"
+                      />
+
+                      <Input
+                        size="sm"
+                        value={formData.password2}
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, password2: value })
+                        }
+                        isRequired
+                        isDisabled={loading}
+                        label="Confirm password"
+                        placeholder="Re-enter password"
+                        type="password"
+                      />
+                    </div>
+
+                    {isNew && (
+                      <Checkbox
+                        isSelected={isCurrent}
+                        isDisabled={loading}
+                        onValueChange={setIsCurrent}
+                      >
+                        Set as default
+                      </Checkbox>
+                    )}
+
+                    <div className="text-start text-small text-default-600">
+                      Need to create an account?{" "}
+                      <Link
+                        prefetch={false}
+                        className="hover:text-blue-500 font-semibold"
+                        href={SignupLink}
+                        target="_blank"
+                      >
+                        Sign up
+                      </Link>
+                    </div>
+                    <div className="flex flex-row gap-2 overflow-x-auto p-1">
+                      {!!!loginInfo.name &&
+                        accounts?.map((user) => {
+                          return (
+                            <div
+                              className="w-fit"
+                              key={`${user?.username}-${user.type}`}
+                            >
+                              <AccountItemCard
+                                switchText="Login"
+                                isDisabled={loading}
+                                user={user}
+                                isLogin
+                                className="px-[2px] py-1 rounded-lg shadow-none"
+                                handleSwitchSuccess={() => {
+                                  {
+                                    handleOnClose();
+                                    clearAll();
+                                  }
+                                }}
+                              />
+                            </div>
+                          );
+                        })}
+                    </div>
+                    <div className="flex gap-2 justify-end">
+                      <Button
+                        color="danger"
+                        variant="light"
+                        onPress={onClose}
+                        isDisabled={loading}
+                      >
+                        Cancel
+                      </Button>
+
+                      <Button
+                        fullWidth
+                        color="primary"
+                        isLoading={loading}
+                        onPress={handleLogin}
+                        isDisabled={loading}
+                      >
+                        {isNew ? "Add account" : "Login"}
+                      </Button>
+                    </div>
+                  </form>
+                )}
+
+                {/* <Tab key="sign-up" title="Sign up">
                                                 <form className="flex flex-col gap-4 h-[300px]">
                                                     <Input isRequired label="Name" placeholder="Enter your name" type="password" />
                                                     <Input isRequired label="Email" placeholder="Enter your email" type="email" />
@@ -652,12 +649,11 @@ export default function AuthModal(props: Props) {
                                                     </div>
                                                 </form>
                                             </Tab> */}
-                </div>
-              </ModalBody>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-    </>
+              </div>
+            </ModalBody>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
   );
 }

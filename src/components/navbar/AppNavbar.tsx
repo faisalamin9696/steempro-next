@@ -1,6 +1,4 @@
-import { getResizedAvatar } from "@/libs/utils/image";
 import {
-  
   useDisclosure,
   Modal,
   ModalBody,
@@ -13,7 +11,6 @@ import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
 import { Badge } from "@heroui/badge";
 import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
-import { Avatar } from "@heroui/avatar";
 import { Divider } from "@heroui/divider";
 
 import Image from "next/image";
@@ -31,7 +28,7 @@ import { IoFlash, IoLogOut } from "react-icons/io5";
 import { LuPencilLine } from "react-icons/lu";
 import { MdSearch } from "react-icons/md";
 import { PiUserSwitchFill } from "react-icons/pi";
-import { keysColorMap } from "../auth/AccountItemCard";
+import { BorderColorMap, keysColorMap } from "../auth/AccountItemCard";
 import { signOut, signIn } from "@/auth";
 import { useAppSelector, useAppDispatch } from "@/libs/constants/AppFunctions";
 import { logoutHandler } from "@/libs/redux/reducers/LoginReducer";
@@ -51,6 +48,8 @@ import AppDrawer from "./components/Drawer";
 import AccountsModal from "../auth/AccountsModal";
 import NotificationsModal from "../NotificationsModal";
 import SearchModal from "../SearchModal";
+import SAvatar from "../SAvatar";
+import { twMerge } from "tailwind-merge";
 
 function AppNavbar() {
   const { authenticateUser, isAuthorized, credentials, setCredentials } =
@@ -132,7 +131,7 @@ function AppNavbar() {
   }
   return (
     <nav className="z-50 sticky top-0 flex-no-wrap flex w-full items-center justify-between py-2 shadow-md dark:shadow-white/5 lg:flex-wrap lg:justify-start h-16 bg-transparent backdrop-blur-md">
-      <div className="flex w-full flex-wrap items-center justify-between px-2">
+      <div className="flex w-full flex-wrap items-center justify-between px-4">
         {/* <!-- Hamburger button for mobile view --> */}
         <div className=" flex flex-row gap-2 items-center">
           <AppDrawer
@@ -161,7 +160,7 @@ function AppNavbar() {
         </div>
         {/* <!-- Right elements --> */}
         <div className="relative flex items-center">
-          <div className="flex flex-row gap-2 items-center">
+          <div className="flex flex-row gap-4 items-center">
             <Input
               radius="full"
               className="hidden 1md:block"
@@ -178,49 +177,52 @@ function AppNavbar() {
             />
 
             <Button
-              size="md"
+              size="sm"
               isIconOnly
-              radius="lg"
+              radius="md"
               variant="light"
               className="1md:hidden"
               onPress={(e) => {
                 setSearchModal(true);
               }}
             >
-              <MdSearch className="text-xl text-default-600 " />
+              <MdSearch size={24} className="text-default-600 " />
             </Button>
 
             <Button
               as={Link}
-              size="md"
+              size="sm"
               prefetch={false}
               isIconOnly
-              radius="lg"
+              radius="md"
               variant="light"
               href="/submit"
             >
-              <LuPencilLine className="text-xl text-default-600" />
+              <LuPencilLine size={24} className="text-default-600" />
             </Button>
 
             {status === "authenticated" && (
               <Badge
                 size="sm"
-                content={
-                  loginInfo.unread_count > 99
-                    ? "99+"
-                    : loginInfo.unread_count > 0 && loginInfo.unread_count
-                }
-                className="opacity-80"
+                content={loginInfo.unread_count ? "" : undefined}
+                // content={
+                //   loginInfo.unread_count > 99
+                //     ? "99+"
+                //     : loginInfo.unread_count > 0 && loginInfo.unread_count
+                // }
+                className="opacity-80 z-0"
                 color="primary"
+                shape="circle"
+                placement="top-right"
               >
                 <Button
-                  onPress={() => setNotificationPopup(true)}
-                  radius="lg"
-                  isIconOnly
                   variant="light"
-                  size="md"
+                  onPress={() => setNotificationPopup(true)}
+                  radius="md"
+                  isIconOnly
+                  size="sm"
                 >
-                  <FaRegBell className="text-xl text-default-600" />
+                  <FaRegBell size={24} className="text-default-600" />
                 </Button>
               </Badge>
             )}
@@ -249,17 +251,19 @@ function AppNavbar() {
                 onOpenChange={(open) => setIsPopOpen(open)}
               >
                 <PopoverTrigger>
-                  <div>
-                    <Avatar
-                      src={getResizedAvatar(session?.user?.name ?? "")}
-                      className="ms-4 shadow-lg cursor-pointer bg-foreground-900/40"
-                      isBordered
-                      size="md"
-                      color={
+                  <div className="z-0">
+                    <SAvatar
+                      onlyImage
+                      borderColor={
                         credentials?.type
-                          ? keysColorMap[credentials.type]
+                          ? BorderColorMap[credentials.type]
                           : undefined
                       }
+                      username={session?.user?.name ?? ""}
+                      className={twMerge(
+                        "shadow-lg cursor-pointer bg-foreground-900/40 border-2 p-[1px]"
+                      )}
+                      size="sm"
                     />
                   </div>
                 </PopoverTrigger>
