@@ -8,17 +8,17 @@ import {
   TableBody,
   TableRow,
   TableCell,
-} from "@nextui-org/table";
+} from "@heroui/table";
 
-import { Button } from "@nextui-org/button";
-import { Input } from "@nextui-org/input";
-import { Pagination } from "@nextui-org/pagination";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+import { Pagination } from "@heroui/pagination";
 import {
   DropdownTrigger,
   Dropdown,
   DropdownMenu,
   DropdownItem,
-} from "@nextui-org/dropdown";
+} from "@heroui/dropdown";
 import { FaChevronDown } from "react-icons/fa";
 import useSWR from "swr";
 import usePathnameClient from "@/libs/utils/usePathnameClient";

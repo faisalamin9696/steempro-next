@@ -6,8 +6,8 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from "@nextui-org/modal";
-import { Button } from "@nextui-org/button";
+} from "@heroui/modal";
+import { Button } from "@heroui/button";
 import React, { useEffect, useRef, useState } from "react";
 import { voteComment } from "@/libs/steem/condenser";
 import { awaitTimeout } from "@/libs/constants/AppFunctions";

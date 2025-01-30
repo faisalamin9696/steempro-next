@@ -2,15 +2,14 @@
 
 import { useLogin } from "@/components/auth/AuthProvider";
 import MassVotingModal from "@/components/MassVotingModal";
-import MainWrapper from "@/components/wrappers/MainWrapper";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import { getKeyType } from "@/libs/steem/condenser";
 import { getAuthorExt } from "@/libs/steem/sds";
 import { getResizedAvatar } from "@/libs/utils/image";
 import { PrivKey, getCredentials, getSessionKey } from "@/libs/utils/user";
-import { Input, Textarea } from "@nextui-org/input";
-import { Avatar } from "@nextui-org/avatar";
-import { Button } from "@nextui-org/button";
+import { Input, Textarea } from "@heroui/input";
+import { Avatar } from "@heroui/avatar";
+import { Button } from "@heroui/button";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";

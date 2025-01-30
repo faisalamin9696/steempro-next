@@ -1,11 +1,10 @@
 "use client";
 
-import MainWrapper from "@/components/wrappers/MainWrapper";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import { getResizedAvatar } from "@/libs/utils/image";
-import { Button } from "@nextui-org/button";
-import { Avatar } from "@nextui-org/avatar";
-import { Input } from "@nextui-org/input";
+import { Button } from "@heroui/button";
+import { Avatar } from "@heroui/avatar";
+import { Input } from "@heroui/input";
 import React, { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";

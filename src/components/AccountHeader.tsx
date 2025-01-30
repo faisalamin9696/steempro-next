@@ -1,42 +1,38 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
-import UserCoverCard from "@/components/UserCoverCard";
-import { abbreviateNumber } from "@/libs/utils/helper";
-import Reputation from "@/components/Reputation";
-import ProfileInfoCard from "@/components/ProfileInfoCard";
-import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
-import { Button } from "@nextui-org/button";
-import { BsInfoCircleFill } from "react-icons/bs";
-import VanillaTilt from "vanilla-tilt";
-import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
-import SAvatar from "@/components/SAvatar";
-import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
-import { addProfileHandler } from "@/libs/redux/reducers/ProfileReducer";
-import { twMerge } from "tailwind-merge";
-import { FaRegHeart } from "react-icons/fa";
-import { IoFlashOutline } from "react-icons/io5";
-import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/modal";
-import FollowersCard from "./FollowersCard";
+import React, { useEffect, useState } from "react";
+import { useAppSelector } from "@/libs/constants/AppFunctions";
 import { useRouter } from "next13-progressbar";
-import MarkdownViewer from "./body/MarkdownViewer";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
+import SAvatar from "./SAvatar";
+import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
+import { Button } from "@heroui/button";
+import FollowButton from "./FollowButton";
+import Link from "next/link";
+import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
+import FollowersCard from "./FollowersCard";
+import { twMerge } from "tailwind-merge";
+import { IoMdShareAlt } from "react-icons/io";
+import { AppLink } from "@/libs/constants/AppConstants";
+import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { Accordion, AccordionItem } from "@heroui/accordion";
+import ProfileInfoCard2 from "./ProfileInfoCard";
 
 type Props = {
   account: AccountExt;
+  className?: string;
 };
 export default function AccountHeader(props: Props) {
   const { account } = props;
   const { username, community: communityName } = usePathnameClient();
-  const cardRef = useRef<HTMLElement | undefined | any>();
-  const { isDesktop } = useDeviceInfo();
-  const dispatch = useAppDispatch();
+  const { isTablet } = useDeviceInfo();
   const router = useRouter();
-
   const profileInfo: AccountExt =
     useAppSelector((state) => state.profileReducer.value)[
       account?.name ?? ""
     ] ?? account;
+
+  const loginInfo = useAppSelector((state) => state.loginReducer.value);
+  const isSelf = !!loginInfo.name && loginInfo.name === profileInfo.name;
 
   const [followerModal, setFollowerModal] = useState<{
     isOpen: boolean;
@@ -46,147 +42,134 @@ export default function AccountHeader(props: Props) {
   });
 
   const posting_json_metadata = JSON.parse(
-    profileInfo?.posting_json_metadata || "{}"
+    account?.posting_json_metadata || "{}"
   );
+
   const cover_picture = proxifyImageUrl(
     posting_json_metadata?.profile?.cover_image ?? "",
-    "2048x512"
+    "1280x128"
   );
-
-  useEffect(() => {
-    dispatch(addProfileHandler(account));
-
-    if (isDesktop && cardRef && cardRef.current)
-      VanillaTilt.init(cardRef.current);
-  }, []);
-
-  // const pathname = usePathname();
 
   useEffect(() => {
     router.refresh();
   }, [username, communityName]);
 
   return (
-    <div className="w-full p-1 relative">
-      <div className="flex justify-center items-center w-full  shadow-none">
-        <UserCoverCard large={false} src={cover_picture} />
+    <div
+      className={twMerge("pb-4 relative self-center w-full", props.className)}
+    >
+      <div
+        className={`block lg:hidden bg-center bg-cover bg-no-repeat bg-[#3e4146]/50 rounded-md lg:h-32 h-24 opacity-90 z-0`}
+        style={{ backgroundImage: `url(${cover_picture})` }}
+      />
 
-        <div
-          ref={cardRef}
-          data-tilt-speed="600"
-          data-tilt
-          data-tilt-max="5"
-          data-tilt-perspective="600"
-          data-tilt-glare
-          data-tilt-max-glare={0.5}
-          className={`account-header self-center backdrop-blur-sm shadow-md m-auto absolute mx-2  
-            bg-black/20 rounded-xl max-w-1md `}
-        >
-          <div
-            className={twMerge(
-              " flex shadow-md px-0 text-white dark:text-white/90 ",
-              "max-[720px]:flex max-[720px]:flex-col"
-            )}
-          >
-            <div className="flex ">
-              <div className="stat">
-                <div className="stat-figure text-2xl max-md:text-xl">
-                  <FaRegHeart />
-                </div>
-                <div className="stat-title text-white/60">Followers</div>
-                <button
-                  onClick={() => {
-                    setFollowerModal({ isOpen: true });
-                  }}
-                  className={twMerge(
-                    "stat-value",
-                    "text-3xl max-md:text-lg max-1md:text-start"
-                  )}
-                  title={profileInfo.count_followers?.toString()}
+      <div className=" flex flex-row max-sm:flex-col">
+        <div className="ps-0 max-lg:ps-4 pe-2 -mt-8 lg:mt-0 z-10">
+          <SAvatar
+            size="lg"
+            quality="medium"
+            username={profileInfo.name}
+            className="hidden sm:block bg-background shadow-none  border-4 border-background"
+          />
+          <SAvatar
+            username={profileInfo.name}
+            size="md"
+            className="hidden max-sm:block border-2 border-background"
+          />
+        </div>
+
+        <div className="flex flex-row items-center max-sm:items-start justify-between w-full mt-1 max-sm:gap-2 max-md:py-2">
+          <div className=" flex flex-row gap-2 max-sm:ms-2">
+            <div>
+              <div className="flex flex-col items-start font-bold text-lg sm:text-2xl mb-0">
+                <p>
+                  {posting_json_metadata?.profile?.name ?? profileInfo.name}
+                </p>
+                <Link
+                  prefetch={false}
+                  href={`/@${profileInfo.name}`}
+                  className=" font-normal text-sm hover:underline"
                 >
-                  {abbreviateNumber(profileInfo.count_followers)}
-                </button>
+                  @{profileInfo.name}
+                </Link>
               </div>
 
-              <div className="stat">
-                <div className="stat-figure text-secondary text-2xl">
-                  {<IoFlashOutline />}
-                </div>
-                <div className="stat-title text-white/60">{"Followings"}</div>
-                <button
+              {/* <div className="flex items-center gap-[8px] md:hidden sm:flex">
+                <span
+                  className="lowercase text-default-900/80 text-[12px] cursor-pointer hover:underline"
                   onClick={() => {
                     setFollowerModal({ isOpen: true, isFollowing: true });
                   }}
-                  className={twMerge(
-                    "stat-value flex flex-row items-center gap-1 text-secondary text-3xl max-md:text-lg max-1md:text-start"
-                  )}
-                  title={profileInfo.count_following?.toString()}
                 >
-                  {abbreviateNumber(profileInfo.count_following)}
-                </button>
-                <div className="stat-desc"></div>
-              </div>
+                  {abbreviateNumber(profileInfo.count_followers)} followers
+                </span>
+                <div className="flex flex-row items-center justify-center gap-[4px]">
+                  <span className="inline-flex bg-green-500 rounded-full w-[0.5rem] h-[0.5rem]"></span>
+                  <span className="lowercase text-default-900/80 text-[12px]">
+                    {abbreviateNumber(profileInfo.count_following)} following
+                  </span>
+                </div>
+              </div> */}
             </div>
+          </div>
 
-            <div className="profile-card stat">
-              <div className="stat-figure text-secondary relative">
-                <SAvatar
-                  username={profileInfo.name}
-                  size="lg"
-                  quality="medium"
-                />
-              </div>
-              <div
-                title={posting_json_metadata?.profile?.name}
-                className="stat-value text-white dark:text-white/90 text-xl max-sm:text-xl max-w-fit overflow-clip text-wrap flex-nowrap line-clamp-1"
-              >
-                {posting_json_metadata?.profile?.name}
-              </div>
-              <div className="stat-title flex space-x-2 items-center">
-                <div className="stat-title flex flex-row items-center text-white/90 gap-2">
-                  <p>@{profileInfo.name}</p>
-                  <Reputation reputation={profileInfo.reputation} />
-                </div>
+          <div className="hidden max-lg:block">
+            <div className="flex flex-row items-center gap-2">
+              <FollowButton
+                account={profileInfo}
+                size={!isTablet ? "sm" : "md"}
+              />
 
-                <div className="">
-                  <Popover
-                    placement={"bottom"}
-                    color="default"
-                    style={{ zIndex: 50 }}
-                  >
-                    <PopoverTrigger>
-                      <Button
-                        isIconOnly
-                        radius="full"
-                        size="sm"
-                        variant="light"
-                        className="hidden max-1md:block text-white/80"
-                      >
-                        <BsInfoCircleFill className="text-xl" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent>
-                      <ProfileInfoCard
-                        hideAvatar
-                        key={`info-profile-card-${profileInfo.name}`}
-                        className="!bg-transparent"
-                        username={profileInfo.name}
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-              </div>
-
-              <div title={posting_json_metadata?.profile?.about}>
-                <MarkdownViewer
-                  className="!stat-desc !text-default-900 !overflow-clip !text-white/80 !text-wrap !flex-nowrap"
-                  text={posting_json_metadata?.profile?.about}
-                />
-              </div>
+              {isSelf ? (
+                <Button
+                  radius="full"
+                  size={!isTablet ? "sm" : "md"}
+                  className=" bg-foreground/10"
+                  variant="flat"
+                  startContent={<IoMdShareAlt size={18} />}
+                  onPress={async () => {
+                    await navigator.share({
+                      url: `${AppLink}/@${profileInfo.name}`,
+                    });
+                  }}
+                >
+                  Share
+                </Button>
+              ) : (
+                <></>
+                // <Button
+                //   title="Create Post"
+                //   radius="full"
+                //   size="md"
+                //   className=" bg-foreground/10"
+                //   variant="flat"
+                //   href="/"
+                //   prefetch={false}
+                //   startContent={<BsChatDots size={18} />}
+                //   as={Link}
+                // >
+                //   Chat
+                // </Button>
+              )}
             </div>
           </div>
         </div>
       </div>
+
+      <Accordion
+        variant="splitted"
+        isCompact
+        className="w-full text-sm !px-0 lg:hidden mt-2"
+      >
+        <AccordionItem
+          key="about"
+          aria-label="About"
+          title="About"
+          classNames={{ title: "text-sm", base: "py-2" }}
+        >
+          <ProfileInfoCard2 compact account={profileInfo} />
+        </AccordionItem>
+      </Accordion>
 
       {followerModal.isOpen && (
         <Modal
@@ -204,8 +187,8 @@ export default function AccountHeader(props: Props) {
                 </ModalHeader>
                 <ModalBody>
                   <FollowersCard
-                    isFollowing={followerModal.isFollowing}
                     username={profileInfo.name}
+                    isFollowing={followerModal.isFollowing}
                   />
                 </ModalBody>
               </>

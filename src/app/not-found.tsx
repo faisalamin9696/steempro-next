@@ -1,4 +1,4 @@
-import { Button, ButtonGroup } from "@nextui-org/button";
+import { Button, ButtonGroup } from "@heroui/button";
 import Link from "next/link";
 import React from "react";
 
@@ -28,7 +28,7 @@ export default function NotFound() {
         </h3>
         <span className=" inline-block text-gray-500 dark:text-gray-400 mt-2 gap-1">
           <p>No worries! Return to </p>
-          <Link className="text-blue-500" href={"/"} scroll>
+          <Link prefetch={false} className="text-blue-500" href={"/"} scroll>
             Home Page
           </Link>
           <p> or explore some awesome posts. </p>
@@ -41,13 +41,13 @@ export default function NotFound() {
           color="primary"
           size="sm"
         >
-          <Button as={Link} href="/trending">
+          <Button prefetch={false} as={Link} href="/trending">
             Trending
           </Button>
-          <Button as={Link} href="/created">
+          <Button prefetch={false} as={Link} href="/created">
             New
           </Button>
-          <Button as={Link} href="/hot">
+          <Button prefetch={false} as={Link} href="/hot">
             Hot
           </Button>
         </ButtonGroup>

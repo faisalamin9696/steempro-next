@@ -1,4 +1,4 @@
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import clsx from "clsx";
 import React, { useRef } from "react";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
@@ -53,7 +53,7 @@ function CarousalMain(props: Props) {
                     "w-2 h-2 rounded-full",
                     page === activePage
                       ? " bg-pink-500/80"
-                      : "bg-black/10 dark:bg-white/30 hover:bg-gray-400"
+                      : "bg-black/10 dark:bg-white/10 hover:bg-gray-400 dark:hover:bg-gray-400 transition-all delay-50"
                   )}
                   aria-label={`Go to page ${page + 1}`}
                 />

@@ -13,7 +13,7 @@ export const MObileAppLink =
   "https://play.google.com/store/apps/details?id=com.steempro.mobile";
 
 export const GitHubLink = "https://github.com/faisalamin9696/steempro-next";
-
+export const DiscordServerLink = "https://discord.gg/SXpWY8FGCB";
 export const FeedBodyLength = 500;
 export const FeedFetchLimit = 1000;
 
@@ -84,11 +84,7 @@ export const validProfileTabs = [
 ];
 export const validBasicCats = ["trending", "created", "hot", "payout"];
 
-export const validCats = validBasicCats.concat([
-  "pinned",
-  "about",
-  "roles",
-]);
+export const validCats = validBasicCats.concat(["pinned", "about", "roles"]);
 
 export const IntrestingList = [
   "faisalamin",

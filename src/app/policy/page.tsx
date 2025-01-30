@@ -1,6 +1,6 @@
 import MainWrapper from "@/components/wrappers/MainWrapper";
 import { AppStrings } from "@/libs/constants/AppStrings";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { Metadata } from "next";
 import Link from "next/link";
 import React from "react";
@@ -219,6 +219,7 @@ export default function page() {
               provided under the CCPA. To manage your privacy settings or create
               privacy requests, please visit our{" "}
               <Link
+                prefetch={false}
                 className=" hover:underline"
                 target="_blank"
                 href={"/policy"}
@@ -265,6 +266,7 @@ export default function page() {
             <li>
               By visiting this page on our website:{" "}
               <Link
+                prefetch={false}
                 className=" hover:underline"
                 target="_blank"
                 href={"/about"}

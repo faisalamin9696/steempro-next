@@ -6,7 +6,7 @@ import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import CarousalMain from "./CarousalMain";
 import { AiFillPushpin } from "react-icons/ai";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { twMerge } from "tailwind-merge";
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 
@@ -32,19 +32,20 @@ const CommunityCarousel = () => {
         {data?.map?.((item, index) => (
           <div className="w-full" key={`${index}`}>
             <PromotionCard
+              sm
               authPerm={`${item.author}/${item.permlink}`}
               topChildren={
                 !!item.is_pinned && (
                   <Button
                     title="Pinned"
                     isIconOnly
-                    className={twMerge("min-w-0 h-6 pointer-events-none")}
+                    className={twMerge("min-w-0 h-4 pointer-events-none")}
                     color="primary"
                     size="sm"
-                    variant="flat"
+                    variant="light"
                     radius="full"
                   >
-                    <AiFillPushpin size={18} color="white" />
+                    <AiFillPushpin size={16} color="white" />
                   </Button>
                 )
               }

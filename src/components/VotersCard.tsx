@@ -8,17 +8,17 @@ import {
   TableBody,
   TableRow,
   TableCell,
-} from "@nextui-org/table";
+} from "@heroui/table";
 
-import { Pagination } from "@nextui-org/pagination";
-import { Button } from "@nextui-org/button";
-import { Input } from "@nextui-org/input";
+import { Pagination } from "@heroui/pagination";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
 import {
   DropdownTrigger,
   Dropdown,
   DropdownMenu,
   DropdownItem,
-} from "@nextui-org/dropdown";
+} from "@heroui/dropdown";
 
 import { FaChevronDown } from "react-icons/fa";
 import useSWR from "swr";
@@ -118,6 +118,7 @@ export default function VotersCard({ comment }: { comment: Feed | Post }) {
               <div className="flex gap-2 items-center">
                 <SAvatar size="xs" username={votes.voter} />
                 <Link
+                  prefetch={false}
                   className=" hover:text-blue-500"
                   href={`/@${votes.voter}`}
                 >

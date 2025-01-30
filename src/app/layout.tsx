@@ -7,9 +7,7 @@ import { AppStrings } from "@/libs/constants/AppStrings";
 import { SessionProvider } from "next-auth/react";
 import { auth, BASE_PATH } from "@/auth";
 import { Providers } from "./providers";
-// import AdSense from "@/components/AdSense";
 // export const runtime = 'edge' // 'nodejs' (default) | 'edge'
-
 // const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -54,11 +52,6 @@ export default async function RootLayout({
   }
   return (
     <html lang="en" suppressHydrationWarning={true}>
-      
-      {/* <head>
-        <AdSense pId="ca-pub-4510618528305465" />
-      </head> */}
-
       <link
         rel="dns-prefetch"
         href="https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg"

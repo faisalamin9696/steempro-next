@@ -1,7 +1,7 @@
-import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
-import { Button } from "@nextui-org/button";
-import { Card } from "@nextui-org/card";
-import { Input } from "@nextui-org/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
+import { Button } from "@heroui/button";
+import { Card } from "@heroui/card";
+import { Input } from "@heroui/input";
 import { memo, useState } from "react";
 import { FaUsersCog } from "react-icons/fa";
 import { MdAdd, MdClose } from "react-icons/md";

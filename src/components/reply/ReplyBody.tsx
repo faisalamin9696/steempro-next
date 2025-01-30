@@ -11,8 +11,8 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/dropdown";
-import { Button } from "@nextui-org/button";
+} from "@heroui/dropdown";
+import { Button } from "@heroui/button";
 import { BsClipboard2Minus } from "react-icons/bs";
 import { LuHistory } from "react-icons/lu";
 import { FaEllipsis } from "react-icons/fa6";
@@ -78,6 +78,7 @@ export default function ReplyBody({
               <div className="flex flex-col items-start">
                 <div className="flex gap-1 items-center">
                   <Link
+                    prefetch={false}
                     className=" hover:text-blue-500"
                     href={`/@${comment.author}`}
                   >
@@ -85,6 +86,7 @@ export default function ReplyBody({
                   </Link>
                   <Reputation reputation={comment.author_reputation} />
                   <Link
+                    prefetch={false}
                     href={`/${comment.category}/@${comment.author}/${comment.permlink}`}
                   >
                     <TimeAgoWrapper

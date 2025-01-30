@@ -2,11 +2,11 @@
 
 import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import { extractMetadata } from "@/libs/utils/editor";
-import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
 
-import { Chip } from "@nextui-org/chip";
-import { Card } from "@nextui-org/card";
-import { Button } from "@nextui-org/button";
+import { Chip } from "@heroui/chip";
+import { Card } from "@heroui/card";
+import { Button } from "@heroui/button";
 import clsx from "clsx";
 import React, { useState } from "react";
 import CommentCover from "./comment/components/CommentCover";
@@ -313,7 +313,11 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
       >
         <div className=" absolute right-2 flex items-center gap-2">
           {targetUrl && (
-            <Link className=" text-blue-500 text-sm" href={targetUrl}>
+            <Link
+              prefetch={false}
+              className=" text-blue-500 text-sm"
+              href={targetUrl}
+            >
               Visit
             </Link>
           )}

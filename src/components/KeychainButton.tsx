@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, ButtonProps } from "@nextui-org/button";
+import { Button, ButtonProps } from "@heroui/button";
 import Image from "next/image";
 
 const KeychainButton = (props: ButtonProps) => {

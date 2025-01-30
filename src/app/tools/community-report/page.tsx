@@ -8,17 +8,17 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-} from "@nextui-org/table";
+} from "@heroui/table";
 
-import { Button } from "@nextui-org/button";
-import { Input } from "@nextui-org/input";
-import { Pagination } from "@nextui-org/pagination";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+import { Pagination } from "@heroui/pagination";
 import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/dropdown";
+} from "@heroui/dropdown";
 
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -142,6 +142,7 @@ export default function CommunityReportPage() {
             <div className="flex gap-2 items-center">
               <SAvatar size="xs" username={report.author} />
               <Link
+                prefetch={false}
                 className=" hover:text-blue-500"
                 href={`/@${report.author}`}
               >

@@ -4,7 +4,7 @@ import ReplyForm from "./ReplyForm";
 import { memo, useState } from "react";
 import SAvatar from "@/components/SAvatar";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 
 interface Props {
   comment: Post;

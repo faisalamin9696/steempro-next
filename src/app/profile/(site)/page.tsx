@@ -1,6 +1,6 @@
 "use client";
 
-import { Tab, Tabs } from "@nextui-org/tabs";
+import { Tab, Tabs } from "@heroui/tabs";
 import React, { useEffect } from "react";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import ProfileBlogsTab from "../(tabs)/blog/page";
@@ -30,15 +30,9 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const profileInfo =
     useAppSelector((state) => state.profileReducer.value)[data?.name] ?? data;
-
   const isSelf = !!loginInfo.name && loginInfo.name === username;
   const dispatch = useAppDispatch();
-
   const { isMobile } = useDeviceInfo();
-
-  // useEffect(() => {
-  //     router.refresh();
-  // }, [pathname]);
 
   useEffect(() => {
     if (data)
@@ -105,29 +99,21 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
   return (
     <div className={clsx("relative items-center flex-row w-full")}>
       <Tabs
-        isVertical={!isMobile}
-        size={isMobile ? "sm" : "md"}
+        size={"sm"}
         disableAnimation={isMobile}
         color={"secondary"}
         radius={isMobile ? "full" : "sm"}
         selectedKey={
           ["comments", "replies", "friends"].includes(category)
-            ? "posts"
-            : category
+            ? `/@${username}/${"posts"}`
+            : `/@${username}/${category ?? "blog"}`
         }
         className="justify-center"
-        defaultSelectedKey={
-          ["comments", "replies", "friends"].includes(category)
-            ? "posts"
-            : category
-        }
         onSelectionChange={(key) => {
-          if (!category) history.replaceState({}, "", `/@${username}/${key}`);
-          else history.pushState({}, "", `/@${username}/${key}`);
+          if (!category) history.replaceState({}, "", `${key}`);
         }}
         classNames={{
           tabList: "max-sm:gap-0 main-tab-list",
-          tab: "max-sm:max-w-prose max-sm:px-2 max-sm:h-5",
           panel: "w-full",
           tabContent: " w-full",
         }}
@@ -135,7 +121,8 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
         {sortedProfileTabs.map((tab) => (
           <Tab
             hidden
-            key={tab.key}
+            href={`/@${username}/${tab.key}`}
+            key={`/@${username}/${tab.key}`}
             title={
               <div className="flex items-center space-x-2">
                 {!isMobile && tab?.icon}

@@ -1,7 +1,6 @@
 import MainWrapper from "@/components/wrappers/MainWrapper";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
 import React from "react";
-import HomeStart from "@/app/(site)/@start/page";
 
 export default async function Layout({
   children,
@@ -9,10 +8,7 @@ export default async function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <MainWrapper
-      startContent={<HomeStart />}
-      startClassName={" max-h-screen md:block !static pr-2"}
-    >
+    <MainWrapper>
       <div className=" flex flex-col">{children}</div>
     </MainWrapper>
   );
@@ -39,6 +35,6 @@ export async function generateMetadata() {
   return {
     title: pageTitle,
     description: pageDescription,
-    keywords: keywords.join(", ")
+    keywords: keywords.join(", "),
   };
 }

@@ -11,16 +11,16 @@ import {
   useAppSelector,
 } from "@/libs/constants/AppFunctions";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
-import { Button } from "@nextui-org/button";
-import { Input } from "@nextui-org/input";
-import { Card } from "@nextui-org/card";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+import { Card } from "@heroui/card";
 
 import clsx from "clsx";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { twMerge } from "tailwind-merge";
 import AddRoleModal from "../AddRoleModal";
-import { ScrollShadow } from "@nextui-org/scroll-shadow";
+import { ScrollShadow } from "@heroui/scroll-shadow";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Role as RoleCheck } from "@/libs/utils/community";
 
@@ -29,7 +29,7 @@ interface Props {
   community?: Community;
   stickyHeader?: boolean;
 }
-export default function CommunitySubscribers(props: Props) {
+export default function CommunityMembers(props: Props) {
   const { large, stickyHeader } = props;
   const [communityInfo, setCommunityInfo] = useState<Community>();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);

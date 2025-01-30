@@ -30,8 +30,15 @@ export const defaultWidth = () => Number.parseInt(CAPPED_SIZE.split("x")[0]);
  *                                          if true, preserves the first {int}x{int} in a proxy url. If not found, uses 0x0
  * @returns string
  */
-export function proxifyImageUrl(url: string, dimensions = "") {
+export function proxifyImageUrl(
+  url: string,
+  dimensions = "",
+  emptyCheck: boolean = false
+) {
   if (url == null) return "";
+
+  if (emptyCheck && url === "") return "";
+
   const proxyList = url.match(rProxyDomainsDimensions);
   let respUrl = url.replaceAll("amp;", "");
 

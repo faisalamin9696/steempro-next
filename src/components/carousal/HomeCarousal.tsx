@@ -4,6 +4,7 @@ import useSWR from "swr";
 import axios from "axios";
 import PromotionCard from "../PromotionCard";
 import CarousalMain from "./CarousalMain";
+import { memo } from "react";
 
 const fetcher = (url) =>
   axios
@@ -14,7 +15,7 @@ const fetcher = (url) =>
     })
     .then((res) => res.data);
 
-const HomeCarousel = () => {
+const HomeCarousel = memo(() => {
   const { data, error } = useSWR<
     { id: number; authPerm: string; views: number }[]
   >("/api/steem/promoted", fetcher);
@@ -32,5 +33,5 @@ const HomeCarousel = () => {
       ))}
     </CarousalMain>
   );
-};
+});
 export default HomeCarousel;

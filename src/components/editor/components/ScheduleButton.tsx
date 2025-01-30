@@ -1,4 +1,4 @@
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { FaCalendarAlt } from "react-icons/fa";
 
 interface Props {

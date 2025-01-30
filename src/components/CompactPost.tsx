@@ -1,7 +1,7 @@
 "use client";
 
 import CommentCover from "@/components/comment/components/CommentCover";
-import { Card } from "@nextui-org/card";
+import { Card } from "@heroui/card";
 import React, { memo } from "react";
 import BodyShort from "@/components/body/BodyShort";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
@@ -34,6 +34,7 @@ export default memo(function CompactPost(props: Props) {
   return (
     <Card
       as={Link}
+      prefetch={false}
       onPress={onPress}
       radius="none"
       href={`/${commentInfo.category}/@${commentInfo.author}/${commentInfo.permlink}`}

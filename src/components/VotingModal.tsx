@@ -1,5 +1,5 @@
-import { Button } from '@nextui-org/button';
-import { Card, CardHeader } from '@nextui-org/card';
+import { Button } from "@heroui/button";
+import { Card, CardHeader } from "@heroui/card";
 import React, { useEffect, useState } from 'react'
 import { IoChevronDownCircleSharp, IoChevronUpCircleSharp } from 'react-icons/io5';
 import { useAppSelector } from '@/libs/constants/AppFunctions';

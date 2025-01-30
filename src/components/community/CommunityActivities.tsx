@@ -2,10 +2,9 @@ import EmptyList from "@/components/EmptyList";
 import ErrorCard from "@/components/ErrorCard";
 import LoadingCard from "@/components/LoadingCard";
 import { awaitTimeout, fetchSds } from "@/libs/constants/AppFunctions";
-import { Button } from "@nextui-org/button";
-import { Card } from "@nextui-org/card";
-import { Input } from "@nextui-org/input";
-import { ScrollShadow } from "@nextui-org/scroll-shadow";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+import { ScrollShadow } from "@heroui/scroll-shadow";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { twMerge } from "tailwind-merge";
@@ -88,7 +87,7 @@ export function CommunityActivities({ community }: { community: Community }) {
       ) : (
         <ScrollShadow className="flex flex-col gap-2" id="scrollDiv2">
           <InfiniteScroll
-            className={clsx("relative grid grid-cols-1 gap-4  p-2 md:pb-16")}
+            className={clsx("flex flex-col gap-4 md:pb-16")}
             dataLength={limit}
             next={handleEndReached}
             hasMore={limit < (data?.length ?? 0)}
@@ -100,17 +99,9 @@ export function CommunityActivities({ community }: { community: Community }) {
               )
             }
           >
-            <div
-              className={twMerge("grid grid-cols-1 gap-4", "md:grid-cols-2")}
-            >
-              {filteredData?.slice(0, limit)?.map((log) => {
-                return (
-                  <Card className="border compact border-gray-100/10 shadow-md shadow-gray-400 dark:shadow-default-500 bg-transparent backdrop-blur-md">
-                    <CommunityActivityItem communityLog={log} />
-                  </Card>
-                );
-              })}
-            </div>
+            {filteredData?.slice(0, limit)?.map((log) => {
+              return <CommunityActivityItem communityLog={log} />;
+            })}
           </InfiniteScroll>
         </ScrollShadow>
       )}

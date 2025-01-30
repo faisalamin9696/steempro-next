@@ -1,10 +1,9 @@
 "use client";
 
 import SAvatar from "@/components/SAvatar";
-import MainWrapper from "@/components/wrappers/MainWrapper";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
-import { abbreviateNumber } from "@/libs/utils/helper";
+import { abbreviateNumber, formatNumberInMillions } from "@/libs/utils/helper";
 import {
   Table,
   TableHeader,
@@ -12,17 +11,17 @@ import {
   TableBody,
   TableRow,
   TableCell,
-} from "@nextui-org/table";
+} from "@heroui/table";
 
-import { Button } from "@nextui-org/button";
-import { Input } from "@nextui-org/input";
-import { Pagination } from "@nextui-org/pagination";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+import { Pagination } from "@heroui/pagination";
 import {
   DropdownTrigger,
   Dropdown,
   DropdownMenu,
   DropdownItem,
-} from "@nextui-org/dropdown";
+} from "@heroui/dropdown";
 import React, { useEffect, useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import useSWR from "swr";
@@ -39,7 +38,7 @@ const INITIAL_VISIBLE_COLUMNS = ["rank", "name", "received_votes", "action"];
 const columns = [
   { name: "RANK", uid: "rank", sortable: true },
   { name: "WITNESS", uid: "name", sortable: true },
-  { name: "VOTES", uid: "received_votes", sortable: false },
+  { name: "VOTES (MV)", uid: "received_votes", sortable: false },
   { name: "VERSION", uid: "running_version", sortable: false },
   { name: "BLOCK", uid: "last_confirmed_block", sortable: false },
   { name: "MISS", uid: "missed_blocks", sortable: true },
@@ -133,10 +132,18 @@ export default function page() {
           <div className="flex flex-row items-center">
             <div className="flex gap-2 items-center">
               <SAvatar size="xs" username={witness.name} />
-              <Link className=" hover:text-blue-500" href={`/@${witness.name}`}>
+              <Link
+                prefetch={false}
+                className=" hover:text-blue-500"
+                href={`/@${witness.name}`}
+              >
                 {witness.name}
               </Link>
-              <Link target="_blank" href={replaceOldDomains(witness.url)}>
+              <Link
+                prefetch={false}
+                target="_blank"
+                href={replaceOldDomains(witness.url)}
+              >
                 <RiLinkM className="text-lg" />
               </Link>
             </div>
@@ -145,7 +152,7 @@ export default function page() {
       case "received_votes":
         return (
           <div className="text-bold text-small">
-            <p>{abbreviateNumber(witness.received_votes, 2, true)}</p>
+            <p>{formatNumberInMillions(witness.received_votes)}</p>
           </div>
         );
 
@@ -217,7 +224,6 @@ export default function page() {
       <div className="flex flex-col gap-4">
         <div className="flex justify-between gap-3 items-center">
           <Input
-            size="sm"
             isClearable
             className="w-full sm:max-w-[25%]"
             placeholder="Search..."
@@ -229,7 +235,6 @@ export default function page() {
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button
-                  size="sm"
                   endContent={<FaChevronDown className="text-small" />}
                   variant="flat"
                 >
@@ -289,7 +294,7 @@ export default function page() {
   const bottomContent = React.useMemo(() => {
     return (
       !!pages && (
-        <div className="py-2 px-2 flex justify-between items-center">
+        <div className="flex justify-between items-center">
           <Pagination
             isCompact
             showControls
@@ -343,7 +348,7 @@ export default function page() {
   );
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 overflow-hidden p-2">
       <div className="flex flex-col gap-1">
         <p className="text-lg font-semibold">
           Steem Witnesses (aka "Block Producers")

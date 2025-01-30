@@ -1,4 +1,4 @@
-import { getAllCredentials, getCredentials } from "@/libs/utils/user";
+import { getAllCredentials } from "@/libs/utils/user";
 import {
   Modal,
   ModalContent,
@@ -6,9 +6,9 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
-} from "@nextui-org/modal";
-import { Button } from "@nextui-org/button";
-import { Spinner } from "@nextui-org/spinner";
+} from "@heroui/modal";
+import { Button } from "@heroui/button";
+import { Spinner } from "@heroui/spinner";
 import React, { useEffect, useState } from "react";
 import { useLogin } from "./AuthProvider";
 import AccountItemCard from "./AccountItemCard";

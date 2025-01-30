@@ -8,28 +8,27 @@ import {
   TableBody,
   TableRow,
   TableCell,
-} from "@nextui-org/table";
-import { Pagination } from "@nextui-org/pagination";
-import { Button } from "@nextui-org/button";
-import { Input } from "@nextui-org/input";
+} from "@heroui/table";
+import { Pagination } from "@heroui/pagination";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
 
 import {
   DropdownTrigger,
   Dropdown,
   DropdownMenu,
   DropdownItem,
-} from "@nextui-org/dropdown";
+} from "@heroui/dropdown";
 import { FaChevronDown } from "react-icons/fa";
 import useSWR from "swr";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import LoadingCard from "@/components/LoadingCard";
 import CommunityCard from "@/components/community/components/CommunityCard";
-import FollowButton from "@/components/FollowButton";
 import { capitalize } from "@/libs/constants/AppConstants";
-import { IoMdSettings } from "react-icons/io";
 import { getTimeFromNow } from "@/libs/utils/time";
+import SubscribeButton from "@/components/SubscribeButton";
 
-const INITIAL_VISIBLE_COLUMNS = ["community"];
+const INITIAL_VISIBLE_COLUMNS = ["rank", "community"];
 
 const columns = [
   { name: "RANK", uid: "rank", sortable: true },
@@ -116,11 +115,12 @@ export default function CommunitiesPage() {
       case "community":
         return (
           <CommunityCard
+            compact
             community={community}
             className="bg-transparent dark:bg-transparent"
             endContent={
               <div className="flex gap-1 items-center">
-                <FollowButton community={community} account={loginInfo} />
+                <SubscribeButton size="sm" community={community} />
               </div>
             }
           />
@@ -178,7 +178,6 @@ export default function CommunitiesPage() {
           <div className="flex flex-col gap-2 w-full sm:max-w-[25%]">
             <p className="text-lg font-semibold">Communities</p>
             <Input
-              size="sm"
               isClearable
               className=""
               placeholder="Search..."
@@ -191,7 +190,6 @@ export default function CommunitiesPage() {
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button
-                  size="sm"
                   endContent={<FaChevronDown className="text-small" />}
                   variant="flat"
                 >
@@ -301,7 +299,7 @@ export default function CommunitiesPage() {
   if (isLoading) return <LoadingCard />;
 
   return (
-    <div>
+    <div className="overflow-hidden p-2">
       <Table
         aria-label="Communities table"
         isHeaderSticky

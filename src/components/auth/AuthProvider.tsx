@@ -2,9 +2,8 @@
 
 import { useSession } from "next-auth/react";
 import React, { createContext, useContext, useState } from "react";
-import AuthModal from "./AuthModal";
 import { getCredentials, getSessionToken, sessionKey } from "@/libs/utils/user";
-import AuthModal2 from "./AuthModal2";
+import AuthModal from "./AuthModal";
 
 // Define the type for your context value
 interface AuthContextType {
@@ -105,7 +104,7 @@ export const AuthProvider = (props: Props) => {
       {children}
 
       {openAuth && (
-        <AuthModal2
+        <AuthModal
           onForget={() => {
             authenticateUser(true);
           }}

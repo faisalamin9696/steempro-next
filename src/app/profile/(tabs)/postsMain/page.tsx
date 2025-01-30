@@ -4,7 +4,7 @@ import usePathnameClient from "@/libs/utils/usePathnameClient";
 import React from "react";
 import ProfileCommentsTab from "../comments/page";
 import ProfileRepliesTab from "../replies/page";
-import { Tab, Tabs } from "@nextui-org/tabs";
+import { Tab, Tabs } from "@heroui/tabs";
 import { clsx } from "clsx";
 import ProfilePostsTab from "../posts/page";
 import ProfileFriendsTab from "../friends/page";
@@ -27,7 +27,7 @@ export default function ProfilePostsMainTab() {
         destroyInactiveTabPanel={false}
         size="sm"
         disableAnimation={isMobile}
-        variant={isMobile ? "underlined" : "solid"}
+        variant={"underlined"}
         color={"primary"}
         radius={isMobile ? "full" : "sm"}
         className="justify-center"
@@ -39,7 +39,6 @@ export default function ProfilePostsMainTab() {
         }}
         classNames={{
           tabList: "max-sm:gap-0 max-sm:bg-transparent max-sm:p-0",
-          tab: "max-sm:max-w-prose max-sm:px-2 max-sm:h-5",
         }}
       >
         {profileTabs.map((tab) => (

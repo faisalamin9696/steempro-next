@@ -1,14 +1,13 @@
-import ProfileInfoCard from "@/components/ProfileInfoCard";
 import MainWrapper from "@/components/wrappers/MainWrapper";
-import { getPost } from "@/libs/steem/sds";
+import { getAuthorExt, getPost } from "@/libs/steem/sds";
 import { getResizedAvatar, getThumbnail } from "@/libs/utils/image";
 import { postSummary } from "@/libs/utils/postSummary";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
-import { ResolvingMetadata } from "next";
+import { Metadata, ResolvingMetadata } from "next";
 import React from "react";
-import PostStart from "./(site)/@start/page";
-import PostPage from "./(site)/page";
 import { auth } from "@/auth";
+import ProfileInfoCard from "@/components/ProfileInfoCard";
+import PostPage from "./(site)/page";
 
 export default async function Layout({
   children,
@@ -17,33 +16,22 @@ export default async function Layout({
 }>) {
   const { username, permlink } = usePathnameServer();
   const session = await auth();
-
   const data = await getPost(username, permlink, session?.user?.name || "null");
-  // const tag = data.community ? JSON.parse(data.json_metadata)?.['tags'][0] : data.category
+  const account = await getAuthorExt(username, session?.user?.name || "null");
 
   return (
     <MainWrapper
-      endClassName={"1md:block"}
-      startClassName=" max-h-screen lg:block lg:mr-4" // non-sticky classes !relative !top-0
-      startContent={
-        <ProfileInfoCard
-          hideAvatar
-          key={Math.random()}
-          profile
-          username={username}
-        />
-      }
-      endContent={<PostStart />}
+      endClassName={"1md:block min-w-[320px] w-[320px]"}
+      endContent={<ProfileInfoCard account={account} />}
     >
       <PostPage data={data} />
     </MainWrapper>
   );
 }
 
-export async function generateMetadata(parent: ResolvingMetadata) {
+export async function generateMetadata(): Promise<Metadata> {
   const { username, permlink } = usePathnameServer();
   const result = await getPost(username, permlink);
-  const previousImages = (await parent).openGraph?.images || [];
   const isPost = result?.depth === 0;
 
   const thumbnail = isPost
@@ -74,10 +62,10 @@ export async function generateMetadata(parent: ResolvingMetadata) {
     description: pageDescription ?? "",
     keywords: keywords.join(", "),
     openGraph: {
-      images: [thumbnail, ...previousImages],
+      images: [thumbnail],
     },
     twitter: {
-      images: [thumbnail, ...previousImages],
+      images: [thumbnail],
     },
   };
 }

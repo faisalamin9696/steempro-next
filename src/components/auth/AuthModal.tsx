@@ -5,19 +5,19 @@ import {
   useDisclosure,
   ModalHeader,
   ModalBody,
-} from "@nextui-org/modal";
-import { Avatar } from "@nextui-org/avatar";
-import { Button } from "@nextui-org/button";
-import { Spinner } from "@nextui-org/spinner";
-import { Checkbox } from "@nextui-org/checkbox";
-import { Input } from "@nextui-org/input";
+} from "@heroui/modal";
+import { Avatar } from "@heroui/avatar";
+import { Button } from "@heroui/button";
+import { Spinner } from "@heroui/spinner";
+import { Checkbox } from "@heroui/checkbox";
+import { Input } from "@heroui/input";
 import {
   useAppSelector,
   useAppDispatch,
   awaitTimeout,
 } from "@/libs/constants/AppFunctions";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
-import { getKeyType } from "@/libs/steem/condenser";
+import { getKeyType, validateKeychain } from "@/libs/steem/condenser";
 import { getAuthorExt } from "@/libs/steem/sds";
 import { validate_account_name } from "@/libs/utils/ChainValidation";
 import { getResizedAvatar } from "@/libs/utils/image";
@@ -39,31 +39,41 @@ import { SignupLink } from "@/libs/constants/AppConstants";
 import secureLocalStorage from "react-secure-storage";
 import { encryptPrivateKey } from "@/libs/utils/encryption";
 import { supabase } from "@/libs/supabase";
+import KeychainButton from "../KeychainButton";
+import { useRouter } from "next/navigation";
+import SAvatar from "../SAvatar";
 
 interface Props {
   open: boolean;
   onClose: () => void;
+  onForget?: (username: string) => void;
   onLoginSuccess?: (auth: User) => void;
   isNew?: boolean;
 }
 
 export default function AuthModal(props: Props) {
-  let { open, onLoginSuccess, isNew } = props;
+  let { open, onLoginSuccess, isNew, onForget } = props;
+
   const [isShow, setIsShow] = useState(true);
   const { isOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
-  let [username, setUsername] = useState("");
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
-  const [key, setKey] = useState("");
-  const [password, setPassword] = useState("");
-  const [password2, setPassword2] = useState("");
   const dispatch = useAppDispatch();
   const [avatar, setAvatar] = useState("");
+
+  let [formData, setFormData] = useState({
+    username: "",
+    key: "",
+    password: "",
+    password2: "",
+  });
+
   const { data: session, status } = useSession();
   const [isCurrent, setIsCurrent] = React.useState(false);
   const [remember, setRemember] = React.useState(false);
   const [accounts, setAccounts] = useState<User[]>();
   let [credentials, setCredentials] = useState<User>();
+  const router = useRouter();
 
   const isLocked =
     status === "authenticated" &&
@@ -76,12 +86,12 @@ export default function AuthModal(props: Props) {
 
   useEffect(() => {
     const timeOut = setTimeout(() => {
-      username = username.trim().toLowerCase();
-      setAvatar(username);
+      formData.username = formData.username.trim().toLowerCase();
+      setAvatar(formData.username);
     }, 1000);
 
     return () => clearTimeout(timeOut);
-  }, [username]);
+  }, [formData.username]);
 
   useEffect(() => {
     const allCredentials = getAllCredentials();
@@ -100,14 +110,16 @@ export default function AuthModal(props: Props) {
   }
 
   function clearAll() {
-    setUsername("");
-    setKey("");
-    setPassword("");
-    setPassword2("");
+    setFormData({
+      username: "",
+      password: "",
+      password2: "",
+      key: "",
+    });
   }
 
   async function handleUnlock() {
-    if (!password) {
+    if (!formData.password) {
       toast.info("Enter the password");
       return;
     }
@@ -115,13 +127,13 @@ export default function AuthModal(props: Props) {
     setLoading(true);
     await awaitTimeout(3);
 
-    credentials = getCredentials(password);
+    credentials = getCredentials(formData.password);
     if (!credentials?.key) {
       toast.error("Invalid credentials");
       setLoading(false);
       return;
     }
-    const enc = saveSessionKey(password);
+    const enc = saveSessionKey(formData.password);
     if (
       remember &&
       (credentials.type === "POSTING" || credentials.type === "MEMO")
@@ -130,7 +142,10 @@ export default function AuthModal(props: Props) {
       if (auth)
         secureLocalStorage.setItem(
           `token_${credentials.username}`,
-          encryptPrivateKey(password, auth?.key.toString()?.substring(0, 20))
+          encryptPrivateKey(
+            formData.password,
+            auth?.key.toString()?.substring(0, 20)
+          )
         );
     }
 
@@ -144,32 +159,138 @@ export default function AuthModal(props: Props) {
   function onComplete(error?: any | null) {
     setLoading(false);
     if (error) toast.error(error.message || JSON.stringify(error));
+    else router.refresh();
+  }
+
+  async function getAuthenticate(
+    account: AccountExt,
+    username: string,
+    key: string,
+    password: string,
+    type: Keys
+  ) {
+    const isKeychain = key === "keychain";
+    if (!isNew) {
+      supabase.auth
+        .signInAnonymously()
+        .then(async () => {
+          const auth = saveCredentials(
+            username,
+            key,
+            password,
+            type,
+            false,
+            isKeychain
+          );
+
+          if (!auth) {
+            onComplete(new Error("Something went wrong!"));
+            return;
+          }
+
+          const response = await signIn("credentials", {
+            username: username,
+            redirect: false,
+          });
+
+          if (!response?.ok) {
+            onComplete(response);
+            return;
+          }
+          saveSessionKey(password);
+          dispatch(
+            saveLoginHandler({
+              ...account,
+              login: true,
+              encKey: auth?.key,
+            })
+          );
+          onLoginSuccess &&
+            onLoginSuccess({
+              username: username,
+              key: auth?.key ?? "",
+              type: type,
+              memo: auth?.memo || "",
+            });
+          handleOnClose();
+          clearAll();
+          toast.success(`Login successsful with private ${type} key`);
+          onComplete();
+        })
+        .catch((error) => {
+          onComplete(error);
+        });
+    } else {
+      const auth = saveCredentials(
+        username,
+        key,
+        password,
+        type,
+        isCurrent,
+        isKeychain
+      );
+      if (auth) {
+        if (isCurrent) {
+          const response = await signIn("credentials", {
+            username: username,
+            redirect: false,
+          });
+
+          if (!response?.ok) {
+            onComplete(response);
+            return;
+          }
+          saveSessionKey(password);
+          dispatch(
+            saveLoginHandler({
+              ...account,
+              login: true,
+              encKey: auth?.key,
+            })
+          );
+          onLoginSuccess &&
+            onLoginSuccess({
+              username: username,
+              key: auth?.key ?? "",
+              type: type,
+              memo: auth?.memo || "",
+            });
+          toast.success(`Login successsful with private ${type} key`);
+        } else toast.success(`${auth?.username} added successfully`);
+
+        handleOnClose();
+        clearAll();
+        onComplete();
+      } else {
+        onComplete(new Error("Something went wrong!"));
+      }
+    }
   }
   async function handleLogin() {
-    username = username.trim().toLowerCase();
+    formData.username = formData.username.trim().toLowerCase();
 
-    const usernameError = validate_account_name(username);
-    if (!username || usernameError) {
+    const usernameError = validate_account_name(formData.username);
+    if (!formData.username || usernameError) {
       toast.info(usernameError ?? "Invalid username");
       return;
     }
 
-    if (!key) {
+    if (!formData.key) {
       toast.info("Invalid private key");
       return;
     }
 
-    if (!password) {
+    if (!formData.password) {
       toast.info("Enter the password");
       return;
     }
 
-    if (!password || password !== password2) {
+    if (!formData.password || formData.password !== formData.password2) {
       toast.info("Password does not matched");
       return;
     }
 
-    if (!validatePassword(password)) {
+    if (!validatePassword(formData.password)) {
       toast.info(
         "Weak password. Please use a combination of uppercase and lowercase letters, numbers, and special characters"
       );
@@ -177,111 +298,31 @@ export default function AuthModal(props: Props) {
     }
 
     setLoading(true);
-    await awaitTimeout(3);
+    await awaitTimeout(1);
     try {
-      const account = await getAuthorExt(username);
+      const account = await getAuthorExt(formData.username);
       if (account) {
-        const keyType = getKeyType(account, key);
+        const keyType = getKeyType(account, formData.key);
 
         if (keyType) {
-          if (!isNew) {
-            supabase.auth
-              .signInAnonymously()
-              .then(async () => {
-                const auth = saveCredentials(
-                  username,
-                  keyType.key,
-                  password,
-                  keyType.type
-                );
-
-                if (!auth) {
-                  onComplete(new Error("Something went wrong!"));
-                  return;
-                }
-
-                const response = await signIn("credentials", {
-                  username,
-                  redirect: false,
-                });
-
-                if (!response?.ok) {
-                  onComplete(response);
-                  return;
-                }
-                saveSessionKey(password);
-                dispatch(
-                  saveLoginHandler({
-                    ...account,
-                    login: true,
-                    encKey: auth?.key,
-                  })
-                );
-                onLoginSuccess &&
-                  onLoginSuccess({
-                    username,
-                    key: auth?.key ?? "",
-                    type: keyType.type,
-                    memo: auth?.memo || "",
-                  });
-                handleOnClose();
-                clearAll();
-                toast.success(
-                  `Login successsful with private ${keyType.type} key`
-                );
-                onComplete();
-              })
-              .catch((error) => {
-                onComplete(error);
-              });
-          } else {
-            const auth = saveCredentials(
-              username,
-              keyType.key,
-              password,
-              keyType.type,
-              isCurrent
+          if (["MASTER", "OWNER"].includes(keyType.type)) {
+            toast.info(
+              "Higher-level keys are prohibited to protect your account."
             );
-            if (auth) {
-              if (isCurrent) {
-                const response = await signIn("credentials", {
-                  username,
-                  redirect: false,
-                });
+            setLoading(false);
 
-                if (!response?.ok) {
-                  onComplete(response);
-                  return;
-                }
-                saveSessionKey(password);
-                dispatch(
-                  saveLoginHandler({
-                    ...account,
-                    login: true,
-                    encKey: auth?.key,
-                  })
-                );
-                onLoginSuccess &&
-                  onLoginSuccess({
-                    username,
-                    key: auth?.key ?? "",
-                    type: keyType.type,
-                    memo: auth?.memo || "",
-                  });
-                toast.success(
-                  `Login successsful with private ${keyType.type} key`
-                );
-              } else toast.success(`${auth?.username} added successfully`);
-
-              handleOnClose();
-              clearAll();
-              onComplete();
-            } else {
-              onComplete(new Error("Something went wrong!"));
-            }
+            return;
           }
+
+          await getAuthenticate(
+            account,
+            formData.username,
+            formData.key,
+            formData.password,
+            keyType.type
+          );
         } else {
-          onComplete(new Error(`Invalid credentials`))
+          onComplete(new Error(`Invalid credentials`));
         }
       }
     } catch (e) {
@@ -289,6 +330,48 @@ export default function AuthModal(props: Props) {
     }
   }
 
+  async function handleKeychainLogin() {
+    formData.username = formData.username.trim().toLowerCase();
+
+    const usernameError = validate_account_name(formData.username);
+    if (!formData.username || usernameError) {
+      toast.info(usernameError ?? "Invalid username");
+      return;
+    }
+
+    await validateKeychain();
+
+    setLoading(true);
+    await awaitTimeout(1);
+
+    try {
+      const account = await getAuthorExt(formData.username);
+      if (account) {
+        window.steem_keychain.requestSignBuffer(
+          formData.username,
+          "SteemPro Authentication",
+          "Posting",
+          function (response) {
+            if (response?.success && response?.result) {
+              getAuthenticate(
+                account,
+                formData.username,
+                "keychain",
+                "",
+                "POSTING"
+              );
+            } else {
+              onComplete(response);
+            }
+          }
+        );
+      } else {
+        onComplete(new Error(`Invalid credentials`));
+      }
+    } catch (e) {
+      onComplete(e);
+    }
+  }
   return (
     <>
       <Modal
@@ -314,47 +397,87 @@ export default function AuthModal(props: Props) {
           {(onClose) => (
             <>
               {isShow ? null : (
-                <ModalHeader className="flex flex-col gap-1">
-                  {isLocked && !isNew ? "Locked" : "Log in"}
+                <ModalHeader className="text-2xl flex flex-col gap-1">
+                  {isLocked && !isNew ? (
+                    <div className=" flex flex-col gap-2">
+                      <p>Unlock your account</p>
+                      <div className="text-small text-default-500 items-center flex flex-row gap-1">
+                        <p>to continue to</p>
+                        <div className="flex items-center space-x-2">
+                          <Link
+                            prefetch={false}
+                            className=" underline hover:text-blue-500"
+                            href={`/@${loginInfo.name}`}
+                          >
+                            {loginInfo.name}
+                          </Link>
+                          <SAvatar
+                            username={loginInfo.name}
+                            className="shadow-lg cursor-pointer bg-foreground-900/40"
+                            size="xs"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className=" flex flex-row gap-2 justify-between">
+                      <p>Log in</p>
+                      <KeychainButton
+                        size="md"
+                        isDisabled={loading}
+                        onPress={() => {
+                          handleKeychainLogin();
+                        }}
+                      />
+                    </div>
+                  )}
                 </ModalHeader>
               )}
+
               <ModalBody>
                 <div className="flex flex-col w-full">
                   {isShow ? (
                     <Spinner className=" self-center m-auto" />
                   ) : isLocked && !isNew ? (
                     <form className="flex flex-col gap-4">
-                      <div className="text-md font-bold flex items-center space-x-2">
-                        <p>Hi, {loginInfo.name}</p>
-                        <Avatar
-                          className="shadow-lg cursor-pointer bg-foreground-900/40"
-                          src={getResizedAvatar(loginInfo.name)}
-                          size="sm"
-                        />
-                      </div>
-
                       <Input
                         size="sm"
                         autoFocus
-                        value={password}
+                        value={formData.password}
                         isRequired
-                        onValueChange={setPassword}
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, password: value })
+                        }
                         isDisabled={loading}
                         label="Encryption password"
                         placeholder="Enter password to unlock account"
                         type="password"
                       />
 
-                      {(credentials?.type === "POSTING" ||
-                        credentials?.type === "MEMO") && (
-                        <Checkbox
-                          isSelected={remember}
+                      <div className="flex flex-row justify-between items-center">
+                        {(credentials?.type === "POSTING" ||
+                          credentials?.type === "MEMO") && (
+                          <Checkbox
+                            size="sm"
+                            isSelected={remember}
+                            isDisabled={loading}
+                            onValueChange={setRemember}
+                          >
+                            Remember me
+                          </Checkbox>
+                        )}
+
+                        <Button
+                          className="text-default-500"
+                          variant="light"
                           isDisabled={loading}
-                          onValueChange={setRemember}
+                          onPress={() => {
+                            onForget && onForget(loginInfo.name);
+                          }}
                         >
-                          Remember
-                        </Checkbox>
-                      )}
+                          Forgot password?
+                        </Button>
+                      </div>
 
                       <div className="flex gap-2 items-center">
                         <Button
@@ -384,21 +507,25 @@ export default function AuthModal(props: Props) {
                         size="sm"
                         label="Username"
                         autoFocus
-                        value={username}
+                        value={formData.username}
                         endContent={
                           <Avatar src={getResizedAvatar(avatar)} size="sm" />
                         }
-                        onValueChange={setUsername}
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, username: value })
+                        }
                         isDisabled={loading}
                         placeholder="Enter your username"
                         type="text"
                       />
                       <Input
                         size="sm"
-                        value={key}
-                        onValueChange={setKey}
+                        value={formData.key}
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, key: value })
+                        }
                         isDisabled={loading}
-                        isRequired
+                        // isRequired
                         label="Private key"
                         placeholder="Enter your private posting key"
                         type="password"
@@ -407,10 +534,12 @@ export default function AuthModal(props: Props) {
                       <div className="flex flex-row gap-2 items-center">
                         <Input
                           size="sm"
-                          value={password}
+                          value={formData.password}
                           isRequired
                           isDisabled={loading}
-                          onValueChange={setPassword}
+                          onValueChange={(value) =>
+                            setFormData({ ...formData, password: value })
+                          }
                           label="Encryption password"
                           placeholder="Enter enc. password"
                           type="password"
@@ -418,8 +547,10 @@ export default function AuthModal(props: Props) {
 
                         <Input
                           size="sm"
-                          value={password2}
-                          onValueChange={setPassword2}
+                          value={formData.password2}
+                          onValueChange={(value) =>
+                            setFormData({ ...formData, password2: value })
+                          }
                           isRequired
                           isDisabled={loading}
                           label="Confirm password"
@@ -434,13 +565,14 @@ export default function AuthModal(props: Props) {
                           isDisabled={loading}
                           onValueChange={setIsCurrent}
                         >
-                          set as default
+                          Set as default
                         </Checkbox>
                       )}
 
                       <div className="text-start text-small text-default-600">
                         Need to create an account?{" "}
                         <Link
+                          prefetch={false}
                           className="hover:text-blue-500 font-semibold"
                           href={SignupLink}
                           target="_blank"

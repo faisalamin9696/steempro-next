@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Textarea } from "@nextui-org/input";
+import { Textarea } from "@heroui/input";
 import {
   Modal,
   ModalBody,
@@ -7,11 +7,11 @@ import {
   ModalHeader,
   ModalFooter,
   useDisclosure,
-} from "@nextui-org/modal";
-import { Button } from "@nextui-org/button";
-import { Checkbox } from "@nextui-org/checkbox";
-import { Input } from "@nextui-org/input";
-import { Select, SelectItem } from "@nextui-org/select";
+} from "@heroui/modal";
+import { Button } from "@heroui/button";
+import { Checkbox } from "@heroui/checkbox";
+import { Input } from "@heroui/input";
+import { Select, SelectItem } from "@heroui/select";
 import SAvatar from "./SAvatar";
 import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import { toast } from "sonner";

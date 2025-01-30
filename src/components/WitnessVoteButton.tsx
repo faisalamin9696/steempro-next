@@ -2,8 +2,8 @@ import { useAppSelector, useAppDispatch } from "@/libs/constants/AppFunctions";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { voteForWitness } from "@/libs/steem/condenser";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
-import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
-import { Button } from "@nextui-org/button";
+import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
+import { Button } from "@heroui/button";
 
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";

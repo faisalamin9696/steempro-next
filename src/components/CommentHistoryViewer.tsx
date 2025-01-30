@@ -10,10 +10,10 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from "@nextui-org/modal";
-import { Checkbox } from "@nextui-org/checkbox";
-import { Button } from "@nextui-org/button";
-import { Tabs, Tab } from "@nextui-org/tabs";
+} from "@heroui/modal";
+import { Checkbox } from "@heroui/checkbox";
+import { Button } from "@heroui/button";
+import { Tabs, Tab } from "@heroui/tabs";
 
 import MarkdownViewer from "./body/MarkdownViewer";
 import { FaHistory } from "react-icons/fa";

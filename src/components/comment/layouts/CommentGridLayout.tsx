@@ -5,8 +5,8 @@ import BodyShort from "../../body/BodyShort";
 import Image from "next/image";
 import { getResizedAvatar, getThumbnail } from "@/libs/utils/image";
 import TimeAgoWrapper from "../../wrappers/TimeAgoWrapper";
-import { Card, CardBody } from "@nextui-org/card";
-import { User } from "@nextui-org/user";
+import { Card, CardBody } from "@heroui/card";
+import { User } from "@heroui/user";
 import Reputation from "@/components/Reputation";
 import CommentFooter from "../components/CommentFooter";
 import STag from "@/components/STag";
@@ -25,7 +25,7 @@ import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { MdDisabledVisible } from "react-icons/md";
 
 export default function CommentGridLayout(props: CommentProps) {
-  const { comment, isReply } = props;
+  const { comment } = props;
   const { community } = usePathnameClient();
   const commentInfo: Feed | Post =
     useAppSelector((state) => state.commentReducer.values)[
@@ -47,9 +47,14 @@ export default function CommentGridLayout(props: CommentProps) {
   return (
     <Card
       className={`grid-footer w-full card card-compact h-full bg-white/60
-         dark:bg-white/10  pb-2 flex flex-col  rounded-lg shadow-lg overflow-visible`}
+         dark:bg-white/10  pb-2 flex flex-col rounded-lg shadow-lg overflow-visible`}
     >
-      <CardBody className="flex flex-col p-0" as={Link} href={targetUrl}>
+      <CardBody
+        className="flex flex-col p-0"
+        as={Link}
+        prefetch={false}
+        href={targetUrl}
+      >
         <>
           <div
             className={twMerge(
@@ -63,31 +68,36 @@ export default function CommentGridLayout(props: CommentProps) {
                 <div
                   className={`h-44 bg-foreground/20 dark:bg-foreground/5  w-full justify-center items-center flex flex-col`}
                 >
-                  <MdDisabledVisible
-                    className={twMerge("text-xl")}
-                  />
+                  <MdDisabledVisible className={twMerge("text-xl")} />
                 </div>
               ) : (
-                <div className="relative">
+                <picture
+                  style={{
+                    width: "100%",
+                    height: imageHeight,
+                    minHeight: imageHeight,
+                    maxHeight: imageHeight,
+                  }}
+                  className="flex flex-col rounded-t-lg overflow-hidden items-center justify-center relative"
+                >
                   <Image
                     src={thumbnail}
                     width={imageWidth}
                     height={imageHeight}
-                    className={isNsfw ? "blur-[2px]" : ""}
+                    className={twMerge(
+                      isNsfw ? "blur-[2px]" : "",
+                      "overflow-hidden"
+                    )}
                     alt={""}
-                    sizes="(max-width: 768px) 100vw,
-                        (max-width: 1200px) 50vw,
-                        33vw"
                     style={{
                       width: "100%",
+                      height: "100%",
                       objectFit: "cover",
-                      minHeight: imageHeight,
-                      maxHeight: imageHeight,
                     }}
                   />
 
                   {isNsfw && <NsfwOverlay />}
-                </div>
+                </picture>
               )
             ) : (
               <div
@@ -155,6 +165,7 @@ export default function CommentGridLayout(props: CommentProps) {
             <div className="flex items-center space-x-2">
               {isSelf ? (
                 <Link
+                  prefetch={false}
                   className=" hover:text-blue-500"
                   href={`/@${commentInfo.author}`}
                 >
@@ -162,6 +173,7 @@ export default function CommentGridLayout(props: CommentProps) {
                 </Link>
               ) : (
                 <Link
+                  prefetch={false}
                   className=" hover:text-blue-500"
                   href={`/@${commentInfo.author}`}
                 >

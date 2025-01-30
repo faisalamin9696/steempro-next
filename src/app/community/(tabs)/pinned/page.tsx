@@ -3,7 +3,7 @@
 import React from "react";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import FeedList from "@/components/FeedList";
-import { getEndPoint, useAppSelector } from "@/libs/constants/AppFunctions";
+import { useAppSelector } from "@/libs/constants/AppFunctions";
 
 export default function CommunityPinnedTab() {
   const { community } = usePathnameClient();

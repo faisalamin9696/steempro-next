@@ -1,4 +1,4 @@
-import { Button } from '@nextui-org/button';
+import { Button } from "@heroui/button";
 import React from 'react'
 import { MdDisabledVisible } from 'react-icons/md';
 import { twMerge } from 'tailwind-merge';

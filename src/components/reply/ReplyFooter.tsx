@@ -29,9 +29,9 @@ import {
 } from "@/libs/utils/editor";
 import { readingTime } from "@/libs/utils/readingTime/reading-time-estimator";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
-import { Button } from "@nextui-org/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
-import { Card } from "@nextui-org/card";
+import { Button } from "@heroui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
+import { Card } from "@heroui/card";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
@@ -525,6 +525,7 @@ export default function ReplyFooter({
                 <Button
                   target="_blank"
                   as={Link}
+                  prefetch={false}
                   href={`/${comment.category}/@${comment.author}/${comment.permlink}`}
                   variant="flat"
                   className="self-start h-6 min-w-0 px-2"

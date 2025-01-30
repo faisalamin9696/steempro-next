@@ -3,22 +3,24 @@
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import React from "react";
 import useSWR from "swr";
-import { Card } from "@nextui-org/card";
+import { Card } from "@heroui/card";
 import ViewCountCard from "./ViewCountCard";
 import Image from "next/image";
 import SAvatar from "./SAvatar";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import Link from "next/link";
 import { getThumbnail } from "@/libs/utils/image";
+import { twMerge } from "tailwind-merge";
 
 interface Props {
   authPerm: string;
   views?: number;
   topChildren?: React.ReactNode;
+  sm?: boolean;
 }
 
 export default function PromotionCard(props: Props) {
-  const { authPerm, views, topChildren } = props;
+  const { sm, authPerm, views, topChildren } = props;
   const [author, permlink] = authPerm.split("/");
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
 
@@ -38,8 +40,12 @@ export default function PromotionCard(props: Props) {
   return (
     <Card
       as={Link}
+      prefetch={false}
       href={targetLink}
-      className="card card-compact text-white p-0 rounded-xl overflow-hidden shadow-lg flex flex-col h-[170px]"
+      className={twMerge(
+        "card card-compact text-white p-0 rounded-xl overflow-hidden shadow-lg flex flex-col h-[170px]",
+        sm && "h-[120px]"
+      )}
     >
       {thumbnail && (
         <Image
@@ -55,9 +61,9 @@ export default function PromotionCard(props: Props) {
           }}
         />
       )}
-      {/* <div
-                className="rounded-lg hover:bg-transparent transition duration-300 absolute bottom-0 top-0 right-0 left-0 bg-gray-900 opacity-25">
-            </div> */}
+      {sm && (
+        <div className="rounded-lg hover:bg-transparent transition duration-300 absolute bottom-0 top-0 right-0 left-0 bg-gray-900 opacity-50"></div>
+      )}{" "}
       <Card
         shadow="none"
         radius="none"
@@ -75,13 +81,12 @@ export default function PromotionCard(props: Props) {
           <TimeAgoWrapper created={data.created * 1000} />
         </div>
       </Card>
-
-      <div className="shadow-sm shadow-foreground/10   absolute right-0 m-2 rounded-lg backdrop-blur-xl dark:bg-default/30 bg-foreground/20 px-1">
-        <ViewCountCard comment={data} compact views={views} />
-      </div>
-      <div className="absolute right-0 m-2">
-        {topChildren}
-      </div>
+      {!sm && (
+        <div className="shadow-sm shadow-foreground/10   absolute right-0 m-2 rounded-lg backdrop-blur-xl dark:bg-default/30 bg-foreground/20 px-1">
+          <ViewCountCard comment={data} compact views={views} />
+        </div>
+      )}
+      <div className="absolute right-0 m-1">{topChildren}</div>
     </Card>
   );
 }

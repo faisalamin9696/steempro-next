@@ -2,7 +2,7 @@ import { useAppSelector } from "@/libs/constants/AppFunctions";
 import { addCommentHandler } from "@/libs/redux/reducers/CommentReducer";
 import { setUserRole, setUserTitle } from "@/libs/steem/condenser";
 import { Role } from "@/libs/utils/community";
-import { Select, SelectItem } from "@nextui-org/select";
+import { Select, SelectItem } from "@heroui/select";
 import {
   Modal,
   ModalBody,
@@ -10,9 +10,9 @@ import {
   ModalFooter,
   ModalHeader,
   useDisclosure,
-} from "@nextui-org/modal";
-import { Button } from "@nextui-org/button";
-import { Input } from "@nextui-org/input";
+} from "@heroui/modal";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
 import { useMutation } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";

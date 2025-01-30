@@ -1,9 +1,10 @@
 import { getResizedAvatar } from "@/libs/utils/image";
-import { Link } from "@nextui-org/link";
-import { User } from "@nextui-org/user";
+import { Link } from "@heroui/link";
+import { User } from "@heroui/user";
 import React from "react";
 import { twMerge } from "tailwind-merge";
 import TimeAgoWrapper from "../../wrappers/TimeAgoWrapper";
+import SAvatar from "@/components/SAvatar";
 
 function CommunityActivityItem({
   communityLog,
@@ -71,56 +72,87 @@ function CommunityActivityItem({
   }
 
   return (
-    <div
-      className="relative flex flex-row items-center card-content border-none 
-            bg-transparent gap-4 p-2 w-full justify-between"
-    >
-      <User
-        classNames={{
-          description: "mt-1 text-default-900/60 dark:text-gray-200 text-sm",
-          name: "text-default-800",
-        }}
-        name={
-          <div className="flex flex-row items-start gap-2">
-            <div className="flex gap-2 items-center">
-              <Link className=" text-default-900 text-sm" href={targetUrl}>
-                {communityLog.account}
-              </Link>
+    <div className=" flex flex-row gap-2 items-center">
+      <SAvatar size="sm" username={communityLog.account} />
 
-              <p
-                className={twMerge(
-                  communityLog.type === "subscribe" ||
-                    communityLog.type === "pinPost"
-                    ? "text-green-500"
-                    : communityLog.type === "mutePost" ||
-                      communityLog.type === "flagPost" ||
-                      communityLog.type === "unpinPost" ||
-                      communityLog.type === "unsubscribe"
-                    ? "text-red-400"
-                    : "text-blue-400"
-                )}
-              >
-                {communityLog.type}
-              </p>
-            </div>
+      <div className=" flex flex-col gap-1">
+        <p
+          className={twMerge(
+            communityLog.type === "subscribe" || communityLog.type === "pinPost"
+              ? "text-green-500"
+              : communityLog.type === "mutePost" ||
+                communityLog.type === "flagPost" ||
+                communityLog.type === "unpinPost" ||
+                communityLog.type === "unsubscribe"
+              ? "text-red-400"
+              : "text-blue-400"
+          )}
+        >
+          {communityLog.type}
+        </p>
 
-            <TimeAgoWrapper
-              className=" text-tiny"
-              created={communityLog.created * 1000}
-            />
-          </div>
-        }
-        description={getDescription()}
-        avatarProps={
-          {
-            className: " cursor-pointer",
-            src: getResizedAvatar(communityLog.account),
-            as: Link,
-            href: targetUrl,
-          } as any
-        }
-      />
+        <div className=" flew flex-col gap-1">
+          <p>{getDescription()}</p>
+
+          <TimeAgoWrapper
+            className=" text-tiny"
+            created={communityLog.created * 1000}
+          />
+        </div>
+      </div>
     </div>
+  );
+
+  return (
+    <User
+      classNames={{
+        description: "mt-1 text-default-900/60 dark:text-gray-200 text-sm",
+        name: "text-default-800",
+      }}
+      name={
+        <div className="flex flex-row items-start gap-2">
+          <div className="flex gap-2 items-center">
+            <Link className=" text-default-900 text-sm" href={targetUrl}>
+              {communityLog.account}
+            </Link>
+
+            <p
+              className={twMerge(
+                communityLog.type === "subscribe" ||
+                  communityLog.type === "pinPost"
+                  ? "text-green-500"
+                  : communityLog.type === "mutePost" ||
+                    communityLog.type === "flagPost" ||
+                    communityLog.type === "unpinPost" ||
+                    communityLog.type === "unsubscribe"
+                  ? "text-red-400"
+                  : "text-blue-400"
+              )}
+            >
+              {communityLog.type}
+            </p>
+          </div>
+        </div>
+      }
+      description={
+        <div className=" flew flex-col gap-1">
+          <p>{getDescription()}</p>
+
+          <TimeAgoWrapper
+            className=" text-tiny"
+            created={communityLog.created * 1000}
+          />
+        </div>
+      }
+      avatarProps={
+        {
+          className: " cursor-pointer",
+          src: getResizedAvatar(communityLog.account),
+          as: Link,
+          href: targetUrl,
+        } as any
+      }
+    />
   );
 }
 

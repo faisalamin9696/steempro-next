@@ -1,10 +1,7 @@
-import { useEffect, useRef } from "react";
 import "./style.scss";
-import VanillaTilt from "vanilla-tilt";
-import { Card, CardBody } from "@nextui-org/card";
-import { Button } from "@nextui-org/button";
+import { Card, CardBody } from "@heroui/card";
+import { Button } from "@heroui/button";
 import SAvatar from "@/components/SAvatar";
-import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 import Link from "next/link";
 
 interface Props {
@@ -19,26 +16,8 @@ const AboutCard = (props: Props): JSX.Element => {
   const { username, firstHeading, secondHeading, imageSize, imageQuality } =
     props;
 
-  const itemCard = useRef(null);
-  const { isMobile } = useDeviceInfo();
-
-  useEffect(() => {
-    if (!isMobile && itemCard && itemCard.current)
-      VanillaTilt.init(itemCard.current);
-  }, []);
-
   return (
-    <Card
-      ref={itemCard}
-      isBlurred
-      className="card column bg-transparent  grid row-auto"
-      data-tilt-speed="600"
-      data-tilt
-      data-tilt-max="5"
-      data-tilt-perspective="600"
-      data-tilt-glare
-      data-tilt-max-glare={0.5}
-    >
+    <Card isBlurred className="card column bg-transparent grid row-auto">
       <CardBody className="card items-center flex-col">
         <SAvatar size="xl" username={username} quality="medium" />
 
@@ -51,6 +30,7 @@ const AboutCard = (props: Props): JSX.Element => {
             </p>
           </div>
           <Button
+            prefetch={false}
             as={Link}
             className="contact-button"
             radius="full"

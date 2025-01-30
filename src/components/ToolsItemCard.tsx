@@ -1,9 +1,6 @@
 import "./style.scss";
-import VanillaTilt from "vanilla-tilt";
-import { useEffect, useRef } from "react";
-import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 import Link from "next/link";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { IconType } from "react-icons";
 
 interface Props {
@@ -16,18 +13,10 @@ interface Props {
 }
 const ToolsItemCard = (props: Props): JSX.Element => {
   const { title, description, Icon, href, buttonText, target } = props;
-  const cardRef = useRef<HTMLElement | undefined | any>();
-  const { isDesktop } = useDeviceInfo();
-
-  useEffect(() => {
-    if (isDesktop && cardRef && cardRef.current)
-      VanillaTilt.init(cardRef.current);
-  }, []);
 
   return (
     <div
       className=" flex flex-col items-center relative gap-4 bg-white/50 dark:bg-foreground/10 p-4 rounded-lg"
-      ref={cardRef}
       data-tilt-speed="600"
       data-tilt
       data-tilt-max="5"
@@ -45,9 +34,10 @@ const ToolsItemCard = (props: Props): JSX.Element => {
         target={target}
         radius="full"
         variant="flat"
-        color="primary"
+        color="default"
         size="md"
         as={Link}
+        prefetch={false}
         href={href}
       >
         {buttonText}

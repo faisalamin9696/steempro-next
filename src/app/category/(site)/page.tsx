@@ -1,6 +1,6 @@
 "use client";
 
-import { Tab, Tabs } from "@nextui-org/tabs";
+import { Tab, Tabs } from "@heroui/tabs";
 import React from "react";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import FeedPatternSwitch from "@/components/FeedPatternSwitch";
@@ -26,15 +26,13 @@ export default function CategoryPage() {
     <div className={clsx("relative items-center flex-row w-full")}>
       <Tabs
         destroyInactiveTabPanel={false}
-        size="sm"
+        size={"sm"}
         color={"secondary"}
         disableAnimation={isMobile}
         radius={isMobile ? "full" : "sm"}
         className="justify-center"
         defaultSelectedKey={category}
-        onSelectionChange={(key) => {
-          history.pushState({}, "", `/${key}/${tag}`);
-        }}
+        selectedKey={`/${category}/${tag}`}
         classNames={{
           tabList: "max-sm:gap-0 main-tab-list",
           tab: "max-sm:px-2 max-sm:h-5",
@@ -42,7 +40,11 @@ export default function CategoryPage() {
         }}
       >
         {homeTabs.map((tab) => (
-          <Tab hidden key={tab.key} title={tab.title}>
+          <Tab
+            href={`/${tab.key}/${tag}`}
+            key={`/${tab.key}/${tag}`}
+            title={tab.title}
+          >
             {tab.children}
           </Tab>
         ))}

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Tab, Tabs } from "@nextui-org/tabs";
+import { Tab, Tabs } from "@heroui/tabs";
 import { clsx } from "clsx";
 import ProfileCommunitiesTab from "../communities/page";
 import ProfileSubsribtionsTab from "../subscriptions/page";
@@ -25,12 +25,11 @@ export default function ProfileCommunitiesMainTab() {
         size="sm"
         color={"primary"}
         disableAnimation={isMobile}
-        variant={isMobile ? "underlined" : "solid"}
+        variant={ "underlined"}
         radius={isMobile ? "full" : "sm"}
         className="justify-center"
         classNames={{
           tabList: "max-sm:gap-0 max-sm:bg-transparent max-sm:p-0",
-          tab: "max-sm:max-w-prose max-sm:px-2 max-sm:h-5",
         }}
       >
         {profileTabs.map((tab) => (

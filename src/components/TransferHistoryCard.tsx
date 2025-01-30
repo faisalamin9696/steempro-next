@@ -85,7 +85,7 @@ const TransferHistoryCard = (props: Props): JSX.Element => {
     author: string;
     permlink: string;
   }) => (
-    <Link
+    <Link prefetch={false}
       className="text-blue-500"
       href={`/@${author}/${permlink}`}
       target="_blank"

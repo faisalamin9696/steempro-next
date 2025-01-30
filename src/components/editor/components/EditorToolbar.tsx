@@ -1,5 +1,5 @@
 import { FaQuoteLeft, FaItalic, FaBold, FaLink, FaHeading, FaCode, FaTable } from 'react-icons/fa';
-import { Button } from '@nextui-org/button';
+import { Button } from "@heroui/button";
 
 import { LuHeading1, LuHeading2, LuHeading3, LuHeading4 } from 'react-icons/lu';
 
@@ -8,7 +8,7 @@ import {
     DropdownTrigger,
     DropdownMenu,
     DropdownItem
-} from "@nextui-org/dropdown";
+} from "@heroui/dropdown";
 import clsx from 'clsx';
 import { BsImage, BsJustify, BsTextCenter } from 'react-icons/bs';
 import { ToolbarItem } from './EditorToolbarItem';

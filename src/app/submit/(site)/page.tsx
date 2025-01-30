@@ -9,9 +9,9 @@ import ClearFormButton from "../../../components/editor/components/ClearFormButt
 import BeneficiaryButton from "../../../components/editor/components/BeneficiaryButton";
 import PublishButton from "../../../components/editor/components/PublishButton";
 import { useLogin } from "../../../components/auth/AuthProvider";
-import { Card } from "@nextui-org/card";
-import { Button } from "@nextui-org/button";
-import { Input } from "@nextui-org/input";
+import { Card } from "@heroui/card";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
 import { useMutation } from "@tanstack/react-query";
 import {
   checkPromotionText,

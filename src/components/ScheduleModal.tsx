@@ -4,12 +4,12 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-} from "@nextui-org/modal";
-import { Button } from "@nextui-org/button";
-import { Input } from "@nextui-org/input";
+} from "@heroui/modal";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
 import React, { useState } from "react";
-import { useDisclosure } from "@nextui-org/modal";
-import { DatePicker } from "@nextui-org/date-picker";
+import { useDisclosure } from "@heroui/modal";
+import { DatePicker } from "@heroui/date-picker";
 import { now, getLocalTimeZone } from "@internationalized/date";
 import { ZonedDateTime } from "@internationalized/date";
 

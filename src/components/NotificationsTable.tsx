@@ -16,17 +16,17 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-} from "@nextui-org/table";
+} from "@heroui/table";
 import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/dropdown";
-import { Input } from "@nextui-org/input";
-import { Spinner } from "@nextui-org/spinner";
-import { Button } from "@nextui-org/button";
-import { Chip } from "@nextui-org/chip";
+} from "@heroui/dropdown";
+import { Input } from "@heroui/input";
+import { Spinner } from "@heroui/spinner";
+import { Button } from "@heroui/button";
+import { Chip } from "@heroui/chip";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import SAvatar from "./SAvatar";
@@ -36,14 +36,14 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next13-progressbar";
 import { validateCommunity } from "@/libs/utils/helper";
-import { IoCheckmarkDone, IoFilter } from "react-icons/io5";
+import { IoFilter } from "react-icons/io5";
 import { markasRead } from "@/libs/steem/condenser";
 import { useLogin } from "./auth/AuthProvider";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { Badge } from "@nextui-org/badge";
+import { Badge } from "@heroui/badge";
 
 interface Props {
   username: string | null;
@@ -294,6 +294,7 @@ export default function NotificationsTable(props: Props) {
                 </Badge>
                 <div>
                   <Link
+                    prefetch={false}
                     className=" hover:text-blue-500"
                     href={`/@${notification.account}`}
                   >

@@ -3,10 +3,10 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/dropdown";
-import { User } from "@nextui-org/user";
-import { Button } from "@nextui-org/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
+} from "@heroui/dropdown";
+import { User } from "@heroui/user";
+import { Button } from "@heroui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
 import clsx, { ClassValue } from "clsx";
 import { FaEllipsis } from "react-icons/fa6";
 import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
@@ -262,6 +262,7 @@ export default function CommentHeader(props: Props) {
           <div className="flex items-center gap-1">
             {isSelf ? (
               <Link
+                prefetch={false}
                 className=" hover:text-blue-500"
                 href={`/@${comment.author}`}
               >
@@ -269,6 +270,7 @@ export default function CommentHeader(props: Props) {
               </Link>
             ) : (
               <Link
+                prefetch={false}
                 className=" hover:text-blue-500"
                 href={`/@${comment.author}`}
               >
@@ -378,75 +380,6 @@ export default function CommentHeader(props: Props) {
           <ExtraInformation className="block max-sm:hidden" />
         </div>
       )}
-
-      {/* <Popover showArrow placement="bottom">
-            <PopoverTrigger>
-                <User
-
-                    classNames={{
-                        description: 'mt-1 text-default-900/60 dark:text-gray-200 text-sm',
-                        name: 'text-default-800'
-                    }}
-                    name={<div className='flex items-center gap-1'>
-                        {isSelf ? <p>{comment.author}</p> :
-                            <div>{comment.author}</div>
-                        }
-                        <Reputation reputation={comment.author_reputation} />
-
-                        {(!isReply && !compact) ?
-                            <Dropdown>
-                                <DropdownTrigger>
-                                    <Button size='sm' radius='full' isIconOnly variant='light'>
-                                        <FaEllipsis className='text-lg' />
-                                    </Button>
-                                </DropdownTrigger>
-                                <DropdownMenu
-                                    onAction={handleMenuActions} hideEmptyContent>
-                                    {renderedItems}
-                                </DropdownMenu>
-                            </Dropdown>
-                            : null}
-                    </div>}
-                    description={<div className='flex flex-col'>
-
-                        {comment.author_role && comment.author_title ?
-                            <div className='flex gap-2 items-center'>
-                                <p className='flex-none'>
-                                    {comment.author_role}
-                                </p>
-                                <p className='flex-none dark:bg-default-900/30 text-tiny font-light px-1 rounded-lg'>{comment.author_title}</p>
-                            </div> : null}
-
-                        <div className={clsx(`time-div flex`, compact ? 'gap-0' : 'max-sm:flex-col sm:gap-2')}>
-                            <TimeAgoWrapper lang={settings.lang.code} created={comment.created * 1000} lastUpdate={comment.last_update * 1000} />
-
-                            {!isReply && <div className='flex gap-1  sm:items-center'>
-                                <p>in</p>
-
-                                <STag className='text-md font-bold '
-                                    content={comment.community || (validateCommunity(comment.category) ? comment.category :
-                                        `#${comment.category}`)} tag={comment.category} />
-                               
-                            </div>}
-                        </div>
-
-                    </div>}
-                    avatarProps={{
-                        className: 'cursor-pointer',
-                        src: getResizedAvatar(comment.author),
-                        as: 'a',
-                        onClick: () => {
-                            router.push(authorLink);
-                        },
-
-
-                    }}
-                />
-            </PopoverTrigger>
-            <PopoverContent className="p-1">
-                <DynamicUserCard username={comment.author} />
-            </PopoverContent>
-        </Popover> */}
 
       {isRoleOpen && (
         <EditRoleModal

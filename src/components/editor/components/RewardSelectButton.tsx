@@ -1,6 +1,6 @@
-import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
-import { Button } from "@nextui-org/button";
-import { RadioGroup, Radio } from "@nextui-org/radio";
+import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
+import { Button } from "@heroui/button";
+import { RadioGroup, Radio } from "@heroui/radio";
 
 import React, { memo, useState } from "react";
 import { FaDollarSign } from "react-icons/fa";

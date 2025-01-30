@@ -1,5 +1,5 @@
 import type { Config } from "tailwindcss";
-import { nextui } from "@nextui-org/react";
+import { heroui } from "@heroui/react";
 
 const defaultTheme = require("tailwindcss/defaultTheme");
 
@@ -8,10 +8,13 @@ const config: Config = {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
+      spacing: {
+        "full-minus-64": "calc(100vh - 64px)",
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
@@ -25,6 +28,7 @@ const config: Config = {
     },
     screens: {
       "1lg": "1100px",
+      "2lg": "1200px",
       "1md": "920px",
       "2md": "980px",
       xs: "350px",
@@ -36,7 +40,7 @@ const config: Config = {
     require("tailwind-scrollbar"),
     require("daisyui"),
     require("@tailwindcss/typography"),
-    nextui({
+    heroui({
       themes: {
         light: {
           colors: {

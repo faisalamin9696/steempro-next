@@ -1,6 +1,6 @@
 import { IconType } from "react-icons";
 import clsx, { ClassValue } from "clsx";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 
 interface Props {
   children?: React.ReactNode;

@@ -8,20 +8,20 @@ import {
   TableBody,
   TableRow,
   TableCell,
-} from "@nextui-org/table";
+} from "@heroui/table";
 
-import { Pagination } from "@nextui-org/pagination";
-import { Button } from "@nextui-org/button";
-import { Input } from "@nextui-org/input";
+import { Pagination } from "@heroui/pagination";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
 
 import {
   DropdownTrigger,
   Dropdown,
   DropdownMenu,
   DropdownItem,
-} from "@nextui-org/dropdown";
+} from "@heroui/dropdown";
 
-import { Chip } from "@nextui-org/chip";
+import { Chip } from "@heroui/chip";
 
 import { FaChevronDown, FaPlus } from "react-icons/fa";
 import useSWR from "swr";
@@ -233,7 +233,11 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
 
             <div className="flex gap-2 items-center">
               <SAvatar size="xs" username={username} />
-              <Link className=" hover:text-blue-500" href={`/@${username}`}>
+              <Link
+                prefetch={false}
+                className=" hover:text-blue-500"
+                href={`/@${username}`}
+              >
                 {username}
               </Link>
             </div>

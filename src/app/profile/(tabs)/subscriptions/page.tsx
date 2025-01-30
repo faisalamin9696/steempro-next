@@ -3,12 +3,10 @@
 import notFound from "@/app/not-found";
 import CommentSkeleton from "@/components/comment/components/CommentSkeleton";
 import CommunityCard from "@/components/community/components/CommunityCard";
-import LoadingCard from "@/components/LoadingCard";
-// import FeedList from '@/components/comment/FeedList';
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
+import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
-import { Button } from "@nextui-org/button";
-import clsx from "clsx";
+import { Button } from "@heroui/button";
 import Link from "next/link";
 import React from "react";
 import { LuPencilLine } from "react-icons/lu";
@@ -17,6 +15,7 @@ import useSWR from "swr";
 export default function ProfileSubsribtionsTab() {
   const { username } = usePathnameClient();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
+  const { isTablet } = useDeviceInfo();
 
   const URL = `/communities_api/getCommunitiesBySubscriber/${username}/${
     loginInfo.name || "null"
@@ -38,20 +37,30 @@ export default function ProfileSubsribtionsTab() {
     <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6">
       {data?.map((community, index) => {
         return (
-          <div key={index ?? community.id} className={`w-full`}>
+          <Link
+            key={index ?? community.id}
+            className={`w-full`}
+            href={
+              {
+                pathname: `/submit`,
+                query: {
+                  account: community?.account,
+                  title: community?.title,
+                },
+              } as any
+            }
+          >
             <CommunityCard
-              className=" h-full"
               community={community}
               compact
               endContent={
                 <div className="flex gap-1 items-center">
                   {isSelf && (
                     <Button
-                      size="sm"
+                      size={!isTablet ? "sm" : "md"}
                       isIconOnly
                       variant="flat"
                       title="Create post"
-                      className={clsx("min-w-0  h-6")}
                       as={Link}
                       href={
                         {
@@ -62,25 +71,16 @@ export default function ProfileSubsribtionsTab() {
                           },
                         } as any
                       }
-                      color="secondary"
+                      color="default"
                       radius="full"
                     >
                       <LuPencilLine className="text-lg" />
                     </Button>
                   )}
-                  <Button
-                    as={Link}
-                    href={`/trending/${community.account}`}
-                    size="sm"
-                    color="primary"
-                    radius="full"
-                  >
-                    Explore
-                  </Button>
                 </div>
               }
             />
-          </div>
+          </Link>
         );
       })}
     </div>

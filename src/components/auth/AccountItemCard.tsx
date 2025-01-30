@@ -3,9 +3,9 @@ import {
   removeSessionToken,
   saveSessionKey,
 } from "@/libs/utils/user";
-import { Chip } from "@nextui-org/chip";
-import { Button } from "@nextui-org/button";
-import { Card, CardBody } from "@nextui-org/card";
+import { Chip } from "@heroui/chip";
+import { Button } from "@heroui/button";
+import { Card, CardBody } from "@heroui/card";
 import React, { memo, useState } from "react";
 import SAvatar from "../SAvatar";
 import { useAppDispatch } from "@/libs/constants/AppFunctions";
@@ -16,7 +16,7 @@ import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { twMerge } from "tailwind-merge";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/libs/supabase";
-import { addCommentHandler, clearCommentHandler } from "@/libs/redux/reducers/CommentReducer";
+import { clearCommentHandler } from "@/libs/redux/reducers/CommentReducer";
 
 interface Props {
   user: User;
@@ -32,6 +32,12 @@ export const keysColorMap = {
   POSTING: "warning",
   ACTIVE: "success",
   OWNER: "danger",
+};
+
+export const BorderColorMap = {
+  POSTING: "orange",
+  ACTIVE: "#22c55e",
+  OWNER: "red",
 };
 
 export default memo(function AccountItemCard(props: Props) {

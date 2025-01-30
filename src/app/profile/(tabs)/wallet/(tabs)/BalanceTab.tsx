@@ -10,12 +10,12 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from "@nextui-org/modal";
-import { Button } from "@nextui-org/button";
-import { DropdownMenu, DropdownItem } from "@nextui-org/dropdown";
+} from "@heroui/modal";
+import { Button } from "@heroui/button";
+import { DropdownMenu, DropdownItem } from "@heroui/dropdown";
 import React, { Key, useState } from "react";
 import PowerDownModal from "@/components/PowerDownModal";
-import { Chip } from "@nextui-org/chip";
+import { Chip } from "@heroui/chip";
 import { IoMdAdd, IoMdRemove } from "react-icons/io";
 import Link from "next/link";
 
@@ -56,6 +56,7 @@ const steem_power_desc = (username: string) => (
       blockchain variance. See{" "}
       {
         <Link
+          prefetch={false}
           className=" hover:text-blue-500 hover:underline"
           target="_blank"
           href={

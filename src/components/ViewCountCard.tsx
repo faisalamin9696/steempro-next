@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import { FaEye } from "react-icons/fa";
 import useSWR from "swr";
 import { abbreviateNumber } from "@/libs/utils/helper";

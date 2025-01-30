@@ -15,10 +15,10 @@ import {
   getSettings,
   updateSettings,
 } from "@/libs/utils/user";
-import { Divider } from "@nextui-org/divider";
-import { Button } from "@nextui-org/button";
-import { Input } from "@nextui-org/input";
-import { Select, SelectItem } from "@nextui-org/select";
+import { Divider } from "@heroui/divider";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+import { Select, SelectItem } from "@heroui/select";
 import React, {
   useCallback,
   useEffect,
@@ -146,13 +146,6 @@ export default function SettingsPage() {
     },
   });
 
-  // const handleOnPicked = (event) => {
-  //     if (event.target.files && event.target.files[0]) {
-  //         const image = event.target.files[0];
-  //         _uploadImage(image);
-  //     }
-  // };
-
   function handleRpcChange(newRpc: string) {
     setRpc(newRpc);
     updateSettings({ ...settings, rpc: newRpc });
@@ -240,13 +233,13 @@ export default function SettingsPage() {
           // else setProfileImage(url);
           // return `Uploaded`;
 
-          if (res.data && res.data.url) {
-            if (isCover) setCoverImage(res.data.url);
-            else setProfileImage(res.data.url);
+          if (res?.url) {
+            if (isCover) setCoverImage(res.url);
+            else setProfileImage(res.url);
 
             return `Uploaded`;
           } else {
-            return `Failed`;
+            throw new Error(`Failed`);
           }
         },
         closeButton: false,

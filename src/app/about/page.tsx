@@ -2,13 +2,13 @@
 
 import React from "react";
 import { AboutItem } from "../../components/AboutCard";
-import { Card } from "@nextui-org/card";
+import { Card } from "@heroui/card";
 import "./style.scss";
 
 export default function AboutPage() {
   
   return (
-    <div className="flex flex-col gap-10 justify-between h-full pb-10">
+    <div className="flex flex-col gap-10 justify-between">
       <div>
         <Card className="dark:bg-white/20 items-center p-6 sm:p-10 rounded-lg flex flex-col gap-2">
           <h1 className="text-lg font-bold font-serif">About Us</h1>

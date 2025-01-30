@@ -1,6 +1,6 @@
-import { Dropdown, DropdownTrigger } from "@nextui-org/dropdown";
-import { Button } from "@nextui-org/button";
-import { Card, CardBody } from "@nextui-org/card";
+import { Dropdown, DropdownTrigger } from "@heroui/dropdown";
+import { Button } from "@heroui/button";
+import { Card, CardBody } from "@heroui/card";
 import { FaSortDown } from "react-icons/fa";
 import { BsInfoCircle } from "react-icons/bs";
 

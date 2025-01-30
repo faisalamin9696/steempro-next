@@ -432,11 +432,11 @@ export default memo(function EditorInput(props: EditorProps) {
           // uploadNextImage();
           // return `Uploaded`;
 
-          if (res.data && res.data.url) {
+          if (res?.url) {
             const Image_name: string = image.file.name;
-            res.data.hash = res.data.url.split("/").pop();
+            // res.data.hash = res.data.url.split("/").pop();
             const imageMd = `![${Image_name?.substring(0, 20) || ""}](${
-              res.data.url
+              res.url
             })`;
             insertImage({
               url: image.temporaryTag,
@@ -446,7 +446,7 @@ export default memo(function EditorInput(props: EditorProps) {
             uploadNextImage();
             return `Uploaded`;
           } else {
-            return `Failed`;
+            throw new Error(`Failed`);
           }
         },
         error: (error) => {

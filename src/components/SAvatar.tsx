@@ -31,7 +31,7 @@ export default function SAvatar(props: Props) {
   if (!username) return null;
 
   return (
-    <Link href={`/@${username}`} onClick={onPress}>
+    <Link prefetch={false} href={`/@${username}`} onClick={onPress}>
       <Image
         title={username}
         onError={(e) => {

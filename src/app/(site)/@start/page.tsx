@@ -8,8 +8,8 @@ import {
   fetchSds,
   useAppSelector,
 } from "@/libs/constants/AppFunctions";
-import { ScrollShadow } from "@nextui-org/scroll-shadow";
-import { Button } from "@nextui-org/button";
+import { ScrollShadow } from "@heroui/scroll-shadow";
+import { Button } from "@heroui/button";
 
 import Link from "next/link";
 import { GrAnnounce } from "react-icons/gr";
@@ -18,7 +18,7 @@ import { HiMiniUserGroup } from "react-icons/hi2";
 import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import EmptyList from "@/components/EmptyList";
-import { Accordion, AccordionItem } from "@nextui-org/accordion";
+import { Accordion, AccordionItem } from "@heroui/accordion";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -127,6 +127,7 @@ export default function HomeStart() {
                         className="bg-white rounded-lg dark:bg-white/5 text-sm px-2 py-1"
                       >
                         <Link
+                          prefetch={false}
                           className=" text-blue-400 hover:underline font-semibold"
                           href={`/@${annoucement.authPerm}`}
                         >
@@ -150,7 +151,11 @@ export default function HomeStart() {
           aria-label="posts"
           title={
             <div className="flex items-center gap-2 ">
-              <Link className="text-medium font-semibold" href={"/communities"}>
+              <Link
+                prefetch={false}
+                className="text-medium font-semibold"
+                href={"/communities"}
+              >
                 {"Top Communities"}
               </Link>
             </div>

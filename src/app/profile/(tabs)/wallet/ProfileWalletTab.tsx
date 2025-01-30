@@ -1,7 +1,7 @@
 "use client";
 
-import { Tab, Tabs } from "@nextui-org/tabs";
-import { Button } from "@nextui-org/button";
+import { Tab, Tabs } from "@heroui/tabs";
+import { Button } from "@heroui/button";
 import BalanceTab from "./(tabs)/BalanceTab";
 import DelegationTab from "./(tabs)/DelegationTab";
 import { vestToSteem } from "@/libs/steem/sds";
@@ -193,7 +193,7 @@ export default function ProfileWalletTab({ data }: { data: AccountExt }) {
         color={"primary"}
         size="sm"
         disableAnimation={isMobile}
-        variant={isMobile ? "underlined" : "solid"}
+        variant={"underlined"}
         radius={isMobile ? "full" : "sm"}
         onSelectionChange={(key) => {
           setSelectedTab(key as string);

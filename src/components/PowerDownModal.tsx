@@ -6,10 +6,10 @@ import {
   ModalHeader,
   ModalFooter,
   useDisclosure,
-} from "@nextui-org/modal";
-import { Button } from "@nextui-org/button";
-import { Checkbox } from "@nextui-org/checkbox";
-import { Input } from "@nextui-org/input";
+} from "@heroui/modal";
+import { Button } from "@heroui/button";
+import { Checkbox } from "@heroui/checkbox";
+import { Input } from "@heroui/input";
 import SAvatar from "./SAvatar";
 import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import { toast } from "sonner";
@@ -21,7 +21,7 @@ import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import moment from "moment";
 import { isNumeric } from "@/libs/utils/helper";
-import { Slider } from "@nextui-org/slider";
+import { Slider } from "@heroui/slider";
 import { steemToVest, vestToSteem } from "@/libs/steem/sds";
 import KeychainButton from "./KeychainButton";
 

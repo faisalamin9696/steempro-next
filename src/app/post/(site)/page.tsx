@@ -6,9 +6,8 @@ import CommentHeader from "@/components/comment/components/CommentHeader";
 import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import { addCommentHandler } from "@/libs/redux/reducers/CommentReducer";
 import { getSettings } from "@/libs/utils/user";
-import { Card, CardFooter } from "@nextui-org/card";
+import { Card, CardFooter } from "@heroui/card";
 import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import SubmitPage from "@/app/submit/(site)/page";
@@ -18,7 +17,7 @@ import { ViewCountTime } from "@/libs/constants/AppConstants";
 import Link from "next/link";
 import { hasNsfwTag } from "@/libs/utils/StateFunctions";
 import TagsListCard from "@/components/TagsListCard";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { updatePostView } from "@/libs/mysql/database";
 import { addRepliesHandler } from "@/libs/redux/reducers/RepliesReducer";
 import PostReplies from "@/components/reply/PostReplies";
@@ -107,10 +106,10 @@ export default function PostPage(props: Props) {
   return (
     <div
       className="flex-col bg-white dark:bg-white/5
-    backdrop-blur-md rounded-lg p-4 w-full mb-10"
+    backdrop-blur-md rounded-lg p-4 w-full mb-10 "
     >
       {commentInfo ? (
-        <div className="card w-full card-compact gap-4">
+        <div className="card w-full card-compact gap-4 ">
           {!!commentInfo.is_muted && commentInfo.is_muted !== 2 ? (
             <div className=" flex items-center gap justify-between mt-2">
               <p>The post was hidden due to low rating</p>
@@ -137,7 +136,7 @@ export default function PostPage(props: Props) {
                   <p className="text-medium">RE: {commentInfo.root_title}</p>
                   <div className="flex gap-2 items-center">
                     •
-                    <Link
+                    <Link prefetch={false}
                       className="text-sm text-default-600 hover:text-blue-500"
                       href={`/@${commentInfo.root_author}/${commentInfo.root_permlink}`}
                     >
@@ -148,7 +147,7 @@ export default function PostPage(props: Props) {
                   {commentInfo.depth >= 2 && (
                     <div className="flex gap-2 items-center">
                       •
-                      <Link
+                      <Link prefetch={false}
                         className="text-sm text-default-600 hover:text-blue-500"
                         href={`/@${commentInfo.parent_author}/${commentInfo.parent_permlink}`}
                       >
@@ -162,7 +161,7 @@ export default function PostPage(props: Props) {
               <div className="flex flex-col px-1 items-center">
                 <Card
                   shadow="none"
-                  className="w-full gap-4 bg-transparent overflow-visible "
+                  className="w-full gap-4 bg-transparent overflow-visible"
                 >
                   <div className="space-y-4 flex-col lg:ml-4">
                     <>
@@ -178,38 +177,43 @@ export default function PostPage(props: Props) {
                       {commentInfo.title}
                     </h2>
                   </div>
-                  <div className={clsx("flex flex-col items-center lg:ml-4")}>
-                    <MarkdownViewer
-                      isNsfw={isNsfw}
-                      noImage={!!commentInfo.is_muted}
-                      text={commentInfo.body}
-                    />
-                  </div>
 
-                  <TagsListCard
-                    tags={
-                      commentInfo.depth === 0
-                        ? JSON.parse(commentInfo.json_metadata ?? `{}`)?.tags ??
-                          []
-                        : []
-                    }
-                  />
-
-                  <div className="sticky bottom-2">
-                    <CardFooter className="w-full m-[1px] p-1  overflow-visible  bg-white/90 rounded-full dark:bg-black/90">
-                      <CommentFooter
-                        comment={commentInfo}
-                        isDetails
-                        className={"w-full"}
+                  <div className=" flex flex-col w-full gap-4 max-w-[65ch] self-center">
+                    <div className={clsx("flex flex-col items-center lg:ml-4")}>
+                      <MarkdownViewer
+                        isNsfw={isNsfw}
+                        noImage={!!commentInfo.is_muted}
+                        text={commentInfo.body}
                       />
-                    </CardFooter>
+                    </div>
+
+                    <div className="w-full  self-center">
+                      <TagsListCard
+                        tags={
+                          commentInfo.depth === 0
+                            ? JSON.parse(commentInfo.json_metadata ?? `{}`)
+                                ?.tags ?? []
+                            : []
+                        }
+                      />
+                    </div>
+
+                    <div className="flex flex-row w-full sticky bottom-2 justify-center">
+                      <CardFooter className="w-full p-1 overflow-visible bg-white/90 rounded-full dark:bg-black/90">
+                        <CommentFooter
+                          comment={commentInfo}
+                          isDetails
+                          className={"w-full"}
+                        />
+                      </CardFooter>
+                    </div>
                   </div>
                 </Card>
               </div>
             </>
           )}
 
-          <div id="comments">
+          <div id="comments" className="w-full max-w-[65ch] self-center ">
             <PostReplies comment={commentInfo} />
           </div>
         </div>

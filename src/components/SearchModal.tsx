@@ -4,11 +4,11 @@ import {
   ModalContent,
   ModalHeader,
   ModalFooter,
-} from "@nextui-org/modal";
-import { Button } from "@nextui-org/button";
+} from "@heroui/modal";
+import { Button } from "@heroui/button";
 import React, { useEffect, useMemo, useState } from "react";
-import { Tab, Tabs } from "@nextui-org/tabs";
-import { Input } from "@nextui-org/input";
+import { Tab, Tabs } from "@heroui/tabs";
+import { Input } from "@heroui/input";
 import {
   awaitTimeout,
   fetchSds,

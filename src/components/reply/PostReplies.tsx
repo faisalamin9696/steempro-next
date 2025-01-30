@@ -7,8 +7,8 @@ import {
 } from "@/libs/constants/AppFunctions";
 import { addRepliesHandler } from "@/libs/redux/reducers/RepliesReducer";
 import { getPostReplies } from "@/libs/steem/sds";
-import { Button } from "@nextui-org/button";
-import { Card } from "@nextui-org/card";
+import { Button } from "@heroui/button";
+import { Card } from "@heroui/card";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { memo, useEffect, useRef, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -31,7 +31,7 @@ import { useLogin } from "@/components/auth/AuthProvider";
 import secureLocalStorage from "react-secure-storage";
 import { readingTime } from "@/libs/utils/readingTime/reading-time-estimator";
 import EmptyList from "@/components/EmptyList";
-import { Select, SelectItem } from "@nextui-org/select";
+import { Select, SelectItem } from "@heroui/select";
 import { useSession } from "next-auth/react";
 
 interface Props {

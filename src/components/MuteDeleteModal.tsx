@@ -10,9 +10,9 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
-} from "@nextui-org/modal";
-import { Input } from "@nextui-org/input";
-import { Button } from "@nextui-org/button";
+} from "@heroui/modal";
+import { Input } from "@heroui/input";
+import { Button } from "@heroui/button";
 import { useMutation } from "@tanstack/react-query";
 import React from "react";
 import { toast } from "sonner";

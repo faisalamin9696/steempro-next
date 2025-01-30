@@ -1,4 +1,4 @@
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import parse, { domToReact } from "html-react-parser";
 import React from "react";
 import CommentCover from "../comment/components/CommentCover";

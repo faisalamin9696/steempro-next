@@ -1,4 +1,4 @@
-import { Badge } from "@nextui-org/badge";
+import { Badge } from "@heroui/badge";
 import clsx from "clsx";
 import STooltip from "./STooltip";
 import { getResizedAvatar } from "@/libs/utils/image";

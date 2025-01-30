@@ -1,5 +1,4 @@
 import { NavigateOptions } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { useRouter } from "next13-progressbar";
 
 export const validateCommunity = (tag?: string): boolean => {
   if (!tag) return false;
@@ -7,6 +6,20 @@ export const validateCommunity = (tag?: string): boolean => {
 
   return community_regex.test(tag);
 };
+
+export function formatNumberInMillions(value: number): string {
+  // Convert the number to millions
+  const valueInBillions = value / 1_000_000_000_000;
+
+  // Format the number with locale-specific separators and up to 3 decimal places
+  const formattedValue = new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: 3,
+    minimumFractionDigits: 3,
+  }).format(valueInBillions);
+
+  // Append 'M' to indicate millions
+  return `${formattedValue}`;
+}
 
 export function abbreviateNumber(
   number?: number,

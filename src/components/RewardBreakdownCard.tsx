@@ -115,7 +115,8 @@ export class EntryPayoutDetail extends Component<DetailProps> {
             <span className="value">
               {beneficiary.map((x: any, i) => (
                 <Fragment key={i}>
-                  <Link 
+                  <Link
+                    prefetch={false}
                     className=" hover:text-blue-500 hover:underline"
                     href={`/@${x[0]}/blogs`}
                   >

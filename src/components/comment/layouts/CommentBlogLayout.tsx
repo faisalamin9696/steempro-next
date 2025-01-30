@@ -1,4 +1,4 @@
-import { Card } from "@nextui-org/card";
+import { Card } from "@heroui/card";
 import { CommentProps } from "../CommentCard";
 import CommentHeader from "../components/CommentHeader";
 import CommentCover from "../components/CommentCover";
@@ -36,6 +36,7 @@ export default function CommentBlogLayout(props: CommentProps) {
       <Card
         radius="none"
         as={Link}
+        prefetch={false}
         href={targetUrl}
         shadow="none"
         className={clsx(

@@ -4,10 +4,10 @@ import {
   ModalContent,
   ModalHeader,
   ModalFooter,
-} from "@nextui-org/modal";
-import { Button } from "@nextui-org/button";
-import { Card } from "@nextui-org/card";
-import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
+} from "@heroui/modal";
+import { Button } from "@heroui/button";
+import { Card } from "@heroui/card";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
 import React, { memo, useState } from "react";
 import { PiCurrencyCircleDollarFill } from "react-icons/pi";
 import { SlLoop } from "react-icons/sl";
@@ -47,7 +47,7 @@ import "./style.scss";
 import ClickAwayListener from "react-click-away-listener";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { As } from "@nextui-org/react";
+import { As } from "@heroui/react";
 
 interface WrapperProps {
   children: React.ReactNode;

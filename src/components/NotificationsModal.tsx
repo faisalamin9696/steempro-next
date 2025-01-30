@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import React from "react";
 import {
   Modal,
@@ -8,7 +8,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalFooter,
-} from "@nextui-org/modal";
+} from "@heroui/modal";
 import NotificationsTable from "./NotificationsTable";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 
@@ -50,7 +50,7 @@ export default function NotificationsModal(props: Props) {
                 )}
               </div>
             </ModalHeader>
-            <ModalBody id="scrollDiv" className=" pb-4">
+            <ModalBody className=" pb-4">
               <NotificationsTable username={username} onClose={onClose} />
             </ModalBody>
 

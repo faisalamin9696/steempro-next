@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { User } from "@nextui-org/user";
+import { User } from "@heroui/user";
 import { getResizedAvatar } from "@/libs/utils/image";
 import clsx from "clsx";
 import Link from "next/link";
 import { empty_comment } from "@/libs/constants/Placeholders";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { FaPencil } from "react-icons/fa6";
 import EditRoleModal from "../../EditRoleModal";
 import { Role as RoleCheck } from "@/libs/utils/community";
@@ -41,7 +41,13 @@ export const CommunitySubscriberItem = (props: Props) => {
         name={
           <div className="flex flex-col items-start gap-2">
             <div className="flex gap-2 items-center">
-              <Link className="hover:text-blue-500" href={`/@${item.account}/posts`}>{item.account}</Link>
+              <Link
+                prefetch={false}
+                className="hover:text-blue-500"
+                href={`/@${item.account}/posts`}
+              >
+                {item.account}
+              </Link>
 
               <p
                 className={clsx(

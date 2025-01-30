@@ -1,14 +1,12 @@
 import React, { memo } from "react";
-import { Card } from "@nextui-org/card";
-import { User } from "@nextui-org/user";
+import { Card } from "@heroui/card";
+import { User } from "@heroui/user";
 import { abbreviateNumber } from "@/libs/utils/helper";
 import TimeAgoWrapper from "../../wrappers/TimeAgoWrapper";
 import { getResizedAvatar } from "@/libs/utils/image";
 import Link from "next/link";
 import clsx from "clsx";
 import { twMerge } from "tailwind-merge";
-// import RoleTitleCard from "../../RoleTitleCard";
-// import { empty_comment } from "@/libs/constants/Placeholders";
 
 interface Props {
   community: Community;
@@ -23,6 +21,7 @@ export const CommunityCard = memo((props: Props) => {
   return (
     <Card
       shadow="sm"
+      radius="md"
       className={twMerge(
         `relative flex flex-col items-start gap-2 w-full bg-white justify-between
              dark:bg-white/5`,
@@ -41,6 +40,7 @@ export const CommunityCard = memo((props: Props) => {
           name={
             <div className="flex flex-col items-start gap-1">
               <Link
+                prefetch={false}
                 className="hover:text-blue-500 font-semibold"
                 href={`/trending/${community.account}`}
               >
@@ -82,12 +82,14 @@ export const CommunityCard = memo((props: Props) => {
             } as any
           }
         />
-        <p
-          title={community.about}
-          className={clsx(compact ? "text-tiny line-clamp-2" : "")}
-        >
-          {community.about}
-        </p>
+        {!compact && (
+          <p
+            title={community.about}
+            className={clsx(compact ? "text-tiny line-clamp-2" : "")}
+          >
+            {community.about}
+          </p>
+        )}
       </div>
       <div className={clsx("flex flex-row gap-4", compact ? "text-tiny" : "")}>
         <div className="flex gap-1">

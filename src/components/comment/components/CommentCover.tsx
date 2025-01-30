@@ -1,5 +1,5 @@
 import NsfwOverlay from "@/components/NsfwOverlay";
-import { Card } from "@nextui-org/card";
+import { Card } from "@heroui/card";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
@@ -51,7 +51,9 @@ export default memo(function CommentCover(props: Props) {
       </div>
     ) : (
       <Card
+        radius="none"
         as={targetUrl ? Link : undefined}
+        prefetch={false}
         href={targetUrl}
         className={clsx(
           isFetching ? "bg-background/50" : "bg-transparent",
@@ -78,7 +80,15 @@ export default memo(function CommentCover(props: Props) {
             {isNsfw && <NsfwOverlay onOpen={setShow} />}
           </div>
         ) : (
-          <div className="relative">
+          <picture
+            className="flex flex-col relative overflow-hidden items-center justify-center"
+            style={{
+              width:
+                size === "xs" ? "130" : size === "sm" ? "220px" : undefined,
+              height:
+                size === "xs" ? "70" : size === "sm" ? "120px" : undefined,
+            }}
+          >
             <Image
               src={src}
               width={size === "xs" ? 130 : size === "sm" ? 220 : 200}
@@ -87,20 +97,14 @@ export default memo(function CommentCover(props: Props) {
               onLoad={onLoadCompleted}
               onError={onLoadCompleted}
               className={show ? "" : "blur-md"}
-              //         sizes={`(max-width: 768px) 100vw,
-              //    (max-width: 1200px) 50vw,
-              //    33vw`}
               style={{
-                width:
-                  size === "xs" ? "130" : size === "sm" ? "220px" : undefined,
-                height:
-                  size === "xs" ? "70" : size === "sm" ? "120px" : undefined,
-
-                objectFit: size ? "cover" : undefined,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
               }}
             />
             {!show && <NsfwOverlay onOpen={setShow} />}
-          </div>
+          </picture>
         )}
       </Card>
     )

@@ -137,25 +137,43 @@ export const uploadImage = (file: File, username: string, sign) => {
   return _upload(fData, username, sign);
 };
 
-const _upload = (fd, username: string, signature) => {
+const _upload = async (fd: FormData, username: string, signature: string) => {
+  const controller = new AbortController(); // Handles timeout cancellation
+  const timeout = setTimeout(() => controller.abort(), 50000); // 50s timeout
+
   try {
-    const image = axios.create({
-      baseURL: `${IMAGE_API}/${username}/${signature}`,
-      onUploadProgress: (progressEvent) => {
-        // console.log(progressEvent.loaded)
-      },
-      headers: {
-        Authorization: IMAGE_API,
-        "Content-Type": "multipart/form-data",
-      },
-      timeout: 50000,
-    });
-    return image.post("", fd);
+    const response = await axios.post(
+      `${IMAGE_API}/${username}/${signature}`,
+      fd,
+      {
+        headers: {
+          Authorization: IMAGE_API,
+          "Content-Type": "multipart/form-data",
+        },
+        signal: controller.signal, // Attach timeout signal
+        onUploadProgress: (progressEvent) => {
+          // console.log(
+          //   `Uploaded: ${(progressEvent.loaded / progressEvent.total) * 100}%`
+          // );
+        },
+      }
+    );
+
+    clearTimeout(timeout); // Clear timeout if successful
+    return response.data; // Return data
   } catch (error: any) {
-    return new Error(error);
+    clearTimeout(timeout); // Ensure timeout is cleared
+
+    if (axios.isCancel(error)) {
+      return { success: false, error: "Upload timed out" };
+    }
+
+    return {
+      success: false,
+      error: error.response?.data || error.message || "Unknown error",
+    };
   }
 };
-
 export function getKeyType(account: AccountExt, key: string) {
   if (!account) {
     throw new Error("Account not found");
@@ -1512,7 +1530,7 @@ export async function withdrawVesting(
     const vests = steemToVest(amount, globalData?.steem_per_share ?? 0);
     const withdrawAmountVests = vests.toFixed(6).toString() + " " + "VESTS";
     transferOp[1].vesting_shares = withdrawAmountVests;
-    
+
     return new Promise((resolve, reject) => {
       client.broadcast
         .sendOperations([transferOp], key)

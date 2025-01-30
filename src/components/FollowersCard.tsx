@@ -8,10 +8,10 @@ import {
   TableBody,
   TableRow,
   TableCell,
-} from "@nextui-org/table";
+} from "@heroui/table";
 
-import { Pagination } from "@nextui-org/pagination";
-import { Input } from "@nextui-org/input";
+import { Pagination } from "@heroui/pagination";
+import { Input } from "@heroui/input";
 import useSWR from "swr";
 import { fetchSds } from "@/libs/constants/AppFunctions";
 import SAvatar from "@/components/SAvatar";
