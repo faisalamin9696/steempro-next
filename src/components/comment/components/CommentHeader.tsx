@@ -56,8 +56,11 @@ export default function CommentHeader(props: Props) {
   const { comment, className, isReply, compact, handleEdit, isDetail } = props;
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const dispatch = useAppDispatch();
-  const username = loginInfo.name;
-  const isSelf = !!loginInfo.name && loginInfo.name === comment.author;
+  const { data: session } = useSession();
+
+  const username = session?.user?.name ?? loginInfo.name;
+
+  const isSelf = session?.user?.name === comment.author;
   const canMute = username && Role.atLeast(comment.observer_role, "mod");
   const canDelete = !comment.children && isSelf && allowDelete(comment);
   const canEdit = isSelf;
@@ -65,7 +68,6 @@ export default function CommentHeader(props: Props) {
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
   const [isRoleOpen, setIsRoleOpen] = useState(false);
   const { authenticateUser, isAuthorized } = useLogin();
-  const { data: session } = useSession();
   const rpm = readingTime(comment.body);
 
   const [showHistory, setShowHistory] = useState(false);

@@ -37,6 +37,7 @@ import { vestToSteem } from "@/libs/steem/sds";
 import moment from "moment";
 import { capitalize } from "@/libs/constants/AppConstants";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 const statusColorMap = {
   incoming: "success",
@@ -63,6 +64,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
   const URL_OUTGOING = `/delegations_api/getOutgoingDelegations/${username}`;
   const URL_INCOMING = `/delegations_api/getIncomingDelegations/${username}`;
   const URL_EXPIRING = `/delegations_api/getExpiringDelegations/${username}`;
+  const { data: session } = useSession();
 
   const { data: outgoingData, isLoading: isLoading1 } = useSWR(
     URL_OUTGOING,
@@ -81,7 +83,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
 
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
-  const isSelf = !!loginInfo.name && loginInfo.name === username;
+  const isSelf = session?.user?.name === username;
   const { authenticateUser, isAuthorized } = useLogin();
 
   const [transferModal, setTransferModal] = useState<{

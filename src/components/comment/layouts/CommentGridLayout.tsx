@@ -23,6 +23,7 @@ import RoleTitleCard from "@/components/RoleTitleCard";
 import { twMerge } from "tailwind-merge";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { MdDisabledVisible } from "react-icons/md";
+import { useSession } from "next-auth/react";
 
 export default function CommentGridLayout(props: CommentProps) {
   const { comment } = props;
@@ -33,9 +34,9 @@ export default function CommentGridLayout(props: CommentProps) {
     ] ?? comment;
   const settings =
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
-  const loginInfo = useAppSelector((state) => state.loginReducer.value);
+  const { data: session } = useSession();
   const thumbnail = getThumbnail(comment.json_images);
-  const isSelf = !!loginInfo.name && loginInfo.name === commentInfo.author;
+  const isSelf = session?.user?.name === commentInfo.author;
   // const json_metadata = JSON.parse(comment?.json_metadata ?? '{}') as { tags?: string[], image?: string[], app?: string, format?: string }
   const targetUrl = `/${comment.category}/@${comment.author}/${comment.permlink}`;
 

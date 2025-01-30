@@ -25,12 +25,11 @@ export default function FollowButton(props: Props) {
   const { account, size } = props;
   const { username } = usePathnameClient();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
-
   const { data: session } = useSession();
   const followingAccount = account?.name;
   const isFollowing = account?.observer_follows_author === 1;
   const dispatch = useAppDispatch();
-  const isSelf = !!loginInfo.name && loginInfo.name === username;
+  const isSelf = session?.user?.name === username;
 
   const { authenticateUser, isAuthorized } = useLogin();
   const router = useRouter();

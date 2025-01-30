@@ -7,6 +7,7 @@ import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { Button } from "@heroui/button";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
 import { LuPencilLine } from "react-icons/lu";
@@ -16,12 +17,13 @@ export default function ProfileSubsribtionsTab() {
   const { username } = usePathnameClient();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { isTablet } = useDeviceInfo();
+  const { data: session } = useSession();
 
   const URL = `/communities_api/getCommunitiesBySubscriber/${username}/${
     loginInfo.name || "null"
   }`;
   const { data, isLoading, error } = useSWR(URL, fetchSds<Community[]>);
-  const isSelf = !!loginInfo.name && loginInfo.name === username;
+  const isSelf = session?.user?.name === username;
 
   if (isLoading)
     return (

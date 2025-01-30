@@ -23,14 +23,15 @@ import {
   MdSettings,
   MdWallet,
 } from "react-icons/md";
+import { useSession } from "next-auth/react";
 
 export default function ProfilePage({ data }: { data: AccountExt }) {
   let { username, category } = usePathnameClient();
-
+  const { data: session } = useSession();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const profileInfo =
     useAppSelector((state) => state.profileReducer.value)[data?.name] ?? data;
-  const isSelf = !!loginInfo.name && loginInfo.name === username;
+  const isSelf = session?.user?.name === username;
   const dispatch = useAppDispatch();
   const { isMobile } = useDeviceInfo();
 

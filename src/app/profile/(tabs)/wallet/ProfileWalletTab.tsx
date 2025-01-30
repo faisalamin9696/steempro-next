@@ -23,13 +23,13 @@ import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 
 export default function ProfileWalletTab({ data }: { data: AccountExt }) {
   const { username } = usePathnameClient();
+  const { data: session } = useSession();
 
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
   const dispatch = useAppDispatch();
-  const isSelf = !!loginInfo.name && loginInfo.name === username;
+  const isSelf = session?.user?.name === username;
   const { authenticateUser, isAuthorized } = useLogin();
-  const { data: session } = useSession();
   const [selectedTab, setSelectedTab] = useState("balance");
   const [powerDownModal, setPowerDownModal] = useState<{
     isOpen: boolean;

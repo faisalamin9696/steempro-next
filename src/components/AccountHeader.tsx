@@ -16,6 +16,7 @@ import { AppLink } from "@/libs/constants/AppConstants";
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 import { Accordion, AccordionItem } from "@heroui/accordion";
 import ProfileInfoCard2 from "./ProfileInfoCard";
+import { useSession } from "next-auth/react";
 
 type Props = {
   account: AccountExt;
@@ -25,14 +26,15 @@ export default function AccountHeader(props: Props) {
   const { account } = props;
   const { username, community: communityName } = usePathnameClient();
   const { isTablet } = useDeviceInfo();
+  const { data: session } = useSession();
+
   const router = useRouter();
   const profileInfo: AccountExt =
     useAppSelector((state) => state.profileReducer.value)[
       account?.name ?? ""
     ] ?? account;
 
-  const loginInfo = useAppSelector((state) => state.loginReducer.value);
-  const isSelf = !!loginInfo.name && loginInfo.name === profileInfo.name;
+  const isSelf = session?.user?.name === profileInfo.name;
 
   const [followerModal, setFollowerModal] = useState<{
     isOpen: boolean;

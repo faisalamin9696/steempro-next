@@ -82,7 +82,7 @@ export default function ReplyFooter({
   });
   const editorDiv = useRef<any>(null);
 
-  const isSelf = !!loginInfo.name && loginInfo.name === comment.author;
+  const isSelf = session?.user?.name === comment.author;
   const canMute = loginInfo.name && Role.atLeast(comment.observer_role, "mod");
   const canDelete = !comment.children && isSelf && allowDelete(comment);
   const canEdit = isSelf;

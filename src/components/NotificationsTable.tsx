@@ -134,14 +134,13 @@ export default function NotificationsTable(props: Props) {
   }
 
   const { data, isLoading, mutate } = useSWR(URL, fetchSds<SDSNotification[]>);
-
+  const { data: session } = useSession();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
-  const isSelf = !!loginInfo.name && loginInfo.name === username;
+  const isSelf = session?.user?.name === username;
   const router = useRouter();
   const { authenticateUser, isAuthorized } = useLogin();
   const dispatch = useAppDispatch();
-  const { data: session } = useSession();
 
   const [allRows, setAllRows] = useState<SDSNotification[]>([]);
   useEffect(() => {

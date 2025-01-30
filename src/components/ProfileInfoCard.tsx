@@ -20,6 +20,7 @@ import { FaRegHeart } from "react-icons/fa";
 import { IoFlashOutline } from "react-icons/io5";
 import { getVoteData } from "@/libs/steem/sds";
 import { AppLink } from "@/libs/constants/AppConstants";
+import { useSession } from "next-auth/react";
 
 type Props = {
   account: AccountExt;
@@ -36,6 +37,7 @@ export default memo(function ProfileInfoCard(props: Props) {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const steemProps = useAppSelector((state) => state.steemGlobalsReducer).value;
   const voteData = profileInfo && getVoteData(profileInfo, steemProps);
+  const { data: session } = useSession();
 
   const [followerModal, setFollowerModal] = useState<{
     isOpen: boolean;
@@ -43,7 +45,7 @@ export default memo(function ProfileInfoCard(props: Props) {
   }>({
     isOpen: false,
   });
-  const isSelf = !!loginInfo.name && loginInfo.name === profileInfo.name;
+  const isSelf = session?.user?.name === profileInfo.name;
 
   const posting_json_metadata = JSON.parse(
     profileInfo?.posting_json_metadata || "{}"

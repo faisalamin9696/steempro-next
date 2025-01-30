@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { useLogin } from "./auth/AuthProvider";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { addCommunityHandler } from "@/libs/redux/reducers/CommunityReducer";
-import { useRouter } from "next13-progressbar";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { useSession } from "next-auth/react";
 
@@ -28,10 +27,9 @@ export default function SubscribeButton(props: Props) {
 
   const isSubscribed = communityInfo?.observer_subscribed === 1;
   const dispatch = useAppDispatch();
-  const isSelf = !!loginInfo.name && loginInfo.name === username;
+  const isSelf = session?.user?.name === username;
 
   const { authenticateUser, isAuthorized } = useLogin();
-  const router = useRouter();
 
   function handleFailed(error: any) {
     toast.error(error.message || JSON.stringify(error));

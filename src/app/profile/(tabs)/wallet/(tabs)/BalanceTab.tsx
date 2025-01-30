@@ -18,6 +18,7 @@ import PowerDownModal from "@/components/PowerDownModal";
 import { Chip } from "@heroui/chip";
 import { IoMdAdd, IoMdRemove } from "react-icons/io";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 const tokens = {
   steem: {
@@ -80,9 +81,10 @@ export default function BalanceTab({
 }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   let { username } = usePathnameClient();
+  const { data: session } = useSession();
 
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
-  const isSelf = !!loginInfo.name && loginInfo.name === username;
+  const isSelf = session?.user?.name === username;
 
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
   let [key, setKey] = useState<SteemTokens>();

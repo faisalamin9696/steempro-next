@@ -21,6 +21,7 @@ import { Button } from "@heroui/button";
 import { updatePostView } from "@/libs/mysql/database";
 import { addRepliesHandler } from "@/libs/redux/reducers/RepliesReducer";
 import PostReplies from "@/components/reply/PostReplies";
+import { useSession } from "next-auth/react";
 // const DynamicPostReplies = dynamic(
 //   () => import("../../../components/reply/PostReplies")
 // );
@@ -32,8 +33,8 @@ interface Props {
 export default function PostPage(props: Props) {
   const { data } = props;
   const pathname = usePathname();
+  const { data: session } = useSession();
   const { category } = usePathnameClient();
-  const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const dispatch = useAppDispatch();
   const commentInfo: Post =
     useAppSelector((state) => state.commentReducer.values)[
@@ -45,7 +46,7 @@ export default function PostPage(props: Props) {
   const toggleEditMode = () => setEditMode(!editMode);
   const router = useRouter();
   const isNsfw = hasNsfwTag(commentInfo) && settings?.nsfw !== "Always show";
-  const isSelf = !!loginInfo.name && loginInfo.name === commentInfo.author;
+  const isSelf = session?.user?.name === commentInfo.author;
 
   useEffect(() => {
     router.refresh();
@@ -136,7 +137,8 @@ export default function PostPage(props: Props) {
                   <p className="text-medium">RE: {commentInfo.root_title}</p>
                   <div className="flex gap-2 items-center">
                     •
-                    <Link prefetch={false}
+                    <Link
+                      prefetch={false}
                       className="text-sm text-default-600 hover:text-blue-500"
                       href={`/@${commentInfo.root_author}/${commentInfo.root_permlink}`}
                     >
@@ -147,7 +149,8 @@ export default function PostPage(props: Props) {
                   {commentInfo.depth >= 2 && (
                     <div className="flex gap-2 items-center">
                       •
-                      <Link prefetch={false}
+                      <Link
+                        prefetch={false}
                         className="text-sm text-default-600 hover:text-blue-500"
                         href={`/@${commentInfo.parent_author}/${commentInfo.parent_permlink}`}
                       >
