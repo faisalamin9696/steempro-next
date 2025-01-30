@@ -9,9 +9,9 @@
       "lint": "next lint"
    },
    "dependencies": {
+      "@heroui/react": "2.6.14",
       "@hiveio/dhive": "https://github.com/faisalamin9696/dhive",
       "@itseasy21/react-elastic-carousel": "^0.12.3",
-      "@heroui/react": "2.6.14",
       "@nivo/core": "^0.88.0",
       "@nivo/pie": "^0.88.0",
       "@piwikpro/react-piwik-pro": "^2.1.1",
