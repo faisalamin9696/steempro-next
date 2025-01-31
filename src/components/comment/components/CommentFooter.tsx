@@ -87,8 +87,6 @@ export default memo(function CommentFooter(props: CommentProps) {
   const [resteemPopup, setResteemPopup] = useState(false);
   const [upvotePopup, setUpvotePopup] = useState(false);
   const [downvotePopup, setDownvotePopup] = useState(false);
-  const settings =
-    useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
 
   function closeVotingModal() {
     if (upvotePopup) setUpvotePopup(false);
@@ -155,6 +153,7 @@ export default memo(function CommentFooter(props: CommentProps) {
           downvote_mana_percent: downvote_per,
         })
       );
+      const settings = getSettings();
 
       if (settings.voteOptions.remember) {
         const voteToSave = downvote ? -weight : weight;
@@ -202,6 +201,7 @@ export default memo(function CommentFooter(props: CommentProps) {
       });
     } catch (error: any) {
       toast.error(error.message || JSON.stringify(error));
+      dispatch(addCommentHandler({ ...comment, status: "idle" }));
     }
   }
 
