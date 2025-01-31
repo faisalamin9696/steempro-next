@@ -10,7 +10,11 @@ import { Button } from "@heroui/button";
 import { twMerge } from "tailwind-merge";
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 
-const CommunityCarousel = () => {
+interface Props {
+  className?: string;
+}
+const CommunityCarousel = (props: Props) => {
+  const { className } = props;
   const { community } = usePathnameClient();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { isMobile } = useDeviceInfo();
@@ -28,7 +32,7 @@ const CommunityCarousel = () => {
 
   return (
     !isMobile && (
-      <CarousalMain enableAutoPlay enabllePagination>
+      <CarousalMain enableAutoPlay enabllePagination className={className}>
         {data?.map?.((item, index) => (
           <div className="w-full" key={`${index}`}>
             <PromotionCard

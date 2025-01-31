@@ -4,6 +4,7 @@ import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 import { memo, useState } from "react";
+import { twMerge } from "tailwind-merge";
 
 interface Props {
   size?: "xs" | "sm";
@@ -96,7 +97,7 @@ export default memo(function CommentCover(props: Props) {
               alt={alt || "image"}
               onLoad={onLoadCompleted}
               onError={onLoadCompleted}
-              className={show ? "" : "blur-md"}
+              className={twMerge(show ? "" : "blur-md", "rounded-md")}
               style={{
                 width: "100%",
                 height: "100%",

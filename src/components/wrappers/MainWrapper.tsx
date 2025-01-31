@@ -40,7 +40,7 @@ export default function MainWrapper(props: Props) {
             <div className="pr-0">{startContent}</div>
           </div>
         )}
-        <div className={twMerge("center-div flex-grow", className)}>
+        <div className={twMerge("center-div flex-grow overflow-visible", className)}>
           {children}
         </div>
 

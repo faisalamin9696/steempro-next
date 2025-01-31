@@ -339,17 +339,19 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
           </Chip>
         </div>
         <div className=" flex items-center justify-between gap-4">
-          <div className=" flex flex-col gap-4">
+          <div className=" flex flex-col gap-4 w-full">
             <div className=" items-center">
-              <div className=" flex items-start gap-2">
+              <div className=" flex flex-row items-start gap-2">
                 <FaClock className=" text-lg" />
                 <div className="text-sm flex-col items-center gap-1">
-                  <div className="flex items-center">
+                  <div className="flex flec-row items-center gap-1">
                     {moment(scheduleInfo.time).format("YYYY-MM-DD HH:mm")}
+
+                    <p>in</p>
 
                     <STag
                       onlyText
-                      className="text-sm ms-2 !text-blue-500"
+                      className="text-sm !text-blue-500"
                       tag={scheduleInfo.parent_permlink ?? scheduleInfo.tags[0]}
                     />
                   </div>
@@ -364,11 +366,25 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
                 </div>
               </div>
             </div>
-            <h2 className="font-bold text-medium text-start ">
-              {scheduleInfo.title}
-            </h2>
-            <div className="line-clamp-3 text-start text-sm flex-1">
-              <BodyShort body={scheduleInfo.body} />
+            <div className=" flex flex-row justify-between gap-4">
+              <div className=" flex flex-col gap-2">
+                <h2 className="font-bold text-medium text-start ">
+                  {scheduleInfo.title}
+                </h2>
+                <div className="line-clamp-3 text-start text-sm flex-1">
+                  <BodyShort body={scheduleInfo.body} />
+                </div>
+              </div>
+
+              {!!images?.length && (
+                <CommentCover
+                  className="max-h-36 max-w-36 self-center object-contain rounded-md"
+                  thumbnail
+                  targetUrl={targetUrl}
+                  isNsfw={false}
+                  src={proxifyImageUrl(images[0])}
+                />
+              )}
             </div>
             <div className="flex gap-4 items-center">
               <Button
@@ -464,19 +480,6 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
               </Popover>
             </div>
           </div>
-
-          {!!images?.length && (
-            <CommentCover
-              className="max-h-36 max-w-36 self-center object-contain"
-              thumbnail
-              targetUrl={targetUrl}
-              isNsfw={false}
-              src={proxifyImageUrl(
-                extractImageLink(scheduleInfo.body),
-                "256x512"
-              )}
-            />
-          )}
         </div>
       </Card>
       <ScheduleModal

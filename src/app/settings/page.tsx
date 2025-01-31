@@ -19,13 +19,7 @@ import { Divider } from "@heroui/divider";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FaInfoCircle, FaUpload, FaUserCircle } from "react-icons/fa";
 import { toast } from "sonner";
 import { FaGlobe } from "react-icons/fa";
@@ -33,7 +27,6 @@ import { MdAddLocationAlt } from "react-icons/md";
 import { AiFillPicture } from "react-icons/ai";
 import { MdDriveFileRenameOutline } from "react-icons/md";
 import { TbServerBolt } from "react-icons/tb";
-import { twMerge } from "tailwind-merge";
 import { AppStrings } from "@/libs/constants/AppStrings";
 import { RiUserSettingsFill } from "react-icons/ri";
 import { updateSettingsHandler } from "@/libs/redux/reducers/SettingsReducer";
@@ -45,8 +38,11 @@ import { IoIosSettings } from "react-icons/io";
 import { addProfileHandler } from "@/libs/redux/reducers/ProfileReducer";
 import { useSession } from "next-auth/react";
 import { useDropzone } from "react-dropzone";
+import { Checkbox } from "@heroui/checkbox";
 
 let isCover: boolean = false;
+
+const iconSize = 24;
 export default function SettingsPage() {
   const { username } = usePathnameClient();
   const { data: session } = useSession();
@@ -71,6 +67,22 @@ export default function SettingsPage() {
   const settings = getSettings();
   const isSelf =
     session?.user?.name === username || (session?.user?.name && !username);
+
+  const [rememberVote, setRememberVote] = useState(
+    settings.voteOptions.remember ?? true
+  );
+
+  function handleRememberVoteChange(selected: boolean) {
+    updateSettings({
+      ...settings,
+      voteOptions: {
+        remember: selected,
+        value: selected ? settings.voteOptions.value ?? 100 : 100,
+      },
+    });
+
+    setRememberVote(selected);
+  }
 
   const [rpc, setRpc] = useState(settings.rpc || AppStrings.rpc_servers[0]);
   const [nsfw, setNsfw] = useState(settings.nsfw || "Always warn");
@@ -275,9 +287,9 @@ export default function SettingsPage() {
   }, [parsedData]);
   return (
     <div className="flex flex-col gap-6 ">
-      <div className="flex flex-col gap-2  max-w-2xl">
+      <div className="flex flex-col gap-4 max-w-2xl">
         <div className="flex items-center gap-2">
-          <IoIosSettings className=" text-xl" />
+          <IoIosSettings size={iconSize} />
           <p className="text-sm">General</p>
 
           <Divider orientation="horizontal" className=" shrink" />
@@ -285,9 +297,7 @@ export default function SettingsPage() {
 
         <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
           <Select
-            startContent={
-              <TbServerBolt className={twMerge(className, "text-lg")} />
-            }
+            startContent={<TbServerBolt size={iconSize - 4} />}
             aria-label="Select RPC Node"
             variant="flat"
             label="Select RPC Node"
@@ -296,17 +306,16 @@ export default function SettingsPage() {
               handleRpcChange(key.target.value as string);
             }}
             selectedKeys={[rpc]}
-            size="sm"
             placeholder="Asset"
             // className=" max-w-[250px]"
             classNames={{
-              value: "text-tiny",
+              value: "text-sm",
               // innerWrapper: ' w-10'
             }}
           >
             {AppStrings.rpc_servers.map((item) => {
               return (
-                <SelectItem className="text-xs" key={item} value={item}>
+                <SelectItem className="text-sm" key={item} value={item}>
                   {item}
                 </SelectItem>
               );
@@ -314,9 +323,7 @@ export default function SettingsPage() {
           </Select>
 
           <Select
-            startContent={
-              <MdDisabledVisible className={twMerge(className, "text-lg")} />
-            }
+            startContent={<MdDisabledVisible size={iconSize - 4} />}
             aria-label="(NSFW) content"
             variant="flat"
             label="NSFW content"
@@ -324,20 +331,19 @@ export default function SettingsPage() {
               handleNsfwChange(key.target.value as NSFW);
             }}
             selectedKeys={[nsfw]}
-            size="sm"
             placeholder="Asset"
             // className=" max-w-[250px]"
             classNames={{
-              value: "text-tiny",
+              value: "text-sm",
               // innerWrapper: ' w-10'
             }}
           >
-            {/* <SelectItem className="text-xs" key={'Always hide'} value={'Always hide'}>
+            {/* <SelectItem className="text-sm" key={'Always hide'} value={'Always hide'}>
                             {'Always hide'}
                         </SelectItem> */}
 
             <SelectItem
-              className="text-xs"
+              className="text-sm"
               key={"Always warn"}
               value={"Always warn"}
             >
@@ -345,20 +351,30 @@ export default function SettingsPage() {
             </SelectItem>
 
             <SelectItem
-              className="text-xs"
+              className="text-sm"
               key={"Always show"}
               value={"Always show"}
             >
               {"Always show"}
             </SelectItem>
           </Select>
+
+          <div className="flex flex-col gap-2 bg-default-100 p-3 rounded-lg">
+            <Checkbox
+              isSelected={rememberVote}
+              onValueChange={handleRememberVoteChange}
+              classNames={{ label: "text-sm" }}
+            >
+              Remember last vote
+            </Checkbox>
+          </div>
         </div>
       </div>
 
       {isSelf && (
-        <div className="flex flex-col gap-2  max-w-2xl">
+        <div className="flex flex-col gap-4  max-w-2xl">
           <div className="flex items-center gap-2">
-            <RiUserSettingsFill className=" text-xl" />
+            <RiUserSettingsFill size={iconSize} />
             <p className="text-sm">Profile</p>
 
             <Divider orientation="horizontal" className=" shrink" />
@@ -370,7 +386,9 @@ export default function SettingsPage() {
               value={profileImage}
               onValueChange={setProfileImage}
               maxLength={200}
-              startContent={<FaUserCircle className={className} />}
+              startContent={
+                <FaUserCircle size={iconSize - 4} className={className} />
+              }
               endContent={
                 <Button
                   title="Upload"
@@ -381,9 +399,8 @@ export default function SettingsPage() {
                   isIconOnly
                   radius="full"
                   variant="flat"
-                  size="sm"
                 >
-                  <FaUpload className="text-xl" />
+                  <FaUpload size={iconSize - 4} />
                 </Button>
               }
             />
@@ -393,7 +410,9 @@ export default function SettingsPage() {
               maxLength={200}
               value={coverImage}
               onValueChange={setCoverImage}
-              startContent={<AiFillPicture className={className} />}
+              startContent={
+                <AiFillPicture size={iconSize - 4} className={className} />
+              }
               endContent={
                 <Button
                   title="Upload"
@@ -404,9 +423,8 @@ export default function SettingsPage() {
                   isIconOnly
                   radius="full"
                   variant="flat"
-                  size="sm"
                 >
-                  <FaUpload className="text-xl" />
+                  <FaUpload size={iconSize - 4} />
                 </Button>
               }
             />
@@ -416,7 +434,12 @@ export default function SettingsPage() {
               maxLength={20}
               value={displayName}
               onValueChange={setDisplayName}
-              startContent={<MdDriveFileRenameOutline className={className} />}
+              startContent={
+                <MdDriveFileRenameOutline
+                  size={iconSize - 4}
+                  className={className}
+                />
+              }
             />
 
             <Input
@@ -424,7 +447,9 @@ export default function SettingsPage() {
               maxLength={160}
               value={about}
               onValueChange={setAbout}
-              startContent={<FaInfoCircle className={className} />}
+              startContent={
+                <FaInfoCircle size={iconSize - 4} className={className} />
+              }
             />
 
             <Input
@@ -432,7 +457,9 @@ export default function SettingsPage() {
               maxLength={30}
               value={location}
               onValueChange={setLocation}
-              startContent={<MdAddLocationAlt className={className} />}
+              startContent={
+                <MdAddLocationAlt size={iconSize - 4} className={className} />
+              }
             />
 
             <Input
@@ -440,18 +467,19 @@ export default function SettingsPage() {
               maxLength={100}
               value={website}
               onValueChange={setWebsite}
-              startContent={<FaGlobe className={className} />}
+              startContent={
+                <FaGlobe size={iconSize - 4} className={className} />
+              }
             />
           </div>
 
           <Button
-            size="sm"
             isLoading={updateMutation.isPending}
             isDisabled={!isChanged || updateMutation.isPending}
             onPress={handleUpdate}
             className="self-start"
           >
-            Update
+            Save
           </Button>
         </div>
       )}

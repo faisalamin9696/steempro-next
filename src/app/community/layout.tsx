@@ -23,7 +23,7 @@ export default async function Layout() {
         endContent={<CommunityInfoCard key={Math.random()} community={data} />}
       >
         <CommunityHeader community={data} account={account} />
-        <CommunityCarousel />
+        <CommunityCarousel className=" mt-2" />
         <CommunityPage data={data} />
       </MainWrapper>
     </main>

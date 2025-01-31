@@ -1,138 +1,184 @@
 import { Button } from "@heroui/button";
 import { Card, CardHeader } from "@heroui/card";
-import React, { useEffect, useState } from 'react'
-import { IoChevronDownCircleSharp, IoChevronUpCircleSharp } from 'react-icons/io5';
-import { useAppSelector } from '@/libs/constants/AppFunctions';
-import { getVoteData } from '@/libs/steem/sds';
-import { twMerge } from 'tailwind-merge';
-import Slider from 'rc-slider';
-import 'rc-slider/assets/index.css';
-import './style.scss';
+import React, { useEffect, useState } from "react";
+import {
+  IoChevronDownCircleSharp,
+  IoChevronUpCircleSharp,
+} from "react-icons/io5";
+import { useAppSelector } from "@/libs/constants/AppFunctions";
+import { getVoteData } from "@/libs/steem/sds";
+import { twMerge } from "tailwind-merge";
+import Slider from "rc-slider";
+import "rc-slider/assets/index.css";
+import "./style.scss";
+import { getSettings } from "@/libs/utils/user";
 
 interface Props {
-    comment: Feed | Post,
-    downvote?: boolean;
-    onConfirm?: (weight: number, downvote?: boolean) => void;
+  comment: Feed | Post;
+  downvote?: boolean;
+  onConfirm?: (weight: number, downvote?: boolean) => void;
 }
 
-
-const ItemCard = ({ tooltip, title, value }: { tooltip: string, title: string, value: string }) => {
-    return <div className="flex gap-1">
-        <p className="font-semibold text-default-500 text-tiny">{value ?? '-'}</p>
-        <p title={tooltip} className="text-default-400 text-tiny">{title}</p>
+const ItemCard = ({
+  tooltip,
+  title,
+  value,
+}: {
+  tooltip: string;
+  title: string;
+  value: string;
+}) => {
+  return (
+    <div className="flex gap-1">
+      <p className="font-semibold text-default-500 text-tiny">{value ?? "-"}</p>
+      <p title={tooltip} className="text-default-400 text-tiny">
+        {title}
+      </p>
     </div>
-}
+  );
+};
 
 export default function VotingModal(props: Props) {
-    const { downvote, onConfirm } = props;
-    const loginInfo = useAppSelector(state => state.loginReducer.value);
-    const globalData = useAppSelector(state => state.steemGlobalsReducer.value);
-    const [voteData, setVoteData] = useState<VoteData>();
-    let [value, setValue] = React.useState(100);
+  const { downvote, onConfirm } = props;
+  const loginInfo = useAppSelector((state) => state.loginReducer.value);
+  const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
+  const [voteData, setVoteData] = useState<VoteData>();
+  const settings =
+    useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
 
-    useEffect(() => {
-        setVoteData(getVoteData(loginInfo, globalData, downvote));
-    }, []);
+  let [value, setValue] = React.useState(settings.voteOptions.value ?? 100);
 
-    const handleValueChange = (value: any) => {
-        if (isNaN(Number(value))) return;
-        setValue(Number(value));
-    };
+  useEffect(() => {
+    setVoteData(getVoteData(loginInfo, globalData, downvote));
+  }, []);
 
-    async function castVote() {
-        onConfirm && onConfirm(value, downvote);
+  const handleValueChange = (value: any) => {
+    if (isNaN(Number(value))) return;
+    setValue(Number(value));
+  };
 
-    }
+  async function castVote() {
+    onConfirm && onConfirm(value, downvote);
+  }
 
-    const marks = {
-        0: 0,
-        25: '25%',
-        50: '50%',
-        75: '75%',
-        100: '100%'
-    };
+  const marks = {
+    0: 0,
+    25: "25%",
+    50: "50%",
+    75: "75%",
+    100: "100%",
+  };
 
+  return (
+    <Card
+      classNames={{ header: "px-0 px-2 py-1" }}
+      className={twMerge(
+        "min-w-[300px] w-full border-2 p-0 overflow-hidden pb-1",
+        downvote ? "border-red-600" : " border-success-400"
+      )}
+    >
+      <CardHeader className="flex flex-col w-full gap-6 pb-1">
+        <div className=" flex flex-row items-start w-full gap-2 pr-4">
+          <div className="button-div flex flex-col gap-1 items-center">
+            {downvote ? (
+              <Button
+                onPress={castVote}
+                color="danger"
+                isIconOnly
+                size="sm"
+                className="min-w-0"
+                radius="full"
+                variant="flat"
+              >
+                <IoChevronDownCircleSharp size={28} />
+              </Button>
+            ) : (
+              <Button
+                onPress={castVote}
+                color="success"
+                isIconOnly
+                className="min-w-0"
+                variant="flat"
+                radius="full"
+                size="sm"
+              >
+                <IoChevronUpCircleSharp size={28} />
+              </Button>
+            )}
 
-    return (<Card shadow="none" className={twMerge("min-w-[300px] w-full  border-2 p-0 overflow-visible pb-1",
-        downvote ? 'border-red-600' : ' border-success-400')}>
-        <CardHeader className="flex flex-col  w-full gap-2 pb-0">
+            {/* <p className="text-sm text-default-900/80">{value}%</p> */}
+          </div>
 
-            <div className=' flex items-center w-full pr-3'>
-                <div className='flex gap-1 items-center'>
-                    {downvote ?
-                        <Button onPress={castVote} color='danger' isIconOnly
-                            size='sm'
-                            className=' min-w-0 h-6 w-6'
-                            radius='full' variant='flat'>
-                            <IoChevronDownCircleSharp className='text-xl' />
-                        </Button>
-                        :
-                        <Button onPress={castVote} color='success' isIconOnly
-                            className=' min-w-0 h-6 w-6'
+          <Slider
+            className="ms-3 top-2 "
+            onChange={handleValueChange}
+            // color={downvote ? 'danger' : "success"}
+            step={1}
+            defaultValue={100}
+            max={100}
+            min={1}
+            value={value}
+            classNames={{
+              rail: twMerge(downvote ? "!bg-danger" : "!bg-success"),
+              handle: twMerge(
+                " !rounded-lg h-6 w-6",
+                downvote ? "!border-danger" : "!border-success"
+              ),
+              track: "bg-red-100",
+            }}
+            track={false}
+            dotStyle={{ borderWidth: "2px" }}
+            activeDotStyle={{
+              borderColor: downvote ? "red" : "green",
+            }}
+            styles={{
+              handle: {
+                height: 20,
+                width: 20,
+                backgroundColor: "black",
+                opacity: 1,
+                marginTop: -9,
+              },
+            }}
+            included={true}
+            marks={marks}
+          />
+        </div>
 
-                            variant='flat' radius='full' size='sm'>
-                            <IoChevronUpCircleSharp className='text-xl' />
-                        </Button>}
+        <div className="gap-2 flex flex-row justify-between w-full">
+          <ItemCard
+            title={"Value"}
+            tooltip={`${"Voting value"}: ${value}%`}
+            value={`${value}%`}
+          />
 
-                    <p className='text-tiny'>{value}%</p>
-                </div>
+          <ItemCard
+            title={"VP"}
+            tooltip={`${"Voting power"}: ${
+              downvote
+                ? loginInfo?.downvote_mana_percent?.toFixed(1)
+                : loginInfo?.upvote_mana_percent?.toFixed(1)
+            }%`}
+            value={`${
+              downvote
+                ? loginInfo?.downvote_mana_percent?.toFixed(1)
+                : loginInfo?.upvote_mana_percent?.toFixed(1)
+            }%`}
+          />
 
-                <Slider
-                    className='ms-3'
-                    onChange={handleValueChange}
-                    // color={downvote ? 'danger' : "success"}
-                    step={1}
-                    defaultValue={100}
-                    max={100}
-                    min={1}
-                    value={value}
-                    classNames={{
-                        rail: twMerge(downvote ? '!bg-danger' : "!bg-success"),
-                        handle: twMerge(' !rounded-lg h-6 w-6', downvote ? '!border-danger' : "!border-success"),
-
-                    }}
-                    dotStyle={{
-                        opacity: 80,
-                        border: 0,
-                    }}
-                    styles={{
-
-                        handle: {
-                            height: 20,
-                            width: 20,
-                            backgroundColor: 'black',
-                            opacity: 1,
-                            marginTop: -9,
-                        }
-                    }}
-
-                    included={false}
-                    marks={marks}
-                />
-            </div>
-
-            <div className=' className="gap-2 flex flex-row px-1 justify-between w-full mt-4'>
-                <ItemCard title={'VP'} tooltip={`${'Voting power'}: ${downvote ?
-                    loginInfo?.downvote_mana_percent?.toFixed(1) : loginInfo?.upvote_mana_percent?.toFixed(1)}%`}
-                    value={`${downvote ? loginInfo?.downvote_mana_percent?.toFixed(1) :
-                        loginInfo?.upvote_mana_percent?.toFixed(1)}%`} />
-
-                <ItemCard title={'RC'}
-                    tooltip={`${'Resource credit'}: ${loginInfo?.rc_mana_percent?.toFixed(1)}%`}
-                    value={`${loginInfo?.rc_mana_percent?.toFixed(1)}%`} />
-                {/* 
+          {/* 
                 <ItemCard title={'Current'} tooltip={`${'Current vote value'}: ${voteData?.current_vote?.toFixed(3)}$`}
                     value={`${voteData?.current_vote?.toFixed(3)}$`} /> */}
 
-                <ItemCard title={'Full'} tooltip={`${'Full vote value'}: ${voteData?.full_vote?.toFixed(3)}$`}
-                    value={`${voteData?.full_vote?.toFixed(3)}$`} />
-            </div>
-
-
-        </CardHeader>
-
-
-    </Card >
-
-    )
+          <ItemCard
+            title={"Full"}
+            tooltip={`${"Full vote value"}: ${voteData?.full_vote?.toFixed(
+              3
+            )}$`}
+            value={`${voteData?.full_vote?.toFixed(3)}$`}
+          />
+        </div>
+      </CardHeader>
+    </Card>
+  );
 }

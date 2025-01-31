@@ -212,5 +212,9 @@ export const empty_settings = (): Setting => {
     rpc: "https://api.steemit.com",
     theme: "system",
     readMore: true,
+    voteOptions: {
+      remember: true,
+      value: 100,
+    },
   };
 };

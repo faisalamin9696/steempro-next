@@ -61,7 +61,7 @@ export default function CommunityHeader(props: Props) {
         style={{ backgroundImage: `url(${cover_picture})` }}
       />
 
-      <div className=" flex flex-row max-sm:flex-col">
+      <div className=" flex flex-row max-sm:flex-col ">
         <div className="sm:ps-4 pe-2 md:-mt-8 z-10 hidden md:block">
           <SAvatar
             size="lg"
@@ -71,24 +71,57 @@ export default function CommunityHeader(props: Props) {
           />
         </div>
 
-        <div className="flex flex-row items-center max-sm:items-start justify-between w-full mt-1 max-sm:gap-2 max-md:py-2">
-          <div className=" flex flex-row gap-2">
+        <div className=" flex flex-row items-center max-sm:items-start justify-between w-full mt-1 max-sm:gap-2 max-md:py-2">
+          <div className="flex flex-row gap-2 w-full">
             <SAvatar
               username={communityInfo.account}
               size="md"
               className="hidden max-md:block border-2 border-background"
             />
 
-            <div>
-              <div className="flex flex-col items-start font-bold text-lg sm:text-2xl mb-0">
-                <p>{communityInfo.title}</p>
-                <Link
-                  prefetch={false}
-                  href={`/@${communityInfo.account}`}
-                  className=" font-normal text-sm hover:underline"
-                >
-                  @{communityInfo.account}
-                </Link>
+            <div className="flex flex-col items-start w-full">
+              <div className="flex flex-col items-start mb-0 w-full">
+                <div className=" flex flex-row justify-between w-full items-start">
+                  <div className=" flex flex-col font-bold text-lg sm:text-2xl">
+                    <p>{communityInfo.title}</p>
+                    <Link
+                      prefetch={false}
+                      href={`/@${communityInfo.account}`}
+                      className=" font-normal text-sm hover:underline"
+                    >
+                      @{communityInfo.account}
+                    </Link>
+                  </div>
+
+                  <div className=" flex flex-row items-center gap-2">
+                    <Button
+                      title="Create Post"
+                      radius="full"
+                      size={!isTablet ? "sm" : "md"}
+                      className=" bg-foreground/10"
+                      variant="flat"
+                      startContent={<BiPlus size={24} />}
+                      as={Link}
+                      prefetch={false}
+                      isDisabled={communityInfo.observer_role === "muted"}
+                      href={
+                        {
+                          pathname: `/submit`,
+                          query: {
+                            account: communityInfo?.account,
+                            title: communityInfo?.title,
+                          },
+                        } as any
+                      }
+                    >
+                      Create Post
+                    </Button>
+                    <SubscribeButton
+                      size={!isTablet ? "sm" : "md"}
+                      community={communityInfo}
+                    />
+                  </div>
+                </div>
               </div>
               <div className="flex items-center gap-[8px] md:hidden sm:flex">
                 <span
@@ -107,35 +140,6 @@ export default function CommunityHeader(props: Props) {
                 </div>
               </div>
             </div>
-          </div>
-
-          <div className=" flex flex-row items-center gap-2">
-            <Button
-              title="Create Post"
-              radius="full"
-              size={!isTablet ? "sm" : "md"}
-              className=" bg-foreground/10"
-              variant="flat"
-              startContent={<BiPlus size={24} />}
-              as={Link}
-              prefetch={false}
-              isDisabled={communityInfo.observer_role === "muted"}
-              href={
-                {
-                  pathname: `/submit`,
-                  query: {
-                    account: communityInfo?.account,
-                    title: communityInfo?.title,
-                  },
-                } as any
-              }
-            >
-              Create Post
-            </Button>
-            <SubscribeButton
-              size={!isTablet ? "sm" : "md"}
-              community={communityInfo}
-            />
           </div>
         </div>
       </div>

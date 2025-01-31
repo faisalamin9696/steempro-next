@@ -48,7 +48,7 @@ export default function CommentGridLayout(props: CommentProps) {
   return (
     <Card
       className={`grid-footer w-full card card-compact h-full bg-white/60
-         dark:bg-white/10  pb-2 flex flex-col rounded-lg shadow-lg overflow-visible`}
+         dark:bg-white/10 pb-2 flex flex-col rounded-lg shadow-lg overflow-visible`}
     >
       <CardBody
         className="flex flex-col p-0"
@@ -79,7 +79,7 @@ export default function CommentGridLayout(props: CommentProps) {
                     minHeight: imageHeight,
                     maxHeight: imageHeight,
                   }}
-                  className="flex flex-col rounded-t-lg overflow-hidden items-center justify-center relative"
+                  className="flex flex-col overflow-hidden items-center justify-center relative"
                 >
                   <Image
                     src={thumbnail}
@@ -87,7 +87,7 @@ export default function CommentGridLayout(props: CommentProps) {
                     height={imageHeight}
                     className={twMerge(
                       isNsfw ? "blur-[2px]" : "",
-                      "overflow-hidden"
+                      "overflow-hidden","rounded-t-lg"
                     )}
                     alt={""}
                     style={{
@@ -102,7 +102,7 @@ export default function CommentGridLayout(props: CommentProps) {
               )
             ) : (
               <div
-                className={`h-44 bg-foreground/20 dark:bg-foreground/5  w-full`}
+                className={`h-44 bg-foreground/20 dark:bg-foreground/5  w-full rounded-t-lg`}
               />
             )}
 

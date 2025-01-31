@@ -26,6 +26,10 @@ export let CurrentSetting: Setting = {
   rpc: "https://api.steemit.com",
   theme: "system",
   readMore: true,
+  voteOptions: {
+    remember: true,
+    value: 100,
+  },
 };
 
 export const WitnessAccount = "faisalamin";

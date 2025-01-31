@@ -358,6 +358,10 @@ type Setting = {
   lang: Language;
   nsfw: NSFW = "Always warn";
   readMore: boolean;
+  voteOptions: {
+    remember: boolean = true;
+    value: number = 100;
+  };
 };
 
 type FeedStyle = "blogs" | "list" | "grid";

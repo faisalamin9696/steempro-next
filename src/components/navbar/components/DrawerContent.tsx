@@ -9,6 +9,8 @@ import React from "react";
 import { HiOutlineUserGroup, HiUserGroup } from "react-icons/hi2";
 import { IoHome, IoHomeOutline } from "react-icons/io5";
 import {
+  RiCalendar2Fill,
+  RiCalendar2Line,
   RiDiscordFill,
   RiDiscordLine,
   RiGithubFill,
@@ -48,9 +50,15 @@ function DrawerContent() {
       unFocusedIcon: <RiGroup2Line size={iconSize} />,
       focusedIcon: <RiGroup2Fill size={iconSize} />,
       loginRequired: true,
+    },
+    {
+      title: "Schedules",
+      href: `/schedules`,
+      unFocusedIcon: <RiCalendar2Line size={iconSize} />,
+      focusedIcon: <RiCalendar2Fill size={iconSize} />,
+      loginRequired: true,
       belowContent: <Divider className=" my-2" />,
     },
-
     {
       title: "Communities",
       href: `/communities`,

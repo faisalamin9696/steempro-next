@@ -17,6 +17,8 @@ import {
   calculatePowerUsage,
   getCredentials,
   getSessionKey,
+  getSettings,
+  updateSettings,
 } from "@/libs/utils/user";
 import {
   awaitTimeout,
@@ -85,6 +87,8 @@ export default memo(function CommentFooter(props: CommentProps) {
   const [resteemPopup, setResteemPopup] = useState(false);
   const [upvotePopup, setUpvotePopup] = useState(false);
   const [downvotePopup, setDownvotePopup] = useState(false);
+  const settings =
+    useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
 
   function closeVotingModal() {
     if (upvotePopup) setUpvotePopup(false);
@@ -151,6 +155,17 @@ export default memo(function CommentFooter(props: CommentProps) {
           downvote_mana_percent: downvote_per,
         })
       );
+
+      if (settings.voteOptions.remember) {
+        const voteToSave = downvote ? -weight : weight;
+        updateSettings({
+          ...settings,
+          voteOptions: {
+            remember: true,
+            value: voteToSave,
+          },
+        });
+      }
 
       if (variables.weight < 0) {
         return;
@@ -238,7 +253,7 @@ export default memo(function CommentFooter(props: CommentProps) {
           <div className="flex flex-row items-center gap-2 relative  ">
             {(upvotePopup || downvotePopup) && (
               <ClickAwayListener onClickAway={closeVotingModal}>
-                <div className="absolute  animate-appearance-in z-[11] top-[-45px]">
+                <div className="absolute animate-appearance-in z-[11] top-[-45px]">
                   <VotingModal
                     {...props}
                     downvote={downvotePopup}

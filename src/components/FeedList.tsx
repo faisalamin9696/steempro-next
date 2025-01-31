@@ -132,7 +132,7 @@ export default function FeedList(props: Props) {
   return (
     <>
       <InfiniteScroll
-        className="gap-2"
+        className="gap-2 !overflow-visible"
         dataLength={rows.length}
         next={handleEndReached}
         hasMore={rows.length < (data?.length ?? 0)}
@@ -144,7 +144,7 @@ export default function FeedList(props: Props) {
             isGridStyle
               ? className
                 ? className
-                : "grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-6"
+                : "grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4"
               : "flex flex-col gap-2"
           )}
         >
