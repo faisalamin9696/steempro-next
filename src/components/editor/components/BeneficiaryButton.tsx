@@ -91,11 +91,10 @@ export default memo(function BeneficiaryButton(props: Props) {
             title="Beneficiaries"
             size="sm"
             isDisabled={isDisabled}
-            color="default"
+            color="warning"
             startContent={<FaUsersCog className="text-xl" />}
-            className=""
             radius="lg"
-            variant="shadow"
+            variant="flat"
           >
             {isMobile ? "" : "Bene:"} {beneficiaries?.length ?? 0}
           </Button>

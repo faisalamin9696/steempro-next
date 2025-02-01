@@ -20,7 +20,12 @@ import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
 import React, { useCallback, useEffect, useState } from "react";
-import { FaInfoCircle, FaUpload, FaUserCircle } from "react-icons/fa";
+import {
+  FaChevronCircleUp,
+  FaInfoCircle,
+  FaUpload,
+  FaUserCircle,
+} from "react-icons/fa";
 import { toast } from "sonner";
 import { FaGlobe } from "react-icons/fa";
 import { MdAddLocationAlt } from "react-icons/md";
@@ -68,24 +73,13 @@ export default function SettingsPage() {
   const isSelf =
     session?.user?.name === username || (session?.user?.name && !username);
 
-  const [rememberVote, setRememberVote] = useState(
-    settings.voteOptions.remember ?? true
-  );
-
-  function handleRememberVoteChange(selected: boolean) {
-    updateSettings({
-      ...settings,
-      voteOptions: {
-        remember: selected,
-        value: selected ? settings.voteOptions.value ?? 100 : 100,
-      },
-    });
-
-    setRememberVote(selected);
-  }
-
   const [rpc, setRpc] = useState(settings.rpc || AppStrings.rpc_servers[0]);
   const [nsfw, setNsfw] = useState(settings.nsfw || "Always warn");
+
+  const [rememberVote, setRememberVote] = useState(
+    String(settings.voteOptions.remember) ?? "true"
+  );
+
   const dispatch = useAppDispatch();
 
   let { authenticateUser, isAuthorized, credentials } = useLogin();
@@ -172,6 +166,21 @@ export default function SettingsPage() {
     const newSetting = updateSettings({ ...settings, nsfw: newNsfw });
     dispatch(updateSettingsHandler(newSetting));
     toast.success(`NSFW content visibility: ${newNsfw}`);
+  }
+
+  function handleRememberChange(value: string) {
+    setRememberVote(value);
+    const newSetting = updateSettings({
+      ...settings,
+      voteOptions: {
+        remember: value == "true",
+        value: value == "true" ? settings.voteOptions.value ?? 100 : 100,
+      },
+    });
+
+    dispatch(updateSettingsHandler(newSetting));
+
+    toast.success(`Remember vote: ${value}`);
   }
 
   async function handleUpdate() {
@@ -325,6 +334,7 @@ export default function SettingsPage() {
           <Select
             startContent={<MdDisabledVisible size={iconSize - 4} />}
             aria-label="(NSFW) content"
+            disallowEmptySelection
             variant="flat"
             label="NSFW content"
             onChange={(key) => {
@@ -359,15 +369,31 @@ export default function SettingsPage() {
             </SelectItem>
           </Select>
 
-          <div className="flex flex-col gap-2 bg-default-100 p-3 rounded-lg">
-            <Checkbox
-              isSelected={rememberVote}
-              onValueChange={handleRememberVoteChange}
-              classNames={{ label: "text-sm" }}
-            >
-              Remember last vote
-            </Checkbox>
-          </div>
+          <Select
+            startContent={<FaChevronCircleUp size={iconSize - 4} />}
+            aria-label="Vote value"
+            variant="flat"
+            disallowEmptySelection
+            label="Vote Percentage"
+            onChange={(key) => {
+              handleRememberChange(key.target.value);
+            }}
+            selectedKeys={[rememberVote]}
+            placeholder="Voting Percentage"
+            // className=" max-w-[250px]"
+            classNames={{
+              value: "text-sm",
+              // innerWrapper: ' w-10'
+            }}
+          >
+            <SelectItem className="text-sm" key={"true"} value={"true"}>
+              {"Remember my vote"}
+            </SelectItem>
+
+            <SelectItem className="text-sm" key={"false"} value={"false"}>
+              {"Default to 100%"}
+            </SelectItem>
+          </Select>
         </div>
       </div>
 

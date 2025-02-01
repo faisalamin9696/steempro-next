@@ -31,16 +31,18 @@ export default memo(function RewardSelectButton(props: Props) {
         onOpenChange={(open) => setRewardPopup(open)}
         placement={"top-start"}
         className=""
-        classNames={{
-          content: "bg-teal-600",
-        }}
+        classNames={
+          {
+            // content: "bg-teal-600",
+          }
+        }
       >
         <PopoverTrigger>
           <Button
             size="sm"
             isDisabled={isDisabled}
+            color="default"
             startContent={<FaDollarSign className="text-xl" />}
-            className="text-white  bg-teal-600"
             radius="lg"
             variant="shadow"
           >

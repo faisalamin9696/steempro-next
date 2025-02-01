@@ -18,9 +18,8 @@ export default function PublishButton(props: Props) {
       color="success"
       onPress={onPress}
       isLoading={isLoading}
-      className="!text-white"
       radius="lg"
-      variant="shadow"
+      variant="flat"
     >
       {buttonText ?? "Publish"}
     </Button>

@@ -595,7 +595,7 @@ export default function SubmitPage(props: Props) {
   return (
     <div
       className={clsx(
-        `editor-main flex flex-col flex-1 gap-4 items-center w-full `,
+        `editor-main flex flex-col flex-1 gap-4 items-center w-full px-1`,
         !oldPost && "1md:justify-evenly 1md:items-start 1md:flex-row "
       )}
     >
@@ -603,7 +603,7 @@ export default function SubmitPage(props: Props) {
         className={clsx(
           `flex flex-col w-full  gap-2`,
           !oldPost &&
-            "1md:w-[50%] 1md:float-start 1md:sticky 1md:z-[1]  1md:self-start 1md:top-[70px] px-1"
+            "1md:w-[50%] 1md:float-start 1md:sticky 1md:z-[1] 1md:self-start 1md:top-[80px] pb-5"
         )}
       >
         {!isEditComment && (
@@ -708,6 +708,7 @@ export default function SubmitPage(props: Props) {
                   size="sm"
                   radius="full"
                   isDisabled={isLoading}
+                  variant="flat"
                   onPress={() => {
                     handleUpdateCancel && handleUpdateCancel();
                   }}

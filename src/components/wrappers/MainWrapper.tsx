@@ -47,7 +47,7 @@ export default function MainWrapper(props: Props) {
         {endContent && (
           <div
             className={twMerge(
-              `right rounded-lg scrollbar-thin pl-2
+              `right rounded-lg scrollbar-thin ml-4
                 hidden 1md:block`,
               endClassName
             )}

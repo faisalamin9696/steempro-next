@@ -16,7 +16,7 @@ import { FiGrid } from "react-icons/fi";
 
 const FEED_STYLES = [
   {
-    title: "Compact",
+    title: "List",
     icon: (size: number) => <LuLayoutList size={size} />,
     key: "list",
   },

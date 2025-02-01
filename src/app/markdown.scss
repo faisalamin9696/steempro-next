@@ -1,5 +1,5 @@
 .markdown-body {
-  @apply prose dark:prose-invert max-sm:prose-sm prose-a:text-blue-500 prose-a:no-underline prose-hr:clear-both;
+  @apply prose dark:prose-invert max-sm:prose-sm prose-a:text-blue-500 prose-a:no-underline prose-hr:clear-both prose-p:clear-both;
 
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
     Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
@@ -88,12 +88,28 @@
       top: 0;
     }
   }
+
+  hr {
+    margin: 15px 0;
+    overflow: hidden;
+  }
+
+  span.frame span span {
+    display: block;
+    padding: 5px 0 0;
+    clear: both;
+  }
+
+  span.align-center {
+    display: block;
+    overflow: hidden;
+    clear: both;
+  }
 }
 
 .phishy {
   @apply text-red-500 prose-headings:text-red-500  prose-ol:text-red-500 prose-ul:text-red-500 prose-li:text-red-500 marker:text-red-500;
   display: inline;
-
 }
 
 // // .markdown-body {
