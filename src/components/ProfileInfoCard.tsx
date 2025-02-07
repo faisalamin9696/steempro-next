@@ -62,7 +62,7 @@ export default memo(function ProfileInfoCard(props: Props) {
 
   const cover_picture = proxifyImageUrl(
     posting_json_metadata?.profile?.cover_image ?? "",
-    "1280x128",
+    "500x98",
     true
   );
 
@@ -75,12 +75,10 @@ export default memo(function ProfileInfoCard(props: Props) {
       )}
     >
       {!compact && cover_picture && (
-        <div className="relative overflow-hidden w-full rounded-t-md h-[97px]">
-          <div
-            style={{ backgroundImage: `url(${cover_picture})` }}
-            className="h-full w-full bg-no-repeat bg-cover bg-center"
-          ></div>
-        </div>
+        <div
+          style={{ backgroundImage: `url(${cover_picture})` }}
+          className="relative overflow-hidden w-full rounded-t-md h-[98px] bg-no-repeat bg-cover bg-center"
+        />
       )}
       <div className=" flex flex-col px-4 py-2 gap-4 w-full">
         <div className=" flex flex-col gap-2">

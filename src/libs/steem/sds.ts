@@ -402,15 +402,22 @@ export const steemToVest = (steem: number, steem_per_share: number): number => {
 };
 
 export const getAccountHistory = async (
-  USERNAME: string
+  username: string,
+  daysBefore?: number,
+  filters?: string,
+  limit: number = 1000
 ): Promise<AccountHistory[]> => {
   try {
-    const start_date = moment().subtract(30, "days").unix();
+    const start_date = moment()
+      .subtract(daysBefore ?? 30, "days")
+      .unix();
     const end_date = moment().unix();
-    const filters = `withdraw_vesting,cancel_transfer_from_savings,claim_reward_balance,fill_convert_request,fill_order,fill_transfer_from_savings,fill_vesting_withdraw,
+    const default_filters = `withdraw_vesting,cancel_transfer_from_savings,claim_reward_balance,fill_convert_request,fill_order,fill_transfer_from_savings,fill_vesting_withdraw,
   transfer,transfer_from_savings,transfer_to_savings,transfer_to_vesting`;
 
-    const R_API = `/account_history_api/getHistoryByOpTypesTime/${USERNAME}/${filters}/${start_date}-${end_date}`;
+    const R_API = `/account_history_api/getHistoryByOpTypesTime/${username}/${
+      filters ?? default_filters
+    }/${start_date}-${end_date}/${limit}`;
     console.log(R_API);
     const response = await fetchSds<any>(R_API);
     if (response) {
@@ -479,10 +486,10 @@ export const getExpiringDelegations = async (
 };
 
 export const getTronInformation = async (
-  USERNAME: string
+  username: string
 ): Promise<SteemTron> => {
   try {
-    const R_API = `https://steemitwallet.com/api/v1/tron/tron_user?username=${USERNAME}`;
+    const R_API = `https://steemitwallet.com/api/v1/tron/tron_user?username=${username}`;
     console.log(R_API);
 
     const response = await fetch(R_API);
@@ -584,6 +591,43 @@ export const getCommentHistory = async (
     const response = await fetchSds<any>(R_API);
     if (response) {
       return (response ?? []) as string[];
+    } else {
+      throw new Error(response);
+    }
+  } catch (error: any) {
+    console.error("Failed to fetch global variables:", error);
+    throw new Error(error);
+  }
+};
+
+export const getTransfersByQuery = async (
+  query: string
+): Promise<Transfer[]> => {
+  try {
+    const R_API = `/transfers_api/getTransfers/${encodeURIComponent(query)}`;
+    console.log(R_API);
+    const response = await fetchSds<Transfer[]>(R_API);
+    if (response) {
+      return response ?? [];
+    } else {
+      throw new Error(response);
+    }
+  } catch (error: any) {
+    console.error("Failed to fetch global variables:", error);
+    throw new Error(error);
+  }
+};
+
+export const getTransfersByTypeFrom = async (
+  from: string,
+  type: string = "transfer"
+): Promise<Transfer[]> => {
+  try {
+    const R_API = `/transfers_api/getTransfersByTypeFrom/${type}/${from}`;
+    console.log(R_API);
+    const response = await fetchSds<Transfer[]>(R_API);
+    if (response) {
+      return response ?? [];
     } else {
       throw new Error(response);
     }

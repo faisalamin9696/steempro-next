@@ -605,7 +605,7 @@ export const setUserTitle = async (
 
     return new Promise((resolve, reject) => {
       window.steem_keychain.requestBroadcast(
-        data.account,
+        account.name,
         opArray,
         "Posting",
         function (response) {
@@ -674,7 +674,98 @@ export const setUserRole = async (
 
     return new Promise((resolve, reject) => {
       window.steem_keychain.requestBroadcast(
-        data.account,
+        account.name,
+        opArray,
+        "Posting",
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
+  const keyData = getKeyType(account, key);
+
+  if (keyData && PrivKey.atLeast(keyData.type, "POSTING")) {
+    const privateKey = PrivateKey.fromString(key);
+
+    return new Promise((resolve, reject) => {
+      client.broadcast
+        .sendOperations(opArray, privateKey)
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  }
+
+  return Promise.reject(
+    new Error(
+      "Check private key permission! Required private posting key or above."
+    )
+  );
+};
+
+export const setUserRoleTitle = async (
+  account: AccountExt,
+  key: string,
+  data: {
+    communityId: string;
+    account: string;
+    role: "muted" | "guest" | "member" | "mod" | "admin" | "owner";
+    title: string;
+  },
+  isKeychain?: boolean
+) => {
+  const action = "setRole";
+  const json = [
+    action,
+    {
+      community: data.communityId,
+      account: data.account,
+      role: data.role,
+    },
+  ];
+  const custom_json = {
+    id: "community",
+    json: JSON.stringify(json),
+    required_auths: [],
+    required_posting_auths: [account.name],
+  };
+
+  const action_2 = "setUserTitle";
+  const json_2 = [
+    action_2,
+    {
+      community: data.communityId,
+      account: data.account,
+      title: data.title,
+    },
+  ];
+  const custom_json_2 = {
+    id: "community",
+    json: JSON.stringify(json_2),
+    required_auths: [],
+    required_posting_auths: [account.name],
+  };
+
+  const opArray: any = [
+    ["custom_json", custom_json],
+    ["custom_json", custom_json_2],
+  ];
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestBroadcast(
+        account.name,
         opArray,
         "Posting",
         function (response) {

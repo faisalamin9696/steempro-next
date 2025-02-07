@@ -49,7 +49,7 @@ export default function AccountHeader(props: Props) {
 
   const cover_picture = proxifyImageUrl(
     posting_json_metadata?.profile?.cover_image ?? "",
-    "1280x128"
+    "1024x200"
   );
 
   useEffect(() => {
@@ -61,7 +61,7 @@ export default function AccountHeader(props: Props) {
       className={twMerge("pb-4 relative self-center w-full", props.className)}
     >
       <div
-        className={`block lg:hidden bg-center bg-cover bg-no-repeat bg-[#3e4146]/50 rounded-md lg:h-32 h-24 opacity-90 z-0`}
+        className={`transition-all block lg:hidden bg-center bg-cover bg-no-repeat bg-[#3e4146]/50 rounded-md sm:h-32 h-24 opacity-90 z-0`}
         style={{ backgroundImage: `url(${cover_picture})` }}
       />
 

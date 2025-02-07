@@ -1,6 +1,10 @@
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import { addCommentHandler } from "@/libs/redux/reducers/CommentReducer";
-import { setUserRole, setUserTitle } from "@/libs/steem/condenser";
+import {
+  setUserRole,
+  setUserRoleTitle,
+  setUserTitle,
+} from "@/libs/steem/condenser";
 import { Role } from "@/libs/utils/community";
 import { Select, SelectItem } from "@heroui/select";
 import {
@@ -50,6 +54,7 @@ export default function EditRoleModal(props: Props) {
     : Role.atLeast(observerRole, "admin")
     ? [
         { item: "Moderator", value: "mod" },
+        { item: "Member", value: "member" },
         { item: "Guest", value: "guest" },
         { item: "Muted", value: "muted" },
       ]
@@ -79,28 +84,17 @@ export default function EditRoleModal(props: Props) {
   }
   const roleTitleMutation = useMutation({
     mutationFn: (data: { key: string; isKeychain?: boolean }) =>
-      Promise.all([
-        setUserRole(
-          loginInfo,
-          data.key,
-          {
-            communityId: comment.category,
-            account: comment.author,
-            role: role || "guest",
-          },
-          data.isKeychain
-        ),
-        setUserTitle(
-          loginInfo,
-          data.key,
-          {
-            communityId: comment.category,
-            account: comment.author,
-            title: title,
-          },
-          data.isKeychain
-        ),
-      ]),
+      setUserRoleTitle(
+        loginInfo,
+        data.key,
+        {
+          communityId: comment.category,
+          account: comment.author,
+          role: role || "guest",
+          title: title,
+        },
+        data.isKeychain
+      ),
     onSuccess() {
       handleSuccess();
     },

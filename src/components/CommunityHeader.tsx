@@ -42,7 +42,7 @@ export default function CommunityHeader(props: Props) {
 
   const cover_picture = proxifyImageUrl(
     posting_json_metadata?.profile?.cover_image ?? "",
-    "1280x128"
+    "1280x200"
   );
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export default function CommunityHeader(props: Props) {
       )}
     >
       <div
-        className={`bg-center bg-cover bg-no-repeat bg-[#3e4146]/50 rounded-md lg:h-32 h-24 opacity-90 z-0`}
+        className={`bg-center bg-cover bg-no-repeat bg-[#3e4146]/50 rounded-md sm:h-32 h-24 opacity-90 z-0`}
         style={{ backgroundImage: `url(${cover_picture})` }}
       />
 
