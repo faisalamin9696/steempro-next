@@ -15,7 +15,7 @@ import STooltip from "./STooltip";
 import LoadingCard from "./LoadingCard";
 import FollowButton from "./FollowButton";
 import { addProfileHandler } from "@/libs/redux/reducers/ProfileReducer";
-import Link from "next/link";
+import SLink from "./SLink";
 
 interface Props {
   username: string;
@@ -70,7 +70,7 @@ export const UserCard = memo((props: Props) => {
             <h4 className="text-small font-semibold leading-none text-default-600">
               {posting_json_metadata?.profile?.name}
             </h4>
-            {/* <Link prefetch={false} href={authorLink}>{comment.author}</Link> */}
+            {/* <SLink href={authorLink}>{comment.author}</SLink> */}
 
             <h5 className={clsx("text-small tracking-tight text-default-500")}>
               @{username}
@@ -110,7 +110,7 @@ export const UserCard = memo((props: Props) => {
               <span className={clsx(compact && "text-tiny")}>
                 <strong className={clsx("text-black dark:text-white")}>
                   {knownPeople?.length}
-                </strong>{" "}
+                </strong>
                 Followers you know
               </span>
             </div>
@@ -119,9 +119,9 @@ export const UserCard = memo((props: Props) => {
                 {knownPeople?.map((people) => {
                   return (
                     <STooltip content={people}>
-                      <Link prefetch={false} href={`/@${people}/posts`}>
+                      <SLink href={`/@${people}/posts`}>
                         <Avatar src={getResizedAvatar(people)} />
-                      </Link>
+                      </SLink>
                     </STooltip>
                   );
                 })}

@@ -8,9 +8,9 @@ import ViewCountCard from "./ViewCountCard";
 import Image from "next/image";
 import SAvatar from "./SAvatar";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
-import Link from "next/link";
 import { getThumbnail } from "@/libs/utils/image";
 import { twMerge } from "tailwind-merge";
+import SLink from "./SLink";
 
 interface Props {
   authPerm: string;
@@ -34,16 +34,15 @@ export default function PromotionCard(props: Props) {
   // const URL = `/posts_api/getPost/${authPerm}`
   // const { data, isLoading, error, isValidating } = useSWR(URL, fetchSds<Post>)
 
-  const thumbnail = getThumbnail(data.json_images, "256x512");
+  const thumbnail = getThumbnail(data.json_images, "512x512");
 
   const targetLink = `/${data?.category}/@${data?.author}/${data?.permlink}`;
   return (
     <Card
-      as={Link}
-      prefetch={false}
+      as={SLink}
       href={targetLink}
       className={twMerge(
-        "card card-compact text-white p-0 rounded-xl overflow-hidden shadow-lg flex flex-col h-[170px]",
+        "text-white p-0 rounded-2xl overflow-hidden shadow-lg flex flex-col h-[170px]",
         sm && "h-[120px]"
       )}
     >
@@ -63,12 +62,12 @@ export default function PromotionCard(props: Props) {
       )}
       {sm && (
         <div className="rounded-lg hover:bg-transparent transition duration-300 absolute bottom-0 top-0 right-0 left-0 bg-gray-900 opacity-50"></div>
-      )}{" "}
+      )}
       <Card
         shadow="none"
         radius="none"
         className="text-white text-start  p-2 w-full
-                mb-auto absolute bottom-0 self-end left-0 gap-1 bg-black/50 rounded-t-lg
+                mb-auto absolute bottom-0 self-end left-0 gap-1 bg-black/50 rounded-b-lg
                 backdrop-blur-sm"
       >
         <p className="text-start font-bold  text-sm line-clamp-1">

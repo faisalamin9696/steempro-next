@@ -15,7 +15,6 @@ import { CommentProps } from "../CommentCard";
 import clsx from "clsx";
 import { abbreviateNumber, validateCommunity } from "@/libs/utils/helper";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
-import Link from "next/link";
 import { hasNsfwTag } from "@/libs/utils/StateFunctions";
 import NsfwOverlay from "@/components/NsfwOverlay";
 import { getSettings } from "@/libs/utils/user";
@@ -24,6 +23,7 @@ import { twMerge } from "tailwind-merge";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { MdDisabledVisible } from "react-icons/md";
 import { useSession } from "next-auth/react";
+import SLink from "@/components/SLink";
 
 export default function CommentGridLayout(props: CommentProps) {
   const { comment } = props;
@@ -47,15 +47,10 @@ export default function CommentGridLayout(props: CommentProps) {
 
   return (
     <Card
-      className={`grid-footer w-full card card-compact h-full bg-white/60
-         dark:bg-white/10 pb-2 flex flex-col rounded-lg shadow-lg overflow-visible`}
+      className={`grid-footer w-full h-full bg-white/60
+         dark:bg-white/10 pb-2 flex flex-col rounded-2xl shadow-lg overflow-visible`}
     >
-      <CardBody
-        className="flex flex-col p-0"
-        as={Link}
-        prefetch={false}
-        href={targetUrl}
-      >
+      <CardBody className="flex flex-col p-0" as={SLink} href={targetUrl}>
         <>
           <div
             className={twMerge(
@@ -87,7 +82,8 @@ export default function CommentGridLayout(props: CommentProps) {
                     height={imageHeight}
                     className={twMerge(
                       isNsfw ? "blur-[2px]" : "",
-                      "overflow-hidden","rounded-t-lg"
+                      "overflow-hidden",
+                      "rounded-t-lg"
                     )}
                     alt={""}
                     style={{
@@ -165,21 +161,19 @@ export default function CommentGridLayout(props: CommentProps) {
           name={
             <div className="flex items-center space-x-2">
               {isSelf ? (
-                <Link
-                  prefetch={false}
+                <SLink
                   className=" hover:text-blue-500"
                   href={`/@${commentInfo.author}`}
                 >
                   {comment.author}
-                </Link>
+                </SLink>
               ) : (
-                <Link
-                  prefetch={false}
+                <SLink
                   className=" hover:text-blue-500"
                   href={`/@${commentInfo.author}`}
                 >
                   {comment.author}
-                </Link>
+                </SLink>
               )}
               <Reputation
                 {...props}
@@ -202,7 +196,7 @@ export default function CommentGridLayout(props: CommentProps) {
             {
               className: "cursor-pointer",
               src: getResizedAvatar(commentInfo.author),
-              as: Link,
+              as: SLink,
               href: `/@${commentInfo.author}`,
             } as any
           }

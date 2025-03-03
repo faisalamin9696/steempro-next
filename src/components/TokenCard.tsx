@@ -3,6 +3,7 @@ import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
 import { FaSortDown } from "react-icons/fa";
 import { BsInfoCircle } from "react-icons/bs";
+import Image from "next/image";
 
 interface TokenCardProps {
   title: string;
@@ -11,6 +12,7 @@ interface TokenCardProps {
   actionContent?: React.ReactNode;
   symbol?: string;
   tokenKey: SteemTokens;
+  iconSrc?: string;
   handleInfoClick?: (key: SteemTokens) => void;
 }
 
@@ -22,6 +24,7 @@ export const TokenCard = (props: TokenCardProps) => {
     endContent,
     actionContent,
     symbol,
+    iconSrc,
     handleInfoClick,
   } = props;
 
@@ -34,7 +37,10 @@ export const TokenCard = (props: TokenCardProps) => {
       <CardBody className=" justify-between flex flex-row max-lg:flex-col  gap-4">
         <div className="flex flex-col items-start gap-2 max-lg:flex-col w-full">
           <div className="flex flex-row gap-1 items-center">
-            <p className="text-md font-bold">{title}</p>
+            <div className=" flex flex-row gap-2 items-center">
+              {iconSrc && <Image alt="" width={35} height={35} src={iconSrc} />}
+              <p className="text-md font-bold">{title}</p>
+            </div>
 
             <Button
               radius="full"
@@ -48,9 +54,7 @@ export const TokenCard = (props: TokenCardProps) => {
           </div>
           <div className="py-6 flex flex-col justify-between items-start  w-full">
             <div className="flex flex-row gap-2 items-start w-full justify-end">
-              <div>
-                <p className="text-sm">{endContent}</p>
-              </div>
+              <div className="text-sm">{endContent}</div>
 
               {symbol && <p className="text-sm">{symbol}</p>}
 

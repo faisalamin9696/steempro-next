@@ -1,13 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
-import { useRouter } from "next13-progressbar";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import SAvatar from "./SAvatar";
 import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import FollowButton from "./FollowButton";
-import Link from "next/link";
 import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
 import FollowersCard from "./FollowersCard";
 import { twMerge } from "tailwind-merge";
@@ -17,6 +15,8 @@ import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 import { Accordion, AccordionItem } from "@heroui/accordion";
 import ProfileInfoCard2 from "./ProfileInfoCard";
 import { useSession } from "next-auth/react";
+import SLink from "./SLink";
+import { usePathname, useRouter } from "next/navigation";
 
 type Props = {
   account: AccountExt;
@@ -29,6 +29,12 @@ export default function AccountHeader(props: Props) {
   const { data: session } = useSession();
 
   const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    router.refresh();
+  }, [pathname]);
+
   const profileInfo: AccountExt =
     useAppSelector((state) => state.profileReducer.value)[
       account?.name ?? ""
@@ -52,10 +58,6 @@ export default function AccountHeader(props: Props) {
     "1024x200"
   );
 
-  useEffect(() => {
-    router.refresh();
-  }, [username, communityName]);
-
   return (
     <div
       className={twMerge("pb-4 relative self-center w-full", props.className)}
@@ -76,7 +78,7 @@ export default function AccountHeader(props: Props) {
           <SAvatar
             username={profileInfo.name}
             size="md"
-            className="hidden max-sm:block border-4 border-background"
+            className="hidden max-sm:block border-4 shadow-none border-background"
           />
         </div>
 
@@ -87,13 +89,12 @@ export default function AccountHeader(props: Props) {
                 <p>
                   {posting_json_metadata?.profile?.name ?? profileInfo.name}
                 </p>
-                <Link
-                  prefetch={false}
+                <SLink
                   href={`/@${profileInfo.name}`}
                   className=" font-normal text-sm hover:underline"
                 >
                   @{profileInfo.name}
-                </Link>
+                </SLink>
               </div>
 
               {/* <div className="flex items-center gap-[8px] md:hidden sm:flex">
@@ -146,9 +147,8 @@ export default function AccountHeader(props: Props) {
                 //   className=" bg-foreground/10"
                 //   variant="flat"
                 //   href="/"
-                //   prefetch={false}
                 //   startContent={<BsChatDots size={18} />}
-                //   as={Link}
+                //   as={SLink}
                 // >
                 //   Chat
                 // </Button>

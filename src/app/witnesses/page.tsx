@@ -4,36 +4,23 @@ import SAvatar from "@/components/SAvatar";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import { abbreviateNumber, formatNumberInMillions } from "@/libs/utils/helper";
-import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-} from "@heroui/table";
-
-import { Button } from "@heroui/button";
-import { Input } from "@heroui/input";
-import { Pagination } from "@heroui/pagination";
-import {
-  DropdownTrigger,
-  Dropdown,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/dropdown";
 import React, { useEffect, useState } from "react";
-import { FaChevronDown } from "react-icons/fa";
 import useSWR from "swr";
 import LoadingCard from "@/components/LoadingCard";
 import { RiLinkM } from "react-icons/ri";
-import Link from "next/link";
 import { replaceOldDomains } from "@/libs/utils/Links";
 import WitnessVoteButton from "@/components/WitnessVoteButton";
-import { capitalize } from "@/libs/constants/AppConstants";
 import { validate_account_name } from "@/libs/utils/ChainValidation";
+import SLink from "@/components/SLink";
+import TableWrapper from "@/components/wrappers/TableWrapper";
 
-const INITIAL_VISIBLE_COLUMNS = ["rank", "name", "received_votes", "action"];
+const INITIAL_VISIBLE_COLUMNS = [
+  "rank",
+  "name",
+  "received_votes",
+  "price",
+  "action",
+];
 
 const columns = [
   { name: "RANK", uid: "rank", sortable: true },
@@ -51,13 +38,11 @@ export default function page() {
   const { data, isLoading } = useSWR(URL, fetchSds<Witness[]>);
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const [allRows, setAllRows] = useState<Witness[]>([]);
-  let [witnessRef, setWitnessRef] = useState("");
 
   useEffect(() => {
     if (data) {
       const hashRef = window.location.hash.replace("#", "");
       const witnessRef = !validate_account_name(hashRef) ? hashRef : "";
-      setWitnessRef(witnessRef);
 
       if (witnessRef) {
         const index = data?.findIndex((account) => account.name === witnessRef);
@@ -71,57 +56,16 @@ export default function page() {
   }, [data]);
 
   const [filterValue, setFilterValue] = React.useState<any>("");
-  const [visibleColumns, setVisibleColumns] = React.useState<any>(
-    new Set(INITIAL_VISIBLE_COLUMNS)
-  );
-  const [statusFilter, setStatusFilter] = React.useState<any>("all");
-  const [rowsPerPage, setRowsPerPage] = React.useState<any>(10);
-  const [sortDescriptor, setSortDescriptor] = React.useState<any>({
-    column: "vests",
-    direction: "descending",
-  });
-  const [page, setPage] = React.useState(1);
-
-  const hasSearchFilter = Boolean(filterValue);
-
-  const headerColumns = React.useMemo(() => {
-    if (visibleColumns === "all") return columns;
-
-    return columns.filter((column) =>
-      Array.from(visibleColumns).includes(column.uid)
-    );
-  }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
     let filteredDelegations = [...allRows];
 
-    if (hasSearchFilter) {
-      filteredDelegations = filteredDelegations.filter((delegation) =>
-        delegation.name.toLowerCase().includes(filterValue.toLowerCase())
-      );
-    }
+    filteredDelegations = filteredDelegations.filter((delegation) =>
+      delegation.name.toLowerCase().includes(filterValue.toLowerCase())
+    );
 
     return filteredDelegations;
   }, [allRows, filterValue]);
-
-  const pages = Math.ceil(filteredItems?.length / rowsPerPage);
-
-  const items = React.useMemo(() => {
-    const start = 0;
-    const end = start + filteredItems.length;
-
-    return filteredItems.slice(start, end);
-  }, [page, filteredItems, rowsPerPage]);
-
-  const sortedItems = React.useMemo(() => {
-    return [...items].sort((a, b) => {
-      const first = a[sortDescriptor.column];
-      const second = b[sortDescriptor.column];
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
-
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    });
-  }, [sortDescriptor, items]);
 
   const renderCell = React.useCallback((witness: Witness, columnKey) => {
     const cellValue = witness[columnKey];
@@ -132,20 +76,15 @@ export default function page() {
           <div className="flex flex-row items-center">
             <div className="flex gap-2 items-center">
               <SAvatar size="xs" username={witness.name} />
-              <Link
-                prefetch={false}
+              <SLink
                 className=" hover:text-blue-500"
                 href={`/@${witness.name}`}
               >
                 {witness.name}
-              </Link>
-              <Link
-                prefetch={false}
-                target="_blank"
-                href={replaceOldDomains(witness.url)}
-              >
+              </SLink>
+              <SLink target="_blank" href={replaceOldDomains(witness.url)}>
                 <RiLinkM className="text-lg" />
-              </Link>
+              </SLink>
             </div>
           </div>
         );
@@ -178,8 +117,12 @@ export default function page() {
 
       case "price":
         return (
-          <div className="text-bold text-small">
+          <div className="flex flex-col gap-1 text-bold text-small">
             <p>{witness.reported_price.base}</p>
+            <TimeAgoWrapper
+              className="text-bold text-tiny text-default-600"
+              created={witness.last_price_report * 1000}
+            />
           </div>
         );
 
@@ -188,228 +131,33 @@ export default function page() {
     }
   }, []);
 
-  const onNextPage = React.useCallback(() => {
-    if (page < pages) {
-      setPage(page + 1);
-    }
-  }, [page, pages]);
-
-  const onPreviousPage = React.useCallback(() => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  }, [page]);
-
-  const onRowsPerPageChange = React.useCallback((e) => {
-    setRowsPerPage(Number(e.target.value));
-    setPage(1);
-  }, []);
-
-  const onSearchChange = React.useCallback((value) => {
-    if (value) {
-      setFilterValue(value);
-      setPage(1);
-    } else {
-      setFilterValue("");
-    }
-  }, []);
-
-  const onClear = React.useCallback(() => {
-    setFilterValue("");
-    setPage(1);
-  }, []);
-
-  const topContent = React.useMemo(() => {
-    return (
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3 items-center">
-          <Input
-            isClearable
-            className="w-full sm:max-w-[25%]"
-            placeholder="Search..."
-            value={filterValue}
-            onClear={() => onClear()}
-            onValueChange={onSearchChange}
-          />
-          <div className="flex gap-3">
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<FaChevronDown className="text-small" />}
-                  variant="flat"
-                >
-                  Columns
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns}
-                selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
-              >
-                {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {capitalize(column.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            {/* <Button size="sm" onClick={() => setTransferModal(!transferModal)}
-              color="primary" endContent={<FaPlus />}>
-              Add New
-            </Button> */}
-          </div>
-        </div>
-        <div className="flex items-center justify-end">
-          {/* <div></div> */}
-          {/* <span className="text-default-400 text-small">Total {allRows.length} delegations</span> */}
-          <label className="flex items-center text-default-400 text-small">
-            Rows per page:
-            <select
-              className="bg-transparent outline-none text-default-400 text-small"
-              onChange={onRowsPerPageChange}
-            >
-              <option value="10">10</option>
-              <option value="20">20</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-              <option value="250">250</option>
-            </select>
-          </label>
-        </div>
-      </div>
-    );
-  }, [
-    filterValue,
-    statusFilter,
-    visibleColumns,
-    onRowsPerPageChange,
-    allRows?.length,
-    onSearchChange,
-    hasSearchFilter,
-  ]);
-
-  const bottomContent = React.useMemo(() => {
-    return (
-      !!pages && (
-        <div className="flex justify-between items-center">
-          <Pagination
-            isCompact
-            showControls
-            showShadow
-            color="primary"
-            page={page}
-            total={pages}
-            onChange={setPage}
-          />
-          <div className="hidden sm:flex w-[30%] justify-end gap-2">
-            <Button
-              isDisabled={pages === 1}
-              size="sm"
-              variant="flat"
-              onPress={onPreviousPage}
-            >
-              Previous
-            </Button>
-            <Button
-              isDisabled={pages === 1}
-              size="sm"
-              variant="flat"
-              onPress={onNextPage}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
-      )
-    );
-  }, [items.length, page, pages, hasSearchFilter]);
-
-  const classNames = React.useMemo(
-    () => ({
-      wrapper: ["max-h-[382px]", "max-w-3xl"],
-      th: ["bg-transparent", "text-default-500", "border-b", "border-divider"],
-      td: [
-        "",
-        // changing the rows border radius
-        // first
-        "group-data-[first=true]:first:before:rounded-none",
-        "group-data-[first=true]:last:before:rounded-none",
-        // middle
-        "group-data-[middle=true]:before:rounded-none",
-        // last
-        "group-data-[last=true]:first:before:rounded-none",
-        "group-data-[last=true]:last:before:rounded-none",
-      ],
-    }),
-    []
-  );
-
   return (
     <div className="flex flex-col gap-4 overflow-hidden p-2">
-      <div className="flex flex-col gap-1">
-        <p className="text-lg font-semibold">
+      <div className="flex flex-col items-center gap-2">
+        <p className="text-blue-500 text-3xl font-semibold">
           Steem Witnesses (aka "Block Producers")
         </p>
-        <p className="text-tiny">{`You have ${
-          30 - (loginInfo?.witness_votes?.length || 0)
-        } votes remaining. You can vote for a maximum of 30 witnesses.`}</p>
+        <p className="text-xs opacity-disabled">
+          {`You have ${
+            30 - (loginInfo?.witness_votes?.length || 0)
+          } votes remaining. You can vote for a maximum of 30 witnesses.`}
+        </p>
       </div>
 
       {isLoading ? (
         <LoadingCard />
       ) : (
         allRows && (
-          <Table
-            aria-label="Delegation table"
-            isHeaderSticky
-            removeWrapper
-            bottomContent={bottomContent}
-            bottomContentPlacement="outside"
-            classNames={classNames}
-            sortDescriptor={sortDescriptor}
-            topContent={topContent}
-            topContentPlacement="outside"
-            onSortChange={setSortDescriptor}
-            isCompact
-            isStriped
-          >
-            <TableHeader columns={headerColumns}>
-              {(column) => (
-                <TableColumn
-                  key={column.uid}
-                  align={column.uid === "actions" ? "center" : "start"}
-                  allowsSorting={column.sortable}
-                >
-                  {column.name}
-                </TableColumn>
-              )}
-            </TableHeader>
-            <TableBody
-              emptyContent={"No data found"}
-              items={sortedItems.slice(
-                (page - 1) * rowsPerPage,
-                page * rowsPerPage
-              )}
-            >
-              {(item) => (
-                <TableRow
-                  key={`${item.rank}-${item.name}`}
-                  className={
-                    item.name === witnessRef
-                      ? "bg-green-600/20  animate-appearance-in !rounded-2xl"
-                      : ""
-                  }
-                >
-                  {(columnKey) => (
-                    <TableCell>{renderCell(item, columnKey)}</TableCell>
-                  )}
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+          <TableWrapper
+            tableColumns={columns}
+            initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
+            filterValue={filterValue}
+            onFilterValueChange={setFilterValue}
+            filteredItems={filteredItems}
+            renderCell={renderCell}
+            sortDescriptor={{ column: "rank", direction: "ascending" }}
+
+          />
         )
       )}
     </div>

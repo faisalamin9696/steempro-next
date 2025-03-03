@@ -10,7 +10,6 @@ import { persistQueryClient } from "@tanstack/react-query-persist-client";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import { compress, decompress } from "lz-string";
 import { AuthProvider } from "@/components/auth/AuthProvider";
-import { ThemeProvider } from "next-themes";
 import LoadingCard from "@/components/LoadingCard";
 import { SWRConfig } from "swr";
 import { fetchSds } from "@/libs/constants/AppFunctions";
@@ -20,6 +19,7 @@ import { supabase } from "@/libs/supabase";
 import PiwikPro from "@piwikpro/react-piwik-pro";
 import DrawerContent from "@/components/navbar/components/DrawerContent";
 import AppNavbar from "@/components/navbar/AppNavbar";
+import { ThemeProvider } from "next-themes";
 
 interface Props {
   children: React.ReactNode;
@@ -51,7 +51,8 @@ export function Providers(props: Props) {
         refetchOnWindowFocus: false,
         retryDelay: 5000,
         refetchOnReconnect: true,
-        gcTime: 1000 * 60 * 60 * 24 * 4, // 4 days
+        gcTime: 1000 * 60 * 60 * 24 * 4, // 4 days,
+        staleTime: 1000 * 60 * 5,
       },
     },
   });

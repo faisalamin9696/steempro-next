@@ -14,7 +14,6 @@ import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
 import { Divider } from "@heroui/divider";
 
 import Image from "next/image";
-import Link from "next/link";
 import React, { useMemo, useState } from "react";
 import {
   FaRegBell,
@@ -28,8 +27,7 @@ import { IoFlash, IoLogOut } from "react-icons/io5";
 import { LuPencilLine } from "react-icons/lu";
 import { MdSearch } from "react-icons/md";
 import { PiUserSwitchFill } from "react-icons/pi";
-import { BorderColorMap, keysColorMap } from "../auth/AccountItemCard";
-import { signOut, signIn } from "@/auth";
+import { BorderColorMap } from "../auth/AccountItemCard";
 import { useAppSelector, useAppDispatch } from "@/libs/constants/AppFunctions";
 import { logoutHandler } from "@/libs/redux/reducers/LoginReducer";
 import {
@@ -41,7 +39,7 @@ import {
   getSessionKey,
   removeCredentials,
 } from "@/libs/utils/user";
-import { useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { useLogin } from "../auth/AuthProvider";
 import AppDrawer from "./components/Drawer";
@@ -50,6 +48,7 @@ import NotificationsModal from "../NotificationsModal";
 import SearchModal from "../SearchModal";
 import SAvatar from "../SAvatar";
 import { twMerge } from "tailwind-merge";
+import SLink from "../SLink";
 
 function AppNavbar() {
   const { authenticateUser, isAuthorized, credentials, setCredentials } =
@@ -69,7 +68,7 @@ function AppNavbar() {
   const { isOpen, onOpenChange } = useDisclosure();
 
   // validate the local storage auth
-  useMemo(() => {
+  useMemo(async () => {
     const credentials = getCredentials();
     if (status === "authenticated") {
       if (!sessionKey && !getSessionToken(session.user?.name)) {
@@ -78,12 +77,12 @@ function AppNavbar() {
         setLocked(false);
       }
       if (!credentials?.username) {
-        signOut();
+        await signOut();
       }
     }
 
     if (status === "unauthenticated" && !!credentials?.username) {
-      signIn("credentials", {
+      await signIn("credentials", {
         username: credentials.username,
         redirect: false,
       });
@@ -112,7 +111,7 @@ function AppNavbar() {
     if (isPopOpen) setIsPopOpen(false);
   }
 
-  function handleLogout() {
+  async function handleLogout() {
     authenticateUser();
     if (!isAuthorized()) {
       return;
@@ -126,7 +125,7 @@ function AppNavbar() {
 
     removeCredentials(credentials);
     dispatch(logoutHandler());
-    signOut();
+    await signOut();
     toast.success(`${credentials.username} logged out successfully`);
   }
   return (
@@ -138,7 +137,7 @@ function AppNavbar() {
             onAccountSwitch={() => setIsAccOpen(!isAccOpen)}
             handleLogout={onOpenChange}
           />
-          <Link href={"/"} className="hidden lg:block">
+          <SLink href={"/"} className="hidden lg:block">
             <Image
               src={"/logo-default.png"}
               alt="logo"
@@ -147,8 +146,8 @@ function AppNavbar() {
               width={160}
               style={{ height: "auto" }}
             />
-          </Link>
-          <Link href={"/"} className="block lg:hidden">
+          </SLink>
+          <SLink href={"/"} className="block lg:hidden">
             <Image
               priority
               src={"/logo192.png"}
@@ -156,7 +155,7 @@ function AppNavbar() {
               height={40}
               width={40}
             />
-          </Link>
+          </SLink>
         </div>
         {/* <!-- Right elements --> */}
         <div className="relative flex items-center">
@@ -190,9 +189,8 @@ function AppNavbar() {
             </Button>
 
             <Button
-              as={Link}
+              as={SLink}
               size="sm"
-              prefetch={false}
               isIconOnly
               radius="md"
               variant="light"
@@ -298,8 +296,7 @@ function AppNavbar() {
                       size="md"
                       variant="light"
                       className="w-full justify-start items-center px-1"
-                      as={Link}
-                      prefetch={false}
+                      as={SLink}
                       href={`/@${session?.user?.name}`}
                       onPress={handleItemClick}
                       startContent={<FaUserCircle className="text-xl" />}
@@ -311,8 +308,7 @@ function AppNavbar() {
                       size="md"
                       variant="light"
                       className="w-full justify-start items-center px-1"
-                      as={Link}
-                      prefetch={false}
+                      as={SLink}
                       href={`/@${session?.user?.name}/wallet`}
                       onPress={handleItemClick}
                       startContent={<FaWallet className="text-xl" />}

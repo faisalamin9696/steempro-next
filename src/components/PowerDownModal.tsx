@@ -22,7 +22,8 @@ import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import moment from "moment";
 import { isNumeric } from "@/libs/utils/helper";
 import { Slider } from "@heroui/slider";
-import { steemToVest, vestToSteem } from "@/libs/steem/sds";
+import { steemToVest, vestToSteem } from "@/libs/helper/vesting";
+
 import KeychainButton from "./KeychainButton";
 
 interface Props {

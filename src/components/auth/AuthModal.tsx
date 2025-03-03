@@ -11,11 +11,7 @@ import { Button } from "@heroui/button";
 import { Spinner } from "@heroui/spinner";
 import { Checkbox } from "@heroui/checkbox";
 import { Input } from "@heroui/input";
-import {
-  useAppSelector,
-  useAppDispatch,
-  awaitTimeout,
-} from "@/libs/constants/AppFunctions";
+import { useAppSelector, useAppDispatch } from "@/libs/constants/AppFunctions";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { getKeyType, validateKeychain } from "@/libs/steem/condenser";
 import { getAuthorExt } from "@/libs/steem/sds";
@@ -34,7 +30,6 @@ import {
 import { toast } from "sonner";
 import { signIn, useSession } from "next-auth/react";
 import AccountItemCard from "./AccountItemCard";
-import Link from "next/link";
 import { SignupLink } from "@/libs/constants/AppConstants";
 import secureLocalStorage from "react-secure-storage";
 import { encryptPrivateKey } from "@/libs/utils/encryption";
@@ -42,6 +37,8 @@ import { supabase } from "@/libs/supabase";
 import KeychainButton from "../KeychainButton";
 import { useRouter } from "next/navigation";
 import SAvatar from "../SAvatar";
+import SLink from "../SLink";
+import { AsyncUtils } from "@/libs/utils/async.utils";
 
 interface Props {
   open: boolean;
@@ -125,7 +122,7 @@ export default function AuthModal(props: Props) {
     }
 
     setLoading(true);
-    await awaitTimeout(3);
+    await AsyncUtils.sleep(3);
 
     credentials = getCredentials(formData.password);
     if (!credentials?.key) {
@@ -298,7 +295,7 @@ export default function AuthModal(props: Props) {
     }
 
     setLoading(true);
-    await awaitTimeout(1);
+    await AsyncUtils.sleep(1);
     try {
       const account = await getAuthorExt(formData.username);
       if (account) {
@@ -342,7 +339,7 @@ export default function AuthModal(props: Props) {
     try {
       await validateKeychain();
       setLoading(true);
-      await awaitTimeout(1);
+      await AsyncUtils.sleep(1);
       const account = await getAuthorExt(formData.username);
       if (account) {
         window.steem_keychain.requestSignBuffer(
@@ -401,13 +398,12 @@ export default function AuthModal(props: Props) {
                     <div className="text-small text-default-500 items-center flex flex-row gap-1">
                       <p>to continue to</p>
                       <div className="flex items-center space-x-2">
-                        <Link
-                          prefetch={false}
+                        <SLink
                           className=" underline hover:text-blue-500"
                           href={`/@${loginInfo.name}`}
                         >
                           {loginInfo.name}
-                        </Link>
+                        </SLink>
                         <SAvatar
                           username={loginInfo.name}
                           className="shadow-lg cursor-pointer bg-foreground-900/40"
@@ -420,7 +416,7 @@ export default function AuthModal(props: Props) {
                   <div className=" flex flex-row gap-2 justify-between">
                     <p>Log in</p>
                     <KeychainButton
-                      size="md"
+                      size="sm"
                       isDisabled={loading}
                       onPress={() => {
                         handleKeychainLogin();
@@ -568,14 +564,13 @@ export default function AuthModal(props: Props) {
 
                     <div className="text-start text-small text-default-600">
                       Need to create an account?{" "}
-                      <Link
-                        prefetch={false}
+                      <SLink
                         className="hover:text-blue-500 font-semibold"
                         href={SignupLink}
                         target="_blank"
                       >
                         Sign up
-                      </Link>
+                      </SLink>
                     </div>
                     <div className="flex flex-row gap-2 overflow-x-auto p-1">
                       {!!!loginInfo.name &&
@@ -637,10 +632,10 @@ export default function AuthModal(props: Props) {
                                                     />
                                                     <p className="text-center text-small">
                                                         Already have an account?{" "}
-                                                        <Link size="sm"
+                                                        <SLink size="sm"
                                                             onClick={() => setSelected('login')}>
                                                             Login
-                                                        </Link>
+                                                        </SLink>
                                                     </p>
                                                     <div className="flex gap-2 justify-end">
                                                         <Button fullWidth color="primary" >

@@ -1,7 +1,7 @@
 "use client";
 
-import { awaitTimeout } from "@/libs/constants/AppFunctions";
 import { getActiveFeed } from "@/libs/steem/sds";
+import { AsyncUtils } from "@/libs/utils/async.utils";
 import React, { useEffect } from "react";
 
 function page() {
@@ -26,7 +26,7 @@ function page() {
         );
 
         allPosts.push(...posts);
-        awaitTimeout(1);
+        await AsyncUtils.sleep(1);
         if (posts?.length < 1000) {
           break;
         }

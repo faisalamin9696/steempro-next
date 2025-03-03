@@ -3,15 +3,9 @@
 import CommunityCard from "@/components/community/components/CommunityCard";
 import ErrorCard from "@/components/ErrorCard";
 import LoadingCard from "@/components/LoadingCard";
-import {
-  awaitTimeout,
-  fetchSds,
-  useAppSelector,
-} from "@/libs/constants/AppFunctions";
+import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import { ScrollShadow } from "@heroui/scroll-shadow";
 import { Button } from "@heroui/button";
-
-import Link from "next/link";
 import { GrAnnounce } from "react-icons/gr";
 import useSWR from "swr";
 import { HiMiniUserGroup } from "react-icons/hi2";
@@ -19,6 +13,8 @@ import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import EmptyList from "@/components/EmptyList";
 import { Accordion, AccordionItem } from "@heroui/accordion";
+import SLink from "@/components/SLink";
+import { AsyncUtils } from "@/libs/utils/async.utils";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -76,7 +72,7 @@ export default function HomeStart() {
   async function handleEndReached() {
     if (allCommunities) {
       setLoadingMore(true);
-      await awaitTimeout(2.5);
+      await AsyncUtils.sleep(2.5);
       const newRows = loadMoreRows(allCommunities, rows);
       setRows([...rows, ...newRows!]);
       setLoadingMore(false);
@@ -126,13 +122,12 @@ export default function HomeStart() {
                         key={index ?? annoucement.authPerm}
                         className="bg-white rounded-lg dark:bg-white/5 text-sm px-2 py-1"
                       >
-                        <Link
-                          prefetch={false}
+                        <SLink
                           className=" text-blue-400 hover:underline font-semibold"
                           href={`/@${annoucement.authPerm}`}
                         >
                           {annoucement.title}
-                        </Link>
+                        </SLink>
                         <p className="opacity-75 text-sm line-clamp-3 font-normal">
                           {annoucement.description}
                         </p>
@@ -151,13 +146,12 @@ export default function HomeStart() {
           aria-label="posts"
           title={
             <div className="flex items-center gap-2 ">
-              <Link
-                prefetch={false}
+              <SLink
                 className="text-medium font-semibold"
                 href={"/communities"}
               >
                 {"Top Communities"}
-              </Link>
+              </SLink>
             </div>
           }
         >

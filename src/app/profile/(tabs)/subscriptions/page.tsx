@@ -3,12 +3,12 @@
 import notFound from "@/app/not-found";
 import CommentSkeleton from "@/components/comment/components/CommentSkeleton";
 import CommunityCard from "@/components/community/components/CommunityCard";
+import SLink from "@/components/SLink";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { Button } from "@heroui/button";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import React from "react";
 import { LuPencilLine } from "react-icons/lu";
 import useSWR from "swr";
@@ -39,7 +39,7 @@ export default function ProfileSubsribtionsTab() {
     <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6">
       {data?.map((community, index) => {
         return (
-          <Link
+          <SLink
             key={index ?? community.id}
             className={`w-full`}
             href={
@@ -63,7 +63,7 @@ export default function ProfileSubsribtionsTab() {
                       isIconOnly
                       variant="flat"
                       title="Create post"
-                      as={Link}
+                      as={SLink}
                       href={
                         {
                           pathname: `/submit`,
@@ -82,7 +82,7 @@ export default function ProfileSubsribtionsTab() {
                 </div>
               }
             />
-          </Link>
+          </SLink>
         );
       })}
     </div>

@@ -12,7 +12,6 @@ import { useLogin } from "../auth/AuthProvider";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { filesize } from "filesize";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import ReactTextareaAutocomplete from "@webscopeio/react-textarea-autocomplete";
 import "@webscopeio/react-textarea-autocomplete/style.css";
 import SAvatar from "../SAvatar";
 import LoadingCard from "../LoadingCard";
@@ -57,6 +56,8 @@ export default memo(function EditorInput(props: EditorProps) {
 
   let { authenticateUser, isAuthorized, credentials } = useLogin();
   const { data: session } = useSession();
+  const ReactTextareaAutocomplete =
+    require("@webscopeio/react-textarea-autocomplete").default;
 
   const postInput = useRef<any>(null);
   const postBodyRef = useRef<HTMLDivElement>(null);
@@ -402,7 +403,7 @@ export default memo(function EditorInput(props: EditorProps) {
     toast.promise(
       async () => {
         // Testing
-        // await awaitTimeout(5);
+        // await AsyncUtils.sleep(5);
         // return true
         const data = await toBase64(image.file);
         let sign = await signImage(

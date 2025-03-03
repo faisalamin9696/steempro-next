@@ -5,11 +5,7 @@ import EditorInput from "@/components/editor/EditorInput";
 import ClearFormButton from "@/components/editor/components/ClearFormButton";
 import PublishButton from "@/components/editor/components/PublishButton";
 import { useLogin } from "@/components/auth/AuthProvider";
-import {
-  useAppSelector,
-  useAppDispatch,
-  awaitTimeout,
-} from "@/libs/constants/AppFunctions";
+import { useAppSelector, useAppDispatch } from "@/libs/constants/AppFunctions";
 import { addCommentHandler } from "@/libs/redux/reducers/CommentReducer";
 import { addRepliesHandler } from "@/libs/redux/reducers/RepliesReducer";
 import {
@@ -37,9 +33,10 @@ import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
 import { toast } from "sonner";
-import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { CustomEvent } from "@piwikpro/react-piwik-pro";
+import SLink from "../SLink";
+import { AsyncUtils } from "@/libs/utils/async.utils";
 
 export default function ReplyFooter({
   comment,
@@ -48,6 +45,7 @@ export default function ReplyFooter({
   className,
   isDeep,
   rootComment,
+  isEditing,
 }: {
   comment: Post;
   expanded?: boolean;
@@ -55,6 +53,7 @@ export default function ReplyFooter({
   className?: string;
   isDeep: boolean;
   rootComment: Post | Feed;
+  isEditing?: (isEdit: boolean) => void;
 }) {
   const postReplies =
     useAppSelector((state) => state.repliesReducer.values)[
@@ -72,6 +71,7 @@ export default function ReplyFooter({
   const queryKey = [`post-${rootComment.author}-${rootComment.permlink}`];
   const queryClient = useQueryClient();
   const [showEdit, setShowEdit] = useState(false);
+
   const [deletePopup, setDeletePopup] = useState(false);
   const [confirmationModal, setConfirmationModal] = useState<{
     isOpen: boolean;
@@ -93,6 +93,7 @@ export default function ReplyFooter({
   const toggleReply = () => setShowReply(!showReply);
   const toggleEdit = () => {
     setShowEdit(!showEdit);
+    isEditing && isEditing(!showEdit);
     dispatch(addCommentHandler({ ...comment, isEdit: !showEdit }));
   };
 
@@ -229,6 +230,7 @@ export default function ReplyFooter({
         last_update: time,
         body: body,
         is_new: 1,
+        isEdit: false,
       };
     } else {
       newComment = {
@@ -322,6 +324,7 @@ export default function ReplyFooter({
     onSettled(data, error, variables, context) {
       if (error) {
         toast.error(error.message || JSON.stringify(error));
+        setPosting(false);
         return;
       }
       const { postData } = variables;
@@ -347,7 +350,7 @@ export default function ReplyFooter({
     if (isAuthorized()) {
       setPosting(true);
 
-      await awaitTimeout(1);
+      await AsyncUtils.sleep(1);
       try {
         // generating the permlink for the comment author
         let permlink = generateReplyPermlink(comment.author);
@@ -414,109 +417,109 @@ export default function ReplyFooter({
   return (
     <div className={className}>
       <div className="flex flex-col gap-2">
-        {!comment.isEdit && (
-          <div className="flex justify-between items-center focus:border-0 focus:ring-0 focus:outline-none">
-            <CommentFooter isReply comment={comment} className="p-0" />
+        <div className="flex justify-between items-center focus:border-0 focus:ring-0 focus:outline-none">
+          <CommentFooter isReply comment={comment} className="p-0" />
 
-            <div className="flex">
-              {canReply && (
-                <Button
-                  size="sm"
-                  onPress={() => {
-                    toggleReply();
-                  }}
-                  variant="light"
-                  isDisabled={showReply || showEdit}
-                  className="text-tiny min-w-0 min-h-0"
+          <div className="flex">
+            {canReply && (
+              <Button
+                size="sm"
+                onPress={() => {
+                  toggleReply();
+                }}
+                variant="light"
+                isDisabled={showReply || showEdit}
+                className="text-tiny min-w-0 min-h-0"
+              >
+                Reply
+              </Button>
+            )}
+
+            {canEdit && (
+              <Button
+                size="sm"
+                onPress={() => {
+                  toggleEdit();
+                }}
+                variant="light"
+                isDisabled={showReply || showEdit}
+                className="text-tiny min-w-0 min-h-0"
+              >
+                Edit
+              </Button>
+            )}
+
+            {canDelete && (
+              <div>
+                <Popover
+                  isOpen={deletePopup}
+                  onOpenChange={(open) => setDeletePopup(open)}
+                  placement={"top-start"}
                 >
-                  Reply
-                </Button>
-              )}
-
-              {canEdit && (
-                <Button
-                  size="sm"
-                  onPress={() => {
-                    toggleEdit();
-                  }}
-                  variant="light"
-                  isDisabled={showReply || showEdit}
-                  className="text-tiny min-w-0 min-h-0"
-                >
-                  Edit
-                </Button>
-              )}
-
-              {canDelete && (
-                <div>
-                  <Popover
-                    isOpen={deletePopup}
-                    onOpenChange={(open) => setDeletePopup(open)}
-                    placement={"top-start"}
-                  >
-                    <PopoverTrigger>
-                      <Button
-                        size="sm"
-                        variant="light"
-                        isLoading={deleteMutation.isPending}
-                        isDisabled={deleteMutation.isPending}
-                        className="text-tiny min-w-0 min-h-0"
-                      >
-                        Delete
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent>
-                      <div className="px-1 py-2">
-                        <div className="text-small font-bold">
-                          {"Confirmation"}
-                        </div>
-                        <div className="text-tiny flex">
-                          {"Do you really want to delete?"}
-                        </div>
-
-                        <div className="text-tiny flex mt-2 space-x-2">
-                          <Button
-                            onPress={() => setDeletePopup(false)}
-                            size="sm"
-                            color="default"
-                          >
-                            No
-                          </Button>
-                          <Button
-                            size="sm"
-                            color="danger"
-                            variant="solid"
-                            onPress={() => {
-                              setDeletePopup(false);
-                              handleDelete();
-                            }}
-                          >
-                            Yes
-                          </Button>
-                        </div>
+                  <PopoverTrigger>
+                    <Button
+                      size="sm"
+                      variant="light"
+                      isLoading={deleteMutation.isPending}
+                      isDisabled={
+                        deleteMutation.isPending || showReply || showEdit
+                      }
+                      className="text-tiny min-w-0 min-h-0"
+                    >
+                      Delete
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <div className="px-1 py-2">
+                      <div className="text-small font-bold">
+                        {"Confirmation"}
                       </div>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-              )}
+                      <div className="text-tiny flex">
+                        {"Do you really want to delete?"}
+                      </div>
 
-              {canMute && (
-                <Button
-                  size="sm"
-                  isLoading={unmuteMutation.isPending}
-                  onPress={() => {
-                    handleMute();
-                  }}
-                  variant="light"
-                  isDisabled={unmuteMutation.isPending}
-                  className="text-tiny min-w-0 min-h-0"
-                >
-                  {comment.is_muted ? "Unmute" : "Mute"}
-                </Button>
-              )}
-            </div>
+                      <div className="text-tiny flex mt-2 space-x-2">
+                        <Button
+                          onPress={() => setDeletePopup(false)}
+                          size="sm"
+                          color="default"
+                        >
+                          No
+                        </Button>
+                        <Button
+                          size="sm"
+                          color="danger"
+                          variant="solid"
+                          onPress={() => {
+                            setDeletePopup(false);
+                            handleDelete();
+                          }}
+                        >
+                          Yes
+                        </Button>
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            )}
+
+            {canMute && (
+              <Button
+                size="sm"
+                isLoading={unmuteMutation.isPending}
+                onPress={() => {
+                  handleMute();
+                }}
+                variant="light"
+                isDisabled={unmuteMutation.isPending || showReply || showEdit}
+                className="text-tiny min-w-0 min-h-0"
+              >
+                {comment.is_muted ? "Unmute" : "Mute"}
+              </Button>
+            )}
           </div>
-        )}
+        </div>
 
         <div className="flex items-center justify-between w-full">
           {!expanded && !!comment.children && (
@@ -524,8 +527,7 @@ export default function ReplyFooter({
               {isDeep ? (
                 <Button
                   target="_blank"
-                  as={Link}
-                  prefetch={false}
+                  as={SLink}
                   href={`/${comment.category}/@${comment.author}/${comment.permlink}`}
                   variant="flat"
                   className="self-start h-6 min-w-0 px-2"

@@ -42,8 +42,8 @@ import { useLogin } from "./auth/AuthProvider";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { Badge } from "@heroui/badge";
+import SLink from "./SLink";
 
 interface Props {
   username: string | null;
@@ -292,13 +292,12 @@ export default function NotificationsTable(props: Props) {
                   <SAvatar size="xs" username={notification.account} />
                 </Badge>
                 <div>
-                  <Link
-                    prefetch={false}
+                  <SLink
                     className=" hover:text-blue-500"
                     href={`/@${notification.account}`}
                   >
                     {notification.account}
-                  </Link>
+                  </SLink>
                   {notification.type === "vote" && (
                     <p className="text-tiny">${voteValue?.toLocaleString()}</p>
                   )}
@@ -332,7 +331,7 @@ export default function NotificationsTable(props: Props) {
           return cellValue;
       }
     },
-    []
+    [globalData]
   );
 
   const onSearchChange = React.useCallback((value) => {
@@ -383,28 +382,7 @@ export default function NotificationsTable(props: Props) {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            {/* <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex">
-                                <Button size="sm" endContent={<FaChevronDown className="text-small" />} variant="flat">
-                                    Columns
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
 
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={visibleColumns}
-                                selectionMode="multiple"
-                                onSelectionChange={setVisibleColumns}
-                            >
-                                {columns.map((column) => (
-                                    <DropdownItem key={column.uid} className="capitalize">
-                                        {capitalize(column.name)}
-                                    </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        </Dropdown> */}
             {isSelf && (
               <Button
                 size="sm"
@@ -513,25 +491,19 @@ export default function NotificationsTable(props: Props) {
               {(item) => {
                 return (
                   <TableRow
-                    onClick={() => {
-                      router.push(getTargetUrl(item));
-                      router.refresh();
-                      props?.onClose && props.onClose();
-                    }}
                     key={JSON.stringify(item)}
                     className="cursor-pointer hover:bg-foreground/10"
                   >
                     {(columnKey) => (
                       <TableCell>
-                        <Link
-                          prefetch={false}
+                        <SLink
                           href={getTargetUrl(item)}
                           onClick={() => {
                             props?.onClose && props.onClose();
                           }}
                         >
                           {renderCell(item, columnKey)}
-                        </Link>
+                        </SLink>
                       </TableCell>
                     )}
                   </TableRow>

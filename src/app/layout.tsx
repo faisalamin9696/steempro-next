@@ -2,15 +2,16 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./markdown.scss";
 import { Toaster } from "sonner";
-import clsx from "clsx";
 import { AppStrings } from "@/libs/constants/AppStrings";
 import { SessionProvider } from "next-auth/react";
-import { auth, BASE_PATH } from "@/auth";
 import { Providers } from "./providers";
+import { auth } from "@/auth";
+import Script from "next/script";
 // export const runtime = 'edge' // 'nodejs' (default) | 'edge'
 // const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.steempro.com"),
   title: {
     default: "SteemPro",
     template: "%s | SteemPro",
@@ -29,12 +30,24 @@ export const metadata: Metadata = {
   openGraph: {
     siteName: "SteemPro",
     url: "https://www.steempro.com",
-    images: ["https://i.ibb.co/THNsSf4/og.jpg"],
+    images: [
+      {
+        url: "/api/og",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     site: "@steemproblogs",
-    images: ["https://i.ibb.co/THNsSf4/og.jpg"],
+    images: [
+      {
+        url: "/api/og",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
 };
 
@@ -44,14 +57,14 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
-  if (session && session.user) {
-    session.user = {
-      name: session.user.name,
-      email: session.user.email,
-    };
-  }
+
   return (
     <html lang="en" suppressHydrationWarning={true}>
+      <script
+        async
+        src="https://www.googletagmanager.com/gtag/js?id=G-0P05PL9Q91"
+      ></script>
+
       <link
         rel="dns-prefetch"
         href="https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg"
@@ -62,14 +75,22 @@ export default async function RootLayout({
       />
       <link rel="preconnect " href={AppStrings.sds_base_url} />
 
-      <body className={clsx()}>
-        <SessionProvider session={session} basePath={BASE_PATH}>
+      <body>
+        <SessionProvider session={session}>
           <Providers>
             {children}
             <Toaster richColors closeButton />
           </Providers>
         </SessionProvider>
       </body>
+
+      <Script
+        content={`
+         window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-0P05PL9Q91');`}
+      />
     </html>
   );
 }

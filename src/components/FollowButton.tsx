@@ -138,21 +138,17 @@ export default function FollowButton(props: Props) {
           isDisabled={isPending}
           radius="full"
           size={size ?? "md"}
-          className={twMerge(
-            isFollowing
-              ? "bg-foreground/10"
-              : "text-white bg-[#115BCA] hover:bg-[#1870F4]"
-          )}
+          color={isFollowing ? "default" : "primary"}
           // isLoading={isPending}
           title={isFollowing ? "Unfollow" : "Follow"}
-          variant={isFollowing ? "flat" : "flat"}
+          variant={"solid"}
           onPress={handleFollow}
           // isIconOnly={isPending}
           startContent={
             isPending ? (
               <CircularProgress
                 size="sm"
-                classNames={{ svg: " h-[18px] w-[18px] text-foreground" }}
+                classNames={{ svg: " h-[18px] w-[18px]" }}
               />
             ) : isFollowing ? (
               <SlMinus size={18} />

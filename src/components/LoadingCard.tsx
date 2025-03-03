@@ -1,12 +1,15 @@
-import React from 'react'
+import React from "react";
 
 export default function LoadingCard() {
-    return (
-        <div className="flex items-center justify-center m-6 rounded-lg">
-            <div className={`px-3 py-1 text-xs font-medium 
-            leading-none text-center text-blue-800 bg-blue-200 
-            rounded-full animate-pulse dark:bg-blue-900 
-            dark:text-blue-200`}>Loading...</div>
-        </div>
-    )
+  return (
+    <div className="flex items-center justify-center m-6 rounded-lg">
+      <div
+        className={`px-3 py-1 text-xs font-medium 
+            leading-none text-center bg-blue-900 text-white
+            rounded-full animate-pulse`}
+      >
+        Loading...
+      </div>
+    </div>
+  );
 }

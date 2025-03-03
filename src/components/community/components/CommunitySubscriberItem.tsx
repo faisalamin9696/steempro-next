@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { User } from "@heroui/user";
 import { getResizedAvatar } from "@/libs/utils/image";
 import clsx from "clsx";
-import Link from "next/link";
 import { empty_comment } from "@/libs/constants/Placeholders";
 import { Button } from "@heroui/button";
 import { FaPencil } from "react-icons/fa6";
 import EditRoleModal from "../../EditRoleModal";
 import { Role as RoleCheck } from "@/libs/utils/community";
+import SLink from "@/components/SLink";
 
 interface Props {
   item: Role;
@@ -41,13 +41,12 @@ export const CommunitySubscriberItem = (props: Props) => {
         name={
           <div className="flex flex-col items-start gap-2">
             <div className="flex gap-2 items-center">
-              <Link
-                prefetch={false}
+              <SLink
                 className="hover:text-blue-500"
                 href={`/@${item.account}/posts`}
               >
                 {item.account}
-              </Link>
+              </SLink>
 
               <p
                 className={clsx(
@@ -78,7 +77,7 @@ export const CommunitySubscriberItem = (props: Props) => {
           {
             className: " cursor-pointer",
             src: getResizedAvatar(item.account),
-            as: Link,
+            as: SLink,
             href: `/@${item.account}/posts`,
           } as any
         }

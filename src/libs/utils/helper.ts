@@ -1,4 +1,7 @@
 import { NavigateOptions } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import NumAbbr from "number-abbreviate";
+
+const numAbbr = new NumAbbr();
 
 export const validateCommunity = (tag?: string): boolean => {
   if (!tag) return false;
@@ -21,40 +24,44 @@ export function formatNumberInMillions(value: number): string {
   return `${formattedValue}`;
 }
 
-export function abbreviateNumber(
-  number?: number,
-  decimalPlaces = 1,
-  outputOnlyM: boolean = false
-): string | number {
-  if (number === 0 || !number) return "0";
-
-  const SI_SYMBOL = ["", "K", "M", "B", "T", "Q"];
-
-  const tier = (Math.log10(Math.abs(number)) / 3) | 0;
-
-  if (tier === 0) return number.toFixed(0);
-
-  if (tier >= 3 && outputOnlyM)
-    return `${(number / 10 ** (tier * 3)).toFixed(0)}M`;
-
-  const suffix = SI_SYMBOL[tier];
-  const scale = Math.pow(10, tier * 3);
-
-  const scaled = number / scale;
-
-  const decimalPart = String(scaled).substring(
-    scaled.toString().indexOf(".") + 1
-  );
-  if (parseFloat(decimalPart) === 0) {
-    decimalPlaces = 0;
-  }
-
-  let formattedNumber = scaled.toFixed(decimalPlaces);
-
-  // Remove decimal part if it's zero
-
-  return formattedNumber + suffix;
+export function abbreviateNumber(number, fraction: number = 2) {
+  return numAbbr.abbreviate(number, fraction);
 }
+
+// export function abbreviateNumber(
+//   number?: number,
+//   decimalPlaces = 1,
+//   outputOnlyM: boolean = false
+// ): string | number {
+//   if (number === 0 || !number) return "0";
+
+//   const SI_SYMBOL = ["", "K", "M", "B", "T", "Q"];
+
+//   const tier = (Math.log10(Math.abs(number)) / 3) | 0;
+
+//   if (tier === 0) return number.toFixed(0);
+
+//   if (tier >= 3 && outputOnlyM)
+//     return `${(number / 10 ** (tier * 3)).toFixed(decimalPlaces)}M`;
+
+//   const suffix = SI_SYMBOL[tier];
+//   const scale = Math.pow(10, tier * 3);
+
+//   const scaled = number / scale;
+
+//   const decimalPart = String(scaled).substring(
+//     scaled.toString().indexOf(".") + 1
+//   );
+//   if (parseFloat(decimalPart) === 0) {
+//     decimalPlaces = 0;
+//   }
+
+//   let formattedNumber = scaled.toFixed(decimalPlaces);
+
+//   // Remove decimal part if it's zero
+
+//   return formattedNumber + suffix;
+// }
 export const toBase64 = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();

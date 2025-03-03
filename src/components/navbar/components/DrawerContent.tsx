@@ -1,13 +1,14 @@
+import SLink from "@/components/SLink";
 import ThemeSwitch from "@/components/ThemeSwitch";
 import { DiscordServerLink, GitHubLink } from "@/libs/constants/AppConstants";
 import { Button } from "@heroui/button";
 import { Divider } from "@heroui/divider";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 import { HiOutlineUserGroup, HiUserGroup } from "react-icons/hi2";
 import { IoHome, IoHomeOutline } from "react-icons/io5";
+import { MdOutlinePolicy, MdPolicy } from "react-icons/md";
 import {
   RiCalendar2Fill,
   RiCalendar2Line,
@@ -103,16 +104,23 @@ function DrawerContent() {
       externalLink: true,
     },
     {
+      title: "Privacy Policy",
+      href: `/policy`,
+      unFocusedIcon: <MdOutlinePolicy size={iconSize} />,
+      focusedIcon: <MdPolicy size={iconSize} />,
+    },
+    {
       title: "About",
       href: `/about`,
       unFocusedIcon: <RiInformation2Line size={iconSize} />,
       focusedIcon: <RiInformation2Fill size={iconSize} />,
     },
   ];
+
   return (
     <div className="scrollbar-thin flex flex-col px-4 py-4 pb-2 justify-between overflow-auto h-full-minus-64">
       <div className=" flex flex-col gap-2">
-        {menuItems.map((item) => {
+        {menuItems.map((item, index) => {
           const isLogin = !!session?.user?.name;
           const isFocused = item.href === pathname;
 
@@ -120,7 +128,7 @@ function DrawerContent() {
             return <></>;
           }
           return (
-            <div className=" flex flex-col">
+            <div className=" flex flex-col" key={index}>
               <Button
                 radius="sm"
                 variant={isFocused ? "solid" : "light"}
@@ -128,7 +136,7 @@ function DrawerContent() {
                   "w-full justify-start gap-4",
                   isFocused && " font-semibold"
                 )}
-                as={Link}
+                as={SLink}
                 target={item.externalLink ? "_blank" : undefined}
                 href={item.href}
                 startContent={isFocused ? item.focusedIcon : item.unFocusedIcon}

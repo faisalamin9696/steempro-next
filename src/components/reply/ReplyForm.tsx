@@ -21,6 +21,8 @@ export default memo(function ReplyForm(props: Props) {
   const isDeep = comment?.depth - rootComment?.depth > 6;
 
   const [expanded, setExpanded] = useState(!isDeep);
+  const [isEditing, setIsEditing] = useState(false);
+
   const getReplies = (permlink) => {
     return postReplies?.filter((item) => item.parent_permlink === permlink);
   };
@@ -31,6 +33,7 @@ export default memo(function ReplyForm(props: Props) {
     <div className="flex flex-col w-full gap-4">
       <div className="flex flex-col gap-2 p-2 bg-foreground/5 w-full rounded-lg">
         <ReplyBody
+          hideBody={isEditing}
           comment={comment}
           isDeep={isDeep}
           rightContent={
@@ -54,6 +57,7 @@ export default memo(function ReplyForm(props: Props) {
           isDeep={isDeep}
           rootComment={rootComment}
           toggleExpand={() => setExpanded(!expanded)}
+          isEditing={setIsEditing}
         />
       </div>
 

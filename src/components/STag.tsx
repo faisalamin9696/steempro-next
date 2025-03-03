@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { twMerge } from "tailwind-merge";
+import SLink from "./SLink";
 
 interface Props {
   className?: string;
@@ -11,8 +11,7 @@ interface Props {
 export default function STag(props: Props) {
   const { className, content, tag, onlyText, isDisabled } = props;
   return (
-    <Link
-      prefetch={false}
+    <SLink
       title={tag}
       className={twMerge(
         isDisabled ? "pointer-events-none" : "",
@@ -25,6 +24,6 @@ export default function STag(props: Props) {
       href={`/trending/${tag}`}
     >
       <p>{content ?? tag}</p>
-    </Link>
+    </SLink>
   );
 }

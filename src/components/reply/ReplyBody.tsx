@@ -3,7 +3,6 @@ import SAvatar from "@/components/SAvatar";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import clsx from "clsx";
-import Link from "next/link";
 import React, { Key, useState } from "react";
 import RoleTitleCard from "../RoleTitleCard";
 import {
@@ -19,18 +18,21 @@ import { FaEllipsis } from "react-icons/fa6";
 import { toast } from "sonner";
 import { AppStrings } from "@/libs/constants/AppStrings";
 import CommentEditHistory from "../CommentHistoryViewer";
+import SLink from "../SLink";
 
 export default function ReplyBody({
   comment,
   rightContent,
   isDeep,
+  hideBody,
 }: {
   comment: Post;
   rightContent?: React.ReactNode;
   isDeep: boolean;
+  hideBody?: boolean;
 }) {
   const menuItems = [
-    { show: true, key: "copy", name: "Copy Link", icon: BsClipboard2Minus },
+    { show: true, key: "copy", name: "Copy SLink", icon: BsClipboard2Minus },
     { show: true, key: "history", name: "Edit History", icon: LuHistory },
   ];
 
@@ -77,16 +79,14 @@ export default function ReplyBody({
 
               <div className="flex flex-col items-start">
                 <div className="flex gap-1 items-center">
-                  <Link
-                    prefetch={false}
+                  <SLink
                     className=" hover:text-blue-500"
                     href={`/@${comment.author}`}
                   >
                     {comment.author}
-                  </Link>
+                  </SLink>
                   <Reputation reputation={comment.author_reputation} />
-                  <Link
-                    prefetch={false}
+                  <SLink
                     href={`/${comment.category}/@${comment.author}/${comment.permlink}`}
                   >
                     <TimeAgoWrapper
@@ -94,7 +94,7 @@ export default function ReplyBody({
                       created={comment.created * 1000}
                       lastUpdate={comment.last_update * 1000}
                     />
-                  </Link>
+                  </SLink>
 
                   <Dropdown>
                     <DropdownTrigger>
@@ -127,7 +127,7 @@ export default function ReplyBody({
 
           <div>{rightContent}</div>
         </div>
-        {!comment.isEdit && (
+        {!hideBody && (
           <div className={clsx(comment.is_muted === 1 && "opacity-60", "mt-2")}>
             <MarkdownViewer
               text={comment.body}

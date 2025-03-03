@@ -4,9 +4,9 @@ import { User } from "@heroui/user";
 import { abbreviateNumber } from "@/libs/utils/helper";
 import TimeAgoWrapper from "../../wrappers/TimeAgoWrapper";
 import { getResizedAvatar } from "@/libs/utils/image";
-import Link from "next/link";
 import clsx from "clsx";
 import { twMerge } from "tailwind-merge";
+import SLink from "@/components/SLink";
 
 interface Props {
   community: Community;
@@ -39,13 +39,12 @@ export const CommunityCard = memo((props: Props) => {
           }}
           name={
             <div className="flex flex-col items-start gap-1">
-              <Link
-                prefetch={false}
+              <SLink
                 className="hover:text-blue-500 font-semibold"
                 href={`/trending/${community.account}`}
               >
                 {community.title}
-              </Link>
+              </SLink>
 
               <div className="flex gap-2 items-center text-xs">
                 {<p>{community.account} </p>}
@@ -77,7 +76,7 @@ export const CommunityCard = memo((props: Props) => {
             {
               className: compact ? "h-8 w-8" : "",
               src: getResizedAvatar(community.account),
-              as: Link,
+              as: SLink,
               href: `/trending/${community.account}`,
             } as any
           }

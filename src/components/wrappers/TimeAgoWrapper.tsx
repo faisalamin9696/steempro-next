@@ -1,5 +1,5 @@
 import moment from "moment";
-import { getTimeFromNow } from "@/libs/utils/time";
+import { getTimeFromNow } from "@/libs/helper/time";
 import clsx from "clsx";
 
 interface Props {

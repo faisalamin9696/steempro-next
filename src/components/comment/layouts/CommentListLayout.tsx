@@ -7,11 +7,11 @@ import BodyShort from "@/components/body/BodyShort";
 import CommentCover from "../components/CommentCover";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import clsx from "clsx";
-import Link from "next/link";
 import { hasNsfwTag } from "@/libs/utils/StateFunctions";
 import { getSettings } from "@/libs/utils/user";
 import { twMerge } from "tailwind-merge";
 import { getThumbnail } from "@/libs/utils/image";
+import SLink from "@/components/SLink";
 
 export default function CommentListLayout(props: CommentProps) {
   const { comment, isReply, isSearch } = props;
@@ -28,7 +28,7 @@ export default function CommentListLayout(props: CommentProps) {
   return (
     <div
       className={twMerge(
-        `w-full card card-compact shadow-md
+        `w-full shadow-md rounded-2xl
         items-center flex-col  gap-1 bg-white/60 dark:bg-white/10`,
         isSearch ? " p-2" : "p-[14px]"
       )}
@@ -38,8 +38,7 @@ export default function CommentListLayout(props: CommentProps) {
           <CommentHeader compact comment={commentInfo} className="w-full" />
 
           <Card
-            as={Link}
-            prefetch={false}
+            as={SLink}
             href={targetUrl}
             radius="none"
             shadow="none"

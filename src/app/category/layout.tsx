@@ -15,7 +15,7 @@ export default async function Layout({
 }
 
 export async function generateMetadata() {
-  const { category, tag } = usePathnameServer();
+  const { category, tag } = await usePathnameServer();
   // const capCat = category.charAt(0).toUpperCase() + category.slice(1);
   const pageTitle = `Latest #${tag} ${category} topics on the Internet`;
   const pageDescription = `Explore the latest ${category} discussions and topics related to #${tag} on the internet. Stay updated with the most recent conversations and insights.`;

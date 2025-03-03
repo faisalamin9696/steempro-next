@@ -1,7 +1,7 @@
 import "./style.scss";
-import Link from "next/link";
 import { Button } from "@heroui/button";
 import { IconType } from "react-icons";
+import SLink from "./SLink";
 
 interface Props {
   title: string;
@@ -36,8 +36,7 @@ const ToolsItemCard = (props: Props): JSX.Element => {
         variant="flat"
         color="default"
         size="md"
-        as={Link}
-        prefetch={false}
+        as={SLink}
         href={href}
       >
         {buttonText}

@@ -10,11 +10,9 @@ import { Card, CardFooter } from "@heroui/card";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
-import SubmitPage from "@/app/submit/(site)/page";
+import SubmitPage from "@/app/submit/(site)/SubmitPage";
 import clsx from "clsx";
-import { useRouter } from "next13-progressbar";
 import { ViewCountTime } from "@/libs/constants/AppConstants";
-import Link from "next/link";
 import { hasNsfwTag } from "@/libs/utils/StateFunctions";
 import TagsListCard from "@/components/TagsListCard";
 import { Button } from "@heroui/button";
@@ -22,6 +20,7 @@ import { updatePostView } from "@/libs/mysql/database";
 import { addRepliesHandler } from "@/libs/redux/reducers/RepliesReducer";
 import PostReplies from "@/components/reply/PostReplies";
 import { useSession } from "next-auth/react";
+import SLink from "@/components/SLink";
 // const DynamicPostReplies = dynamic(
 //   () => import("../../../components/reply/PostReplies")
 // );
@@ -44,13 +43,10 @@ export default function PostPage(props: Props) {
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
   const [editMode, setEditMode] = useState(false);
   const toggleEditMode = () => setEditMode(!editMode);
-  const router = useRouter();
   const isNsfw = hasNsfwTag(commentInfo) && settings?.nsfw !== "Always show";
   const isSelf = session?.user?.name === commentInfo.author;
 
   useEffect(() => {
-    router.refresh();
-
     // clear the replies store
     dispatch(addRepliesHandler({ comment: commentInfo, replies: [] }));
   }, [pathname]);
@@ -110,7 +106,7 @@ export default function PostPage(props: Props) {
     backdrop-blur-md rounded-lg p-4 w-full mb-10 "
     >
       {commentInfo ? (
-        <div className="card w-full card-compact gap-4 ">
+        <div className="rounded-2xl w-full gap-4 flex flex-col">
           {!!commentInfo.is_muted && commentInfo.is_muted !== 2 ? (
             <div className=" flex items-center gap justify-between mt-2">
               <p>The post was hidden due to low rating</p>
@@ -137,25 +133,23 @@ export default function PostPage(props: Props) {
                   <p className="text-medium">RE: {commentInfo.root_title}</p>
                   <div className="flex gap-2 items-center">
                     •
-                    <Link
-                      prefetch={false}
+                    <SLink
                       className="text-sm text-default-600 hover:text-blue-500"
                       href={`/@${commentInfo.root_author}/${commentInfo.root_permlink}`}
                     >
                       View the full context
-                    </Link>
+                    </SLink>
                   </div>
 
                   {commentInfo.depth >= 2 && (
                     <div className="flex gap-2 items-center">
                       •
-                      <Link
-                        prefetch={false}
+                      <SLink
                         className="text-sm text-default-600 hover:text-blue-500"
                         href={`/@${commentInfo.parent_author}/${commentInfo.parent_permlink}`}
                       >
                         View the direct parent
-                      </Link>
+                      </SLink>
                     </div>
                   )}
                 </Card>
@@ -216,8 +210,10 @@ export default function PostPage(props: Props) {
             </>
           )}
 
-          <div id="comments" className="w-full max-w-[65ch] self-center ">
-            <PostReplies comment={commentInfo} />
+          <div id="comments" className="flex flex-col items-center">
+            <div className="flex flex-col w-full max-w-[65ch] self-center">
+              <PostReplies comment={commentInfo} />
+            </div>
           </div>
         </div>
       ) : null}

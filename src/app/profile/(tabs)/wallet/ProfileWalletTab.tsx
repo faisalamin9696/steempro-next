@@ -4,7 +4,7 @@ import { Tab, Tabs } from "@heroui/tabs";
 import { Button } from "@heroui/button";
 import BalanceTab from "./(tabs)/BalanceTab";
 import DelegationTab from "./(tabs)/DelegationTab";
-import { vestToSteem } from "@/libs/steem/sds";
+import { vestToSteem } from "@/libs/helper/vesting";
 import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { useMutation } from "@tanstack/react-query";
@@ -190,7 +190,7 @@ export default function ProfileWalletTab({ data }: { data: AccountExt }) {
       <Tabs
         destroyInactiveTabPanel={false}
         aria-label="Wallet"
-        color={"primary"}
+        color={"secondary"}
         size="sm"
         disableAnimation={isMobile}
         variant={"underlined"}

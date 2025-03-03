@@ -240,7 +240,7 @@ export default function EditRoleModal(props: Props) {
                     classNames={{ base: "items-center" }}
                   >
                     {(item) => (
-                      <SelectItem key={item.value} value={item.value}>
+                      <SelectItem key={item.value}>
                         {item.item}
                       </SelectItem>
                     )}

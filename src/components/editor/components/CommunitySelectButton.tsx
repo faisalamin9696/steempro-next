@@ -125,7 +125,6 @@ export default memo(function CommunitySelectButton(props: Props) {
             <SelectItem
               key={JSON.stringify({ account: item.account })}
               textValue={JSON.stringify(item)}
-              value={item.title}
             >
               <div className="flex gap-2 items-center">
                 <Image

@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { getResizedAvatar } from "@/libs/utils/image";
 import Image from "next/image";
-import Link from "next/link";
+import SLink from "./SLink";
 
 interface Props {
   username: string;
@@ -65,8 +65,8 @@ export default function SAvatar(props: Props) {
   return onlyImage ? (
     avatarImage
   ) : (
-    <Link prefetch={false} href={`/@${username}`} onClick={onPress}>
+    <SLink href={`/@${username}`} onClick={onPress}>
       {avatarImage}
-    </Link>
+    </SLink>
   );
 }

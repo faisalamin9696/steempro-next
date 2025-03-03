@@ -5,7 +5,6 @@ import ErrorCard from "@/components/ErrorCard";
 import LoadingCard from "@/components/LoadingCard";
 import CommunitySubscriberItem from "@/components/community/components/CommunitySubscriberItem";
 import {
-  awaitTimeout,
   fetchSds,
   mapSds,
   useAppSelector,
@@ -14,7 +13,6 @@ import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Card } from "@heroui/card";
-
 import clsx from "clsx";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
@@ -23,6 +21,7 @@ import AddRoleModal from "../AddRoleModal";
 import { ScrollShadow } from "@heroui/scroll-shadow";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Role as RoleCheck } from "@/libs/utils/community";
+import { AsyncUtils } from "@/libs/utils/async.utils";
 
 interface Props {
   large?: boolean;
@@ -87,7 +86,7 @@ export default function CommunityMembers(props: Props) {
 
   async function handleEndReached() {
     if (communityInfo?.roles) {
-      await awaitTimeout(2.5);
+      await AsyncUtils.sleep(2.5);
       setLimit((prevLimit) => prevLimit + 30);
     }
   }
@@ -163,7 +162,10 @@ export default function CommunityMembers(props: Props) {
                   key={item.account}
                   className="border compact border-gray-100/10 shadow-md shadow-gray-400 dark:shadow-default-500 bg-transparent backdrop-blur-md"
                 >
-                  <CommunitySubscriberItem item={item} community={communityInfo} />
+                  <CommunitySubscriberItem
+                    item={item}
+                    community={communityInfo}
+                  />
                 </Card>
               );
             })}

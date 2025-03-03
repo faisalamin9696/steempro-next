@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  awaitTimeout,
-  useAppDispatch,
-  useAppSelector,
-} from "@/libs/constants/AppFunctions";
+import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import { addRepliesHandler } from "@/libs/redux/reducers/RepliesReducer";
 import { getPostReplies } from "@/libs/steem/sds";
 import { Button } from "@heroui/button";
@@ -33,6 +29,7 @@ import { readingTime } from "@/libs/utils/readingTime/reading-time-estimator";
 import EmptyList from "@/components/EmptyList";
 import { Select, SelectItem } from "@heroui/select";
 import { useSession } from "next-auth/react";
+import { AsyncUtils } from "@/libs/utils/async.utils";
 
 interface Props {
   comment: Post | Feed;
@@ -140,7 +137,7 @@ export default memo(function PostReplies(props: Props) {
 
   async function handleLoadMore() {
     setIsLoading(true);
-    await awaitTimeout(1.5);
+    await AsyncUtils.sleep(1.5);
     setLimit((prev) => prev + defaultLimit);
     setIsLoading(false);
   }
@@ -267,7 +264,7 @@ export default memo(function PostReplies(props: Props) {
     }
 
     setPosting(true);
-    await awaitTimeout(0.5);
+    await AsyncUtils.sleep(0.5);
 
     try {
       // generating the permlink for the comment author
@@ -350,15 +347,11 @@ export default memo(function PostReplies(props: Props) {
                   // repliesMutation.mutate();
                 }}
               >
-                <SelectItem key={"created"} value={"created"}>
-                  Age
-                </SelectItem>
+                <SelectItem key={"created"}>Age</SelectItem>
 
-                <SelectItem key={"payout"} value={"payout"}>
-                  Trending
-                </SelectItem>
+                <SelectItem key={"payout"}>Trending</SelectItem>
 
-                {/* <SelectItem key={"upvote_count"} value={"upvote_count"}>
+                {/* <SelectItem key={"upvote_count"}>
                   Votes
                 </SelectItem> */}
               </Select>
@@ -475,12 +468,8 @@ export default memo(function PostReplies(props: Props) {
           <div className="flex flex-col ">
             {rootReplies?.splice(0, limit)?.map((reply: Post, index) => {
               return !reply.link_id ? null : (
-                <div>
-                  <Reply
-                    key={index ?? reply.link_id}
-                    comment={reply}
-                    rootComment={commentInfo}
-                  />
+                <div key={index ?? reply.link_id}>
+                  <Reply comment={reply} rootComment={commentInfo} />
                 </div>
               );
             })}

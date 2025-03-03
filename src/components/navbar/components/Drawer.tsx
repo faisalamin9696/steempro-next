@@ -4,12 +4,12 @@ import React, { memo, useEffect, useState } from "react";
 import { Button } from "@heroui/button";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { twMerge } from "tailwind-merge";
-import Link from "next/link";
 import Image from "next/image";
-import ThemeSwitch from "../../ThemeSwitch";
 import { MdClose } from "react-icons/md";
 import DrawerContent from "./DrawerContent";
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import SLink from "@/components/SLink";
+import ThemeSwitch from "@/components/ThemeSwitch";
 
 interface Props {
   onItemClick?: () => void;
@@ -64,7 +64,7 @@ export default memo(function Drawer(props: Props) {
         <div className=" flex flewx-row items-center justify-between p-2 pl-4 h-16 ">
           <div className=" flex items-center gap-2 w-full justify-between">
             <div className="flex flex-row items-center  ">
-              <Link href={"/"} className="hidden 2lg:block">
+              <SLink href={"/"} className="hidden 2lg:block">
                 <Image
                   src={"/logo-default.png"}
                   alt="logo"
@@ -73,10 +73,10 @@ export default memo(function Drawer(props: Props) {
                   width={160}
                   style={{ height: "auto" }}
                 />
-              </Link>
+              </SLink>
 
               <div className="flex flex-row items-center gap-2 2lg:hidden">
-                <Link href={"/"}>
+                <SLink href={"/"}>
                   <Image
                     priority
                     src={"/logo192.png"}
@@ -84,7 +84,7 @@ export default memo(function Drawer(props: Props) {
                     height={40}
                     width={40}
                   />
-                </Link>
+                </SLink>
                 <ThemeSwitch sm className="" />
               </div>
             </div>

@@ -1,36 +1,20 @@
-import MainWrapper from "@/components/wrappers/MainWrapper";
-import { getAuthorExt, getPost } from "@/libs/steem/sds";
+import { getPost } from "@/libs/steem/sds";
 import { getResizedAvatar, getThumbnail } from "@/libs/utils/image";
 import { postSummary } from "@/libs/utils/postSummary";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
-import { Metadata, ResolvingMetadata } from "next";
+import { Metadata } from "next";
 import React from "react";
-import { auth } from "@/auth";
-import ProfileInfoCard from "@/components/ProfileInfoCard";
-import PostPage from "./(site)/page";
 
 export default async function Layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { username, permlink } = usePathnameServer();
-  const session = await auth();
-  const data = await getPost(username, permlink, session?.user?.name || "null");
-  const account = await getAuthorExt(username, session?.user?.name || "null");
-
-  return (
-    <MainWrapper
-      endClassName={"1md:block min-w-[320px] w-[320px]"}
-      endContent={<ProfileInfoCard account={account} />}
-    >
-      <PostPage data={data} />
-    </MainWrapper>
-  );
+  return children;
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { username, permlink } = usePathnameServer();
+  const { username, permlink } = await usePathnameServer();
   const result = await getPost(username, permlink);
   const isPost = result?.depth === 0;
 

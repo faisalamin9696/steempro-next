@@ -390,17 +390,6 @@ export const getClubStatus = async (username: string) => {
   }
 };
 
-export const vestToSteem = (
-  rewards_vests: number = 0,
-  steem_per_share: number
-): number => {
-  return rewards_vests * steem_per_share;
-};
-
-export const steemToVest = (steem: number, steem_per_share: number): number => {
-  return steem / steem_per_share;
-};
-
 export const getAccountHistory = async (
   username: string,
   daysBefore?: number,

@@ -9,11 +9,7 @@ import { Button } from "@heroui/button";
 import React, { useEffect, useMemo, useState } from "react";
 import { Tab, Tabs } from "@heroui/tabs";
 import { Input } from "@heroui/input";
-import {
-  awaitTimeout,
-  fetchSds,
-  useAppSelector,
-} from "@/libs/constants/AppFunctions";
+import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import useSWR from "swr";
 import LoadingCard from "./LoadingCard";
 import SAvatar from "./SAvatar";
@@ -26,6 +22,7 @@ import EmptyList from "./EmptyList";
 import { FeedBodyLength } from "@/libs/constants/AppConstants";
 import CommentListLayout from "./comment/layouts/CommentListLayout";
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { AsyncUtils } from "@/libs/utils/async.utils";
 
 type SearchTypes = "posts" | "comments" | "tags" | "people";
 
@@ -134,7 +131,7 @@ export default function SearchModal(props: Props) {
   async function handleEndReached() {
     if (data) {
       setLoadingMore(true);
-      await awaitTimeout(2.5);
+      await AsyncUtils.sleep(2.5);
       const newRows = loadMoreRows(data, rows);
       setRows([...rows, ...newRows!]);
       setLoadingMore(false);

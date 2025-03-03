@@ -1,11 +1,27 @@
 import { AppStrings } from "./AppStrings";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
-import { FeedBodyLength, IntrestingList } from "./AppConstants";
+import { FeedBodyLength, FeedLastScroll, IntrestingList } from "./AppConstants";
 import { FeedTypes } from "../steem/sds";
 
 export function sdsWrapper(api: string): string {
   return AppStrings.sds_base_url + api;
+}
+
+export function getFeedScrollItems(endPoint: string) {
+  return FeedLastScroll.find((feed) => feed.endPoint === endPoint)?.items || 16;
+}
+
+export function updateFeedScroll(endPoint: string, items: number) {
+  const index = FeedLastScroll.findIndex((feed) => feed.endPoint === endPoint);
+
+  if (index !== -1) {
+    // Update existing entry
+    FeedLastScroll[index].items = items;
+  } else {
+    // Add new entry
+    FeedLastScroll.push({ endPoint, items });
+  }
 }
 
 export async function fetchSds<T>(
@@ -75,9 +91,9 @@ export function mapSds(response: any) {
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 export const useAppDispatch: () => AppDispatch = useDispatch;
 
-export function awaitTimeout(seconds: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
-}
+// export function awaitTimeout(seconds: number): Promise<void> {
+//   return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+// }
 
 export const filterRecommendations = (following: string[], count = 4) => {
   return IntrestingList.filter((p) => !following?.includes(p))

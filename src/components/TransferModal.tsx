@@ -27,7 +27,7 @@ import {
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import moment from "moment";
-import { steemToVest, vestToSteem } from "@/libs/steem/sds";
+import { steemToVest, vestToSteem } from "@/libs/helper/vesting";
 import { isNumeric } from "@/libs/utils/helper";
 import clsx from "clsx";
 import { validate_account_name } from "@/libs/utils/ChainValidation";
@@ -448,20 +448,13 @@ const TransferModal = (props: Props): JSX.Element => {
                       innerWrapper: delegation ? "w-15" : " w-10",
                     }}
                   >
-                    <SelectItem
-                      className="text-xs"
-                      key={"STEEM"}
-                      value={"STEEM"}
-                    >
+                    <SelectItem className="text-xs" key={"STEEM"}>
                       {"STEEM"}
                     </SelectItem>
-                    <SelectItem key={"SBD"} value={"SBD"}>
-                      {"SBD"}
-                    </SelectItem>
+                    <SelectItem key={"SBD"}>{"SBD"}</SelectItem>
                     <SelectItem
                       key={"VESTS"}
                       className={clsx(delegation ? "block" : "hidden")}
-                      value={"VESTS"}
                     >
                       {"STEEM POWER"}
                     </SelectItem>
@@ -485,7 +478,7 @@ const TransferModal = (props: Props): JSX.Element => {
 
               {!savings && !powewrup && !delegation && (
                 <Textarea
-                  spellCheck={false}
+                  spellCheck={"false"}
                   value={memo}
                   onValueChange={setMemo}
                   label="Memo"

@@ -1,11 +1,10 @@
 import React, { Component, Fragment, useState } from "react";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
-import { getTimeFromNow } from "@/libs/utils/time";
+import { getTimeFromNow } from "@/libs/helper/time";
 import useSWR from "swr";
 import LoadingCard from "./LoadingCard";
-import clsx from "clsx";
 import "./style.scss";
-import Link from "next/link";
+import SLink from "./SLink";
 
 interface Props {
   comment: Feed | Post;
@@ -115,13 +114,12 @@ export class EntryPayoutDetail extends Component<DetailProps> {
             <span className="value">
               {beneficiary.map((x: any, i) => (
                 <Fragment key={i}>
-                  <Link
-                    prefetch={false}
+                  <SLink
                     className=" hover:text-blue-500 hover:underline"
                     href={`/@${x[0]}/blogs`}
                   >
                     {x[0]}
-                  </Link>
+                  </SLink>
                   : {(x[1] / 100).toFixed(0)}% <br />
                 </Fragment>
               ))}

@@ -1,10 +1,10 @@
 import { getResizedAvatar } from "@/libs/utils/image";
-import { Link } from "@heroui/link";
 import { User } from "@heroui/user";
 import React from "react";
 import { twMerge } from "tailwind-merge";
 import TimeAgoWrapper from "../../wrappers/TimeAgoWrapper";
 import SAvatar from "@/components/SAvatar";
+import SLink from "@/components/SLink";
 
 function CommunityActivityItem({
   communityLog,
@@ -25,12 +25,12 @@ function CommunityActivityItem({
       case "mutePost":
         description = (
           <div className=" flex flex-col gap-2">
-            <Link
+            <SLink
               className=" text-sm text-blue-500"
               href={`/@${data.author}/${data.permlink}`}
             >
               <p className=" line-clamp-2">{`/@${data.author}/${data.permlink}`}</p>
-            </Link>
+            </SLink>
 
             {data?.notes && <p className="text-tiny">Reason: {data.notes}</p>}
           </div>
@@ -41,10 +41,10 @@ function CommunityActivityItem({
       case "setRole":
         description = (
           <div className=" flex flex-col gap-2">
-            <Link
+            <SLink
               className=" text-sm text-blue-500"
               href={`/@${data.target}`}
-            >{`/@${data.target}`}</Link>
+            >{`/@${data.target}`}</SLink>
 
             {data?.role && <p className="text-tiny">{data.role}</p>}
           </div>
@@ -54,10 +54,10 @@ function CommunityActivityItem({
       case "setUserTitle":
         description = (
           <div className=" flex flex-col gap-2">
-            <Link
+            <SLink
               className=" text-sm text-blue-500"
               href={`/@${data.target}`}
-            >{`/@${data.target}`}</Link>
+            >{`/@${data.target}`}</SLink>
 
             {data?.title && <p className="text-tiny">{data.title}</p>}
           </div>
@@ -112,9 +112,9 @@ function CommunityActivityItem({
       name={
         <div className="flex flex-row items-start gap-2">
           <div className="flex gap-2 items-center">
-            <Link className=" text-default-900 text-sm" href={targetUrl}>
+            <SLink className=" text-default-900 text-sm" href={targetUrl}>
               {communityLog.account}
-            </Link>
+            </SLink>
 
             <p
               className={twMerge(
@@ -148,7 +148,7 @@ function CommunityActivityItem({
         {
           className: " cursor-pointer",
           src: getResizedAvatar(communityLog.account),
-          as: Link,
+          as: SLink,
           href: targetUrl,
         } as any
       }

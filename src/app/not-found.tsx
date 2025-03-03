@@ -1,5 +1,5 @@
+import SLink from "@/components/SLink";
 import { Button, ButtonGroup } from "@heroui/button";
-import Link from "next/link";
 import React from "react";
 
 export default function NotFound() {
@@ -10,7 +10,7 @@ export default function NotFound() {
           className="w-12 h-12 dark:text-gray-400 text-gray-700"
           stroke="currentColor"
           fill="currentColor"
-          stroke-width="0"
+          strokeWidth="0"
           viewBox="0 0 24 24"
           height="200px"
           width="200px"
@@ -28,9 +28,9 @@ export default function NotFound() {
         </h3>
         <span className=" inline-block text-gray-500 dark:text-gray-400 mt-2 gap-1">
           <p>No worries! Return to </p>
-          <Link prefetch={false} className="text-blue-500" href={"/"} scroll>
+          <SLink className="text-blue-500" href={"/"}>
             Home Page
-          </Link>
+          </SLink>
           <p> or explore some awesome posts. </p>
         </span>
 
@@ -41,13 +41,13 @@ export default function NotFound() {
           color="primary"
           size="sm"
         >
-          <Button prefetch={false} as={Link} href="/trending">
+          <Button as={SLink} href="/trending">
             Trending
           </Button>
-          <Button prefetch={false} as={Link} href="/created">
+          <Button as={SLink} href="/created">
             New
           </Button>
-          <Button prefetch={false} as={Link} href="/hot">
+          <Button as={SLink} href="/hot">
             Hot
           </Button>
         </ButtonGroup>

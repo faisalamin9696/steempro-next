@@ -7,11 +7,11 @@ import MarkdownViewer from "@/components/body/MarkdownViewer";
 import CommentFooter from "../components/CommentFooter";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import clsx from "clsx";
-import Link from "next/link";
 import { hasNsfwTag } from "@/libs/utils/StateFunctions";
 import { getSettings } from "@/libs/utils/user";
 import { getThumbnail } from "@/libs/utils/image";
 import { twMerge } from "tailwind-merge";
+import SLink from "@/components/SLink";
 
 export default function CommentBlogLayout(props: CommentProps) {
   const { comment, isReply } = props;
@@ -27,7 +27,7 @@ export default function CommentBlogLayout(props: CommentProps) {
 
   return (
     <div
-      className="w-full card card-compact flex-col gap-4 
+      className="w-full rounded-2xl flex-col gap-4 
     bg-white/60 dark:bg-white/10"
     >
       <div className="p-2">
@@ -35,8 +35,7 @@ export default function CommentBlogLayout(props: CommentProps) {
       </div>
       <Card
         radius="none"
-        as={Link}
-        prefetch={false}
+        as={SLink}
         href={targetUrl}
         shadow="none"
         className={clsx(
@@ -46,7 +45,7 @@ export default function CommentBlogLayout(props: CommentProps) {
       >
         <h2
           className={twMerge(
-            "card-content font-bold text-lg max-sm:text-medium text-start ",
+            "mt-2 font-bold text-lg max-sm:text-medium text-start ",
             commentInfo.is_muted ? " blur-[2px]" : ""
           )}
         >

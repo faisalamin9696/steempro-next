@@ -6,6 +6,7 @@ import "./style.scss";
 import { MdOpenInNew } from "react-icons/md";
 import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
 import { getProxyImageURL } from "@/libs/utils/image";
+import Link from "next/link";
 
 export function ParsedBody({
   body,
@@ -46,6 +47,13 @@ export function ParsedBody({
 
             {/* <NsfwOverlay /> */}
           </div>
+        );
+      }
+
+      if (domNode?.name === "a") {
+        // Render the table content using domToReact
+        return (
+          <Link {...domNode?.attribs}>{domToReact(domNode.children)}</Link>
         );
       }
 

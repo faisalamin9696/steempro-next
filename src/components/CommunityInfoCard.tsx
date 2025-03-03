@@ -14,8 +14,8 @@ import { getResizedAvatar } from "@/libs/utils/image";
 import { SlCalender } from "react-icons/sl";
 import { TbHeartDollar } from "react-icons/tb";
 import CommunityMembers from "./community/CommunityMembers";
-import Link from "next/link";
 import { CommunityActivities } from "./community/CommunityActivities";
+import SLink from "./SLink";
 
 type Props = {
   community: Community;
@@ -41,7 +41,7 @@ export default memo(function CommunityInfoCard(props: Props) {
   return (
     <div
       className={twMerge(
-        `relative flex flex-col card-content border-none rounded-lg
+        `relative flex flex-col border-none rounded-lg
         bg-transparent items-start gap-4 w-full bg-white dark:bg-white/5 p-4 text-default-900/90`,
         props.className
       )}
@@ -49,13 +49,12 @@ export default memo(function CommunityInfoCard(props: Props) {
       <div className=" flex flex-col">
         <div className="flex flex-col items-start font-bold text-lg sm:text-2xl mb-0">
           <p className="text-left">{communityInfo.title}</p>
-          <Link
-            prefetch={false}
+          <SLink
             href={`/@${communityInfo.account}`}
             className=" font-normal text-sm hover:underline"
           >
             @{communityInfo.account}
-          </Link>
+          </SLink>
         </div>
         <MarkdownViewer
           className="!text-sm !text-default-900/70 !text-left prose-p:!my-2"
@@ -126,12 +125,12 @@ export default memo(function CommunityInfoCard(props: Props) {
           <div className=" flex flex-row items-center gap-4 px-3">
             <AvatarGroup isBordered size="md" max={5}>
               {leaderShip?.map((leader) => (
-                <Link prefetch={false} href={`/@${leader.account}`}>
+                <SLink href={`/@${leader.account}`}>
                   <Avatar
                     key={leader.account}
                     src={getResizedAvatar(leader.account)}
                   />
-                </Link>
+                </SLink>
               ))}
             </AvatarGroup>
             <p

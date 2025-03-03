@@ -1,8 +1,10 @@
 import SAvatar from "@/components/SAvatar";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
-import { vestToSteem } from "@/libs/steem/sds";
-import Link from "next/link";
+import { vestToSteem } from "@/libs/helper/vesting";
+
 import React from "react";
+import SLink from "./SLink";
+import parseAsset from "@/libs/helper/parse-asset";
 
 interface Props {
   op: AccountHistory;
@@ -25,7 +27,9 @@ function TransferFromTo({
       {from && (
         <div className=" flex items-center gap-2">
           <SAvatar size="xs" username={from} />
-          <p>{from}</p>
+          <SLink className="hover:text-blue-500" href={`/@${from}`}>
+            {from}
+          </SLink>
         </div>
       )}
       {to && <p>to</p>}
@@ -33,7 +37,9 @@ function TransferFromTo({
       {to && (
         <div className="flex items-center gap-2">
           <SAvatar size="xs" username={to} />
-          <p>{to}</p>
+          <SLink className="hover:text-blue-500" href={`/@${to}`}>
+            {to}
+          </SLink>
         </div>
       )}
     </div>
@@ -46,12 +52,11 @@ const TransferHistoryCard = (props: Props): JSX.Element => {
 
   const type = op.op[0];
   const data = op.op[1];
-  const amount_vests = data?.reward_vests?.split(" ")?.[0];
-  const amount_curation = data?.reward?.split(" ")?.[0];
-  const amount_vesting = data?.vesting_payout?.split(" ")?.[0];
-  const amount_vesting_shares = data?.vesting_shares?.split(" ")?.[0];
-
-  let operation = "claim";
+  const amount_vests = parseAsset(data?.reward_vests)?.amount;
+  const amount_curation = parseAsset(data?.reward)?.amount;
+  const amount_vesting = parseAsset(data?.vesting_payout)?.amount;
+  const amount_withdrawan = parseAsset(data?.withdrawn)?.amount;
+  const amount_vesting_shares = parseAsset(data?.vesting_shares)?.amount;
 
   const powerdown_vests =
     type === "withdraw_vesting"
@@ -75,6 +80,11 @@ const TransferHistoryCard = (props: Props): JSX.Element => {
       ? vestToSteem(amount_vesting, steem_per_share)?.toLocaleString()
       : undefined;
 
+  const withdrawn_vests =
+    type === "fill_vesting_withdraw"
+      ? vestToSteem(amount_withdrawan, steem_per_share)?.toLocaleString()
+      : undefined;
+
   /* All transfers involve up to 2 accounts, context and 1 other. */
   let message;
 
@@ -85,7 +95,7 @@ const TransferHistoryCard = (props: Props): JSX.Element => {
     author: string;
     permlink: string;
   }) => (
-    <Link prefetch={false}
+    <SLink
       className="text-blue-500"
       href={`/@${author}/${permlink}`}
       target="_blank"
@@ -93,11 +103,11 @@ const TransferHistoryCard = (props: Props): JSX.Element => {
       <p className=" line-clamp-1 max-w-[200px]">
         {author}/{permlink}
       </p>
-    </Link>
+    </SLink>
   );
 
   if (type === "transfer_to_vesting") {
-    const amount = data.amount.split(" ")[0];
+    const amount = parseAsset(data?.amount)?.amount;
 
     if (data.from === context) {
       if (data.to === "") {
@@ -137,16 +147,16 @@ const TransferHistoryCard = (props: Props): JSX.Element => {
     const fromWhere =
       type === "transfer_to_savings" ? (
         <TransferFromTo
-          title={`Transfer to savings ${data.amount}`}
+          title={`Transfer to savings ${data?.amount}`}
           to={data.to}
         />
       ) : type === "transfer_from_savings" ? (
         <TransferFromTo
-          title={`Transfer from savings ${data.amount}`}
+          title={`Transfer from savings ${data?.amount}`}
           to={data.to}
         />
       ) : (
-        <TransferFromTo title={`Transfer ${data.amount}`} to={data?.to} />
+        <TransferFromTo title={`Transfer ${data?.amount}`} to={data?.to} />
       );
 
     if (data.from === context) {
@@ -168,17 +178,17 @@ const TransferHistoryCard = (props: Props): JSX.Element => {
       const fromWhere =
         type === "transfer_to_savings" ? (
           <TransferFromTo
-            title={`Receive from savings ${data.amount} from`}
+            title={`Receive from savings ${data?.amount} from`}
             from={data.from}
           />
         ) : type === "transfer_from_savings" ? (
           <TransferFromTo
-            title={`Transfer from savings ${data.amount} from`}
+            title={`Transfer from savings ${data?.amount} from`}
             from={data.from}
           />
         ) : (
           <TransferFromTo
-            title={`Received ${data.amount} from`}
+            title={`Received ${data?.amount} from`}
             from={data.from}
           />
         );
@@ -188,19 +198,19 @@ const TransferHistoryCard = (props: Props): JSX.Element => {
       const fromWhere =
         type === "transfer_to_savings" ? (
           <TransferFromTo
-            title={`Transfer to savings ${data.amount} from`}
+            title={`Transfer to savings ${data?.amount} from`}
             from={data.from}
             to={data.to}
           />
         ) : type === "transfer_from_savings" ? (
           <TransferFromTo
-            title={`Transfer from savings ${data.amount} from`}
+            title={`Transfer from savings ${data?.amount} from`}
             from={data.from}
             to={data.to}
           />
         ) : (
           <TransferFromTo
-            title={`Transfer ${data.amount} from`}
+            title={`Transfer ${data?.amount} from`}
             from={data.from}
             to={data.to}
           />
@@ -297,7 +307,7 @@ const TransferHistoryCard = (props: Props): JSX.Element => {
   } else if (type === "fill_convert_request") {
     message = (
       <TransferFromTo
-        title={`Fill convert request: ${data.amount_in} for ${data.amount_out}`}
+        title={`Fill convert request: ${data?.amount_in} for ${data?.amount_out}`}
       />
     );
   } else if (type === "fill_order") {
@@ -305,7 +315,7 @@ const TransferHistoryCard = (props: Props): JSX.Element => {
       // my order was filled by data.current_owner
       message = (
         <TransferFromTo
-          title={`Paid ${data.open_pays} for ${data.current_pays}`}
+          title={`Paid ${data?.open_pays} for ${data?.current_pays}`}
         />
       );
     } else {
@@ -321,8 +331,12 @@ const TransferHistoryCard = (props: Props): JSX.Element => {
   } else if (type === "comment_benefactor_reward") {
     message = (
       <TransferFromTo
-        title={`${benefactor_reward} STEEM POWER for ${data.author} / ${data.permlink}`}
+        title={`${benefactor_reward} STEEM POWER for ${data?.author} / ${data?.permlink}`}
       />
+    );
+  } else if (type === "fill_vesting_withdraw") {
+    message = (
+      <TransferFromTo title={`Deposited power down steem ${withdrawn_vests}`} />
     );
   } else {
     message = JSON.stringify({ type, ...data }, null, 2);

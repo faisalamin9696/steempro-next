@@ -1,7 +1,7 @@
 import { TokenCard } from "@/components/TokenCard";
 import TransferModal from "@/components/TransferModal";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
-import { vestToSteem } from "@/libs/steem/sds";
+import { vestToSteem } from "@/libs/helper/vesting";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import {
   useDisclosure,
@@ -17,8 +17,8 @@ import React, { Key, useState } from "react";
 import PowerDownModal from "@/components/PowerDownModal";
 import { Chip } from "@heroui/chip";
 import { IoMdAdd, IoMdRemove } from "react-icons/io";
-import Link from "next/link";
 import { useSession } from "next-auth/react";
+import SLink from "@/components/SLink";
 
 const tokens = {
   steem: {
@@ -56,8 +56,7 @@ const steem_power_desc = (username: string) => (
       STEEM POWER increases at an APR of approximately 2.77%, subject to
       blockchain variance. See{" "}
       {
-        <Link
-          prefetch={false}
+        <SLink
           className=" hover:text-blue-500 hover:underline"
           target="_blank"
           href={
@@ -65,7 +64,7 @@ const steem_power_desc = (username: string) => (
           }
         >
           FAQ
-        </Link>
+        </SLink>
       }{" "}
       for details.
     </p>
@@ -155,6 +154,7 @@ export default function BalanceTab({
         <>
           <TokenCard
             tokenKey="steem"
+            iconSrc="/steem-logo.svg"
             symbol={tokens.steem.symbol}
             description={tokens.steem.description}
             title={tokens.steem.title}
@@ -179,6 +179,7 @@ export default function BalanceTab({
 
           <TokenCard
             tokenKey="steem_power"
+            iconSrc="/sp-logo.svg"
             symbol={tokens.steem_power.symbol}
             description={steem_power_desc(username)}
             title={tokens.steem_power.title}
@@ -253,6 +254,7 @@ export default function BalanceTab({
 
           <TokenCard
             tokenKey="steem_dollar"
+            iconSrc="/sbd-logo.svg"
             description={tokens.steem_dollar.description}
             title={tokens.steem_dollar.title}
             endContent={
@@ -278,6 +280,7 @@ export default function BalanceTab({
 
           <TokenCard
             tokenKey={"saving"}
+            iconSrc="/savings-logo.svg"
             description={tokens.saving.description}
             title={tokens.saving.title}
             endContent={

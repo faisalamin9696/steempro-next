@@ -53,8 +53,8 @@ export default memo(function FeedPatternSwitch() {
     <div className="flex space-x-1">
       <Dropdown size="sm" title="View" showArrow>
         <DropdownTrigger>
-          <Button radius="sm" isIconOnly className="capitalize" variant="light">
-            <div className=" flex flex-row items-center text-default-500">
+          <Button radius="sm" size="sm" className="min-w-0 w-[48px] px-1" variant="light">
+            <div className=" flex flex-row items-center text-default-500 ">
               {renderIcon(findStyleByKey(selectedKey)!, 24)}
               <RiArrowDropDownLine size={20} />
             </div>

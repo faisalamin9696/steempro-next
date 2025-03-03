@@ -19,6 +19,8 @@ export const FeedFetchLimit = 1000;
 
 // export const isDev = false;
 
+export var FeedLastScroll: { endPoint: string; items: number }[] = [];
+
 export let CurrentSetting: Setting = {
   lang: { code: "en", title: "English" },
   nsfw: "Always warn",

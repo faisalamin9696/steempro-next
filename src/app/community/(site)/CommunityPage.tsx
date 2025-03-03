@@ -29,14 +29,14 @@ export default function CommunityPage(props: Props) {
       title: "Trending",
       key: "trending",
       children: <CommunityTrendingsTab />,
-      icon: <FaFire size={24} />,
+      icon: <FaFire size={22} />,
       priority: 1,
     },
     {
       title: "New",
       key: "created",
       children: <CommunityCreatedTab />,
-      icon: <MdNewLabel size={24} />,
+      icon: <MdNewLabel size={22} />,
       priority: 2,
     },
   ];
@@ -45,7 +45,7 @@ export default function CommunityPage(props: Props) {
       title: "Pinned",
       key: "pinned",
       children: <CommunityPinnedTab />,
-      icon: <MdPin size={24} />,
+      icon: <MdPin size={22} />,
       priority: 3,
     });
   }
@@ -55,7 +55,7 @@ export default function CommunityPage(props: Props) {
       title: "About",
       key: "about",
       children: <CommunityAboutTab community={data} />,
-      icon: <MdInfo size={24} />,
+      icon: <MdInfo size={22} />,
       priority: 5,
     });
   }

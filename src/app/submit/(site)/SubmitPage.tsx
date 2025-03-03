@@ -18,7 +18,6 @@ import {
   getCredentials,
   getSessionKey,
 } from "@/libs/utils/user";
-import { awaitTimeout, useAppSelector } from "@/libs/constants/AppFunctions";
 import { readingTime } from "@/libs/utils/readingTime/reading-time-estimator";
 import {
   grantPostingPermission,
@@ -43,7 +42,6 @@ import MarkdownViewer from "@/components/body/MarkdownViewer";
 import { AppStrings } from "@/libs/constants/AppStrings";
 import { empty_community } from "@/libs/constants/Placeholders";
 import { getPost } from "@/libs/steem/sds";
-import EditorInput from "@/components/editor/EditorInput";
 import "./style.scss";
 import secureLocalStorage from "react-secure-storage";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -58,6 +56,9 @@ import { IoClose } from "react-icons/io5";
 import { ZonedDateTime } from "@internationalized/date";
 import { CustomEvent } from "@piwikpro/react-piwik-pro";
 import { cryptoUtils, Signature } from "@hiveio/dhive";
+import { AsyncUtils } from "@/libs/utils/async.utils";
+import { useAppSelector } from "@/libs/constants/AppFunctions";
+import EditorInput from "@/components/editor/EditorInput";
 
 interface Props {
   params?: {
@@ -253,7 +254,7 @@ export default function SubmitPage(props: Props) {
 
     setPosting(true);
 
-    await awaitTimeout(1);
+    await AsyncUtils.sleep(1);
     try {
       let permlink = generatePermlink(title);
       let simplePost;
@@ -388,7 +389,7 @@ export default function SubmitPage(props: Props) {
       if (isAuthorized()) {
         setPosting(true);
 
-        await awaitTimeout(1);
+        await AsyncUtils.sleep(1);
         try {
           // generating the permlink for the comment author
           let permlink = generateReplyPermlink(oldPost.author);

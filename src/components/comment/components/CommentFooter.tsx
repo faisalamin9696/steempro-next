@@ -20,11 +20,7 @@ import {
   getSettings,
   updateSettings,
 } from "@/libs/utils/user";
-import {
-  awaitTimeout,
-  useAppDispatch,
-  useAppSelector,
-} from "@/libs/constants/AppFunctions";
+import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import { useLogin } from "@/components/auth/AuthProvider";
 import { addCommentHandler } from "@/libs/redux/reducers/CommentReducer";
 import { toast } from "sonner";
@@ -48,8 +44,9 @@ import VotersCard from "@/components/VotersCard";
 import "./style.scss";
 import ClickAwayListener from "react-click-away-listener";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { As } from "@heroui/react";
+import SLink from "@/components/SLink";
+import { AsyncUtils } from "@/libs/utils/async.utils";
 
 interface WrapperProps {
   children: React.ReactNode;
@@ -186,7 +183,7 @@ export default memo(function CommentFooter(props: CommentProps) {
       })
     );
 
-    await awaitTimeout(0.25);
+    await AsyncUtils.sleep(0.25);
     try {
       const credentials = getCredentials(getSessionKey(session?.user?.name));
       if (!credentials?.key) {
@@ -329,7 +326,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                     ? undefined
                     : `/${comment.category}/@${comment.author}/${comment.permlink}#comments`
                 }
-                as={isDetails ? undefined : Link}
+                as={isDetails ? undefined : SLink}
                 passHref={!isDetails}
                 hoverable
                 className={twMerge("px-2")}

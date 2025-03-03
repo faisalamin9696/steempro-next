@@ -14,7 +14,7 @@ export default function TagsListCard({
         ?.filter((tag) => !!tag)
         ?.map((tag) => {
           return <STag isDisabled={isDisabled} key={tag} tag={tag} />;
-          // <Chip isDisabled={isDisabled} as={Link} href={`/trending/${tag}`} key={tag}>{tag}</Chip>
+          // <Chip isDisabled={isDisabled} as={SLink} href={`/trending/${tag}`} key={tag}>{tag}</Chip>
         })}
     </div>
   );

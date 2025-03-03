@@ -213,7 +213,7 @@ export default function FollowersCard({
               <TableRow key={row}>
                 {(columnKey) => (
                   <TableCell>
-                    <div className="flex gap-2 items-center p-2">
+                    <div className="flex gap-2 items-center p-2" key={row}>
                       <SAvatar size="xs" username={row} />
                       <p>{row}</p>
                     </div>

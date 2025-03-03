@@ -10,13 +10,13 @@ import {
 import { Button } from "@heroui/button";
 import React, { useEffect, useRef, useState } from "react";
 import { voteComment } from "@/libs/steem/condenser";
-import { awaitTimeout } from "@/libs/constants/AppFunctions";
 import { toast } from "sonner";
 import { empty_comment } from "@/libs/constants/Placeholders";
 import STooltip from "./STooltip";
 import { FaCheckCircle } from "react-icons/fa";
 import { TiWarning } from "react-icons/ti";
 import { PiArrowArcRightFill } from "react-icons/pi";
+import { AsyncUtils } from "@/libs/utils/async.utils";
 
 interface Props {
   isOpen: boolean;
@@ -95,7 +95,7 @@ export default function MassVotingModal(props: Props) {
       } catch (error) {
         updateStatus(pending_post, "failed", String(error));
       } finally {
-        await awaitTimeout(2);
+        await AsyncUtils.sleep(2);
 
         if (all_links.length <= 0) {
           toast.success("Completed");

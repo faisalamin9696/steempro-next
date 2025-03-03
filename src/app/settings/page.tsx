@@ -228,7 +228,7 @@ export default function SettingsPage() {
     toast.promise(
       async () => {
         // Testing
-        // await awaitTimeout(5);
+        // await AsyncUtils.sleep(5);
         // return true
 
         const data = await toBase64(image);
@@ -324,7 +324,7 @@ export default function SettingsPage() {
           >
             {AppStrings.rpc_servers.map((item) => {
               return (
-                <SelectItem className="text-sm" key={item} value={item}>
+                <SelectItem className="text-sm" key={item}>
                   {item}
                 </SelectItem>
               );
@@ -352,19 +352,11 @@ export default function SettingsPage() {
                             {'Always hide'}
                         </SelectItem> */}
 
-            <SelectItem
-              className="text-sm"
-              key={"Always warn"}
-              value={"Always warn"}
-            >
+            <SelectItem className="text-sm" key={"Always warn"}>
               {"Always warn"}
             </SelectItem>
 
-            <SelectItem
-              className="text-sm"
-              key={"Always show"}
-              value={"Always show"}
-            >
+            <SelectItem className="text-sm" key={"Always show"}>
               {"Always show"}
             </SelectItem>
           </Select>
@@ -386,11 +378,11 @@ export default function SettingsPage() {
               // innerWrapper: ' w-10'
             }}
           >
-            <SelectItem className="text-sm" key={"true"} value={"true"}>
+            <SelectItem className="text-sm" key={"true"}>
               {"Remember my vote"}
             </SelectItem>
 
-            <SelectItem className="text-sm" key={"false"} value={"false"}>
+            <SelectItem className="text-sm" key={"false"}>
               {"Default to 100%"}
             </SelectItem>
           </Select>

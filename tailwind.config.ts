@@ -1,7 +1,6 @@
 import type { Config } from "tailwindcss";
 import { heroui } from "@heroui/react";
-
-const defaultTheme = require("tailwindcss/defaultTheme");
+import defaultTheme from "tailwindcss/defaultTheme";
 
 const config: Config = {
   content: [
@@ -38,18 +37,32 @@ const config: Config = {
   darkMode: "class",
   plugins: [
     require("tailwind-scrollbar"),
-    require("daisyui"),
     require("@tailwindcss/typography"),
     heroui({
+      addCommonColors: false, // override common colors (e.g. "blue", "green", "pink").
+      defaultTheme: "light", // default theme from the themes object
+      defaultExtendTheme: "light", // default theme to extend on custom themes
       themes: {
         light: {
           colors: {
             background: "#E4E4E7",
             foreground: "#11181C",
             primary: {
-              foreground: "#FFFFFF",
-              DEFAULT: "#006FEE",
+              "50": "#dfedfd",
+              "100": "#b3d4fa",
+              "200": "#86bbf7",
+              "300": "#59a1f4",
+              "400": "#2d88f1",
+              "500": "#006fee",
+              "600": "#005cc4",
+              "700": "#00489b",
+              "800": "#003571",
+              "900": "#002147",
+              foreground: "#fff",
+              DEFAULT: "#006fee",
             },
+            focus: "#006FEE",
+            overlay: "#000000",
           },
         },
 
@@ -59,20 +72,20 @@ const config: Config = {
             background: "#0F172A",
             foreground: "#ffffff",
             primary: {
-              50: "#FAFAFA",
-              100: "#F4F4F5",
-              200: "#E4E4E7",
-              300: "#D4D4D8",
-              400: "#A1A1AA",
-              500: "#71717A",
-              // 600: "#52525B",
-              700: "#3F3F46",
-              800: "#27272A",
-              900: "#18181B",
-              // DEFAULT: "#09090b",
-              // foreground: "#ffffff",
+              "50": "#dfedfd",
+              "100": "#b3d4fa",
+              "200": "#86bbf7",
+              "300": "#59a1f4",
+              "400": "#2d88f1",
+              "500": "#006fee",
+              "600": "#005cc4",
+              "700": "#00489b",
+              "800": "#003571",
+              "900": "#002147",
+              foreground: "#fff",
+              DEFAULT: "#006fee",
             },
-            focus: "#F182F6",
+            focus: "#006FEE",
           },
         },
       },

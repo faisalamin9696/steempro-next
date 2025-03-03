@@ -614,3 +614,17 @@ type CommunityLog = {
   account: string;
   data: string;
 };
+
+type Proposal = {
+  id: number;
+  proposal_id: number;
+  creator: string;
+  receiver: string;
+  start_date: string;
+  end_date: string;
+  daily_pay: string;
+  subject: string;
+  permlink: string;
+  total_votes: string;
+  status?: "active" | "expired" | "upcoming";
+};

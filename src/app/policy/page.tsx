@@ -1,8 +1,8 @@
+import SLink from "@/components/SLink";
 import MainWrapper from "@/components/wrappers/MainWrapper";
 import { AppStrings } from "@/libs/constants/AppStrings";
 import { Button } from "@heroui/button";
 import { Metadata } from "next";
-import Link from "next/link";
 import React from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -218,14 +218,13 @@ export default function page() {
               Residents of these states may have similar rights to those
               provided under the CCPA. To manage your privacy settings or create
               privacy requests, please visit our{" "}
-              <Link
-                prefetch={false}
+              <SLink
                 className=" hover:underline"
                 target="_blank"
                 href={"/policy"}
               >
                 policy
-              </Link>{" "}
+              </SLink>{" "}
               page or contact us at{" "}
               <a
                 className=" hover:underline"
@@ -265,14 +264,13 @@ export default function page() {
             </li>
             <li>
               By visiting this page on our website:{" "}
-              <Link
-                prefetch={false}
+              <SLink
                 className=" hover:underline"
                 target="_blank"
                 href={"/about"}
               >
                 www.steempro.com/about
-              </Link>
+              </SLink>
             </li>
           </ul>
 

@@ -2,7 +2,7 @@ import "./style.scss";
 import { Card, CardBody } from "@heroui/card";
 import { Button } from "@heroui/button";
 import SAvatar from "@/components/SAvatar";
-import Link from "next/link";
+import SLink from "./SLink";
 
 interface Props {
   username: string;
@@ -30,8 +30,7 @@ const AboutCard = (props: Props): JSX.Element => {
             </p>
           </div>
           <Button
-            prefetch={false}
-            as={Link}
+            as={SLink}
             className="contact-button"
             radius="full"
             size="sm"

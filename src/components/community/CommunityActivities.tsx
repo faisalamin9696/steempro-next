@@ -1,7 +1,7 @@
 import EmptyList from "@/components/EmptyList";
 import ErrorCard from "@/components/ErrorCard";
 import LoadingCard from "@/components/LoadingCard";
-import { awaitTimeout, fetchSds } from "@/libs/constants/AppFunctions";
+import { fetchSds } from "@/libs/constants/AppFunctions";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { ScrollShadow } from "@heroui/scroll-shadow";
@@ -11,6 +11,7 @@ import { twMerge } from "tailwind-merge";
 import CommunityActivityItem from "./components/CommunityActivityItem";
 import InfiniteScroll from "react-infinite-scroll-component";
 import clsx from "clsx";
+import { AsyncUtils } from "@/libs/utils/async.utils";
 
 export function CommunityActivities({ community }: { community: Community }) {
   const [query, setQuery] = useState("");
@@ -41,7 +42,7 @@ export function CommunityActivities({ community }: { community: Community }) {
 
   async function handleEndReached() {
     if (data) {
-      await awaitTimeout(2.5);
+      await AsyncUtils.sleep(2.5);
       setLimit((prevLimit) => prevLimit + 30);
     }
   }

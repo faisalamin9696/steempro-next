@@ -28,21 +28,21 @@ export default function ProfilePostsMainTab() {
         size="sm"
         disableAnimation={isMobile}
         variant={"underlined"}
-        color={"primary"}
+        color={"secondary"}
         radius={isMobile ? "full" : "sm"}
         className="justify-center"
-        defaultSelectedKey={category}
-        selectedKey={category}
-        onSelectionChange={(key) => {
-          if (!category) history.replaceState({}, "", `/@${username}/${key}`);
-          else history.pushState({}, "", `/@${username}/${key}`);
-        }}
+        defaultSelectedKey={`/@${username}/${category}`}
+        selectedKey={`/@${username}/${category}`}
         classNames={{
           tabList: "max-sm:gap-0 max-sm:bg-transparent max-sm:p-0",
         }}
       >
         {profileTabs.map((tab) => (
-          <Tab key={tab.key} title={tab.title}>
+          <Tab
+            key={`/@${username}/${tab.key}`}
+            title={tab.title}
+            href={`/@${username}/${tab.key}`}
+          >
             {tab.children}
           </Tab>
         ))}

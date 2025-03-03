@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { BsFillMoonStarsFill } from "react-icons/bs";
 import { FaSun } from "react-icons/fa";
 import { RiMoonFill, RiSunFill } from "react-icons/ri";
@@ -18,17 +18,17 @@ export default memo(function ThemeSwitch({ className, sm }: ThemeSwitchProps) {
   const settings =
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
   const { theme, setTheme, systemTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Derive the current theme mode
   const isLightMode =
     theme === "light" || (theme === "system" && systemTheme === "light");
-
-  useEffect(() => {
-    const currentTheme = isLightMode ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", currentTheme);
-    document.body.setAttribute("data-theme", currentTheme);
-  }, [isLightMode]);
 
   const toggleTheme = () => {
     const newMode = {
@@ -39,6 +39,10 @@ export default memo(function ThemeSwitch({ className, sm }: ThemeSwitchProps) {
     dispatch(updateSettingsHandler(newMode));
     setTheme(newMode.theme);
   };
+
+  if (!mounted) {
+    return null;
+  }
 
   if (sm) {
     return (

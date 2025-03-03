@@ -27,9 +27,9 @@ const BodyShort = (props: BodyShortProps): JSX.Element => {
 
   /* eslint-disable react/no-danger */
   return (
-    <div className={props.className}>
-      <p style={{ wordBreak: "break-word" }}>{extractBodySummary(body)}</p>
-    </div>
+    <p className={props.className} style={{ wordBreak: "break-word" }}>
+      {extractBodySummary(body)}
+    </p>
   );
 };
 

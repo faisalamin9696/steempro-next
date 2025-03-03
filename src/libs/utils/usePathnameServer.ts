@@ -13,8 +13,8 @@ interface Params {
   community: string;
 }
 
-const usePathnameServer = (): Params => {
-  const headersList = headers();
+const usePathnameServer = async (): Promise<Params> => {
+  const headersList = await headers();
   const pathname = headersList.get("pathname") ?? "";
   const params = {
     category: "",

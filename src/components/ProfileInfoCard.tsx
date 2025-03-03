@@ -10,17 +10,18 @@ import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
 import { Avatar, AvatarGroup } from "@heroui/avatar";
 import { Button } from "@heroui/button";
 import { getResizedAvatar } from "@/libs/utils/image";
-import Link from "next/link";
 import useSWR from "swr";
 import FollowersCard from "./FollowersCard";
 import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
 import FollowButton from "./FollowButton";
 import { IoMdShareAlt } from "react-icons/io";
-import { FaRegHeart } from "react-icons/fa";
-import { IoFlashOutline } from "react-icons/io5";
+import { FaGlobe, FaHeart, FaLocationArrow } from "react-icons/fa";
+import { IoFlash } from "react-icons/io5";
 import { getVoteData } from "@/libs/steem/sds";
 import { AppLink } from "@/libs/constants/AppConstants";
 import { useSession } from "next-auth/react";
+import SLink from "./SLink";
+import { FaLocationDot } from "react-icons/fa6";
 
 type Props = {
   account: AccountExt;
@@ -66,10 +67,13 @@ export default memo(function ProfileInfoCard(props: Props) {
     true
   );
 
+  const website = posting_json_metadata?.profile?.website;
+  const location = posting_json_metadata?.profile?.location;
+
   return (
     <div
       className={twMerge(
-        `relative flex flex-col card-content border-none rounded-lg
+        `relative flex flex-col border-none rounded-lg
         bg-transparent items-start w-full bg-white dark:bg-white/5  text-default-900/90 pb-4`,
         props.className
       )}
@@ -80,7 +84,7 @@ export default memo(function ProfileInfoCard(props: Props) {
           className="relative overflow-hidden w-full rounded-t-md h-[98px] bg-no-repeat bg-cover bg-center"
         />
       )}
-      <div className=" flex flex-col px-4 py-2 gap-4 w-full">
+      <div className=" flex flex-col px-4 py-2 gap-2 w-full">
         <div className=" flex flex-col gap-2">
           <div className=" flex flex-row justify-between">
             {!compact && (
@@ -88,13 +92,12 @@ export default memo(function ProfileInfoCard(props: Props) {
                 <p className="text-left">
                   {posting_json_metadata?.profile?.name ?? profileInfo.name}
                 </p>
-                <Link
-                  prefetch={false}
+                <SLink
                   href={`/@${profileInfo.name}`}
                   className=" font-normal text-sm hover:underline"
                 >
                   @{profileInfo.name}
-                </Link>
+                </SLink>
               </div>
             )}
 
@@ -137,9 +140,8 @@ export default memo(function ProfileInfoCard(props: Props) {
                 //   className=" bg-foreground/10"
                 //   variant="flat"
                 //   href="/"
-                //   prefetch={false}
                 //   startContent={<BsChatDots size={18} />}
-                //   as={Link}
+                //   as={SLink}
                 // >
                 //   Chat
                 // </Button>
@@ -150,12 +152,39 @@ export default memo(function ProfileInfoCard(props: Props) {
             className="!text-sm !text-default-900/70 !text-left prose-p:!my-2"
             text={posting_json_metadata?.profile?.about}
           />
+
+          {website && (
+            <div
+              title="Website"
+              className=" flex flex-row gap-1 items-center text-tiny w-max"
+            >
+              <FaGlobe size={16} className=" me-1" />
+
+              <SLink
+                className=" hover:underline hover:text-blue-500"
+                target="_blank"
+                href={website}
+              >
+                {website}
+              </SLink>
+            </div>
+          )}
+
+          {location && (
+            <div
+              title="Location"
+              className=" flex flex-row gap-1 items-center text-tiny w-max"
+            >
+              <FaLocationDot size={16} className=" me-1" />
+              <div>{location}</div>
+            </div>
+          )}
         </div>
 
         <div className=" flex flex-col max-w-[300px] w-full gap-2">
           <div className="flex justify-between items-start">
             <div className=" flex flex-row gap-1 items-center text-tiny">
-              <FaRegHeart size={16} className=" me-1" />
+              <FaHeart size={16} className=" me-1" />
               <div
                 className=" flex flex-row gap-1 hover:underline cursor-pointer"
                 onClick={() => {
@@ -168,7 +197,7 @@ export default memo(function ProfileInfoCard(props: Props) {
             </div>
 
             <div className=" flex flex-row gap-1 items-center text-tiny">
-              <IoFlashOutline size={16} className=" me-1" />
+              <IoFlash size={16} className=" me-1" />
               <div
                 className=" flex flex-row gap-1 hover:underline cursor-pointer"
                 onClick={() => {
@@ -234,24 +263,26 @@ export default memo(function ProfileInfoCard(props: Props) {
           </div>
         </div>
 
-        <div className=" flex flex-col items-start gap-2">
-          <p className=" font-bold text-left">Followers you know</p>
-          <div className=" flex flex-row items-center gap-4 px-3">
-            <AvatarGroup isBordered size="md" max={5}>
-              {knownPeople?.map((people) => (
-                <Link prefetch={false} className="!ms-1" href={`/@${people}`}>
-                  <Avatar key={people} src={getResizedAvatar(people)} />
-                </Link>
-              ))}
-            </AvatarGroup>
-            {/* <p
+        {!!knownPeople?.length && (
+          <div className=" flex flex-col items-start gap-2">
+            <p className=" font-bold text-left">Followers you know</p>
+            <div className=" flex flex-row items-center gap-4 px-3">
+              <AvatarGroup isBordered size="md" max={5}>
+                {knownPeople?.map((people) => (
+                  <SLink key={people} className="!ms-1" href={`/@${people}`}>
+                    <Avatar key={people} src={getResizedAvatar(people)} />
+                  </SLink>
+                ))}
+              </AvatarGroup>
+              {/* <p
               onClick={() => seFollowerModal(!followerModal)}
               className=" text-tiny hover:underline cursor-pointer"
             >
               Show all
             </p> */}
+            </div>
           </div>
-        </div>
+        )}
       </div>
       {/* {profileInfo.flag_text && (
         <div className=" flex flex-col items-start gap-2">

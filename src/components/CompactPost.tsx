@@ -5,12 +5,12 @@ import { Card } from "@heroui/card";
 import React, { memo } from "react";
 import BodyShort from "@/components/body/BodyShort";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
-import Link from "next/link";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import { MdAccessTime } from "react-icons/md";
 import { getThumbnail } from "@/libs/utils/image";
 import { hasNsfwTag } from "@/libs/utils/StateFunctions";
 import { getSettings } from "@/libs/utils/user";
+import SLink from "./SLink";
 
 interface Props {
   comment: Feed;
@@ -33,8 +33,7 @@ export default memo(function CompactPost(props: Props) {
 
   return (
     <Card
-      as={Link}
-      prefetch={false}
+      as={SLink}
       onPress={onPress}
       radius="none"
       href={`/${commentInfo.category}/@${commentInfo.author}/${commentInfo.permlink}`}
@@ -42,7 +41,7 @@ export default memo(function CompactPost(props: Props) {
       shadow="none"
       // className=" text-start p-0 bg-transparent px-0 py-2 mb-auto"
     >
-      {/* <div className="card card-compact rounded-lg overflow-hidden shadow-lg flex flex-col bg-white dark:bg-white/5 p-2"> */}
+      {/* <div className=" rounded-2xl overflow-hidden shadow-lg flex flex-col bg-white dark:bg-white/5 p-2"> */}
       {isNsfw ? null : (
         <div className="relative">
           <CommentCover

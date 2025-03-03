@@ -36,12 +36,12 @@ import { useMutation } from "@tanstack/react-query";
 import { mutePost, pinPost } from "@/libs/steem/condenser";
 import { addCommentHandler } from "@/libs/redux/reducers/CommentReducer";
 import { useLogin } from "@/components/auth/AuthProvider";
-import Link from "next/link";
 import { BsPinAngleFill } from "react-icons/bs";
 import RoleTitleCard from "@/components/RoleTitleCard";
 import { useSession } from "next-auth/react";
 import { AppStrings } from "@/libs/constants/AppStrings";
 import CommentEditHistory from "@/components/CommentHistoryViewer";
+import SLink from "@/components/SLink";
 
 interface Props {
   comment: Post | Feed;
@@ -263,21 +263,19 @@ export default function CommentHeader(props: Props) {
         name={
           <div className="flex items-center gap-1">
             {isSelf ? (
-              <Link
-                prefetch={false}
+              <SLink
                 className=" hover:text-blue-500"
                 href={`/@${comment.author}`}
               >
                 {comment.author}
-              </Link>
+              </SLink>
             ) : (
-              <Link
-                prefetch={false}
+              <SLink
                 className=" hover:text-blue-500"
                 href={`/@${comment.author}`}
               >
                 {comment.author}
-              </Link>
+              </SLink>
             )}
             <Reputation reputation={comment.author_reputation} />
 
@@ -349,8 +347,7 @@ export default function CommentHeader(props: Props) {
           {
             className: clsx(isReply ? "h-8 w-8" : "", "cursor-pointer "),
             src: getResizedAvatar(comment.author),
-            as: Link,
-
+            as: SLink,
             href: `/@${comment.author}`,
           } as any
         }

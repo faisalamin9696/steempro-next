@@ -28,7 +28,8 @@ import SAvatar from "@/components/SAvatar";
 import { FaChevronDown } from "react-icons/fa";
 import LoadingCard from "@/components/LoadingCard";
 import { capitalize } from "@/libs/constants/AppConstants";
-import Link from "next/link";
+import SLink from "@/components/SLink";
+import TableWrapper from "@/components/wrappers/TableWrapper";
 
 type CommunityReportType = {
   author: string;
@@ -141,13 +142,12 @@ export default function CommunityReportPage() {
           return (
             <div className="flex gap-2 items-center">
               <SAvatar size="xs" username={report.author} />
-              <Link
-                prefetch={false}
+              <SLink
                 className=" hover:text-blue-500"
                 href={`/@${report.author}`}
               >
                 {report.author}
-              </Link>
+              </SLink>
             </div>
           );
 
@@ -362,47 +362,15 @@ export default function CommunityReportPage() {
       {isPending ? (
         <LoadingCard />
       ) : (
-        <Table
-          aria-label="Delegation table"
-          isHeaderSticky
-          removeWrapper
-          bottomContent={bottomContent}
-          bottomContentPlacement="outside"
-          classNames={classNames}
-          sortDescriptor={sortDescriptor}
-          topContent={topContent}
-          topContentPlacement="outside"
-          onSortChange={setSortDescriptor}
-          isCompact
-          isStriped
-        >
-          <TableHeader columns={headerColumns}>
-            {(column) => (
-              <TableColumn
-                key={column.uid}
-                align={column.uid === "actions" ? "center" : "start"}
-                allowsSorting={column.sortable}
-              >
-                {column.name}
-              </TableColumn>
-            )}
-          </TableHeader>
-          <TableBody
-            emptyContent={"No data found"}
-            items={sortedItems.slice(
-              (page - 1) * rowsPerPage,
-              page * rowsPerPage
-            )}
-          >
-            {(item) => (
-              <TableRow key={`${item.author}`}>
-                {(columnKey) => (
-                  <TableCell>{renderCell(item, columnKey)}</TableCell>
-                )}
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+        <TableWrapper
+          classNames={{ base: ["max-h-[382px]", "max-w-none","w-full"] }}
+          initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
+          tableColumns={columns}
+          filteredItems={filteredItems}
+          onFilterValueChange={setFilterValue}
+          renderCell={renderCell}
+          sortDescriptor={{ column: "author", direction: "ascending" }}
+        />
       )}
     </div>
   );

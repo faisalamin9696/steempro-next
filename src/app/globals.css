@@ -2,59 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
-
 .Toastify__toast-container {
   z-index: 100001 !important;
-
-}
-
-:root {
-  --background: #E4E4E7;
-  --color-fg-default: #1F2328;
-  --color-fg-muted: #656d76;
-  --color-fg-subtle: #6e7781;
-  --color-canvas-default: #ffffff;
-  --color-canvas-subtle: #f6f8fa;
-  --color-border-default: #d0d7de;
-  --color-border-muted: hsla(210, 18%, 87%, 1);
-  --color-neutral-muted: rgba(175, 184, 193, 0.2);
-  --color-accent-fg: #0969da;
-  --color-accent-emphasis: #0969da;
-  --color-attention-subtle: #fff8c5;
-  --color-danger-fg: #d1242f;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: rgb(71 85 105 / 1);
-    --color-prettylights-syntax-constant-other-reference-link: #a5d6ff;
-    --color-fg-default: #e6edf3;
-    --color-fg-muted: #7d8590;
-    --color-fg-subtle: #6e7681;
-    --color-canvas-default: #0d1117;
-    --color-canvas-subtle: #161b22;
-    --color-border-default: #30363d;
-    --color-border-muted: #21262d;
-    --color-neutral-muted: rgba(110, 118, 129, 0.4);
-    --color-accent-fg: #2f81f7;
-    --color-accent-emphasis: #1f6feb;
-    --color-attention-subtle: rgba(187, 128, 9, 0.15);
-    --color-danger-fg: #f85149;
-
+    --background: rgb(15, 23, 42);
   }
-
-
-
 }
 
-body {
-  background: rgb(var(--background));
-
+:root {
+  /* Your default theme */
+  --background: rgb(228, 228, 231);
 }
 
-html {
-  background: rgb(var(--background));
-
+[data-theme="dark"] {
+  --background: rgb(15, 23, 42);
 }
 
 @layer utilities {

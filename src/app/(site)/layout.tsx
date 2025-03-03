@@ -11,16 +11,14 @@ export default async function Layout({
   start: React.ReactNode;
 }>) {
   return (
-    <MainWrapper
-      topContent={<HomeCarousel />}
-    >
+    <MainWrapper topContent={<HomeCarousel />}>
       <div className=" flex flex-col">{children}</div>
     </MainWrapper>
   );
 }
 
 export async function generateMetadata() {
-  let { category } = usePathnameServer();
+  let { category } = await usePathnameServer();
   if (!category) category = "trending";
 
   const capCat = category.charAt(0).toUpperCase() + category.slice(1);

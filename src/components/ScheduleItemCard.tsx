@@ -14,7 +14,6 @@ import BodyShort from "./body/BodyShort";
 import { RiDraftLine } from "react-icons/ri";
 import { TbClockEdit } from "react-icons/tb";
 import { MdDelete } from "react-icons/md";
-import Link from "next/link";
 import STag from "./STag";
 import { FaClock, FaInfoCircle } from "react-icons/fa";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
@@ -40,6 +39,7 @@ import {
 } from "@internationalized/date";
 import { cryptoUtils, Signature } from "@hiveio/dhive";
 import { extractImageLink } from "@/libs/utils/extractContent";
+import SLink from "./SLink";
 
 const StatusData = {
   0: { title: "Pending", color: "warning" },
@@ -303,7 +303,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
 
   return (
     <div
-      className="w-full card card-compact flex-col gap-4 
+      className="w-full rounded-2xl flex-col gap-4 
     bg-white/60 dark:bg-white/10"
     >
       <Card
@@ -313,13 +313,12 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
       >
         <div className=" absolute right-2 flex items-center gap-2">
           {targetUrl && (
-            <Link
-              prefetch={false}
+            <SLink
               className=" text-blue-500 text-sm"
               href={targetUrl}
             >
               Visit
-            </Link>
+            </SLink>
           )}
 
           {scheduleInfo.status === 2 && (

@@ -1,19 +1,17 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
-import { useRouter } from "next13-progressbar";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
+import React, { useState } from "react";
+import { useAppSelector } from "@/libs/constants/AppFunctions";
 import SAvatar from "./SAvatar";
 import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { BiPlus } from "react-icons/bi";
-import Link from "next/link";
 import { abbreviateNumber } from "@/libs/utils/helper";
 import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
 import CommunityMembers from "./community/CommunityMembers";
 import SubscribeButton from "./SubscribeButton";
 import { twMerge } from "tailwind-merge";
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import SLink from "./SLink";
 
 type Props = {
   community: Community;
@@ -22,17 +20,12 @@ type Props = {
 };
 export default function CommunityHeader(props: Props) {
   const { community, account } = props;
-  const { username, community: communityName } = usePathnameClient();
   const { isTablet } = useDeviceInfo();
 
-  const dispatch = useAppDispatch();
-  const router = useRouter();
   const communityInfo: Community =
     useAppSelector((state) => state.communityReducer.values)[
       community?.account ?? ""
     ] ?? community;
-
-  const loginInfo = useAppSelector((state) => state.loginReducer.value);
 
   const [membersModal, setMembersModal] = useState(false);
 
@@ -44,10 +37,6 @@ export default function CommunityHeader(props: Props) {
     posting_json_metadata?.profile?.cover_image ?? "",
     "1280x200"
   );
-
-  useEffect(() => {
-    router.refresh();
-  }, [username, communityName]);
 
   return (
     <div
@@ -67,7 +56,7 @@ export default function CommunityHeader(props: Props) {
             size="lg"
             quality="medium"
             username={communityInfo.account}
-            className="hidden md:block bg-background shadow-none  border-4 border-background"
+            className="hidden md:block bg-background shadow-none border-4 border-background"
           />
         </div>
 
@@ -76,7 +65,7 @@ export default function CommunityHeader(props: Props) {
             <SAvatar
               username={communityInfo.account}
               size="md"
-              className="hidden max-md:block border-2 border-background"
+              className="hidden max-md:block border-2 shadow-none border-background"
             />
 
             <div className="flex flex-col items-start w-full">
@@ -84,13 +73,12 @@ export default function CommunityHeader(props: Props) {
                 <div className=" flex flex-row justify-between w-full items-start">
                   <div className=" flex flex-col font-bold text-lg sm:text-2xl">
                     <p>{communityInfo.title}</p>
-                    <Link
-                      prefetch={false}
+                    <SLink
                       href={`/@${communityInfo.account}`}
                       className=" font-normal text-sm hover:underline"
                     >
                       @{communityInfo.account}
-                    </Link>
+                    </SLink>
                   </div>
 
                   <div className=" flex flex-row items-center gap-2">
@@ -101,8 +89,7 @@ export default function CommunityHeader(props: Props) {
                       className=" bg-foreground/10"
                       variant="flat"
                       startContent={<BiPlus size={24} />}
-                      as={Link}
-                      prefetch={false}
+                      as={SLink}
                       isDisabled={communityInfo.observer_role === "muted"}
                       href={
                         {

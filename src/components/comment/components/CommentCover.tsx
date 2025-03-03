@@ -1,8 +1,8 @@
 import NsfwOverlay from "@/components/NsfwOverlay";
+import SLink from "@/components/SLink";
 import { Card } from "@heroui/card";
 import clsx from "clsx";
 import Image from "next/image";
-import Link from "next/link";
 import { memo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -53,8 +53,7 @@ export default memo(function CommentCover(props: Props) {
     ) : (
       <Card
         radius="none"
-        as={targetUrl ? Link : undefined}
-        prefetch={false}
+        as={targetUrl ? SLink : undefined}
         href={targetUrl}
         className={clsx(
           isFetching ? "bg-background/50" : "bg-transparent",

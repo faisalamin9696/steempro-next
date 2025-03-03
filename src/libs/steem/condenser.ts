@@ -7,11 +7,12 @@ import {
   PrivateKey,
   PublicKey,
   Signature,
+  TransactionConfirmation,
 } from "@hiveio/dhive";
 import { PrivKey } from "../utils/user";
 import { toast } from "sonner";
 import { CurrentSetting } from "../constants/AppConstants";
-import { steemToVest } from "./sds";
+import { steemToVest } from "../helper/vesting";
 global.Buffer = global.Buffer || require("buffer").Buffer;
 
 const IMAGE_API = AppStrings.image_hostings[0];
@@ -1268,7 +1269,7 @@ export const voteForWitness = async (
   key: string,
   options: { witness: string; approved: boolean },
   isKeychain?: boolean
-) => {
+): Promise<TransactionConfirmation> => {
   if (isKeychain) {
     await validateKeychain();
 
@@ -1764,3 +1765,141 @@ export function verifyMessage(
     return false;
   }
 }
+
+export const getProposals = async (): Promise<Proposal[]> => {
+  return new Promise((resolve, reject) => {
+    client
+      .call2("condenser_api", "list_proposals", [
+        [-1],
+        1000,
+        "by_total_votes",
+        "descending",
+        "all",
+      ])
+      .then((res) => {
+        if (res) {
+          res.map((data) => {
+            if (
+              new Date(data.start_date) < new Date() &&
+              new Date(data.end_date) >= new Date()
+            ) {
+              data.status = "active";
+            } else if (new Date(data.end_date) < new Date()) {
+              data.status = "expired";
+            } else {
+              data.status = "upcoming";
+            }
+          });
+        }
+        resolve(res);
+      })
+      .catch((error) => {
+        console.error(error);
+        reject(error);
+      });
+  });
+};
+
+export const findProposals = (id: number): Promise<Proposal> =>
+  client
+    .call2("condenser_api", "find_proposals", [[id]])
+    .then((r: Proposal[]) => {
+      const proposal = r?.[0];
+      if (proposal) {
+        if (
+          new Date(proposal.start_date) < new Date() &&
+          new Date(proposal.end_date) >= new Date()
+        ) {
+          proposal.status = "active";
+        } else if (new Date(r?.[0].end_date) < new Date()) {
+          proposal.status = "expired";
+        } else {
+          proposal.status = "upcoming";
+        }
+      }
+      return proposal;
+    });
+
+export interface ProposalVote {
+  id: number;
+  proposal: Proposal;
+  voter: string;
+}
+
+export const getProposalVotes = (
+  proposalId: number,
+  voter: string,
+  limit: number
+): Promise<ProposalVote[]> =>
+  client
+    .call2("condenser_api", "list_proposal_votes", [
+      [proposalId, voter],
+      limit,
+      "by_proposal_voter",
+    ])
+    .then((r) =>
+      r.filter((x: ProposalVote) => x.proposal.proposal_id === proposalId)
+    )
+    .then((r) => r.map((x: ProposalVote) => ({ id: x.id, voter: x.voter })));
+
+export const voteForProposal = async (
+  account: AccountExt,
+  key: string,
+  options: { proposalId: number; approved: boolean },
+  isKeychain?: boolean
+): Promise<TransactionConfirmation> => {
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestUpdateProposalVote(
+        account.name,
+        JSON.stringify([options.proposalId]),
+        options.approved,
+        JSON.stringify([]),
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
+  const keyData = getKeyType(account, key);
+
+  if (keyData && PrivKey.atLeast(keyData.type, "ACTIVE")) {
+    const privateKey = PrivateKey.fromString(key);
+
+    const operation: any = [
+      [
+        "update_proposal_votes",
+        {
+          voter: keyData.account,
+          proposal_ids: [options.proposalId],
+          approve: options.approved,
+          extensions: [],
+        },
+      ],
+    ];
+    return new Promise((resolve, reject) => {
+      client.broadcast
+        .sendOperations(operation, privateKey)
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((err) => {
+          reject(err);
+          console.log("PowerUp error", err);
+        });
+    });
+  }
+
+  return Promise.reject(
+    new Error(
+      "Check private key permission! Required private active key or above."
+    )
+  );
+};

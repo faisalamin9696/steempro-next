@@ -1,6 +1,7 @@
 import {
-  awaitTimeout,
   fetchSds,
+  getFeedScrollItems,
+  updateFeedScroll,
   useAppSelector,
 } from "@/libs/constants/AppFunctions";
 import { notFound } from "next/navigation";
@@ -15,6 +16,7 @@ import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 import { twMerge } from "tailwind-merge";
 import EmptyList from "./EmptyList";
 import { FaArrowUp } from "react-icons/fa"; // Import an icon for the button
+import { AsyncUtils } from "@/libs/utils/async.utils";
 
 interface Props {
   endPoint: string;
@@ -78,7 +80,7 @@ export default function FeedList(props: Props) {
   // Memoize the initial rows to avoid unnecessary updates
   useMemo(() => {
     if (data) {
-      setRows(data.slice(0, 16));
+      setRows(data.slice(0, getFeedScrollItems(endPoint)));
     }
   }, [data]);
 
@@ -92,8 +94,9 @@ export default function FeedList(props: Props) {
   const handleEndReached = useCallback(async () => {
     if (data && rows.length < data.length) {
       setLoadingMore(true);
-      await awaitTimeout(2.5); // Simulate network delay
+      await AsyncUtils.sleep(2.5); // Simulate network delay
       const newRows = loadMoreRows(data, rows);
+      updateFeedScroll(endPoint, [...rows, ...newRows].length);
       setRows((prevRows) => [...prevRows, ...newRows]);
       setLoadingMore(false);
     }

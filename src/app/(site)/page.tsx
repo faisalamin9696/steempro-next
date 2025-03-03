@@ -18,30 +18,30 @@ export default function HomePage() {
   let { category } = usePathnameClient();
   const { isMobile } = useDeviceInfo();
 
-  let homeTabs = [
+  let categoryTabs = [
     {
       title: "Trending",
       key: "trending",
       children: <HomeTrendingsTab />,
-      icon: <FaFire size={24} />,
+      icon: <FaFire size={22} />,
     },
     {
       title: "Hot",
       key: "hot",
       children: <HomeHotTab />,
-      icon: <MdWhatshot size={24} />,
+      icon: <MdWhatshot size={22} />,
     },
     {
       title: "New",
       key: "created",
       children: <HomeCreatedTab />,
-      icon: <MdNewLabel size={24} />,
+      icon: <MdNewLabel size={22} />,
     },
     {
       title: "Payout",
       key: "payout",
       children: <HomePayoutTab />,
-      icon: <FaCircleDollarToSlot size={24} />,
+      icon: <FaCircleDollarToSlot size={22} />,
     },
   ];
 
@@ -64,9 +64,8 @@ export default function HomePage() {
           base: "",
         }}
       >
-        {homeTabs.map((tab) => (
+        {categoryTabs.map((tab) => (
           <Tab
-            hidden
             href={`/${tab.key}`}
             key={`/${tab.key}`}
             title={

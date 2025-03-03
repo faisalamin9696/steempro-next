@@ -52,14 +52,14 @@ export default function AboutPage() {
         <Divider orientation="vertical" className="block max-sm:hidden" />
 
         <div className="flex justify-start max-sm:justify-center w-[217px]">
-          <Link href={MObileAppLink} target="_blank" className="p-0 max-w-fit">
+          <SLink href={MobileAppLink} target="_blank" className="p-0 max-w-fit">
             <Image
               height={40}
               width={150}
               src="/google-play.png"
               alt={"google-play-store"}
             />
-          </Link>
+          </SLink>
         </div>
       </div> */}
     </div>
