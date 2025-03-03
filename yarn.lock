@@ -1261,7 +1261,7 @@
 
 "@hiveio/dhive@https://github.com/faisalamin9696/dhive":
   version "0.14.12"
-  resolved "https://github.com/faisalamin9696/dhive#3b3044a9f32929a3c7646146ce84b48f21ff67e0"
+  resolved "https://github.com/faisalamin9696/dhive#c58fa2453878c4e8b619b2b34653d9f5c59d867c"
   dependencies:
     bs58 "^4.0.1"
     bytebuffer "^5.0.1"
