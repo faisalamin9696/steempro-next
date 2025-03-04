@@ -167,10 +167,7 @@ function AppNavbar() {
         </div>
         {/* <!-- Right elements --> */}
         <div className="relative flex items-center">
-          <div
-            className="flex flex-row gap-4 items-center"
-            onClick={searchiDisclosure.onOpen}
-          >
+          <div className="flex flex-row gap-4 items-center">
             <Input
               radius="full"
               className="hidden 1md:block"
@@ -181,8 +178,11 @@ function AppNavbar() {
               placeholder="Search"
               size="md"
               isReadOnly
-              endContent={<MdSearch size={20} />}
+              endContent={
+                <MdSearch onClick={searchiDisclosure.onOpen} size={20} />
+              }
               type="search"
+              onClick={searchiDisclosure.onOpen}
             />
 
             <Button
@@ -192,7 +192,11 @@ function AppNavbar() {
               variant="light"
               className="1md:hidden"
             >
-              <MdSearch size={24} className="text-default-600 " />
+              <MdSearch
+                onClick={searchiDisclosure.onOpen}
+                size={24}
+                className="text-default-600 "
+              />
             </Button>
 
             <Button
@@ -374,12 +378,11 @@ function AppNavbar() {
             )}
           </div>
         </div>
-        {searchiDisclosure.isOpen && (
-          <SearchModal
-            isOpen={searchiDisclosure.isOpen}
-            onClose={searchiDisclosure.onClose}
-          />
-        )}
+        <SearchModal
+          isOpen={searchiDisclosure.isOpen}
+          onClose={searchiDisclosure.onClose}
+        />
+
         {accountDisclosure.isOpen && (
           <AccountsModal
             isOpen={accountDisclosure.isOpen}
@@ -389,13 +392,11 @@ function AppNavbar() {
             }}
           />
         )}
-        {notiDisclosure.isOpen && (
-          <NotificationsModal
-            onOpen={notiDisclosure.isOpen}
-            onClose={notiDisclosure.onClose}
-            username={session?.user?.name ?? ""}
-          />
-        )}
+        <NotificationsModal
+          onOpen={notiDisclosure.isOpen}
+          onClose={notiDisclosure.onClose}
+          username={session?.user?.name ?? ""}
+        />
       </div>
 
       {logoutDisclosure.isOpen && (

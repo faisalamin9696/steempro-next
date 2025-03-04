@@ -133,7 +133,9 @@ export default function NotificationsTable(props: Props) {
     )}/20/${offset}`;
   }
 
-  const { data, isLoading, mutate } = useSWR(URL, fetchSds<SDSNotification[]>);
+  const { data, isLoading } = useSWR(URL, fetchSds<SDSNotification[]>, {
+    refreshInterval: 300000,
+  });
   const { data: session } = useSession();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);

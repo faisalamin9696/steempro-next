@@ -8,7 +8,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalFooter,
-  useDisclosure,
 } from "@heroui/modal";
 import NotificationsTable from "./NotificationsTable";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
