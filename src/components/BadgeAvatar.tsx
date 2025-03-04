@@ -1,8 +1,8 @@
 import { Badge } from "@heroui/badge";
-import clsx from "clsx";
 import STooltip from "./STooltip";
 import { getResizedAvatar } from "@/libs/utils/image";
 import Image from "next/image";
+import { twMerge } from "tailwind-merge";
 
 interface Props {
   username: string;
@@ -21,7 +21,7 @@ export default function BadgeAvatar(props: Props) {
     <STooltip content={badge ? `${"Reputation score"}: ${badge}` : username}>
       <Badge
         content={typeof badge === "number" ? badge.toFixed(0) : badge}
-        className={clsx(badge ? "" : "hidden")}
+        className={twMerge(badge ? "" : "hidden")}
         color="primary"
         shape="circle"
       >
@@ -34,7 +34,7 @@ export default function BadgeAvatar(props: Props) {
           width={imageSize}
           onClick={onPress}
           src={`${getResizedAvatar(username, quality ?? "small")}`}
-          className={clsx(
+          className={twMerge(
             " shadow-lg rounded-full",
             border && "border",
             className

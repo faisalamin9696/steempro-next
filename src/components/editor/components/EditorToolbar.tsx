@@ -17,10 +17,10 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@heroui/dropdown";
-import clsx from "clsx";
 import { BsImage, BsJustify, BsTextCenter } from "react-icons/bs";
 import { ToolbarItem } from "./EditorToolbarItem";
 import { Tooltip } from "@heroui/tooltip";
+import { twMerge } from "tailwind-merge";
 
 interface ToolbarProps {
   onSelect: any;
@@ -117,7 +117,7 @@ const EditorToolbar = (props: ToolbarProps) => {
   );
 
   return (
-    <div className={clsx(className)}>
+    <div className={twMerge(className)}>
       <div className="flex flex-row items-center max-sm:flex-col max-sm:items-start w-full gap-1 max-sm:gap-2 overflow-auto">
         <div className=" flex gap-1 items-center">
           <div title="Headings">{HeadingItem}</div>

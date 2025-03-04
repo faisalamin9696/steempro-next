@@ -2,8 +2,8 @@ import React from "react";
 import { FaEye } from "react-icons/fa";
 import useSWR from "swr";
 import { abbreviateNumber } from "@/libs/utils/helper";
-import clsx from "clsx";
 import axios from "axios";
+import { twMerge } from "tailwind-merge";
 
 type Props = {
   author?: string;
@@ -50,7 +50,7 @@ export default function ViewCountCard(props: Props) {
 
   return (
     <div
-      className={clsx(data && props.className)}
+      className={twMerge(data && props.className)}
       title={`${data || props.views} Unique views`}
     >
       <div className="flex flex-row gap-2 items-center">

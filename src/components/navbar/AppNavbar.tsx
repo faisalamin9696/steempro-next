@@ -49,6 +49,7 @@ import SearchModal from "../SearchModal";
 import SAvatar from "../SAvatar";
 import { twMerge } from "tailwind-merge";
 import SLink from "../SLink";
+import { AsyncUtils } from "@/libs/utils/async.utils";
 
 function AppNavbar() {
   const { authenticateUser, isAuthorized, credentials, setCredentials } =
@@ -56,16 +57,17 @@ function AppNavbar() {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { data: session, status } = useSession();
   const [isPopOpen, setIsPopOpen] = React.useState(false);
-  const [isAccOpen, setIsAccOpen] = React.useState(false);
-  const [notificationPopup, setNotificationPopup] = useState(false);
+  const accountDisclosure = useDisclosure();
+  const notiDisclosure = useDisclosure();
+  const searchiDisclosure = useDisclosure();
   const dispatch = useAppDispatch();
   const [isLocked, setLocked] = useState(
     status === "authenticated" &&
       !sessionKey &&
       !getSessionToken(session.user?.name)
   );
-  const [searchModal, setSearchModal] = useState(false);
-  const { isOpen, onOpenChange } = useDisclosure();
+  const logoutDisclosure = useDisclosure();
+  const [logoutLoading, setLogoutLoading] = useState(false);
 
   // validate the local storage auth
   useMemo(async () => {
@@ -117,15 +119,21 @@ function AppNavbar() {
       return;
     }
 
+    setLogoutLoading(true);
+
     const credentials = getCredentials(getSessionKey(session?.user?.name));
     if (!credentials?.key) {
       toast.error("Invalid credentials");
+      setLogoutLoading(false);
       return;
     }
 
     removeCredentials(credentials);
     dispatch(logoutHandler());
+    // simulate for two seconds
+    await AsyncUtils.sleep(2);
     await signOut();
+    setLogoutLoading(false);
     toast.success(`${credentials.username} logged out successfully`);
   }
   return (
@@ -134,8 +142,8 @@ function AppNavbar() {
         {/* <!-- Hamburger button for mobile view --> */}
         <div className=" flex flex-row gap-2 items-center">
           <AppDrawer
-            onAccountSwitch={() => setIsAccOpen(!isAccOpen)}
-            handleLogout={onOpenChange}
+            onAccountSwitch={accountDisclosure.onOpen}
+            handleLogout={logoutDisclosure.onOpen}
           />
           <SLink href={"/"} className="hidden lg:block">
             <Image
@@ -159,7 +167,10 @@ function AppNavbar() {
         </div>
         {/* <!-- Right elements --> */}
         <div className="relative flex items-center">
-          <div className="flex flex-row gap-4 items-center">
+          <div
+            className="flex flex-row gap-4 items-center"
+            onClick={searchiDisclosure.onOpen}
+          >
             <Input
               radius="full"
               className="hidden 1md:block"
@@ -170,7 +181,6 @@ function AppNavbar() {
               placeholder="Search"
               size="md"
               isReadOnly
-              onClick={() => setSearchModal(true)}
               endContent={<MdSearch size={20} />}
               type="search"
             />
@@ -181,9 +191,6 @@ function AppNavbar() {
               radius="md"
               variant="light"
               className="1md:hidden"
-              onPress={(e) => {
-                setSearchModal(true);
-              }}
             >
               <MdSearch size={24} className="text-default-600 " />
             </Button>
@@ -215,7 +222,7 @@ function AppNavbar() {
               >
                 <Button
                   variant="light"
-                  onPress={() => setNotificationPopup(true)}
+                  onPress={notiDisclosure.onOpen}
                   radius="md"
                   isIconOnly
                   size="sm"
@@ -340,7 +347,7 @@ function AppNavbar() {
                       size="md"
                       variant="light"
                       onPress={() => {
-                        setIsAccOpen(!isAccOpen);
+                        accountDisclosure.onOpen();
                         handleItemClick();
                       }}
                       startContent={<PiUserSwitchFill className="text-xl" />}
@@ -354,7 +361,7 @@ function AppNavbar() {
                       variant="light"
                       color="danger"
                       onPress={() => {
-                        onOpenChange();
+                        logoutDisclosure.onOpen();
                         handleItemClick();
                       }}
                       startContent={<IoLogOut className="text-xl" />}
@@ -367,60 +374,66 @@ function AppNavbar() {
             )}
           </div>
         </div>
-        {searchModal && (
-          <SearchModal isOpen={searchModal} onOpenChange={setSearchModal} />
+        {searchiDisclosure.isOpen && (
+          <SearchModal
+            isOpen={searchiDisclosure.isOpen}
+            onClose={searchiDisclosure.onClose}
+          />
         )}
-        {isAccOpen && (
+        {accountDisclosure.isOpen && (
           <AccountsModal
-            isOpen={isAccOpen}
-            onOpenChange={setIsAccOpen}
+            isOpen={accountDisclosure.isOpen}
+            onClose={accountDisclosure.onClose}
             handleSwitchSuccess={(user) => {
               if (user) setCredentials(user);
             }}
           />
         )}
-        {notificationPopup && (
+        {notiDisclosure.isOpen && (
           <NotificationsModal
-            isOpen={notificationPopup}
-            onOpenChange={setNotificationPopup}
+            onOpen={notiDisclosure.isOpen}
+            onClose={notiDisclosure.onClose}
             username={session?.user?.name ?? ""}
           />
         )}
       </div>
 
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        size="md"
-        hideCloseButton
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Confirmation
-              </ModalHeader>
-              <ModalBody>
-                <p>Do you really want to logout {loginInfo.name}?</p>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="primary" variant="light" onPress={onClose}>
-                  Cancel
-                </Button>
-                <Button
-                  color="danger"
-                  onPress={() => {
-                    onOpenChange();
-                    handleLogout();
-                  }}
-                >
-                  Logout
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+      {logoutDisclosure.isOpen && (
+        <Modal
+          isOpen={logoutDisclosure.isOpen}
+          onClose={logoutDisclosure.onClose}
+          size="md"
+          hideCloseButton
+        >
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  Confirmation
+                </ModalHeader>
+                <ModalBody>
+                  <p>Do you really want to logout {loginInfo.name}?</p>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="primary" variant="light" onPress={onClose}>
+                    Cancel
+                  </Button>
+                  <Button
+                    color="danger"
+                    isLoading={logoutLoading}
+                    isDisabled={logoutLoading}
+                    onPress={() => {
+                      handleLogout();
+                    }}
+                  >
+                    Logout
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+      )}
     </nav>
   );
 }

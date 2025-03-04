@@ -1,5 +1,4 @@
 import { Button } from "@heroui/button";
-import clsx from "clsx";
 import React, { useRef } from "react";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import Carousel from "@itseasy21/react-elastic-carousel";
@@ -49,7 +48,7 @@ function CarousalMain(props: Props) {
                 <button
                   key={page}
                   onClick={() => onClick(page as any)}
-                  className={clsx(
+                  className={twMerge(
                     "w-2 h-2 rounded-full",
                     page === activePage
                       ? " bg-pink-500/80"
@@ -73,7 +72,7 @@ function CarousalMain(props: Props) {
               isIconOnly
               variant="flat"
               radius="full"
-              className={clsx(
+              className={twMerge(
                 "absolute z-10 hover:bg-blue-500",
                 type === "PREV" ? "left-4" : "right-4"
               )}

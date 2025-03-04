@@ -12,7 +12,13 @@ import { MdInfo, MdNewLabel, MdPin } from "react-icons/md";
 import { FaFire } from "react-icons/fa";
 import CommunityPinnedTab from "../(tabs)/pinned/page";
 import CommunityMembers from "@/components/community/CommunityMembers";
-import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/modal";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  useDisclosure,
+} from "@heroui/modal";
 
 interface Props {
   data: Community;
@@ -22,7 +28,7 @@ export default function CommunityPage(props: Props) {
   const { data } = props;
   let { community, category } = usePathnameClient();
   const { isMobile, isBetween920AndMobile } = useDeviceInfo();
-  const [membersModal, setMembersModal] = useState(false);
+  const membersDisclosure = useDisclosure();
 
   const communityTabs = [
     {
@@ -65,7 +71,7 @@ export default function CommunityPage(props: Props) {
 
   useEffect(() => {
     if (category === "roles") {
-      setMembersModal(!membersModal);
+      membersDisclosure.onOpen();
     }
   }, []);
 
@@ -108,14 +114,14 @@ export default function CommunityPage(props: Props) {
           </div>
         )}
       </div>
-      {membersModal && (
+      {membersDisclosure.isOpen && (
         <Modal
-          isOpen={membersModal}
-          onOpenChange={setMembersModal}
+          isOpen={membersDisclosure.isOpen}
           placement="top-center"
           scrollBehavior="inside"
           closeButton
           onClose={() => {
+            membersDisclosure.onClose();
             history.replaceState({}, "", `/${"trending"}/${community}`);
           }}
         >

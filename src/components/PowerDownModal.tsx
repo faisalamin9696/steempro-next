@@ -33,12 +33,11 @@ interface Props {
 }
 
 const PowerDownModal = (props: Props): JSX.Element => {
-  const { cancel } = props;
+  const { cancel, isOpen, onOpenChange } = props;
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
   const dispatch = useAppDispatch();
   const [confirmCheck, setConfirmCheck] = useState(cancel || false);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { data: session } = useSession();
   const { authenticateUser, isAuthorized } = useLogin();
   const [amount, setAmount] = useState(cancel ? "0" : "");
@@ -77,7 +76,7 @@ const PowerDownModal = (props: Props): JSX.Element => {
         })
       );
 
-      props.onOpenChange(isOpen);
+      onOpenChange(isOpen);
       if (cancel) toast.success(`Power down canceled`);
       else
         toast.success(
@@ -123,11 +122,11 @@ const PowerDownModal = (props: Props): JSX.Element => {
 
   return (
     <Modal
-      isOpen={props.isOpen || isOpen}
+      isOpen={isOpen}
       placement="center"
       hideCloseButton
       isDismissable={false}
-      onOpenChange={props.onOpenChange || onOpenChange}
+      onOpenChange={onOpenChange}
     >
       <ModalContent>
         {(onClose) => (

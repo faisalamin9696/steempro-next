@@ -28,14 +28,12 @@ import { useSession } from "next-auth/react";
 interface Props {
   comment: Post | Feed;
   isOpen: boolean;
-  onOpenChange?: (isOpen: boolean) => void;
+  onClose: () => void;
   handleOnUpdate?: (role: RoleTypes, title: string) => void;
 }
 export default function EditRoleModal(props: Props) {
-  const { comment, handleOnUpdate } = props;
-  const { isOpen, onOpenChange } = useDisclosure();
+  const { comment, handleOnUpdate, onClose, isOpen } = props;
   const { data: session } = useSession();
-
   let [title, setTitle] = useState(comment.author_title);
   let [role, setRole] = useState<RoleTypes>(comment.author_role || "guest");
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
@@ -76,8 +74,7 @@ export default function EditRoleModal(props: Props) {
     );
     handleOnUpdate && handleOnUpdate(role, title);
     toast.success("Updated");
-    props.onOpenChange && props.onOpenChange(false);
-    onOpenChange();
+    onClose();
   }
   function handleFailed(error: any) {
     toast.error(error.message || JSON.stringify(error));
@@ -200,10 +197,10 @@ export default function EditRoleModal(props: Props) {
     roleTitleMutation.isPending;
   return (
     <Modal
-      isOpen={props.isOpen ?? isOpen}
+      isOpen={isOpen}
       hideCloseButton
       isDismissable={!isPending}
-      onOpenChange={props.onOpenChange ?? onOpenChange}
+      onClose={onClose}
       placement="top-center"
     >
       <ModalContent>
@@ -240,9 +237,7 @@ export default function EditRoleModal(props: Props) {
                     classNames={{ base: "items-center" }}
                   >
                     {(item) => (
-                      <SelectItem key={item.value}>
-                        {item.item}
-                      </SelectItem>
+                      <SelectItem key={item.value}>{item.item}</SelectItem>
                     )}
                   </Select>
                 )}

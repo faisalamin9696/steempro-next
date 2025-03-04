@@ -5,7 +5,6 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  useDisclosure,
 } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import React, { useState } from "react";
@@ -14,22 +13,17 @@ import { useSession } from "next-auth/react";
 interface Props {
   proposalId: number;
   isOpen: boolean;
-  onOpenChange?: (isOpen: boolean) => void;
+  onClose: () => void;
 }
 export default function AddRoleModal(props: Props) {
-  let { proposalId } = props;
-  const { isOpen, onOpenChange } = useDisclosure();
+  let { proposalId, isOpen, onClose } = props;
   const { data: session } = useSession();
   let [username, setUsername] = useState("");
 
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
 
   return (
-    <Modal
-      isOpen={props.isOpen ?? isOpen}
-      hideCloseButton
-      onOpenChange={props.onOpenChange ?? onOpenChange}
-    >
+    <Modal isOpen={isOpen} hideCloseButton onClose={onClose}>
       <ModalContent>
         {(onClose) => (
           <>

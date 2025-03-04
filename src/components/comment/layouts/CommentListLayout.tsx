@@ -6,7 +6,6 @@ import MarkdownViewer from "@/components/body/MarkdownViewer";
 import BodyShort from "@/components/body/BodyShort";
 import CommentCover from "../components/CommentCover";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
-import clsx from "clsx";
 import { hasNsfwTag } from "@/libs/utils/StateFunctions";
 import { getSettings } from "@/libs/utils/user";
 import { twMerge } from "tailwind-merge";
@@ -42,7 +41,7 @@ export default function CommentListLayout(props: CommentProps) {
             href={targetUrl}
             radius="none"
             shadow="none"
-            className={clsx(
+            className={twMerge(
               !!commentInfo.is_muted && " opacity-80",
               "bg-transparent main-comment-list w-full !p-0"
             )}

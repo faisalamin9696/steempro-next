@@ -1,22 +1,20 @@
-import { useAppSelector, useAppDispatch } from "@/libs/constants/AppFunctions";
-import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
+import { useAppSelector } from "@/libs/constants/AppFunctions";
 import {
   getProposalVotes,
   ProposalVote,
   voteForProposal,
-  voteForWitness,
 } from "@/libs/steem/condenser";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
 import { Button } from "@heroui/button";
 import { useMutation } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { BiSolidUpvote, BiUpvote } from "react-icons/bi";
 import { toast } from "sonner";
 import { useLogin } from "./auth/AuthProvider";
 import { useSession } from "next-auth/react";
 import KeychainButton from "./KeychainButton";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 
 export default function ProposalVoteButton({
   proposal,
@@ -25,11 +23,11 @@ export default function ProposalVoteButton({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
-  const dispatch = useAppDispatch();
   const { authenticateUser, isAuthorized } = useLogin();
   const { data: session } = useSession();
   const shouldFetch = !!session?.user?.name;
   const [isVoted, setIsVoted] = useState(false);
+  const { mutate } = useSWRConfig();
 
   const { data } = useSWR<ProposalVote[]>(
     shouldFetch ? `proposals-votes-${proposal.id}` : null,
@@ -61,6 +59,7 @@ export default function ProposalVoteButton({
       }
       if (isVoted) setIsVoted(false);
       else setIsVoted(true);
+      mutate(`proposals-votes-${proposal.id}`);
       toast.success(isVoted ? "Proposal Unapproved" : "Proposal Approved");
     },
   });

@@ -6,7 +6,6 @@ import BodyShort from "@/components/body/BodyShort";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
 import CommentFooter from "../components/CommentFooter";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
-import clsx from "clsx";
 import { hasNsfwTag } from "@/libs/utils/StateFunctions";
 import { getSettings } from "@/libs/utils/user";
 import { getThumbnail } from "@/libs/utils/image";
@@ -38,7 +37,7 @@ export default function CommentBlogLayout(props: CommentProps) {
         as={SLink}
         href={targetUrl}
         shadow="none"
-        className={clsx(
+        className={twMerge(
           commentInfo.is_muted && " opacity-80",
           "w-full bg-transparent gap-4 px-2"
         )}

@@ -46,7 +46,6 @@ import "./style.scss";
 import secureLocalStorage from "react-secure-storage";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
-import clsx from "clsx";
 import TagsListCard from "@/components/TagsListCard";
 import moment from "moment";
 import ScheduleButton from "@/components/editor/components/ScheduleButton";
@@ -59,6 +58,8 @@ import { cryptoUtils, Signature } from "@hiveio/dhive";
 import { AsyncUtils } from "@/libs/utils/async.utils";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import EditorInput from "@/components/editor/EditorInput";
+import { twMerge } from "tailwind-merge";
+import { useDisclosure } from "@heroui/react";
 
 interface Props {
   params?: {
@@ -101,9 +102,8 @@ export default function SubmitPage(props: Props) {
   const rpm = readingTime(markdown);
   const [isPosting, setPosting] = useState(false);
   const [isScheduling, setScheduling] = useState(false);
-  const [isPickerOpen, setIsPickerOpen] = useState(false);
+  const pickerDisclosure = useDisclosure();
   const [dateTime, setDateTime] = useState<ZonedDateTime | null>();
-
   const isLoading = isPosting || isScheduling;
 
   // const [openAuth, setOpenAuth] = useState(false);
@@ -494,7 +494,7 @@ export default function SubmitPage(props: Props) {
   }
   async function handleSchedule(_tags: string[]) {
     if (!dateTime) {
-      setIsPickerOpen(true);
+      pickerDisclosure.onOpen();
       return;
     }
 
@@ -595,13 +595,13 @@ export default function SubmitPage(props: Props) {
   }
   return (
     <div
-      className={clsx(
+      className={twMerge(
         `editor-main flex flex-col flex-1 gap-4 items-center w-full px-1`,
         !oldPost && "1md:justify-evenly 1md:items-start 1md:flex-row "
       )}
     >
       <div
-        className={clsx(
+        className={twMerge(
           `flex flex-col w-full  gap-2`,
           !oldPost &&
             "1md:w-[50%] 1md:float-start 1md:sticky 1md:z-[1] 1md:self-start 1md:top-[80px] pb-5"
@@ -748,7 +748,7 @@ export default function SubmitPage(props: Props) {
       </div>
 
       <div
-        className={clsx(
+        className={twMerge(
           isEdit ? "" : "1md:w-[50%] ",
           "flex flex-col w-full mb-10 gap-2"
         )}
@@ -777,8 +777,8 @@ export default function SubmitPage(props: Props) {
 
       <ScheduleModal
         onDateTimeChange={setDateTime}
-        isOpen={isPickerOpen}
-        onOpenChange={setIsPickerOpen}
+        isOpen={pickerDisclosure.isOpen}
+        onClose={pickerDisclosure.onClose}
       />
     </div>
   );

@@ -1,22 +1,27 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 interface ScheduleState {
-  values: Schedule | {};
+  values: Record<string, any>; // Ensure values remains an object
 }
 
-const initialstate: ScheduleState = {
+const initialState: ScheduleState = {
   values: {},
 };
 
 const scheduleReducer = createSlice({
   name: "schedules",
-  initialState: initialstate,
+  initialState,
   reducers: {
-    addScheduleHandler: (state: ScheduleState, actions) => {
-      const payload = actions.payload;
-      if (payload)
-        state.values[`${payload?.id}/${payload?.username}`] = payload;
-      else state.values = initialstate;
+    addScheduleHandler: (state: ScheduleState, action) => {
+      const payload = action.payload;
+      if (payload) {
+        state.values = {
+          ...state.values,
+          [`${payload?.id}/${payload?.username}`]: payload,
+        };
+      } else {
+        state.values = {}; // Corrected reset
+      }
     },
   },
 });

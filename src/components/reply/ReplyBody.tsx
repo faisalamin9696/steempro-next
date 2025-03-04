@@ -2,7 +2,6 @@ import Reputation from "@/components/Reputation";
 import SAvatar from "@/components/SAvatar";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
-import clsx from "clsx";
 import React, { Key, useState } from "react";
 import RoleTitleCard from "../RoleTitleCard";
 import {
@@ -19,6 +18,8 @@ import { toast } from "sonner";
 import { AppStrings } from "@/libs/constants/AppStrings";
 import CommentEditHistory from "../CommentHistoryViewer";
 import SLink from "../SLink";
+import { twMerge } from "tailwind-merge";
+import { useDisclosure } from "@heroui/react";
 
 export default function ReplyBody({
   comment,
@@ -35,8 +36,7 @@ export default function ReplyBody({
     { show: true, key: "copy", name: "Copy SLink", icon: BsClipboard2Minus },
     { show: true, key: "history", name: "Edit History", icon: LuHistory },
   ];
-
-  const [showHistory, setShowHistory] = useState(false);
+  const historyDisclosure = useDisclosure();
 
   const renderedItems = menuItems
     .filter((item) => item.show)
@@ -53,7 +53,7 @@ export default function ReplyBody({
   async function handleMenuActions(key: Key) {
     switch (key) {
       case "history":
-        setShowHistory(!showHistory);
+        historyDisclosure.onOpen();
         break;
 
       case "copy":
@@ -90,7 +90,7 @@ export default function ReplyBody({
                     href={`/${comment.category}/@${comment.author}/${comment.permlink}`}
                   >
                     <TimeAgoWrapper
-                      handleEditClick={() => setShowHistory(!showHistory)}
+                      handleEditClick={historyDisclosure.onOpen}
                       created={comment.created * 1000}
                       lastUpdate={comment.last_update * 1000}
                     />
@@ -128,7 +128,9 @@ export default function ReplyBody({
           <div>{rightContent}</div>
         </div>
         {!hideBody && (
-          <div className={clsx(comment.is_muted === 1 && "opacity-60", "mt-2")}>
+          <div
+            className={twMerge(comment.is_muted === 1 && "opacity-60", "mt-2")}
+          >
             <MarkdownViewer
               text={comment.body}
               className={`!prose-sm !w-full !max-w-none`}
@@ -137,10 +139,10 @@ export default function ReplyBody({
         )}
       </div>
 
-      {showHistory && (
+      {historyDisclosure.isOpen && (
         <CommentEditHistory
-          isOpen={showHistory}
-          onOpenChange={setShowHistory}
+          isOpen={historyDisclosure.isOpen}
+          onClose={historyDisclosure.onClose}
           author={comment.author}
           permlink={comment.permlink}
         />

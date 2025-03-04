@@ -131,7 +131,7 @@ export default memo(function MarkdownViewer(props: Props) {
     const sections: any[] = [];
 
     // HtmlReady inserts ~~~ embed:${id} type ~~~
-    for (let section of cleanText.split('~~~ embed:')) {
+    for (let section of cleanText?.split('~~~ embed:')) {
         const match = section.match(
             /^([A-Za-z0-9\?\=\_\-\/\.]+) (youtube|vimeo|twitch|dtube|threespeak)\s?(\d+)? ~~~/
         );

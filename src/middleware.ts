@@ -37,6 +37,12 @@ export function middleware(request: NextRequest) {
       headers: request.headers,
     });
   }
+
+  if (splitted_path.length === 1 && first_param === "proposals") {
+    return NextResponse.rewrite(new URL(`/proposals`, request.nextUrl), {
+      headers: request.headers,
+    });
+  }
   if (splitted_path.length === 1 && first_param === "submit") {
     return NextResponse.rewrite(new URL(`/submit`, request.nextUrl), {
       headers: request.headers,

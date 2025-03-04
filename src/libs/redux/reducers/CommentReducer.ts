@@ -1,26 +1,31 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 interface CommentState {
-  values: Post | Feed | {};
+  values: Record<string, any>; // Ensure values is always an object
 }
 
-const initialstate: CommentState = {
+const initialState: CommentState = {
   values: {},
 };
 
 const commentReducer = createSlice({
   name: "comments",
-  initialState: initialstate,
+  initialState,
   reducers: {
-    addCommentHandler: (state: CommentState, actions) => {
-      const payload = actions.payload;
-      if (payload)
-        state.values[`${payload?.author}/${payload?.permlink}`] = payload;
-      else state.values = initialstate;
+    addCommentHandler: (state: CommentState, action) => {
+      const payload = action.payload;
+      if (payload) {
+        state.values = {
+          ...state.values,
+          [`${payload?.author}/${payload?.permlink}`]: payload,
+        };
+      } else {
+        state.values = {};
+      }
     },
 
     clearCommentHandler: (state: CommentState) => {
-      state.values = [];
+      state.values = {}; // Corrected from `[]` to `{}`
     },
   },
 });

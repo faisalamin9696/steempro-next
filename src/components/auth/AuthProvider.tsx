@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import React, { createContext, useContext, useState } from "react";
 import { getCredentials, getSessionToken, sessionKey } from "@/libs/utils/user";
 import AuthModal from "./AuthModal";
+import { useDisclosure } from "@heroui/react";
 
 // Define the type for your context value
 interface AuthContextType {
@@ -33,7 +34,7 @@ interface Props {
 export const AuthProvider = (props: Props) => {
   let { children } = props;
   const { status, data: session } = useSession();
-  const [openAuth, setOpenAuth] = useState(false);
+  const authDisclosure = useDisclosure();
   let [credentials, setCredentials] = useState<User | undefined>(
     getCredentials()
   );
@@ -66,7 +67,7 @@ export const AuthProvider = (props: Props) => {
   function authenticateUser(isNew?: boolean) {
     if (isNew) {
       setIsNew(true);
-      setOpenAuth(true);
+      authDisclosure.onOpen();
     }
 
     credentials = getCredentials();
@@ -77,7 +78,7 @@ export const AuthProvider = (props: Props) => {
 
     // if active key and not session login as for password
     if (credentials?.type === "ACTIVE" && !sessionKey) {
-      setOpenAuth(true);
+      authDisclosure.onOpen();
       return;
     }
 
@@ -86,7 +87,7 @@ export const AuthProvider = (props: Props) => {
     if (isLogin() && !!token) return;
 
     if (!isLogin() || (isLogin() && !sessionKey)) {
-      setOpenAuth(true);
+      authDisclosure.onOpen();
       return;
     }
   }
@@ -103,16 +104,16 @@ export const AuthProvider = (props: Props) => {
     >
       {children}
 
-      {openAuth && (
+      {authDisclosure.isOpen && (
         <AuthModal
           onForget={() => {
             authenticateUser(true);
           }}
           isNew={isNew}
-          open={openAuth}
+          open={authDisclosure.isOpen}
           onClose={() => {
-            setOpenAuth(false);
             setIsNew(false);
+            authDisclosure.onClose();
           }}
           onLoginSuccess={(user) => {
             setCredentials(user);

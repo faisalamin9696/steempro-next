@@ -7,7 +7,13 @@ import moment from "moment";
 import { abbreviateNumber } from "@/libs/utils/helper";
 import MarkdownViewer from "./body/MarkdownViewer";
 import { Role as RoleLevel } from "@/libs/utils/community";
-import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  useDisclosure,
+} from "@heroui/modal";
 import { Avatar, AvatarGroup } from "@heroui/avatar";
 import { Accordion, AccordionItem } from "@heroui/accordion";
 import { getResizedAvatar } from "@/libs/utils/image";
@@ -35,8 +41,7 @@ export default memo(function CommunityInfoCard(props: Props) {
   const leaderShip = members.filter((item) =>
     RoleLevel.atLeast(item.role, "mod")
   );
-
-  const [membersModal, setMembersModal] = useState(false);
+  const membersDisclosure = useDisclosure();
 
   return (
     <div
@@ -78,7 +83,7 @@ export default memo(function CommunityInfoCard(props: Props) {
         <div className="flex justify-between text-left mt-[0.5rem] gap-[0.25rem] mb-[0.5rem] w-full">
           <div
             className="flex flex-col items-start flex-1 hover:underline cursor-pointer"
-            onClick={() => setMembersModal(!membersModal)}
+            onClick={membersDisclosure.onOpen}
           >
             <p className=" font-bold text-sm">
               {abbreviateNumber(communityInfo.count_subs)}
@@ -134,7 +139,7 @@ export default memo(function CommunityInfoCard(props: Props) {
               ))}
             </AvatarGroup>
             <p
-              onClick={() => setMembersModal(!membersModal)}
+              onClick={membersDisclosure.onOpen}
               className=" text-tiny hover:underline cursor-pointer"
             >
               Show all
@@ -156,33 +161,10 @@ export default memo(function CommunityInfoCard(props: Props) {
         </div>
       )}
 
-      {membersModal && (
+      {membersDisclosure.isOpen && (
         <Modal
-          isOpen={membersModal}
-          onOpenChange={setMembersModal}
-          placement="top-center"
-          scrollBehavior="inside"
-          closeButton
-        >
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  {"Members"}
-                </ModalHeader>
-                <ModalBody>
-                  <CommunityMembers community={communityInfo} />
-                </ModalBody>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-      )}
-
-      {membersModal && (
-        <Modal
-          isOpen={membersModal}
-          onOpenChange={setMembersModal}
+          isOpen={membersDisclosure.isOpen}
+          onClose={membersDisclosure.onClose}
           placement="top-center"
           scrollBehavior="inside"
           closeButton

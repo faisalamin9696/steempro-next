@@ -6,6 +6,7 @@ import LoadingCard from "@/components/LoadingCard";
 import ProposalItemCard from "@/components/ProposalItemCard";
 import { findProposals } from "@/libs/steem/condenser";
 import { getPost } from "@/libs/steem/sds";
+import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import React from "react";
 import useSWR from "swr";
@@ -13,9 +14,11 @@ import useSWR from "swr";
 function page() {
   const params = useParams();
   const proposalId = params.id as string;
+  const { data: session } = useSession();
 
-  const { data, error, isLoading } = useSWR<Proposal>("proposals", () =>
-    findProposals(Number(proposalId))
+  const { data, error, isLoading } = useSWR<Proposal>(
+    `proposal-${proposalId}`,
+    () => findProposals(Number(proposalId))
   );
 
   const {
@@ -23,8 +26,15 @@ function page() {
     error: PostError,
     isLoading: isLoadingPost,
   } = useSWR<Post>(
-    data?.creator && data.permlink ? "proposals-content" : null,
-    () => getPost(data?.creator ?? "null", data?.permlink ?? "null")
+    data?.creator && data?.permlink
+      ? `proposals-content-${data?.creator}-${data?.permlink}`
+      : null,
+    () =>
+      getPost(
+        data?.creator ?? "null",
+        data?.permlink ?? "null",
+        session?.user?.id || "null"
+      )
   );
 
   if (isLoading) return <LoadingCard />;
@@ -39,9 +49,12 @@ function page() {
           {isLoadingPost ? (
             <LoadingCard />
           ) : (
-            postData && (
+            postData?.body && (
               <div className="flex flex-col w-full items-center">
-                <MarkdownViewer text={postData?.body || ""} className=" !max-w-[700px]" />
+                <MarkdownViewer
+                  text={postData?.body || ""}
+                  className=" !max-w-[700px]"
+                />
               </div>
             )
           )}

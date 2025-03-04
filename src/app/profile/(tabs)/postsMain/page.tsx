@@ -5,10 +5,10 @@ import React from "react";
 import ProfileCommentsTab from "../comments/page";
 import ProfileRepliesTab from "../replies/page";
 import { Tab, Tabs } from "@heroui/tabs";
-import { clsx } from "clsx";
 import ProfilePostsTab from "../posts/page";
 import ProfileFriendsTab from "../friends/page";
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { twMerge } from "tailwind-merge";
 
 export default function ProfilePostsMainTab() {
   let { username, category } = usePathnameClient();
@@ -22,7 +22,7 @@ export default function ProfilePostsMainTab() {
   const { isMobile } = useDeviceInfo();
 
   return (
-    <div className={clsx("relative items-center flex-row w-full")}>
+    <div className={twMerge("relative items-center flex-row w-full")}>
       <Tabs
         destroyInactiveTabPanel={false}
         size="sm"

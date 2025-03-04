@@ -8,30 +8,31 @@ import {
   ModalContent,
   ModalHeader,
   ModalFooter,
+  useDisclosure,
 } from "@heroui/modal";
 import NotificationsTable from "./NotificationsTable";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 
 interface Props {
   username: string | null;
-  isOpen: boolean;
-  onOpenChange: (isOpen: boolean) => void;
+  onOpen: boolean;
+  onClose: () => void;
 }
 
 export default function NotificationsModal(props: Props) {
-  const { username } = props;
+  const { username, onOpen, onClose } = props;
   if (!username) return null;
 
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
 
   return (
     <Modal
-      isOpen={props.isOpen}
-      onOpenChange={props.onOpenChange}
+      isOpen={onOpen}
+      onClose={onClose}
       className=" mt-4"
       scrollBehavior="inside"
       hideCloseButton
-      backdrop="blur"
+      backdrop="opaque"
       size="lg"
       placement="top-center"
     >

@@ -4,6 +4,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalFooter,
+  useDisclosure,
 } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { Card } from "@heroui/card";
@@ -11,7 +12,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
 import React, { memo, useState } from "react";
 import { PiCurrencyCircleDollarFill } from "react-icons/pi";
 import { SlLoop } from "react-icons/sl";
-import clsx from "clsx";
 import { useMutation } from "@tanstack/react-query";
 import {
   calculatePowerUsage,
@@ -64,8 +64,7 @@ export default memo(function CommentFooter(props: CommentProps) {
   const { comment, className, isReply, compact, isDetails } = props;
 
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
-  const [votersModal, setVotersModal] = useState(false);
-
+  const voterDisclosure = useDisclosure();
   const { authenticateUser, isAuthorized } = useLogin();
   const { data: session } = useSession();
 
@@ -241,12 +240,12 @@ export default memo(function CommentFooter(props: CommentProps) {
   return (
     <div className={twMerge("flex flex-col p-1 gap-1 w-full ", className)}>
       <div
-        className={clsx(
+        className={twMerge(
           "flex flex-row max-xs:flex-col items-center max-xs:items-start gap-2",
           !isReply && "justify-between"
         )}
       >
-        <div className={clsx("flex", compact ? "gap-3" : "gap-4")}>
+        <div className={twMerge("flex", compact ? "gap-3" : "gap-4")}>
           <div className="flex flex-row items-center gap-2 relative  ">
             {(upvotePopup || downvotePopup) && (
               <ClickAwayListener onClickAway={closeVotingModal}>
@@ -275,7 +274,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                 isLoading={comment.status === "upvoting"}
                 isIconOnly
                 size="sm"
-                className={clsx(isUpvoted && "text-success-400")}
+                className={twMerge(isUpvoted && "text-success-400")}
               >
                 {isUpvoted ? (
                   <BiSolidUpvote className={"text-lg"} />
@@ -288,7 +287,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                 <button
                   title={`${comment.upvote_count} Votes`}
                   className="text-tiny"
-                  onClick={() => setVotersModal(!votersModal)}
+                  onClick={voterDisclosure.onOpen}
                 >
                   {abbreviateNumber(comment.upvote_count)}
                 </button>
@@ -308,7 +307,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                   }
                   setDownvotePopup(!downvotePopup);
                 }}
-                className={clsx(isDownvoted && "text-danger-400")}
+                className={twMerge(isDownvoted && "text-danger-400")}
                 radius="full"
               >
                 {isDownvoted ? (
@@ -469,10 +468,10 @@ export default memo(function CommentFooter(props: CommentProps) {
         )}
       </div>
 
-      {votersModal && (
+      {voterDisclosure.isOpen && (
         <Modal
-          isOpen={votersModal}
-          onOpenChange={setVotersModal}
+          isOpen={voterDisclosure.isOpen}
+          onClose={voterDisclosure.onClose}
           placement="top-center"
           hideCloseButton
           scrollBehavior="inside"

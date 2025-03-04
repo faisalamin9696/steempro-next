@@ -9,7 +9,6 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  useDisclosure,
 } from "@heroui/modal";
 import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
@@ -22,7 +21,7 @@ import { useSession } from "next-auth/react";
 
 interface Props {
   isOpen: boolean;
-  onOpenChange: (isOpen: boolean) => void;
+  onClose: () => void;
   comment: Post | Feed;
   mute?: boolean;
   muteNote?: string;
@@ -30,8 +29,7 @@ interface Props {
 }
 
 export default function MuteDeleteModal(props: Props) {
-  const { mute, onNoteChange, muteNote, comment } = props;
-  const { isOpen, onOpenChange } = useDisclosure();
+  const { mute, onNoteChange, muteNote, comment, isOpen, onClose } = props;
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const dispatch = useAppDispatch();
   const { authenticateUser, isAuthorized } = useLogin();
@@ -42,21 +40,28 @@ export default function MuteDeleteModal(props: Props) {
       key: string;
       options: {
         notes?: string;
+        isKeychain?: boolean;
       };
     }) =>
-      mutePost(loginInfo, data.key, true, {
-        community: comment.category,
-        account: comment.author,
-        permlink: comment.permlink,
-        notes: data.options.notes,
-      }),
+      mutePost(
+        loginInfo,
+        data.key,
+        true,
+        {
+          community: comment.category,
+          account: comment.author,
+          permlink: comment.permlink,
+          notes: data.options.notes,
+        },
+        data.options.isKeychain
+      ),
     onSettled(data, error, variables, context) {
       if (error) {
         toast.error(error.message || JSON.stringify(error));
         return;
       }
       dispatch(addCommentHandler({ ...comment, is_muted: 1 }));
-      props.onOpenChange(false);
+      onClose();
       toast.success(`Muted`);
     },
   });
@@ -78,7 +83,7 @@ export default function MuteDeleteModal(props: Props) {
         return;
       }
       dispatch(addCommentHandler({ ...comment, link_id: undefined }));
-      props.onOpenChange(false);
+      onClose();
       toast.success(`Deleted`);
     },
   });
@@ -95,7 +100,7 @@ export default function MuteDeleteModal(props: Props) {
     if (mute) {
       muteMutation.mutate({
         key: credentials.key,
-        options: { notes: muteNote },
+        options: { notes: muteNote, isKeychain: credentials.keychainLogin },
       });
       return;
     }
@@ -112,8 +117,8 @@ export default function MuteDeleteModal(props: Props) {
     <Modal
       isDismissable={!isPending}
       hideCloseButton
-      isOpen={props.isOpen || isOpen}
-      onOpenChange={props.onOpenChange || onOpenChange}
+      isOpen={isOpen}
+      onClose={onClose}
     >
       <ModalContent>
         {(onClose) => (

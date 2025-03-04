@@ -2,10 +2,10 @@
 
 import React from "react";
 import { Tab, Tabs } from "@heroui/tabs";
-import { clsx } from "clsx";
 import ProfileCommunitiesTab from "../communities/page";
 import ProfileSubsribtionsTab from "../subscriptions/page";
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { twMerge } from "tailwind-merge";
 
 export default function ProfileCommunitiesMainTab() {
   const profileTabs = [
@@ -20,7 +20,7 @@ export default function ProfileCommunitiesMainTab() {
   const { isMobile } = useDeviceInfo();
 
   return (
-    <div className={clsx("relative items-center flex-row w-full")}>
+    <div className={twMerge("relative items-center flex-row w-full")}>
       <Tabs
         size="sm"
         color={"primary"}

@@ -4,7 +4,6 @@ import { Tab, Tabs } from "@heroui/tabs";
 import React from "react";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import FeedPatternSwitch from "@/components/FeedPatternSwitch";
-import clsx from "clsx";
 import CategoryTrendingsTab from "./(tabs)/trendings/page";
 import CategoryCreatedTab from "./(tabs)/created/page";
 import CategoryPayoutTab from "./(tabs)/payout/page";
@@ -13,6 +12,7 @@ import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 import { FaFire } from "react-icons/fa";
 import { FaCircleDollarToSlot } from "react-icons/fa6";
 import { MdWhatshot, MdNewLabel } from "react-icons/md";
+import { twMerge } from "tailwind-merge";
 
 export default function CategoryPage() {
   let { category, tag } = usePathnameClient();
@@ -46,7 +46,7 @@ export default function CategoryPage() {
   ];
 
   return (
-    <div className={clsx("relative items-center flex-row w-full")}>
+    <div className={twMerge("relative items-center flex-row w-full")}>
       <Tabs
         destroyInactiveTabPanel={false}
         size={"sm"}

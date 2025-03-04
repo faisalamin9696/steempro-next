@@ -6,6 +6,8 @@ import { Divider } from "@heroui/divider";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import React from "react";
+import { AiFillProject, AiOutlineProject } from "react-icons/ai";
+import { FaMoneyCheck, FaMoneyCheckAlt } from "react-icons/fa";
 import { HiOutlineUserGroup, HiUserGroup } from "react-icons/hi2";
 import { IoHome, IoHomeOutline } from "react-icons/io5";
 import { MdOutlinePolicy, MdPolicy } from "react-icons/md";
@@ -72,6 +74,12 @@ function DrawerContent() {
       href: `/witnesses`,
       unFocusedIcon: <RiUserStarLine size={iconSize} />,
       focusedIcon: <RiUserStarFill size={iconSize} />,
+    },
+    {
+      title: "Proposals",
+      href: `/proposals`,
+      unFocusedIcon: <AiOutlineProject size={iconSize} />,
+      focusedIcon: <AiFillProject size={iconSize} />,
     },
 
     {

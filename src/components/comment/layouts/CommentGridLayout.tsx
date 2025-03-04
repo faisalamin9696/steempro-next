@@ -12,7 +12,6 @@ import CommentFooter from "../components/CommentFooter";
 import STag from "@/components/STag";
 import "./style.scss";
 import { CommentProps } from "../CommentCard";
-import clsx from "clsx";
 import { abbreviateNumber, validateCommunity } from "@/libs/utils/helper";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import { hasNsfwTag } from "@/libs/utils/StateFunctions";
@@ -118,7 +117,7 @@ export default function CommentGridLayout(props: CommentProps) {
 
           <div className="flex flex-1 flex-col justify-between p-4">
             <div
-              className={clsx(
+              className={twMerge(
                 !!commentInfo.is_muted && " opacity-80",
                 "flex-1"
               )}
@@ -126,7 +125,7 @@ export default function CommentGridLayout(props: CommentProps) {
               <Card
                 radius="none"
                 shadow="none"
-                className={clsx("bg-transparent  w-full text-start")}
+                className={twMerge("bg-transparent  w-full text-start")}
               >
                 <p
                   className={twMerge(
@@ -136,7 +135,7 @@ export default function CommentGridLayout(props: CommentProps) {
                 >
                   {commentInfo.title}
                 </p>
-                <p
+                <div
                   className={twMerge(
                     "mt-3 text-sm text-default-900/60",
                     commentInfo.is_muted ? " blur-[2px]" : ""
@@ -146,7 +145,7 @@ export default function CommentGridLayout(props: CommentProps) {
                     body={commentInfo.body}
                     className=" line-clamp-2"
                   />
-                </p>
+                </div>
               </Card>
             </div>
           </div>

@@ -29,9 +29,9 @@ import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import moment from "moment";
 import { steemToVest, vestToSteem } from "@/libs/helper/vesting";
 import { isNumeric } from "@/libs/utils/helper";
-import clsx from "clsx";
 import { validate_account_name } from "@/libs/utils/ChainValidation";
 import KeychainButton from "./KeychainButton";
+import { twMerge } from "tailwind-merge";
 
 type AssetTypes = "STEEM" | "SBD" | "VESTS";
 
@@ -71,6 +71,8 @@ const TransferModal = (props: Props): JSX.Element => {
     oldDelegation,
     isRemove,
     onDelegationSuccess,
+    isOpen,
+    onOpenChange,
   } = props;
   const [asset, setAsset] = useState(props.asset);
   const [basic, setBasic] = useState(savings || powewrup);
@@ -81,9 +83,7 @@ const TransferModal = (props: Props): JSX.Element => {
     : undefined;
 
   const dispatch = useAppDispatch();
-
   const [confirmCheck, setConfirmCheck] = useState(false);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { data: session } = useSession();
   const { authenticateUser, isAuthorized } = useLogin();
 
@@ -386,11 +386,11 @@ const TransferModal = (props: Props): JSX.Element => {
 
   return (
     <Modal
-      isOpen={props.isOpen || isOpen}
+      isOpen={isOpen}
       placement="center"
       hideCloseButton
       isDismissable={false}
-      onOpenChange={props.onOpenChange || onOpenChange}
+      onOpenChange={onOpenChange}
     >
       <ModalContent>
         {(onClose) => (
@@ -454,7 +454,7 @@ const TransferModal = (props: Props): JSX.Element => {
                     <SelectItem key={"SBD"}>{"SBD"}</SelectItem>
                     <SelectItem
                       key={"VESTS"}
-                      className={clsx(delegation ? "block" : "hidden")}
+                      className={twMerge(delegation ? "block" : "hidden")}
                     >
                       {"STEEM POWER"}
                     </SelectItem>

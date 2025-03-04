@@ -1,13 +1,13 @@
 import { IconType } from "react-icons";
-import clsx, { ClassValue } from "clsx";
 import { Button } from "@heroui/button";
+import { twMerge } from "tailwind-merge";
 
 interface Props {
   children?: React.ReactNode;
   IconType: IconType;
   tooltip?: string;
   onPress?: () => void;
-  className?: ClassValue | undefined;
+  className?: string;
   size?: "sm" | "md" | "lg";
   isLoading?: boolean;
   variant?:
@@ -19,7 +19,7 @@ interface Props {
     | "shadow"
     | "ghost"
     | undefined;
-  iconClassName?: ClassValue | undefined;
+  iconClassName?: string;
   color?:
     | "default"
     | "primary"
@@ -51,7 +51,7 @@ const IconButton = (props: Props) => {
       isLoading={isLoading}
       isIconOnly
       radius="full"
-      className={clsx(
+      className={twMerge(
         "text-default-900/60 data-[hover]:bg-foreground/10",
         className
       )}
@@ -61,7 +61,7 @@ const IconButton = (props: Props) => {
       onPress={onPress}
     >
       <IconType
-        className={clsx(
+        className={twMerge(
           size === "sm" ? "text-sm" : size === "lg" ? "text-3xl" : " text-2xl",
           iconClassName
         )}

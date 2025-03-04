@@ -4,7 +4,6 @@ import { User } from "@heroui/user";
 import { abbreviateNumber } from "@/libs/utils/helper";
 import TimeAgoWrapper from "../../wrappers/TimeAgoWrapper";
 import { getResizedAvatar } from "@/libs/utils/image";
-import clsx from "clsx";
 import { twMerge } from "tailwind-merge";
 import SLink from "@/components/SLink";
 
@@ -84,13 +83,13 @@ export const CommunityCard = memo((props: Props) => {
         {!compact && (
           <p
             title={community.about}
-            className={clsx(compact ? "text-tiny line-clamp-2" : "")}
+            className={twMerge(compact ? "text-tiny line-clamp-2" : "")}
           >
             {community.about}
           </p>
         )}
       </div>
-      <div className={clsx("flex flex-row gap-4", compact ? "text-tiny" : "")}>
+      <div className={twMerge("flex flex-row gap-4", compact ? "text-tiny" : "")}>
         <div className="flex gap-1">
           <p className="font-semibold text-default-600 ">
             {abbreviateNumber(community.count_subs)}

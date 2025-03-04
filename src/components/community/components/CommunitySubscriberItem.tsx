@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { User } from "@heroui/user";
 import { getResizedAvatar } from "@/libs/utils/image";
-import clsx from "clsx";
 import { empty_comment } from "@/libs/constants/Placeholders";
 import { Button } from "@heroui/button";
 import { FaPencil } from "react-icons/fa6";
 import EditRoleModal from "../../EditRoleModal";
 import { Role as RoleCheck } from "@/libs/utils/community";
 import SLink from "@/components/SLink";
+import { twMerge } from "tailwind-merge";
 
 interface Props {
   item: Role;
@@ -49,7 +49,7 @@ export const CommunitySubscriberItem = (props: Props) => {
               </SLink>
 
               <p
-                className={clsx(
+                className={twMerge(
                   roleTitle.role === "owner"
                     ? "text-green-500"
                     : roleTitle.role === "admin"
@@ -114,8 +114,11 @@ export const CommunitySubscriberItem = (props: Props) => {
           handleOnUpdate={(role, title) =>
             setRoleTitle({ role: role, title: title })
           }
-          onOpenChange={(isOpen) =>
-            setEditRoleModal({ ...editRoleModal, isOpen: isOpen })
+          onClose={() =>
+            setEditRoleModal({
+              ...editRoleModal,
+              isOpen: !editRoleModal.isOpen,
+            })
           }
         />
       )}

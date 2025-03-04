@@ -1,29 +1,28 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-
 interface ProfileState {
-    value: AccountExt | {}
-};
+  value: Record<string, any>; // Ensures value remains an object
+}
 
-
-
-const initialstate: ProfileState = {
-    value: {}
+const initialState: ProfileState = {
+  value: {},
 };
 
 const profileReducer = createSlice({
-    name: 'profiles',
-    initialState: initialstate,
-    reducers: {
-        addProfileHandler: (state: ProfileState, actions) => {
-            const payload = actions?.payload;
-            if (payload)
-                state.value[`${payload?.name}`] = payload;
-        },
-
+  name: "profiles",
+  initialState,
+  reducers: {
+    addProfileHandler: (state: ProfileState, action) => {
+      const payload = action?.payload;
+      if (payload) {
+        state.value = {
+          ...state.value,
+          [`${payload?.name}`]: payload,
+        };
+      }
     },
+  },
 });
-
 
 export const { addProfileHandler } = profileReducer.actions;
 export const ProfileReducer = profileReducer.reducer;

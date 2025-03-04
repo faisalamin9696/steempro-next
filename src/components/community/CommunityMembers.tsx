@@ -13,7 +13,6 @@ import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Card } from "@heroui/card";
-import clsx from "clsx";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { twMerge } from "tailwind-merge";
@@ -22,6 +21,7 @@ import { ScrollShadow } from "@heroui/scroll-shadow";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Role as RoleCheck } from "@/libs/utils/community";
 import { AsyncUtils } from "@/libs/utils/async.utils";
+import { useDisclosure } from "@heroui/react";
 
 interface Props {
   large?: boolean;
@@ -34,7 +34,7 @@ export default function CommunityMembers(props: Props) {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const [query, setQuery] = useState("");
   const [filteredData, setFilteredData] = useState<Role[]>();
-  const [isAddRoleOpen, setIsAddRoleOpen] = useState(false);
+  const roleDisclosure = useDisclosure();
   const [limit, setLimit] = useState(30);
 
   const URL = `/communities_api/getCommunity/${usePathnameClient().community}/${
@@ -122,9 +122,7 @@ export default function CommunityMembers(props: Props) {
               size="sm"
               variant="flat"
               color="success"
-              onPress={() => {
-                setIsAddRoleOpen(!isAddRoleOpen);
-              }}
+              onPress={roleDisclosure.onOpen}
             >
               Add new
             </Button>
@@ -141,7 +139,7 @@ export default function CommunityMembers(props: Props) {
       ) : (
         <ScrollShadow className="flex flex-col gap-2" id="scrollDiv">
           <InfiniteScroll
-            className={clsx(
+            className={twMerge(
               "relative grid grid-cols-1 gap-4  p-2 md:pb-16",
               large && "md:grid-cols-2"
             )}
@@ -173,11 +171,11 @@ export default function CommunityMembers(props: Props) {
         </ScrollShadow>
       )}
 
-      {isAddRoleOpen && (
+      {roleDisclosure.isOpen && (
         <AddRoleModal
           community={communityInfo}
-          isOpen={isAddRoleOpen}
-          onOpenChange={setIsAddRoleOpen}
+          isOpen={roleDisclosure.isOpen}
+          onClose={roleDisclosure.onClose}
         />
       )}
     </div>

@@ -409,7 +409,7 @@ export const mutePost = async (
 
     return new Promise((resolve, reject) => {
       window.steem_keychain.requestBroadcast(
-        data.account,
+        account.name,
         opArray,
         "Posting",
         function (response) {

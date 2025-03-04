@@ -1,7 +1,7 @@
-import clsx from "clsx";
 import { getResizedAvatar } from "@/libs/utils/image";
 import Image from "next/image";
 import SLink from "./SLink";
+import { twMerge } from "tailwind-merge";
 
 interface Props {
   username: string;
@@ -54,7 +54,7 @@ export default function SAvatar(props: Props) {
         borderColor: borderColor,
       }}
       src={`${getResizedAvatar(username, quality ?? "small")}`}
-      className={clsx(
+      className={twMerge(
         "max-w-none shadow-lg rounded-full",
         border && "border",
         className

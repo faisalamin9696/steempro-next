@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@heroui/react": "2.7.2",
+    "@heroui/react": "2.7.4",
     "@hiveio/dhive": "https://github.com/faisalamin9696/dhive",
     "@itseasy21/react-elastic-carousel": "^0.12.3",
     "@nivo/core": "^0.88.0",
@@ -23,7 +23,6 @@
     "@types/webscopeio__react-textarea-autocomplete": "^4.7.5",
     "@webscopeio/react-textarea-autocomplete": "^4.9.2",
     "axios": "^1.7.9",
-    "clsx": "^2.1.1",
     "crypto-js": "^4.2.0",
     "daisyui": "^4.12.23",
     "diff-match-patch": "^1.0.5",
@@ -43,7 +42,7 @@
     "react": "19.0.0",
     "react-click-away-listener": "^2.3.0",
     "react-dom": "19.0.0",
-    "react-dropzone": "^14.3.5",
+    "react-dropzone": "^14.3.8",
     "react-icons": "^5.5.0",
     "react-infinite-scroll-component": "^6.1.0",
     "react-redux": "^9.2.0",
@@ -52,13 +51,13 @@
     "sanitize-html": "^2.14.0",
     "sass": "^1.85.0",
     "sharp": "^0.33.5",
-    "sonner": "^2.0.0",
+    "sonner": "^2.0.1",
     "speakingurl": "^14.0.1",
     "ssh2": "^1.16.0",
     "striptags": "^3.2.0",
-    "styled-components": "^5.0.0",
-    "swr": "^2.2.5",
-    "tailwind-merge": "^3.0.1",
+    "styled-components": "^6.1.15",
+    "swr": "^2.3.2",
+    "tailwind-merge": "^3.0.2",
     "xmldom": "^0.6.0"
   },
   "devDependencies": {

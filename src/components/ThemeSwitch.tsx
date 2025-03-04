@@ -4,10 +4,10 @@ import { FaSun } from "react-icons/fa";
 import { RiMoonFill, RiSunFill } from "react-icons/ri";
 import { useTheme } from "next-themes";
 import { Switch } from "@heroui/switch";
-import clsx from "clsx";
 import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import { updateSettingsHandler } from "@/libs/redux/reducers/SettingsReducer";
 import { getSettings, updateSettings } from "@/libs/utils/user";
+import { twMerge } from "tailwind-merge";
 
 interface ThemeSwitchProps {
   className?: string;
@@ -49,7 +49,7 @@ export default memo(function ThemeSwitch({ className, sm }: ThemeSwitchProps) {
       <div className="flex flex-col gap-2" title="Change theme">
         <button
           onClick={toggleTheme}
-          className={clsx(
+          className={twMerge(
             "w-6 h-6 flex items-center justify-center rounded-full hover:bg-default-200",
             className
           )}
@@ -68,12 +68,12 @@ export default memo(function ThemeSwitch({ className, sm }: ThemeSwitchProps) {
       startContent={<RiSunFill />}
       className={"mt-2"}
       classNames={{
-        base: clsx(
+        base: twMerge(
           "inline-flex flex-row-reverse w-full max-w-md bg-default-400/20 dark:bg-default-500/20 hover:bg-content2 items-center",
           "justify-between cursor-pointer rounded-lg gap-2 p-2 border-2 border-transparent "
         ),
         wrapper: "p-0 overflow-visible group-data-[selected]:bg-primary/50",
-        thumb: clsx(
+        thumb: twMerge(
           "border-2 shadow-lg ",
           "group-data-[hover=true]:border-primary",
           "group-data-[selected=true]:ms-6",

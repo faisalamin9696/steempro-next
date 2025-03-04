@@ -630,8 +630,11 @@ export default function ReplyFooter({
         <MuteDeleteModal
           comment={comment}
           isOpen={confirmationModal.isOpen}
-          onOpenChange={(isOpen) =>
-            setConfirmationModal({ ...confirmationModal, isOpen: isOpen })
+          onClose={() =>
+            setConfirmationModal({
+              ...confirmationModal,
+              isOpen: !confirmationModal.isOpen,
+            })
           }
           mute={true}
           muteNote={confirmationModal.muteNote}

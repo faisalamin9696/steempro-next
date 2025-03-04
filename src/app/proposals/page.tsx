@@ -30,7 +30,7 @@ const FundindCard = ({
 }) => {
   return (
     <div className=" flex flex-col items-center gap-2">
-      <Card radius="md" className="py-1 px-2 bg-primary">
+      <Card radius="md" className="py-1 px-2 bg-primary text-white">
         {title} SBD
       </Card>
       <p className="text-xs opacity-80">{description}</p>
@@ -41,7 +41,7 @@ const initialSatus = ["all"];
 
 function Proposals() {
   const { data, error, isLoading } = useSWR<Proposal[]>(
-    "proposals",
+    "proposals-list",
     getProposals
   );
 
@@ -81,11 +81,17 @@ function Proposals() {
     }
   }, [data]);
 
-  const DaoStats = (account: AccountExt) => {
+  const DaoStats = ({
+    proposals,
+    account,
+  }: {
+    proposals: Proposal[];
+    account: AccountExt;
+  }) => {
     const totalBudget = account.balance_sbd;
     const dailyBudget = totalBudget / 100;
     let _thresholdProposalId: number | null = null;
-    const dailyFunded = data?.reduce((a, b) => {
+    const dailyFunded = proposals?.reduce((a, b) => {
       const dp = parseAsset(b.daily_pay);
       const _sum_amount = a + Number(dp.amount);
       if (_sum_amount >= dailyBudget && !_thresholdProposalId) {
@@ -132,7 +138,9 @@ function Proposals() {
         </p>
       </div>
 
-      {accountData && <DaoStats {...accountData} />}
+      {data && accountData && (
+        <DaoStats proposals={data} account={accountData} />
+      )}
 
       <div className=" flex flex-row items-center justify-between">
         <Input
@@ -167,18 +175,14 @@ function Proposals() {
               selectionMode="multiple"
               onSelectionChange={setVisibleColumns}
             >
-              {["all", "active", "expired", "upcoming"].map((column) => (
+              {["all", "active", "upcoming"].map((column) => (
                 <DropdownItem key={column.toLowerCase()} className="capitalize">
                   {capitalize(column)}
                 </DropdownItem>
               ))}
             </DropdownMenu>
           </Dropdown>
-          {/* <Button size="sm" onClick={() => setTransferModal(!transferModal)}
-              color="primary" endContent={<FaPlus />}>
-              Add New
-            </Button> */}
-        </div>{" "}
+        </div>
       </div>
       <div className="flex flex-col w-full gap-4">
         {filteredItems?.map((proposal) => {

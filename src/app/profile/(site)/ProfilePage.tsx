@@ -7,7 +7,6 @@ import ProfileBlogsTab from "../(tabs)/blog/page";
 import ProfileWalletTab from "../(tabs)/wallet/ProfileWalletTab";
 import FeedPatternSwitch from "@/components/FeedPatternSwitch";
 import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
-import clsx from "clsx";
 import ProfilePostsMainTab from "../(tabs)/postsMain/page";
 import ProfileSettingsTab from "../(tabs)/settings/page";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
@@ -24,6 +23,7 @@ import {
   MdWallet,
 } from "react-icons/md";
 import { useSession } from "next-auth/react";
+import { twMerge } from "tailwind-merge";
 
 export default function ProfilePage({ data }: { data: AccountExt }) {
   let { username, category } = usePathnameClient();
@@ -98,7 +98,7 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
   const sortedProfileTabs = profileTabs.sort((a, b) => a.priority - b.priority);
 
   return (
-    <div className={clsx("relative items-center flex-row w-full")}>
+    <div className={twMerge("relative items-center flex-row w-full")}>
       <Tabs
         size={"sm"}
         disableAnimation={isMobile}

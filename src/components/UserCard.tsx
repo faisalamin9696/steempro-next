@@ -7,7 +7,6 @@ import {
 } from "@/libs/constants/AppFunctions";
 import SAvatar from "./SAvatar";
 import { abbreviateNumber } from "@/libs/utils/helper";
-import clsx from "clsx";
 import { SlUserFollowing } from "react-icons/sl";
 import useSWR from "swr";
 import { getResizedAvatar } from "@/libs/utils/image";
@@ -16,6 +15,7 @@ import LoadingCard from "./LoadingCard";
 import FollowButton from "./FollowButton";
 import { addProfileHandler } from "@/libs/redux/reducers/ProfileReducer";
 import SLink from "./SLink";
+import { twMerge } from "tailwind-merge";
 
 interface Props {
   username: string;
@@ -72,7 +72,7 @@ export const UserCard = memo((props: Props) => {
             </h4>
             {/* <SLink href={authorLink}>{comment.author}</SLink> */}
 
-            <h5 className={clsx("text-small tracking-tight text-default-500")}>
+            <h5 className={twMerge("text-small tracking-tight text-default-500")}>
               @{username}
             </h5>
           </div>
@@ -101,14 +101,14 @@ export const UserCard = memo((props: Props) => {
           <div className="">
             <div className="flex gap-2 items-center text-gray-800 dark:text-gray-300 mb-4">
               <SlUserFollowing
-                className={clsx(
+                className={twMerge(
                   "h-4 w-4",
                   compact && "h-2 w-2",
                   " text-gray-600 dark:text-gray-400"
                 )}
               />
-              <span className={clsx(compact && "text-tiny")}>
-                <strong className={clsx("text-black dark:text-white")}>
+              <span className={twMerge(compact && "text-tiny")}>
+                <strong className={twMerge("text-black dark:text-white")}>
                   {knownPeople?.length}
                 </strong>
                 Followers you know

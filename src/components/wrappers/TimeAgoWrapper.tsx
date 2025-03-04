@@ -1,6 +1,6 @@
 import moment from "moment";
 import { getTimeFromNow } from "@/libs/helper/time";
-import clsx from "clsx";
+import { twMerge } from "tailwind-merge";
 
 interface Props {
   created?: number;
@@ -19,7 +19,7 @@ export default function TimeAgoWrapper(props: Props) {
   return (
     <div>
       <span>
-        <div className={clsx("flex space-x-1 text-tiny")}>
+        <div className={twMerge("flex space-x-1 text-tiny")}>
           <p
             className={className}
             title={

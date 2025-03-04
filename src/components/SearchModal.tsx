@@ -13,7 +13,6 @@ import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import useSWR from "swr";
 import LoadingCard from "./LoadingCard";
 import SAvatar from "./SAvatar";
-import clsx from "clsx";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import { FaSearch } from "react-icons/fa";
 import Reputation from "./Reputation";
@@ -23,15 +22,17 @@ import { FeedBodyLength } from "@/libs/constants/AppConstants";
 import CommentListLayout from "./comment/layouts/CommentListLayout";
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 import { AsyncUtils } from "@/libs/utils/async.utils";
+import { twMerge } from "tailwind-merge";
 
 type SearchTypes = "posts" | "comments" | "tags" | "people";
 
 interface Props {
   isOpen: boolean;
-  onOpenChange: (isOpen: boolean) => void;
+  onClose: () => void;
 }
 
 export default function SearchModal(props: Props) {
+  const { isOpen, onClose } = props;
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const [searchType, setSearchType] = useState<SearchTypes>("posts");
   let [searchText, setSearchText] = useState("");
@@ -150,8 +151,8 @@ export default function SearchModal(props: Props) {
 
   return (
     <Modal
-      isOpen={props.isOpen}
-      onOpenChange={props.onOpenChange}
+      isOpen={isOpen}
+      onClose={onClose}
       className=" mt-4"
       scrollBehavior="inside"
       backdrop="blur"
@@ -270,7 +271,7 @@ export default function SearchModal(props: Props) {
                                   {posting_json_metadata?.profile?.name}
                                 </h4>
                                 <h5
-                                  className={clsx(
+                                  className={twMerge(
                                     "text-sm tracking-tight text-default-500"
                                   )}
                                 >

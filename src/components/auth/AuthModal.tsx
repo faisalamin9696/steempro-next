@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Modal,
-  ModalContent,
-  useDisclosure,
-  ModalHeader,
-  ModalBody,
-} from "@heroui/modal";
+import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/modal";
 import { Avatar } from "@heroui/avatar";
 import { Button } from "@heroui/button";
 import { Spinner } from "@heroui/spinner";
@@ -49,10 +43,8 @@ interface Props {
 }
 
 export default function AuthModal(props: Props) {
-  let { open, onLoginSuccess, isNew, onForget } = props;
-
+  let { open, onLoginSuccess, isNew, onForget, onClose } = props;
   const [isShow, setIsShow] = useState(true);
-  const { isOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const dispatch = useAppDispatch();

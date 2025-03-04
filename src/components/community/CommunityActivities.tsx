@@ -10,7 +10,6 @@ import useSWR from "swr";
 import { twMerge } from "tailwind-merge";
 import CommunityActivityItem from "./components/CommunityActivityItem";
 import InfiniteScroll from "react-infinite-scroll-component";
-import clsx from "clsx";
 import { AsyncUtils } from "@/libs/utils/async.utils";
 
 export function CommunityActivities({ community }: { community: Community }) {
@@ -88,7 +87,7 @@ export function CommunityActivities({ community }: { community: Community }) {
       ) : (
         <ScrollShadow className="flex flex-col gap-2" id="scrollDiv2">
           <InfiniteScroll
-            className={clsx("flex flex-col gap-4 md:pb-16")}
+            className={twMerge("flex flex-col gap-4 md:pb-16")}
             dataLength={limit}
             next={handleEndReached}
             hasMore={limit < (data?.length ?? 0)}

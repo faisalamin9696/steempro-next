@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tooltip as NextTooltip } from "@heroui/tooltip";
-import clsx from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 type OverlayPlacement = "top" | "bottom" | "right" | "left" | "top-start" | "top-end" | "bottom-start" | "bottom-end" | "left-start" | "left-end" | "right-start" | "right-end";
 
@@ -15,7 +15,7 @@ const STooltip = (props: TooltipProps) => {
 
     const { className, content, children, placement } = props;
 
-    return (<div className={clsx(className)}>
+    return (<div className={twMerge(className)}>
         {content ?
             <NextTooltip placement={placement} content={content}>
                 {children}

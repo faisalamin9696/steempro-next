@@ -5,7 +5,6 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  useDisclosure,
 } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { Spinner } from "@heroui/spinner";
@@ -16,13 +15,12 @@ import { secureDecrypt } from "@/libs/utils/encryption";
 
 interface Props {
   isOpen: boolean;
-  onOpenChange: (isOpen: boolean) => void;
+  onClose: () => void;
   handleSwitchSuccess?: (User?: User) => void;
 }
 
 export default function AccountsModal(props: Props) {
-  const { handleSwitchSuccess } = props;
-  const { isOpen, onOpenChange } = useDisclosure();
+  const { handleSwitchSuccess, isOpen, onClose } = props;
   const [accounts, setAccounts] = useState<User[]>();
   const [defaultAcc, setDefaultAcc] = useState<User>();
   const [isShow, setIsShow] = useState(true);
@@ -49,7 +47,6 @@ export default function AccountsModal(props: Props) {
         const activeAccount = allCredentials.splice(index, 1)[0];
         allCredentials.unshift(activeAccount);
       }
-
       setAccounts(allCredentials);
     }
 
@@ -64,8 +61,8 @@ export default function AccountsModal(props: Props) {
     <Modal
       placement="top-center"
       className=" mt-4"
-      isOpen={props.isOpen ?? isOpen}
-      onOpenChange={props.onOpenChange ?? onOpenChange}
+      isOpen={isOpen}
+      onOpenChange={onClose}
       scrollBehavior={"inside"}
       hideCloseButton
     >
@@ -89,7 +86,7 @@ export default function AccountsModal(props: Props) {
                           defaultAccount={defaultAcc}
                           handleSwitchSuccess={(user) => {
                             handleSwitchSuccess && handleSwitchSuccess(user);
-                            props.onOpenChange(false);
+                            onClose();
                           }}
                         />
                       );

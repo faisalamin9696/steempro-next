@@ -628,3 +628,5 @@ type Proposal = {
   total_votes: string;
   status?: "active" | "expired" | "upcoming";
 };
+
+type AssetTypes = "STEEM" | "SBD" | "VESTS";

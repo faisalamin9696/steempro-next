@@ -94,7 +94,7 @@ export default memo(function FeedPatternSwitch() {
 
       {/* <IconButton
         size="md"
-        className={clsx(
+        className={twMerge(
           "text-xl",
           settings.feedStyle === "list" && "text-secondary"
         )}
@@ -104,11 +104,11 @@ export default memo(function FeedPatternSwitch() {
         }}
       /> */}
       {/* <IconButton size='md'
-                    className={clsx('text-xl', settings.feedStyle === 'blog' && 'text-secondary')}
+                    className={twMerge('text-xl', settings.feedStyle === 'blog' && 'text-secondary')}
                     IconType={TbLayoutList} onClick={() => { updateStyle('blog') }} /> */}
       {/* <IconButton
         size="md"
-        className={clsx(
+        className={twMerge(
           "text-xl",
           settings.feedStyle === "grid" && "text-secondary"
         )}
@@ -118,7 +118,7 @@ export default memo(function FeedPatternSwitch() {
         }}
       /> */}
       {/* <IconButton
-                className={clsx('text-xl', settings.feedStyle === 'grid' && 'text-secondary')}
+                className={twMerge('text-xl', settings.feedStyle === 'grid' && 'text-secondary')}
                 IconType={BsFillGrid3X3GapFill} onClick={() => { updateStyle('grid') }} /> */}
     </div>
   );

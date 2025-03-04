@@ -1,7 +1,6 @@
 import NsfwOverlay from "@/components/NsfwOverlay";
 import SLink from "@/components/SLink";
 import { Card } from "@heroui/card";
-import clsx from "clsx";
 import Image from "next/image";
 import { memo, useState } from "react";
 import { twMerge } from "tailwind-merge";
@@ -31,7 +30,7 @@ export default memo(function CommentCover(props: Props) {
     noCard ? (
       <div className="relative">
         <Image
-          className={clsx(
+          className={twMerge(
             isFetching && "bg-background/50",
             className,
             show ? "" : "blur-lg"
@@ -55,7 +54,7 @@ export default memo(function CommentCover(props: Props) {
         radius="none"
         as={targetUrl ? SLink : undefined}
         href={targetUrl}
-        className={clsx(
+        className={twMerge(
           isFetching ? "bg-background/50" : "bg-transparent",
           className
         )}

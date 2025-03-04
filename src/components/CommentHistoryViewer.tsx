@@ -25,7 +25,7 @@ import { PiHashFill } from "react-icons/pi";
 
 interface Props {
   isOpen: boolean;
-  onOpenChange: (isOpen: boolean) => void;
+  onClose: () => void;
   author: string;
   permlink: string;
 }
@@ -80,7 +80,7 @@ const processHistoryData = (rawData: string[]): CommentHistoryItem[] => {
 
 const CommentEditHistory: React.FC<Props> = ({
   isOpen,
-  onOpenChange,
+  onClose,
   author,
   permlink,
 }) => {
@@ -118,7 +118,7 @@ const CommentEditHistory: React.FC<Props> = ({
   return (
     <Modal
       isOpen={isOpen}
-      onOpenChange={onOpenChange}
+      onClose={onClose}
       className="mt-4"
       scrollBehavior="inside"
       backdrop="blur"

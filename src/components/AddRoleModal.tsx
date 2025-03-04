@@ -27,11 +27,10 @@ import { Avatar } from "@heroui/avatar";
 interface Props {
   community?: Community;
   isOpen: boolean;
-  onOpenChange?: (isOpen: boolean) => void;
+  onClose: () => void;
 }
 export default function AddRoleModal(props: Props) {
-  let { community } = props;
-  const { isOpen, onOpenChange } = useDisclosure();
+  let { community, isOpen, onClose } = props;
   const { data: session } = useSession();
   let [username, setUsername] = useState("");
   let [avatar, setAvatar] = useState("");
@@ -78,8 +77,7 @@ export default function AddRoleModal(props: Props) {
 
   function handleSuccess() {
     toast.success("Updated");
-    props.onOpenChange && props.onOpenChange(false);
-    onOpenChange();
+    onClose();
   }
   function handleFailed(error: any) {
     toast.error(error.message || JSON.stringify(error));
@@ -212,10 +210,10 @@ export default function AddRoleModal(props: Props) {
     roleTitleMutation.isPending;
   return (
     <Modal
-      isOpen={props.isOpen ?? isOpen}
+      isOpen={isOpen}
       hideCloseButton
       isDismissable={!isPending}
-      onOpenChange={props.onOpenChange ?? onOpenChange}
+      onClose={onClose}
     >
       <ModalContent>
         {(onClose) => (
@@ -259,9 +257,7 @@ export default function AddRoleModal(props: Props) {
                   classNames={{ base: "items-center" }}
                 >
                   {(item) => (
-                    <SelectItem key={item.value}>
-                      {item.item}
-                    </SelectItem>
+                    <SelectItem key={item.value}>{item.item}</SelectItem>
                   )}
                 </Select>
               </div>

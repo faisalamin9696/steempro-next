@@ -4,7 +4,6 @@ import { Tabs, Tab } from "@heroui/tabs";
 import React from "react";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import FeedPatternSwitch from "@/components/FeedPatternSwitch";
-import clsx from "clsx";
 import HomeTrendingsTab from "./(tabs)/trendings/page";
 import HomeCreatedTab from "./(tabs)/created/page";
 import HomePayoutTab from "./(tabs)/payout/page";
@@ -13,6 +12,7 @@ import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 import { FaFire } from "react-icons/fa";
 import { MdNewLabel, MdWhatshot } from "react-icons/md";
 import { FaCircleDollarToSlot } from "react-icons/fa6";
+import { twMerge } from "tailwind-merge";
 
 export default function HomePage() {
   let { category } = usePathnameClient();
@@ -46,7 +46,7 @@ export default function HomePage() {
   ];
 
   return (
-    <div className={clsx("relative items-center flex-row w-full")}>
+    <div className={twMerge("relative items-center flex-row w-full")}>
       <Tabs
         size={"sm"}
         disableAnimation={isMobile}

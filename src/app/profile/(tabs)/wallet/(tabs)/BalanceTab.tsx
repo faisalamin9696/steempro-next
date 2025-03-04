@@ -78,7 +78,8 @@ export default function BalanceTab({
   data: AccountExt;
   onDelegationClick?: () => void;
 }) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const balanceDisclosure = useDisclosure();
+
   let { username } = usePathnameClient();
   const { data: session } = useSession();
 
@@ -111,7 +112,7 @@ export default function BalanceTab({
   function handleInfo(tokenKey: SteemTokens) {
     key = tokenKey;
     setKey(tokenKey);
-    onOpen();
+    balanceDisclosure.onOpen();
   }
 
   function handleAction(key: Key) {
@@ -316,8 +317,12 @@ export default function BalanceTab({
         />
       )}
 
-      {isOpen && (
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange} hideCloseButton>
+      {balanceDisclosure.isOpen && (
+        <Modal
+          isOpen={balanceDisclosure.isOpen}
+          onClose={balanceDisclosure.onClose}
+          hideCloseButton
+        >
           <ModalContent>
             {(onClose) =>
               key && (

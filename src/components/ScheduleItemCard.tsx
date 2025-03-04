@@ -3,11 +3,9 @@
 import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import { extractMetadata } from "@/libs/utils/editor";
 import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
-
 import { Chip } from "@heroui/chip";
 import { Card } from "@heroui/card";
 import { Button } from "@heroui/button";
-import clsx from "clsx";
 import React, { useState } from "react";
 import CommentCover from "./comment/components/CommentCover";
 import BodyShort from "./body/BodyShort";
@@ -40,6 +38,8 @@ import {
 import { cryptoUtils, Signature } from "@hiveio/dhive";
 import { extractImageLink } from "@/libs/utils/extractContent";
 import SLink from "./SLink";
+import { twMerge } from "tailwind-merge";
+import { useDisclosure } from "@heroui/react";
 
 const StatusData = {
   0: { title: "Pending", color: "warning" },
@@ -57,8 +57,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { authenticateUser, isAuthorized } = useLogin();
   const [dateTime, setDateTime] = useState<ZonedDateTime | null>();
-  const [isOpen, setIsOpen] = useState(false);
-
+  const scheduleDisclosure = useDisclosure();
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDrafting, setIsDrafting] = useState(false);
@@ -216,7 +215,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
     }
 
     if (!dateTime) {
-      setIsOpen(!isOpen);
+      scheduleDisclosure.onOpen();
       return;
     }
 
@@ -309,14 +308,11 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
       <Card
         radius="none"
         shadow="none"
-        className={clsx("w-full bg-transparent gap-4 p-2 relative")}
+        className={twMerge("w-full bg-transparent gap-4 p-2 relative")}
       >
         <div className=" absolute right-2 flex items-center gap-2">
           {targetUrl && (
-            <SLink
-              className=" text-blue-500 text-sm"
-              href={targetUrl}
-            >
+            <SLink className=" text-blue-500 text-sm" href={targetUrl}>
               Visit
             </SLink>
           )}
@@ -481,14 +477,16 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
           </div>
         </div>
       </Card>
-      <ScheduleModal
-        isOpen={isOpen}
-        onOpenChange={setIsOpen}
-        onDateTimeChange={setDateTime}
-        startTime={parseZonedDateTime(
-          parseAbsoluteToLocal(scheduleInfo.time).toString()
-        )}
-      />
+      {scheduleDisclosure.isOpen && (
+        <ScheduleModal
+          isOpen={scheduleDisclosure.isOpen}
+          onClose={scheduleDisclosure.onClose}
+          onDateTimeChange={setDateTime}
+          startTime={parseZonedDateTime(
+            parseAbsoluteToLocal(scheduleInfo.time).toString()
+          )}
+        />
+      )}
     </div>
   );
 }
