@@ -173,31 +173,29 @@ export default function AccountHeader(props: Props) {
         </AccordionItem>
       </Accordion>
 
-      {followerModal.isOpen && (
-        <Modal
-          isOpen={followerModal.isOpen}
-          onOpenChange={(isOpen) => setFollowerModal({ isOpen: isOpen })}
-          placement="top-center"
-          scrollBehavior="inside"
-          closeButton
-        >
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  {followerModal.isFollowing ? "Following" : "Followers"}
-                </ModalHeader>
-                <ModalBody>
-                  <FollowersCard
-                    username={profileInfo.name}
-                    isFollowing={followerModal.isFollowing}
-                  />
-                </ModalBody>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-      )}
+      <Modal
+        isOpen={followerModal.isOpen}
+        onOpenChange={(isOpen) => setFollowerModal({ isOpen: isOpen })}
+        placement="top-center"
+        scrollBehavior="inside"
+        closeButton
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                {followerModal.isFollowing ? "Following" : "Followers"}
+              </ModalHeader>
+              <ModalBody>
+                <FollowersCard
+                  username={profileInfo.name}
+                  isFollowing={followerModal.isFollowing}
+                />
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 }

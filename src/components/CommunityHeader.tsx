@@ -1,8 +1,14 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import SAvatar from "./SAvatar";
-import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  useDisclosure,
+} from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { BiPlus } from "react-icons/bi";
 import { abbreviateNumber } from "@/libs/utils/helper";
@@ -27,7 +33,7 @@ export default function CommunityHeader(props: Props) {
       community?.account ?? ""
     ] ?? community;
 
-  const [membersModal, setMembersModal] = useState(false);
+  const membersDisclosure = useDisclosure();
 
   const posting_json_metadata = JSON.parse(
     account?.posting_json_metadata || "{}"
@@ -113,9 +119,7 @@ export default function CommunityHeader(props: Props) {
               <div className="flex items-center gap-[8px] md:hidden sm:flex">
                 <span
                   className="lowercase text-default-900/80 text-[12px] cursor-pointer hover:underline"
-                  onClick={() => {
-                    setMembersModal(!membersModal);
-                  }}
+                  onClick={membersDisclosure.onOpen}
                 >
                   {abbreviateNumber(communityInfo.count_subs)} members
                 </span>
@@ -131,28 +135,26 @@ export default function CommunityHeader(props: Props) {
         </div>
       </div>
 
-      {membersModal && (
-        <Modal
-          isOpen={membersModal}
-          onOpenChange={setMembersModal}
-          placement="top-center"
-          scrollBehavior="inside"
-          closeButton
-        >
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  {"Members"}
-                </ModalHeader>
-                <ModalBody>
-                  <CommunityMembers community={communityInfo} />
-                </ModalBody>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-      )}
+      <Modal
+        isOpen={membersDisclosure.isOpen}
+        onClose={membersDisclosure.onClose}
+        placement="top-center"
+        scrollBehavior="inside"
+        closeButton
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                {"Members"}
+              </ModalHeader>
+              <ModalBody>
+                <CommunityMembers community={communityInfo} />
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 }

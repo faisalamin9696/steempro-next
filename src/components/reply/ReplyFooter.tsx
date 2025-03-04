@@ -626,7 +626,6 @@ export default function ReplyFooter({
         ) : null}
       </div>
 
-      {confirmationModal.isOpen && (
         <MuteDeleteModal
           comment={comment}
           isOpen={confirmationModal.isOpen}
@@ -642,7 +641,7 @@ export default function ReplyFooter({
             setConfirmationModal({ ...confirmationModal, muteNote: value });
           }}
         />
-      )}
+      
     </div>
   );
 }

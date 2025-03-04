@@ -468,39 +468,35 @@ export default memo(function CommentFooter(props: CommentProps) {
         )}
       </div>
 
-      {voterDisclosure.isOpen && (
-        <Modal
-          isOpen={voterDisclosure.isOpen}
-          onClose={voterDisclosure.onClose}
-          placement="top-center"
-          hideCloseButton
-          scrollBehavior="inside"
-          size="lg"
-        >
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  Voters
-                </ModalHeader>
-                <ModalBody>
-                  <VotersCard comment={comment} />
-                </ModalBody>
-                <ModalFooter>
-                  <Button
-                    color="danger"
-                    variant="flat"
-                    size="sm"
-                    onPress={onClose}
-                  >
-                    Close
-                  </Button>
-                </ModalFooter>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-      )}
+      <Modal
+        isOpen={voterDisclosure.isOpen}
+        onClose={voterDisclosure.onClose}
+        placement="top-center"
+        hideCloseButton
+        scrollBehavior="inside"
+        size="lg"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">Voters</ModalHeader>
+              <ModalBody>
+                <VotersCard comment={comment} />
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="danger"
+                  variant="flat"
+                  size="sm"
+                  onPress={onClose}
+                >
+                  Close
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 });

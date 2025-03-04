@@ -213,7 +213,6 @@ export default function MassVotingPage() {
         </div>
       </div>
 
-      {votingModal.isOpen && (
         <MassVotingModal
           isOpen={votingModal.isOpen}
           handleOnComplete={() => {
@@ -226,7 +225,6 @@ export default function MassVotingPage() {
           data={votingModal.voterCredentials}
           links={votingModal.links}
         />
-      )}
     </div>
   );
 }

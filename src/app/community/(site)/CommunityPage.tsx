@@ -114,31 +114,29 @@ export default function CommunityPage(props: Props) {
           </div>
         )}
       </div>
-      {membersDisclosure.isOpen && (
-        <Modal
-          isOpen={membersDisclosure.isOpen}
-          placement="top-center"
-          scrollBehavior="inside"
-          closeButton
-          onClose={() => {
-            membersDisclosure.onClose();
-            history.replaceState({}, "", `/${"trending"}/${community}`);
-          }}
-        >
-          <ModalContent>
-            {() => (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  {"Members"}
-                </ModalHeader>
-                <ModalBody>
-                  <CommunityMembers community={data} />
-                </ModalBody>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-      )}
+      <Modal
+        isOpen={membersDisclosure.isOpen}
+        placement="top-center"
+        scrollBehavior="inside"
+        closeButton
+        onClose={() => {
+          membersDisclosure.onClose();
+          history.replaceState({}, "", `/${"trending"}/${community}`);
+        }}
+      >
+        <ModalContent>
+          {() => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                {"Members"}
+              </ModalHeader>
+              <ModalBody>
+                <CommunityMembers community={data} />
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 }

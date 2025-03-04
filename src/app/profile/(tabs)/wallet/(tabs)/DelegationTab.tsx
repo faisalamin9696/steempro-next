@@ -295,7 +295,6 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
           </Button>
         }
       />
-      {transferModal.isOpen && (
         <TransferModal
           asset={"VESTS"}
           isOpen={transferModal.isOpen}
@@ -350,7 +349,6 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
               );
           }}
         />
-      )}
     </>
   );
 }

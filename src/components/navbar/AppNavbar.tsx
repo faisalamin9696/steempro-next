@@ -59,7 +59,7 @@ function AppNavbar() {
   const [isPopOpen, setIsPopOpen] = React.useState(false);
   const accountDisclosure = useDisclosure();
   const notiDisclosure = useDisclosure();
-  const searchiDisclosure = useDisclosure();
+  const searchDisclosure = useDisclosure();
   const dispatch = useAppDispatch();
   const [isLocked, setLocked] = useState(
     status === "authenticated" &&
@@ -179,10 +179,10 @@ function AppNavbar() {
               size="md"
               isReadOnly
               endContent={
-                <MdSearch onClick={searchiDisclosure.onOpen} size={20} />
+                <MdSearch onClick={searchDisclosure.onOpen} size={20} />
               }
               type="search"
-              onClick={searchiDisclosure.onOpen}
+              onClick={searchDisclosure.onOpen}
             />
 
             <Button
@@ -191,12 +191,9 @@ function AppNavbar() {
               radius="md"
               variant="light"
               className="1md:hidden"
+              onPress={searchDisclosure.onOpen}
             >
-              <MdSearch
-                onClick={searchiDisclosure.onOpen}
-                size={24}
-                className="text-default-600 "
-              />
+              <MdSearch size={24} className="text-default-600 " />
             </Button>
 
             <Button
@@ -379,8 +376,8 @@ function AppNavbar() {
           </div>
         </div>
         <SearchModal
-          isOpen={searchiDisclosure.isOpen}
-          onClose={searchiDisclosure.onClose}
+          isOpen={searchDisclosure.isOpen}
+          onClose={searchDisclosure.onClose}
         />
 
         {accountDisclosure.isOpen && (

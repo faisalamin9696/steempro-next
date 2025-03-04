@@ -296,33 +296,31 @@ export default memo(function ProfileInfoCard(props: Props) {
           />
         </div>
       )} */}
-      {followerModal.isOpen && (
-        <Modal
-          isOpen={followerModal.isOpen}
-          onOpenChange={(isOpen) => {
-            setFollowerModal({ isOpen: isOpen });
-          }}
-          placement="top-center"
-          scrollBehavior="inside"
-          closeButton
-        >
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  {followerModal.isFollowing ? "Following" : "Followers"}
-                </ModalHeader>
-                <ModalBody>
-                  <FollowersCard
-                    isFollowing={followerModal.isFollowing}
-                    username={profileInfo.name}
-                  />
-                </ModalBody>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-      )}
+      <Modal
+        isOpen={followerModal.isOpen}
+        onOpenChange={(isOpen) => {
+          setFollowerModal({ isOpen: isOpen });
+        }}
+        placement="top-center"
+        scrollBehavior="inside"
+        closeButton
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                {followerModal.isFollowing ? "Following" : "Followers"}
+              </ModalHeader>
+              <ModalBody>
+                <FollowersCard
+                  isFollowing={followerModal.isFollowing}
+                  username={profileInfo.name}
+                />
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 });

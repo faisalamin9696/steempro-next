@@ -477,7 +477,6 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
           </div>
         </div>
       </Card>
-      {scheduleDisclosure.isOpen && (
         <ScheduleModal
           isOpen={scheduleDisclosure.isOpen}
           onClose={scheduleDisclosure.onClose}
@@ -486,7 +485,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
             parseAbsoluteToLocal(scheduleInfo.time).toString()
           )}
         />
-      )}
+      
     </div>
   );
 }

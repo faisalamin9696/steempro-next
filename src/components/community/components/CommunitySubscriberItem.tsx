@@ -107,7 +107,7 @@ export const CommunitySubscriberItem = (props: Props) => {
         </Button>
       )}
 
-      {editRoleModal.isOpen && editRoleModal.comment && (
+      {editRoleModal.comment && (
         <EditRoleModal
           comment={editRoleModal.comment}
           isOpen={editRoleModal.isOpen}

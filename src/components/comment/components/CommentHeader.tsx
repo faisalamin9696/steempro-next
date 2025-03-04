@@ -379,31 +379,27 @@ export default function CommentHeader(props: Props) {
         </div>
       )}
 
-      {roleDisclosure.isOpen && (
-        <EditRoleModal
-          comment={comment}
-          isOpen={roleDisclosure.isOpen}
-          onClose={roleDisclosure.onClose}
-        />
-      )}
+      <EditRoleModal
+        comment={comment}
+        isOpen={roleDisclosure.isOpen}
+        onClose={roleDisclosure.onClose}
+      />
 
-      {confirmationModal.isOpen && (
-        <MuteDeleteModal
-          comment={comment}
-          isOpen={confirmationModal.isOpen}
-          onClose={() =>
-            setConfirmationModal({
-              ...confirmationModal,
-              isOpen: !confirmationModal.isOpen,
-            })
-          }
-          mute={confirmationModal.mute}
-          muteNote={confirmationModal.muteNote}
-          onNoteChange={(value) => {
-            setConfirmationModal({ ...confirmationModal, muteNote: value });
-          }}
-        />
-      )}
+      <MuteDeleteModal
+        comment={comment}
+        isOpen={confirmationModal.isOpen}
+        onClose={() =>
+          setConfirmationModal({
+            ...confirmationModal,
+            isOpen: !confirmationModal.isOpen,
+          })
+        }
+        mute={confirmationModal.mute}
+        muteNote={confirmationModal.muteNote}
+        onNoteChange={(value) => {
+          setConfirmationModal({ ...confirmationModal, muteNote: value });
+        }}
+      />
 
       <CommentEditHistory
         isOpen={historyDisclosure.isOpen}

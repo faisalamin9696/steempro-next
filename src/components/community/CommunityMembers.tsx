@@ -171,13 +171,11 @@ export default function CommunityMembers(props: Props) {
         </ScrollShadow>
       )}
 
-      {roleDisclosure.isOpen && (
-        <AddRoleModal
-          community={communityInfo}
-          isOpen={roleDisclosure.isOpen}
-          onClose={roleDisclosure.onClose}
-        />
-      )}
+      <AddRoleModal
+        community={communityInfo}
+        isOpen={roleDisclosure.isOpen}
+        onClose={roleDisclosure.onClose}
+      />
     </div>
   );
 }

@@ -295,67 +295,61 @@ export default function BalanceTab({
         </>
       )}
 
-      {transferModal.isOpen && (
-        <TransferModal
-          asset={transferModal.asset as any}
-          powewrup={transferModal.powerup}
-          savings={transferModal.savings}
-          delegation={transferModal.delegation}
-          delegatee={isSelf ? "" : username}
-          isOpen={transferModal.isOpen}
-          onOpenChange={(isOpen) =>
-            setTransferModal({ ...transferModal, isOpen: isOpen })
-          }
-        />
-      )}
+      <TransferModal
+        asset={transferModal.asset as any}
+        powewrup={transferModal.powerup}
+        savings={transferModal.savings}
+        delegation={transferModal.delegation}
+        delegatee={isSelf ? "" : username}
+        isOpen={transferModal.isOpen}
+        onOpenChange={(isOpen) =>
+          setTransferModal({ ...transferModal, isOpen: isOpen })
+        }
+      />
 
-      {powerDownModal.isOpen && (
-        <PowerDownModal
-          isOpen={powerDownModal.isOpen}
-          cancel={powerDownModal.cancel}
-          onOpenChange={(isOpen) => setPowerDownModal({ isOpen: isOpen })}
-        />
-      )}
+      <PowerDownModal
+        isOpen={powerDownModal.isOpen}
+        cancel={powerDownModal.cancel}
+        onOpenChange={(isOpen) => setPowerDownModal({ isOpen: isOpen })}
+      />
 
-      {balanceDisclosure.isOpen && (
-        <Modal
-          isOpen={balanceDisclosure.isOpen}
-          onClose={balanceDisclosure.onClose}
-          hideCloseButton
-        >
-          <ModalContent>
-            {(onClose) =>
-              key && (
-                <>
-                  <ModalHeader className="flex flex-col gap-1">
-                    {tokens[key]["title"]}
-                  </ModalHeader>
-                  <ModalBody>
-                    <div>
-                      {tokens[key].title === "STEEM POWER"
-                        ? steem_power_desc(username)
-                        : tokens[key]["description"]}
-                    </div>
-                  </ModalBody>
-                  <ModalFooter>
-                    <Button
-                      color="danger"
-                      variant="flat"
-                      onPress={onClose}
-                      size="sm"
-                    >
-                      Close
-                    </Button>
-                    {/* <Button color="primary" onClick={onClose}>
+      <Modal
+        isOpen={balanceDisclosure.isOpen}
+        onClose={balanceDisclosure.onClose}
+        hideCloseButton
+      >
+        <ModalContent>
+          {(onClose) =>
+            key && (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  {tokens[key]["title"]}
+                </ModalHeader>
+                <ModalBody>
+                  <div>
+                    {tokens[key].title === "STEEM POWER"
+                      ? steem_power_desc(username)
+                      : tokens[key]["description"]}
+                  </div>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    color="danger"
+                    variant="flat"
+                    onPress={onClose}
+                    size="sm"
+                  >
+                    Close
+                  </Button>
+                  {/* <Button color="primary" onClick={onClose}>
                                     Action
                                 </Button> */}
-                  </ModalFooter>
-                </>
-              )
-            }
-          </ModalContent>
-        </Modal>
-      )}
+                </ModalFooter>
+              </>
+            )
+          }
+        </ModalContent>
+      </Modal>
     </div>
   );
 }

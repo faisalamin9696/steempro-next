@@ -161,28 +161,26 @@ export default memo(function CommunityInfoCard(props: Props) {
         </div>
       )}
 
-      {membersDisclosure.isOpen && (
-        <Modal
-          isOpen={membersDisclosure.isOpen}
-          onClose={membersDisclosure.onClose}
-          placement="top-center"
-          scrollBehavior="inside"
-          closeButton
-        >
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  {"Members"}
-                </ModalHeader>
-                <ModalBody>
-                  <CommunityMembers community={communityInfo} />
-                </ModalBody>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-      )}
+      <Modal
+        isOpen={membersDisclosure.isOpen}
+        onClose={membersDisclosure.onClose}
+        placement="top-center"
+        scrollBehavior="inside"
+        closeButton
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                {"Members"}
+              </ModalHeader>
+              <ModalBody>
+                <CommunityMembers community={communityInfo} />
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 });

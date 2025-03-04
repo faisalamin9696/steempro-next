@@ -139,14 +139,13 @@ export default function ReplyBody({
         )}
       </div>
 
-      {historyDisclosure.isOpen && (
         <CommentEditHistory
           isOpen={historyDisclosure.isOpen}
           onClose={historyDisclosure.onClose}
           author={comment.author}
           permlink={comment.permlink}
         />
-      )}
+      
     </div>
   );
 }

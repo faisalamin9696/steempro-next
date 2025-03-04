@@ -218,13 +218,11 @@ export default function ProfileWalletTab({ data }: { data: AccountExt }) {
         </Tab>
       </Tabs>
 
-      {powerDownModal.isOpen && (
-        <PowerDownModal
-          isOpen={powerDownModal.isOpen}
-          cancel={powerDownModal.cancel}
-          onOpenChange={(isOpen) => setPowerDownModal({ isOpen: isOpen })}
-        />
-      )}
+      <PowerDownModal
+        isOpen={powerDownModal.isOpen}
+        cancel={powerDownModal.cancel}
+        onOpenChange={(isOpen) => setPowerDownModal({ isOpen: isOpen })}
+      />
     </div>
   );
 }
