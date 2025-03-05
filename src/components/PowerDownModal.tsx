@@ -5,7 +5,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalFooter,
-  useDisclosure,
 } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { Checkbox } from "@heroui/checkbox";

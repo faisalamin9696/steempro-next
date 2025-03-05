@@ -1,4 +1,4 @@
-import { getAuthorExt } from "@/libs/steem/sds";
+import { getAccountExt } from "@/libs/steem/sds";
 import { getResizedAvatar } from "@/libs/utils/image";
 import usePathnameServer from "@/libs/utils/usePathnameServer";
 import { auth } from "@/auth";
@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
   }
   const session = await auth();
 
-  const result = await getAuthorExt(username, session?.user?.name || "null");
+  const result = await getAccountExt(username, session?.user?.name || "null");
   const { name, about, website } =
     JSON.parse(result.posting_json_metadata || "{}")?.profile ?? {};
 

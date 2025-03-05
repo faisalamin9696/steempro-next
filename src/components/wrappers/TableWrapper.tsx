@@ -18,6 +18,7 @@ import { Pagination } from "@heroui/pagination";
 import { Input } from "@heroui/input";
 import React, { Key } from "react";
 import { FaChevronDown } from "react-icons/fa";
+import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 
 interface Props {
   initialVisibleColumns: string[];
@@ -43,6 +44,7 @@ interface Props {
   sortDescriptor?: { column: string; direction: "ascending" | "descending" };
   topContentDropdown?: React.ReactNode;
   bottomContent?: React.ReactNode;
+  mobileVisibleColumns?: string[];
 }
 
 function TableWrapper(props: Props) {
@@ -59,12 +61,16 @@ function TableWrapper(props: Props) {
     topContentEnd,
     headerColumnTitle,
     topContentDropdown,
+    mobileVisibleColumns,
+    filterValue,
   } = props;
   const [page, setPage] = React.useState(1);
   const [rowsPerPage, setRowsPerPage] = React.useState<any>(10);
   const pages = Math.ceil(filteredItems?.length / rowsPerPage);
+  const { isMobile } = useDeviceInfo();
+
   const [visibleColumns, setVisibleColumns] = React.useState<any>(
-    new Set(initialVisibleColumns)
+    new Set(isMobile ? mobileVisibleColumns : initialVisibleColumns)
   );
   const [sortDescriptor, setSortDescriptor] = React.useState<any>({
     column: props.sortDescriptor?.column ?? "id",
@@ -105,14 +111,17 @@ function TableWrapper(props: Props) {
     setPage(1);
   }, []);
 
-  const onSearchChange = React.useCallback((value) => {
-    if (value) {
-      onFilterValueChange(value);
-      setPage(1);
-    } else {
-      onFilterValueChange("");
-    }
-  }, []);
+  const onSearchChange = React.useCallback(
+    (value) => {
+      if (value) {
+        onFilterValueChange(value);
+        setPage(1);
+      } else {
+        onFilterValueChange("");
+      }
+    },
+    [filterValue]
+  );
 
   const onClear = React.useCallback(() => {
     onFilterValueChange("");
@@ -141,7 +150,7 @@ function TableWrapper(props: Props) {
             onChange={setPage}
           />
 
-          {!hidePaginationActions && (
+          {!hidePaginationActions && !isMobile && (
             <div className="hidden sm:flex w-[30%] justify-end gap-2">
               <Button
                 isDisabled={pages === 1}
@@ -177,13 +186,14 @@ function TableWrapper(props: Props) {
             placeholder="Search..."
             onClear={() => onClear()}
             onValueChange={onSearchChange}
+            value={filterValue}
           />
           {headerColumns && (
             <div className="flex gap-3">
               {topContentDropdown}
               {!topContentDropdown && (
                 <Dropdown>
-                  <DropdownTrigger className="hidden sm:flex">
+                  <DropdownTrigger className="">
                     <Button
                       endContent={<FaChevronDown className="text-small" />}
                       variant="flat"

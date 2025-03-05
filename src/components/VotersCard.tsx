@@ -18,12 +18,18 @@ const columns = [
   { name: "TIME", uid: "time", sortable: true },
 ];
 
-export default function VotersCard({ comment }: { comment: Feed | Post }) {
+export default function VotersCard({
+  comment,
+  isOpen,
+}: {
+  comment: Feed | Post;
+  isOpen: boolean;
+}) {
   const URL = `/posts_api/getVotesById/${comment.link_id}`;
 
   if (!comment.link_id) return null;
 
-  const { data, isLoading } = useSWR(URL, fetchSds<PostVote[]>);
+  const { data, isLoading } = useSWR(isOpen ? URL : null, fetchSds<PostVote[]>);
   const [allRows, setAllRows] = useState<PostVote[]>([]);
 
   useEffect(() => {
@@ -31,70 +37,76 @@ export default function VotersCard({ comment }: { comment: Feed | Post }) {
   }, [data]);
 
   const [filterValue, setFilterValue] = React.useState<any>("");
+  const hasSearchFilter = Boolean(filterValue);
 
   const filteredItems = React.useMemo(() => {
     let filteredVotes = [...allRows];
 
-    filteredVotes = filteredVotes.filter((votes) =>
-      votes.voter.toLowerCase().includes(filterValue.toLowerCase())
-    );
-
+    if (hasSearchFilter) {
+      filteredVotes = filteredVotes.filter((votes) =>
+        votes.voter.toLowerCase().includes(filterValue.toLowerCase())
+      );
+    }
     return filteredVotes;
   }, [allRows, filterValue]);
 
-  const renderCell = React.useCallback((votes: PostVote, columnKey) => {
-    const cellValue = votes[columnKey];
+  const renderCell = React.useCallback(
+    (votes: PostVote, columnKey) => {
+      const cellValue = votes[columnKey];
 
-    switch (columnKey) {
-      case "voter":
-        return (
-          <div className="flex flex-row items-start gap-1">
-            <div className="flex flex-col gap-2">
-              <div className="flex gap-2 items-center">
-                <SAvatar size="xs" username={votes.voter} />
-                <SLink
-                  className=" hover:text-blue-500"
-                  href={`/@${votes.voter}`}
-                >
-                  {votes.voter}
-                </SLink>
+      switch (columnKey) {
+        case "voter":
+          return (
+            <div className="flex flex-row items-start gap-1">
+              <div className="flex flex-col gap-2">
+                <div className="flex gap-2 items-center">
+                  <SAvatar size="xs" username={votes.voter} />
+                  <SLink
+                    className=" hover:text-blue-500"
+                    href={`/@${votes.voter}`}
+                  >
+                    {votes.voter}
+                  </SLink>
+                </div>
               </div>
             </div>
-          </div>
-        );
+          );
 
-      case "rshares":
-        const ratio = (comment?.payout ?? 1) / (comment?.net_rshares ?? 1);
-        const voteAmount = votes.rshares * ratio;
+        case "rshares":
+          const ratio = (comment?.payout ?? 1) / (comment?.net_rshares ?? 1);
+          const voteAmount = votes.rshares * ratio;
 
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              ${voteAmount.toLocaleString()}
-            </p>
-            <p className="text-bold text-small capitalize">
-              {votes.percent / 100}%
-            </p>
-          </div>
-        );
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-small capitalize">
+                ${voteAmount.toLocaleString()}
+              </p>
+              <p className="text-bold text-small capitalize">
+                {votes.percent / 100}%
+              </p>
+            </div>
+          );
 
-      case "time":
-        return (
-          <TimeAgoWrapper
-            className="text-bold text-default-600"
-            created={votes.time * 1000}
-          />
-        );
+        case "time":
+          return (
+            <TimeAgoWrapper
+              className="text-bold text-default-600"
+              created={votes.time * 1000}
+            />
+          );
 
-      default:
-        return cellValue;
-    }
-  }, [comment]);
+        default:
+          return cellValue;
+      }
+    },
+    [comment]
+  );
 
   if (isLoading) return <LoadingCard />;
 
   return (
     <TableWrapper
+      filterValue={filterValue}
       initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
       tableColumns={columns}
       filteredItems={filteredItems}
@@ -102,6 +114,7 @@ export default function VotersCard({ comment }: { comment: Feed | Post }) {
       renderCell={renderCell}
       baseVarient
       hidePaginationActions
+      sortDescriptor={{ column: "rshares", direction: "descending" }}
     />
   );
 }

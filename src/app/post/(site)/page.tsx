@@ -1,6 +1,6 @@
 "use client";
 
-import { getPost, getAuthorExt } from "@/libs/steem/sds";
+import { getPost, getAccountExt } from "@/libs/steem/sds";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { useSession } from "next-auth/react";
 import useSWR from "swr";
@@ -22,7 +22,7 @@ function page() {
     () =>
       Promise.all([
         getPost(username, permlink, session?.user?.name || "null"),
-        getAuthorExt(username, session?.user?.name || "null"),
+        getAccountExt(username, session?.user?.name || "null"),
       ])
   );
 

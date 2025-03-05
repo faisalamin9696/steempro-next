@@ -52,15 +52,17 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
   const [allRows, setAllRows] = useState<AccountHistory[]>([]);
   const [filterValue, setFilterValue] = React.useState<any>("");
+  const hasSearchFilter = Boolean(filterValue);
   const [statusFilter, setStatusFilter] = React.useState<any>("all");
   const filteredItems = React.useMemo(() => {
     let filteredHistory = [...allRows];
-
-    filteredHistory = filteredHistory.filter((history) =>
-      JSON.stringify(history.op)
-        .toLowerCase()
-        .includes(filterValue.toLowerCase())
-    );
+    if (hasSearchFilter) {
+      filteredHistory = filteredHistory.filter((history) =>
+        JSON.stringify(history.op)
+          .toLowerCase()
+          .includes(filterValue.toLowerCase())
+      );
+    }
 
     if (
       statusFilter !== "all" &&
@@ -118,6 +120,7 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
       initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
       tableColumns={columns}
       filteredItems={filteredItems}
+      filterValue={filterValue}
       onFilterValueChange={setFilterValue}
       renderCell={renderCell}
       sortDescriptor={{ column: "time", direction: "descending" }}

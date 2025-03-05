@@ -4,7 +4,7 @@ import { useLogin } from "@/components/auth/AuthProvider";
 import MassVotingModal from "@/components/MassVotingModal";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import { getKeyType } from "@/libs/steem/condenser";
-import { getAuthorExt } from "@/libs/steem/sds";
+import { getAccountExt } from "@/libs/steem/sds";
 import { getResizedAvatar } from "@/libs/utils/image";
 import { PrivKey, getCredentials, getSessionKey } from "@/libs/utils/user";
 import { Input, Textarea } from "@heroui/input";
@@ -86,7 +86,7 @@ export default function MassVotingPage() {
       return;
     }
     if (advance) {
-      const account = await getAuthorExt(username);
+      const account = await getAccountExt(username);
       if (account) {
         try {
           const keyType = getKeyType(account, key);

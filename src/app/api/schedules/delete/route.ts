@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyMessage } from "@/libs/steem/condenser";
 import { Signature } from "@hiveio/dhive";
-import { getAuthorExt } from "@/libs/steem/sds";
+import { getAccountExt } from "@/libs/steem/sds";
 import { executeQuery } from "@/libs/mysql/db";
 
 // Define the POST handler
@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const bufferObj = body.hash;
-    const account = await getAuthorExt(body.username);
+    const account = await getAccountExt(body.username);
     const postingPubKey = account?.posting_key_auths?.[0]?.[0];
     const activePubKey = account?.active_key_auths?.[0]?.[0];
 

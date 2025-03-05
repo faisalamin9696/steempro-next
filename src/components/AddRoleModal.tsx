@@ -9,13 +9,11 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  useDisclosure,
 } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { useMutation } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 import { useLogin } from "./auth/AuthProvider";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
@@ -25,17 +23,15 @@ import { getResizedAvatar } from "@/libs/utils/image";
 import { Avatar } from "@heroui/avatar";
 
 interface Props {
-  community?: Community;
+  community: Community;
   isOpen: boolean;
-  onClose: () => void;
+  onOpenChange: (isOpen: boolean) => void;
 }
 export default function AddRoleModal(props: Props) {
-  let { community, isOpen, onClose } = props;
+  let { community, isOpen, onOpenChange } = props;
   const { data: session } = useSession();
   let [username, setUsername] = useState("");
   let [avatar, setAvatar] = useState("");
-
-  if (!community) return null;
 
   let [title, setTitle] = useState("");
   let [role, setRole] = useState<
@@ -77,7 +73,7 @@ export default function AddRoleModal(props: Props) {
 
   function handleSuccess() {
     toast.success("Updated");
-    onClose();
+    onOpenChange(false);
   }
   function handleFailed(error: any) {
     toast.error(error.message || JSON.stringify(error));
@@ -213,7 +209,7 @@ export default function AddRoleModal(props: Props) {
       isOpen={isOpen}
       hideCloseButton
       isDismissable={!isPending}
-      onClose={onClose}
+      onOpenChange={onOpenChange}
     >
       <ModalContent>
         {(onClose) => (

@@ -165,7 +165,7 @@ export const getPinnedFeed = async (
   }
 };
 
-export const getAuthorExt = async (
+export const getAccountExt = async (
   account: string,
   observer: string = "null"
 ): Promise<AccountExt> => {
@@ -180,6 +180,32 @@ export const getAuthorExt = async (
     // if the response is successful, parse the JSON and check if it's valid
     if (response) {
       return response as AccountExt;
+    } else {
+      throw new Error(response);
+    }
+  } catch (error: any) {
+    // log and re-throw any errors that occur
+    console.error("Failed to fetch post:", error);
+    throw new Error(error);
+  }
+};
+
+export const getAccountsExt = async (
+  accounts: string[],
+  obserber: string = "null",
+  fields: string = ""
+): Promise<AccountExt[]> => {
+  try {
+    if (!accounts) {
+      throw new Error("Invalid request");
+    }
+    const R_API = `/accounts_api/getAccountsExt/${accounts}/${obserber}/${fields}`;
+    console.log(R_API);
+
+    const response = await fetchSds<AccountExt[]>(R_API);
+    // if the response is successful, parse the JSON and check if it's valid
+    if (response) {
+      return response as AccountExt[];
     } else {
       throw new Error(response);
     }

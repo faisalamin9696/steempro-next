@@ -1,6 +1,6 @@
 "use client";
 
-import { getAuthorExt, getCommunity } from "@/libs/steem/sds";
+import { getAccountExt, getCommunity } from "@/libs/steem/sds";
 import MainWrapper from "@/components/wrappers/MainWrapper";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { useSession } from "next-auth/react";
@@ -22,7 +22,7 @@ export default function Template() {
     () =>
       Promise.all([
         getCommunity(community, session?.user?.name || "null"),
-        getAuthorExt(community, session?.user?.name || "null"),
+        getAccountExt(community, session?.user?.name || "null"),
       ])
   );
 

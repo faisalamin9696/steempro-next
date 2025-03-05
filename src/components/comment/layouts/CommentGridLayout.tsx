@@ -233,9 +233,7 @@ export default function CommentGridLayout(props: CommentProps) {
           <span className="ml-1">{commentInfo.children}</span>
         </span>
       </div>
-      <div className="px-2">
-        <CommentFooter compact className="rounded-lg" comment={commentInfo} />
-      </div>
+        <CommentFooter compact className="w-full px-2 py-2" comment={commentInfo} />
     </Card>
   );
 }

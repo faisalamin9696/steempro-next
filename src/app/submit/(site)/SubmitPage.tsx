@@ -59,7 +59,6 @@ import { AsyncUtils } from "@/libs/utils/async.utils";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import EditorInput from "@/components/editor/EditorInput";
 import { twMerge } from "tailwind-merge";
-import { useDisclosure } from "@heroui/react";
 
 interface Props {
   params?: {
@@ -102,7 +101,7 @@ export default function SubmitPage(props: Props) {
   const rpm = readingTime(markdown);
   const [isPosting, setPosting] = useState(false);
   const [isScheduling, setScheduling] = useState(false);
-  const pickerDisclosure = useDisclosure();
+  const [isPicker, setIsPicker] = useState(false);
   const [dateTime, setDateTime] = useState<ZonedDateTime | null>();
   const isLoading = isPosting || isScheduling;
 
@@ -494,7 +493,7 @@ export default function SubmitPage(props: Props) {
   }
   async function handleSchedule(_tags: string[]) {
     if (!dateTime) {
-      pickerDisclosure.onOpen();
+      setIsPicker(!isPicker);
       return;
     }
 
@@ -777,8 +776,8 @@ export default function SubmitPage(props: Props) {
 
       <ScheduleModal
         onDateTimeChange={setDateTime}
-        isOpen={pickerDisclosure.isOpen}
-        onClose={pickerDisclosure.onClose}
+        isOpen={isPicker}
+        onOpenChange={setIsPicker}
       />
     </div>
   );

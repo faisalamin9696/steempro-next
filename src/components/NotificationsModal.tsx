@@ -14,19 +14,19 @@ import { useAppSelector } from "@/libs/constants/AppFunctions";
 
 interface Props {
   username: string | null;
-  onOpen: boolean;
+  isOpen: boolean;
   onClose: () => void;
 }
 
 export default function NotificationsModal(props: Props) {
-  const { username, onOpen, onClose } = props;
+  const { username, isOpen, onClose } = props;
   if (!username) return null;
 
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
 
   return (
     <Modal
-      isOpen={onOpen}
+      isOpen={isOpen}
       onClose={onClose}
       className=" mt-4"
       scrollBehavior="inside"
@@ -51,7 +51,7 @@ export default function NotificationsModal(props: Props) {
               </div>
             </ModalHeader>
             <ModalBody className=" pb-4">
-              <NotificationsTable username={username} onClose={onClose} />
+              <NotificationsTable {...props} />
             </ModalBody>
 
             <ModalFooter>

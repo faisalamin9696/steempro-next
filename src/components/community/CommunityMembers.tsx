@@ -21,7 +21,6 @@ import { ScrollShadow } from "@heroui/scroll-shadow";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Role as RoleCheck } from "@/libs/utils/community";
 import { AsyncUtils } from "@/libs/utils/async.utils";
-import { useDisclosure } from "@heroui/react";
 
 interface Props {
   large?: boolean;
@@ -34,7 +33,7 @@ export default function CommunityMembers(props: Props) {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const [query, setQuery] = useState("");
   const [filteredData, setFilteredData] = useState<Role[]>();
-  const roleDisclosure = useDisclosure();
+  const [isAddRoleOpen, setIsAddRoleOpen] = useState(false);
   const [limit, setLimit] = useState(30);
 
   const URL = `/communities_api/getCommunity/${usePathnameClient().community}/${
@@ -122,14 +121,15 @@ export default function CommunityMembers(props: Props) {
               size="sm"
               variant="flat"
               color="success"
-              onPress={roleDisclosure.onOpen}
+              onPress={() => {
+                setIsAddRoleOpen(!isAddRoleOpen);
+              }}
             >
               Add new
             </Button>
           )}
         </div>
       </div>
-
       {isLoading || isValidating ? (
         <LoadingCard />
       ) : error ? (
@@ -170,12 +170,13 @@ export default function CommunityMembers(props: Props) {
           </InfiniteScroll>
         </ScrollShadow>
       )}
-
-      <AddRoleModal
-        community={communityInfo}
-        isOpen={roleDisclosure.isOpen}
-        onClose={roleDisclosure.onClose}
-      />
+      {isAddRoleOpen && communityInfo && (
+        <AddRoleModal
+          community={communityInfo}
+          isOpen={isAddRoleOpen}
+          onOpenChange={setIsAddRoleOpen}
+        />
+      )}
     </div>
   );
 }

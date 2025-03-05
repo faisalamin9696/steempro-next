@@ -97,7 +97,7 @@ export default memo(function CommentCover(props: Props) {
               onError={onLoadCompleted}
               className={twMerge(show ? "" : "blur-md", "rounded-md")}
               style={{
-                width: "100%",
+                // width: "100%",
                 height: "100%",
                 objectFit: "cover",
               }}

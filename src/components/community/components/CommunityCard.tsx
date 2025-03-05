@@ -6,6 +6,7 @@ import TimeAgoWrapper from "../../wrappers/TimeAgoWrapper";
 import { getResizedAvatar } from "@/libs/utils/image";
 import { twMerge } from "tailwind-merge";
 import SLink from "@/components/SLink";
+import { FaRankingStar } from "react-icons/fa6";
 
 interface Props {
   community: Community;
@@ -89,8 +90,16 @@ export const CommunityCard = memo((props: Props) => {
           </p>
         )}
       </div>
-      <div className={twMerge("flex flex-row gap-4", compact ? "text-tiny" : "")}>
-        <div className="flex gap-1">
+      <div
+        className={twMerge("flex flex-row gap-4", compact ? "text-tiny" : "")}
+      >
+        <div className="flex gap-2 items-center " title="Rank">
+          <p className=" text-default-500">
+            <FaRankingStar size={16} />
+          </p>
+          <p className="font-semibold text-default-600 ">{community.rank}</p>
+        </div>
+        <div className="flex gap-1 items-center">
           <p className="font-semibold text-default-600 ">
             {abbreviateNumber(community.count_subs)}
           </p>
@@ -98,7 +107,7 @@ export const CommunityCard = memo((props: Props) => {
             {compact ? "Subs" : "Subscribers"}
           </p>
         </div>
-        <div className="flex gap-1">
+        <div className="flex gap-1 items-center">
           <p className="font-semibold text-default-600 ">
             ${abbreviateNumber(community.count_pending)}
           </p>

@@ -34,7 +34,6 @@ import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import LoadingCard from "./LoadingCard";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useRouter } from "next13-progressbar";
 import { validateCommunity } from "@/libs/utils/helper";
 import { IoFilter } from "react-icons/io5";
 import { markasRead } from "@/libs/steem/condenser";
@@ -47,7 +46,8 @@ import SLink from "./SLink";
 
 interface Props {
   username: string | null;
-  onClose?: () => void;
+  onClose: () => void;
+  isOpen: boolean;
 }
 
 const typeColorMap = {
@@ -140,7 +140,6 @@ export default function NotificationsTable(props: Props) {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
   const isSelf = session?.user?.name === username;
-  const router = useRouter();
   const { authenticateUser, isAuthorized } = useLogin();
   const dispatch = useAppDispatch();
 

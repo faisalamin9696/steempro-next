@@ -42,7 +42,6 @@ import { AppStrings } from "@/libs/constants/AppStrings";
 import CommentEditHistory from "@/components/CommentHistoryViewer";
 import SLink from "@/components/SLink";
 import { twMerge } from "tailwind-merge";
-import { useDisclosure } from "@heroui/react";
 
 interface Props {
   comment: Post | Feed;
@@ -67,11 +66,11 @@ export default function CommentHeader(props: Props) {
   const canEdit = isSelf;
   const settings =
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
-  const roleDisclosure = useDisclosure();
+  const [isRoleOpen, setIsRoleOpen] = useState(false);
 
   const { authenticateUser, isAuthorized } = useLogin();
   const rpm = readingTime(comment.body);
-  const historyDisclosure = useDisclosure();
+  const [showHistory, setShowHistory] = useState(false);
 
   const [confirmationModal, setConfirmationModal] = useState<{
     isOpen: boolean;
@@ -184,7 +183,7 @@ export default function CommentHeader(props: Props) {
         break;
 
       case "history":
-        historyDisclosure.onOpen();
+        setShowHistory(!showHistory);
         break;
 
       case "copy":
@@ -194,7 +193,7 @@ export default function CommentHeader(props: Props) {
         );
         break;
       case "role":
-        roleDisclosure.onOpen();
+        setIsRoleOpen(!isRoleOpen);
         break;
       case "delete":
         setConfirmationModal({ isOpen: true });
@@ -317,7 +316,9 @@ export default function CommentHeader(props: Props) {
 
             <div className={twMerge(`flex items-center gap-1`)}>
               <TimeAgoWrapper
-                handleEditClick={historyDisclosure.onOpen}
+                handleEditClick={() => {
+                  setShowHistory(!showHistory);
+                }}
                 lang={settings.lang.code}
                 created={comment.created * 1000}
                 lastUpdate={comment.last_update * 1000}
@@ -378,12 +379,13 @@ export default function CommentHeader(props: Props) {
           <ExtraInformation className="block max-sm:hidden" />
         </div>
       )}
-
-      <EditRoleModal
-        comment={comment}
-        isOpen={roleDisclosure.isOpen}
-        onClose={roleDisclosure.onClose}
-      />
+      {isRoleOpen && (
+        <EditRoleModal
+          comment={comment}
+          isOpen={isRoleOpen}
+          onOpenChange={setIsRoleOpen}
+        />
+      )}
 
       <MuteDeleteModal
         comment={comment}
@@ -401,12 +403,14 @@ export default function CommentHeader(props: Props) {
         }}
       />
 
-      <CommentEditHistory
-        isOpen={historyDisclosure.isOpen}
-        onClose={historyDisclosure.onClose}
-        author={comment.author}
-        permlink={comment.permlink}
-      />
+      {showHistory && (
+        <CommentEditHistory
+          isOpen={showHistory}
+          onOpenChange={setShowHistory}
+          author={comment.author}
+          permlink={comment.permlink}
+        />
+      )}
     </div>
   );
 }

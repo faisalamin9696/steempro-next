@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
 import SAvatar from "./SAvatar";
 import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
 import { Button } from "@heroui/button";
@@ -17,6 +16,7 @@ import ProfileInfoCard2 from "./ProfileInfoCard";
 import { useSession } from "next-auth/react";
 import SLink from "./SLink";
 import { usePathname, useRouter } from "next/navigation";
+import Reputation from "./Reputation";
 
 type Props = {
   account: AccountExt;
@@ -24,7 +24,6 @@ type Props = {
 };
 export default function AccountHeader(props: Props) {
   const { account } = props;
-  const { username, community: communityName } = usePathnameClient();
   const { isTablet } = useDeviceInfo();
   const { data: session } = useSession();
 
@@ -89,12 +88,17 @@ export default function AccountHeader(props: Props) {
                 <p>
                   {posting_json_metadata?.profile?.name ?? profileInfo.name}
                 </p>
-                <SLink
-                  href={`/@${profileInfo.name}`}
-                  className=" font-normal text-sm hover:underline"
-                >
-                  @{profileInfo.name}
-                </SLink>
+
+                <div className=" flex flex-row items-center gap-1">
+                  <SLink
+                    href={`/@${profileInfo.name}`}
+                    className=" font-normal text-sm hover:underline"
+                  >
+                    @{profileInfo.name}
+                  </SLink>
+
+                  <Reputation reputation={profileInfo.reputation} className=" font-semibold"  />
+                </div>
               </div>
 
               {/* <div className="flex items-center gap-[8px] md:hidden sm:flex">
@@ -173,29 +177,31 @@ export default function AccountHeader(props: Props) {
         </AccordionItem>
       </Accordion>
 
-      <Modal
-        isOpen={followerModal.isOpen}
-        onOpenChange={(isOpen) => setFollowerModal({ isOpen: isOpen })}
-        placement="top-center"
-        scrollBehavior="inside"
-        closeButton
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                {followerModal.isFollowing ? "Following" : "Followers"}
-              </ModalHeader>
-              <ModalBody>
-                <FollowersCard
-                  username={profileInfo.name}
-                  isFollowing={followerModal.isFollowing}
-                />
-              </ModalBody>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+      {followerModal.isOpen && (
+        <Modal
+          isOpen={followerModal.isOpen}
+          onOpenChange={(isOpen) => setFollowerModal({ isOpen: isOpen })}
+          placement="top-center"
+          scrollBehavior="inside"
+          closeButton
+        >
+          <ModalContent>
+            {() => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  {followerModal.isFollowing ? "Following" : "Followers"}
+                </ModalHeader>
+                <ModalBody>
+                  <FollowersCard
+                    username={profileInfo.name}
+                    isFollowing={followerModal.isFollowing}
+                  />
+                </ModalBody>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+      )}
     </div>
   );
 }

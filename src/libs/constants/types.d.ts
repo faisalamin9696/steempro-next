@@ -170,6 +170,10 @@ type AccountExt = {
   last_fetch: number;
   encKey: string;
   unread_count: number = 0;
+  proxied_vsf_votes: string[];
+  proxied_votes?: number;
+  share?: number;
+
   // notification: {
   //   status: boolean;
   //   vote: {

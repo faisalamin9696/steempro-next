@@ -248,12 +248,16 @@ export default memo(function CommentFooter(props: CommentProps) {
         <div className={twMerge("flex", compact ? "gap-3" : "gap-4")}>
           <div className="flex flex-row items-center gap-2 relative  ">
             {(upvotePopup || downvotePopup) && (
-              <ClickAwayListener onClickAway={closeVotingModal}>
-                <div className="absolute animate-appearance-in z-[11] top-[-45px]">
+              <ClickAwayListener
+                onClickAway={closeVotingModal}
+                mouseEvent="mousedown"
+              >
+                <div className="absolute animate-appearance-in z-[11] top-[-50px]">
                   <VotingModal
                     {...props}
                     downvote={downvotePopup}
                     onConfirm={castVote}
+                    onClose={closeVotingModal}
                   />
                 </div>
               </ClickAwayListener>
@@ -481,7 +485,7 @@ export default memo(function CommentFooter(props: CommentProps) {
             <>
               <ModalHeader className="flex flex-col gap-1">Voters</ModalHeader>
               <ModalBody>
-                <VotersCard comment={comment} />
+                <VotersCard comment={comment} isOpen={voterDisclosure.isOpen} />
               </ModalBody>
               <ModalFooter>
                 <Button

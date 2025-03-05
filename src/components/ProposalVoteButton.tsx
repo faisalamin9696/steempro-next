@@ -30,7 +30,7 @@ export default function ProposalVoteButton({
   const { mutate } = useSWRConfig();
 
   const { data } = useSWR<ProposalVote[]>(
-    shouldFetch ? `proposals-votes-${proposal.id}` : null,
+    shouldFetch ? `proposals-vote-check-${proposal.id}` : null,
     () => getProposalVotes(proposal.id, session?.user?.name ?? "null", 1)
   );
 

@@ -9,7 +9,7 @@ import { Card, CardBody } from "@heroui/card";
 import React, { memo, useState } from "react";
 import SAvatar from "../SAvatar";
 import { useAppDispatch } from "@/libs/constants/AppFunctions";
-import { getAuthorExt } from "@/libs/steem/sds";
+import { getAccountExt } from "@/libs/steem/sds";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
@@ -70,7 +70,7 @@ export default memo(function AccountItemCard(props: Props) {
     // authenticateUser();
     setSwitching(true);
     try {
-      const account = await getAuthorExt(user.username);
+      const account = await getAccountExt(user.username);
       if (account) {
         supabase.auth
           .signInAnonymously()

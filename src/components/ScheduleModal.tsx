@@ -13,23 +13,23 @@ import { ZonedDateTime } from "@internationalized/date";
 
 interface Props {
   isOpen: boolean;
-  onClose: () => void;
+  onOpenChange: (isOpen: boolean) => void;
   onDateTimeChange: (datetime: ZonedDateTime | null) => void;
   startTime?: ZonedDateTime;
 }
 export default function ScheduleModal(props: Props) {
-  const { isOpen, onClose } = props;
+  const { isOpen, onOpenChange } = props;
   const [dateTime, setDateTime] = useState<ZonedDateTime | null>(
     props.startTime ?? now(getLocalTimeZone()).add({ minutes: 1 })
   );
 
   function handleConfirm() {
     props.onDateTimeChange(dateTime);
-    onClose();
+    onOpenChange(false);
   }
 
   return (
-    <Modal isOpen={props.isOpen ?? isOpen} hideCloseButton onClose={onClose}>
+    <Modal isOpen={isOpen} hideCloseButton onOpenChange={onOpenChange}>
       <ModalContent>
         {(onClose) => (
           <>

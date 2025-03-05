@@ -81,6 +81,7 @@ export default function CommunityReportPage() {
   }
 
   const [filterValue, setFilterValue] = React.useState<any>("");
+  
   const [visibleColumns, setVisibleColumns] = React.useState<any>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
@@ -363,7 +364,8 @@ export default function CommunityReportPage() {
         <LoadingCard />
       ) : (
         <TableWrapper
-          classNames={{ base: ["max-h-[382px]", "max-w-none","w-full"] }}
+          filterValue={filterValue}
+          classNames={{ base: ["max-h-[382px]", "max-w-none", "w-full"] }}
           initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
           tableColumns={columns}
           filteredItems={filteredItems}

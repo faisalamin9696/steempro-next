@@ -13,7 +13,6 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  useDisclosure,
 } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
@@ -28,11 +27,11 @@ import { useSession } from "next-auth/react";
 interface Props {
   comment: Post | Feed;
   isOpen: boolean;
-  onClose: () => void;
+  onOpenChange: (isOpen: boolean) => void;
   handleOnUpdate?: (role: RoleTypes, title: string) => void;
 }
 export default function EditRoleModal(props: Props) {
-  const { comment, handleOnUpdate, onClose, isOpen } = props;
+  const { comment, handleOnUpdate, onOpenChange, isOpen } = props;
   const { data: session } = useSession();
   let [title, setTitle] = useState(comment.author_title);
   let [role, setRole] = useState<RoleTypes>(comment.author_role || "guest");
@@ -74,7 +73,7 @@ export default function EditRoleModal(props: Props) {
     );
     handleOnUpdate && handleOnUpdate(role, title);
     toast.success("Updated");
-    onClose();
+    onOpenChange(false);
   }
   function handleFailed(error: any) {
     toast.error(error.message || JSON.stringify(error));
@@ -200,7 +199,7 @@ export default function EditRoleModal(props: Props) {
       isOpen={isOpen}
       hideCloseButton
       isDismissable={!isPending}
-      onClose={onClose}
+      onOpenChange={onOpenChange}
       placement="top-center"
     >
       <ModalContent>

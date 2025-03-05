@@ -19,7 +19,6 @@ import { AppStrings } from "@/libs/constants/AppStrings";
 import CommentEditHistory from "../CommentHistoryViewer";
 import SLink from "../SLink";
 import { twMerge } from "tailwind-merge";
-import { useDisclosure } from "@heroui/react";
 
 export default function ReplyBody({
   comment,
@@ -36,7 +35,7 @@ export default function ReplyBody({
     { show: true, key: "copy", name: "Copy SLink", icon: BsClipboard2Minus },
     { show: true, key: "history", name: "Edit History", icon: LuHistory },
   ];
-  const historyDisclosure = useDisclosure();
+  const [showHistory, setShowHistory] = useState(false);
 
   const renderedItems = menuItems
     .filter((item) => item.show)
@@ -53,7 +52,7 @@ export default function ReplyBody({
   async function handleMenuActions(key: Key) {
     switch (key) {
       case "history":
-        historyDisclosure.onOpen();
+        setShowHistory(!showHistory);
         break;
 
       case "copy":
@@ -90,7 +89,9 @@ export default function ReplyBody({
                     href={`/${comment.category}/@${comment.author}/${comment.permlink}`}
                   >
                     <TimeAgoWrapper
-                      handleEditClick={historyDisclosure.onOpen}
+                      handleEditClick={() => {
+                        setShowHistory(!showHistory);
+                      }}
                       created={comment.created * 1000}
                       lastUpdate={comment.last_update * 1000}
                     />
@@ -139,13 +140,14 @@ export default function ReplyBody({
         )}
       </div>
 
+      {showHistory && (
         <CommentEditHistory
-          isOpen={historyDisclosure.isOpen}
-          onClose={historyDisclosure.onClose}
+          isOpen={showHistory}
+          onOpenChange={setShowHistory}
           author={comment.author}
           permlink={comment.permlink}
         />
-      
+      )}
     </div>
   );
 }

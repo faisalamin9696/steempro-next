@@ -11,7 +11,7 @@ import {
 } from "@/libs/constants/AppFunctions";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { saveSteemGlobals } from "@/libs/redux/reducers/SteemGlobalReducer";
-import { getAuthorExt } from "@/libs/steem/sds";
+import { getAccountExt } from "@/libs/steem/sds";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next13-progressbar";
 import React, { useEffect, useState } from "react";
@@ -111,7 +111,7 @@ export default function AppWrapper({
     }
   );
 
-  const { data: accountData } = useSWR(username && [username], getAuthorExt, {
+  const { data: accountData } = useSWR(username && [username], getAccountExt, {
     shouldRetryOnError: true,
     refreshInterval: 300000, 
     errorRetryInterval: 3000,

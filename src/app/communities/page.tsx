@@ -10,12 +10,7 @@ import { getTimeFromNow } from "@/libs/helper/time";
 import SubscribeButton from "@/components/SubscribeButton";
 import TableWrapper from "@/components/wrappers/TableWrapper";
 
-const INITIAL_VISIBLE_COLUMNS = [
-  "rank",
-  "community",
-  "count_subs",
-  "count_pending",
-];
+const INITIAL_VISIBLE_COLUMNS = ["community", "count_subs", "count_pending"];
 
 const columns = [
   { name: "RANK", uid: "rank", sortable: true },
@@ -39,15 +34,18 @@ export default function CommunitiesPage() {
   }, [data]);
 
   const [filterValue, setFilterValue] = React.useState<any>("");
+  const hasSearchFilter = Boolean(filterValue);
 
   const filteredItems = React.useMemo(() => {
     let filteredCommunities = [...allRows];
 
-    filteredCommunities = filteredCommunities.filter(
-      (community) =>
-        community.title.toLowerCase().includes(filterValue.toLowerCase()) ||
-        community.account.toLowerCase().includes(filterValue.toLowerCase())
-    );
+    if (hasSearchFilter) {
+      filteredCommunities = filteredCommunities.filter(
+        (community) =>
+          community.title.toLowerCase().includes(filterValue.toLowerCase()) ||
+          community.account.toLowerCase().includes(filterValue.toLowerCase())
+      );
+    }
     return filteredCommunities;
   }, [allRows, filterValue]);
 
@@ -87,27 +85,27 @@ export default function CommunitiesPage() {
 
   return (
     <div className="flex flex-col gap-4 overflow-hidden p-2">
-      <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-col items-center gap-2 text-center">
         <p className="text-blue-500 text-3xl font-semibold">Communities</p>
         <p className="text-xs opacity-disabled">
           {`Explore & Engage in Communities`}
         </p>
         <p className=" text-center max-w-[80%] opacity-80">
-          Discover vibrant communities on SteemPro where users with shared
-          interests connect, discuss, and collaborate. From technology to
-          lifestyle, crypto to gaming, join the conversation, share your
-          thoughts, and grow with like-minded individuals. Find your tribe and
-          start engaging today!
+          Connect, discuss, and collaborate on SteemPro! Explore communities
+          from tech, lifestyle, crypto to gaming, share ideas, and grow with
+          like-minded people. Join the conversation today!
         </p>
       </div>
 
       <TableWrapper
+        filterValue={filterValue}
         initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
         tableColumns={columns}
         filteredItems={filteredItems}
         onFilterValueChange={setFilterValue}
         renderCell={renderCell}
         sortDescriptor={{ column: "rank", direction: "ascending" }}
+        mobileVisibleColumns={['community']}
       />
     </div>
   );

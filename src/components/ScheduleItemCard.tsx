@@ -36,10 +36,8 @@ import {
   parseAbsoluteToLocal,
 } from "@internationalized/date";
 import { cryptoUtils, Signature } from "@hiveio/dhive";
-import { extractImageLink } from "@/libs/utils/extractContent";
 import SLink from "./SLink";
 import { twMerge } from "tailwind-merge";
-import { useDisclosure } from "@heroui/react";
 
 const StatusData = {
   0: { title: "Pending", color: "warning" },
@@ -57,7 +55,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { authenticateUser, isAuthorized } = useLogin();
   const [dateTime, setDateTime] = useState<ZonedDateTime | null>();
-  const scheduleDisclosure = useDisclosure();
+  const [scheduleModal, setScheduleModal] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDrafting, setIsDrafting] = useState(false);
@@ -215,7 +213,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
     }
 
     if (!dateTime) {
-      scheduleDisclosure.onOpen();
+      setScheduleModal(!scheduleModal);
       return;
     }
 
@@ -477,15 +475,14 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
           </div>
         </div>
       </Card>
-        <ScheduleModal
-          isOpen={scheduleDisclosure.isOpen}
-          onClose={scheduleDisclosure.onClose}
-          onDateTimeChange={setDateTime}
-          startTime={parseZonedDateTime(
-            parseAbsoluteToLocal(scheduleInfo.time).toString()
-          )}
-        />
-      
+      <ScheduleModal
+        isOpen={scheduleModal}
+        onOpenChange={setScheduleModal}
+        onDateTimeChange={setDateTime}
+        startTime={parseZonedDateTime(
+          parseAbsoluteToLocal(scheduleInfo.time).toString()
+        )}
+      />
     </div>
   );
 }

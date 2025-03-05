@@ -8,7 +8,7 @@ import { Input } from "@heroui/input";
 import { useAppSelector, useAppDispatch } from "@/libs/constants/AppFunctions";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { getKeyType, validateKeychain } from "@/libs/steem/condenser";
-import { getAuthorExt } from "@/libs/steem/sds";
+import { getAccountExt } from "@/libs/steem/sds";
 import { validate_account_name } from "@/libs/utils/ChainValidation";
 import { getResizedAvatar } from "@/libs/utils/image";
 import {
@@ -289,7 +289,7 @@ export default function AuthModal(props: Props) {
     setLoading(true);
     await AsyncUtils.sleep(1);
     try {
-      const account = await getAuthorExt(formData.username);
+      const account = await getAccountExt(formData.username);
       if (account) {
         const keyType = getKeyType(account, formData.key);
 
@@ -332,7 +332,7 @@ export default function AuthModal(props: Props) {
       await validateKeychain();
       setLoading(true);
       await AsyncUtils.sleep(1);
-      const account = await getAuthorExt(formData.username);
+      const account = await getAccountExt(formData.username);
       if (account) {
         window.steem_keychain.requestSignBuffer(
           formData.username,

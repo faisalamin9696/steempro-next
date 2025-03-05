@@ -313,43 +313,45 @@ export default function BalanceTab({
         onOpenChange={(isOpen) => setPowerDownModal({ isOpen: isOpen })}
       />
 
-      <Modal
-        isOpen={balanceDisclosure.isOpen}
-        onClose={balanceDisclosure.onClose}
-        hideCloseButton
-      >
-        <ModalContent>
-          {(onClose) =>
-            key && (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  {tokens[key]["title"]}
-                </ModalHeader>
-                <ModalBody>
-                  <div>
-                    {tokens[key].title === "STEEM POWER"
-                      ? steem_power_desc(username)
-                      : tokens[key]["description"]}
-                  </div>
-                </ModalBody>
-                <ModalFooter>
-                  <Button
-                    color="danger"
-                    variant="flat"
-                    onPress={onClose}
-                    size="sm"
-                  >
-                    Close
-                  </Button>
-                  {/* <Button color="primary" onClick={onClose}>
+      {balanceDisclosure.isOpen && (
+        <Modal
+          isOpen={balanceDisclosure.isOpen}
+          onOpenChange={balanceDisclosure.onOpenChange}
+          hideCloseButton
+        >
+          <ModalContent>
+            {() =>
+              key && (
+                <>
+                  <ModalHeader className="flex flex-col gap-1">
+                    {tokens[key]["title"]}
+                  </ModalHeader>
+                  <ModalBody>
+                    <div>
+                      {tokens[key].title === "STEEM POWER"
+                        ? steem_power_desc(username)
+                        : tokens[key]["description"]}
+                    </div>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button
+                      color="danger"
+                      variant="flat"
+                      onPress={balanceDisclosure.onClose}
+                      size="sm"
+                    >
+                      Close
+                    </Button>
+                    {/* <Button color="primary" onClick={onClose}>
                                     Action
                                 </Button> */}
-                </ModalFooter>
-              </>
-            )
-          }
-        </ModalContent>
-      </Modal>
+                  </ModalFooter>
+                </>
+              )
+            }
+          </ModalContent>
+        </Modal>
+      )}
     </div>
   );
 }

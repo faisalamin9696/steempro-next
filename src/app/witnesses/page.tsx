@@ -133,7 +133,7 @@ export default function page() {
 
   return (
     <div className="flex flex-col gap-4 overflow-hidden p-2">
-      <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-col items-center gap-2 text-center">
         <p className="text-blue-500 text-3xl font-semibold">
           Steem Witnesses (aka "Block Producers")
         </p>
@@ -155,8 +155,8 @@ export default function page() {
             onFilterValueChange={setFilterValue}
             filteredItems={filteredItems}
             renderCell={renderCell}
+            mobileVisibleColumns={["rank", "name"]}
             sortDescriptor={{ column: "rank", direction: "ascending" }}
-
           />
         )
       )}

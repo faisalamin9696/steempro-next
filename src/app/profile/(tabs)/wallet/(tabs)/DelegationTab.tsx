@@ -245,6 +245,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
       <TableWrapper
         initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
         tableColumns={columns}
+        filterValue={filterValue}
         filteredItems={filteredItems}
         onFilterValueChange={setFilterValue}
         renderCell={renderCell}
@@ -295,60 +296,60 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
           </Button>
         }
       />
-        <TransferModal
-          asset={"VESTS"}
-          isOpen={transferModal.isOpen}
-          delegation
-          oldDelegation={transferModal.oldDelegation}
-          delegatee={
-            transferModal.delegatee
-              ? transferModal.delegatee
-              : isSelf
-              ? ""
-              : username
+      <TransferModal
+        asset={"VESTS"}
+        isOpen={transferModal.isOpen}
+        delegation
+        oldDelegation={transferModal.oldDelegation}
+        delegatee={
+          transferModal.delegatee
+            ? transferModal.delegatee
+            : isSelf
+            ? ""
+            : username
+        }
+        isRemove={transferModal.isRemove}
+        onOpenChange={(isOpen) =>
+          setTransferModal({
+            isOpen: isOpen,
+            delegation: transferModal.delegation,
+          })
+        }
+        onDelegationSuccess={(vests) => {
+          if (vests === 0) {
+            // change the status to expiring of removing item
+            setAllRows((prev) =>
+              prev.map((item) => {
+                if (
+                  item.from === transferModal.delegation?.from &&
+                  item.to === transferModal.delegation?.to &&
+                  item.status === transferModal.delegation?.status
+                )
+                  return {
+                    ...item,
+                    status: "expiring",
+                    expiration: moment().add(5, "days").unix(),
+                  };
+                else return item;
+              })
+            );
           }
-          isRemove={transferModal.isRemove}
-          onOpenChange={(isOpen) =>
-            setTransferModal({
-              isOpen: isOpen,
-              delegation: transferModal.delegation,
-            })
-          }
-          onDelegationSuccess={(vests) => {
-            if (vests === 0) {
-              // change the status to expiring of removing item
-              setAllRows((prev) =>
-                prev.map((item) => {
-                  if (
-                    item.from === transferModal.delegation?.from &&
-                    item.to === transferModal.delegation?.to &&
-                    item.status === transferModal.delegation?.status
-                  )
-                    return {
-                      ...item,
-                      status: "expiring",
-                      expiration: moment().add(5, "days").unix(),
-                    };
-                  else return item;
-                })
-              );
-            }
 
-            // update the vevsts of the updating item
-            else
-              setAllRows((prev) =>
-                prev.map((item) => {
-                  if (
-                    item.from === transferModal.delegation?.from &&
-                    item.to === transferModal.delegation?.to &&
-                    item.status === transferModal.delegation?.status
-                  )
-                    return { ...item, vests: vests, time: moment().unix() };
-                  else return item;
-                })
-              );
-          }}
-        />
+          // update the vevsts of the updating item
+          else
+            setAllRows((prev) =>
+              prev.map((item) => {
+                if (
+                  item.from === transferModal.delegation?.from &&
+                  item.to === transferModal.delegation?.to &&
+                  item.status === transferModal.delegation?.status
+                )
+                  return { ...item, vests: vests, time: moment().unix() };
+                else return item;
+              })
+            );
+        }}
+      />
     </>
   );
 }

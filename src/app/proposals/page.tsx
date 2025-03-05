@@ -5,7 +5,7 @@ import LoadingCard from "@/components/LoadingCard";
 import ProposalItemCard from "@/components/ProposalItemCard";
 import { capitalize } from "@/libs/constants/AppConstants";
 import { getProposals } from "@/libs/steem/condenser";
-import { getAuthorExt } from "@/libs/steem/sds";
+import { getAccountExt } from "@/libs/steem/sds";
 import parseAsset from "@/libs/helper/parse-asset";
 import { Card } from "@heroui/card";
 import {
@@ -30,7 +30,7 @@ const FundindCard = ({
 }) => {
   return (
     <div className=" flex flex-col items-center gap-2">
-      <Card radius="md" className="py-1 px-2 bg-primary text-white">
+      <Card radius="md" className="py-1 px-2 bg-primary text-white text-sm">
         {title} SBD
       </Card>
       <p className="text-xs opacity-80">{description}</p>
@@ -46,7 +46,7 @@ function Proposals() {
   );
 
   const { data: accountData } = useSWR<AccountExt>("proposal-fund", () =>
-    getAuthorExt("steem.dao")
+    getAccountExt("steem.dao")
   );
 
   const [allRows, setAllRows] = useState<Proposal[]>([]);
@@ -125,7 +125,7 @@ function Proposals() {
 
   return (
     <div className="flex flex-col gap-4 pb-10">
-      <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-col items-center gap-2 text-center">
         <p className="text-blue-500 text-3xl font-semibold">Proposals</p>
         <p className="text-xs opacity-disabled">
           Power Your Ideas with the Steem Proposal System (SPS)

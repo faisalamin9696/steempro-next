@@ -10,11 +10,7 @@ type SLinkProps = LinkProps &
 
 const SLink = ({ href, children, ...props }: SLinkProps) => {
   return (
-    <Link
-      prefetch={false}
-      href={href as string}
-      {...props}
-    >
+    <Link prefetch={false} href={href as string} {...props}>
       {children}
     </Link>
   );

@@ -22,10 +22,12 @@ import { MdSubject } from "react-icons/md";
 import moment from "moment";
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 import { PiHashFill } from "react-icons/pi";
+import useSWR from "swr";
+import ErrorCard from "./ErrorCard";
 
 interface Props {
   isOpen: boolean;
-  onClose: () => void;
+  onOpenChange: (isOpen: boolean) => void;
   author: string;
   permlink: string;
 }
@@ -53,26 +55,31 @@ const processHistoryData = (rawData: string[]): CommentHistoryItem[] => {
   let previousBody = "";
 
   rawData.forEach((entry: any, index) => {
-    const currentBody = entry.body.startsWith("@@")
-      ? dmp.patch_apply(dmp.patch_fromText(entry.body), previousBody)[0]
-      : entry.body;
-    previousBody = currentBody;
+    try {
+      const currentBody = entry.body.startsWith("@@")
+        ? dmp.patch_apply(dmp.patch_fromText(entry.body), previousBody)[0]
+        : entry.body;
+      previousBody = currentBody;
 
-    const metadata = entry.json_metadata ? JSON.parse(entry.json_metadata) : {};
-    history.push({
-      title: entry.title,
-      body: currentBody,
-      time: entry.time,
-      tags: metadata.tags?.join(", ") || "",
-      titleDiff:
-        index > 0 ? calculateDiff(history[index - 1].title, entry.title) : "",
-      tagsDiff:
-        index > 0
-          ? calculateDiff(history[index - 1].tags, metadata.tags?.join(", "))
-          : "",
-      bodyDiff:
-        index > 0 ? calculateDiff(history[index - 1].body, currentBody) : "",
-    });
+      const metadata = entry?.json_metadata
+        ? JSON.parse(entry.json_metadata)
+        : {};
+
+      history.push({
+        title: entry.title,
+        body: currentBody,
+        time: entry.time,
+        tags: metadata.tags?.join(", ") || "",
+        titleDiff:
+          index > 0 ? calculateDiff(history[index - 1].title, entry.title) : "",
+        tagsDiff:
+          index > 0
+            ? calculateDiff(history[index - 1].tags, metadata.tags?.join(", "))
+            : "",
+        bodyDiff:
+          index > 0 ? calculateDiff(history[index - 1].body, currentBody) : "",
+      });
+    } catch (error) {}
   });
 
   return history;
@@ -80,23 +87,23 @@ const processHistoryData = (rawData: string[]): CommentHistoryItem[] => {
 
 const CommentEditHistory: React.FC<Props> = ({
   isOpen,
-  onClose,
+  onOpenChange,
   author,
   permlink,
 }) => {
   const {
     data: historyData,
     isLoading,
-    isError,
     error,
-  } = useQuery({
-    queryKey: [`comment_history_${author}_${permlink}`],
-    queryFn: () => getCommentHistory(author, permlink),
-  });
+  } = useSWR(`comment_history_${author}_${permlink}`, () =>
+    getCommentHistory(author, permlink)
+  );
 
   const [history, setHistory] = useState<CommentHistoryItem[]>([]);
   const [showDiff, setShowDiff] = useState<boolean[]>([]);
   const { isMobile } = useDeviceInfo();
+
+  if (error) return <ErrorCard />;
 
   useEffect(() => {
     if (historyData) {
@@ -104,10 +111,7 @@ const CommentEditHistory: React.FC<Props> = ({
       setHistory(processedData);
       setShowDiff(Array(processedData.length).fill(false));
     }
-    if (isError) {
-      toast.error(`Failed to load history: ${error}`);
-    }
-  }, [historyData, isError, error]);
+  }, [historyData]);
 
   const toggleDiff = (index: number, checked: boolean) => {
     setShowDiff((prev) =>
@@ -118,7 +122,7 @@ const CommentEditHistory: React.FC<Props> = ({
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onOpenChange={onOpenChange}
       className="mt-4"
       scrollBehavior="inside"
       backdrop="blur"
@@ -134,7 +138,7 @@ const CommentEditHistory: React.FC<Props> = ({
             </ModalHeader>
             <ModalBody className="pb-4 overflow-x-clip">
               {isLoading && <LoadingCard />}
-              {!isLoading && (
+              {historyData && (
                 <Tabs
                   variant="light"
                   radius={isMobile ? "full" : "sm"}
