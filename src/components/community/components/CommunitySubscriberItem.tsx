@@ -114,7 +114,7 @@ export const CommunitySubscriberItem = (props: Props) => {
           handleOnUpdate={(role, title) =>
             setRoleTitle({ role: role, title: title })
           }
-          onClose={() =>
+          onOpenChange={() =>
             setEditRoleModal({
               ...editRoleModal,
               isOpen: !editRoleModal.isOpen,

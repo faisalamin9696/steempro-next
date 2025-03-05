@@ -159,6 +159,7 @@ export const empty_profile = (name: string): AccountExt => {
     encKey: "",
     status: "idle",
     unread_count: 0,
+    proxied_vsf_votes:[]
   };
 };
 

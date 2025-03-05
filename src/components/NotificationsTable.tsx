@@ -46,8 +46,8 @@ import SLink from "./SLink";
 
 interface Props {
   username: string | null;
-  onClose: () => void;
-  isOpen: boolean;
+  onClose?: () => void;
+  isOpen?: boolean;
 }
 
 const typeColorMap = {
@@ -119,7 +119,7 @@ const filter = {
 
 let tempLastRead = 0;
 export default function NotificationsTable(props: Props) {
-  const { username } = props;
+  const { username,onClose } = props;
 
   if (!username) return null;
   // let [offset, setOffset] = useState(20);
@@ -499,9 +499,7 @@ export default function NotificationsTable(props: Props) {
                       <TableCell>
                         <SLink
                           href={getTargetUrl(item)}
-                          onClick={() => {
-                            props?.onClose && props.onClose();
-                          }}
+                          onClick={onClose}
                         >
                           {renderCell(item, columnKey)}
                         </SLink>
