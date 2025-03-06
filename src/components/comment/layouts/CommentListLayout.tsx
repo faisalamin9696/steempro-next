@@ -28,7 +28,7 @@ export default function CommentListLayout(props: CommentProps) {
     <div
       className={twMerge(
         `w-full shadow-md rounded-2xl
-        items-center flex-col  gap-1 bg-white/60 dark:bg-white/10`,
+        items-center flex-col  gap-1 comment-card`,
         isSearch ? " p-2" : "p-[14px]"
       )}
     >

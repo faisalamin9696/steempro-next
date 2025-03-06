@@ -20,6 +20,7 @@ import PiwikPro from "@piwikpro/react-piwik-pro";
 import DrawerContent from "@/components/navbar/components/DrawerContent";
 import AppNavbar from "@/components/navbar/AppNavbar";
 import { ThemeProvider } from "next-themes";
+import { initFirebase } from "@/libs/helper/firabase";
 
 interface Props {
   children: React.ReactNode;
@@ -32,6 +33,7 @@ export function Providers(props: Props) {
 
   useEffect(() => {
     try {
+      initFirebase();
       async () => {
         const { data } = await supabase.auth.getUser();
         const uid = data.user?.id;

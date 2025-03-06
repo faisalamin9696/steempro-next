@@ -9,7 +9,7 @@ import {
 } from "react-icons/fa";
 import { Button } from "@heroui/button";
 
-import { LuHeading1, LuHeading2, LuHeading3, LuHeading4 } from "react-icons/lu";
+import { LuHeading1, LuHeading2, LuHeading3, LuHeading4, LuLetterText } from "react-icons/lu";
 
 import {
   Dropdown,
@@ -27,9 +27,10 @@ interface ToolbarProps {
   style?: any;
   className?: string;
   isDisabled?: boolean;
+  isSnipping?: boolean;
 }
 const EditorToolbar = (props: ToolbarProps) => {
-  const { onSelect, className, isDisabled } = props;
+  const { onSelect, className, isDisabled, isSnipping } = props;
   const masterKey = "Alt + ";
 
   const HeadingItem = (
@@ -182,7 +183,7 @@ const EditorToolbar = (props: ToolbarProps) => {
             IconType={FaTable}
           />
 
-          <div className="h-4 w-[1px] bg-default-900/20" />
+          <div className="opacity-10">|</div>
 
           {/* <ToolbarItem tooltip={{
                         description: 'Snippet',
@@ -215,7 +216,7 @@ const EditorToolbar = (props: ToolbarProps) => {
             IconType={BsImage}
           />
 
-          <div className="max-sm:hidden h-4 w-[1px] bg-default-900/20" />
+          <div className="max-sm:hidden opacity-10">|</div>
         </div>
         <div className="flex gap-1 items-center">
           <ToolbarItem
@@ -241,6 +242,20 @@ const EditorToolbar = (props: ToolbarProps) => {
             }}
             IconType={BsTextCenter}
           />
+
+          {!isSnipping && (
+            <ToolbarItem
+              tooltip={{
+                description: "Snippet",
+                shortcut: `${masterKey + "X"}`,
+              }}
+              isDisabled={isDisabled}
+              onSelect={() => {
+                onSelect("snippet");
+              }}
+              IconType={LuLetterText }
+            />
+          )}
         </div>
       </div>
     </div>

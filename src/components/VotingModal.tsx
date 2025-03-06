@@ -13,6 +13,8 @@ import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import "./style.scss";
 import { getSettings } from "@/libs/utils/user";
+import { LuSeparatorVertical } from "react-icons/lu";
+import { RiSeparator } from "react-icons/ri";
 
 interface Props {
   comment: Feed | Post;
@@ -31,11 +33,9 @@ const ItemCard = ({
   value: string;
 }) => {
   return (
-    <div className="flex gap-1">
-      <p className="font-semibold text-default-500 text-sm">{value ?? "-"}</p>
-      <p title={tooltip} className="text-default-400 text-tiny">
-        {title}
-      </p>
+    <div className="flex flex-row items-center gap-[2px]" title={tooltip}>
+      <p className="font-semibold text-default-500 text-xs">{value}</p>
+      <p className="text-default-400 text-tiny"> {title}</p>
     </div>
   );
 };
@@ -81,25 +81,39 @@ export default function VotingModal(props: Props) {
     >
       <CardHeader className="flex flex-col w-full gap-2">
         {/* Close Button */}
-        <div className="flex flex-row w-full justify-between items-center pl-[6px]">
-          <div className="flex flex-row items-center gap-[2px]">
-            <p className="font-semibold text-default-500 text-sm">
-              {value}
-            </p>
-            <p className="text-default-400 text-tiny">{"%"}</p>
+        <div className="flex flex-row w-full justify-between items-center pl-[6px] pr-1">
+          <div className="gap-2 flex flex-row justify-between w-full">
+            <div className=" flex flex-row gap-1 items-center">
+              <ItemCard
+                title={""}
+                tooltip={`${"Voting value"}: ${value}%`}
+                value={`${value}%`}
+              />
+
+              <div className="opacity-10">|</div>
+              <ItemCard
+                title={"VP"}
+                tooltip={`${"Voting power"}: ${
+                  downvote
+                    ? loginInfo?.downvote_mana_percent?.toFixed(1)
+                    : loginInfo?.upvote_mana_percent?.toFixed(1)
+                }%`}
+                value={`${
+                  downvote
+                    ? loginInfo?.downvote_mana_percent?.toFixed(1)
+                    : loginInfo?.upvote_mana_percent?.toFixed(1)
+                }%`}
+              />
+            </div>
           </div>
-          <Button
-            isIconOnly
-            radius="full"
-            size="sm"
-            variant="light"
-            onPress={onClose} // Replace with your close handler
+          <button
+            onClick={onClose} // Replace with your close handler
           >
             <IoCloseCircleSharp
               size={24}
               className="text-gray-500 hover:text-gray-700"
             />
-          </Button>
+          </button>
         </div>
 
         <div className="flex flex-col w-full gap-6 pb-1">

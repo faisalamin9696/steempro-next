@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import React, { createContext, useContext, useState } from "react";
 import { getCredentials, getSessionToken, sessionKey } from "@/libs/utils/user";
 import AuthModal from "./AuthModal";
-import { useDisclosure } from "@heroui/react";
+import { useDisclosure } from "@heroui/modal";
 
 // Define the type for your context value
 interface AuthContextType {

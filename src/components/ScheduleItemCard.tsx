@@ -299,10 +299,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
   if (scheduleInfo?.status === -1) return null;
 
   return (
-    <div
-      className="w-full rounded-2xl flex-col gap-4 
-    bg-white/60 dark:bg-white/10"
-    >
+    <div className="w-full rounded-2xl flex-col gap-4 comment-card">
       <Card
         radius="none"
         shadow="none"

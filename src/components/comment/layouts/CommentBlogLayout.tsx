@@ -26,8 +26,7 @@ export default function CommentBlogLayout(props: CommentProps) {
 
   return (
     <div
-      className="w-full rounded-2xl flex-col gap-4 
-    bg-white/60 dark:bg-white/10"
+      className="w-full rounded-2xl flex-col gap-4 comment-card"
     >
       <div className="p-2">
         <CommentHeader comment={commentInfo} compact className="w-full" />

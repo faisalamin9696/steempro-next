@@ -9,13 +9,13 @@ import { getAccountExt } from "@/libs/steem/sds";
 import parseAsset from "@/libs/helper/parse-asset";
 import { Card } from "@heroui/card";
 import {
-  Button,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Input,
-} from "@heroui/react";
+} from "@heroui/dropdown";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
 import React, { useEffect, useMemo, useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { MdSearch } from "react-icons/md";
@@ -55,22 +55,25 @@ function Proposals() {
     new Set(initialSatus)
   );
 
+  const hasSearchFilter = Boolean(filterValue);
   const filteredItems = useMemo(() => {
     let filteredProposals = [...allRows];
 
-    filteredProposals = filteredProposals.filter((proposal) =>
-      (proposal.creator.toLowerCase().search(filterValue.toLowerCase().trim()) >
-        -1 ||
-        proposal.receiver
+    if (hasSearchFilter)
+      filteredProposals = filteredProposals.filter((proposal) =>
+        (proposal.creator
           .toLowerCase()
-          .search(filterValue.toLowerCase().trim()) > -1 ||
-        proposal.subject
-          .toLowerCase()
-          .search(filterValue.toLowerCase().trim()) > -1) &&
-      Array.from(visibleColumns).includes("all")
-        ? true
-        : Array.from(visibleColumns).includes(proposal.status)
-    );
+          .includes(filterValue.toLowerCase().trim()) ||
+          proposal.receiver
+            .toLowerCase()
+            .includes(filterValue.toLowerCase().trim()) ||
+          proposal.subject
+            .toLowerCase()
+            .includes(filterValue.toLowerCase().trim())) &&
+        Array.from(visibleColumns).includes("all")
+          ? true
+          : Array.from(visibleColumns).includes(proposal.status)
+      );
 
     return filteredProposals;
   }, [allRows, filterValue, visibleColumns]);

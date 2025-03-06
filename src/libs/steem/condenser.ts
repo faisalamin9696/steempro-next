@@ -83,7 +83,7 @@ export const signImage = async (
     // Convert the photo to a Uint8Array
     const photoBuf = new Uint8Array(Buffer.from(photo, "base64"));
     if (photoBuf.length === 0) {
-      throw new Error("Something went wrong");
+      throw new Error("Something went wrong!");
     }
 
     // Create a prefix as a Uint8Array

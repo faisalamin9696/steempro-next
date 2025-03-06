@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./markdown.scss";
+import "./main.scss";
 import { Toaster } from "sonner";
 import { AppStrings } from "@/libs/constants/AppStrings";
 import { SessionProvider } from "next-auth/react";

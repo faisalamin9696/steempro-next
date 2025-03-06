@@ -19,6 +19,8 @@ import "./style.scss";
 import { getAccountsByPrefix } from "@/libs/steem/sds";
 import { useSession } from "next-auth/react";
 import { validate_account_name } from "@/libs/utils/ChainValidation";
+import { useDisclosure } from "@heroui/modal";
+import SnippetModal from "../SnippetModal";
 
 const tableTemplete = `|	Column 1	|	Column 2	|	Column 3	|
 |	------------	|	------------	|	------------	|
@@ -38,6 +40,8 @@ interface EditorProps {
   rows?: number;
   isDisabled?: boolean;
   users?: string[];
+  maxLength?: number;
+  isSnipping?: boolean;
 }
 
 let timeout: any = null;
@@ -52,6 +56,8 @@ export default memo(function EditorInput(props: EditorProps) {
     users,
     rows,
     isDisabled,
+    maxLength,
+    isSnipping,
   } = props;
 
   let { authenticateUser, isAuthorized, credentials } = useLogin();
@@ -62,6 +68,7 @@ export default memo(function EditorInput(props: EditorProps) {
   const postInput = useRef<any>(null);
   const postBodyRef = useRef<HTMLDivElement>(null);
   let [imagesUploadCount, setImagesUploadCount] = useState(0);
+  const snippetDisclosure = useDisclosure();
 
   const onDrop = useCallback((acceptedFiles: any[], rejectedFiles: any[]) => {
     if (!acceptedFiles.length) {
@@ -196,9 +203,9 @@ export default memo(function EditorInput(props: EditorProps) {
     table: () => insertCode("table"),
     link: () => insertCode("link"),
     image: () => insertCode("image"),
-    snip: () => insertCode("snip"),
     justify: () => insertCode("justify"),
     center: () => insertCode("center"),
+    snippet: () => insertCode("snippet"),
   };
 
   function hotKeyHandler(e: KeyboardEvent<HTMLDivElement>) {
@@ -240,8 +247,8 @@ export default memo(function EditorInput(props: EditorProps) {
         shortcutHandler.link();
         break;
 
-      case "s":
-        shortcutHandler.snip();
+      case "x":
+        shortcutHandler.snippet();
         break;
 
       case "j":
@@ -306,8 +313,8 @@ export default memo(function EditorInput(props: EditorProps) {
         }
         // insertAtCursor('![', '](url)', 2, 2);
         break;
-      case "snip":
-        alert("Snippets");
+      case "snippet":
+        snippetDisclosure.onOpen();
         break;
 
       case "justify":
@@ -323,7 +330,7 @@ export default memo(function EditorInput(props: EditorProps) {
   }
 
   function handleChange(text: string) {
-    setValue(text);
+    setValue(text?.trimStart());
   }
 
   function insertImage(responseData: {
@@ -505,7 +512,11 @@ export default memo(function EditorInput(props: EditorProps) {
         )}
 
         <div className="flex flex-col gap-2">
-          <EditorToolbar isDisabled={isDisabled} onSelect={insertCode} />
+          <EditorToolbar
+            isSnipping={isSnipping}
+            isDisabled={isDisabled}
+            onSelect={insertCode}
+          />
 
           <ReactTextareaAutocomplete
             style={{ fontSize: 14 }}
@@ -523,6 +534,7 @@ export default memo(function EditorInput(props: EditorProps) {
             onChange={(e) => handleChange(e.target.value)}
             loadingComponent={() => <LoadingCard />}
             minChar={0}
+            maxLength={maxLength}
             trigger={{
               "@": {
                 dataProvider: async (token) => {
@@ -570,6 +582,20 @@ export default memo(function EditorInput(props: EditorProps) {
         aria-hidden
         id="dropzone"
         accept="image/png, image/gif, image/jpeg, image/jpg"
+      />
+
+      <SnippetModal
+        handleOnSelect={(snippet) => {
+          insertAtCursor(
+            snippet.body,
+            "",
+            snippet.body.length + 1,
+            snippet.body.length + 1
+          );
+          snippetDisclosure.onOpenChange();
+        }}
+        isOpen={snippetDisclosure.isOpen}
+        onOpenChange={snippetDisclosure.onOpenChange}
       />
     </div>
   );

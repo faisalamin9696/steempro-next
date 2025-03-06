@@ -465,7 +465,7 @@ type CommunityReport = {
 // };
 
 type Snippet = {
-  id: string;
+  id: number;
   title: string;
   body: string;
 };
@@ -596,6 +596,15 @@ type Schedule = {
   status: number;
   permlink?: string;
   message?: string;
+};
+
+type Snippet = {
+  id: number;
+  username: string;
+  title: string;
+  body: string;
+  created: string;
+  modified: string;
 };
 
 type Keys = "POSTING" | "ACTIVE" | "OWNER" | "MASTER" | "MEMO";

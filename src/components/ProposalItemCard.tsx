@@ -3,7 +3,9 @@ import { abbreviateNumber } from "@/libs/utils/helper";
 import moment from "moment";
 import React from "react";
 import SAvatar from "./SAvatar";
-import { Card, CardBody, Chip, useDisclosure } from "@heroui/react";
+import { useDisclosure } from "@heroui/modal";
+import { Card, CardBody } from "@heroui/card";
+import { Chip } from "@heroui/chip";
 import SLink from "./SLink";
 import ProposalVoteButton from "./ProposalVoteButton";
 import Link from "next/link";
@@ -39,7 +41,7 @@ function ProposalItemCard({ proposal }: { proposal: Proposal }) {
   };
   return (
     <div>
-      <Card className="flex flex-col bg-white/60 dark:bg-white/10">
+      <Card className="flex flex-col comment-card">
         <CardBody className="flex flex-col gap-2">
           <div className=" flex flex-row items-center gap-2">
             <div className="flex flex-row gap-2 items-center">

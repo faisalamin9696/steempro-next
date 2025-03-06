@@ -182,6 +182,10 @@ function TableWrapper(props: Props) {
         <div className="flex justify-between gap-3 items-center">
           <Input
             isClearable
+            classNames={{
+              inputWrapper:
+                "text-default-500 bg-default-400/20 dark:bg-default-500/20",
+            }}
             className="w-full sm:max-w-[50%]"
             placeholder="Search..."
             onClear={() => onClear()}

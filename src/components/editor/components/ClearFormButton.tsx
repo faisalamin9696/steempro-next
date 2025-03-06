@@ -6,14 +6,17 @@ import { MdDelete } from "react-icons/md";
 interface Props {
   onClearPress?: () => void;
   isDisabled?: boolean;
+  title?: string;
+  isLoading?: boolean;
+  divTitle?: string;
 }
 export default memo(function ClearFormButton(props: Props) {
-  const { onClearPress, isDisabled } = props;
+  const { divTitle, title, isLoading, onClearPress, isDisabled } = props;
 
   const [clearPopup, setClearPopup] = useState(false);
 
   return (
-    <div title="Clear all">
+    <div title={divTitle ?? "Clear all"}>
       <Popover
         isOpen={clearPopup}
         onOpenChange={(open) => setClearPopup(open)}
@@ -25,15 +28,16 @@ export default memo(function ClearFormButton(props: Props) {
             color="danger"
             isDisabled={isDisabled}
             isIconOnly
-            startContent={<MdDelete className="text-xl" />}
+            startContent={!isLoading && <MdDelete className="text-xl" />}
             variant="flat"
+            isLoading={isLoading}
           />
         </PopoverTrigger>
         <PopoverContent>
           <div className="px-1 py-2">
             <div className="text-small font-bold">{"Confirmation"}</div>
             <div className="text-tiny flex">
-              {"Do you really want to clear all data?"}
+              {title ?? "Do you really want to clear all data?"}
             </div>
 
             <div className="text-tiny flex mt-2 space-x-2">
