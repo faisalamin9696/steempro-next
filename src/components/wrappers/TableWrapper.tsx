@@ -74,7 +74,11 @@ function TableWrapper(props: Props) {
   const { isMobile } = useDeviceInfo();
 
   const [visibleColumns, setVisibleColumns] = React.useState<any>(
-    new Set(isMobile ? mobileVisibleColumns : initialVisibleColumns)
+    new Set(
+      isMobile
+        ? mobileVisibleColumns || initialVisibleColumns
+        : initialVisibleColumns
+    )
   );
   const [sortDescriptor, setSortDescriptor] = React.useState<any>({
     column: props.sortDescriptor?.column ?? "id",
