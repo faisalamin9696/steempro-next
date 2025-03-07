@@ -231,7 +231,7 @@ function TemplateTab(props: Props) {
                 });
             }}
           >
-            <p>{template.title}</p>
+            <p className=" font-semibold">{template.title}</p>
             <MarkdownViewer text={`<center>${template.image}</center>`} className=" prose-img:max-fit" />
           </Card>
         );

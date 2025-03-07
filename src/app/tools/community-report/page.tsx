@@ -1,14 +1,6 @@
 "use client";
 
 import { fetchSds } from "@/libs/constants/AppFunctions";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from "@heroui/table";
 
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
@@ -81,7 +73,7 @@ export default function CommunityReportPage() {
   }
 
   const [filterValue, setFilterValue] = React.useState<any>("");
-  
+
   const [visibleColumns, setVisibleColumns] = React.useState<any>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );

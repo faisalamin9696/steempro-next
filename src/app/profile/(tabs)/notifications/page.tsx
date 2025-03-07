@@ -5,5 +5,11 @@ import React from "react";
 
 export default function ProfileNotificationsTab() {
   const { username } = usePathnameClient();
-  return <NotificationsTable username={username} />;
+  return (
+    <NotificationsTable
+      username={username}
+      onOpenChange={() => {}}
+      isOpen={true}
+    />
+  );
 }

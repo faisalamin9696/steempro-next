@@ -1,21 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-} from "@heroui/table";
-
 import { Pagination } from "@heroui/pagination";
 import { Input } from "@heroui/input";
 import useSWR from "swr";
 import { fetchSds } from "@/libs/constants/AppFunctions";
 import SAvatar from "@/components/SAvatar";
 import LoadingCard from "@/components/LoadingCard";
+import TableWrapper from "./wrappers/TableWrapper";
+import SLink from "./SLink";
 
 const INITIAL_VISIBLE_COLUMNS = [""];
 
@@ -33,13 +26,19 @@ export default function FollowersCard({
   if (!username) return null;
 
   const { data, isLoading } = useSWR(URL, fetchSds<string[]>);
-  const [allRows, setAllRows] = useState<string[]>([]);
+  const [allRows, setAllRows] = useState<{ username: string }[]>([]);
 
   useEffect(() => {
-    if (data) setAllRows(data);
+    if (data) {
+      const mappedData = data.map((item) => ({
+        username: item,
+      }));
+
+      setAllRows(mappedData);
+    }
   }, [data]);
 
-  const [filterValue, setFilterValue] = React.useState<any>("");
+  const [filterValue, setFilterValue] = React.useState<string>("");
   const [visibleColumns, setVisibleColumns] = React.useState<any>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
@@ -54,15 +53,15 @@ export default function FollowersCard({
   const hasSearchFilter = Boolean(filterValue);
 
   const filteredItems = React.useMemo(() => {
-    let filteredVotes = [...allRows];
+    let filteredFollowers = [...allRows];
 
     if (hasSearchFilter) {
-      filteredVotes = filteredVotes.filter((item) =>
-        item.toLowerCase().includes(filterValue.toLowerCase())
+      filteredFollowers = filteredFollowers.filter((item) =>
+        item.username.toLowerCase().includes(filterValue.toLowerCase().trim())
       );
     }
 
-    return filteredVotes;
+    return filteredFollowers;
   }, [allRows, filterValue, statusFilter]);
 
   const pages = Math.ceil(filteredItems?.length / rowsPerPage);
@@ -186,43 +185,24 @@ export default function FollowersCard({
   if (isLoading) return <LoadingCard />;
 
   return (
-    <div>
-      <Table
-        aria-label="Follows table"
-        isHeaderSticky={false}
-        removeWrapper
-        bottomContent={bottomContent}
-        bottomContentPlacement="outside"
-        classNames={classNames}
-        sortDescriptor={sortDescriptor}
-        topContent={topContent}
-        topContentPlacement="outside"
-        onSortChange={setSortDescriptor}
-        isCompact
-        isStriped
-      >
-        <TableHeader>
-          <TableColumn allowsSorting key={"username"}>
-            {"USERNAME"}
-          </TableColumn>
-        </TableHeader>
-        <TableBody emptyContent={"No data found"}>
-          {sortedItems
-            .slice((page - 1) * rowsPerPage, page * rowsPerPage)
-            ?.map((row) => (
-              <TableRow key={row}>
-                {(columnKey) => (
-                  <TableCell>
-                    <div className="flex gap-2 items-center p-2" key={row}>
-                      <SAvatar size="xs" username={row} />
-                      <p>{row}</p>
-                    </div>
-                  </TableCell>
-                )}
-              </TableRow>
-            ))}
-        </TableBody>
-      </Table>
-    </div>
+    <TableWrapper
+      topContentDropdown={<></>}
+      baseVarient
+      hidePaginationActions
+      inputClassName="!max-w-[75%]"
+      sortDescriptor={{ column: "username", direction: "ascending" }}
+      initialVisibleColumns={["username"]}
+      tableColumns={[{ name: "USERNAME", uid: "username", sortable: true }]}
+      filteredItems={filteredItems}
+      onFilterValueChange={setFilterValue}
+      renderCell={(row) => {
+        return (
+          <div className="flex gap-2 items-center p-2" key={row.username}>
+            <SAvatar size="xs" username={row.username} />
+            <SLink href={`/@${row.username}`}>{row.username}</SLink>
+          </div>
+        );
+      }}
+    />
   );
 }

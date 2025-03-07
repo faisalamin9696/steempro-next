@@ -31,7 +31,7 @@ function SnippetModal(props: Props) {
             </ModalHeader>
             <ModalBody id="scrollDiv" className=" pb-4">
               <div className=" flex flex-col gap-4">
-                <Tabs variant={"light"} size="md" aria-label="snippet tab">
+                <Tabs radius="full" color="default"  size="md" aria-label="snippet tab">
                   <Tab key="snippet" title="Snippets">
                     <SnippetTab {...props} />
                   </Tab>

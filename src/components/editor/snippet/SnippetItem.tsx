@@ -90,24 +90,26 @@ function SnippetItem(props: Props) {
   }
 
   return (
-    <Card className=" flex flex-row gap-4 comment-card p-2">
-      <button
-        className=" flex flex-col flex-1"
-        disabled={isPending}
-        onClick={() => {
+    <Card className=" flex flex-row gap-4 comment-card pe-2">
+      <Card
+        as={"div"}
+        isPressable
+        className=" flex flex-col flex-1 border-r-1 border-default-100 rounded-none bg-transparent shadow-none rounded-l-xl"
+        isDisabled={isPending}
+        onPress={() => {
           handleOnSelect && handleOnSelect(snippet);
         }}
       >
-        <p className=" font-semibold bg-gray-300 dark:bg-gray-500 p-2 rounded-xl">
+        <p className=" font-semibold bg-gray-300/60 dark:bg-gray-500/30 p-2 rounded-tl-xl">
           {snippet.title}
         </p>
         <MarkdownViewer
           text={snippet.body}
           className="max-h-40 overflow-y-auto px-2"
         />
-      </button>
+      </Card>
 
-      <div className=" flex flex-col gap-2">
+      <div className=" flex flex-col gap-2 py-2">
         <Button
           title="Copy"
           variant="flat"

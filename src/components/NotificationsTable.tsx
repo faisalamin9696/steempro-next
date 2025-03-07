@@ -43,11 +43,12 @@ import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { useSession } from "next-auth/react";
 import { Badge } from "@heroui/badge";
 import SLink from "./SLink";
+import TableWrapper from "./wrappers/TableWrapper";
 
 interface Props {
   username: string | null;
-  onClose?: () => void;
-  isOpen?: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  isOpen: boolean;
 }
 
 const typeColorMap = {
@@ -119,7 +120,7 @@ const filter = {
 
 let tempLastRead = 0;
 export default function NotificationsTable(props: Props) {
-  const { username,onClose } = props;
+  const { isOpen, username, onOpenChange } = props;
 
   if (!username) return null;
   // let [offset, setOffset] = useState(20);
@@ -142,7 +143,6 @@ export default function NotificationsTable(props: Props) {
   const isSelf = session?.user?.name === username;
   const { authenticateUser, isAuthorized } = useLogin();
   const dispatch = useAppDispatch();
-
   const [allRows, setAllRows] = useState<SDSNotification[]>([]);
   useEffect(() => {
     if (data) {
@@ -173,7 +173,6 @@ export default function NotificationsTable(props: Props) {
       if (data) setAllRows((prev) => [...prev, ...data]);
     },
   });
-
   const markMutation = useMutation({
     mutationFn: (data: { key: string; isKeychain?: boolean }) =>
       markasRead(loginInfo, data.key, data.isKeychain),
@@ -209,27 +208,10 @@ export default function NotificationsTable(props: Props) {
       isKeychain: credentials.keychainLogin,
     });
   }
-
   const [filterValue, setFilterValue] = React.useState<any>("");
-  const [visibleColumns, setVisibleColumns] = React.useState<any>(
-    new Set(INITIAL_VISIBLE_COLUMNS)
-  );
   const [statusFilter, setStatusFilter] = React.useState<any>("all");
-  const [rowsPerPage, setRowsPerPage] = React.useState<any>(5);
-  const [sortDescriptor, setSortDescriptor] = React.useState<any>({
-    column: "time",
-    direction: "descending",
-  });
 
   const hasSearchFilter = Boolean(filterValue);
-
-  const headerColumns = React.useMemo(() => {
-    if (visibleColumns === "all") return columns;
-
-    return columns.filter((column) =>
-      Array.from(visibleColumns).includes(column.uid)
-    );
-  }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
     let filteredNotifications = [...allRows];
@@ -250,20 +232,6 @@ export default function NotificationsTable(props: Props) {
 
     return filteredNotifications;
   }, [allRows, filterValue, statusFilter]);
-
-  const items = React.useMemo(() => {
-    return filteredItems;
-  }, [filteredItems, rowsPerPage]);
-
-  const sortedItems = React.useMemo(() => {
-    return [...items].sort((a, b) => {
-      const first = a[sortDescriptor.column];
-      const second = b[sortDescriptor.column];
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
-
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    });
-  }, [sortDescriptor, items]);
 
   const renderCell = React.useCallback(
     (notification: SDSNotification, columnKey) => {
@@ -290,7 +258,7 @@ export default function NotificationsTable(props: Props) {
                   placement="bottom-right"
                   shape="circle"
                 >
-                  <SAvatar size="xs" username={notification.account} />
+                  <SAvatar size="1xs" username={notification.account} />
                 </Badge>
                 <div>
                   <SLink
@@ -335,31 +303,10 @@ export default function NotificationsTable(props: Props) {
     [globalData]
   );
 
-  const onSearchChange = React.useCallback((value) => {
-    if (value) {
-      setFilterValue(value);
-    } else {
-      setFilterValue("");
-    }
-  }, []);
-
-  const onClear = React.useCallback(() => {
-    setFilterValue("");
-  }, []);
-
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4 p-1">
         <div className="flex justify-between gap-3 items-end">
-          <Input
-            size="sm"
-            isClearable
-            color="default"
-            placeholder="Search..."
-            value={filterValue}
-            onClear={() => onClear()}
-            onValueChange={onSearchChange}
-          />
           <div className="flex gap-3">
             <Dropdown>
               <DropdownTrigger className="">
@@ -404,9 +351,7 @@ export default function NotificationsTable(props: Props) {
   }, [
     filterValue,
     statusFilter,
-    visibleColumns,
     allRows?.length,
-    onSearchChange,
     hasSearchFilter,
     markMutation.isPending,
     loginInfo.unread_count,
@@ -441,77 +386,47 @@ export default function NotificationsTable(props: Props) {
   };
 
   return (
-    <div className=" flex flex-col gap-4">
-      <div className="">
-        {isLoading ? (
-          <LoadingCard />
-        ) : (
-          <Table
-            aria-label="Notification table"
-            // bottomContent={bottomContent}
-            classNames={{
-              base: "w-full overflow-auto mb-4 h-full",
-            }}
-            sortDescriptor={sortDescriptor}
-            topContent={topContent}
-            topContentPlacement="outside"
-            onSortChange={setSortDescriptor}
-            bottomContent={
-              allRows?.length > 0 && !isLoading ? (
-                <div className="flex w-full justify-center">
-                  <Button
-                    size="sm"
-                    isDisabled={isLoading || loadMoreMutation.isPending}
-                    isLoading={loadMoreMutation.isPending}
-                    radius="full"
-                    variant="shadow"
-                    onPress={() => {
-                      offset += 20;
-                      loadMoreMutation.mutate(offset);
-                    }}
-                  >
-                    {isLoading && <Spinner size="sm" />}
-                    Load More
-                  </Button>
-                </div>
-              ) : null
-            }
-          >
-            <TableHeader columns={headerColumns}>
-              {(column) => (
-                <TableColumn
-                  key={column.uid}
-                  align={column.uid === "actions" ? "center" : "start"}
-                  allowsSorting={column.sortable}
-                >
-                  {column.name}
-                </TableColumn>
-              )}
-            </TableHeader>
-            <TableBody emptyContent={"No data found"} items={sortedItems}>
-              {(item) => {
-                return (
-                  <TableRow
-                    key={JSON.stringify(item)}
-                    className="cursor-pointer hover:bg-foreground/10"
-                  >
-                    {(columnKey) => (
-                      <TableCell>
-                        <SLink
-                          href={getTargetUrl(item)}
-                          onClick={onClose}
-                        >
-                          {renderCell(item, columnKey)}
-                        </SLink>
-                      </TableCell>
-                    )}
-                  </TableRow>
-                );
+    <TableWrapper
+      filteredItems={filteredItems}
+      filterValue={filterValue}
+      renderCell={renderCell}
+      skipPaging
+      isCompact={false}
+      isLoading={isLoading}
+      stickyTop
+      classNames={{
+        base: ["w-full", "overflow-auto", "mb-4", "h-full"],
+      }}
+      sortDescriptor={{ column: "time", direction: "descending" }}
+      initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
+      tableColumns={columns}
+      onFilterValueChange={setFilterValue}
+      bottomContent={
+        allRows?.length > 0 && !isLoading ? (
+          <div className="flex w-full justify-center">
+            <Button
+              size="sm"
+              isDisabled={isLoading || loadMoreMutation.isPending}
+              isLoading={loadMoreMutation.isPending}
+              radius="full"
+              variant="shadow"
+              onPress={() => {
+                offset += 20;
+                loadMoreMutation.mutate(offset);
               }}
-            </TableBody>
-          </Table>
-        )}
-      </div>
-    </div>
+            >
+              {isLoading && <Spinner size="sm" />}
+              Load More
+            </Button>
+          </div>
+        ) : null
+      }
+      topContentDropdown={topContent}
+      cellWrapper={(item, children) => (
+        <SLink href={getTargetUrl(item)} onClick={() => onOpenChange(!isOpen)}>
+          {children}
+        </SLink>
+      )}
+    />
   );
 }

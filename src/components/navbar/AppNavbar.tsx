@@ -391,7 +391,7 @@ function AppNavbar() {
         )}
         <NotificationsModal
           isOpen={notiDisclosure.isOpen}
-          onClose={notiDisclosure.onClose}
+          onOpenChange={notiDisclosure.onOpenChange}
           username={session?.user?.name ?? ""}
         />
       </div>

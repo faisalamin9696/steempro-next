@@ -144,22 +144,17 @@ export default function page() {
         </p>
       </div>
 
-      {isLoading ? (
-        <LoadingCard />
-      ) : (
-        allRows && (
-          <TableWrapper
-            tableColumns={columns}
-            initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
-            filterValue={filterValue}
-            onFilterValueChange={setFilterValue}
-            filteredItems={filteredItems}
-            renderCell={renderCell}
-            mobileVisibleColumns={["rank", "name"]}
-            sortDescriptor={{ column: "rank", direction: "ascending" }}
-          />
-        )
-      )}
+      <TableWrapper
+        isLoading={isLoading}
+        tableColumns={columns}
+        initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
+        filterValue={filterValue}
+        onFilterValueChange={setFilterValue}
+        filteredItems={filteredItems}
+        renderCell={renderCell}
+        mobileVisibleColumns={["rank", "name"]}
+        sortDescriptor={{ column: "rank", direction: "ascending" }}
+      />
     </div>
   );
 }
