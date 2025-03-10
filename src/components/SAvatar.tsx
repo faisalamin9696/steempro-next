@@ -5,24 +5,26 @@ import { twMerge } from "tailwind-merge";
 
 interface Props {
   username: string;
-  quality?: "small" | "large" | "medium";
+  loadSize?: "small" | "medium" | "large";
   onPress?: (event) => void;
   border?: boolean;
   className?: string;
   size?: "xs" | "1xs" | "sm" | "md" | "lg" | "xl";
   borderColor?: string;
   onlyImage?: boolean;
+  quality?: number;
 }
 export default function SAvatar(props: Props) {
   const {
     username,
     size,
-    quality,
+    loadSize,
     onPress,
     border,
     borderColor,
     className,
     onlyImage,
+    quality,
   } = props;
   const imageSize =
     size === "xl"
@@ -44,6 +46,7 @@ export default function SAvatar(props: Props) {
   const avatarImage = (
     <Image
       title={username}
+      quality={quality}
       onError={(e) => {
         e.currentTarget.src = "/image-placeholder.png";
       }}
@@ -53,7 +56,7 @@ export default function SAvatar(props: Props) {
       style={{
         borderColor: borderColor,
       }}
-      src={`${getResizedAvatar(username, quality ?? "small")}`}
+      src={`${getResizedAvatar(username, loadSize ?? "small")}`}
       className={twMerge(
         "max-w-none shadow-lg rounded-full",
         border && "border",

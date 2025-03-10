@@ -13,8 +13,6 @@ import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import "./style.scss";
 import { getSettings } from "@/libs/utils/user";
-import { LuSeparatorVertical } from "react-icons/lu";
-import { RiSeparator } from "react-icons/ri";
 
 interface Props {
   comment: Feed | Post;
@@ -40,19 +38,19 @@ const ItemCard = ({
   );
 };
 
-export default function VotingModal(props: Props) {
+export default function VotingSliderCard(props: Props) {
   const { downvote, onConfirm, onClose } = props;
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
-  const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
-  const [voteData, setVoteData] = useState<VoteData>();
+  // const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
+  // const [voteData, setVoteData] = useState<VoteData>();
   const settings =
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
 
   let [value, setValue] = React.useState(settings.voteOptions.value ?? 100);
 
-  useEffect(() => {
-    setVoteData(getVoteData(loginInfo, globalData, downvote));
-  }, []);
+  // useEffect(() => {
+  //   setVoteData(getVoteData(loginInfo, globalData, downvote));
+  // }, []);
 
   const handleValueChange = (value: any) => {
     if (isNaN(Number(value))) return;

@@ -54,7 +54,7 @@ export default function CommunityHeader(props: Props) {
         <div className="sm:ps-4 pe-2 md:-mt-8 z-10 hidden md:block">
           <SAvatar
             size="lg"
-            quality="medium"
+            loadSize="medium"
             username={communityInfo.account}
             className="hidden md:block bg-background shadow-none border-4 border-background"
           />

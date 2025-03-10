@@ -6,10 +6,10 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@heroui/modal";
-import { Button } from "@heroui/button";
+import { Button, PressEvent } from "@heroui/button";
 import { Card } from "@heroui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
-import React, { memo, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { PiCurrencyCircleDollarFill } from "react-icons/pi";
 import { SlLoop } from "react-icons/sl";
 import { useMutation } from "@tanstack/react-query";
@@ -27,7 +27,7 @@ import { toast } from "sonner";
 import { reblogPost, voteComment } from "@/libs/steem/condenser";
 import { getVoteData } from "@/libs/steem/sds";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
-import VotingModal from "@/components/VotingModal";
+import VotingSliderCard from "@/components/VotingSliderCard";
 import { CommentProps } from "../CommentCard";
 import {
   BiDownvote,
@@ -70,19 +70,26 @@ export default memo(function CommentFooter(props: CommentProps) {
 
   const dispatch = useAppDispatch();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
+  const settings =
+    useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
 
   const isUpvoted =
     !!comment.observer_vote && comment.observer_vote_percent > 0;
   const isDownvoted =
     !!comment.observer_vote && comment.observer_vote_percent < 0;
   const isResteemd = !!comment.observer_resteem;
-
   const isVoting =
     comment.status === "upvoting" || comment.status === "downvoting";
   const [breakdownModal, setBreakdownModal] = useState(false);
   const [resteemPopup, setResteemPopup] = useState(false);
   const [upvotePopup, setUpvotePopup] = useState(false);
   const [downvotePopup, setDownvotePopup] = useState(false);
+  const [longPressUpvote, setLongPressUpvote] = useState<
+    PressEvent | undefined
+  >();
+  const [longPressDownvote, setLongPressDownvote] = useState<
+    PressEvent | undefined
+  >();
 
   function closeVotingModal() {
     if (upvotePopup) setUpvotePopup(false);
@@ -171,6 +178,9 @@ export default memo(function CommentFooter(props: CommentProps) {
   async function castVote(weight: number, downvote?: boolean) {
     closeVotingModal();
 
+    authenticateUser();
+    if (!isAuthorized()) return;
+
     if (downvote) {
       weight = -weight;
     }
@@ -237,6 +247,42 @@ export default memo(function CommentFooter(props: CommentProps) {
     });
   }
 
+  // handleLongPress upvote
+  useEffect(() => {
+    let timer: NodeJS.Timeout | undefined;
+    if (settings.longPressVote.enabled) {
+      const fetchedUser = settings.longPressVote.usersList.filter(
+        (user) => user.name === comment.author
+      )[0];
+      const voteWeight =
+        fetchedUser?.weight ?? settings.voteOptions.value ?? 100;
+      timer = longPressUpvote
+        ? setTimeout(() => {
+            castVote(voteWeight, false);
+          }, 800)
+        : undefined;
+    }
+    return () => clearTimeout(timer);
+  }, [longPressUpvote]);
+
+  // handleLongPress downvote
+  useEffect(() => {
+    let timer: NodeJS.Timeout | undefined;
+    if (settings.longPressVote.enabled) {
+      const fetchedUser = settings.longPressVote.usersList.filter(
+        (user) => user.name === comment.author
+      )[0];
+      const voteWeight =
+        fetchedUser?.weight ?? settings.voteOptions.value ?? 100;
+      timer = longPressDownvote
+        ? setTimeout(() => {
+            castVote(voteWeight, true);
+          }, 800)
+        : undefined;
+    }
+    return () => clearTimeout(timer);
+  }, [longPressDownvote]);
+
   return (
     <div className={twMerge("flex flex-col p-1 gap-1 w-full ", className)}>
       <div
@@ -253,7 +299,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                 mouseEvent="mousedown"
               >
                 <div className="absolute animate-appearance-in z-[11] top-[-50px]">
-                  <VotingModal
+                  <VotingSliderCard
                     {...props}
                     downvote={downvotePopup}
                     onConfirm={castVote}
@@ -274,6 +320,8 @@ export default memo(function CommentFooter(props: CommentProps) {
                   }
                   setUpvotePopup(!upvotePopup);
                 }}
+                onPressStart={setLongPressUpvote}
+                onPressEnd={() => setLongPressUpvote(undefined)}
                 isDisabled={isVoting}
                 isLoading={comment.status === "upvoting"}
                 isIconOnly
@@ -303,6 +351,8 @@ export default memo(function CommentFooter(props: CommentProps) {
                 variant="light"
                 title="Downvote"
                 isDisabled={isVoting}
+                onPressStart={setLongPressDownvote}
+                onPressEnd={() => setLongPressDownvote(undefined)}
                 isLoading={comment.status === "downvoting"}
                 onPress={() => {
                   if (!isAuthorized()) {

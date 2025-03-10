@@ -366,6 +366,10 @@ type Setting = {
     remember: boolean = true;
     value: number = 100;
   };
+  longPressVote: {
+    enabled: boolean;
+    usersList: { name: string; weight: number; community: string }[];
+  };
 };
 
 type FeedStyle = "blogs" | "list" | "grid";

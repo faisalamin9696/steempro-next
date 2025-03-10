@@ -295,17 +295,19 @@ export default function BalanceTab({
         </>
       )}
 
-      <TransferModal
-        asset={transferModal.asset as any}
-        powewrup={transferModal.powerup}
-        savings={transferModal.savings}
-        delegation={transferModal.delegation}
-        delegatee={isSelf ? "" : username}
-        isOpen={transferModal.isOpen}
-        onOpenChange={(isOpen) =>
-          setTransferModal({ ...transferModal, isOpen: isOpen })
-        }
-      />
+      {transferModal.isOpen && (
+        <TransferModal
+          asset={transferModal.asset as any}
+          powewrup={transferModal.powerup}
+          savings={transferModal.savings}
+          delegation={transferModal.delegation}
+          delegatee={isSelf ? "" : username}
+          isOpen={transferModal.isOpen}
+          onOpenChange={(isOpen) =>
+            setTransferModal({ ...transferModal, isOpen: isOpen })
+          }
+        />
+      )}
 
       <PowerDownModal
         isOpen={powerDownModal.isOpen}

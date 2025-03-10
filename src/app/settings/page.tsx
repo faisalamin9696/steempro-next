@@ -23,6 +23,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   FaChevronCircleUp,
   FaInfoCircle,
+  FaList,
   FaUpload,
   FaUserCircle,
 } from "react-icons/fa";
@@ -43,7 +44,8 @@ import { IoIosSettings } from "react-icons/io";
 import { addProfileHandler } from "@/libs/redux/reducers/ProfileReducer";
 import { useSession } from "next-auth/react";
 import { useDropzone } from "react-dropzone";
-import { Checkbox } from "@heroui/checkbox";
+import { useDisclosure } from "@heroui/react";
+import CustomUsersVotingCard from "@/components/CustomUsersVotingCard";
 
 let isCover: boolean = false;
 
@@ -76,8 +78,14 @@ export default function SettingsPage() {
   const [rpc, setRpc] = useState(settings.rpc || AppStrings.rpc_servers[0]);
   const [nsfw, setNsfw] = useState(settings.nsfw || "Always warn");
 
+  const customVotingDisclosure = useDisclosure();
+
   const [rememberVote, setRememberVote] = useState(
     String(settings.voteOptions.remember) ?? "true"
+  );
+
+  const [longPress, setLongPress] = useState(
+    String(settings.longPressVote.enabled) ?? "false"
   );
 
   const dispatch = useAppDispatch();
@@ -181,6 +189,23 @@ export default function SettingsPage() {
     dispatch(updateSettingsHandler(newSetting));
 
     toast.success(`Remember vote: ${value}`);
+  }
+
+  function handleLongPressChange(value: string) {
+    setLongPress(value);
+    const newSetting = updateSettings({
+      ...settings,
+      longPressVote: {
+        enabled: value == "true",
+        usersList: settings.longPressVote.usersList || [],
+      },
+    });
+
+    dispatch(updateSettingsHandler(newSetting));
+
+    toast.success(
+      `LongPress voting:  ${value === "true" ? "enabled" : "disabled"}`
+    );
   }
 
   async function handleUpdate() {
@@ -386,6 +411,50 @@ export default function SettingsPage() {
               {"Default to 100%"}
             </SelectItem>
           </Select>
+
+          <div className=" flex flex-row items-center gap-2">
+            <Select
+              startContent={<FaChevronCircleUp size={iconSize - 4} />}
+              aria-label="Long press vote"
+              variant="flat"
+              disallowEmptySelection
+              label="LongPress Vote"
+              onChange={(key) => {
+                handleLongPressChange(key.target.value);
+              }}
+              selectedKeys={[longPress]}
+              placeholder="LongPress Vote"
+              // className=" max-w-[250px]"
+              classNames={{
+                value: "text-sm",
+                // innerWrapper: ' w-10'
+              }}
+            >
+              <SelectItem className="text-sm" key={"true"}>
+                {"Enable"}
+              </SelectItem>
+
+              <SelectItem className="text-sm" key={"false"}>
+                {"Disable"}
+              </SelectItem>
+            </Select>
+
+            <Button
+              isIconOnly
+              radius="sm"
+              size="lg"
+              onPress={customVotingDisclosure.onOpen}
+            >
+              <FaList />
+            </Button>
+          </div>
+
+          {/* {settings.longPressVote.enabled && (
+            <div>
+              <div className=" opacity-disabled text-sm">Custom Votes</div>
+              <CustomUsersVotingCard />
+            </div>
+          )} */}
         </div>
       </div>
 
@@ -509,6 +578,10 @@ export default function SettingsPage() {
         aria-hidden
         id="dropzone"
         accept="image/png, image/gif, image/jpeg, image/jpg"
+      />
+      <CustomUsersVotingCard
+        isOpen={customVotingDisclosure.isOpen}
+        onOpenChange={customVotingDisclosure.onOpenChange}
       />
     </div>
   );

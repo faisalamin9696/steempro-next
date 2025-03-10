@@ -19,7 +19,7 @@ const AboutCard = (props: Props): JSX.Element => {
   return (
     <Card isBlurred className="card column bg-transparent grid row-auto">
       <CardBody className="card items-center flex-col">
-        <SAvatar size="xl" username={username} quality="medium" />
+        <SAvatar size="xl" username={username} loadSize="large" quality={75} />
 
         <div className="flex flex-col items-center gap-4">
           <div className="flex flex-col items-center">

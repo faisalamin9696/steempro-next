@@ -32,6 +32,10 @@ export let CurrentSetting: Setting = {
     remember: true,
     value: 100,
   },
+  longPressVote: {
+    enabled: false,
+    usersList: [],
+  },
 };
 
 export const WitnessAccount = "faisalamin";

@@ -159,7 +159,7 @@ export const empty_profile = (name: string): AccountExt => {
     encKey: "",
     status: "idle",
     unread_count: 0,
-    proxied_vsf_votes:[]
+    proxied_vsf_votes: [],
   };
 };
 
@@ -216,6 +216,10 @@ export const empty_settings = (): Setting => {
     voteOptions: {
       remember: true,
       value: 100,
+    },
+    longPressVote: {
+      enabled: false,
+      usersList: [],
     },
   };
 };

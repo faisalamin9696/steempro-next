@@ -43,14 +43,11 @@ export default memo(function BeneficiaryButton(props: Props) {
       toast.info("Beneficiary cannot be duplicate");
       return;
     }
-    if (!weight || !/^[1-9]\d{0,2}$/.test(weight)) {
-      toast.info("Beneficiary percentage must be from 1-100");
-      return;
-    }
 
-    if (parseFloat(weight) > 100 || parseFloat(weight) < 1) {
+    const weightValue = Number(weight);
+
+    if (!weight || weightValue < 1 || weightValue > 100) {
       toast.info("Beneficiary percentage must be from 1-100");
-      return;
     }
 
     if (validate_account_name(username)) {
@@ -163,6 +160,7 @@ export default memo(function BeneficiaryButton(props: Props) {
                   onValueChange={setUsername}
                   variant="flat"
                   value={username}
+                  spellCheck="false"
                 />
               </div>
               <IconButton

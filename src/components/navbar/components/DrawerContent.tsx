@@ -32,7 +32,7 @@ import {
 import { twMerge } from "tailwind-merge";
 
 const iconSize = 24;
-function DrawerContent() {
+function DrawerContent({ toggleDrawer }: { toggleDrawer: () => void }) {
   const { data: session } = useSession();
   const pathname = usePathname()?.replaceAll(
     /\b(?:trending|payout|created|hot)\b/g,
@@ -147,6 +147,9 @@ function DrawerContent() {
                 as={SLink}
                 target={item.externalLink ? "_blank" : undefined}
                 href={item.href}
+                onPress={() => {
+                  toggleDrawer();
+                }}
                 startContent={isFocused ? item.focusedIcon : item.unFocusedIcon}
               >
                 {item.title}

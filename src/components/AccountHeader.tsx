@@ -70,14 +70,14 @@ export default function AccountHeader(props: Props) {
         <div className="ps-0 max-lg:ps-4 pe-2 -mt-8 lg:mt-0 z-10">
           <SAvatar
             size="lg"
-            quality="medium"
+            loadSize="medium"
             username={profileInfo.name}
             className="hidden sm:block bg-background shadow-none border-4 border-background"
           />
           <SAvatar
             username={profileInfo.name}
             size="md"
-            className="hidden max-sm:block border-4 shadow-none border-background"
+            className="hidden max-sm:block bg-background border-4 shadow-none border-background"
           />
         </div>
 

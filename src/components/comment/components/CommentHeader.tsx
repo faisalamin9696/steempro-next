@@ -242,7 +242,7 @@ export default function CommentHeader(props: Props) {
 
         <ViewCountCard
           comment={comment}
-          className="shadow-sm shadow-foreground/30  rounded-full bg-white dark:border-none dark:bg-foreground/10 text-tiny px-2 py-[1px] font-light "
+          className="shadow-sm shadow-foreground/30 rounded-full bg-white dark:border-none dark:bg-foreground/10 text-tiny px-2 py-[1px] font-light "
         />
       </div>
     );
@@ -376,7 +376,7 @@ export default function CommentHeader(props: Props) {
               <ExtraInformation />
             </PopoverContent>
           </Popover>
-          <ExtraInformation className="block max-sm:hidden" />
+          <ExtraInformation className="flex max-sm:hidden" />
         </div>
       )}
       {isRoleOpen && (

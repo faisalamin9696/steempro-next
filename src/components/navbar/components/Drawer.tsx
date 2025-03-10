@@ -12,7 +12,6 @@ import SLink from "@/components/SLink";
 import ThemeSwitch from "@/components/ThemeSwitch";
 
 interface Props {
-  onItemClick?: () => void;
   onAccountSwitch?: () => void;
   handleLogout: () => void;
 }
@@ -101,7 +100,7 @@ export default memo(function Drawer(props: Props) {
             <MdClose className="text-lg" />
           </Button>
         </div>
-        <DrawerContent />
+        <DrawerContent toggleDrawer={toggleDrawer} />
       </div>
     </div>
   );
