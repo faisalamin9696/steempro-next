@@ -11,7 +11,7 @@ import CommentCard from "./comment/CommentCard";
 import { twMerge } from "tailwind-merge";
 import { notFound } from "next/navigation";
 import CommentSkeleton from "./comment/components/CommentSkeleton";
-import { Spinner } from "@heroui/react";
+import { Spinner } from "@heroui/spinner";
 import EmptyList from "./EmptyList";
 
 interface Props {

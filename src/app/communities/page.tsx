@@ -10,7 +10,12 @@ import { getTimeFromNow } from "@/libs/helper/time";
 import SubscribeButton from "@/components/SubscribeButton";
 import TableWrapper from "@/components/wrappers/TableWrapper";
 
-const INITIAL_VISIBLE_COLUMNS = ["community", "count_subs", "count_pending"];
+const INITIAL_VISIBLE_COLUMNS = [
+  "rank",
+  "community",
+  "count_subs",
+  "count_pending",
+];
 
 const columns = [
   { name: "RANK", uid: "rank", sortable: true },
@@ -105,7 +110,7 @@ export default function CommunitiesPage() {
         onFilterValueChange={setFilterValue}
         renderCell={renderCell}
         sortDescriptor={{ column: "rank", direction: "ascending" }}
-        mobileVisibleColumns={['community']}
+        mobileVisibleColumns={["community"]}
       />
     </div>
   );

@@ -562,6 +562,11 @@ type Transfer = {
   memo: string;
 };
 
+type WitnessVote = {
+  account: string;
+  vests_own: number;
+  vests_proxied: number;
+};
 type RewardSum = {
   author_reward: { sbd: number; steem: number; vests: number };
   comment_benefactor_reward: { sbd: number; steem: number; vests: number };

@@ -34,7 +34,7 @@ import { AiFillPicture } from "react-icons/ai";
 import { MdDriveFileRenameOutline } from "react-icons/md";
 import { TbServerBolt } from "react-icons/tb";
 import { AppStrings } from "@/libs/constants/AppStrings";
-import { RiUserSettingsFill } from "react-icons/ri";
+import { RiArrowUpDoubleFill, RiUserSettingsFill } from "react-icons/ri";
 import { updateSettingsHandler } from "@/libs/redux/reducers/SettingsReducer";
 import { MdDisabledVisible } from "react-icons/md";
 import { useMutation } from "@tanstack/react-query";
@@ -44,7 +44,7 @@ import { IoIosSettings } from "react-icons/io";
 import { addProfileHandler } from "@/libs/redux/reducers/ProfileReducer";
 import { useSession } from "next-auth/react";
 import { useDropzone } from "react-dropzone";
-import { useDisclosure } from "@heroui/react";
+import { useDisclosure } from "@heroui/modal";
 import CustomUsersVotingCard from "@/components/CustomUsersVotingCard";
 
 let isCover: boolean = false;
@@ -414,7 +414,7 @@ export default function SettingsPage() {
 
           <div className=" flex flex-row items-center gap-2">
             <Select
-              startContent={<FaChevronCircleUp size={iconSize - 4} />}
+              startContent={<RiArrowUpDoubleFill size={iconSize - 4} />}
               aria-label="Long press vote"
               variant="flat"
               disallowEmptySelection

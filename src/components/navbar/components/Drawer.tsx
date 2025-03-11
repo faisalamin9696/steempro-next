@@ -10,6 +10,7 @@ import DrawerContent from "./DrawerContent";
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 import SLink from "@/components/SLink";
 import ThemeSwitch from "@/components/ThemeSwitch";
+import { usePathname } from "next/navigation";
 
 interface Props {
   onAccountSwitch?: () => void;
@@ -18,6 +19,7 @@ interface Props {
 
 export default memo(function Drawer(props: Props) {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
 
   const { is2Large } = useDeviceInfo();
 
@@ -26,6 +28,13 @@ export default memo(function Drawer(props: Props) {
     setIsOpen(newState);
     document.body.classList.toggle("overflow-hidden", newState);
   };
+
+  useEffect(() => {
+    let timeout = setTimeout(() => {
+      if (isOpen) toggleDrawer();
+    }, 250);
+    return () => clearTimeout(timeout);
+  }, [pathname]);
 
   useEffect(() => {
     if (is2Large && isOpen) {
@@ -100,7 +109,7 @@ export default memo(function Drawer(props: Props) {
             <MdClose className="text-lg" />
           </Button>
         </div>
-        <DrawerContent toggleDrawer={toggleDrawer} />
+        <DrawerContent />
       </div>
     </div>
   );

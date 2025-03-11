@@ -13,6 +13,9 @@ import WitnessVoteButton from "@/components/WitnessVoteButton";
 import { validate_account_name } from "@/libs/utils/ChainValidation";
 import SLink from "@/components/SLink";
 import TableWrapper from "@/components/wrappers/TableWrapper";
+import WitnessVotersModal from "@/components/WitnessVotersModal";
+import { useDisclosure } from "@heroui/react";
+import { simpleVotesToSp } from "@/components/ProposalItemCard";
 
 const INITIAL_VISIBLE_COLUMNS = [
   "rank",
@@ -25,7 +28,7 @@ const INITIAL_VISIBLE_COLUMNS = [
 const columns = [
   { name: "RANK", uid: "rank", sortable: true },
   { name: "WITNESS", uid: "name", sortable: true },
-  { name: "VOTES (MV)", uid: "received_votes", sortable: false },
+  { name: "VOTES (SP)", uid: "received_votes", sortable: false },
   { name: "VERSION", uid: "running_version", sortable: false },
   { name: "BLOCK", uid: "last_confirmed_block", sortable: false },
   { name: "MISS", uid: "missed_blocks", sortable: true },
@@ -38,6 +41,14 @@ export default function page() {
   const { data, isLoading } = useSWR(URL, fetchSds<Witness[]>);
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const [allRows, setAllRows] = useState<Witness[]>([]);
+  const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
+
+  const [witnessModal, setWitnessModal] = useState<{
+    isOpen: boolean;
+    witness?: Witness;
+  }>({
+    isOpen: false,
+  });
 
   useEffect(() => {
     if (data) {
@@ -70,6 +81,13 @@ export default function page() {
   const renderCell = React.useCallback((witness: Witness, columnKey) => {
     const cellValue = witness[columnKey];
 
+    const votesStr =
+      simpleVotesToSp(
+        witness.received_votes,
+        globalData.total_vesting_shares,
+        globalData.total_vesting_fund_steem
+      )?.toLocaleString() + " SP";
+
     switch (columnKey) {
       case "name":
         return (
@@ -90,8 +108,13 @@ export default function page() {
         );
       case "received_votes":
         return (
-          <div className="text-bold text-small">
-            <p>{formatNumberInMillions(witness.received_votes)}</p>
+          <div
+            className="text-bold text-small cursor-pointer text-blue-500 font-semibold"
+            onClick={() => {
+              setWitnessModal({ isOpen: true, witness: witness });
+            }}
+          >
+            <p>{votesStr}</p>
           </div>
         );
 
@@ -155,6 +178,14 @@ export default function page() {
         mobileVisibleColumns={["rank", "name"]}
         sortDescriptor={{ column: "rank", direction: "ascending" }}
       />
+
+      {witnessModal.isOpen && witnessModal.witness && (
+        <WitnessVotersModal
+          witness={witnessModal.witness}
+          isOpen={witnessModal.isOpen}
+          onOpenChange={() => setWitnessModal({ isOpen: false })}
+        />
+      )}
     </div>
   );
 }

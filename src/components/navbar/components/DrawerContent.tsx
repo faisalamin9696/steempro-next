@@ -7,7 +7,6 @@ import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import React from "react";
 import { AiFillProject, AiOutlineProject } from "react-icons/ai";
-import { FaMoneyCheck, FaMoneyCheckAlt } from "react-icons/fa";
 import { HiOutlineUserGroup, HiUserGroup } from "react-icons/hi2";
 import { IoHome, IoHomeOutline } from "react-icons/io5";
 import { MdOutlinePolicy, MdPolicy } from "react-icons/md";
@@ -32,7 +31,7 @@ import {
 import { twMerge } from "tailwind-merge";
 
 const iconSize = 24;
-function DrawerContent({ toggleDrawer }: { toggleDrawer: () => void }) {
+function DrawerContent() {
   const { data: session } = useSession();
   const pathname = usePathname()?.replaceAll(
     /\b(?:trending|payout|created|hot)\b/g,
@@ -147,9 +146,6 @@ function DrawerContent({ toggleDrawer }: { toggleDrawer: () => void }) {
                 as={SLink}
                 target={item.externalLink ? "_blank" : undefined}
                 href={item.href}
-                onPress={() => {
-                  toggleDrawer();
-                }}
                 startContent={isFocused ? item.focusedIcon : item.unFocusedIcon}
               >
                 {item.title}

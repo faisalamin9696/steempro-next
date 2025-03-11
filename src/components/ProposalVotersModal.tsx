@@ -1,24 +1,17 @@
 import { useAppSelector } from "@/libs/constants/AppFunctions";
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-} from "@heroui/modal";
-import { Button } from "@heroui/button";
+import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
 import React, { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import { getProposalVotes, ProposalVote } from "@/libs/steem/condenser";
+import { getProposalVotes } from "@/libs/steem/condenser";
 import useSWR from "swr";
-import { getAccountExt, getAccountsExt } from "@/libs/steem/sds";
+import { getAccountsExt } from "@/libs/steem/sds";
 import SAvatar from "./SAvatar";
 import SLink from "./SLink";
-import { steemToVest, vestToSteem } from "@/libs/helper/vesting";
+import { vestToSteem } from "@/libs/helper/vesting";
 import LoadingCard from "./LoadingCard";
 import TableWrapper from "./wrappers/TableWrapper";
 import { simpleVotesToSp } from "./ProposalItemCard";
 import { twMerge } from "tailwind-merge";
+import Link from "next/link";
 
 interface Props {
   proposal: Proposal;
@@ -247,12 +240,18 @@ export default function ProposalVotersModal(props: Props) {
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-2">
-              <p>
-                Voters{" "}
-                <span className="text-sm opacity-disabled">
-                  Proposal #{proposal.id}
-                </span>
-              </p>
+              <div className=" flex flex-row gap-2 items-center">
+                <p>Voters</p>
+                <div className="text-xs opacity-disabled flex flex-row items-center gap-1">
+                  <p>Proposal</p>
+                  <Link
+                    className=" hover:text-blue-500"
+                    href={`/proposals/${proposal.id}`}
+                  >
+                    #{proposal.id}
+                  </Link>
+                </div>
+              </div>
               <p className="text-tiny font-normal">
                 <span className="opacity-disabled">Total votes:</span>{" "}
                 {votesStr}
@@ -266,6 +265,7 @@ export default function ProposalVotersModal(props: Props) {
                   <TableWrapper
                     filterValue={filterValue}
                     isCompact={false}
+                    hidePaginationActions
                     initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
                     tableColumns={columns}
                     filteredItems={filteredItems}

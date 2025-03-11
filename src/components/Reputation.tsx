@@ -1,4 +1,4 @@
-import { Tooltip } from "@heroui/react";
+import { Tooltip } from "@heroui/tooltip";
 import { twMerge } from "tailwind-merge";
 
 export default function Reputation({

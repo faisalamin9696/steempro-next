@@ -651,3 +651,21 @@ export const getTransfersByTypeFrom = async (
     throw new Error(error);
   }
 };
+
+export const getWitnessVotes = async (
+  witness: string
+): Promise<WitnessVote[]> => {
+  try {
+    const R_API = `/witnesses_api/getWitnessVotesSummary/${witness}`;
+    console.log(R_API);
+    const response = await fetchSds<WitnessVote[]>(R_API);
+    if (response) {
+      return response ?? [];
+    } else {
+      throw new Error(response);
+    }
+  } catch (error: any) {
+    console.error("Failed to fetch global variables:", error);
+    throw new Error(error);
+  }
+};
