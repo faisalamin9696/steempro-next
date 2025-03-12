@@ -438,7 +438,7 @@ type Witness = {
   last_confirmed_block: number;
   last_aslot: number;
   account_subsidies: number;
-  signing_key: number;
+  signing_key: string;
   url: string;
   props: {
     account_creation_fee: string;

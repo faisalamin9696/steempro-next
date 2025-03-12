@@ -1,8 +1,8 @@
 import MarkdownViewer from "@/components/body/MarkdownViewer";
 import { Card } from "@heroui/card";
 import { Button } from "@heroui/button";
-import React, { useState } from "react";
-import { FaPencil, FaRegCopy } from "react-icons/fa6";
+import React, { Key, useState } from "react";
+import { FaEllipsis, FaPencil, FaRegCopy } from "react-icons/fa6";
 import ClearFormButton from "../components/ClearFormButton";
 import axios from "axios";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
@@ -10,15 +10,23 @@ import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { cryptoUtils, Signature } from "@hiveio/dhive";
 import { signMessage } from "@/libs/steem/condenser";
-import { mutate } from "swr";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@heroui/react";
+import { RiEdit2Fill } from "react-icons/ri";
+import { MdDelete } from "react-icons/md";
 
 interface Props {
   snippet: Snippet;
   handleEdit?: (snippet: Snippet) => void;
   handleOnSelect?: (snippet: Snippet) => void;
+  onDelete?: (snippet: Snippet) => void;
 }
 function SnippetItem(props: Props) {
-  const { snippet, handleEdit, handleOnSelect } = props;
+  const { snippet, handleEdit, handleOnSelect, onDelete } = props;
   const { data: session } = useSession();
   const [isPending, setIsPending] = useState(false);
 
@@ -44,8 +52,8 @@ function SnippetItem(props: Props) {
         }
       )
       .then((res) => {
+        onDelete && onDelete(snippet);
         toast.success("Deleted successfully");
-        mutate(`/api/snippet/snippets`);
       })
       .catch(function (error) {
         toast.error(error.message || JSON.stringify(error));
@@ -89,8 +97,26 @@ function SnippetItem(props: Props) {
     }
   }
 
+  async function handleMenuActions(key: Key) {
+    switch (key) {
+      case "edit":
+        handleEdit && handleEdit(snippet);
+        break;
+
+      case "copy":
+        navigator.clipboard.writeText(snippet.body).then(() => {
+          toast.success("Copied");
+        });
+
+      case "delete":
+        handleDelete(snippet);
+        break;
+      default:
+        break;
+    }
+  }
   return (
-    <Card className=" flex flex-row gap-4 comment-card pe-2">
+    <Card className=" flex flex-row gap-0 comment-card">
       <Card
         as={"div"}
         isPressable
@@ -105,47 +131,54 @@ function SnippetItem(props: Props) {
         </p>
         <MarkdownViewer
           text={snippet.body}
-          className="max-h-40 overflow-y-auto px-2"
+          className="max-h-36 overflow-y-auto px-2 prose-a:pointer-events-none"
         />
       </Card>
+      <div className=" p-2">
+        <Dropdown>
+          <DropdownTrigger>
+            <Button
+              size="sm"
+              radius="full"
+              isLoading={isPending}
+              isDisabled={isPending}
+              isIconOnly
+              variant="light"
+            >
+              <FaEllipsis className="text-lg" />
+            </Button>
+          </DropdownTrigger>
+          <DropdownMenu
+            aria-labelledby="comment options"
+            onAction={handleMenuActions}
+            hideEmptyContent
+          >
+            <DropdownItem
+              key={"copy"}
+              color={"default"}
+              startContent={<FaRegCopy size={18} />}
+            >
+              Copy
+            </DropdownItem>
 
-      <div className=" flex flex-col gap-2 py-2">
-        <Button
-          title="Copy"
-          variant="flat"
-          color="secondary"
-          size="sm"
-          isDisabled={isPending}
-          isIconOnly
-          onPress={() => {
-            navigator.clipboard.writeText(snippet.body).then(() => {
-              toast.success("Copied");
-            });
-          }}
-        >
-          <FaRegCopy size={18} />
-        </Button>
+            <DropdownItem
+              key={"edit"}
+              color={"default"}
+              startContent={<RiEdit2Fill size={18} />}
+            >
+              Edit
+            </DropdownItem>
 
-        <Button
-          title="Edit"
-          variant="flat"
-          color="primary"
-          size="sm"
-          isDisabled={isPending}
-          isIconOnly
-          onPress={() => handleEdit && handleEdit(snippet)}
-        >
-          <FaPencil size={16} />
-        </Button>
-
-        <ClearFormButton
-          divTitle="Delete"
-          title="Do you really want to delete this snippet?"
-          isLoading={isPending}
-          onClearPress={() => {
-            handleDelete(snippet);
-          }}
-        />
+            <DropdownItem
+              key={"delete"}
+              color={"danger"}
+              className="text-danger"
+              startContent={<MdDelete size={18} />}
+            >
+              Delete
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
       </div>
     </Card>
   );

@@ -15,14 +15,15 @@ import { useLogin } from "@/components/auth/AuthProvider";
 interface Props {
   onClose: () => void;
   oldSnippet?: Snippet;
+  onNewSnippet?: (snippet: Snippet) => void;
+  onUpdateSnippet?: (snippet: Snippet) => void;
 }
 function AddSnippet(props: Props) {
-  const { onClose, oldSnippet } = props;
+  const { onClose, oldSnippet, onNewSnippet, onUpdateSnippet } = props;
   const { data: session } = useSession();
   let [title, setTitle] = useState(oldSnippet?.title ?? "");
   let [body, setBody] = useState(oldSnippet?.body ?? "");
   const [isPending, setIsPending] = useState(false);
-  const { mutate } = useSWRConfig();
   const { isAuthorized, authenticateUser } = useLogin();
 
   async function addSnippet(
@@ -57,10 +58,15 @@ function AddSnippet(props: Props) {
         }
       )
       .then((res) => {
-        toast.success(
-          oldSnippet ? "Updated successfully" : "Added successfully"
-        );
-        mutate(`/api/snippet/snippets`);
+        if (oldSnippet) {
+          onUpdateSnippet &&
+            onUpdateSnippet({ title, body, id: oldSnippet.id });
+          toast.success("Updated successfully");
+          return;
+        }
+        onNewSnippet &&
+          onNewSnippet({ title, body, id: res?.data?.["insertId"] });
+        toast.success("Added successfully");
       })
       .catch(function (error) {
         toast.error(error.message || JSON.stringify(error));

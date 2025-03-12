@@ -16,6 +16,7 @@ import TableWrapper from "@/components/wrappers/TableWrapper";
 import WitnessVotersModal from "@/components/WitnessVotersModal";
 import { useDisclosure } from "@heroui/react";
 import { simpleVotesToSp } from "@/components/ProposalItemCard";
+import { twMerge } from "tailwind-merge";
 
 const INITIAL_VISIBLE_COLUMNS = [
   "rank",
@@ -35,6 +36,8 @@ const columns = [
   { name: "PRICE FEED", uid: "price", sortable: false },
   { name: "VOTE", uid: "action", sortable: false },
 ];
+
+const disable_key = "STM1111111111111111111111111111111114T1Anm";
 
 export default function page() {
   const URL = `/witnesses_api/getWitnessesByRank`;
@@ -95,7 +98,10 @@ export default function page() {
             <div className="flex gap-2 items-center">
               <SAvatar size="xs" username={witness.name} />
               <SLink
-                className=" hover:text-blue-500"
+                className={twMerge(
+                  " hover:text-blue-500",
+                  witness.signing_key === disable_key && "line-through text-warning-500"
+                )}
                 href={`/@${witness.name}`}
               >
                 {witness.name}

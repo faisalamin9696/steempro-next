@@ -330,7 +330,7 @@ export default memo(function EditorInput(props: EditorProps) {
   }
 
   function handleChange(text: string) {
-    setValue(text?.trimStart());
+    setValue(text);
   }
 
   function insertImage(responseData: {

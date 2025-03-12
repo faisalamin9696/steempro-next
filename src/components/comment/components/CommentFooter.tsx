@@ -232,6 +232,14 @@ export default memo(function CommentFooter(props: CommentProps) {
     },
   });
 
+  const handleVibrate = () => {
+    if (navigator.vibrate) {
+      navigator.vibrate(200); // Vibrate for 200ms
+    } else {
+      console.warn("Vibration API not supported");
+    }
+  };
+
   async function handleResteem() {
     authenticateUser();
     if (!isAuthorized()) return;
@@ -258,6 +266,7 @@ export default memo(function CommentFooter(props: CommentProps) {
         fetchedUser?.weight ?? settings.voteOptions.value ?? 100;
       timer = longPressUpvote
         ? setTimeout(() => {
+            handleVibrate();
             castVote(voteWeight, false);
           }, 800)
         : undefined;
@@ -276,6 +285,7 @@ export default memo(function CommentFooter(props: CommentProps) {
         fetchedUser?.weight ?? settings.voteOptions.value ?? 100;
       timer = longPressDownvote
         ? setTimeout(() => {
+            handleVibrate();
             castVote(voteWeight, true);
           }, 800)
         : undefined;

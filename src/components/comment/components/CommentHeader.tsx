@@ -7,7 +7,7 @@ import {
 import { User } from "@heroui/user";
 import { Button } from "@heroui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
-import { FaEllipsis } from "react-icons/fa6";
+import { FaEllipsis, FaRegCopy } from "react-icons/fa6";
 import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import Reputation from "@/components/Reputation";
 import { getResizedAvatar } from "@/libs/utils/image";
@@ -17,19 +17,19 @@ import { getCredentials, getSessionKey, getSettings } from "@/libs/utils/user";
 import STag from "@/components/STag";
 
 import { Key, useState } from "react";
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdDoNotDisturb } from "react-icons/md";
 import { GrAnnounce } from "react-icons/gr";
 import ViewCountCard from "@/components/ViewCountCard";
 import { readingTime } from "@/libs/utils/readingTime/reading-time-estimator";
 import { Role } from "@/libs/utils/community";
 import { allowDelete } from "@/libs/utils/StateFunctions";
 import { MdOutlineDoNotDisturb } from "react-icons/md";
-import { RiEdit2Fill } from "react-icons/ri";
+import { RiEdit2Fill, RiEditCircleFill } from "react-icons/ri";
 import { LuHistory } from "react-icons/lu";
 import { toast } from "sonner";
 import { BsClipboard2Minus } from "react-icons/bs";
 import EditRoleModal from "@/components/EditRoleModal";
-import { FaInfoCircle } from "react-icons/fa";
+import { FaInfoCircle, FaUserEdit } from "react-icons/fa";
 import MuteDeleteModal from "@/components/MuteDeleteModal";
 import { useMutation } from "@tanstack/react-query";
 import { mutePost, pinPost } from "@/libs/steem/condenser";
@@ -95,13 +95,13 @@ export default function CommentHeader(props: Props) {
       show: Role.atLeast(comment?.observer_role, "mod"),
       key: "role",
       name: "Edit Role/Title",
-      icon: LuHistory,
+      icon: FaUserEdit  ,
     },
     {
       show: canMute,
       key: "mute",
       name: comment.is_muted ? "Unmute" : "Mute",
-      icon: MdOutlineDoNotDisturb,
+      icon: MdDoNotDisturb,
       color: "warning",
     },
     {
@@ -110,7 +110,7 @@ export default function CommentHeader(props: Props) {
       name: comment.is_pinned ? "Unpin" : "Pin",
       icon: BsPinAngleFill,
     },
-    { show: true, key: "copy", name: "Copy Link", icon: BsClipboard2Minus },
+    { show: true, key: "copy", name: "Copy Link", icon: FaRegCopy },
     { show: false, key: "promote", name: "Promote", icon: GrAnnounce },
     { show: true, key: "history", name: "Edit History", icon: LuHistory },
   ];

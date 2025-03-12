@@ -103,6 +103,11 @@ function SnippetTab(props: Props) {
                   handleEdit={(snippet) =>
                     setIsNew({ isOpen: true, snippet: snippet })
                   }
+                  onDelete={(snippet) => {
+                    setAllRows((oldRows) =>
+                      oldRows.filter((row) => row.id !== snippet.id)
+                    );
+                  }}
                 />
               );
             })
@@ -114,6 +119,16 @@ function SnippetTab(props: Props) {
             oldSnippet={isNew.snippet}
             onClose={() => {
               setIsNew({ isOpen: !isNew.isOpen });
+            }}
+            onNewSnippet={(snippet) => {
+              setAllRows((oldRows) => [snippet].concat(oldRows));
+              setIsNew({ isOpen: false });
+            }}
+            onUpdateSnippet={(snippet) => {
+              setIsNew({ isOpen: false });
+              setAllRows((oldRows) =>
+                oldRows.map((row) => (row.id === snippet.id ? snippet : row))
+              );
             }}
           />
         </>

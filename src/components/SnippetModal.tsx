@@ -16,12 +16,11 @@ function SnippetModal(props: Props) {
     <Modal
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      className=" mt-4"
+      className=" mt-4 h-full"
       scrollBehavior="inside"
       backdrop="opaque"
       size="xl"
       placement="top"
-      isDismissable={false}
     >
       <ModalContent>
         {(onClose) => (
@@ -31,7 +30,12 @@ function SnippetModal(props: Props) {
             </ModalHeader>
             <ModalBody id="scrollDiv" className=" pb-4">
               <div className=" flex flex-col gap-4">
-                <Tabs radius="full" color="default"  size="md" aria-label="snippet tab">
+                <Tabs
+                  radius="full"
+                  color="default"
+                  size="md"
+                  aria-label="snippet tab"
+                >
                   <Tab key="snippet" title="Snippets">
                     <SnippetTab {...props} />
                   </Tab>

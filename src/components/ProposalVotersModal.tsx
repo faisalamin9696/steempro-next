@@ -43,13 +43,15 @@ export default function ProposalVotersModal(props: Props) {
     () => fetchVotersData(proposal.id)
   );
   const [allRows, setAllRows] = useState<AccountExt[]>([]);
+  let [totalEffVotes, setTotalEffVotes] = useState<{
+    voters: number;
+    votes: number;
+  }>({ voters: 0, votes: 0 });
 
-  const votesStr =
-    simpleVotesToSp(
-      parseFloat(proposal.total_votes),
-      globalData.total_vesting_shares,
-      globalData.total_vesting_fund_steem
-    )?.toLocaleString() + " SP";
+  let [totalNonEffVotes, setTotalNonEffVotes] = useState<{
+    voters: number;
+    votes: number;
+  }>({ voters: 0, votes: 0 });
 
   const fetchVotersData = async (id: number): Promise<AccountExt[]> => {
     let allVoters: string[] = [];
@@ -68,8 +70,8 @@ export default function ProposalVotersModal(props: Props) {
       lastVoter = proposalVoters[proposalVoters.length - 1].voter;
     }
 
-    // Fetch voter account details in batches of 1000
-    let allVoterDetails: AccountExt[] = [];
+    let allAccounts: AccountExt[] = [];
+
     for (let i = 0; i < allVoters.length; i += 1000) {
       let batch = allVoters.slice(i, i + 750);
       let accounts = await getAccountsExt(
@@ -77,40 +79,74 @@ export default function ProposalVotersModal(props: Props) {
         "null",
         "name,proxy,vests_own,vests_in,vests_out,proxied_vsf_votes"
       );
-      let mappedAccounts: AccountExt[] = [];
 
       if (accounts) {
-        mappedAccounts = accounts.map((account) => {
-          const total_proxied =
-            parseFloat(account.proxied_vsf_votes?.[0] ?? "0") +
-            parseFloat(account.proxied_vsf_votes?.[1] ?? "0");
-
-          const total_sp: number =
-            vestToSteem(account.vests_own, globalData.steem_per_share) +
-            simpleVotesToSp(
-              total_proxied,
-              globalData.total_vesting_shares,
-              globalData.total_vesting_fund_steem
-            );
-
-          // const totalSp = vestToSteem(total_vests, globalData.steem_per_share);
-          const ratio =
-            (total_sp /
-              simpleVotesToSp(
-                parseFloat(proposal.total_votes),
-                globalData.total_vesting_shares,
-                globalData.total_vesting_fund_steem
-              )) *
-            100;
-          return {
-            ...account,
-            proxied_votes: total_proxied,
-            share: ratio,
-          };
-        });
+        allAccounts = allAccounts.concat(accounts);
       }
-      allVoterDetails = allVoterDetails.concat(mappedAccounts);
     }
+
+    function getAccountTotalSp(row: AccountExt) {
+      return (
+        vestToSteem(row.vests_own, globalData.steem_per_share) +
+        simpleVotesToSp(
+          parseFloat(row.proxied_vsf_votes?.[0] ?? "0") +
+            parseFloat(row.proxied_vsf_votes?.[1] ?? "0"),
+          globalData.total_vesting_shares,
+          globalData.total_vesting_fund_steem
+        )
+      );
+    }
+
+    const { effVotes, effvoteCount } = allAccounts.reduce(
+      (acc, row) => {
+        if (
+          !row.proxy || // No proxy → Effective voter
+          (row.proxy && allRows.some((row) => row.name === row.proxy)) // proxy and proxy vote found
+        ) {
+          acc.effVotes += getAccountTotalSp(row);
+          acc.effvoteCount += 1;
+        }
+        return acc;
+      },
+      { effVotes: 0, effvoteCount: 0 }
+    );
+
+    setTotalEffVotes({ votes: effVotes, voters: effvoteCount });
+
+    const { nonEffVotes, nonEffvoteCount } = allAccounts.reduce(
+      (acc, row) => {
+        if (row.proxy && !allAccounts.some((acc) => acc.name === row.proxy)) {
+          acc.nonEffVotes += getAccountTotalSp(row);
+          acc.nonEffvoteCount += 1;
+        }
+        return acc;
+      },
+      { nonEffVotes: 0, nonEffvoteCount: 0 }
+    );
+
+    setTotalNonEffVotes({ voters: nonEffvoteCount, votes: nonEffVotes });
+
+    let allVoterDetails: AccountExt[] = [];
+
+    // ✅ Step 2: Calculate `proxied_votes` and `share` after the loop
+    allVoterDetails = allAccounts.map((account) => {
+      const total_proxied = simpleVotesToSp(
+        parseFloat(account.proxied_vsf_votes?.[0] ?? "0") +
+          parseFloat(account.proxied_vsf_votes?.[1] ?? "0"),
+        globalData.total_vesting_shares,
+        globalData.total_vesting_fund_steem
+      );
+
+      const total_votes_sp = nonEffVotes + effVotes;
+
+      const ratio = (getAccountTotalSp(account) / total_votes_sp) * 100;
+
+      return {
+        ...account,
+        proxied_votes: total_proxied,
+        share: ratio,
+      };
+    });
 
     return allVoterDetails;
   };
@@ -143,17 +179,13 @@ export default function ProposalVotersModal(props: Props) {
         globalData.steem_per_share
       ).toLocaleString();
 
-      const ownProxied = simpleVotesToSp(
-        account.proxied_votes ?? 0,
-        globalData.total_vesting_shares,
-        globalData.total_vesting_fund_steem
-      )?.toLocaleString();
+      const ownProxied = account.proxied_votes?.toLocaleString();
 
       const isInvalidProxy =
-        account.proxy && !data?.some((row) => row.name === account.proxy);
+        account.proxy && !allRows.some((row) => row.name === account.proxy);
 
       const isValidProxy =
-        account.proxy && data?.some((row) => row.name === account.proxy);
+        account.proxy && allRows.some((row) => row.name === account.proxy);
 
       const title = isInvalidProxy
         ? `proxy to @${account.proxy}\n${account.proxy} who didn't vote`
@@ -184,7 +216,7 @@ export default function ProposalVotersModal(props: Props) {
               <p
                 className={twMerge(
                   "text-bold text-small capitalize",
-                  isInvalidProxy && "line-through"
+                  isInvalidProxy && "line-through text-warning-500"
                 )}
               >
                 {isValidProxy ? `(${ownSp})` : ownSp}
@@ -198,7 +230,7 @@ export default function ProposalVotersModal(props: Props) {
               <p
                 className={twMerge(
                   "text-bold text-small capitalize",
-                  isInvalidProxy && "line-through"
+                  isInvalidProxy && "line-through text-warning-500"
                 )}
               >
                 {isValidProxy ? `(${ownProxied})` : ownProxied}
@@ -212,7 +244,7 @@ export default function ProposalVotersModal(props: Props) {
               <p
                 className={twMerge(
                   "text-bold text-small capitalize",
-                  isInvalidProxy && "line-through"
+                  isInvalidProxy && "line-through text-warning-500"
                 )}
               >
                 {isValidProxy
@@ -226,7 +258,7 @@ export default function ProposalVotersModal(props: Props) {
           return cellValue;
       }
     },
-    [globalData, data]
+    [globalData]
   );
 
   return (
@@ -252,10 +284,24 @@ export default function ProposalVotersModal(props: Props) {
                   </Link>
                 </div>
               </div>
-              <p className="text-tiny font-normal">
-                <span className="opacity-disabled">Total votes:</span>{" "}
-                {votesStr}
-              </p>
+              <div className="text-tiny font-normal flex flex-col gap-1">
+                <p
+                  title="Direct votes from voters"
+                  className="opacity-disabled"
+                >
+                  Effective votes:{" "}
+                  {totalEffVotes.votes.toLocaleString() + " SP"} (
+                  {totalEffVotes.voters})
+                </p>
+                <p
+                  title="Voters witness proxy didn't vote"
+                  className="opacity-disabled"
+                >
+                  Non-effective votes:{" "}
+                  {totalNonEffVotes.votes.toLocaleString() + " SP"} (
+                  {totalNonEffVotes.voters})
+                </p>
+              </div>
             </ModalHeader>
             <ModalBody>
               {isLoading ? (
