@@ -2,20 +2,19 @@ import MarkdownViewer from "@/components/body/MarkdownViewer";
 import { Card } from "@heroui/card";
 import { Button } from "@heroui/button";
 import React, { Key, useState } from "react";
-import { FaEllipsis, FaPencil, FaRegCopy } from "react-icons/fa6";
-import ClearFormButton from "../components/ClearFormButton";
+import { FaEllipsis, FaRegCopy } from "react-icons/fa6";
 import axios from "axios";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
-import { cryptoUtils, Signature } from "@hiveio/dhive";
+import { cryptoUtils, Signature } from "@steempro/dsteem";
 import { signMessage } from "@/libs/steem/condenser";
 import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-} from "@heroui/react";
+} from "@heroui/dropdown";
 import { RiEdit2Fill } from "react-icons/ri";
 import { MdDelete } from "react-icons/md";
 

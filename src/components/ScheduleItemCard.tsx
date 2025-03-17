@@ -35,7 +35,7 @@ import {
   parseZonedDateTime,
   parseAbsoluteToLocal,
 } from "@internationalized/date";
-import { cryptoUtils, Signature } from "@hiveio/dhive";
+import { cryptoUtils, Signature } from "@steempro/dsteem";
 import SLink from "./SLink";
 import { twMerge } from "tailwind-merge";
 

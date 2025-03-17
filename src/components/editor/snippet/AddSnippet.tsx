@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
-import { cryptoUtils, Signature } from "@hiveio/dhive";
+import { cryptoUtils, Signature } from "@steempro/dsteem";
 import { signMessage } from "@/libs/steem/condenser";
 import moment from "moment";
 import { useSWRConfig } from "swr";

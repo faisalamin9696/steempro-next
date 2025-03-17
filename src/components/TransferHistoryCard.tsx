@@ -45,7 +45,7 @@ function TransferFromTo({
     </div>
   );
 }
-const TransferHistoryCard = (props: Props): JSX.Element => {
+const TransferHistoryCard = (props: Props): React.ReactNode => {
   let { op, context, steem_per_share } = props;
 
   // context -> account perspective

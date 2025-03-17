@@ -11,10 +11,9 @@ import { FaPencil } from "react-icons/fa6";
 import { useRouter } from "next13-progressbar";
 import usePathnameClient from "@/libs/utils/usePathnameClient";
 import { useSession } from "next-auth/react";
-import { twMerge } from "tailwind-merge";
 import { BsPlusCircle } from "react-icons/bs";
 import { SlMinus } from "react-icons/sl";
-import { CircularProgress } from "@heroui/progress";
+import { Spinner } from "@heroui/spinner";
 
 type Props = {
   account: AccountExt;
@@ -146,10 +145,7 @@ export default function FollowButton(props: Props) {
           // isIconOnly={isPending}
           startContent={
             isPending ? (
-              <CircularProgress
-                size="sm"
-                classNames={{ svg: " h-[18px] w-[18px]" }}
-              />
+              <Spinner color="current" size="sm" classNames={{ base: " h-[18px] w-[18px]" }} />
             ) : isFollowing ? (
               <SlMinus size={18} />
             ) : (

@@ -13,10 +13,12 @@ import { FaFire } from "react-icons/fa";
 import { FaCircleDollarToSlot } from "react-icons/fa6";
 import { MdWhatshot, MdNewLabel } from "react-icons/md";
 import { twMerge } from "tailwind-merge";
+import { usePathname } from "next/navigation";
 
 export default function CategoryPage() {
   let { category, tag } = usePathnameClient();
   const { isMobile } = useDeviceInfo();
+  const pathname = usePathname();
 
   let homeTabs = [
     {
@@ -55,7 +57,7 @@ export default function CategoryPage() {
         radius={isMobile ? "full" : "sm"}
         className="justify-center"
         defaultSelectedKey={category}
-        selectedKey={`/${category}/${tag}`}
+        selectedKey={pathname}
         classNames={{
           tabList: "max-sm:gap-0 main-tab-list",
           tab: "max-sm:px-2 max-sm:h-5",

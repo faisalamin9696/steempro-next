@@ -107,7 +107,7 @@ export default function SearchModal(props: Props) {
     setUrl(!!query ? getUrl() : undefined);
   }
 
-  function ListLoader(): JSX.Element {
+  function ListLoader(): React.ReactNode {
     return (
       <div className="flex justify-center items-center">
         <Button

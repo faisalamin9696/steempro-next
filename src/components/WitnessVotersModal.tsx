@@ -168,6 +168,7 @@ export default function WitnessVotersModal(props: Props) {
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       placement="center"
+      scrollBehavior="inside"
     >
       <ModalContent>
         {(onClose) => (

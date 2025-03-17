@@ -9,7 +9,7 @@ import { Button } from "@heroui/button";
 import { GrAnnounce } from "react-icons/gr";
 import useSWR from "swr";
 import { HiMiniUserGroup } from "react-icons/hi2";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import EmptyList from "@/components/EmptyList";
 import { Accordion, AccordionItem } from "@heroui/accordion";
@@ -79,7 +79,7 @@ export default function HomeStart() {
     }
   }
 
-  function ListLoader(): JSX.Element {
+  function ListLoader(): React.ReactNode {
     return (
       <div className="flex justify-center items-center">
         <Button

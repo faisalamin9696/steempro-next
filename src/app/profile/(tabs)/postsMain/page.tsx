@@ -9,9 +9,12 @@ import ProfilePostsTab from "../posts/page";
 import ProfileFriendsTab from "../friends/page";
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 import { twMerge } from "tailwind-merge";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function ProfilePostsMainTab() {
   let { username, category } = usePathnameClient();
+  const pathname = usePathname();
 
   const profileTabs = [
     { title: "Posts", key: "posts", children: <ProfilePostsTab /> },
@@ -32,13 +35,14 @@ export default function ProfilePostsMainTab() {
         radius={isMobile ? "full" : "sm"}
         className="justify-center"
         defaultSelectedKey={`/@${username}/${category}`}
-        selectedKey={`/@${username}/${category}`}
+        selectedKey={category ? pathname : `/@${username}/${"posts"}`}
         classNames={{
           tabList: "max-sm:gap-0 max-sm:bg-transparent max-sm:p-0",
         }}
       >
         {profileTabs.map((tab) => (
           <Tab
+            as={Link}
             key={`/@${username}/${tab.key}`}
             title={tab.title}
             href={`/@${username}/${tab.key}`}

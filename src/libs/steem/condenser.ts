@@ -8,7 +8,7 @@ import {
   PublicKey,
   Signature,
   TransactionConfirmation,
-} from "@hiveio/dhive";
+} from "@steempro/dsteem";
 import { PrivKey } from "../utils/user";
 import { toast } from "sonner";
 import { CurrentSetting } from "../constants/AppConstants";
@@ -19,8 +19,6 @@ const IMAGE_API = AppStrings.image_hostings[0];
 
 export let client = new Client(AppStrings.rpc_servers, {
   timeout: AppStrings.chain_timeout,
-  addressPrefix: AppStrings.chain_prefix,
-  chainId: AppStrings.chain_id,
   failoverThreshold: 10,
   consoleOnFailover: true,
 });
@@ -35,11 +33,7 @@ export function updateClient() {
   }
 
   client = new Client(updatedList, {
-    timeout: AppStrings.chain_timeout,
-    addressPrefix: AppStrings.chain_prefix,
-    chainId: AppStrings.chain_id,
-    failoverThreshold: 10,
-    consoleOnFailover: true,
+    ...client.options,
   });
 }
 
@@ -189,6 +183,7 @@ export function getKeyType(account: AccountExt, key: string) {
         key,
         "posting"
       ).toString();
+
       const isvalid = wifIsValid(
         privPostingKey,
         account?.posting_key_auths[0][0]
@@ -1769,7 +1764,7 @@ export function verifyMessage(
 export const getProposals = async (): Promise<Proposal[]> => {
   return new Promise((resolve, reject) => {
     client
-      .call2("condenser_api", "list_proposals", [
+      .call("condenser_api", "list_proposals", [
         [-1],
         1000,
         "by_total_votes",
@@ -1802,7 +1797,7 @@ export const getProposals = async (): Promise<Proposal[]> => {
 
 export const findProposals = (id: number): Promise<Proposal> =>
   client
-    .call2("condenser_api", "find_proposals", [[id]])
+    .call("condenser_api", "find_proposals", [[id]])
     .then((r: Proposal[]) => {
       const proposal = r?.[0];
       if (proposal) {
@@ -1832,7 +1827,7 @@ export const getProposalVotes = (
   limit: number
 ): Promise<ProposalVote[]> =>
   client
-    .call2("condenser_api", "list_proposal_votes", [
+    .call("condenser_api", "list_proposal_votes", [
       [proposalId, voter],
       limit,
       "by_proposal_voter",

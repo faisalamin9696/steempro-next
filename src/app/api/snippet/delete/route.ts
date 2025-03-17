@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyMessage } from "@/libs/steem/condenser";
-import { Signature } from "@hiveio/dhive";
+import { Signature } from "@steempro/dsteem";
 import { getAccountExt } from "@/libs/steem/sds";
 import { executeQuery } from "@/libs/mysql/db";
 

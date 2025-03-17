@@ -11,7 +11,7 @@ interface Props {
   buttonText: string;
   target?: string;
 }
-const ToolsItemCard = (props: Props): JSX.Element => {
+const ToolsItemCard = (props: Props): React.ReactNode => {
   const { title, description, Icon, href, buttonText, target } = props;
 
   return (

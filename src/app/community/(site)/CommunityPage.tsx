@@ -13,6 +13,8 @@ import { FaFire } from "react-icons/fa";
 import CommunityPinnedTab from "../(tabs)/pinned/page";
 import CommunityMembers from "@/components/community/CommunityMembers";
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/modal";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 interface Props {
   data: Community;
@@ -23,6 +25,7 @@ export default function CommunityPage(props: Props) {
   let { community, category } = usePathnameClient();
   const { isMobile, isBetween920AndMobile } = useDeviceInfo();
   const [membersModal, setMembersModal] = useState(false);
+  const pathname = usePathname();
 
   const communityTabs = [
     {
@@ -79,8 +82,7 @@ export default function CommunityPage(props: Props) {
           color={"secondary"}
           radius={isMobile ? "full" : "sm"}
           className="justify-center"
-          defaultSelectedKey={category ?? "trending"}
-          selectedKey={`/${category}/${community}`}
+          selectedKey={pathname}
           classNames={{
             tabList: "max-sm:gap-0 main-tab-list",
             panel: "w-full",
@@ -89,6 +91,7 @@ export default function CommunityPage(props: Props) {
         >
           {sortedCommunityTabs.map((tab) => (
             <Tab
+              as={Link}
               href={`/${tab.key}/${community}`}
               key={`/${tab.key}/${community}`}
               title={

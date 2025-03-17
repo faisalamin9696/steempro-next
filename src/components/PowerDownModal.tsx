@@ -31,7 +31,7 @@ interface Props {
   cancel?: boolean;
 }
 
-const PowerDownModal = (props: Props): JSX.Element => {
+const PowerDownModal = (props: Props): React.ReactNode => {
   const { cancel, isOpen, onOpenChange } = props;
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);

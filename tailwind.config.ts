@@ -1,5 +1,5 @@
 import type { Config } from "tailwindcss";
-import { heroui } from "@heroui/react";
+import { heroui } from "@heroui/theme";
 import defaultTheme from "tailwindcss/defaultTheme";
 
 const config: Config = {

@@ -44,9 +44,10 @@ import VotersCard from "@/components/VotersCard";
 import "./style.scss";
 import ClickAwayListener from "react-click-away-listener";
 import { useSession } from "next-auth/react";
-import { As } from "@heroui/react";
+import { As } from "@heroui/system";
 import SLink from "@/components/SLink";
 import { AsyncUtils } from "@/libs/utils/async.utils";
+import { SiSteem } from "react-icons/si";
 
 interface WrapperProps {
   children: React.ReactNode;
@@ -101,13 +102,15 @@ export default memo(function CommentFooter(props: CommentProps) {
       key,
       weight,
       isKeychain,
+      isLongPress,
     }: {
       key: string;
       weight: number;
       isKeychain?: boolean;
+      isLongPress?: boolean;
     }) => voteComment(loginInfo, comment, key, weight, isKeychain),
     onSettled(data, error, variables, context) {
-      const { weight } = variables;
+      const { weight, isLongPress } = variables;
       if (error) {
         toast.error(error.message || JSON.stringify(error));
         dispatch(addCommentHandler({ ...comment, status: "idle" }));
@@ -163,8 +166,8 @@ export default memo(function CommentFooter(props: CommentProps) {
         updateSettings({
           ...settings,
           voteOptions: {
-            remember: true,
-            value: voteToSave,
+            ...settings.voteOptions,
+            value: isLongPress ? settings.voteOptions.value : voteToSave,
           },
         });
       }
@@ -175,7 +178,11 @@ export default memo(function CommentFooter(props: CommentProps) {
     },
   });
 
-  async function castVote(weight: number, downvote?: boolean) {
+  async function castVote(
+    weight: number,
+    downvote?: boolean,
+    isLongPress?: boolean
+  ) {
     closeVotingModal();
 
     authenticateUser();
@@ -204,6 +211,7 @@ export default memo(function CommentFooter(props: CommentProps) {
         key: credentials.key,
         weight,
         isKeychain: credentials.keychainLogin,
+        isLongPress,
       });
     } catch (error: any) {
       toast.error(error.message || JSON.stringify(error));
@@ -267,7 +275,7 @@ export default memo(function CommentFooter(props: CommentProps) {
       timer = longPressUpvote
         ? setTimeout(() => {
             handleVibrate();
-            castVote(voteWeight, false);
+            castVote(voteWeight, false, true);
           }, 800)
         : undefined;
     }
@@ -286,7 +294,7 @@ export default memo(function CommentFooter(props: CommentProps) {
       timer = longPressDownvote
         ? setTimeout(() => {
             handleVibrate();
-            castVote(voteWeight, true);
+            castVote(voteWeight, true, true);
           }, 800)
         : undefined;
     }
@@ -499,12 +507,16 @@ export default memo(function CommentFooter(props: CommentProps) {
           </div>
         </div>
 
-        {!!comment.payout && (
+        {
           <ButtonWrapper
             hoverable
             onPress={() => setBreakdownModal(!breakdownModal)}
             className="pr-2"
-            title={`$${comment.payout?.toLocaleString()} Payout`}
+            title={`${
+              !comment.max_accepted_payout
+                ? "Declined"
+                : "$" + comment.payout?.toLocaleString()
+            }  Payout`}
           >
             <Popover
               placement="top"
@@ -519,7 +531,11 @@ export default memo(function CommentFooter(props: CommentProps) {
                   size="sm"
                   variant="light"
                 >
-                  <PiCurrencyCircleDollarFill className="text-lg" />
+                  {comment.payout && comment.percent_steem_dollars ? (
+                    <SiSteem size={20} />
+                  ) : (
+                    <PiCurrencyCircleDollarFill size={24} />
+                  )}
                 </Button>
               </PopoverTrigger>
               <PopoverContent>
@@ -527,9 +543,16 @@ export default memo(function CommentFooter(props: CommentProps) {
               </PopoverContent>
             </Popover>
 
-            <div className="text-tiny">{comment.payout?.toFixed(2)}</div>
+            <div
+              className={twMerge(
+                "text-tiny",
+                !comment.max_accepted_payout && "line-through opacity-disabled"
+              )}
+            >
+              {comment.payout?.toFixed(2)}
+            </div>
           </ButtonWrapper>
-        )}
+        }
       </div>
 
       <Modal

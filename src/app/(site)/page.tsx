@@ -13,10 +13,13 @@ import { FaFire } from "react-icons/fa";
 import { MdNewLabel, MdWhatshot } from "react-icons/md";
 import { FaCircleDollarToSlot } from "react-icons/fa6";
 import { twMerge } from "tailwind-merge";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function HomePage() {
   let { category } = usePathnameClient();
   const { isMobile } = useDeviceInfo();
+  const pathname = usePathname();
 
   let categoryTabs = [
     {
@@ -53,12 +56,8 @@ export default function HomePage() {
         color={"secondary"}
         radius={isMobile ? "full" : "sm"}
         className="justify-center"
-        defaultSelectedKey={category ?? "trending"}
-        selectedKey={`/${category}`}
-        onSelectionChange={(key) => {
-          if (!category) history.replaceState({}, "", `${key}`);
-          // else history.pushState({}, "", `/${key}`);
-        }}
+        defaultSelectedKey={`/${"trending"}`}
+        selectedKey={category ? pathname : "/trending"}
         classNames={{
           tabList: "max-sm:gap-0 main-tab-list",
           base: "",
@@ -66,6 +65,7 @@ export default function HomePage() {
       >
         {categoryTabs.map((tab) => (
           <Tab
+            as={Link}
             href={`/${tab.key}`}
             key={`/${tab.key}`}
             title={

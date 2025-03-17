@@ -61,7 +61,7 @@ type SavingProps = BasicProps & {
 };
 type Props = DelegationProps | PowerupProps | SavingProps;
 
-const TransferModal = (props: Props): JSX.Element => {
+const TransferModal = (props: Props): React.ReactNode => {
   const {
     savings,
     powewrup,

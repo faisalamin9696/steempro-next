@@ -30,6 +30,7 @@ export class EntryPayoutDetail extends Component<DetailProps> {
     const curatorPayout = data.curator_payout_value;
     const maxPayout = data.max_accepted_payout;
     const fullPower = data.percent_steem_dollars === 0;
+    const isDeclined = maxPayout === 0;
 
     const totalPayout = pendingPayout + authorPayout + curatorPayout;
     const payoutLimitHit = totalPayout >= maxPayout;
@@ -62,6 +63,14 @@ export class EntryPayoutDetail extends Component<DetailProps> {
       if (pendingPayoutHp > 0) {
         breakdownPayout.push(`${pendingPayoutHp?.toFixed(3)} SP`);
       }
+    }
+
+    if (isDeclined) {
+      return (
+        <p>
+          <span className="value">{"Payout Declined"}</span>
+        </p>
+      );
     }
 
     return (
@@ -160,8 +169,6 @@ export class EntryPayoutDetail extends Component<DetailProps> {
 }
 
 export const RewardBreakdownCard = (props: Props) => {
-  const [showPopover, setShowPopover] = useState(false);
-
   const { comment } = props;
 
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
@@ -169,41 +176,14 @@ export const RewardBreakdownCard = (props: Props) => {
     comment.permlink
   }/${false}`;
 
-  const { data, isLoading } = useSWR(URL, fetchSds<Post>);
+  const { data, isLoading, error } = useSWR(URL, fetchSds<Post>);
 
   if (isLoading) {
     return <LoadingCard />;
   }
-  if (!data) {
+  if (!data || error) {
     return <></>;
   }
 
-  const check = data.max_accepted_payout;
-
-  let isPayoutDeclined,
-    pendingPayout,
-    authorPayout,
-    curatorPayout,
-    maxPayout,
-    totalPayout,
-    payoutLimitHit,
-    shownPayout;
-
-  if (check) {
-    isPayoutDeclined = data.max_accepted_payout === 0;
-
-    pendingPayout = data.pending_payout_value;
-    authorPayout = data.payout - data.curator_payout_value;
-    curatorPayout = data.curator_payout_value;
-    maxPayout = comment.max_accepted_payout;
-    totalPayout = pendingPayout + authorPayout + curatorPayout;
-    payoutLimitHit = totalPayout >= maxPayout;
-    shownPayout = payoutLimitHit && maxPayout > 0 ? maxPayout : totalPayout;
-  }
-
-  return (
-    <div>
-      <EntryPayoutDetail data={data} globalData={globalData} />
-    </div>
-  );
+  return <EntryPayoutDetail data={data} globalData={globalData} />;
 };

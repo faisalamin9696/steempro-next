@@ -14,7 +14,7 @@ export function ParsedBody({
 }: {
   body: string;
   isNsfw?: boolean;
-}): JSX.Element {
+}): React.ReactNode {
   function handleOpenImage(url?: string) {
     if (url && window)
       window
@@ -70,5 +70,5 @@ export function ParsedBody({
 
   const parsedBody = parse(body, options);
 
-  return parsedBody as JSX.Element;
+  return parsedBody as React.ReactNode;
 }

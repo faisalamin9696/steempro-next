@@ -3,7 +3,6 @@
 import { Select, SelectItem } from "@heroui/select";
 import { Button } from "@heroui/button";
 import { memo, useEffect } from "react";
-import { Image } from "@heroui/image";
 import {
   fetchSds,
   useAppDispatch,
@@ -14,6 +13,7 @@ import useSWR from "swr";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { IoCloseOutline } from "react-icons/io5";
 import { empty_community } from "@/libs/constants/Placeholders";
+import Image from "next/image";
 
 interface Props {
   community?: Community;
@@ -105,9 +105,10 @@ export default memo(function CommunitySelectButton(props: Props) {
                   <Image
                     loading="lazy"
                     className="avatar rounded-full object-contain"
-                    style={{ width: 28, height: 28 }}
+                    height={28}
+                    width={28}
                     src={getResizedAvatar(item.data?.account)}
-                    alt={item.data?.account}
+                    alt={""}
                   />
                   <div className="flex flex-col">
                     <span className="text-small">{item.data?.title}</span>
@@ -130,7 +131,8 @@ export default memo(function CommunitySelectButton(props: Props) {
                 <Image
                   loading="lazy"
                   className="avatar rounded-full object-contain"
-                  style={{ width: 28, height: 28 }}
+                  height={28}
+                  width={28}
                   src={getResizedAvatar(item.account)}
                   alt={item.account}
                 />

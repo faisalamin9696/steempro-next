@@ -24,6 +24,8 @@ import {
 } from "react-icons/md";
 import { useSession } from "next-auth/react";
 import { twMerge } from "tailwind-merge";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 export default function ProfilePage({ data }: { data: AccountExt }) {
   let { username, category } = usePathnameClient();
@@ -34,6 +36,7 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
   const isSelf = session?.user?.name === username;
   const dispatch = useAppDispatch();
   const { isMobile } = useDeviceInfo();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (data)
@@ -104,15 +107,14 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
         disableAnimation={isMobile}
         color={"secondary"}
         radius={isMobile ? "full" : "sm"}
-        selectedKey={
-          ["comments", "replies", "friends"].includes(category)
-            ? `/@${username}/${"posts"}`
-            : `/@${username}/${category ?? "blog"}`
-        }
         className="justify-center"
-        onSelectionChange={(key) => {
-          if (!category) history.replaceState({}, "", `${key}`);
-        }}
+        selectedKey={
+          category
+            ? ["comments", "replies", "friends"].includes(category)
+              ? `/@${username}/${"posts"}`
+              : pathname
+            : `/@${username}/${"blog"}`
+        }
         classNames={{
           tabList: "max-sm:gap-0 main-tab-list",
           panel: "w-full",
@@ -121,7 +123,7 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
       >
         {sortedProfileTabs.map((tab) => (
           <Tab
-            hidden
+            as={Link}
             href={`/@${username}/${tab.key}`}
             key={`/@${username}/${tab.key}`}
             title={

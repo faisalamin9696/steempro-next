@@ -1,4 +1,4 @@
-import { SMTAsset } from "@hiveio/dhive";
+import { SMTAsset } from "@steempro/dsteem";
 
 export enum Symbol {
   HIVE = "STEEM",

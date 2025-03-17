@@ -11,6 +11,7 @@ import ProposalVoteButton from "./ProposalVoteButton";
 import Link from "next/link";
 import { IoMdLink } from "react-icons/io";
 import ProposalVotersModal from "./ProposalVotersModal";
+import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 
 function ProposalItemCard({ proposal }: { proposal: Proposal }) {
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
@@ -127,7 +128,16 @@ function ProposalItemCard({ proposal }: { proposal: Proposal }) {
             <div className="max-sm:gap-4 flex flex-col max-sm:flex-row-reverse sm:justify-between items-center">
               <ProposalVoteButton proposal={proposal} />
 
-              <p className="opacity-disabled">
+              <p className="opacity-disabled flex flex-row items-center gap-1">
+                {moment(proposal.start_date).isAfter(moment()) && (
+                  <span className="text-xs flex flex-row items-center me-1">
+                    <span className=" me-1">{"(Starting"} </span>
+                    <TimeAgoWrapper
+                      created={moment(proposal.start_date).unix() * 1000}
+                    />
+                    {")"}
+                  </span>
+                )}
                 {durationInDays} <span className="text-xs">days left</span>
               </p>
             </div>

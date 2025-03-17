@@ -258,7 +258,7 @@ export default function ProposalVotersModal(props: Props) {
           return cellValue;
       }
     },
-    [globalData]
+    [allRows, globalData]
   );
 
   return (
@@ -267,6 +267,7 @@ export default function ProposalVotersModal(props: Props) {
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       placement="center"
+      scrollBehavior="inside"
     >
       <ModalContent>
         {(onClose) => (

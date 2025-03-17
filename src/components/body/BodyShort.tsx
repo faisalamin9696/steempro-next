@@ -14,7 +14,7 @@ interface BodyShortProps {
   length?: number;
 }
 
-const BodyShort = (props: BodyShortProps): JSX.Element => {
+const BodyShort = (props: BodyShortProps): React.ReactNode => {
   let body = striptags(
     remarkable.render(striptags(decodeEntities(props.body || "")))
   );

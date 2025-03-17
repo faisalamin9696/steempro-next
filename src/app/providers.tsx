@@ -1,9 +1,8 @@
 "use client";
 
 import { store } from "@/libs/redux/store";
-import { HeroUIProvider } from "@heroui/react";
+import { HeroUIProvider } from "@heroui/system";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useRouter } from "next13-progressbar";
 import { Provider as ReduxProvider } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { persistQueryClient } from "@tanstack/react-query-persist-client";
@@ -21,6 +20,7 @@ import DrawerContent from "@/components/navbar/components/DrawerContent";
 import AppNavbar from "@/components/navbar/AppNavbar";
 import { ThemeProvider } from "next-themes";
 import { initFirebase } from "@/libs/helper/firabase";
+import { useRouter } from "next/navigation";
 
 interface Props {
   children: React.ReactNode;

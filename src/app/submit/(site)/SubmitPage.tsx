@@ -54,7 +54,7 @@ import ScheduleModal from "@/components/ScheduleModal";
 import { IoClose } from "react-icons/io5";
 import { ZonedDateTime } from "@internationalized/date";
 import { CustomEvent } from "@piwikpro/react-piwik-pro";
-import { cryptoUtils, Signature } from "@hiveio/dhive";
+import { cryptoUtils, Signature } from "@steempro/dsteem";
 import { AsyncUtils } from "@/libs/utils/async.utils";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import EditorInput from "@/components/editor/EditorInput";

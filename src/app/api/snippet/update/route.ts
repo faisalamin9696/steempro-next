@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { verifyMessage } from "@/libs/steem/condenser";
 import { getAccountExt } from "@/libs/steem/sds";
-import { Signature } from "@hiveio/dhive";
+import { Signature } from "@steempro/dsteem";
 import { executeQuery } from "@/libs/mysql/db";
 import moment from "moment";
 

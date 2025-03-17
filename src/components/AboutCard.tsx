@@ -12,7 +12,7 @@ interface Props {
   imageQuality?: "small" | "large" | "medium";
   href?: string;
 }
-const AboutCard = (props: Props): JSX.Element => {
+const AboutCard = (props: Props): React.ReactNode => {
   const { username, firstHeading, secondHeading, imageSize, imageQuality } =
     props;
 

@@ -68,7 +68,7 @@ export default function CommunityMembers(props: Props) {
     return () => clearTimeout(timeout);
   }, [query, communityInfo?.roles]);
 
-  function ListLoader(): JSX.Element {
+  function ListLoader(): React.ReactNode {
     return (
       <div className="md:absolute md:bottom-0 flex justify-center items-center md:w-full">
         <Button

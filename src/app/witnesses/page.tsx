@@ -3,10 +3,9 @@
 import SAvatar from "@/components/SAvatar";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
-import { abbreviateNumber, formatNumberInMillions } from "@/libs/utils/helper";
+import { abbreviateNumber } from "@/libs/utils/helper";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
-import LoadingCard from "@/components/LoadingCard";
 import { RiLinkM } from "react-icons/ri";
 import { replaceOldDomains } from "@/libs/utils/Links";
 import WitnessVoteButton from "@/components/WitnessVoteButton";
@@ -14,7 +13,6 @@ import { validate_account_name } from "@/libs/utils/ChainValidation";
 import SLink from "@/components/SLink";
 import TableWrapper from "@/components/wrappers/TableWrapper";
 import WitnessVotersModal from "@/components/WitnessVotersModal";
-import { useDisclosure } from "@heroui/react";
 import { simpleVotesToSp } from "@/components/ProposalItemCard";
 import { twMerge } from "tailwind-merge";
 
@@ -100,7 +98,8 @@ export default function page() {
               <SLink
                 className={twMerge(
                   " hover:text-blue-500",
-                  witness.signing_key === disable_key && "line-through text-warning-500"
+                  witness.signing_key === disable_key &&
+                    "line-through text-warning-500"
                 )}
                 href={`/@${witness.name}`}
               >
@@ -181,7 +180,7 @@ export default function page() {
         onFilterValueChange={setFilterValue}
         filteredItems={filteredItems}
         renderCell={renderCell}
-        mobileVisibleColumns={["rank", "name"]}
+        mobileVisibleColumns={["rank", "name","action"]}
         sortDescriptor={{ column: "rank", direction: "ascending" }}
       />
 
