@@ -531,7 +531,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                   size="sm"
                   variant="light"
                 >
-                  {comment.payout && comment.percent_steem_dollars ? (
+                  {(comment.payout && !comment.percent_steem_dollars) || !comment.max_accepted_payout ? (
                     <SiSteem size={20} />
                   ) : (
                     <PiCurrencyCircleDollarFill size={24} />

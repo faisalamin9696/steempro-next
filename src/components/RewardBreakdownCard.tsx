@@ -176,8 +176,18 @@ export const RewardBreakdownCard = (props: Props) => {
     comment.permlink
   }/${false}`;
 
-  const { data, isLoading, error } = useSWR(URL, fetchSds<Post>);
+  const { data, isLoading, error } = useSWR(
+    comment.max_accepted_payout !== 0 && URL,
+    fetchSds<Post>
+  );
 
+  if (comment.max_accepted_payout === 0) {
+    return (
+      <p>
+        <span className="value">{"Payout Declined"}</span>
+      </p>
+    );
+  }
   if (isLoading) {
     return <LoadingCard />;
   }
