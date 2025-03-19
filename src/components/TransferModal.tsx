@@ -148,7 +148,7 @@ const TransferModal = (props: Props): React.ReactNode => {
           );
         }
 
-      props.onOpenChange(isOpen);
+      props.onOpenChange(false);
       toast.success(`${amount} ${asset} transfered to ${to}`);
     },
   });
@@ -183,7 +183,7 @@ const TransferModal = (props: Props): React.ReactNode => {
           })
         );
       }
-      props.onOpenChange(isOpen);
+      props.onOpenChange(false);
       toast.success(`${amount} ${asset} transfered to ${to}'s savings`);
     },
   });
@@ -209,7 +209,7 @@ const TransferModal = (props: Props): React.ReactNode => {
         })
       );
 
-      props.onOpenChange(isOpen);
+      props.onOpenChange(false);
       toast.success(`${amount} ${asset} powered up to ${to}`);
     },
   });
@@ -248,7 +248,7 @@ const TransferModal = (props: Props): React.ReactNode => {
           vests_out: loginInfo.vests_out + outVests,
         })
       );
-      props.onOpenChange(isOpen);
+      props.onOpenChange(false);
       toast.success(
         isRemove ? "Delegation removed" : `${amount} SP delegated to ${to}`
       );

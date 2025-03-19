@@ -43,6 +43,7 @@ export default function page() {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const [allRows, setAllRows] = useState<Witness[]>([]);
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
+  let [witnessRef, setWitnessRef] = useState("");
 
   const [witnessModal, setWitnessModal] = useState<{
     isOpen: boolean;
@@ -55,6 +56,7 @@ export default function page() {
     if (data) {
       const hashRef = window.location.hash.replace("#", "");
       const witnessRef = !validate_account_name(hashRef) ? hashRef : "";
+      setWitnessRef(witnessRef);
 
       if (witnessRef) {
         const index = data?.findIndex((account) => account.name === witnessRef);
@@ -66,7 +68,6 @@ export default function page() {
       setAllRows(data);
     }
   }, [data]);
-
   const [filterValue, setFilterValue] = React.useState<any>("");
 
   const filteredItems = React.useMemo(() => {
@@ -180,8 +181,12 @@ export default function page() {
         onFilterValueChange={setFilterValue}
         filteredItems={filteredItems}
         renderCell={renderCell}
-        mobileVisibleColumns={["rank", "name","action"]}
-        sortDescriptor={{ column: "rank", direction: "ascending" }}
+        mobileVisibleColumns={["rank", "name", "action"]}
+        rowClassName={(item) =>
+          item.name === witnessRef
+            ? "bg-green-600/20  animate-appearance-in !rounded-2xl"
+            : ""
+        }
       />
 
       {witnessModal.isOpen && witnessModal.witness && (

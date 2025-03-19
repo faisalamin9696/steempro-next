@@ -75,7 +75,7 @@ const PowerDownModal = (props: Props): React.ReactNode => {
         })
       );
 
-      onOpenChange(isOpen);
+      onOpenChange(false);
       if (cancel) toast.success(`Power down canceled`);
       else
         toast.success(

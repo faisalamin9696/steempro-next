@@ -29,7 +29,7 @@ interface Props extends TableProps {
   filteredItems: any[];
   onFilterValueChange: (query: string) => void;
   filterValue?: string;
-  rowClassName?: string;
+  rowClassName?: (item: any) => string;
   renderCell: (item: any, columnKey: Key) => React.ReactNode;
   baseVarient?: boolean;
   hidePaginationActions?: boolean;
@@ -331,7 +331,10 @@ function TableWrapper(props: Props) {
         }
       >
         {(item) => (
-          <TableRow key={item?.id ?? Math.random()} className={rowClassName}>
+          <TableRow
+            key={item?.id ?? Math.random()}
+            className={rowClassName && rowClassName(item)}
+          >
             {(columnKey) => (
               <TableCell>
                 {cellWrapper

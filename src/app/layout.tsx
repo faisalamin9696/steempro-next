@@ -84,14 +84,6 @@ export default async function RootLayout({
           </Providers>
         </SessionProvider>
       </body>
-
-      <Script
-        content={`
-         window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-0P05PL9Q91');`}
-      />
     </html>
   );
 }
