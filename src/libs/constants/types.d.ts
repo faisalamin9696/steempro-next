@@ -536,6 +536,7 @@ type User = {
   type: Keys;
   memo: string;
   keychainLogin?: boolean;
+  passwordless?: boolean;
 };
 
 type ValidCategories = "created" | "trending" | "payout" | "pinned" | "about";

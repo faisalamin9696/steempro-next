@@ -2,7 +2,12 @@
 
 import { useSession } from "next-auth/react";
 import React, { createContext, useContext, useState } from "react";
-import { getCredentials, getSessionToken, sessionKey } from "@/libs/utils/user";
+import {
+  getCredentials,
+  getSessionToken,
+  saveSessionKey,
+  sessionKey,
+} from "@/libs/utils/user";
 import AuthModal from "./AuthModal";
 import { useDisclosure } from "@heroui/modal";
 
@@ -73,6 +78,11 @@ export const AuthProvider = (props: Props) => {
     credentials = getCredentials();
 
     if (credentials?.keychainLogin) {
+      return true;
+    }
+
+    if (credentials?.passwordless) {
+      saveSessionKey("steempro");
       return true;
     }
 

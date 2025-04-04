@@ -10,14 +10,6 @@ import {
   useAppSelector,
 } from "@/libs/constants/AppFunctions";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from "@heroui/table";
-import {
   Dropdown,
   DropdownItem,
   DropdownMenu,

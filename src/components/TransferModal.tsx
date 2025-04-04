@@ -170,7 +170,10 @@ const TransferModal = (props: Props): React.ReactNode => {
         dispatch(
           saveLoginHandler({
             ...loginInfo,
-            savings_sbd: loginInfo.savings_sbd + variables.options.amount,
+            savings_sbd:
+              from === to
+                ? loginInfo.savings_sbd + variables.options.amount
+                : loginInfo.balance_sbd - variables.options.amount,
             balance_sbd: loginInfo.balance_sbd - variables.options.amount,
           })
         );
@@ -204,8 +207,13 @@ const TransferModal = (props: Props): React.ReactNode => {
           ...loginInfo,
           balance_steem: loginInfo.balance_steem - variables.options.amount,
           vests_own:
-            loginInfo.vests_own +
-            steemToVest(variables.options.amount, globalData.steem_per_share),
+            from === to
+              ? loginInfo.vests_own +
+                steemToVest(
+                  variables.options.amount,
+                  globalData.steem_per_share
+                )
+              : loginInfo.vests_own,
         })
       );
 

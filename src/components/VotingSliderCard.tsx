@@ -41,16 +41,16 @@ const ItemCard = ({
 export default function VotingSliderCard(props: Props) {
   const { downvote, onConfirm, onClose } = props;
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
-  // const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
-  // const [voteData, setVoteData] = useState<VoteData>();
+  const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
+  const [voteData, setVoteData] = useState<VoteData>();
   const settings =
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
 
   let [value, setValue] = React.useState(settings.voteOptions.value ?? 100);
 
-  // useEffect(() => {
-  //   setVoteData(getVoteData(loginInfo, globalData, downvote));
-  // }, []);
+  useEffect(() => {
+    setVoteData(getVoteData(loginInfo, globalData, downvote));
+  }, []);
 
   const handleValueChange = (value: any) => {
     if (isNaN(Number(value))) return;
@@ -102,6 +102,22 @@ export default function VotingSliderCard(props: Props) {
                     : loginInfo?.upvote_mana_percent?.toFixed(1)
                 }%`}
               />
+
+              {voteData?.current_vote && (
+                <>
+                  <div className="opacity-10">|</div>
+                  <ItemCard
+                    title={""}
+                    tooltip={`${`${value}% vote value`}: ~${(
+                      (voteData?.current_vote * value) /
+                      100
+                    ).toFixed(3)}$`}
+                    value={`~${((voteData?.current_vote * value) / 100).toFixed(
+                      3
+                    )}$`}
+                  />
+                </>
+              )}
             </div>
           </div>
           <button

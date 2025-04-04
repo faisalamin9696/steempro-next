@@ -410,7 +410,7 @@ function AppNavbar() {
                   Confirmation
                 </ModalHeader>
                 <ModalBody>
-                  <p>Do you really want to logout {loginInfo.name}?</p>
+                  <p>Do you really want to logout {session?.user?.name}?</p>
                 </ModalBody>
                 <ModalFooter>
                   <Button color="primary" variant="light" onPress={onClose}>

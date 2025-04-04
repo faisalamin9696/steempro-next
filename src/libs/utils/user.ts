@@ -16,6 +16,7 @@ export function getCredentials(password?: string): User | undefined {
   );
 
   const credentials = JSON.parse(credentialsString || `{}`) as User;
+
   try {
     if (credentials && credentials?.username) {
       const isKeychain = credentials.key === "keychain";
@@ -27,11 +28,15 @@ export function getCredentials(password?: string): User | undefined {
           type: credentials.type,
           memo: "",
           keychainLogin: credentials.key === "keychain",
+          passwordless: credentials.passwordless,
         };
       }
 
       const privateKey = password
-        ? decryptPrivateKey(credentials.key, password)
+        ? decryptPrivateKey(
+            credentials.key,
+            credentials.passwordless ? "steempro" : password
+          )
         : credentials.key;
 
       if (privateKey) {
@@ -40,6 +45,7 @@ export function getCredentials(password?: string): User | undefined {
           key: privateKey,
           type: credentials.type,
           memo: "",
+          passwordless: credentials.passwordless,
         };
       }
       return { ...credentials, key: privateKey };
@@ -70,7 +76,12 @@ export function getAllCredentials(): User[] {
   } else return [];
 }
 
-export function addToCurrent(username: string, encKey: string, keyType: Keys) {
+export function addToCurrent(
+  username: string,
+  encKey: string,
+  keyType: Keys,
+  passwordless: boolean
+) {
   const isMemo = keyType === "MEMO";
   let credentials: User | undefined;
   if (keyType === "MEMO") credentials = getCredentials();
@@ -80,7 +91,8 @@ export function addToCurrent(username: string, encKey: string, keyType: Keys) {
     key: isMemo && credentials ? credentials.key : encKey,
     type: keyType,
     memo: isMemo ? encKey : "",
-  });
+    passwordless,
+  } as User);
 }
 
 export function removeCredentials(credentials: User) {
@@ -101,7 +113,12 @@ export function removeCredentials(credentials: User) {
   } catch {}
 }
 
-function addToAccounts(username: string, encKey: string, keyType: Keys) {
+function addToAccounts(
+  username: string,
+  encKey: string,
+  keyType: Keys,
+  passwordless: boolean
+) {
   const accounts = (secureLocalStorage.getItem("accounts") ?? []) as User[];
   const index = accounts.findIndex(
     (account) => account.username === username && account.type === keyType
@@ -116,6 +133,7 @@ function addToAccounts(username: string, encKey: string, keyType: Keys) {
             key: isMemo ? accounts[index].key : encKey,
             type: keyType,
             memo: isMemo ? encKey : "",
+            passwordless,
           }),
           ...accounts.slice(index + 1),
         ]
@@ -124,6 +142,7 @@ function addToAccounts(username: string, encKey: string, keyType: Keys) {
           key: encKey,
           type: keyType,
           memo: isMemo ? encKey : "",
+          passwordless,
         });
 
   secureLocalStorage.setItem("accounts", updatedAccounts);
@@ -134,6 +153,7 @@ export function saveCredentials(
   privateKey: string,
   password: string,
   keyType: Keys,
+  passwordless: boolean,
   current?: boolean,
   isKeychain?: boolean
 ): User | undefined {
@@ -141,38 +161,40 @@ export function saveCredentials(
 
   if (isKeychain) {
     if (!existAuth || current || existAuth?.username === username) {
-      addToCurrent(username, privateKey, keyType);
+      addToCurrent(username, privateKey, keyType, passwordless);
 
       if (username !== existAuth?.username) {
         removeSessionToken(existAuth?.username);
       }
     }
 
-    addToAccounts(username, privateKey, keyType);
+    addToAccounts(username, privateKey, keyType, passwordless);
     return {
       username: username,
       key: privateKey,
       type: keyType,
       memo: "",
+      passwordless,
     };
   }
 
   const encryptedKey = encryptPrivateKey(privateKey, password);
   if (encryptedKey) {
     if (!existAuth || current || existAuth?.username === username) {
-      addToCurrent(username, encryptedKey, keyType);
+      addToCurrent(username, encryptedKey, keyType, passwordless);
 
       if (username !== existAuth?.username) {
         removeSessionToken(existAuth?.username);
       }
     }
 
-    addToAccounts(username, encryptedKey, keyType);
+    addToAccounts(username, encryptedKey, keyType, passwordless);
     return {
       username: username,
       key: encryptedKey,
       type: keyType,
       memo: "",
+      passwordless,
     };
   }
 }

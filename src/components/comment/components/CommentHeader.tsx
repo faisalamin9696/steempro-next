@@ -15,7 +15,6 @@ import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import { validateCommunity } from "@/libs/utils/helper";
 import { getCredentials, getSessionKey, getSettings } from "@/libs/utils/user";
 import STag from "@/components/STag";
-
 import { Key, useState } from "react";
 import { MdDelete, MdDoNotDisturb } from "react-icons/md";
 import { GrAnnounce } from "react-icons/gr";
@@ -23,11 +22,9 @@ import ViewCountCard from "@/components/ViewCountCard";
 import { readingTime } from "@/libs/utils/readingTime/reading-time-estimator";
 import { Role } from "@/libs/utils/community";
 import { allowDelete } from "@/libs/utils/StateFunctions";
-import { MdOutlineDoNotDisturb } from "react-icons/md";
-import { RiEdit2Fill, RiEditCircleFill } from "react-icons/ri";
+import { RiEdit2Fill } from "react-icons/ri";
 import { LuHistory } from "react-icons/lu";
 import { toast } from "sonner";
-import { BsClipboard2Minus } from "react-icons/bs";
 import EditRoleModal from "@/components/EditRoleModal";
 import { FaInfoCircle, FaUserEdit } from "react-icons/fa";
 import MuteDeleteModal from "@/components/MuteDeleteModal";
@@ -42,6 +39,8 @@ import { AppStrings } from "@/libs/constants/AppStrings";
 import CommentEditHistory from "@/components/CommentHistoryViewer";
 import SLink from "@/components/SLink";
 import { twMerge } from "tailwind-merge";
+import Image from "next/image";
+import { Card } from "@heroui/card";
 
 interface Props {
   comment: Post | Feed;
@@ -59,6 +58,9 @@ export default function CommentHeader(props: Props) {
   const { data: session } = useSession();
 
   const username = session?.user?.name ?? loginInfo.name;
+  const isUsingSteempro = JSON.parse(
+    comment?.json_metadata ?? "{}"
+  )?.app?.includes("steempro");
 
   const isSelf = session?.user?.name === comment.author;
   const canMute = username && Role.atLeast(comment.observer_role, "mod");
@@ -95,7 +97,7 @@ export default function CommentHeader(props: Props) {
       show: Role.atLeast(comment?.observer_role, "mod"),
       key: "role",
       name: "Edit Role/Title",
-      icon: FaUserEdit  ,
+      icon: FaUserEdit,
     },
     {
       show: canMute,
@@ -261,7 +263,7 @@ export default function CommentHeader(props: Props) {
           wrapper: "gap-1",
         }}
         name={
-          <div className="flex items-center gap-1">
+          <div className="flex flex-row items-center gap-1">
             {isSelf ? (
               <SLink
                 className=" hover:text-blue-500"
@@ -278,13 +280,11 @@ export default function CommentHeader(props: Props) {
               </SLink>
             )}
             <Reputation reputation={comment.author_reputation} />
-
             {!!comment.is_pinned && (
               <p className="ms-1 px-1 rounded-full text-tiny bg-success/50">
                 Pinned
               </p>
             )}
-
             {!isReply && !compact ? (
               <Dropdown>
                 <DropdownTrigger>
@@ -296,7 +296,7 @@ export default function CommentHeader(props: Props) {
                     isIconOnly
                     variant="light"
                   >
-                    <FaEllipsis className="text-lg" />
+                    <FaEllipsis size={18} />
                   </Button>
                 </DropdownTrigger>
                 <DropdownMenu
@@ -308,6 +308,18 @@ export default function CommentHeader(props: Props) {
                 </DropdownMenu>
               </Dropdown>
             ) : null}
+            {isDetail && isUsingSteempro && (
+              <Card title="Posted using SteemPro" className=" rounded-full">
+                <Image
+                  quality={75}
+                  title="Posted using SteemPro"
+                  alt=""
+                  height={20}
+                  width={20}
+                  src="/logo192.png"
+                />
+              </Card>
+            )}
           </div>
         }
         description={

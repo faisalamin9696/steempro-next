@@ -17,6 +17,9 @@ import SAvatar from "./SAvatar";
 import { toast } from "sonner";
 import { validate_account_name } from "@/libs/utils/ChainValidation";
 import { updateSettingsHandler } from "@/libs/redux/reducers/SettingsReducer";
+import { secureDecrypt } from "@/libs/utils/encryption";
+
+const STORAGE_KEY = "@secure.j.settings";
 
 interface Props {
   isOpen: boolean;
@@ -24,8 +27,15 @@ interface Props {
 }
 function CustomUsersVotingCard(props: Props) {
   const { isOpen, onOpenChange } = props;
+
+  const settingssString = secureDecrypt(
+    localStorage.getItem(STORAGE_KEY) ?? "",
+    process.env.NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY
+  );
+  const settingsLocal = JSON.parse(settingssString || `{}`) as Setting;
+
   const settings =
-    useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
+    useAppSelector((state) => state.settingsReducer.value) ?? settingsLocal;
   let [username, setUsername] = useState("");
   let [weight, setWeight] = useState("");
   const dispatch = useAppDispatch();
@@ -48,7 +58,7 @@ function CustomUsersVotingCard(props: Props) {
       toast.info("User already added");
       return;
     }
- 
+
     const weightValue = Number(weight);
 
     if (!weight || weightValue < 1 || weightValue > 100) {
@@ -121,6 +131,24 @@ function CustomUsersVotingCard(props: Props) {
               <div className="my-4 flex flex-col gap-6">
                 <div className=" flex gap-2 items-end w-full">
                   <Input
+                    classNames={{ label: "text-default-900/80" }}
+                    className="w-[70%]"
+                    autoCapitalize="off"
+                    labelPlacement="outside"
+                    label={"Username"}
+                    size="sm"
+                    onValueChange={setUsername}
+                    variant="flat"
+                    value={username}
+                    spellCheck="false"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleAddUser();
+                      }
+                    }}
+                  />
+
+                  <Input
                     className="w-[30%]"
                     classNames={{ label: "text-default-900/80" }}
                     labelPlacement="outside"
@@ -141,19 +169,6 @@ function CustomUsersVotingCard(props: Props) {
                         </span>
                       </div>
                     }
-                  />
-
-                  <Input
-                    classNames={{ label: "text-default-900/80" }}
-                    className="w-[70%]"
-                    autoCapitalize="off"
-                    labelPlacement="outside"
-                    label={"Username"}
-                    size="sm"
-                    onValueChange={setUsername}
-                    variant="flat"
-                    value={username}
-                    spellCheck="false"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         handleAddUser();

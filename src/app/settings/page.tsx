@@ -443,6 +443,7 @@ export default function SettingsPage() {
               isIconOnly
               radius="sm"
               size="lg"
+              isDisabled={longPress === "false"}
               onPress={customVotingDisclosure.onOpen}
             >
               <FaList />
@@ -579,10 +580,12 @@ export default function SettingsPage() {
         id="dropzone"
         accept="image/png, image/gif, image/jpeg, image/jpg"
       />
-      <CustomUsersVotingCard
-        isOpen={customVotingDisclosure.isOpen}
-        onOpenChange={customVotingDisclosure.onOpenChange}
-      />
+      {customVotingDisclosure.isOpen && (
+        <CustomUsersVotingCard
+          isOpen={customVotingDisclosure.isOpen}
+          onOpenChange={customVotingDisclosure.onOpenChange}
+        />
+      )}
     </div>
   );
 }

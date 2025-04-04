@@ -33,6 +33,9 @@ import { useRouter } from "next/navigation";
 import SAvatar from "../SAvatar";
 import SLink from "../SLink";
 import { AsyncUtils } from "@/libs/utils/async.utils";
+import { BsInfo, BsInfoCircle } from "react-icons/bs";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
+import { FaInfoCircle } from "react-icons/fa";
 
 interface Props {
   open: boolean;
@@ -49,6 +52,7 @@ export default function AuthModal(props: Props) {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const dispatch = useAppDispatch();
   const [avatar, setAvatar] = useState("");
+  const [pinEnabled, setPinEnabled] = useState(false);
 
   let [formData, setFormData] = useState({
     username: "",
@@ -108,15 +112,18 @@ export default function AuthModal(props: Props) {
   }
 
   async function handleUnlock() {
-    if (!formData.password) {
-      toast.info("Enter the password");
-      return;
+    if (!credentials?.passwordless) {
+      if (!formData.password) {
+        toast.info("Enter the password");
+        return;
+      }
     }
-
     setLoading(true);
     await AsyncUtils.sleep(3);
 
-    credentials = getCredentials(formData.password);
+    credentials = getCredentials(
+      credentials?.passwordless ? "steempro" : formData.password
+    );
     if (!credentials?.key) {
       toast.error("Invalid credentials");
       setLoading(false);
@@ -166,8 +173,9 @@ export default function AuthModal(props: Props) {
           const auth = saveCredentials(
             username,
             key,
-            password,
+            !pinEnabled ? "steempro" : password,
             type,
+            !pinEnabled,
             false,
             isKeychain
           );
@@ -200,6 +208,7 @@ export default function AuthModal(props: Props) {
               key: auth?.key ?? "",
               type: type,
               memo: auth?.memo || "",
+              passwordless: !pinEnabled,
             });
           handleOnClose();
           clearAll();
@@ -213,8 +222,9 @@ export default function AuthModal(props: Props) {
       const auth = saveCredentials(
         username,
         key,
-        password,
+        !pinEnabled ? "steempro" : password,
         type,
+        !pinEnabled,
         isCurrent,
         isKeychain
       );
@@ -243,6 +253,7 @@ export default function AuthModal(props: Props) {
               key: auth?.key ?? "",
               type: type,
               memo: auth?.memo || "",
+              passwordless: !pinEnabled,
             });
           toast.success(`Login successsful with private ${type} key`);
         } else toast.success(`${auth?.username} added successfully`);
@@ -268,22 +279,23 @@ export default function AuthModal(props: Props) {
       toast.info("Invalid private key");
       return;
     }
+    if (pinEnabled) {
+      if (!formData.password) {
+        toast.info("Enter the password");
+        return;
+      }
 
-    if (!formData.password) {
-      toast.info("Enter the password");
-      return;
-    }
+      if (!formData.password || formData.password !== formData.password2) {
+        toast.info("Password does not matched");
+        return;
+      }
 
-    if (!formData.password || formData.password !== formData.password2) {
-      toast.info("Password does not matched");
-      return;
-    }
-
-    if (!validatePassword(formData.password)) {
-      toast.info(
-        "Weak password. Please use a combination of uppercase and lowercase letters, numbers, and special characters"
-      );
-      return;
+      if (!validatePassword(formData.password)) {
+        toast.info(
+          "Weak password. Please use a combination of uppercase and lowercase letters, numbers, and special characters"
+        );
+        return;
+      }
     }
 
     setLoading(true);
@@ -299,10 +311,14 @@ export default function AuthModal(props: Props) {
               "Higher-level keys are prohibited to protect your account."
             );
             setLoading(false);
-
             return;
           }
 
+          if (["ACTIVE"].includes(keyType.type) && !pinEnabled) {
+            toast.info("Pin code is required for active key or above");
+            setLoading(false);
+            return;
+          }
           await getAuthenticate(
             account,
             formData.username,
@@ -425,19 +441,21 @@ export default function AuthModal(props: Props) {
                   <Spinner className=" self-center m-auto" />
                 ) : isLocked && !isNew ? (
                   <form className="flex flex-col gap-4">
-                    <Input
-                      size="sm"
-                      autoFocus
-                      value={formData.password}
-                      isRequired
-                      onValueChange={(value) =>
-                        setFormData({ ...formData, password: value })
-                      }
-                      isDisabled={loading}
-                      label="Encryption password"
-                      placeholder="Enter password to unlock account"
-                      type="password"
-                    />
+                    {!credentials?.passwordless && (
+                      <Input
+                        size="sm"
+                        autoFocus
+                        value={formData.password}
+                        isRequired
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, password: value })
+                        }
+                        isDisabled={loading}
+                        label="Encryption password"
+                        placeholder="Enter password to unlock account"
+                        type="password"
+                      />
+                    )}
 
                     <div className="flex flex-row justify-between items-center">
                       {(credentials?.type === "POSTING" ||
@@ -516,35 +534,78 @@ export default function AuthModal(props: Props) {
                       type="password"
                     />
 
-                    <div className="flex flex-row gap-2 items-center">
-                      <Input
+                    <div className="flex flex-row gap-1 items-center">
+                      <Checkbox
                         size="sm"
-                        value={formData.password}
-                        isRequired
+                        isSelected={pinEnabled}
                         isDisabled={loading}
-                        onValueChange={(value) =>
-                          setFormData({ ...formData, password: value })
-                        }
-                        label="Encryption password"
-                        placeholder="Enter enc. password"
-                        type="password"
-                      />
+                        onValueChange={setPinEnabled}
+                      >
+                        Set Pin Code
+                      </Checkbox>
 
-                      <Input
-                        size="sm"
-                        value={formData.password2}
-                        onValueChange={(value) =>
-                          setFormData({ ...formData, password2: value })
-                        }
-                        isRequired
-                        isDisabled={loading}
-                        label="Confirm password"
-                        placeholder="Re-enter password"
-                        type="password"
-                      />
+                      <Popover color="primary" placement={"top"}>
+                        <PopoverTrigger>
+                          <Button
+                            radius="full"
+                            isIconOnly
+                            size="sm"
+                            variant="light"
+                            isDisabled={loading}
+                          >
+                            <FaInfoCircle size={18} />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent>
+                          <div className="px-1 py-2">
+                            <div className="text-small font-bold">
+                              Pin Code Encryption
+                            </div>
+                            <div className="text-tiny flex flex-col">
+                              <span>
+                                Encrypt private key with your pin code,
+                              </span>{" "}
+                              <span>
+                                It add more security to your private keys.
+                              </span>
+                              <span>Optional for private posting key.</span>
+                            </div>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
                     </div>
 
-                    {isNew && (
+                    {pinEnabled && (
+                      <div className="flex flex-row gap-2 items-center">
+                        <Input
+                          size="sm"
+                          value={formData.password}
+                          isRequired
+                          isDisabled={loading}
+                          onValueChange={(value) =>
+                            setFormData({ ...formData, password: value })
+                          }
+                          label="Pin Code"
+                          placeholder="Enter pin code"
+                          type="password"
+                        />
+
+                        <Input
+                          size="sm"
+                          value={formData.password2}
+                          onValueChange={(value) =>
+                            setFormData({ ...formData, password2: value })
+                          }
+                          isRequired
+                          isDisabled={loading}
+                          label="Confirm Pin"
+                          placeholder="Re-enter pin code"
+                          type="password"
+                        />
+                      </div>
+                    )}
+
+                    {/* {isNew && (
                       <Checkbox
                         isSelected={isCurrent}
                         isDisabled={loading}
@@ -552,7 +613,7 @@ export default function AuthModal(props: Props) {
                       >
                         Set as default
                       </Checkbox>
-                    )}
+                    )} */}
 
                     <div className="text-start text-small text-default-600">
                       Need to create an account?{" "}
@@ -611,31 +672,6 @@ export default function AuthModal(props: Props) {
                     </div>
                   </form>
                 )}
-
-                {/* <Tab key="sign-up" title="Sign up">
-                                                <form className="flex flex-col gap-4 h-[300px]">
-                                                    <Input isRequired label="Name" placeholder="Enter your name" type="password" />
-                                                    <Input isRequired label="Email" placeholder="Enter your email" type="email" />
-                                                    <Input
-                                                        isRequired
-                                                        label="Password"
-                                                        placeholder="Enter your password"
-                                                        type="password"
-                                                    />
-                                                    <p className="text-center text-small">
-                                                        Already have an account?{" "}
-                                                        <SLink size="sm"
-                                                            onClick={() => setSelected('login')}>
-                                                            Login
-                                                        </SLink>
-                                                    </p>
-                                                    <div className="flex gap-2 justify-end">
-                                                        <Button fullWidth color="primary" >
-                                                            Sign up
-                                                        </Button>
-                                                    </div>
-                                                </form>
-                                            </Tab> */}
               </div>
             </ModalBody>
           </>

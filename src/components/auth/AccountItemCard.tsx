@@ -75,7 +75,7 @@ export default memo(function AccountItemCard(props: Props) {
         supabase.auth
           .signInAnonymously()
           .then(async () => {
-            addToCurrent(account.name, user.key, user.type);
+            addToCurrent(account.name, user.key, user.type, user.passwordless ?? false);
 
             const response = await signIn("credentials", {
               username: user.username,
