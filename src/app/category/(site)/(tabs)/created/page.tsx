@@ -15,7 +15,7 @@ export default function CategoryCreatedTab() {
       <div className="flex flex-col space-y-2">
         <FeedList
           endPoint={getEndPoint(
-            "ActivePostsByTagCreated",
+            "PostsByTagCreated",
             `${tag}/${loginInfo.name || "null"}`
           )}
         />

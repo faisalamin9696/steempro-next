@@ -106,7 +106,8 @@ export type FeedTypes =
   | "ActivePostsByTagTrending"
   | "ActivePostsByTagCreated"
   | "ActivePostsByTagHot"
-  | "ActivePostsByTagPayout";
+  | "ActivePostsByTagPayout"
+  | "PostsByTagCreated";
 
 export const getAuthorFeed = async (
   author: string,

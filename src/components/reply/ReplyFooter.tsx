@@ -304,6 +304,7 @@ export default function ReplyFooter({
 
     setPosting(false);
     handleClear();
+    if (showEdit) isEditing && isEditing(!showEdit);
     toast.success(showEdit ? "Updated" : "Sent");
     CustomEvent.trackEvent("comment_submit_form", newComment.author, "Sent");
   }
@@ -626,22 +627,21 @@ export default function ReplyFooter({
         ) : null}
       </div>
 
-        <MuteDeleteModal
-          comment={comment}
-          isOpen={confirmationModal.isOpen}
-          onClose={() =>
-            setConfirmationModal({
-              ...confirmationModal,
-              isOpen: !confirmationModal.isOpen,
-            })
-          }
-          mute={true}
-          muteNote={confirmationModal.muteNote}
-          onNoteChange={(value) => {
-            setConfirmationModal({ ...confirmationModal, muteNote: value });
-          }}
-        />
-      
+      <MuteDeleteModal
+        comment={comment}
+        isOpen={confirmationModal.isOpen}
+        onClose={() =>
+          setConfirmationModal({
+            ...confirmationModal,
+            isOpen: !confirmationModal.isOpen,
+          })
+        }
+        mute={true}
+        muteNote={confirmationModal.muteNote}
+        onNoteChange={(value) => {
+          setConfirmationModal({ ...confirmationModal, muteNote: value });
+        }}
+      />
     </div>
   );
 }

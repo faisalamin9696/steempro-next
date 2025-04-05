@@ -190,8 +190,8 @@ export function getKeyType(account: AccountExt, key: string) {
       );
       if (isvalid) {
         // derive  the active key from master key
-        privKey = PrivateKey.fromLogin(account.name, key, "active").toString();
-        keyType = AppStrings.key_types.active;
+        privKey = PrivateKey.fromLogin(account.name, key, "posting").toString();
+        keyType = AppStrings.key_types.posting;
       } else {
         keyType = "";
       }
@@ -205,11 +205,12 @@ export function getKeyType(account: AccountExt, key: string) {
 
       const publicKey = wifToPublic(key);
 
+
       const publicKeys = [
-        account?.active_key_auths[0][0],
-        account?.owner_key_auths[0][0],
-        account?.posting_key_auths[0][0],
-        account.memo_key,
+        account?.active_key_auths?.[0]?.[0],
+        account?.owner_key_auths?.[0]?.[0],
+        account?.posting_key_auths?.[0]?.[0],
+        account?.memo_key,
       ];
 
       keyType =

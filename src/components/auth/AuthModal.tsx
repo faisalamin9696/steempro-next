@@ -304,7 +304,6 @@ export default function AuthModal(props: Props) {
       const account = await getAccountExt(formData.username);
       if (account) {
         const keyType = getKeyType(account, formData.key);
-
         if (keyType) {
           if (["MASTER", "OWNER"].includes(keyType.type)) {
             toast.info(
@@ -322,7 +321,7 @@ export default function AuthModal(props: Props) {
           await getAuthenticate(
             account,
             formData.username,
-            formData.key,
+            keyType.key,
             formData.password,
             keyType.type
           );
