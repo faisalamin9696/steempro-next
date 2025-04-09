@@ -3,9 +3,7 @@
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import React, { useState, useEffect, useRef } from "react";
 import useSWR from "swr";
-import { Button } from "@heroui/button";
 import { getSettings } from "@/libs/utils/user";
-import { FaArrowUp } from "react-icons/fa"; // Import an icon for the button
 import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
 import CommentCard from "./comment/CommentCard";
 import { twMerge } from "tailwind-merge";
@@ -13,6 +11,7 @@ import { notFound } from "next/navigation";
 import CommentSkeleton from "./comment/components/CommentSkeleton";
 import { Spinner } from "@heroui/spinner";
 import EmptyList from "./EmptyList";
+import { ScrollToTopButton } from "./ScrollToTopButton";
 
 interface Props {
   endPoint: string;
@@ -20,48 +19,6 @@ interface Props {
 }
 
 // Scroll to Top Button Component
-const ScrollToTopButton = () => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  // Show/hide the button based on scroll position
-  useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.scrollY > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-    };
-
-    window.addEventListener("scroll", toggleVisibility);
-    return () => window.removeEventListener("scroll", toggleVisibility);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth", // Smooth scrolling
-    });
-  };
-
-  return (
-    <div
-      className={`fixed bottom-8 right-8 z-50 transition-transform duration-300 ${
-        isVisible ? "translate-y-0" : "translate-y-20"
-      }`}
-    >
-      <Button
-        isIconOnly
-        color="primary"
-        className="shadow-lg"
-        aria-label="Scroll to top"
-        onPress={scrollToTop}
-      >
-        <FaArrowUp />
-      </Button>
-    </div>
-  );
-};
 
 const itemsPerPage = 16;
 export default function FeedList(props: Props) {

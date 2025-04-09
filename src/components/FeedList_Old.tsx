@@ -17,6 +17,7 @@ import { twMerge } from "tailwind-merge";
 import EmptyList from "./EmptyList";
 import { FaArrowUp } from "react-icons/fa"; // Import an icon for the button
 import { AsyncUtils } from "@/libs/utils/async.utils";
+import { ScrollToTopButton } from "./ScrollToTopButton";
 
 interface Props {
   endPoint: string;
@@ -24,48 +25,6 @@ interface Props {
 }
 
 // Scroll to Top Button Component
-const ScrollToTopButton = () => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  // Show/hide the button based on scroll position
-  useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.scrollY > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-    };
-
-    window.addEventListener("scroll", toggleVisibility);
-    return () => window.removeEventListener("scroll", toggleVisibility);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth", // Smooth scrolling
-    });
-  };
-
-  return (
-    <div
-      className={`fixed bottom-8 right-8 z-50 transition-transform duration-300 ${
-        isVisible ? "translate-y-0" : "translate-y-20"
-      }`}
-    >
-      <Button
-        isIconOnly
-        color="primary"
-        className="shadow-lg"
-        aria-label="Scroll to top"
-        onPress={scrollToTop}
-      >
-        <FaArrowUp />
-      </Button>
-    </div>
-  );
-};
 
 export default function FeedList_Old(props: Props) {
   const { endPoint, className } = props;

@@ -9,13 +9,6 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "@/libs/constants/AppFunctions";
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-} from "@heroui/dropdown";
-import { Input } from "@heroui/input";
 import { Spinner } from "@heroui/spinner";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
@@ -23,7 +16,6 @@ import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import SAvatar from "./SAvatar";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
-import LoadingCard from "./LoadingCard";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { validateCommunity } from "@/libs/utils/helper";
@@ -36,6 +28,9 @@ import { useSession } from "next-auth/react";
 import { Badge } from "@heroui/badge";
 import SLink from "./SLink";
 import TableWrapper from "./wrappers/TableWrapper";
+import { CustomCheckbox } from "./CustomCheckbox";
+import { CheckboxGroup } from "@heroui/checkbox";
+import { MdOutlineRefresh } from "react-icons/md";
 
 interface Props {
   username: string | null;
@@ -72,10 +67,10 @@ const columns = [
 
 const typeOptions = [
   { name: "vote", uid: "vote" },
-  { name: "Follow", uid: "follow" },
+  { name: "Reply", uid: "reply" },
   { name: "Mention", uid: "mention" },
   { name: "Resteem", uid: "resteem" },
-  { name: "Reply", uid: "reply" },
+  { name: "Follow", uid: "follow" },
 ];
 
 let offset = 0;
@@ -126,9 +121,13 @@ export default function NotificationsTable(props: Props) {
     )}/20/${offset}`;
   }
 
-  const { data, isLoading } = useSWR(URL, fetchSds<SDSNotification[]>, {
-    refreshInterval: 300000,
-  });
+  const { data, isLoading, mutate, isValidating } = useSWR(
+    URL,
+    fetchSds<SDSNotification[]>,
+    {
+      refreshInterval: 300000,
+    }
+  );
   const { data: session } = useSession();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
@@ -136,6 +135,8 @@ export default function NotificationsTable(props: Props) {
   const { authenticateUser, isAuthorized } = useLogin();
   const dispatch = useAppDispatch();
   const [allRows, setAllRows] = useState<SDSNotification[]>([]);
+  const [groupSelected, setGroupSelected] = React.useState<string[]>([]);
+
   useEffect(() => {
     if (data) {
       if (isSelf) {
@@ -214,16 +215,16 @@ export default function NotificationsTable(props: Props) {
       );
     }
     if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== typeOptions.length
+      groupSelected.length > 0 &&
+      groupSelected.length !== typeOptions.length
     ) {
       filteredNotifications = filteredNotifications.filter((notification) =>
-        Array.from(statusFilter).includes(notification.type)
+        groupSelected.includes(notification.type)
       );
     }
 
     return filteredNotifications;
-  }, [allRows, filterValue, statusFilter]);
+  }, [allRows, filterValue, groupSelected]);
 
   const renderCell = React.useCallback(
     (notification: SDSNotification, columnKey) => {
@@ -300,29 +301,16 @@ export default function NotificationsTable(props: Props) {
       <div className="flex flex-col gap-4 p-1">
         <div className="flex justify-between gap-3 items-end">
           <div className="flex gap-3">
-            <Dropdown>
-              <DropdownTrigger className="">
-                <Button size="sm" variant="flat" isIconOnly color="secondary">
-                  <IoFilter className="text-lg" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                emptyContent={<></>}
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
+            {isSelf && (
+              <Button
+                size="sm"
+                isIconOnly
+                isLoading={isValidating}
+                onPress={() => mutate()}
               >
-                {typeOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {capitalize(status.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-
+                <MdOutlineRefresh size={18} />
+              </Button>
+            )}
             {isSelf && (
               <Button
                 size="sm"
@@ -346,7 +334,9 @@ export default function NotificationsTable(props: Props) {
     allRows?.length,
     hasSearchFilter,
     markMutation.isPending,
-    loginInfo.unread_count,
+    loginInfo,
+    isValidating,
+    isSelf,
   ]);
 
   const getTargetUrl = (item: SDSNotification): string => {
@@ -385,7 +375,23 @@ export default function NotificationsTable(props: Props) {
       skipPaging
       isCompact={false}
       isLoading={isLoading}
-      stickyTop
+      stickyTop={isSelf}
+      topRowContent={
+        <div className="flex flex-col gap-1 w-full px-1">
+          <CheckboxGroup
+            className="gap-1"
+            orientation="horizontal"
+            value={groupSelected}
+            onValueChange={setGroupSelected}
+          >
+            {typeOptions.map((status) => (
+              <CustomCheckbox className="capitalize" value={status.uid}>
+                {capitalize(status.name)}
+              </CustomCheckbox>
+            ))}
+          </CheckboxGroup>
+        </div>
+      }
       classNames={{
         base: ["w-full", "overflow-auto", "mb-4", "h-full"],
       }}

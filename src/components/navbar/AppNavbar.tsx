@@ -25,7 +25,7 @@ import {
 } from "react-icons/fa";
 import { IoFlash, IoLogOut } from "react-icons/io5";
 import { LuPencilLine } from "react-icons/lu";
-import { MdSearch } from "react-icons/md";
+import { MdOutlineRefresh, MdSearch } from "react-icons/md";
 import { PiUserSwitchFill } from "react-icons/pi";
 import { BorderColorMap } from "../auth/AccountItemCard";
 import { useAppSelector, useAppDispatch } from "@/libs/constants/AppFunctions";
@@ -50,6 +50,8 @@ import SAvatar from "../SAvatar";
 import { twMerge } from "tailwind-merge";
 import SLink from "../SLink";
 import { AsyncUtils } from "@/libs/utils/async.utils";
+import { mutate } from "swr";
+import { Spinner } from "@heroui/spinner";
 
 function AppNavbar() {
   const { authenticateUser, isAuthorized, credentials, setCredentials } =
@@ -68,6 +70,7 @@ function AppNavbar() {
   );
   const logoutDisclosure = useDisclosure();
   const [logoutLoading, setLogoutLoading] = useState(false);
+  const commonInfo = useAppSelector((state) => state.commonReducer.values);
 
   // validate the local storage auth
   useMemo(async () => {
@@ -136,6 +139,12 @@ function AppNavbar() {
     setLogoutLoading(false);
     toast.success(`${credentials.username} logged out successfully`);
   }
+
+  async function handleRefreshData() {
+    mutate("/steem_requests_api/getSteemProps");
+    mutate([session?.user?.name, "null"]);
+  }
+
   return (
     <nav className="z-50 sticky top-0 flex-no-wrap flex w-full items-center justify-between py-2 shadow-md dark:shadow-white/5 lg:flex-wrap lg:justify-start h-16 bg-transparent backdrop-blur-md">
       <div className="flex w-full flex-wrap items-center justify-between px-4">
@@ -278,7 +287,7 @@ function AppNavbar() {
                     <div className="flex justify-between gap-2 w-full">
                       <div
                         title="Voting power"
-                        className="flex items-center gap-1 bg-foreground/10 px-1 rounded-lg"
+                        className="flex items-center gap-1 bg-foreground/10 px-1 rounded-full"
                       >
                         <p className=" text-tiny opacity-80">
                           <IoFlash />
@@ -290,13 +299,27 @@ function AppNavbar() {
 
                       <div
                         title="Resource credits"
-                        className="flex items-center gap-1 bg-foreground/10 px-1 rounded-lg"
+                        className="flex items-center gap-1 bg-foreground/10 px-1 rounded-full"
                       >
                         <p className=" text-tiny opacity-80">
                           <FaCoins />
                         </p>
                         <p>{loginInfo.rc_mana_percent?.toLocaleString()}%</p>
                       </div>
+
+                      <Button
+                        className=" min-h-0 min-w-0 w-6 h-6"
+                        onPress={handleRefreshData}
+                        isIconOnly
+                        size="sm"
+                        radius="full"
+                      >
+                        {commonInfo.isLoadingAccount ? (
+                          <Spinner size="sm" color="current" />
+                        ) : (
+                          <MdOutlineRefresh size={18} />
+                        )}
+                      </Button>
                     </div>
 
                     <Divider className=" mt-2" />

@@ -22,6 +22,8 @@ import { AppLink } from "@/libs/constants/AppConstants";
 import { useSession } from "next-auth/react";
 import SLink from "./SLink";
 import { FaLocationDot } from "react-icons/fa6";
+import WitnessVotesCard from "./WitnessVotesCard";
+import SAvatar from "./SAvatar";
 
 type Props = {
   account: AccountExt;
@@ -39,6 +41,7 @@ export default memo(function ProfileInfoCard(props: Props) {
   const steemProps = useAppSelector((state) => state.steemGlobalsReducer).value;
   const voteData = profileInfo && getVoteData(profileInfo, steemProps);
   const { data: session } = useSession();
+  const [witnessModal, setWitnessModal] = useState(false);
 
   const [followerModal, setFollowerModal] = useState<{
     isOpen: boolean;
@@ -156,7 +159,7 @@ export default memo(function ProfileInfoCard(props: Props) {
           {website && (
             <div
               title="Website"
-              className=" flex flex-row gap-1 items-center text-tiny w-max"
+              className=" flex flex-row gap-1 items-start text-tiny break-words w-full"
             >
               <FaGlobe size={16} className=" me-1" />
 
@@ -256,7 +259,7 @@ export default memo(function ProfileInfoCard(props: Props) {
 
             <div className="flex flex-col items-start flex-1">
               <p className=" font-bold text-sm">
-                {voteData.full_vote?.toFixed(3)}$
+                ~{voteData.full_vote?.toFixed(3)}$
               </p>
               <p className="text-default-900/80 text-[12px]">Value</p>
             </div>
@@ -280,6 +283,36 @@ export default memo(function ProfileInfoCard(props: Props) {
             >
               Show all
             </p> */}
+            </div>
+          </div>
+        )}
+
+        {account.witness_votes && (
+          <div className=" flex flex-col items-start gap-2">
+            <div className="flex flex-row font-bold text-left items-center gap-1">
+              <p>Witness</p>
+              <p className="text-sm font-semibold">
+                {account.proxy ? "proxy" : "votes"}
+              </p>
+            </div>
+            <div className=" flex flex-row items-center gap-4 px-3">
+              <AvatarGroup isBordered size="md" max={5}>
+                {(account.proxy ? [account.proxy] : account.witness_votes)?.map(
+                  (people) => (
+                    <SLink key={people} className="!ms-1" href={`/@${people}`}>
+                      <Avatar key={people} src={getResizedAvatar(people)} />
+                    </SLink>
+                  )
+                )}
+              </AvatarGroup>
+              {!account.proxy && (
+                <p
+                  onClick={() => setWitnessModal(!witnessModal)}
+                  className=" text-tiny hover:underline cursor-pointer"
+                >
+                  Show all
+                </p>
+              )}
             </div>
           </div>
         )}
@@ -316,6 +349,49 @@ export default memo(function ProfileInfoCard(props: Props) {
                   isFollowing={followerModal.isFollowing}
                   username={profileInfo.name}
                 />
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        isOpen={witnessModal}
+        onOpenChange={(isOpen) => {
+          setWitnessModal(false);
+        }}
+        placement="top-center"
+        scrollBehavior="inside"
+        closeButton
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader>
+                <div className="flex flex-col gap-2 items-start">
+                  <div className=" flex flex-row items-center gap-1">
+                    <p>Witness votes by</p>
+
+                    <div className="flex gap-1 items-center" key={account.name}>
+                      <SAvatar size="xs" username={account.name} />
+                      <SLink
+                        className="hover:text-blue-500 text-sm font-normal"
+                        href={`/@${account.name}`}
+                      >
+                        @{account.name}
+                      </SLink>
+                    </div>
+                  </div>
+
+                  <p className="text-xs opacity-disabled">
+                    {`@${account.name} have ${
+                      30 - (account?.witness_votes?.length || 0)
+                    } votes remaining. Can vote for a maximum of 30 witnesses.`}
+                  </p>
+                </div>
+              </ModalHeader>
+              <ModalBody>
+                <WitnessVotesCard witnesses={account.witness_votes} />
               </ModalBody>
             </>
           )}

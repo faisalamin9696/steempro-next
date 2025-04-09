@@ -7,6 +7,7 @@ import { RepliesReducer } from "./reducers/RepliesReducer";
 import { LoginReducer } from "./reducers/LoginReducer";
 import { CommunityReducer } from "./reducers/CommunityReducer";
 import { ScheduleReducer } from "./reducers/ScheduleReducer";
+import { CommonReducer } from "./reducers/CommonReducer";
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     repliesReducer: RepliesReducer,
     loginReducer: LoginReducer,
     scheduleReducer: ScheduleReducer,
+    commonReducer: CommonReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

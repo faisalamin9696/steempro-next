@@ -1,37 +1,20 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import useSWR from "swr";
-import { fetchSds } from "@/libs/constants/AppFunctions";
+import React, { useState } from "react";
 import SAvatar from "@/components/SAvatar";
 import TableWrapper from "./wrappers/TableWrapper";
 import SLink from "./SLink";
 
-export default function FollowersCard({
-  username,
-  isFollowing,
+export default function WitnessVotesCard({
+  witnesses,
 }: {
-  username: string;
-  isFollowing?: boolean;
+  witnesses: string[];
 }) {
-  const URL = `/followers_api/get${
-    isFollowing ? "Following" : "Followers"
-  }/${username}/100000`;
-
-  if (!username) return null;
-
-  const { data, isLoading } = useSWR(URL, fetchSds<string[]>);
-  const [allRows, setAllRows] = useState<{ username: string }[]>([]);
-
-  useEffect(() => {
-    if (data) {
-      const mappedData = data.map((item) => ({
-        username: item,
-      }));
-
-      setAllRows(mappedData);
-    }
-  }, [data]);
+  const [allRows, setAllRows] = useState(
+    witnesses.map((item) => ({
+      username: item,
+    }))
+  );
 
   const [filterValue, setFilterValue] = React.useState<string>("");
   const hasSearchFilter = Boolean(filterValue);
@@ -50,7 +33,6 @@ export default function FollowersCard({
 
   return (
     <TableWrapper
-      isLoading={isLoading}
       topContentDropdown={<></>}
       baseVarient
       hidePaginationActions
@@ -64,7 +46,9 @@ export default function FollowersCard({
         return (
           <div className="flex gap-2 items-center p-2" key={row.username}>
             <SAvatar size="xs" username={row.username} />
-            <SLink className="hover:text-blue-500" href={`/@${row.username}`}>{row.username}</SLink>
+            <SLink className="hover:text-blue-500" href={`/@${row.username}`}>
+              {row.username}
+            </SLink>
           </div>
         );
       }}

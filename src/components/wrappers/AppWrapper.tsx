@@ -9,6 +9,7 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "@/libs/constants/AppFunctions";
+import { addCommonDataHandler } from "@/libs/redux/reducers/CommonReducer";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { saveSteemGlobals } from "@/libs/redux/reducers/SteemGlobalReducer";
 import { getAccountExt } from "@/libs/steem/sds";
@@ -101,9 +102,11 @@ export default function AppWrapper({
     }
   }, [session?.user?.name, username]);
 
-  const { data: globalData } = useSWR(
+  const { data: globalData, isValidating: isValidatingGlobal } = useSWR(
     `/steem_requests_api/getSteemProps`,
-    fetchSds<SteemProps>,
+    () => {
+      fetchSds<SteemProps>;
+    },
     {
       shouldRetryOnError: true,
       refreshInterval: 600000, // 10 minutes
@@ -111,11 +114,23 @@ export default function AppWrapper({
     }
   );
 
-  const { data: accountData } = useSWR(username && [username], getAccountExt, {
-    shouldRetryOnError: true,
-    refreshInterval: 300000, 
-    errorRetryInterval: 3000,
-  });
+  const { data: accountData, isValidating: isValidatingAccount } = useSWR(
+    username ? [username, "null"] : null, // Pass both account and observer
+    ([account, observer]) => getAccountExt(account, observer), // Destructure the array to pass arguments properly
+    {
+      shouldRetryOnError: true,
+      refreshInterval: 300000,
+      errorRetryInterval: 3000,
+    }
+  );
+
+  useEffect(() => {
+    dispatch(
+      addCommonDataHandler({
+        isLoadingAccount: isValidatingAccount || isValidatingGlobal,
+      })
+    );
+  }, [isValidatingAccount, isValidatingGlobal]);
 
   const URL = `/notifications_api/getFilteredUnreadCount/${
     loginInfo?.name
@@ -126,7 +141,7 @@ export default function AppWrapper({
     fetchSds<number>,
     {
       shouldRetryOnError: true,
-      refreshInterval: 300000, 
+      refreshInterval: 300000,
       errorRetryInterval: 10000,
     }
   );

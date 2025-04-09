@@ -37,8 +37,10 @@ interface Props extends TableProps {
   topContentEnd?: React.ReactNode;
   headerColumnTitle?: string;
   topContentDropdown?: React.ReactNode;
+  topRowContent?: React.ReactNode;
   mobileVisibleColumns?: string[];
   inputClassName?: string;
+  topContentClassName?: string;
   skipPaging?: boolean;
   isLoading?: boolean;
   cellWrapper?: (item: any, children: React.ReactNode) => React.ReactNode;
@@ -66,6 +68,8 @@ function TableWrapper(props: Props) {
     isLoading,
     cellWrapper,
     stickyTop,
+    topRowContent,
+    topContentClassName,
   } = props;
 
   const [page, setPage] = React.useState(1);
@@ -188,7 +192,8 @@ function TableWrapper(props: Props) {
       <div
         className={twMerge(
           "flex flex-col gap-4",
-          stickyTop && "sticky top-0 z-20 pb-1 bg-default-50"
+          stickyTop && "sticky top-0 z-20 pb-1 bg-default-50",
+          topContentClassName
         )}
       >
         {title && <p className="text-lg font-semibold">{title}</p>}
@@ -257,6 +262,8 @@ function TableWrapper(props: Props) {
             </label>
           </div>
         )}
+
+        {topRowContent}
       </div>
     );
   }, [
@@ -265,6 +272,7 @@ function TableWrapper(props: Props) {
     onSearchChange,
     topContentDropdown,
     topContentEnd,
+    topRowContent,
   ]);
 
   const classNames = React.useMemo(
