@@ -104,9 +104,7 @@ export default function AppWrapper({
 
   const { data: globalData, isValidating: isValidatingGlobal } = useSWR(
     `/steem_requests_api/getSteemProps`,
-    () => {
-      fetchSds<SteemProps>;
-    },
+    fetchSds<SteemProps>,
     {
       shouldRetryOnError: true,
       refreshInterval: 600000, // 10 minutes

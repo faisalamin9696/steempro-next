@@ -125,7 +125,7 @@ function ProposalItemCard({ proposal }: { proposal: Proposal }) {
               </div>
             </div>
 
-            <div className="max-sm:gap-4 flex flex-col max-sm:flex-row-reverse sm:justify-between items-center">
+            <div className="max-sm:gap-4 flex flex-col max-sm:flex-row-reverse sm:justify-between items-end">
               <ProposalVoteButton proposal={proposal} />
 
               <p className="opacity-disabled flex flex-row items-center gap-1">

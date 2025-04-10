@@ -93,7 +93,7 @@ export default function ProposalVoteButton({
       <PopoverTrigger>
         <Button
           isIconOnly
-          variant="flat"
+          variant={isVoted ? "flat" : "solid"}
           isDisabled={voteMutation.isPending}
           isLoading={voteMutation.isPending}
           color={isVoted ? "success" : "default"}
