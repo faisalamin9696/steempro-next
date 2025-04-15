@@ -44,7 +44,9 @@ export default function TransferHistoryTab({ data }: { data: AccountExt }) {
   const filters = `author_reward,curation_reward,withdraw_vesting,cancel_transfer_from_savings,claim_reward_balance,fill_convert_request,
 fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_from_savings,transfer_to_savings,transfer_to_vesting`;
 
-  const URL = `/account_history_api/getHistoryByOpTypesTime/${data.name}/${filters}/${start_date}-${end_date}`;
+  const URL = data.name
+    ? `/account_history_api/getHistoryByOpTypesTime/${data.name}/${filters}/${start_date}-${end_date}`
+    : null;
   const { data: historyData, isLoading: isLoading } = useSWR(
     URL,
     fetchSds<AccountHistory[]>

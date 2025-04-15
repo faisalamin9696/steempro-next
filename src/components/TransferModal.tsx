@@ -100,7 +100,10 @@ const TransferModal = (props: Props): React.ReactNode => {
   const availableBalance =
     asset === "VESTS"
       ? vestToSteem(
-          loginInfo.vests_own - loginInfo.vests_out - loginInfo.powerdown,
+          loginInfo.vests_own -
+            loginInfo.vests_out -
+            loginInfo.powerdown +
+            loginInfo.powerdown_done,
           globalData.steem_per_share
         ) + (oldSpDelegation ?? 0)
       : asset === "STEEM"

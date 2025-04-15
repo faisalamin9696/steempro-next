@@ -574,16 +574,21 @@ export default function ReplyFooter({
               onImageUpload={() => {}}
               onImageInvalid={() => {}}
               rows={6}
+              isDisabled={isPosting}
             />
 
             <div className="flex justify-between">
-              <ClearFormButton onClearPress={handleClear} />
+              <ClearFormButton
+                onClearPress={handleClear}
+                isDisabled={isPosting}
+              />
 
               <div className="flex gap-2 ">
                 {
                   <Button
                     radius="full"
                     size="sm"
+                    isDisabled={isPosting}
                     onPress={() => {
                       if (showReply) toggleReply();
                       else toggleEdit();

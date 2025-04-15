@@ -397,16 +397,21 @@ export default memo(function PostReplies(props: Props) {
                 onImageUpload={() => {}}
                 onImageInvalid={() => {}}
                 rows={6}
+                isDisabled={isPosting}
               />
 
               <div className="flex justify-between">
-                <ClearFormButton onClearPress={handleClear} />
+                <ClearFormButton
+                  isDisabled={isPosting}
+                  onClearPress={handleClear}
+                />
 
                 <div className="flex gap-2 ">
                   {
                     <Button
                       radius="full"
                       size="sm"
+                      isDisabled={isPosting}
                       onPress={() => {
                         toggleReply();
                       }}
