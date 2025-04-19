@@ -1,6 +1,6 @@
 import { Button } from "@heroui/button";
 import parse, { domToReact } from "html-react-parser";
-import React from "react";
+import React, { useState } from "react";
 import CommentCover from "../comment/components/CommentCover";
 import "./style.scss";
 import { MdOpenInNew } from "react-icons/md";
@@ -21,6 +21,8 @@ export function ParsedBody({
         .open(getProxyImageURL(proxifyImageUrl(url), "large"), "_blank")
         ?.focus();
   }
+
+  const [showOpen, setShowOpen] = useState(false);
   const options = {
     replace(domNode) {
       if (domNode?.attribs && domNode?.name === "img") {
@@ -31,9 +33,10 @@ export function ParsedBody({
               src={domNode?.attribs?.src}
               alt={domNode?.attribs?.alt}
               noCard
+              onLoadCompleted={() => setShowOpen(true)}
             />
 
-            <Button
+            {showOpen && <Button
               size="sm"
               isIconOnly
               title="Open image"
@@ -43,7 +46,7 @@ export function ParsedBody({
               className="open-button  absolute top-0 right-0 m-1"
             >
               <MdOpenInNew size={18} />
-            </Button>
+            </Button>}
 
             {/* <NsfwOverlay /> */}
           </div>

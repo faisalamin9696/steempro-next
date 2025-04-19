@@ -260,21 +260,24 @@ export const validateCommentBody = (
   return true;
 };
 
-export function getEditorDraft() {
-  const draftString = secureDecrypt(
-    localStorage.getItem("@secure.j.post_draft") ?? "",
-    process.env.NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY
-  );
-  const draft = JSON.parse(draftString || `{}`) as {
-    title: string;
-    markdown: string;
-    tags: string;
-    beneficiaries: Beneficiary[];
-    community: Community;
-  };
+// export function getPostDraft() {
+//   const draftString = secureDecrypt(
+//     localStorage.getItem("@secure.j.post_draft") ?? "",
+//     process.env.NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY
+//   );
+//   const draft = JSON.parse(draftString || `{}`) as {
+//     title: string;
+//     markdown: string;
+//     tags: string;
+//     beneficiaries: Beneficiary[];
+//     community: Community;
+//     commentMarkdown:string
+//   };
 
-  return draft;
-}
+//   return draft;
+// }
+
+
 
 export function validateTagInput(value) {
   const cats = value.trim().replace(/#/g, "").split(/ +/);

@@ -49,7 +49,7 @@ export async function fetchSds<T>(
     const parsed = mapSds(result) as T; // Assuming mapSds returns the correct type
     return parsed;
   } else {
-    throw new Error(result.error!);
+    throw new Error(result?.error || String(result));
   }
 }
 

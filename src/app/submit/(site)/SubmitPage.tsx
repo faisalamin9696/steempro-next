@@ -30,7 +30,6 @@ import {
   extractMetadata,
   generatePermlink,
   generateReplyPermlink,
-  getEditorDraft,
   makeJsonMetadata,
   makeJsonMetadataForUpdate,
   makeJsonMetadataReply,
@@ -59,6 +58,7 @@ import { AsyncUtils } from "@/libs/utils/async.utils";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import EditorInput from "@/components/editor/EditorInput";
 import { twMerge } from "tailwind-merge";
+import { getPostDraft, savePostDraft } from "@/libs/draft";
 
 interface Props {
   params?: {
@@ -80,20 +80,20 @@ export default function SubmitPage(props: Props) {
   const [refCommunity, setRefCommunity] = useState(
     accountParams ? empty_community(accountParams, titleParams) : undefined
   );
-  const draft = getEditorDraft();
+  const draft = getPostDraft();
 
-  const [title, setTitle] = useState(draft?.title || "");
-  const [tags, setTags] = useState(draft?.tags || "");
+  const [title, setTitle] = useState(draft.title);
+  const [tags, setTags] = useState(draft.tags);
   const [markdown, setMarkdown] = useState(
-    isEdit ? oldPost?.body : draft?.markdown || ""
+    isEdit ? oldPost?.body : draft.markdown
   );
 
   const [reward, setReward] = React.useState(rewardTypes[1]);
   const [beneficiaries, setBeneficiaries] = React.useState<Beneficiary[]>(
-    isEdit ? [] : draft?.beneficiaries || []
+    isEdit ? [] : draft.beneficiaries
   );
   const [community, setCommunity] = useState<Community | undefined>(
-    isEdit ? undefined : draft?.community
+    isEdit ? undefined : draft.community
   );
 
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
@@ -124,19 +124,14 @@ export default function SubmitPage(props: Props) {
 
   function saveDraft() {
     if (!isEdit)
-      secureLocalStorage.setItem("post_draft", {
-        title: title,
-        markdown: markdown,
-        tags: tags,
-        beneficiaries: beneficiaries,
-        community: community,
-      });
+      savePostDraft(title, markdown, tags, beneficiaries, community)
   }
+
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       saveDraft();
-    }, 1000);
+    }, 800);
 
     return () => clearTimeout(timeout);
   }, [title, markdown, tags, beneficiaries, community]);
@@ -603,7 +598,7 @@ export default function SubmitPage(props: Props) {
         className={twMerge(
           `flex flex-col w-full  gap-2`,
           !oldPost &&
-            "1md:w-[50%] 1md:float-start 1md:sticky 1md:z-[1] 1md:self-start 1md:top-[80px] pb-5"
+          "1md:w-[50%] 1md:float-start 1md:sticky 1md:z-[1] 1md:self-start 1md:top-[80px] pb-5"
         )}
       >
         {!isEditComment && (
@@ -656,8 +651,8 @@ export default function SubmitPage(props: Props) {
           value={markdown}
           isDisabled={isLoading}
           onChange={setMarkdown}
-          onImageUpload={() => {}}
-          onImageInvalid={() => {}}
+          onImageUpload={() => { }}
+          onImageInvalid={() => { }}
         />
 
         <div className="flex gap-2 relativeitems-center flex-row">

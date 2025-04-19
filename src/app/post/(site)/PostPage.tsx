@@ -39,6 +39,7 @@ export default function PostPage(props: Props) {
     useAppSelector((state) => state.commentReducer.values)[
       `${data.author}/${data.permlink}`
     ] ?? data;
+    
   const settings =
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
   const [editMode, setEditMode] = useState(false);

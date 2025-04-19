@@ -371,7 +371,7 @@ type Setting = {
     usersList: { name: string; weight: number; community: string }[];
   };
 };
-
+ 
 type FeedStyle = "blogs" | "list" | "grid";
 
 type PostingContent = {

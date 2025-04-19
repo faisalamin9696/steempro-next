@@ -15,6 +15,7 @@ interface Props {
   alt?: string;
   isNsfw?: boolean;
   targetUrl?: string;
+  onLoadCompleted?: () => void;
 }
 export default memo(function CommentCover(props: Props) {
   let { size, src, thumbnail, className, noCard, alt, isNsfw, targetUrl } =
@@ -24,6 +25,7 @@ export default memo(function CommentCover(props: Props) {
 
   function onLoadCompleted() {
     if (isFetching) setIsFetching(false);
+    props.onLoadCompleted && props.onLoadCompleted();
   }
 
   return !!src ? (

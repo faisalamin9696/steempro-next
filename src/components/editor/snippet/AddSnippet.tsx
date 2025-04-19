@@ -9,7 +9,6 @@ import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { cryptoUtils, Signature } from "@steempro/dsteem";
 import { signMessage } from "@/libs/steem/condenser";
 import moment from "moment";
-import { useSWRConfig } from "swr";
 import { useLogin } from "@/components/auth/AuthProvider";
 
 interface Props {
@@ -138,8 +137,8 @@ function AddSnippet(props: Props) {
       <EditorInput
         value={body}
         onChange={setBody}
-        onImageUpload={() => {}}
-        onImageInvalid={() => {}}
+        onImageUpload={() => { }}
+        onImageInvalid={() => { }}
         maxLength={5000}
         isSnipping
         isDisabled={isPending}

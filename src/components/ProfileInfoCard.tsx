@@ -66,7 +66,7 @@ export default memo(function ProfileInfoCard(props: Props) {
 
   const cover_picture = proxifyImageUrl(
     posting_json_metadata?.profile?.cover_image ?? "",
-    "500x98",
+    "1024x720",
     true
   );
 

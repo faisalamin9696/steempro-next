@@ -38,6 +38,7 @@ import {
 import { cryptoUtils, Signature } from "@steempro/dsteem";
 import SLink from "./SLink";
 import { twMerge } from "tailwind-merge";
+import { savePostDraft } from "@/libs/draft";
 
 const StatusData = {
   0: { title: "Pending", color: "warning" },
@@ -284,15 +285,16 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
   async function handleDraft() {
     const options = JSON.parse(scheduleInfo?.options ?? "{}");
     const beneficiaries = options?.["extensions"]?.[0]?.[1]?.["beneficiaries"];
-    secureLocalStorage.setItem("post_draft", {
-      title: scheduleInfo.title,
-      markdown: scheduleInfo.body,
-      tags: scheduleInfo.tags?.replaceAll(",", " "),
-      beneficiaries: beneficiaries,
-      community: validateCommunity(scheduleInfo.parent_permlink)
+    savePostDraft(
+      scheduleInfo.title,
+      scheduleInfo.body,
+      scheduleInfo.tags?.replaceAll(",", " "),
+      beneficiaries,
+      validateCommunity(scheduleInfo.parent_permlink)
         ? empty_community(scheduleInfo.parent_permlink)
         : undefined,
-    });
+    )
+
 
     await handleDelete(true);
   }

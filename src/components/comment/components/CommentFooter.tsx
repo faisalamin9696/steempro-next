@@ -48,6 +48,7 @@ import { As } from "@heroui/system";
 import SLink from "@/components/SLink";
 import { AsyncUtils } from "@/libs/utils/async.utils";
 import { SiSteem } from "react-icons/si";
+import { mutate } from "swr";
 
 interface WrapperProps {
   children: React.ReactNode;
@@ -76,6 +77,7 @@ export default memo(function CommentFooter(props: CommentProps) {
 
   const isUpvoted =
     !!comment.observer_vote && comment.observer_vote_percent > 0;
+
   const isDownvoted =
     !!comment.observer_vote && comment.observer_vote_percent < 0;
   const isResteemd = !!comment.observer_resteem;
@@ -142,6 +144,25 @@ export default memo(function CommentFooter(props: CommentProps) {
         observer_vote_rshares: remove ? 0 : comment.observer_vote_rshares,
         status: "idle",
       };
+
+      mutate(
+        [`post-${comment.author}-${comment.permlink}`, session?.user?.name],
+        (prev) => [
+          newChanges,
+          prev?.[1] ?? null, // fallback to null if no metadata
+        ],
+        {
+          optimisticData: (current) => [
+            {
+              ...current?.[0], // safe access to current data
+              ...newChanges,   // merge new changes
+            },
+            current?.[1] ?? null,
+          ],
+          revalidate: false,
+          rollbackOnError: true, // optional: revert on failure
+        }
+      );
 
       dispatch(addCommentHandler(newChanges));
 
@@ -235,6 +256,24 @@ export default memo(function CommentFooter(props: CommentProps) {
         toast.error(error.message || JSON.stringify(error));
         return;
       }
+      mutate(
+        [`post-${comment.author}-${comment.permlink}`, session?.user?.name],
+        (prev) => [
+          { ...prev?.[0], observer_resteem: 1 },
+          prev?.[1] ?? null, // fallback to null if no metadata
+        ],
+        {
+          optimisticData: (current) => [
+            {
+              ...current?.[0], // safe access to current data
+              observer_resteem: 1,   // merge new changes
+            },
+            current?.[1] ?? null,
+          ],
+          revalidate: false,
+          rollbackOnError: true, // optional: revert on failure
+        }
+      );
       dispatch(addCommentHandler({ ...comment, observer_resteem: 1 }));
       toast.success("Resteemed");
     },
@@ -274,9 +313,9 @@ export default memo(function CommentFooter(props: CommentProps) {
         fetchedUser?.weight ?? settings.voteOptions.value ?? 100;
       timer = longPressUpvote
         ? setTimeout(() => {
-            handleVibrate();
-            castVote(voteWeight, false, true);
-          }, 800)
+          handleVibrate();
+          castVote(voteWeight, false, true);
+        }, 800)
         : undefined;
     }
     return () => clearTimeout(timer);
@@ -293,9 +332,9 @@ export default memo(function CommentFooter(props: CommentProps) {
         fetchedUser?.weight ?? settings.voteOptions.value ?? 100;
       timer = longPressDownvote
         ? setTimeout(() => {
-            handleVibrate();
-            castVote(voteWeight, true, true);
-          }, 800)
+          handleVibrate();
+          castVote(voteWeight, true, true);
+        }, 800)
         : undefined;
     }
     return () => clearTimeout(timer);
@@ -512,11 +551,10 @@ export default memo(function CommentFooter(props: CommentProps) {
             hoverable
             onPress={() => setBreakdownModal(!breakdownModal)}
             className="pr-2"
-            title={`${
-              !comment.max_accepted_payout
-                ? "Declined"
-                : "$" + comment.payout?.toLocaleString()
-            }  Payout`}
+            title={`${!comment.max_accepted_payout
+              ? "Declined"
+              : "$" + comment.payout?.toLocaleString()
+              }  Payout`}
           >
             <Popover
               placement="top"

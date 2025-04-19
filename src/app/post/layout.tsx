@@ -20,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   const thumbnail = isPost
     ? getThumbnail(result.json_images, "640x480")
-    : getResizedAvatar(result?.author, "medium");
+    : getResizedAvatar(result?.author, "small");
 
   const pageTitle = isPost ? result?.title : `RE: ${result?.root_title}`;
   const pageDescription = isPost

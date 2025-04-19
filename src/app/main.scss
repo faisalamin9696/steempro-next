@@ -1,3 +1,7 @@
 .comment-card {
   @apply bg-white/60 dark:bg-white/10;
 }
+
+svg {
+  @apply outline-none;
+}

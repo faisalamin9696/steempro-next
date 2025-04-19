@@ -30,6 +30,7 @@ import EmptyList from "@/components/EmptyList";
 import { Select, SelectItem } from "@heroui/select";
 import { useSession } from "next-auth/react";
 import { AsyncUtils } from "@/libs/utils/async.utils";
+import { getCommentDraft, saveCommentDraft } from "@/libs/draft";
 
 interface Props {
   comment: Post | Feed;
@@ -68,15 +69,30 @@ export default memo(function PostReplies(props: Props) {
   const { users } = JSON.parse(commentInfo.json_metadata ?? `{}`) || [];
 
   const [isLoading, setIsLoading] = useState(false);
-  const [markdown, setMarkdown] = useState("");
+  const draft = getCommentDraft(comment.link_id);
+  const [markdown, setMarkdown] = useState(draft.markdown);
   const rpm = readingTime(markdown);
 
   const [showReply, setShowReply] = useState(false);
   const [isPosting, setPosting] = useState(false);
   const { authenticateUser, isAuthorized } = useLogin();
   const { data: session } = useSession();
-
   const editorDiv = useRef<any>(null);
+
+
+  function saveDraft() {
+    saveCommentDraft(comment.link_id, markdown)
+  }
+
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      saveDraft();
+    }, 800);
+
+    return () => clearTimeout(timeout);
+  }, [markdown]);
+
 
   const repliesMutation = useMutation({
     mutationKey,
@@ -394,8 +410,8 @@ export default memo(function PostReplies(props: Props) {
                   ...(users ?? []),
                 ]}
                 onChange={setMarkdown}
-                onImageUpload={() => {}}
-                onImageInvalid={() => {}}
+                onImageUpload={() => { }}
+                onImageInvalid={() => { }}
                 rows={6}
                 isDisabled={isPosting}
               />
