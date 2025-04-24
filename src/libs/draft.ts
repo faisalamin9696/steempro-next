@@ -12,32 +12,6 @@ type PostDraft = {
   community?: Community;
 };
 
-export function saveCommentDraft(linkId: number, markdown: string) {
-  const existing = Cookies.get("comment_drafts");
-  const drafts = existing
-    ? (JSON.parse(existing) as Record<number, CommentDraft>)
-    : {};
-
-  drafts[linkId] = { markdown };
-
-  if (linkId && markdown)
-    Cookies.set("comment_drafts", JSON.stringify(drafts), {
-      expires: 7, // Cookie itself expires in 7 days
-      secure: true,
-      sameSite: "strict",
-    });
-}
-
-export function getCommentDraft(linkId: number) {
-  const existing = Cookies.get("comment_drafts");
-  if (!existing) return { markdown: "" };
-
-  const drafts = JSON.parse(existing) as Record<number, CommentDraft>;
-  const draft = drafts[linkId];
-
-  return { markdown: draft?.markdown || "" };
-}
-
 export function savePostDraft(
   title: string,
   markdown: string,
@@ -45,17 +19,7 @@ export function savePostDraft(
   beneficiaries: Beneficiary[],
   community?: Community
 ) {
-  //   const draft = existing
-  //     ? (JSON.parse(existing) as PostDraft)
-  //     : {
-  //         title: "",
-  //         markdown: "",
-  //         tags: "",
-  //         beneficiaries: [],
-  //         community: undefined,
-  //       };
-
-  Cookies.set(
+  localStorage.setItem(
     "post_draft",
     JSON.stringify({
       title,
@@ -63,27 +27,82 @@ export function savePostDraft(
       tags,
       beneficiaries,
       community,
-    }),
-    {
-      expires: 7, // Cookie itself expires in 7 days
-      secure: true,
-      sameSite: "strict",
-    }
+      expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days from now
+    })
   );
 }
 
-export function getPostDraft() {
-  const existing = Cookies.get("post_draft");
-  if (!existing)
-    return {
-      title: "",
-      markdown: "",
-      tags: "",
-      beneficiaries: [],
-      community: undefined,
+export function getPostDraft(): PostDraft {
+  const empty_draft = {
+    title: "",
+    markdown: "",
+    tags: "",
+    beneficiaries: [],
+    community: undefined,
+  };
+  const raw = localStorage.getItem("post_draft");
+  if (!raw) return empty_draft;
+
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed.expiresAt && Date.now() > parsed.expiresAt) {
+      localStorage.removeItem("post_draft");
+      return empty_draft;
+    }
+    return parsed;
+  } catch {
+    return empty_draft;
+  }
+}
+
+export function saveCommentDraft(linkId: number, markdown: string) {
+  const existing = localStorage.getItem("comment_drafts");
+  const drafts = existing
+    ? (JSON.parse(existing) as Record<
+        number,
+        { markdown: string; expiresAt: number }
+      >)
+    : {};
+
+  if (linkId && markdown) {
+    drafts[linkId] = {
+      markdown,
+      expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000, // expires in 7 days
     };
 
-  const draft = JSON.parse(existing) as PostDraft;
+    localStorage.setItem("comment_drafts", JSON.stringify(drafts));
+  }
+}
 
-  return draft;
+export function getCommentDraft(linkId: number) {
+  const existing = localStorage.getItem("comment_drafts");
+  if (!existing) return { markdown: "" };
+
+  const drafts = JSON.parse(existing) as Record<
+    number,
+    { markdown: string; expiresAt: number }
+  >;
+  const draft = drafts[linkId];
+  if (!draft) return { markdown: "" };
+
+  return { markdown: draft.markdown };
+}
+
+export function cleanupCommentDrafts() {
+  const existing = localStorage.getItem("comment_drafts");
+  if (!existing) return;
+
+  const drafts = JSON.parse(existing) as Record<
+    number,
+    { markdown: string; expiresAt: number }
+  >;
+  const now = Date.now();
+
+  for (const key in drafts) {
+    if (drafts[key].expiresAt < now) {
+      delete drafts[key];
+    }
+  }
+
+  localStorage.setItem("comment_drafts", JSON.stringify(drafts));
 }

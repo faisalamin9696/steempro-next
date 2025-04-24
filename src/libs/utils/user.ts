@@ -8,6 +8,7 @@ import { empty_settings } from "../constants/Placeholders";
 import CryptoJS from "crypto-js";
 import { updateCurrentSetting } from "../constants/AppConstants";
 const AUTH_STORAGE_KEY = "@secure.j.auth";
+const SETTINGS_STORAGE_KEY = "@secure.j.settings";
 
 export function getCredentials(password?: string): User | undefined {
   const credentialsString = secureDecrypt(
@@ -23,12 +24,8 @@ export function getCredentials(password?: string): User | undefined {
 
       if (isKeychain) {
         return {
-          username: credentials.username,
-          key: credentials.key,
-          type: credentials.type,
-          memo: "",
+          ...credentials,
           keychainLogin: credentials.key === "keychain",
-          passwordless: credentials.passwordless,
         };
       }
 
@@ -42,10 +39,10 @@ export function getCredentials(password?: string): User | undefined {
       if (privateKey) {
         return {
           username: credentials.username,
-          key: privateKey,
           type: credentials.type,
-          memo: "",
+          memo: credentials.memo,
           passwordless: credentials.passwordless,
+          key: privateKey,
         };
       }
       return { ...credentials, key: privateKey };
@@ -68,29 +65,25 @@ export const parsePostMeta = (metaData: string) => {
 };
 
 export function getAllCredentials(): User[] {
-  const accounts = secureLocalStorage.getItem("accounts") ?? "";
-  if (accounts) {
-    const credentials = (accounts ?? []) as User[];
-    if (credentials) return credentials;
-    else return [];
-  } else return [];
+  const accounts = (secureLocalStorage.getItem("accounts") ?? []) as User[];
+  const credentials = accounts.map((item) => {
+    return { ...item, keychainLogin: item.key === "keychain" };
+  });
+  return credentials;
 }
 
 export function addToCurrent(
   username: string,
   encKey: string,
   keyType: Keys,
-  passwordless: boolean
+  passwordless: boolean,
+  memoKey: string
 ) {
-  const isMemo = keyType === "MEMO";
-  let credentials: User | undefined;
-  if (keyType === "MEMO") credentials = getCredentials();
-
   secureLocalStorage.setItem("auth", {
     username: username,
-    key: isMemo && credentials ? credentials.key : encKey,
+    key: encKey,
     type: keyType,
-    memo: isMemo ? encKey : "",
+    memo: memoKey || "",
     passwordless,
   } as User);
 }
@@ -113,26 +106,46 @@ export function removeCredentials(credentials: User) {
   } catch {}
 }
 
+export function updateMemoKey(key: string) {
+  const credentials = getCredentials();
+  if (credentials) {
+    secureLocalStorage.setItem("auth", {
+      ...credentials,
+      memo: key,
+    } as User);
+    const isPasswordLess =
+      credentials?.passwordless ||
+      ["keychain", "steempro"].includes(credentials.key);
+
+    addToAccounts(
+      credentials.username,
+      credentials.key,
+      credentials.type,
+      isPasswordLess,
+      key
+    );
+  }
+}
+
 function addToAccounts(
   username: string,
   encKey: string,
   keyType: Keys,
-  passwordless: boolean
+  passwordless: boolean,
+  memoKey?: string
 ) {
   const accounts = (secureLocalStorage.getItem("accounts") ?? []) as User[];
   const index = accounts.findIndex(
     (account) => account.username === username && account.type === keyType
   );
-  const isMemo = keyType === "MEMO";
-
   const updatedAccounts =
     index !== -1
       ? [
           ...accounts.slice(0, index),
           Object.assign({}, accounts[index], {
-            key: isMemo ? accounts[index].key : encKey,
+            key: encKey,
             type: keyType,
-            memo: isMemo ? encKey : "",
+            memo: memoKey || "",
             passwordless,
           }),
           ...accounts.slice(index + 1),
@@ -141,7 +154,7 @@ function addToAccounts(
           username: username,
           key: encKey,
           type: keyType,
-          memo: isMemo ? encKey : "",
+          memo: memoKey || "",
           passwordless,
         });
 
@@ -155,25 +168,26 @@ export function saveCredentials(
   keyType: Keys,
   passwordless: boolean,
   current?: boolean,
-  isKeychain?: boolean
+  isKeychain?: boolean,
+  memoKey = ""
 ): User | undefined {
   const existAuth = getUserAuth() as User;
 
   if (isKeychain) {
     if (!existAuth || current || existAuth?.username === username) {
-      addToCurrent(username, privateKey, keyType, passwordless);
+      addToCurrent(username, privateKey, keyType, passwordless, memoKey);
 
       if (username !== existAuth?.username) {
         removeSessionToken(existAuth?.username);
       }
     }
 
-    addToAccounts(username, privateKey, keyType, passwordless);
+    addToAccounts(username, privateKey, keyType, passwordless, memoKey);
     return {
       username: username,
       key: privateKey,
       type: keyType,
-      memo: "",
+      memo: memoKey,
       passwordless,
     };
   }
@@ -181,41 +195,47 @@ export function saveCredentials(
   const encryptedKey = encryptPrivateKey(privateKey, password);
   if (encryptedKey) {
     if (!existAuth || current || existAuth?.username === username) {
-      addToCurrent(username, encryptedKey, keyType, passwordless);
+      addToCurrent(username, encryptedKey, keyType, passwordless, memoKey);
 
       if (username !== existAuth?.username) {
         removeSessionToken(existAuth?.username);
       }
     }
 
-    addToAccounts(username, encryptedKey, keyType, passwordless);
+    addToAccounts(username, encryptedKey, keyType, passwordless, memoKey);
     return {
       username: username,
       key: encryptedKey,
       type: keyType,
-      memo: "",
+      memo: memoKey,
       passwordless,
     };
   }
 }
 
 export function validatePassword(input: string): boolean {
-  const uppercaseRegex = /[A-Z]/;
-  const lowercaseRegex = /[a-z]/;
-  const digitRegex = /[0-9]/;
-  const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+  // const uppercaseRegex = /[A-Z]/;
+  // const lowercaseRegex = /[a-z]/;
+  // const digitRegex = /[0-9]/;
+  // const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
 
   return (
-    input.length >= 8 &&
-    uppercaseRegex.test(input) &&
-    lowercaseRegex.test(input) &&
-    digitRegex.test(input) &&
-    specialCharRegex.test(input)
+    input.length >= 4
+    // uppercaseRegex.test(input) &&
+    // lowercaseRegex.test(input) &&
+    // digitRegex.test(input) &&
+    // specialCharRegex.test(input)
   );
 }
 
 export function getSettings(): Setting {
-  const lsSettings = (secureLocalStorage.getItem("settings") ?? {}) as Setting;
+  const settingsString = secureDecrypt(
+    localStorage.getItem(SETTINGS_STORAGE_KEY) ?? "",
+    process.env.NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY
+  );
+
+  const lsSettings = JSON.parse(settingsString || `{}`) as Setting;
+
   if (Object.keys(lsSettings).length > 0) {
     const setting = { ...empty_settings(), ...lsSettings };
     updateCurrentSetting(setting);
@@ -225,7 +245,6 @@ export function getSettings(): Setting {
     return empty_settings();
   }
 }
-
 export function updateSettings(setting: Setting) {
   const lsSettings =
     (secureLocalStorage.getItem("settings") as Setting) ?? empty_settings();

@@ -100,7 +100,7 @@ export function CommunityActivities({ community }: { community: Community }) {
             }
           >
             {filteredData?.slice(0, limit)?.map((log) => {
-              return <CommunityActivityItem communityLog={log} />;
+              return <CommunityActivityItem key={log.id} communityLog={log} />;
             })}
           </InfiniteScroll>
         </ScrollShadow>

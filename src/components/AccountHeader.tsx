@@ -17,6 +17,7 @@ import { useSession } from "next-auth/react";
 import SLink from "./SLink";
 import { usePathname, useRouter } from "next/navigation";
 import Reputation from "./Reputation";
+import ChatButton from "./ChatButton";
 
 type Props = {
   account: AccountExt;
@@ -54,7 +55,7 @@ export default function AccountHeader(props: Props) {
 
   const cover_picture = proxifyImageUrl(
     posting_json_metadata?.profile?.cover_image ?? "",
-    "1024x200"
+    "1024x720"
   );
 
   return (
@@ -77,6 +78,7 @@ export default function AccountHeader(props: Props) {
           <SAvatar
             username={profileInfo.name}
             size="md"
+            loadSize="medium"
             className="hidden max-sm:block bg-background border-4 shadow-none border-background"
           />
         </div>
@@ -97,7 +99,10 @@ export default function AccountHeader(props: Props) {
                     @{profileInfo.name}
                   </SLink>
 
-                  <Reputation reputation={profileInfo.reputation} className=" font-semibold"  />
+                  <Reputation
+                    reputation={profileInfo.reputation}
+                    className=" font-semibold"
+                  />
                 </div>
               </div>
 
@@ -143,19 +148,7 @@ export default function AccountHeader(props: Props) {
                   Share
                 </Button>
               ) : (
-                <></>
-                // <Button
-                //   title="Create Post"
-                //   radius="full"
-                //   size="md"
-                //   className=" bg-foreground/10"
-                //   variant="flat"
-                //   href="/"
-                //   startContent={<BsChatDots size={18} />}
-                //   as={SLink}
-                // >
-                //   Chat
-                // </Button>
+                <ChatButton account={account} />
               )}
             </div>
           </div>

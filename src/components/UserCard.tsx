@@ -118,7 +118,7 @@ export const UserCard = memo((props: Props) => {
               <AvatarGroup isBordered size="sm">
                 {knownPeople?.map((people) => {
                   return (
-                    <STooltip content={people}>
+                    <STooltip content={people} key={people}>
                       <SLink href={`/@${people}/posts`}>
                         <Avatar src={getResizedAvatar(people)} />
                       </SLink>

@@ -51,9 +51,9 @@ export default memo(function RewardSelectButton(props: Props) {
         </PopoverTrigger>
         <PopoverContent>
           <div className="px-1 py-2">
-            <div className="space-y-1 text-white">
+            <div className="space-y-1">
               <p className="flex text-small font-bold">{"Reward type"}</p>
-              <p className="text-white/80 text-tiny">
+              <p className="text-tiny">
                 {"What type of tokens do you want as rewards?"}
               </p>
             </div>
@@ -70,8 +70,9 @@ export default memo(function RewardSelectButton(props: Props) {
               {rewardTypes?.map((reward) => {
                 return (
                   <Radio
-                    classNames={{ label: "text-white" }}
+                    classNames={{ label: "" }}
                     key={reward.shortTitle}
+                    className="gap-1"
                     value={JSON.stringify(reward)}
                   >
                     {reward.title}

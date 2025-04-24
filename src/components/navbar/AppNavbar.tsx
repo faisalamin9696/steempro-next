@@ -71,10 +71,12 @@ function AppNavbar() {
   const logoutDisclosure = useDisclosure();
   const [logoutLoading, setLogoutLoading] = useState(false);
   const commonInfo = useAppSelector((state) => state.commonReducer.values);
+  const [keyType, setKeyType] = useState(credentials?.type);
 
   // validate the local storage auth
   useMemo(async () => {
     const credentials = getCredentials();
+    setKeyType(credentials?.type);
     if (status === "authenticated") {
       if (!sessionKey && !getSessionToken(session.user?.name)) {
         setLocked(true);
@@ -220,6 +222,7 @@ function AppNavbar() {
               <Badge
                 size="sm"
                 content={loginInfo.unread_count ? "" : undefined}
+                showOutline={!!loginInfo.unread_count}
                 // content={
                 //   loginInfo.unread_count > 99
                 //     ? "99+"
@@ -270,8 +273,8 @@ function AppNavbar() {
                     <SAvatar
                       onlyImage
                       borderColor={
-                        credentials?.type
-                          ? BorderColorMap[credentials.type]
+                        keyType
+                          ? BorderColorMap[keyType]
                           : undefined
                       }
                       username={session?.user?.name ?? ""}
@@ -279,6 +282,7 @@ function AppNavbar() {
                         "shadow-lg cursor-pointer bg-foreground-900/40 border-2 p-[1px]"
                       )}
                       size="sm"
+                      loadSize="medium"
                     />
                   </div>
                 </PopoverTrigger>
@@ -415,7 +419,7 @@ function AppNavbar() {
         <NotificationsModal
           isOpen={notiDisclosure.isOpen}
           onOpenChange={notiDisclosure.onOpenChange}
-          username={session?.user?.name ?? ""}
+          username={session?.user?.name ?? "null"}
         />
       </div>
 

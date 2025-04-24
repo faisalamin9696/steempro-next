@@ -43,7 +43,7 @@ export function ParsedBody({
               variant="flat"
               onPress={() => handleOpenImage(domNode?.attribs?.src)}
               radius="full"
-              className="open-button  absolute top-0 right-0 m-1"
+              className="open-button absolute top-0 right-0 m-1"
             >
               <MdOpenInNew size={18} />
             </Button>}

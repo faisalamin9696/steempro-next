@@ -13,6 +13,8 @@ import { PrivKey } from "../utils/user";
 import { toast } from "sonner";
 import { CurrentSetting } from "../constants/AppConstants";
 import { steemToVest } from "../helper/vesting";
+import { encryptPrivateKey } from "../utils/encryption";
+import moment from "moment";
 global.Buffer = global.Buffer || require("buffer").Buffer;
 
 const IMAGE_API = AppStrings.image_hostings[0];
@@ -176,6 +178,8 @@ export function getKeyType(account: AccountExt, key: string) {
 
   try {
     let privKey = key;
+    let privMemoKey = "";
+
     let keyType: string = "";
     if (key[0] !== "5") {
       const privPostingKey = PrivateKey.fromLogin(
@@ -189,8 +193,16 @@ export function getKeyType(account: AccountExt, key: string) {
         account?.posting_key_auths[0][0]
       );
       if (isvalid) {
-        // derive  the active key from master key
+        // derive the active key from master key
         privKey = PrivateKey.fromLogin(account.name, key, "posting").toString();
+
+        // derive the memo key from master key
+        privMemoKey = PrivateKey.fromLogin(
+          account.name,
+          key,
+          "memo"
+        ).toString();
+
         keyType = AppStrings.key_types.posting;
       } else {
         keyType = "";
@@ -204,7 +216,6 @@ export function getKeyType(account: AccountExt, key: string) {
       ];
 
       const publicKey = wifToPublic(key);
-
 
       const publicKeys = [
         account?.active_key_auths?.[0]?.[0],
@@ -224,6 +235,7 @@ export function getKeyType(account: AccountExt, key: string) {
           account: account.name,
           type: keyType as Keys,
           key: privKey,
+          memo: privMemoKey,
         }
       : "";
   } catch (e: any) {
@@ -1899,3 +1911,112 @@ export const voteForProposal = async (
     )
   );
 };
+
+export const sendMessage = async (
+  sender: AccountExt,
+  recipient: string,
+  message: string,
+  ref_tid: string | null | undefined,
+  key: string,
+  isKeychain?: boolean
+) => {
+  const payload = {
+    sender: sender.name,
+    recipient: recipient,
+    message: message,
+    ref_tid: ref_tid,
+    secret: "",
+  };
+
+  const custom_json = {
+    id: "steempro_chat",
+    required_auths: [],
+    required_posting_auths: [sender.name],
+    json: JSON.stringify(payload),
+  };
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    const secretResponse = await axios.post("/api/chat/secret");
+
+    if (secretResponse?.data?.secret) {
+      // Parse JSON string to object
+      const parsed = JSON.parse(custom_json.json);
+      // Update secret
+      parsed.secret = secretResponse?.data?.secret;
+      // Re-stringify and update custom_json
+      custom_json.json = JSON.stringify(parsed);
+      const opArray: Operation = ["custom_json", custom_json];
+
+      return new Promise((resolve, reject) => {
+        window.steem_keychain.requestBroadcast(
+          sender.name,
+          [opArray],
+          "Posting",
+          function (response) {
+            if (response?.success) {
+              resolve(response);
+            } else {
+              reject(response);
+            }
+          }
+        );
+      });
+    }
+  }
+
+  const keyData = getKeyType(sender, key);
+
+  if (keyData && PrivKey.atLeast(keyData.type, "POSTING")) {
+    const secretResponse = await axios.post("/api/chat/secret");
+    if (secretResponse?.data?.secret) {
+      // Parse JSON string to object
+      const parsed = JSON.parse(custom_json.json);
+      // Update secret
+      parsed.secret = secretResponse?.data?.secret;
+      // Re-stringify and update custom_json
+      custom_json.json = JSON.stringify(parsed);
+      const opArray: Operation = ["custom_json", custom_json];
+
+      const privateKey = PrivateKey.fromString(key);
+      return new Promise((resolve, reject) => {
+        client.broadcast
+          .sendOperations([opArray], privateKey)
+          .then(async (result) => {
+            resolve(result);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    }
+  }
+
+  return Promise.reject(
+    new Error(
+      "Check private key permission! Required private posting key or above."
+    )
+  );
+};
+
+export function requestKeychainSignBuffer(
+  username: string,
+  message: any,
+  keyType: Keys
+): Promise<any> {
+  return new Promise((resolve, reject) => {
+    window.steem_keychain.requestSignBuffer(
+      username,
+      message,
+      keyType.toLowerCase(),
+      function (response) {
+        if (response?.success && response?.result) {
+          resolve(response);
+        } else {
+          reject(new Error(response?.message || "Keychain failed"));
+        }
+      }
+    );
+  });
+}

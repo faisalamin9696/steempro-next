@@ -13,7 +13,7 @@ import NotificationsTable from "./NotificationsTable";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 
 interface Props {
-  username: string | null;
+  username: string;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
 }

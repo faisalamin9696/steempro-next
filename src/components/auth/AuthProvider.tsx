@@ -14,8 +14,8 @@ import { useDisclosure } from "@heroui/modal";
 // Define the type for your context value
 interface AuthContextType {
   credentials?: User;
-  authenticateUser: (isNew?: boolean) => void;
-  isAuthorized: () => boolean;
+  authenticateUser: (addNew?: boolean, onlyMemo?: boolean) => void;
+  isAuthorized: (memo?: boolean) => boolean;
   isLogin: () => boolean;
   setCredentials: React.Dispatch<React.SetStateAction<User | undefined>>;
 }
@@ -43,7 +43,8 @@ export const AuthProvider = (props: Props) => {
   let [credentials, setCredentials] = useState<User | undefined>(
     getCredentials()
   );
-  const [isNew, setIsNew] = useState(false);
+  const [addNew, setAddNew] = useState(false);
+  const [addMemo, setAddMemo] = useState(false);
 
   // useEffect(() => {
   //     setCredentials(getCredentials());
@@ -57,8 +58,11 @@ export const AuthProvider = (props: Props) => {
     );
   }
 
-  function isAuthorized() {
+  function isAuthorized(memo?: boolean) {
     credentials = getCredentials();
+    if (memo) {
+      if (!credentials?.memo || !isLogin()) return false;
+    }
 
     if (credentials?.keychainLogin) return true;
 
@@ -69,14 +73,18 @@ export const AuthProvider = (props: Props) => {
     return isLogin() && (!!sessionKey || !!token);
   }
 
-  function authenticateUser(isNew?: boolean) {
-    if (isNew) {
-      setIsNew(true);
+  function authenticateUser(addNew?: boolean, onlyMemo?: boolean) {
+    if (addNew) {
+      setAddNew(true);
       authDisclosure.onOpen();
     }
 
     credentials = getCredentials();
 
+    if (onlyMemo && !credentials?.memo && isLogin()) {
+      setAddMemo(true);
+      authDisclosure.onOpen();
+    }
     if (credentials?.keychainLogin) {
       return true;
     }
@@ -116,18 +124,18 @@ export const AuthProvider = (props: Props) => {
 
       {authDisclosure.isOpen && (
         <AuthModal
-          onForget={() => {
-            authenticateUser(true);
-          }}
-          isNew={isNew}
+          addMemo={addMemo}
+          addNew={addNew}
           open={authDisclosure.isOpen}
           onClose={() => {
-            setIsNew(false);
+            setAddNew(false);
+            setAddMemo(false);
             authDisclosure.onClose();
           }}
           onLoginSuccess={(user) => {
             setCredentials(user);
-            if (isNew) setIsNew(false);
+            if (addNew) setAddNew(false);
+            if (addMemo) setAddMemo(false);
           }}
         />
       )}

@@ -21,6 +21,7 @@ import AppNavbar from "@/components/navbar/AppNavbar";
 import { ThemeProvider } from "next-themes";
 import { initFirebase } from "@/libs/helper/firabase";
 import { useRouter } from "next/navigation";
+import { cleanupCommentDrafts } from "@/libs/draft";
 
 interface Props {
   children: React.ReactNode;
@@ -71,6 +72,7 @@ export function Providers(props: Props) {
 
   useEffect(() => {
     setIsMounted(true);
+    cleanupCommentDrafts();
     PiwikPro.initialize(
       "70c8840a-d55a-4a1f-a3af-d1a06b46a5dc",
       "https://steempro.piwik.pro"

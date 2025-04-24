@@ -309,11 +309,13 @@ export default function BalanceTab({
         />
       )}
 
-      <PowerDownModal
-        isOpen={powerDownModal.isOpen}
-        cancel={powerDownModal.cancel}
-        onOpenChange={(isOpen) => setPowerDownModal({ isOpen: isOpen })}
-      />
+      {powerDownModal.isOpen && (
+        <PowerDownModal
+          isOpen={powerDownModal.isOpen}
+          cancel={powerDownModal.cancel}
+          onOpenChange={(isOpen) => setPowerDownModal({ isOpen: isOpen })}
+        />
+      )}
 
       {balanceDisclosure.isOpen && (
         <Modal

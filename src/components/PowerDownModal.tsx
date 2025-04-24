@@ -22,7 +22,6 @@ import moment from "moment";
 import { isNumeric } from "@/libs/utils/helper";
 import { Slider } from "@heroui/slider";
 import { steemToVest, vestToSteem } from "@/libs/helper/vesting";
-
 import KeychainButton from "./KeychainButton";
 
 interface Props {
@@ -42,8 +41,8 @@ const PowerDownModal = (props: Props): React.ReactNode => {
   const [amount, setAmount] = useState(cancel ? "0" : "");
 
   const availableBalance = vestToSteem(
-    loginInfo.vests_own - loginInfo.vests_out - loginInfo.powerdown,
-    globalData.steem_per_share
+    loginInfo.vests_own - loginInfo.vests_out - loginInfo.powerdown +loginInfo.powerdown_done,
+    globalData.steem_per_share 
   );
 
   const withdrawMutation = useMutation({
@@ -131,7 +130,7 @@ const PowerDownModal = (props: Props): React.ReactNode => {
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              {cancel ? "Cancel " : "" + "Power Down"}
+              {cancel ? "Cancel Power Down" : "" + "Power Down"}
             </ModalHeader>
             <ModalBody className=" flex flex-col gap-6">
               <div className="flex flex-col gap-4 items-start">

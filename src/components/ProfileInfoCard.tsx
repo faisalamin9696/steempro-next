@@ -24,6 +24,7 @@ import SLink from "./SLink";
 import { FaLocationDot } from "react-icons/fa6";
 import WitnessVotesCard from "./WitnessVotesCard";
 import SAvatar from "./SAvatar";
+import ChatButton from "./ChatButton";
 
 type Props = {
   account: AccountExt;
@@ -135,19 +136,7 @@ export default memo(function ProfileInfoCard(props: Props) {
                   Share
                 </Button>
               ) : (
-                <></>
-                // <Button
-                //   title="Create Post"
-                //   radius="full"
-                //   size="md"
-                //   className=" bg-foreground/10"
-                //   variant="flat"
-                //   href="/"
-                //   startContent={<BsChatDots size={18} />}
-                //   as={SLink}
-                // >
-                //   Chat
-                // </Button>
+                <ChatButton account={account} />
               )}
             </div>
           )}
@@ -185,7 +174,7 @@ export default memo(function ProfileInfoCard(props: Props) {
         </div>
 
         <div className=" flex flex-col max-w-[300px] w-full gap-2">
-          <div className="flex justify-between items-start">
+          <div className="flex justify-between items-start gap-2  border-b-1 dark:border-default-300 pb-3">
             <div className=" flex flex-row gap-1 items-center text-tiny">
               <FaHeart size={16} className=" me-1" />
               <div
@@ -199,7 +188,7 @@ export default memo(function ProfileInfoCard(props: Props) {
               </div>
             </div>
 
-            <div className=" flex flex-row gap-1 items-center text-tiny">
+            <div className=" flex flex-row gap-1 items-center text-tiny lg:me-2 me-3">
               <IoFlash size={16} className=" me-1" />
               <div
                 className=" flex flex-row gap-1 hover:underline cursor-pointer"
@@ -213,7 +202,7 @@ export default memo(function ProfileInfoCard(props: Props) {
             </div>
           </div>
 
-          <div className="flex justify-between text-left mt-[0.5rem] gap-[0.25rem] mb-[0.5rem]">
+          <div className="flex justify-between text-left gap-[0.25rem] mb-[0.5rem] ">
             <div className="flex flex-col items-start flex-1">
               <p className=" font-bold text-sm">
                 {abbreviateNumber(profileInfo.count_root_posts)}
@@ -287,35 +276,34 @@ export default memo(function ProfileInfoCard(props: Props) {
           </div>
         )}
 
-        {account.witness_votes && (
-          <div className=" flex flex-col items-start gap-2">
-            <div className="flex flex-row font-bold text-left items-center gap-1">
-              <p>Witness</p>
-              <p className="text-sm font-semibold">
-                {account.proxy ? "proxy" : "votes"}
-              </p>
-            </div>
-            <div className=" flex flex-row items-center gap-4 px-3">
-              <AvatarGroup isBordered size="md" max={5}>
-                {(account.proxy ? [account.proxy] : account.witness_votes)?.map(
-                  (people) => (
+        {!!account.witness_votes?.length ||
+          (account.proxy && (
+            <div className=" flex flex-col items-start gap-2">
+              <div className="flex flex-row font-bold text-left items-center gap-1">
+                <p>Witness {account.proxy ? "proxy" : "votes"}</p>
+              </div>
+              <div className=" flex flex-row items-center gap-4 px-3">
+                <AvatarGroup isBordered size="md" max={5}>
+                  {(account.proxy
+                    ? [account.proxy]
+                    : account.witness_votes
+                  )?.map((people) => (
                     <SLink key={people} className="!ms-1" href={`/@${people}`}>
                       <Avatar key={people} src={getResizedAvatar(people)} />
                     </SLink>
-                  )
+                  ))}
+                </AvatarGroup>
+                {!account.proxy && (
+                  <p
+                    onClick={() => setWitnessModal(!witnessModal)}
+                    className=" text-tiny hover:underline cursor-pointer"
+                  >
+                    Show all
+                  </p>
                 )}
-              </AvatarGroup>
-              {!account.proxy && (
-                <p
-                  onClick={() => setWitnessModal(!witnessModal)}
-                  className=" text-tiny hover:underline cursor-pointer"
-                >
-                  Show all
-                </p>
-              )}
+              </div>
             </div>
-          </div>
-        )}
+          ))}
       </div>
       {/* {profileInfo.flag_text && (
         <div className=" flex flex-col items-start gap-2">

@@ -16,7 +16,7 @@ interface Props {
 function SnippetTab(props: Props) {
   const { data: session } = useSession();
   const [filterValue, setFilterValue] = useState("");
-  const [isNew, setIsNew] = useState<{ isOpen: boolean; snippet?: Snippet }>({
+  const [addNew, setAddNew] = useState<{ isOpen: boolean; snippet?: Snippet }>({
     isOpen: false,
   });
 
@@ -60,7 +60,7 @@ function SnippetTab(props: Props) {
 
   return (
     <div className=" flex flex-col gap-4">
-      {!isNew.isOpen ? (
+      {!addNew.isOpen ? (
         <>
           <div className=" flex flex-row items-center justify-between gap-4">
             <Input
@@ -78,7 +78,7 @@ function SnippetTab(props: Props) {
             />
             <Button
               onPress={() => {
-                setIsNew({ isOpen: true });
+                setAddNew({ isOpen: true });
               }}
               variant="flat"
               color="success"
@@ -101,7 +101,7 @@ function SnippetTab(props: Props) {
                   {...props}
                   snippet={snippet}
                   handleEdit={(snippet) =>
-                    setIsNew({ isOpen: true, snippet: snippet })
+                    setAddNew({ isOpen: true, snippet: snippet })
                   }
                   onDelete={(snippet) => {
                     setAllRows((oldRows) =>
@@ -116,16 +116,16 @@ function SnippetTab(props: Props) {
       ) : (
         <>
           <AddSnippet
-            oldSnippet={isNew.snippet}
+            oldSnippet={addNew.snippet}
             onClose={() => {
-              setIsNew({ isOpen: !isNew.isOpen });
+              setAddNew({ isOpen: !addNew.isOpen });
             }}
             onNewSnippet={(snippet) => {
               setAllRows((oldRows) => [snippet].concat(oldRows));
-              setIsNew({ isOpen: false });
+              setAddNew({ isOpen: false });
             }}
             onUpdateSnippet={(snippet) => {
-              setIsNew({ isOpen: false });
+              setAddNew({ isOpen: false });
               setAllRows((oldRows) =>
                 oldRows.map((row) => (row.id === snippet.id ? snippet : row))
               );

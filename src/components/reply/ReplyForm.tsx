@@ -64,7 +64,7 @@ export default memo(function ReplyForm(props: Props) {
       <div className={twMerge("flex flex-col ")} style={{}}>
         {expanded &&
           replies?.map((item: Post) => (
-            <Reply comment={item} rootComment={rootComment} />
+            <Reply key={item.link_id} comment={item} rootComment={rootComment} />
           ))}
       </div>
     </div>

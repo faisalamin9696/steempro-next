@@ -71,7 +71,7 @@ export default function SettingsPage() {
   const [about, setAbout] = useState(userAbout ?? "");
   const [website, setWebsite] = useState(userWebsite ?? "");
   const [location, setLocation] = useState(userLocation ?? "");
-  const settings = getSettings();
+  let settings = getSettings();
   const isSelf =
     session?.user?.name === username || (session?.user?.name && !username);
 
@@ -193,6 +193,7 @@ export default function SettingsPage() {
 
   function handleLongPressChange(value: string) {
     setLongPress(value);
+    settings = getSettings();
     const newSetting = updateSettings({
       ...settings,
       longPressVote: {

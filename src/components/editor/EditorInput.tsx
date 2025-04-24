@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, memo, useEffect } from "react";
+import { useState, useRef, useCallback, memo, useEffect, KeyboardEventHandler, CSSProperties } from "react";
 import EditorToolbar from "./components/EditorToolbar";
 import { useDropzone } from "react-dropzone";
 import { KeyboardEvent } from "react";
@@ -42,6 +42,8 @@ interface EditorProps {
   users?: string[];
   maxLength?: number;
   isSnipping?: boolean;
+  onKeyDown?: KeyboardEventHandler<HTMLTextAreaElement> | undefined;
+  containerStyle?: CSSProperties | undefined;
 }
 
 let timeout: any = null;
@@ -58,6 +60,8 @@ export default memo(function EditorInput(props: EditorProps) {
     isDisabled,
     maxLength,
     isSnipping,
+    onKeyDown,
+    containerStyle,
   } = props;
 
   let { authenticateUser, isAuthorized, credentials } = useLogin();
@@ -524,13 +528,14 @@ export default memo(function EditorInput(props: EditorProps) {
               postInput.current = ref;
             }}
             value={value}
+            onKeyDown={onKeyDown}
             dropdownStyle={{ zIndex: 14 }}
-            containerStyle={{}}
+            containerStyle={containerStyle}
             movePopupAsYouType
             disabled={isDisabled}
             placeholder="Write something..."
             rows={rows ?? 10}
-            className="w-full focus-visible:outline-none p-2 rounded-lg bg-default-100  enabled:hover:bg-default-200 enabled:focus:bg-default-100 disabled:opacity-disabled"
+            className="min-h-10 w-full focus-visible:outline-none p-2 rounded-lg bg-default-100  enabled:hover:bg-default-200 enabled:focus:bg-default-100 disabled:opacity-disabled"
             onChange={(e) => handleChange(e.target.value)}
             loadingComponent={() => <LoadingCard />}
             minChar={0}

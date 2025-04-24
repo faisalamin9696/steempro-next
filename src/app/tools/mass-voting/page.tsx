@@ -146,7 +146,7 @@ export default function MassVotingPage() {
               className="flex-1"
               onValueChange={setUsername}
               value={username}
-              endContent={<Avatar src={getResizedAvatar(avatar)} size="sm" />}
+              endContent={<Avatar className="p-1" src={getResizedAvatar(avatar)} size="sm" />}
             />
 
             {isLogin() && (

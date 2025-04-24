@@ -228,7 +228,7 @@ export default function AddRoleModal(props: Props) {
                   value={username}
                   onValueChange={setUsername}
                   endContent={
-                    <Avatar src={getResizedAvatar(avatar)} size="sm" />
+                    <Avatar className="p-1" src={getResizedAvatar(avatar)} size="sm" />
                   }
                 />
 

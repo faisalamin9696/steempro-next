@@ -13,7 +13,7 @@ export default function SchedulesPage() {
   const { data: session } = useSession();
 
   const { data, isLoading, error } = useSWR<Schedule[]>(
-    session?.user?.name && `/api/schedules/posts`,
+    session?.user?.name && `/api/schedules/posts?user=${session.user.name}`,
     async function fetcher(api: string): Promise<Schedule[]> {
       return (await fetch(api)).json();
     },

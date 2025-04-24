@@ -5,26 +5,27 @@ import {
 } from "@/libs/utils/user";
 import { Chip } from "@heroui/chip";
 import { Button } from "@heroui/button";
-import { Card, CardBody } from "@heroui/card";
-import React, { memo, useState } from "react";
+import { Card } from "@heroui/card";
+import React, { useState } from "react";
 import SAvatar from "../SAvatar";
 import { useAppDispatch } from "@/libs/constants/AppFunctions";
 import { getAccountExt } from "@/libs/steem/sds";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { twMerge } from "tailwind-merge";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/libs/supabase";
 import { clearCommentHandler } from "@/libs/redux/reducers/CommentReducer";
+import Image from "next/image";
+import { MdVpnKey } from "react-icons/md";
 
 interface Props {
   user: User;
   defaultAccount?: User;
-  handleSwitchSuccess?: (user?: User) => void;
+  handleSwitchSuccess: (user?: User) => void;
   className?: string;
   switchText?: string;
-  isLogin?: boolean;
   isDisabled?: boolean;
 }
 
@@ -40,77 +41,68 @@ export const BorderColorMap = {
   OWNER: "red",
 };
 
-export default memo(function AccountItemCard(props: Props) {
-  const {
-    defaultAccount,
-    user,
-    handleSwitchSuccess,
-    switchText,
-    isLogin,
-    isDisabled,
-  } = props;
+export default function AccountItemCard(props: Props) {
+  const { defaultAccount, user, handleSwitchSuccess, switchText, isDisabled } =
+    props;
 
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const [switching, setSwitching] = useState(false);
-
-  function onComplete(error?: any | null) {
-    // remogve session token when user changed not for changing between keys
-    if (user.username !== defaultAccount?.username) {
-      removeSessionToken(user.username);
-      removeSessionToken(defaultAccount?.username);
-    }
-
-    setSwitching(false);
-    if (error) toast.error(error.message || JSON.stringify(error));
-    else router.refresh();
-  }
+  const [isPending, setIsPending] = useState(false);
+  const { data: session } = useSession();
 
   async function handleSwitch() {
-    // authenticateUser();
-    setSwitching(true);
+    setIsPending(true);
     try {
       const account = await getAccountExt(user.username);
       if (account) {
-        supabase.auth
-          .signInAnonymously()
-          .then(async () => {
-            addToCurrent(account.name, user.key, user.type, user.passwordless ?? false);
+        setIsPending(true);
+        const supaLogin = await supabase.auth.signInAnonymously();
+        if (supaLogin.error) {
+          throw new Error(supaLogin.error.message);
+        }
 
-            const response = await signIn("credentials", {
-              username: user.username,
-              redirect: false,
-            });
+        addToCurrent(
+          account.name,
+          user.key,
+          user.type,
+          user.passwordless ?? false,
+          user.memo
+        );
 
-            if (!response?.ok) {
-              onComplete(response);
-              return;
-            }
+        const loginSession = await signIn("credentials", {
+          username: account.name,
+          redirect: false,
+        });
 
-            dispatch(
-              saveLoginHandler({
-                ...account,
-                login: true,
-                encKey: user.key,
-              })
-            );
-            // clear redux comments cache
-            dispatch(clearCommentHandler());
+        if (loginSession?.error) {
+          throw new Error(loginSession.error);
+        }
 
-            handleSwitchSuccess && handleSwitchSuccess(user);
-            saveSessionKey("");
-            if (isLogin)
-              toast.success(`Login successsful with private ${user.type} key`);
-            else toast.success(`Successfully switched to ${user.username}`);
-
-            onComplete();
+        dispatch(
+          saveLoginHandler({
+            ...account,
+            login: true,
+            encKey: user.key,
           })
-          .catch((error) => {
-            onComplete(error);
-          });
+        );
+        // clear redux comments cache
+        dispatch(clearCommentHandler());
+        saveSessionKey("");
+        if (!session?.user?.name)
+          toast.success(`Login successsful with private ${user.type} key`);
+        else toast.success(`Successfully switched to ${user.username}`);
+        handleSwitchSuccess();
+        if (user.username !== defaultAccount?.username) {
+          removeSessionToken(user.username);
+          removeSessionToken(defaultAccount?.username);
+        } else router.refresh();
+        setIsPending(false);
+      } else {
+        throw new Error(`Failed to fetch account`);
       }
-    } catch (e) {
-      onComplete(e);
+    } catch (e: any) {
+      toast.error(e?.message || String(e));
+      setIsPending(false);
     }
   }
 
@@ -119,46 +111,62 @@ export default memo(function AccountItemCard(props: Props) {
     defaultAccount?.type === user.type;
 
   return (
-    <Card className={twMerge("w-full bg-foreground/10", props.className)}>
-      <CardBody
-        className={twMerge(
-          "flex flex-row gap-2  items-center",
-          props.className
-        )}
-      >
+    <Card
+      className={twMerge(
+        "flex flex-col gap-2 w-full bg-foreground/10 p-2",
+        props.className
+      )}
+    >
+      <div className=" flex flex-row gap-2 items-center">
         <SAvatar size="xs" username={user.username} />
-        <div>
-          <div className="flex flex-row gap-1 items-center">
-            <p className="text-sm">{user.username}</p>
-
-            <Chip
-              variant="flat"
-              size="sm"
-              title={user.type}
-              className=" justify-center"
-              color={keysColorMap[user.type]}
-            >
-              {user.type[0]}
-            </Chip>
-          </div>
-          {isDefault ? (
-            <Chip color="success" size="sm" variant="flat">
-              Default
-            </Chip>
+        <p className="text-sm">{user.username}</p>
+        <div className="flex flex-row gap-1 items-center w-max">
+          {user.keychainLogin ? (
+            <Image
+              title="Keychain"
+              height={20}
+              width={20}
+              alt="K"
+              src={"/keychain_transparent.svg"}
+            />
           ) : (
-            <Button
-              size="sm"
-              isLoading={switching}
-              isDisabled={switching || isDisabled}
-              radius="full"
-              onPress={handleSwitch}
-              className="min-w-0  h-6 bg-foreground/20"
-            >
-              {switchText ?? "Switch"}
-            </Button>
+            <div className="flex flex-row items-center gap-2">
+              <Chip
+                variant="flat"
+                size="sm"
+                title={user.type}
+                className=" justify-center"
+                color={keysColorMap[user.type]}
+              >
+                {user.type[0]}
+              </Chip>
+
+              {!user?.passwordless && (
+                <MdVpnKey className=" text-blue-500" size={16} />
+              )}
+            </div>
           )}
         </div>
-      </CardBody>
+      </div>
+
+      <div>
+        {isDefault ? (
+          <Chip color="success" size="sm" variant="flat">
+            Default
+          </Chip>
+        ) : (
+          <Button
+            size="sm"
+            isLoading={isPending}
+            isDisabled={isPending || isDisabled}
+            radius="full"
+            onPress={handleSwitch}
+            className="min-w-0  h-6 bg-foreground/20"
+          >
+            {switchText ?? "Switch"}
+          </Button>
+        )}
+      </div>
     </Card>
   );
-});
+}

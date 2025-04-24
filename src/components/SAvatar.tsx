@@ -13,6 +13,7 @@ interface Props {
   borderColor?: string;
   onlyImage?: boolean;
   quality?: number;
+  alt?: string;
 }
 export default function SAvatar(props: Props) {
   const {
@@ -25,6 +26,7 @@ export default function SAvatar(props: Props) {
     className,
     onlyImage,
     quality,
+    alt,
   } = props;
   const imageSize =
     size === "xl"
@@ -50,7 +52,7 @@ export default function SAvatar(props: Props) {
       onError={(e) => {
         e.currentTarget.src = "/image-placeholder.png";
       }}
-      alt=""
+      alt={alt ?? ""}
       height={imageSize}
       width={imageSize}
       style={{

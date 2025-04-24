@@ -70,7 +70,15 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
   const images = metadata?.["image"] ?? [];
   const dispatch = useAppDispatch();
 
-  const isLoading = isUpdating || isDeleting || isDrafting;
+  const isPending = isUpdating || isDeleting || isDrafting;
+
+  function clearPending() {
+    console.log(isUpdating, isDeleting, isDrafting);
+    // clearing
+    setIsUpdating(false);
+    setIsDrafting(false);
+    setIsDeleting(false);
+  }
 
   function deleteSchedule(
     hash: Buffer,
@@ -135,11 +143,13 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
           loginInfo.name,
           "Posting",
           function (response) {
-            if (response.success) {
+            if (response?.success && response?.result) {
               const signature = response.result;
               deleteSchedule(hash, signature, isDraft);
             } else {
+              clearPending();
               toast.error(response.message);
+              return;
             }
           }
         );
@@ -147,8 +157,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
         const isValidKey = verifyPrivKey(loginInfo, credentials.key);
 
         if (!isValidKey) {
-          setIsUpdating(false);
-          setIsDrafting(false);
+          clearPending();
           toast.info("Private posting key or above required");
           return;
         }
@@ -162,6 +171,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
       }
     } catch (error: any) {
       toast.error(error?.message);
+      clearPending();
     }
   }
 
@@ -285,6 +295,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
   async function handleDraft() {
     const options = JSON.parse(scheduleInfo?.options ?? "{}");
     const beneficiaries = options?.["extensions"]?.[0]?.[1]?.["beneficiaries"];
+
     savePostDraft(
       scheduleInfo.title,
       scheduleInfo.body,
@@ -292,9 +303,8 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
       beneficiaries,
       validateCommunity(scheduleInfo.parent_permlink)
         ? empty_community(scheduleInfo.parent_permlink)
-        : undefined,
-    )
-
+        : undefined
+    );
 
     await handleDelete(true);
   }
@@ -305,9 +315,9 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
       <Card
         radius="none"
         shadow="none"
-        className={twMerge("w-full bg-transparent gap-4 p-2 relative")}
+        className={twMerge("w-full bg-transparent gap-4 p-4 relative")}
       >
-        <div className=" absolute right-2 flex items-center gap-2">
+        <div className=" absolute right-4 flex items-center gap-2">
           {targetUrl && (
             <SLink className=" text-blue-500 text-sm" href={targetUrl}>
               Visit
@@ -384,7 +394,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
                 size="sm"
                 variant="flat"
                 color="primary"
-                isDisabled={isLoading}
+                isDisabled={isPending}
                 isLoading={isDrafting}
                 onPress={handleDraft}
                 startContent={<RiDraftLine className=" text-xl" />}
@@ -395,7 +405,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
               {dateTime && (
                 <p className="text-default-500 text-sm flex flex-row items-center gap-2">
                   <button
-                    disabled={isLoading}
+                    disabled={isPending}
                     onClick={() => {
                       setDateTime(undefined);
                     }}
@@ -415,7 +425,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
                     size="sm"
                     variant="flat"
                     color="warning"
-                    isDisabled={isLoading}
+                    isDisabled={isPending}
                     isLoading={isUpdating}
                     onPress={handleOnEdit}
                   >
@@ -434,7 +444,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
                     title="Delete"
                     size="sm"
                     variant="flat"
-                    isDisabled={isLoading}
+                    isDisabled={isPending}
                     isLoading={isDeleting}
                     color="danger"
                     startContent={<MdDelete className=" text-xl" />}

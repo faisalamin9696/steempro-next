@@ -82,6 +82,19 @@ type KeyTypes = {
   MASTER: "MASTER";
   MEMO: "MEMO";
 };
+
+type Message = {
+  // id: number;
+  tid: string;
+  sender: string;
+  recipient: string;
+  message: string;
+  ref_tid?: string | null;
+  timestamp: string;
+  ref_message?: Message | null;
+  community?: string | null;
+};
+
 type AccountExt = {
   name: string = "";
   creator: string;
@@ -371,7 +384,7 @@ type Setting = {
     usersList: { name: string; weight: number; community: string }[];
   };
 };
- 
+
 type FeedStyle = "blogs" | "list" | "grid";
 
 type PostingContent = {

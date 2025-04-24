@@ -245,16 +245,21 @@ export default function SearchModal(props: Props) {
                   }
                 >
                   <div className=" flex flex-col gap-2 px-1">
-                    {rows?.map((item) => {
+                    {rows?.map((item, index) => {
                       const posting_json_metadata = JSON.parse(
                         item?.posting_json_metadata || "{}"
                       );
                       return item?.["permlink"] ? (
-                        <div className="flex flex-col gap-2" onClick={onClose}>
+                        <div
+                          key={index}
+                          className="flex flex-col gap-2"
+                          onClick={onClose}
+                        >
                           <CommentListLayout compact comment={item} isSearch />
                         </div>
                       ) : (
                         <div
+                          key={index}
                           className={`flex items-start h-full dark:bg-foreground/10
                                                 bg-white  overflow-hidden rounded-lg shadow-lg p-2 gap-4`}
                         >

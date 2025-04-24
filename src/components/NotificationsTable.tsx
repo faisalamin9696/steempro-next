@@ -19,7 +19,6 @@ import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { validateCommunity } from "@/libs/utils/helper";
-import { IoFilter } from "react-icons/io5";
 import { markasRead } from "@/libs/steem/condenser";
 import { useLogin } from "./auth/AuthProvider";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
@@ -33,7 +32,7 @@ import { CheckboxGroup } from "@heroui/checkbox";
 import { MdOutlineRefresh } from "react-icons/md";
 
 interface Props {
-  username: string | null;
+  username: string;
   onOpenChange: (isOpen: boolean) => void;
   isOpen: boolean;
 }
@@ -73,7 +72,7 @@ const typeOptions = [
   { name: "Follow", uid: "follow" },
 ];
 
-let offset = 0;
+let offset = {};
 const defFilter = DefaultNotificationFilters;
 
 const filter = {
@@ -109,16 +108,24 @@ let tempLastRead = 0;
 export default function NotificationsTable(props: Props) {
   const { isOpen, username, onOpenChange } = props;
 
+  function getOffset(): number {
+    return offset?.[username] || 0;
+  }
+
+  function updateOffset() {
+    if (offset[username]) offset[username] += 50;
+    else offset[username] = 50;
+  }
+
   if (!username) return null;
-  // let [offset, setOffset] = useState(20);
 
   const URL = `/notifications_api/getFilteredNotificationsByStatus/${username}/all/${JSON.stringify(
     filter
-  )}/20`;
-  function URL_OFFSET(offset: number) {
+  )}/50`;
+  function URL_OFFSET(_offset: number) {
     return `/notifications_api/getFilteredNotificationsByStatus/${username}/all/${JSON.stringify(
       filter
-    )}/20/${offset}`;
+    )}/50/${_offset}`;
   }
 
   const { data, isLoading, mutate, isValidating } = useSWR(
@@ -143,7 +150,7 @@ export default function NotificationsTable(props: Props) {
         const unreadCount = data.filter((obj) => obj.is_read === 0).length;
         if (
           (unreadCount >= 0 && unreadCount > loginInfo.unread_count) ||
-          unreadCount < 20
+          unreadCount < 50
         ) {
           dispatch(
             saveLoginHandler({ ...loginInfo, unread_count: unreadCount })
@@ -156,8 +163,8 @@ export default function NotificationsTable(props: Props) {
   }, [data]);
 
   const loadMoreMutation = useMutation({
-    mutationFn: (offset: number) =>
-      fetchSds<SDSNotification[]>(URL_OFFSET(offset)),
+    mutationFn: (_offset: number) =>
+      fetchSds<SDSNotification[]>(URL_OFFSET(_offset)),
     onSettled(data, error, variables, context) {
       if (error) {
         toast.error(error.message || JSON.stringify(error));
@@ -331,7 +338,7 @@ export default function NotificationsTable(props: Props) {
   }, [
     filterValue,
     statusFilter,
-    allRows?.length,
+    allRows,
     hasSearchFilter,
     markMutation.isPending,
     loginInfo,
@@ -385,7 +392,11 @@ export default function NotificationsTable(props: Props) {
             onValueChange={setGroupSelected}
           >
             {typeOptions.map((status) => (
-              <CustomCheckbox className="capitalize" value={status.uid}>
+              <CustomCheckbox
+                className="capitalize"
+                key={status.uid}
+                value={status.uid}
+              >
                 {capitalize(status.name)}
               </CustomCheckbox>
             ))}
@@ -409,11 +420,10 @@ export default function NotificationsTable(props: Props) {
               radius="full"
               variant="shadow"
               onPress={() => {
-                offset += 20;
-                loadMoreMutation.mutate(offset);
+                updateOffset();
+                loadMoreMutation.mutate(getOffset());
               }}
             >
-              {isLoading && <Spinner size="sm" />}
               Load More
             </Button>
           </div>

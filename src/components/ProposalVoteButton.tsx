@@ -25,12 +25,13 @@ export default function ProposalVoteButton({
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { authenticateUser, isAuthorized } = useLogin();
   const { data: session } = useSession();
-  const shouldFetch = !!session?.user?.name;
   const [isVoted, setIsVoted] = useState(false);
   const { mutate } = useSWRConfig();
 
   const { data } = useSWR<ProposalVote[]>(
-    shouldFetch ? `proposals-vote-check-${proposal.id}` : null,
+    session?.user?.name
+      ? `proposals-vote-check-${proposal.id}-${session.user.name}`
+      : null,
     () => getProposalVotes(proposal.id, session?.user?.name ?? "null", 1)
   );
 

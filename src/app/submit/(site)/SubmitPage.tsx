@@ -59,6 +59,7 @@ import { useAppSelector } from "@/libs/constants/AppFunctions";
 import EditorInput from "@/components/editor/EditorInput";
 import { twMerge } from "tailwind-merge";
 import { getPostDraft, savePostDraft } from "@/libs/draft";
+import { validateCommunity } from "@/libs/utils/helper";
 
 interface Props {
   params?: {
@@ -123,10 +124,8 @@ export default function SubmitPage(props: Props) {
   }, [oldPost]);
 
   function saveDraft() {
-    if (!isEdit)
-      savePostDraft(title, markdown, tags, beneficiaries, community)
+    if (!isEdit) savePostDraft(title, markdown, tags, beneficiaries, community);
   }
-
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -598,7 +597,7 @@ export default function SubmitPage(props: Props) {
         className={twMerge(
           `flex flex-col w-full  gap-2`,
           !oldPost &&
-          "1md:w-[50%] 1md:float-start 1md:sticky 1md:z-[1] 1md:self-start 1md:top-[80px] pb-5"
+            "1md:w-[50%] 1md:float-start 1md:sticky 1md:z-[1] 1md:self-start 1md:top-[80px] pb-5"
         )}
       >
         {!isEditComment && (
@@ -651,8 +650,8 @@ export default function SubmitPage(props: Props) {
           value={markdown}
           isDisabled={isLoading}
           onChange={setMarkdown}
-          onImageUpload={() => { }}
-          onImageInvalid={() => { }}
+          onImageUpload={() => {}}
+          onImageInvalid={() => {}}
         />
 
         <div className="flex gap-2 relativeitems-center flex-row">
