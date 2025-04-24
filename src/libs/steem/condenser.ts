@@ -116,7 +116,7 @@ export const signImage = async (
       return signature;
     }
   } catch (error) {
-    // console.log('failed to sign images', error);
+    // console.error('failed to sign images', error);
     return null;
   }
 };
@@ -149,7 +149,7 @@ const _upload = async (fd: FormData, username: string, signature: string) => {
         },
         signal: controller.signal, // Attach timeout signal
         onUploadProgress: (progressEvent) => {
-          // console.log(
+          // console.error(
           //   `Uploaded: ${(progressEvent.loaded / progressEvent.total) * 100}%`
           // );
         },
@@ -1191,7 +1191,7 @@ export const claimRewardBalance = async (
           resolve(result);
         })
         .catch((err) => {
-          console.log("Claim Error", err);
+          console.error("Claim Error", err);
           reject(err);
         });
     });
@@ -1320,7 +1320,7 @@ export const voteForWitness = async (
         })
         .catch((err) => {
           reject(err);
-          console.log("PowerUp error", err);
+          console.error("Witness vote error", err);
         });
     });
   }
@@ -1382,7 +1382,7 @@ export const transferToVesting = async (
         })
         .catch((err) => {
           reject(err);
-          console.log("PowerUp error", err);
+          console.error("PowerUp error", err);
         });
     });
   }
@@ -1442,7 +1442,7 @@ export const delegateVestingShares = async (
           resolve(result);
         })
         .catch((err) => {
-          console.log("PowerUp error", err);
+          console.error("Delegation error", err);
 
           reject(err);
         });
@@ -1509,7 +1509,7 @@ export async function transferAsset(
         })
         .catch((err) => {
           reject(err);
-          console.log("Transfer error", err);
+          console.error("Transfer error", err);
         });
     });
   }
@@ -1578,7 +1578,7 @@ export const transferToSavings = async (
         })
         .catch((err) => {
           reject(err);
-          console.log("Transfer error", err);
+          console.error("Savings error", err);
         });
     });
   }
@@ -1639,7 +1639,7 @@ export async function withdrawVesting(
         })
         .catch((err) => {
           reject(err);
-          console.log("Transfer error", err);
+          console.error("Withdraw error", err);
         });
     });
   }
@@ -1900,7 +1900,7 @@ export const voteForProposal = async (
         })
         .catch((err) => {
           reject(err);
-          console.log("PowerUp error", err);
+          console.error("Proposal vote error", err);
         });
     });
   }
@@ -1949,17 +1949,46 @@ export const sendMessage = async (
       custom_json.json = JSON.stringify(parsed);
       const opArray: Operation = ["custom_json", custom_json];
 
+      const props = await client.database.getDynamicGlobalProperties();
+      const headBlockNumber = props.head_block_number;
+      const headBlockId = props.head_block_id;
+      const expireTime = 40000;
+
+      const op = {
+        ref_block_num: headBlockNumber & 0xffff,
+        ref_block_prefix: Buffer.from(headBlockId, "hex").readUInt32LE(4),
+        expiration: new Date(Date.now() + expireTime).toISOString(),
+        operations: [opArray], // Add operations here
+      };
+
       return new Promise((resolve, reject) => {
-        window.steem_keychain.requestBroadcast(
+        window.steem_keychain.requestSignTx(
           sender.name,
-          [opArray],
+          op,
           "Posting",
-          function (response) {
-            if (response?.success) {
-              resolve(response);
-            } else {
-              reject(response);
+          async (response) => {
+            if (!response.error) {
+              try {
+                const isValid = await client.database.verifyAuthority(
+                  response.result
+                );
+                if (!isValid) {
+                  reject(new Error("Failed to verify transaction"));
+                }
+                const result = await client.broadcast.send(response.result);
+                if (!result.id) {
+                  reject(new Error("Transaction is expired try again"));
+                } else {
+                  resolve({ success: true, tx_id: result.id });
+                }
+              } catch (error: any) {
+                const isExpired = error?.message?.includes("trx.exp=");
+                if (isExpired)
+                  reject(new Error("Transaction is expired try again"));
+                reject(new Error("Something went wrong!"));
+              }
             }
+            reject(response);
           }
         );
       });

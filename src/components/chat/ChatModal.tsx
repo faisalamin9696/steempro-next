@@ -34,7 +34,7 @@ interface Props {
   onOpenChange: (isOpen: boolean) => void;
 }
 
-const ITEMS_PER_BATCH = 5;
+const ITEMS_PER_BATCH = 30;
 
 export function getDecryptedData(key: string, item: Message): Message {
   const decMessage = Memo.decode(key, item.message)?.replace("#", "") || "";
@@ -88,6 +88,7 @@ export default function ChatModal(props: Props) {
         .range(0, ITEMS_PER_BATCH);
 
       if (error) {
+        toast.error(error.message);
         throw error;
       }
 
@@ -155,7 +156,7 @@ export default function ChatModal(props: Props) {
         credentials.keychainLogin
       ).then((response: any) => {
         if (response?.success) {
-          const tx_id = response.result.tx_id;
+          const tx_id = response.tx_id;
           setMessages((prev) => [
             {
               sender: loginInfo.name,
@@ -175,7 +176,7 @@ export default function ChatModal(props: Props) {
         setIsPending(false);
       });
     } catch (error: any) {
-      toast.error(error?.message || String(error));
+      toast.error(error?.message || JSON.stringify(error));
       setIsPending(false);
     }
   }

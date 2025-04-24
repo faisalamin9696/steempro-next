@@ -25,7 +25,7 @@ export const getActiveFeed = async (
     }
   } catch (error: any) {
     // log and re-throw any errors that occur
-    console.error("Failed to fetch post:", error);
+    console.error("Failed to fetch feed:", error);
     throw new Error(error);
   }
 };
@@ -54,7 +54,7 @@ export const getActiveTagFeed = async (
     }
   } catch (error: any) {
     // log and re-throw any errors that occur
-    console.error("Failed to fetch post:", error);
+    console.error("Failed to fetch feed:", error);
     throw new Error(error);
   }
 };
@@ -83,7 +83,7 @@ export const getActiveCommunityFeed = async (
     }
   } catch (error: any) {
     // log and re-throw any errors that occur
-    console.error("Failed to fetch post:", error);
+    console.error("Failed to fetch feed:", error);
     throw new Error(error);
   }
 };
@@ -135,7 +135,7 @@ export const getAuthorFeed = async (
     }
   } catch (error: any) {
     // log and re-throw any errors that occur
-    console.error("Failed to fetch post:", error);
+    console.error("Failed to fetch feed:", error);
     throw new Error(error);
   }
 };
@@ -161,7 +161,7 @@ export const getPinnedFeed = async (
     }
   } catch (error: any) {
     // log and re-throw any errors that occur
-    console.error("Failed to fetch post:", error);
+    console.error("Failed to fetch feed:", error);
     throw new Error(error);
   }
 };
@@ -186,7 +186,7 @@ export const getAccountExt = async (
     }
   } catch (error: any) {
     // log and re-throw any errors that occur
-    console.error("Failed to fetch post:", error);
+    console.error("Failed to fetch account:", error);
     throw new Error(error);
   }
 };
@@ -212,7 +212,7 @@ export const getAccountsExt = async (
     }
   } catch (error: any) {
     // log and re-throw any errors that occur
-    console.error("Failed to fetch post:", error);
+    console.error("Failed to fetch account:", error);
     throw new Error(error);
   }
 };
@@ -237,7 +237,7 @@ export const getCommunity = async (
     }
   } catch (error: any) {
     // log and re-throw any errors that occur
-    console.error("Failed to fetch post:", error);
+    console.error("Failed to fetch community:", error);
     throw new Error(error);
   }
 };
@@ -264,7 +264,7 @@ export const getAuthorCommunities = async (
     }
   } catch (error: any) {
     // log and re-throw any errors that occur
-    console.error("Failed to fetch post:", error);
+    console.error("Failed to fetch communities:", error);
     throw new Error(error);
   }
 };
@@ -364,7 +364,7 @@ export const getPostReplies = async (
       throw new Error(response);
     }
   } catch (error: any) {
-    console.error("Failed to fetch global variables:", error);
+    console.error("Failed to fetch post replies:", error);
     throw new Error(error);
   }
 };
@@ -442,7 +442,7 @@ export const getAccountHistory = async (
       throw new Error(response);
     }
   } catch (error: any) {
-    console.error("Failed to fetch post:", error);
+    console.error("Failed to fetch account history:", error);
     throw new Error(error);
   }
 };
@@ -460,7 +460,7 @@ export const getIncomingDelegations = async (
       throw new Error(response);
     }
   } catch (error: any) {
-    console.error("Failed to fetch post:", error);
+    console.error("Failed to fetch incoming delegation:", error);
     throw new Error(error);
   }
 };
@@ -478,7 +478,7 @@ export const getOutgoingDelegations = async (
       throw new Error(response);
     }
   } catch (error: any) {
-    console.error("Failed to fetch post:", error);
+    console.error("Failed to fetch outgoing delegation:", error);
     throw new Error(error);
   }
 };
@@ -496,7 +496,7 @@ export const getExpiringDelegations = async (
       throw new Error(response);
     }
   } catch (error: any) {
-    console.error("Failed to fetch post:", error);
+    console.error("Failed to fetch expiring delegation:", error);
     throw new Error(error);
   }
 };
@@ -525,7 +525,7 @@ export const getTronInformation = async (
       throw new Error(`HTTP error: ${response.status}`);
     }
   } catch (error: any) {
-    console.error("Failed to fetch post:", error);
+    console.error("Failed to fetch tron info:", error);
     throw new Error(error);
   }
 };
@@ -548,7 +548,7 @@ export const getNotifications = async (
       throw new Error(`HTTP error: ${response.status}`);
     }
   } catch (error: any) {
-    console.error("Failed to fetch post:", error);
+    console.error("Failed to fetch notifications:", error);
     // throw new Error(error);
     throw new Error(`Error: ${error}`);
   }
@@ -570,7 +570,7 @@ export const getUnreadNotifications = async (
       throw new Error(`HTTP error: ${response.status}`);
     }
   } catch (error: any) {
-    console.error("Failed to fetch post:", error);
+    console.error("Failed to fetch unread notifications:", error);
     // throw new Error(error);
     throw new Error(`Error: ${error}`);
   }
@@ -592,7 +592,7 @@ export const getAccountsByPrefix = async (
       throw new Error(response);
     }
   } catch (error: any) {
-    console.error("Failed to fetch global variables:", error);
+    console.error("Failed to fetch account:", error);
     throw new Error(error);
   }
 };
@@ -611,7 +611,7 @@ export const getCommentHistory = async (
       throw new Error(response);
     }
   } catch (error: any) {
-    console.error("Failed to fetch global variables:", error);
+    console.error("Failed to fetch comment history:", error);
     throw new Error(error);
   }
 };
@@ -629,7 +629,7 @@ export const getTransfersByQuery = async (
       throw new Error(response);
     }
   } catch (error: any) {
-    console.error("Failed to fetch global variables:", error);
+    console.error("Failed to fetch transfers:", error);
     throw new Error(error);
   }
 };
@@ -648,7 +648,7 @@ export const getTransfersByTypeFrom = async (
       throw new Error(response);
     }
   } catch (error: any) {
-    console.error("Failed to fetch global variables:", error);
+    console.error("Failed to fetch transfers:", error);
     throw new Error(error);
   }
 };
@@ -666,7 +666,7 @@ export const getWitnessVotes = async (
       throw new Error(response);
     }
   } catch (error: any) {
-    console.error("Failed to fetch global variables:", error);
+    console.error("Failed to fetch witness votes:", error);
     throw new Error(error);
   }
 };

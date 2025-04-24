@@ -122,6 +122,7 @@ const ChatInput = forwardRef<HTMLInputElement, Props>(
         <Button
           isIconOnly
           color="primary"
+          isLoading={isPending}
           isDisabled={isPending || cooldown > 0}
           onPress={handleSend}
         >

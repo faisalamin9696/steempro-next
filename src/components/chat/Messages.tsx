@@ -20,7 +20,7 @@ interface MessagesProps {
   messageAlert: boolean;
 }
 
-const ITEMS_PER_BATCH = 5;
+const ITEMS_PER_BATCH = 30;
 
 const Messages = (props: MessagesProps) => {
   const {
@@ -93,7 +93,7 @@ const Messages = (props: MessagesProps) => {
   function scrollToBottom() {
     if (lastItemRef.current) {
       lastItemRef.current.scrollIntoView({
-        behavior: "smooth",
+        behavior: "instant",
         block: "start",
       });
     }
