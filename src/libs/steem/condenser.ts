@@ -2013,7 +2013,11 @@ export const sendMessage = async (
         client.broadcast
           .sendOperations([opArray], privateKey)
           .then(async (result) => {
-            resolve(result);
+            if (!result.id) {
+              reject(new Error("Something went wrong!"));
+            } else {
+              resolve({ success: true, tx_id: result.id });
+            }
           })
           .catch((err) => {
             reject(err);
