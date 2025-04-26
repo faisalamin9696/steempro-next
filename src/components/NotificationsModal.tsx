@@ -9,8 +9,13 @@ import {
   ModalHeader,
   ModalFooter,
 } from "@heroui/modal";
-import NotificationsTable from "./NotificationsTable";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
+import { Tab, Tabs } from "@heroui/tabs";
+import { BsChatDots } from "react-icons/bs";
+import { FaRegBell } from "react-icons/fa";
+import { Badge } from "@heroui/badge";
+import ChatNotificationsTable from "./chat/ChatNotificationTable";
+import NotificationsTable from "./NotificationsTable";
 
 interface Props {
   username: string;
@@ -21,7 +26,6 @@ interface Props {
 export default function NotificationsModal(props: Props) {
   const { username, isOpen, onOpenChange } = props;
   if (!username) return null;
-
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
 
   return (
@@ -38,20 +42,63 @@ export default function NotificationsModal(props: Props) {
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1 justify-between">
+            {/* <ModalHeader className="flex flex-col gap-1 justify-between">
               <div className=" flex flex-row gap-2 items-center text-center">
                 <p>Notifications</p>
-                {!!loginInfo.unread_count && (
-                  <div className="relative max-w-fit min-w-min inline-flex items-center justify-between box-border whitespace-nowrap px-1 h-6 text-tiny rounded-full bg-default/40 text-default-700">
-                    <span className="flex-1 text-inherit font-normal px-1">
-                      {loginInfo.unread_count}
-                    </span>
-                  </div>
-                )}
               </div>
-            </ModalHeader>
+            </ModalHeader> */}
             <ModalBody className=" pb-4">
-              <NotificationsTable {...props} />
+              <Tabs
+                variant={"solid"}
+                classNames={{
+                  tabList: "gap-6 w-full relative rounded-none p-0",
+                  cursor: "w-full bg-primary-300",
+                  tab: " px-0 h-12",
+                }}
+              >
+                <Tab
+                  key="general"
+                  title={
+                    <div className="flex flex-row gap-2 items-center">
+                      <p>General</p>
+                      {!!loginInfo.unread_count && (
+                        <Badge
+                          color="primary"
+                          variant="solid"
+                          showOutline={false}
+                          size="sm"
+                          content={loginInfo.unread_count}
+                        >
+                          <FaRegBell size={18} />
+                        </Badge>
+                      )}
+                    </div>
+                  }
+                >
+                  <NotificationsTable {...props} />
+                </Tab>
+                <Tab
+                  key="chat"
+                  title={
+                    <div className="flex flex-row gap-2 items-center">
+                      <p>Chat</p>
+                      <Badge
+                        color="secondary"
+                        variant="solid"
+                        size="sm"
+                        showOutline={false}
+                        content={loginInfo.unread_count_chat}
+                      >
+                        <BsChatDots size={18} />
+                      </Badge>
+                    </div>
+                  }
+                >
+                  <div className="flex flex-col gap-4 p-1">
+                    <ChatNotificationsTable {...props} />
+                  </div>
+                </Tab>
+              </Tabs>
             </ModalBody>
 
             <ModalFooter>

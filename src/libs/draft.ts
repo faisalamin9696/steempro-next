@@ -88,6 +88,24 @@ export function getCommentDraft(linkId: number) {
   return { markdown: draft.markdown };
 }
 
+export function removeCommentDraft(linkId: number) {
+  const existing = localStorage.getItem("comment_drafts");
+  if (!existing) return;
+
+  const drafts = JSON.parse(existing) as Record<
+    number,
+    { markdown: string; expiresAt: number }
+  >;
+
+  if (!(linkId in drafts)) return;
+
+  // Remove the draft
+  delete drafts[linkId];
+
+  // Update localStorage
+  localStorage.setItem("comment_drafts", JSON.stringify(drafts));
+}
+
 export function cleanupCommentDrafts() {
   const existing = localStorage.getItem("comment_drafts");
   if (!existing) return;

@@ -1217,17 +1217,71 @@ export const markasRead = async (
     required_posting_auths: [account.name],
     json: JSON.stringify(["setLastRead", { date }]),
   };
-  const params1 = {
+
+  const opArray: Operation[] = [["custom_json", params]];
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestBroadcast(
+        account.name,
+        opArray,
+        "Posting",
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
+  const keyData = getKeyType(account, key);
+  if (keyData && PrivKey.atLeast(keyData.type, "POSTING")) {
+    const privateKey = PrivateKey.fromString(key);
+    return new Promise((resolve, reject) => {
+      client.broadcast
+        .sendOperations(opArray, privateKey)
+        .then(async (result) => {
+          resolve(result);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  }
+
+  return Promise.reject(
+    new Error(
+      "Check private key permission! Required private posting key or above."
+    )
+  );
+};
+
+export const markasReadChat = async (
+  account: AccountExt,
+  key: string,
+  isKeychain?: boolean
+) => {
+  let date = new Date().toISOString().slice(0, 19);
+
+  const params = {
     id: "steempro_notify",
     required_auths: [],
     required_posting_auths: [account.name],
-    json: JSON.stringify(["setLastRead", { date }]),
+    json: JSON.stringify([
+      "setLastRead",
+      {
+        type: "message",
+        date,
+      },
+    ]),
   };
 
-  const opArray: Operation[] = [
-    ["custom_json", params],
-    ["custom_json", params1],
-  ];
+  const opArray: Operation[] = [["custom_json", params]];
 
   if (isKeychain) {
     await validateKeychain();

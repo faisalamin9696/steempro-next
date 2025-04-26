@@ -37,23 +37,27 @@ interface Props {
 const ITEMS_PER_BATCH = 30;
 
 export function getDecryptedData(key: string, item: Message): Message {
-  const decMessage = Memo.decode(key, item.message)?.replace("#", "") || "";
-  const decReply = item.ref_message
-    ? Memo.decode(key, item.ref_message.message)?.replace("#", "") || ""
-    : "";
+  try {
+    const decMessage = Memo.decode(key, item.message)?.replace("#", "") || "";
+    const decReply = item.ref_message
+      ? Memo.decode(key, item.ref_message.message)?.replace("#", "") || ""
+      : "";
 
-  const ref_message = item.ref_message
-    ? {
-        ...item.ref_message,
-        message: decReply,
-      }
-    : undefined;
+    const ref_message = item.ref_message
+      ? {
+          ...item.ref_message,
+          message: decReply,
+        }
+      : undefined;
 
-  return {
-    ...item,
-    message: decMessage,
-    ref_message,
-  };
+    return {
+      ...item,
+      message: decMessage,
+      ref_message,
+    };
+  } catch (error) {
+    return item;
+  }
 }
 
 export default function ChatModal(props: Props) {
@@ -73,34 +77,28 @@ export default function ChatModal(props: Props) {
   const { data, error, isLoading } = useSWR<Message[]>(
     account.name ? `chat-${account.name}` : null,
     async () => {
-      // delay request
-      // await AsyncUtils.sleep(2);
+      const { data: rpcData, error: rpcError } = await supabase.rpc(
+        "get_user_chat",
+        {
+          sender_usr: loginInfo.name,
+          recipient_usr: account.name,
+          from_limit: 0,
+          to_limit: ITEMS_PER_BATCH,
+        }
+      );
 
-      const { data, error } = await supabase
-        .from("steempro_chat")
-        .select(
-          `tid,ref_tid,sender,recipient,message,timestamp,community,ref_message:ref_tid ( tid,sender,recipient,message,timestamp,community)`
-        )
-        .or(
-          `and(sender.eq.${loginInfo.name},recipient.eq.${account.name}),and(sender.eq.${account.name},recipient.eq.${loginInfo.name})`
-        )
-        .order("timestamp", { ascending: false })
-        .range(0, ITEMS_PER_BATCH);
-
-      if (error) {
-        toast.error(error.message);
-        throw error;
+      if (rpcError) {
+        throw rpcError;
       }
 
-      const queryData = data as unknown as Message[];
+      const queryData = rpcData as Message[];
 
-      const parserData = queryData.map((item) => {
-        return {
-          ...item,
-          ...getDecryptedData(credentials?.memo!, item),
-        };
-      });
-      return (parserData ?? []) as Message[];
+      const parsedData = queryData.map((item) => ({
+        ...item,
+        ...getDecryptedData(credentials?.memo!, item),
+      }));
+
+      return parsedData;
     }
   );
 

@@ -9,7 +9,6 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "@/libs/constants/AppFunctions";
-import { Spinner } from "@heroui/spinner";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
 import React, { useEffect, useState } from "react";
@@ -60,7 +59,7 @@ const INITIAL_VISIBLE_COLUMNS = ["account", "time", "type"];
 
 const columns = [
   { name: "ACCOUNT", uid: "account", sortable: true },
-  { name: "TIME", uid: "time", sortable: false },
+  { name: "TIME", uid: "time", sortable: true },
   { name: "TYPE", uid: "type", sortable: true },
 ];
 
@@ -116,7 +115,6 @@ export default function NotificationsTable(props: Props) {
     if (offset[username]) offset[username] += 50;
     else offset[username] = 50;
   }
-
   if (!username) return null;
 
   const URL = `/notifications_api/getFilteredNotificationsByStatus/${username}/all/${JSON.stringify(
@@ -128,13 +126,6 @@ export default function NotificationsTable(props: Props) {
     )}/50/${_offset}`;
   }
 
-  const { data, isLoading, mutate, isValidating } = useSWR(
-    URL,
-    fetchSds<SDSNotification[]>,
-    {
-      refreshInterval: 300000,
-    }
-  );
   const { data: session } = useSession();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
@@ -143,6 +134,14 @@ export default function NotificationsTable(props: Props) {
   const dispatch = useAppDispatch();
   const [allRows, setAllRows] = useState<SDSNotification[]>([]);
   const [groupSelected, setGroupSelected] = React.useState<string[]>([]);
+
+  const { data, isLoading, mutate, isValidating } = useSWR(
+    URL,
+    fetchSds<SDSNotification[]>,
+    {
+      refreshInterval: 300000,
+    }
+  );
 
   useEffect(() => {
     if (data) {

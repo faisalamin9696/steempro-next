@@ -37,7 +37,11 @@ import { useSession } from "next-auth/react";
 import { CustomEvent } from "@piwikpro/react-piwik-pro";
 import SLink from "../SLink";
 import { AsyncUtils } from "@/libs/utils/async.utils";
-import { getCommentDraft, saveCommentDraft } from "@/libs/draft";
+import {
+  getCommentDraft,
+  removeCommentDraft,
+  saveCommentDraft,
+} from "@/libs/draft";
 
 export default function ReplyFooter({
   comment,
@@ -58,7 +62,7 @@ export default function ReplyFooter({
 }) {
   const postReplies =
     useAppSelector((state) => state.repliesReducer.values)[
-    `${rootComment?.author}/${rootComment?.permlink}`
+      `${rootComment?.author}/${rootComment?.permlink}`
     ] ?? [];
   const [showReply, setShowReply] = useState(false);
   const [markdown, setMarkdown] = useState("");
@@ -99,13 +103,9 @@ export default function ReplyFooter({
   };
 
   function handleClear() {
-    secureLocalStorage.removeItem("comment_draft");
+    removeCommentDraft(comment.link_id);
     setMarkdown("");
   }
-
-
-
-
 
   useEffect(() => {
     if (showEdit || showReply) {
@@ -115,15 +115,14 @@ export default function ReplyFooter({
       setMarkdown(comment.body);
     }
     if (showReply) {
-      const draft = getCommentDraft(comment.link_id)
+      const draft = getCommentDraft(comment.link_id);
       setMarkdown(draft.markdown);
     }
   }, [showEdit, showReply]);
 
   function saveDraft() {
-    if (showReply) saveCommentDraft(comment.link_id, markdown)
+    if (showReply) saveCommentDraft(comment.link_id, markdown);
   }
-
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -576,8 +575,8 @@ export default function ReplyFooter({
               ]}
               value={markdown}
               onChange={setMarkdown}
-              onImageUpload={() => { }}
-              onImageInvalid={() => { }}
+              onImageUpload={() => {}}
+              onImageInvalid={() => {}}
               rows={6}
               isDisabled={isPosting}
             />

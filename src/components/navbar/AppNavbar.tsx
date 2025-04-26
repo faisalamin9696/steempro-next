@@ -146,7 +146,6 @@ function AppNavbar() {
     mutate("/steem_requests_api/getSteemProps");
     mutate([session?.user?.name, "null"]);
   }
-
   return (
     <nav className="z-50 sticky top-0 flex-no-wrap flex w-full items-center justify-between py-2 shadow-md dark:shadow-white/5 lg:flex-wrap lg:justify-start h-16 bg-transparent backdrop-blur-md">
       <div className="flex w-full flex-wrap items-center justify-between px-4">
@@ -221,15 +220,19 @@ function AppNavbar() {
             {status === "authenticated" && (
               <Badge
                 size="sm"
-                content={loginInfo.unread_count ? "" : undefined}
-                showOutline={!!loginInfo.unread_count}
+                content={(loginInfo.unread_count || loginInfo.unread_count_chat) ? "" : undefined}
+                showOutline={!!loginInfo.unread_count || !!loginInfo.unread_count_chat}
                 // content={
                 //   loginInfo.unread_count > 99
                 //     ? "99+"
                 //     : loginInfo.unread_count > 0 && loginInfo.unread_count
                 // }
-                className="opacity-80 z-0"
-                color="primary"
+                className={twMerge(
+                  "opacity-80 z-0",
+                  loginInfo?.unread_count_chat &&
+                    "border-teal-300 animate-pulse"
+                )}
+                color={"primary"}
                 shape="circle"
                 placement="top-right"
               >
@@ -273,9 +276,7 @@ function AppNavbar() {
                     <SAvatar
                       onlyImage
                       borderColor={
-                        keyType
-                          ? BorderColorMap[keyType]
-                          : undefined
+                        keyType ? BorderColorMap[keyType] : undefined
                       }
                       username={session?.user?.name ?? ""}
                       className={twMerge(

@@ -50,16 +50,12 @@ const Messages = (props: MessagesProps) => {
       // delay request
       // await AsyncUtils.sleep(2);
 
-      const { data, error } = await supabase
-        .from("steempro_chat")
-        .select(
-          `tid,ref_tid,sender,recipient,message,timestamp,community,ref_message:ref_tid ( tid,sender,recipient,message,timestamp,community)`
-        )
-        .or(
-          `and(sender.eq.${loginInfo.name},recipient.eq.${account.name}),and(sender.eq.${account.name},recipient.eq.${loginInfo.name})`
-        )
-        .order("timestamp", { ascending: false })
-        .range(from, to);
+      const { data, error } = await supabase.rpc("get_user_chat", {
+        sender_usr: loginInfo.name,
+        recipient_usr: account.name,
+        from_limit: from,
+        to_limit: to,
+      });
 
       if (error) {
         throw error;

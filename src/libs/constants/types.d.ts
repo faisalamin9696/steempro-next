@@ -95,6 +95,13 @@ type Message = {
   community?: string | null;
 };
 
+type ChatNotification = {
+  sender: string;
+  count: number;
+  last_read_time?: string;
+  latest_timestamp: string;
+};
+
 type AccountExt = {
   name: string = "";
   creator: string;
@@ -183,6 +190,7 @@ type AccountExt = {
   last_fetch: number;
   encKey: string;
   unread_count: number = 0;
+  unread_count_chat?: number;
   proxied_vsf_votes: string[];
   proxied_votes?: number;
   share?: number;

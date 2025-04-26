@@ -12,6 +12,7 @@ import {
 import { addCommonDataHandler } from "@/libs/redux/reducers/CommonReducer";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { saveSteemGlobals } from "@/libs/redux/reducers/SteemGlobalReducer";
+import { getUnreadChatCount } from "@/libs/steem/mysql";
 import { getAccountExt } from "@/libs/steem/sds";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next13-progressbar";
@@ -102,6 +103,10 @@ export default function AppWrapper({
     }
   }, [session?.user?.name, username]);
 
+  const URL = `/notifications_api/getFilteredUnreadCount/${
+    loginInfo?.name
+  }/${JSON.stringify(filter)}`;
+
   const { data: globalData, isValidating: isValidatingGlobal } = useSWR(
     `/steem_requests_api/getSteemProps`,
     fetchSds<SteemProps>,
@@ -122,17 +127,15 @@ export default function AppWrapper({
     }
   );
 
-  useEffect(() => {
-    dispatch(
-      addCommonDataHandler({
-        isLoadingAccount: isValidatingAccount || isValidatingGlobal,
-      })
-    );
-  }, [isValidatingAccount, isValidatingGlobal]);
-
-  const URL = `/notifications_api/getFilteredUnreadCount/${
-    loginInfo?.name
-  }/${JSON.stringify(filter)}`;
+  const { data: unreadDataChat } = useSWR(
+    !!loginInfo?.name && `unread-chat-${loginInfo.name}`,
+    () => getUnreadChatCount(loginInfo.name),
+    {
+      shouldRetryOnError: true,
+      refreshInterval: 310000,
+      errorRetryInterval: 20000,
+    }
+  );
 
   const { data: unreadData } = useSWR(
     !!loginInfo?.name && URL,
@@ -143,6 +146,14 @@ export default function AppWrapper({
       errorRetryInterval: 10000,
     }
   );
+
+  useEffect(() => {
+    dispatch(
+      addCommonDataHandler({
+        isLoadingAccount: isValidatingAccount || isValidatingGlobal,
+      })
+    );
+  }, [isValidatingAccount, isValidatingGlobal]);
 
   // saving the fetched data in redux state
   useEffect(() => {
@@ -157,8 +168,16 @@ export default function AppWrapper({
       // if (!accountData.witness_votes.includes(WitnessAccount))
       //     pingForWitnessVote();
     }
+    if (unreadDataChat) {
+      dispatch(
+        saveLoginHandler({
+          ...accountData,
+          unread_count_chat: unreadDataChat,
+        })
+      );
+    }
     if (globalData) dispatch(saveSteemGlobals(globalData));
-  }, [globalData, accountData]);
+  }, [globalData, accountData, unreadDataChat]);
 
   useEffect(() => {
     if (unreadData) {
