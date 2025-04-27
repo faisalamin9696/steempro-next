@@ -7,10 +7,10 @@ import { FaUsersCog } from "react-icons/fa";
 import { MdAdd, MdClose } from "react-icons/md";
 import IconButton from "../../IconButton";
 import { toast } from "sonner";
-import { validate_account_name } from "@/libs/utils/ChainValidation";
+import { validate_account_name } from "@/libs/utils/chainValidation";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import SAvatar from "@/components/SAvatar";
-import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
 
 interface Props {
   onSelectBeneficiary?: (bene: Beneficiary) => void;

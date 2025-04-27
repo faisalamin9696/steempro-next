@@ -7,8 +7,8 @@ import {
 import { getAccountExt } from "@/libs/steem/sds";
 import { supabase } from "@/libs/supabase";
 import { AsyncUtils } from "@/libs/utils/async.utils";
-import { validate_account_name } from "@/libs/utils/ChainValidation";
-import { getResizedAvatar } from "@/libs/utils/image";
+import { validate_account_name } from "@/libs/utils/chainValidation";
+import { getResizedAvatar } from "@/libs/utils/parseImage";
 import { saveCredentials, saveSessionKey } from "@/libs/utils/user";
 import { Avatar } from "@heroui/avatar";
 import { Checkbox } from "@heroui/checkbox";
@@ -88,7 +88,7 @@ function KeychainLogin(props: Props) {
       "POSTING",
       true,
       current,
-      true,
+      true
     );
 
     return auth;
@@ -164,7 +164,7 @@ function KeychainLogin(props: Props) {
         label="Username"
         autoFocus
         value={username}
-        endContent={<Avatar className="p-1" src={getResizedAvatar(avatar)} size="sm" />}
+        endContent={<Avatar src={getResizedAvatar(avatar)} size="sm" />}
         onValueChange={setUsername}
         isDisabled={isPending}
         placeholder="Enter your username"

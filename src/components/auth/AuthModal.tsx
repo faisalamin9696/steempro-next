@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/modal";
-import { useAppSelector, useAppDispatch } from "@/libs/constants/AppFunctions";
+import { useAppSelector } from "@/libs/constants/AppFunctions";
 import { getCredentials, sessionKey, getSessionToken } from "@/libs/utils/user";
 import { useSession } from "next-auth/react";
 import SAvatar from "../SAvatar";
@@ -26,7 +26,6 @@ export default function AuthModal(props: Props) {
   let { open, onLoginSuccess, addNew, onClose, addMemo } = props;
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   let { credentials } = useLogin();
-  const dispatch = useAppDispatch();
   const [useKeychain, setUseKeychain] = React.useState(true);
   const { data: session, status } = useSession();
 
@@ -35,7 +34,6 @@ export default function AuthModal(props: Props) {
     !sessionKey &&
     (credentials?.type === "ACTIVE" || !getSessionToken(session.user?.name)) &&
     !credentials?.keychainLogin;
-
 
   useEffect(() => {
     credentials = getCredentials();

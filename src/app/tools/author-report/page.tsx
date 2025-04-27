@@ -1,7 +1,7 @@
 "use client";
 
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
-import { getResizedAvatar } from "@/libs/utils/image";
+import { getResizedAvatar } from "@/libs/utils/parseImage";
 import { Button } from "@heroui/button";
 import { Avatar } from "@heroui/avatar";
 import { Input } from "@heroui/input";
@@ -71,7 +71,7 @@ export default function AuthorReportPage() {
           onValueChange={setUsername}
           value={username}
           endContent={
-            <Avatar className="p-1" src={getResizedAvatar(avatar)} size="sm" />
+            <Avatar src={getResizedAvatar(avatar)} size="sm" />
           }
         />
 

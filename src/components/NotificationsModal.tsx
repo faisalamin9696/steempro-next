@@ -51,25 +51,31 @@ export default function NotificationsModal(props: Props) {
               <Tabs
                 variant={"solid"}
                 classNames={{
-                  tabList: "gap-6 w-full relative rounded-none p-0",
-                  cursor: "w-full bg-primary-300",
+                  tabList: "gap-4 w-full relative rounded-none p-0",
+                  cursor: "w-full bg-primary-200",
                   tab: " px-0 h-12",
                 }}
               >
                 <Tab
                   key="general"
                   title={
-                    <div className="flex flex-row gap-2 items-center">
+                    <div className="flex flex-row gap-1 items-center">
                       <p>General</p>
                       {!!loginInfo.unread_count && (
                         <Badge
                           color="primary"
                           variant="solid"
+                          shape="circle"
                           showOutline={false}
                           size="sm"
-                          content={loginInfo.unread_count}
+                          isInvisible={!loginInfo.unread_count}
+                          content={
+                            loginInfo.unread_count > 99
+                              ? "99+"
+                              : loginInfo.unread_count
+                          }
                         >
-                          <FaRegBell size={18} />
+                          <FaRegBell className="m-1" size={18} />
                         </Badge>
                       )}
                     </div>
@@ -87,9 +93,14 @@ export default function NotificationsModal(props: Props) {
                         variant="solid"
                         size="sm"
                         showOutline={false}
-                        content={loginInfo.unread_count_chat}
+                        isInvisible={!loginInfo.unread_count_chat}
+                        content={
+                          loginInfo.unread_count_chat > 99
+                            ? "99+"
+                            : loginInfo.unread_count_chat
+                        }
                       >
-                        <BsChatDots size={18} />
+                        <BsChatDots className="m-1" size={18} />
                       </Badge>
                     </div>
                   }

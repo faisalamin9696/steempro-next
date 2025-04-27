@@ -11,7 +11,7 @@ import {
 } from "@heroui/dropdown";
 import { FaChevronDown } from "react-icons/fa";
 import useSWR from "swr";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
+import usePathnameClient from "@/libs/hooks/usePathnameClient";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import LoadingCard from "@/components/LoadingCard";

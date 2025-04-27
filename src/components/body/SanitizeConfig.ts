@@ -2,8 +2,8 @@ import {
   getExternalLinkWarningMessage,
   getPhishingWarningMessage,
 } from "./htmlReady";
-import { defaultSrcSet, isDefaultImageSize } from "../../libs/utils/ProxifyUrl";
-import { replaceOldDomains } from "@/libs/utils/Links";
+import { defaultSrcSet, isDefaultImageSize } from "../../libs/utils/proxifyUrl";
+import { replaceOldDomains } from "@/libs/utils/parseLinks";
 
 const iframeWhitelist: any = [
   {

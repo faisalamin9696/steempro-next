@@ -7,8 +7,8 @@ import BodyShort from "@/components/body/BodyShort";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import { MdAccessTime } from "react-icons/md";
-import { getThumbnail } from "@/libs/utils/image";
-import { hasNsfwTag } from "@/libs/utils/StateFunctions";
+import { getThumbnail } from "@/libs/utils/parseImage";
+import { hasNsfwTag } from "@/libs/utils/stateFunctions";
 import { getSettings } from "@/libs/utils/user";
 import SLink from "./SLink";
 

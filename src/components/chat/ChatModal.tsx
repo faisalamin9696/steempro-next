@@ -27,6 +27,7 @@ import MessageReplyRef from "./MessageReplyRef";
 import ChatInput from "./ChatInput";
 import sanitize from "sanitize-html";
 import Messages from "./Messages";
+import { useSession } from "next-auth/react";
 
 interface Props {
   account: AccountExt;
@@ -73,14 +74,15 @@ export default function ChatModal(props: Props) {
   const credentials = getCredentials();
   const [messages, setMessages] = useState<Message[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { data: session } = useSession();
 
   const { data, error, isLoading } = useSWR<Message[]>(
-    account.name ? `chat-${account.name}` : null,
+    session?.user?.name && account.name ? `chat-${account.name}` : null,
     async () => {
       const { data: rpcData, error: rpcError } = await supabase.rpc(
         "get_user_chat",
         {
-          sender_usr: loginInfo.name,
+          sender_usr: session!.user!.name,
           recipient_usr: account.name,
           from_limit: 0,
           to_limit: ITEMS_PER_BATCH,
@@ -103,10 +105,15 @@ export default function ChatModal(props: Props) {
   );
 
   useEffect(() => {
+
+    if (error) {
+      toast.error(error);
+    }
+    
     if (data) {
       setMessages(data);
     }
-  }, [data]);
+  }, [data, error]);
 
   async function handleSend(_msg: string) {
     _msg = sanitize(_msg);

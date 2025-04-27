@@ -18,8 +18,8 @@ import { toast } from "sonner";
 import { useLogin } from "./auth/AuthProvider";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { useSession } from "next-auth/react";
-import { validate_account_name } from "@/libs/utils/ChainValidation";
-import { getResizedAvatar } from "@/libs/utils/image";
+import { validate_account_name } from "@/libs/utils/chainValidation";
+import { getResizedAvatar } from "@/libs/utils/parseImage";
 import { Avatar } from "@heroui/avatar";
 
 interface Props {
@@ -228,7 +228,7 @@ export default function AddRoleModal(props: Props) {
                   value={username}
                   onValueChange={setUsername}
                   endContent={
-                    <Avatar className="p-1" src={getResizedAvatar(avatar)} size="sm" />
+                    <Avatar src={getResizedAvatar(avatar)} size="sm" />
                   }
                 />
 

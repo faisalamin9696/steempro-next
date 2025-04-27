@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { useLogin } from "./auth/AuthProvider";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { addCommunityHandler } from "@/libs/redux/reducers/CommunityReducer";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
+import usePathnameClient from "@/libs/hooks/usePathnameClient";
 import { useSession } from "next-auth/react";
 
 type Props = {

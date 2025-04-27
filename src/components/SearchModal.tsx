@@ -20,7 +20,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import EmptyList from "./EmptyList";
 import { FeedBodyLength } from "@/libs/constants/AppConstants";
 import CommentListLayout from "./comment/layouts/CommentListLayout";
-import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
 import { AsyncUtils } from "@/libs/utils/async.utils";
 import { twMerge } from "tailwind-merge";
 

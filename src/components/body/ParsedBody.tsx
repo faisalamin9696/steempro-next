@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import CommentCover from "../comment/components/CommentCover";
 import "./style.scss";
 import { MdOpenInNew } from "react-icons/md";
-import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
-import { getProxyImageURL } from "@/libs/utils/image";
+import { proxifyImageUrl } from "@/libs/utils/proxifyUrl";
+import { getProxyImageURL } from "@/libs/utils/parseImage";
 import Link from "next/link";
 
 export function ParsedBody({

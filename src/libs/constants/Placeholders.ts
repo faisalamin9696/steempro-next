@@ -160,6 +160,7 @@ export const empty_profile = (name: string): AccountExt => {
     status: "idle",
     unread_count: 0,
     proxied_vsf_votes: [],
+    unread_count_chat: 0,
   };
 };
 

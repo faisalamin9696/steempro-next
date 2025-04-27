@@ -4,7 +4,7 @@ import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import React, { useState, useEffect, useRef } from "react";
 import useSWR from "swr";
 import { getSettings } from "@/libs/utils/user";
-import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
 import CommentCard from "./comment/CommentCard";
 import { twMerge } from "tailwind-merge";
 import { notFound } from "next/navigation";

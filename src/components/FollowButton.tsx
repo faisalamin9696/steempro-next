@@ -9,7 +9,7 @@ import { useLogin } from "./auth/AuthProvider";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { FaPencil } from "react-icons/fa6";
 import { useRouter } from "next13-progressbar";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
+import usePathnameClient from "@/libs/hooks/usePathnameClient";
 import { useSession } from "next-auth/react";
 import { BsPlusCircle } from "react-icons/bs";
 import { SlMinus } from "react-icons/sl";

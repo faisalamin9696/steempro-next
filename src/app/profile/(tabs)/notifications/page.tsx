@@ -1,6 +1,6 @@
 "use client";
 import NotificationsTable from "@/components/NotificationsTable";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
+import usePathnameClient from "@/libs/hooks/usePathnameClient";
 import React from "react";
 
 export default function ProfileNotificationsTab() {

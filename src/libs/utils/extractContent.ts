@@ -1,8 +1,8 @@
 import sanitize from "sanitize-html";
 import { Remarkable } from "remarkable";
 import htmlReady from "@/components/body/htmlReady";
-import remarkableStripper from "@/libs/utils/RemarkableStripper";
-import { htmlDecode } from "./Html";
+import remarkableStripper from "@/libs/utils/remarkableStripper";
+import { htmlDecode } from "./htmlDecode";
 
 const remarkable = new Remarkable({ html: true});
 

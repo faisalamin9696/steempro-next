@@ -1,13 +1,13 @@
 "use client";
 
-import usePathnameClient from "@/libs/utils/usePathnameClient";
+import usePathnameClient from "@/libs/hooks/usePathnameClient";
 import React from "react";
 import ProfileCommentsTab from "../comments/page";
 import ProfileRepliesTab from "../replies/page";
 import { Tab, Tabs } from "@heroui/tabs";
 import ProfilePostsTab from "../posts/page";
 import ProfileFriendsTab from "../friends/page";
-import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
 import { twMerge } from "tailwind-merge";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

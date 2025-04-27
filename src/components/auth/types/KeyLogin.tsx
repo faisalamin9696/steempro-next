@@ -2,8 +2,8 @@ import { useAppDispatch } from "@/libs/constants/AppFunctions";
 import { getKeyType } from "@/libs/steem/condenser";
 import { getAccountExt } from "@/libs/steem/sds";
 import { AsyncUtils } from "@/libs/utils/async.utils";
-import { validate_account_name } from "@/libs/utils/ChainValidation";
-import { getResizedAvatar } from "@/libs/utils/image";
+import { validate_account_name } from "@/libs/utils/chainValidation";
+import { getResizedAvatar } from "@/libs/utils/parseImage";
 import {
   saveCredentials,
   saveSessionKey,
@@ -264,7 +264,7 @@ function KeyLogin(props: Props) {
         label="Username"
         autoFocus
         value={username}
-        endContent={<Avatar className="p-1" src={getResizedAvatar(avatar)} size="sm" />}
+        endContent={<Avatar src={getResizedAvatar(avatar)} size="sm" />}
         onValueChange={setUsername}
         isDisabled={isPending}
         placeholder="Enter your username"

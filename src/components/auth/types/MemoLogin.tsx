@@ -9,6 +9,7 @@ import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import { FaLock } from "react-icons/fa6";
 import { toast } from "sonner";
+import { mutate } from "swr";
 
 interface Props {
   onClose: () => void;
@@ -20,7 +21,6 @@ function MemoLogin(props: Props) {
   const [memoKey, setMemoKey] = useState("");
   const [isPending, setIsPending] = useState(false);
   const { data: session } = useSession();
-  const credentials = getCredentials();
 
   async function handleLogin() {
     const _memoKey = memoKey.trim();
@@ -41,6 +41,8 @@ function MemoLogin(props: Props) {
       if (account) {
         const keyType = getKeyType(account, _memoKey);
         if (keyType) {
+          const credentials = getCredentials();
+
           if (keyType.type !== "MEMO") {
             toast.info("Use only private memo key");
             setIsPending(false);
@@ -50,6 +52,13 @@ function MemoLogin(props: Props) {
           toast.success(
             `Memo key is added successfully for ${session.user.name}`
           );
+          onLoginSuccess &&
+            onLoginSuccess({
+              ...credentials!,
+              username: account.name,
+              memo: keyType.memo,
+            });
+          mutate(`unread-chat-${account.name}`);
           onSuccess();
           onClose();
           setIsPending(false);

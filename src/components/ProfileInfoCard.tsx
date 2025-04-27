@@ -6,13 +6,19 @@ import { twMerge } from "tailwind-merge";
 import moment from "moment";
 import { abbreviateNumber } from "@/libs/utils/helper";
 import MarkdownViewer from "./body/MarkdownViewer";
-import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  useDisclosure,
+} from "@heroui/modal";
 import { Avatar, AvatarGroup } from "@heroui/avatar";
 import { Button } from "@heroui/button";
-import { getResizedAvatar } from "@/libs/utils/image";
+import { getResizedAvatar } from "@/libs/utils/parseImage";
 import useSWR from "swr";
 import FollowersCard from "./FollowersCard";
-import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
+import { proxifyImageUrl } from "@/libs/utils/proxifyUrl";
 import FollowButton from "./FollowButton";
 import { IoMdShareAlt } from "react-icons/io";
 import { FaGlobe, FaHeart, FaLocationArrow } from "react-icons/fa";
@@ -25,6 +31,7 @@ import { FaLocationDot } from "react-icons/fa6";
 import WitnessVotesCard from "./WitnessVotesCard";
 import SAvatar from "./SAvatar";
 import ChatButton from "./ChatButton";
+import ChatModal from "./chat/ChatModal";
 
 type Props = {
   account: AccountExt;
@@ -43,6 +50,7 @@ export default memo(function ProfileInfoCard(props: Props) {
   const voteData = profileInfo && getVoteData(profileInfo, steemProps);
   const { data: session } = useSession();
   const [witnessModal, setWitnessModal] = useState(false);
+  const chatDisclosure = useDisclosure();
 
   const [followerModal, setFollowerModal] = useState<{
     isOpen: boolean;
@@ -136,7 +144,10 @@ export default memo(function ProfileInfoCard(props: Props) {
                   Share
                 </Button>
               ) : (
-                <ChatButton account={account} />
+                <ChatButton
+                 
+                  onPress={chatDisclosure.onOpen}
+                />
               )}
             </div>
           )}
@@ -385,6 +396,14 @@ export default memo(function ProfileInfoCard(props: Props) {
           )}
         </ModalContent>
       </Modal>
+
+      {chatDisclosure.isOpen && (
+        <ChatModal
+          isOpen={chatDisclosure.isOpen}
+          onOpenChange={chatDisclosure.onOpenChange}
+          account={account}
+        />
+      )}
     </div>
   );
 });

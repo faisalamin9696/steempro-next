@@ -11,31 +11,31 @@ import { markasReadChat } from "@/libs/steem/condenser";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { useSession } from "next-auth/react";
-import { Badge } from "@heroui/badge";
 import SLink from "../SLink";
 import TimeAgoWrapper from "../wrappers/TimeAgoWrapper";
 import SAvatar from "../SAvatar";
 import { useLogin } from "../auth/AuthProvider";
 import TableWrapper from "../wrappers/TableWrapper";
-import { supabase } from "@/libs/supabase";
 import moment from "moment";
-import { getUnreadChats } from "@/libs/steem/mysql";
+import { getUnreadChatsHeads } from "@/libs/steem/mysql";
+import { Memo } from "@steempro/dsteem";
+import { MdOutlineRefresh } from "react-icons/md";
 
 interface Props {
   onOpenChange: (isOpen: boolean) => void;
   isOpen: boolean;
 }
 
-const typeColorMap = {
-  message: "secondary",
-};
-
-const INITIAL_VISIBLE_COLUMNS = ["sender", "latest_timestamp", "count"];
+const INITIAL_VISIBLE_COLUMNS = [
+  "sender_usr",
+  "latest_timestamp",
+  "message_count",
+];
 
 const columns = [
-  { name: "SENDER", uid: "sender", sortable: true },
+  { name: "SENDER", uid: "sender_usr", sortable: true },
   { name: "TIME", uid: "latest_timestamp", sortable: true },
-  { name: "MESSAGES", uid: "count", sortable: true },
+  { name: "MESSAGES", uid: "message_count", sortable: true },
 ];
 
 const ITEMS_PER_BATCH = 30;
@@ -48,17 +48,11 @@ export default function ChatNotificationsTable(props: Props) {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
 
   const isSelf = session?.user?.name === loginInfo.name;
-  const { authenticateUser, isAuthorized } = useLogin();
+  const { authenticateUser, isAuthorized, credentials } = useLogin();
   const dispatch = useAppDispatch();
-  const [allRows, setAllRows] = useState<ChatNotification[]>([]);
-  const [page, setPage] = useState(0);
-  const [endReached, setEndReached] = useState(
-    allRows.length < ITEMS_PER_BATCH
-  );
-
-  useEffect(() => {
-    if (page) setPage(0);
-  }, []);
+  const [allRows, setAllRows] = useState<UnReadChat[]>([]);
+  const [page, setPage] = useState(1);
+  const [endReached, setEndReached] = useState(false);
 
   function getFromAndTo() {
     let from = page * ITEMS_PER_BATCH;
@@ -71,11 +65,12 @@ export default function ChatNotificationsTable(props: Props) {
     return { from, to };
   }
 
-  const { from, to } = getFromAndTo();
-
   const { data, isLoading, mutate, isValidating } = useSWR(
     loginInfo.name && `chat-notifications-${loginInfo.name}`,
-    () => getUnreadChats(loginInfo.name, 0, ITEMS_PER_BATCH),
+    () => {
+      const { from, to } = getFromAndTo();
+      return getUnreadChatsHeads(loginInfo.name, 0, to - 1);
+    },
     {
       refreshInterval: 300000,
     }
@@ -87,18 +82,32 @@ export default function ChatNotificationsTable(props: Props) {
       if (data.length < ITEMS_PER_BATCH) {
         setEndReached(true);
       }
-      setPage(page + 1);
     }
   }, [data]);
 
+  function handleAddMemo() {
+    authenticateUser(false, true);
+    if (!isAuthorized(true)) {
+      return;
+    }
+  }
   const loadMoreMutation = useMutation({
-    mutationFn: () => getUnreadChats(loginInfo.name, from, to),
+    mutationFn: () => {
+      const { from, to } = getFromAndTo();
+      return getUnreadChatsHeads(loginInfo.name, from, to);
+    },
     onSettled(data, error, variables, context) {
       if (error) {
         toast.error(error.message || JSON.stringify(error));
         return;
       }
-      if (data) setAllRows((prev) => [...prev, ...data]);
+      if (data) {
+        setAllRows((prev) => [...prev, ...data]);
+        setPage(page + 1);
+        if (data.length < ITEMS_PER_BATCH) {
+          setEndReached(true);
+        }
+      }
     },
   });
 
@@ -114,7 +123,7 @@ export default function ChatNotificationsTable(props: Props) {
         return {
           ...item,
           ...{
-            is_read: true,
+            message_count: 0,
           },
         };
       });
@@ -123,7 +132,6 @@ export default function ChatNotificationsTable(props: Props) {
       dispatch(
         saveLoginHandler({ ...loginInfo, unread_count_chat: undefined })
       );
-      setAllRows([]);
       toast.success("Chat marked as seen");
     },
   });
@@ -152,28 +160,48 @@ export default function ChatNotificationsTable(props: Props) {
 
     if (hasSearchFilter) {
       filteredNotifications = filteredNotifications.filter((notification) =>
-        notification.sender.toLowerCase().includes(filterValue.toLowerCase())
+        notification.sender_usr
+          .toLowerCase()
+          .includes(filterValue.toLowerCase())
       );
     }
     return filteredNotifications;
   }, [allRows, filterValue]);
 
   const renderCell = React.useCallback(
-    (notification: ChatNotification, columnKey) => {
+    (notification: UnReadChat, columnKey) => {
       const cellValue = notification[columnKey];
       switch (columnKey) {
-        case "sender":
+        case "sender_usr":
           return (
-            <div className="flex flex-row items-center">
+            <div className="flex flex-col gap-1 items-start">
               <div className="flex gap-2 items-center">
-                <SAvatar size="1xs" username={notification.sender} />
-                <div>
+                <SAvatar size="1xs" username={notification.sender_usr} />
+                <div className="flex flex-col gap-1">
                   <SLink
                     className=" hover:text-blue-500"
-                    href={`/@${notification.sender}/chat`}
+                    href={`/@${notification.sender_usr}?chat`}
                   >
-                    {notification.sender}
+                    {notification.sender_usr}
                   </SLink>
+
+                  {credentials?.memo ? (
+                    <div className="w-40">
+                      <p className="truncate text-sm opacity-disabled">
+                        {Memo.decode(
+                          credentials.memo,
+                          notification.latest_message
+                        )?.replace("#", "")}
+                      </p>
+                    </div>
+                  ) : (
+                    <p
+                      className="text-tiny opacity-disabled cursor-pointer"
+                      onClick={handleAddMemo}
+                    >
+                      Encrypted message
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -188,17 +216,17 @@ export default function ChatNotificationsTable(props: Props) {
               />
             </div>
           );
-        case "count":
-          return (
+        case "message_count":
+          return notification.message_count ? (
             <Chip
               className="capitalize border-none gap-1 text-default-600"
-              color={typeColorMap["message"] as any}
+              color={"secondary"}
               size="sm"
               variant="flat"
             >
               {cellValue}
             </Chip>
-          );
+          ) : null;
 
         default:
           return cellValue;
@@ -207,8 +235,8 @@ export default function ChatNotificationsTable(props: Props) {
     [globalData]
   );
 
-  const getTargetUrl = (item: ChatNotification): string => {
-    let targetUrl = `/@${item.sender}/${"chat"}`;
+  const getTargetUrl = (item: UnReadChat): string => {
+    let targetUrl = `/@${item.sender_usr}${"?chat"}`;
     return targetUrl;
   };
 
@@ -217,6 +245,17 @@ export default function ChatNotificationsTable(props: Props) {
       <div className="flex flex-col gap-4 p-1">
         <div className="flex justify-between gap-3 items-end">
           <div className="flex gap-3">
+            {isSelf && (
+              <Button
+                size="sm"
+                isIconOnly
+                isLoading={isValidating}
+                onPress={() => mutate()}
+              >
+                <MdOutlineRefresh size={18} />
+              </Button>
+            )}
+
             {isSelf && (
               <Button
                 size="sm"
@@ -229,7 +268,7 @@ export default function ChatNotificationsTable(props: Props) {
                 color="secondary"
                 // endContent={<IoCheckmarkDone className="text-lg" />}
               >
-                Mark all as seen
+                Mark as seen
               </Button>
             )}
           </div>
@@ -282,7 +321,12 @@ export default function ChatNotificationsTable(props: Props) {
       }
       topContentDropdown={topContent}
       cellWrapper={(item, children) => (
-        <SLink href={getTargetUrl(item)} onClick={() => onOpenChange(!isOpen)}>
+        <SLink
+          href={getTargetUrl(item)}
+          onClick={() => {
+            onOpenChange(!isOpen);
+          }}
+        >
           {children}
         </SLink>
       )}

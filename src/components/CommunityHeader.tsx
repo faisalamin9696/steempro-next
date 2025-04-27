@@ -6,11 +6,11 @@ import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { BiPlus } from "react-icons/bi";
 import { abbreviateNumber } from "@/libs/utils/helper";
-import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
+import { proxifyImageUrl } from "@/libs/utils/proxifyUrl";
 import CommunityMembers from "./community/CommunityMembers";
 import SubscribeButton from "./SubscribeButton";
 import { twMerge } from "tailwind-merge";
-import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
 import SLink from "./SLink";
 
 type Props = {

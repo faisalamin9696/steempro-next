@@ -1,7 +1,7 @@
 "use client";
 
 import { getPost, getAccountExt } from "@/libs/steem/sds";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
+import usePathnameClient from "@/libs/hooks/usePathnameClient";
 import { useSession } from "next-auth/react";
 import useSWR from "swr";
 import React from "react";

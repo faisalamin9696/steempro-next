@@ -7,7 +7,7 @@ import { twMerge } from "tailwind-merge";
 import Image from "next/image";
 import { MdClose } from "react-icons/md";
 import DrawerContent from "./DrawerContent";
-import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
 import SLink from "@/components/SLink";
 import ThemeSwitch from "@/components/ThemeSwitch";
 import { usePathname } from "next/navigation";

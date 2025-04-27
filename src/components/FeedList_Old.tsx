@@ -12,7 +12,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import CommentCard from "./comment/CommentCard";
 import CommentSkeleton from "./comment/components/CommentSkeleton";
 import { getSettings } from "@/libs/utils/user";
-import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
 import { twMerge } from "tailwind-merge";
 import EmptyList from "./EmptyList";
 import { FaArrowUp } from "react-icons/fa"; // Import an icon for the button

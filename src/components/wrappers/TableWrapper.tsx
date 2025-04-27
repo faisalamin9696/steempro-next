@@ -19,9 +19,10 @@ import { Pagination } from "@heroui/pagination";
 import { Input } from "@heroui/input";
 import React, { Key } from "react";
 import { FaChevronDown } from "react-icons/fa";
-import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
 import { twMerge } from "tailwind-merge";
 import LoadingCard from "../LoadingCard";
+import EmptyList from "../EmptyList";
 
 interface Props extends TableProps {
   initialVisibleColumns: string[];
@@ -45,6 +46,7 @@ interface Props extends TableProps {
   isLoading?: boolean;
   cellWrapper?: (item: any, children: React.ReactNode) => React.ReactNode;
   stickyTop?: boolean;
+  emptyContent?: React.ReactNode;
 }
 
 function TableWrapper(props: Props) {
@@ -70,6 +72,7 @@ function TableWrapper(props: Props) {
     stickyTop,
     topRowContent,
     topContentClassName,
+    emptyContent,
   } = props;
 
   const [page, setPage] = React.useState(1);
@@ -331,7 +334,7 @@ function TableWrapper(props: Props) {
         )}
       </TableHeader>
       <TableBody
-        emptyContent={"No data found"}
+        emptyContent={props.emptyContent ?? <EmptyList text="Empty" />}
         items={
           skipPaging
             ? sortedItems

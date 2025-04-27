@@ -2,13 +2,13 @@
 
 import useSWR from "swr";
 import PromotionCard from "../PromotionCard";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
+import usePathnameClient from "@/libs/hooks/usePathnameClient";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import CarousalMain from "./CarousalMain";
 import { AiFillPushpin } from "react-icons/ai";
 import { Button } from "@heroui/button";
 import { twMerge } from "tailwind-merge";
-import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
 
 interface Props {
   className?: string;

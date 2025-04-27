@@ -2,7 +2,7 @@
 
 import { Tab, Tabs } from "@heroui/tabs";
 import React, { useEffect } from "react";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
+import usePathnameClient from "@/libs/hooks/usePathnameClient";
 import ProfileBlogsTab from "../(tabs)/blog/page";
 import ProfileWalletTab from "../(tabs)/wallet/ProfileWalletTab";
 import FeedPatternSwitch from "@/components/FeedPatternSwitch";
@@ -12,7 +12,7 @@ import ProfileSettingsTab from "../(tabs)/settings/page";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { addProfileHandler } from "@/libs/redux/reducers/ProfileReducer";
 import ProfileCommunitiesMainTab from "../(tabs)/CommunitiesMain/page";
-import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
 import ProfileNotificationsTab from "../(tabs)/notifications/page";
 import {
   MdFeed,
@@ -42,7 +42,11 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
     if (data)
       if (isSelf)
         dispatch(
-          saveLoginHandler({ ...data, unread_count: loginInfo.unread_count })
+          saveLoginHandler({
+            ...data,
+            unread_count: loginInfo.unread_count,
+            unread_count_chat: loginInfo.unread_count_chat,
+          })
         );
       else dispatch(addProfileHandler(data));
   }, [data]);

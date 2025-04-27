@@ -1,4 +1,4 @@
-import BadActorList from "./BadActorList";
+import BadActorList from "./badActorList";
 
 export function validate_account_name(value: string) {
     let i, label, len, length, ref;

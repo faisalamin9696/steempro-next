@@ -8,7 +8,7 @@ import { getSettings } from "@/libs/utils/user";
 import CommentListLayout from "./layouts/CommentListLayout";
 import CommentBlogLayout from "./layouts/CommentBlogLayout";
 import CommentGridLayout from "./layouts/CommentGridLayout";
-import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
 
 interface Props {
   comment: Feed | Post;

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
+import usePathnameClient from "@/libs/hooks/usePathnameClient";
 import FeedList from "@/components/FeedList";
 import { getEndPoint, useAppSelector } from "@/libs/constants/AppFunctions";
 

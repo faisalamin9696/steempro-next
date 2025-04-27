@@ -1,6 +1,6 @@
 import { getCommunity } from "@/libs/steem/sds";
-import { getResizedAvatar } from "@/libs/utils/image";
-import usePathnameServer from "@/libs/utils/usePathnameServer";
+import { getResizedAvatar } from "@/libs/utils/parseImage";
+import usePathnameServer from "@/libs/hooks/usePathnameServer";
 import { ResolvingMetadata } from "next";
 
 export default async function Layout({

@@ -1,5 +1,5 @@
 import { headers } from "next/headers";
-import { validateCommunity } from "./helper";
+import { validateCommunity } from "../utils/helper";
 import { validCats, validProfileTabs } from "../constants/AppConstants";
 
 // Define username URL regex

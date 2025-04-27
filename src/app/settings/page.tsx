@@ -39,7 +39,7 @@ import { updateSettingsHandler } from "@/libs/redux/reducers/SettingsReducer";
 import { MdDisabledVisible } from "react-icons/md";
 import { useMutation } from "@tanstack/react-query";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
+import usePathnameClient from "@/libs/hooks/usePathnameClient";
 import { IoIosSettings } from "react-icons/io";
 import { addProfileHandler } from "@/libs/redux/reducers/ProfileReducer";
 import { useSession } from "next-auth/react";

@@ -2,7 +2,7 @@
 
 import FeedList from "@/components/FeedList";
 import { getEndPoint, useAppSelector } from "@/libs/constants/AppFunctions";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
+import usePathnameClient from "@/libs/hooks/usePathnameClient";
 import React from "react";
 import { twMerge } from "tailwind-merge";
 

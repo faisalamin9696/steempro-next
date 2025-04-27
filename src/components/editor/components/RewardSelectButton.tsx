@@ -4,7 +4,7 @@ import { RadioGroup, Radio } from "@heroui/radio";
 
 import React, { memo, useState } from "react";
 import { FaDollarSign } from "react-icons/fa";
-import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
 
 export const rewardTypes: Payout[] = [
   { title: "Decline Payout", shortTitle: "Declined", payout: 0 },

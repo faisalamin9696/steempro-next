@@ -9,7 +9,7 @@ import SAvatar from "./SAvatar";
 import { abbreviateNumber } from "@/libs/utils/helper";
 import { SlUserFollowing } from "react-icons/sl";
 import useSWR from "swr";
-import { getResizedAvatar } from "@/libs/utils/image";
+import { getResizedAvatar } from "@/libs/utils/parseImage";
 import STooltip from "./STooltip";
 import LoadingCard from "./LoadingCard";
 import FollowButton from "./FollowButton";

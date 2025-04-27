@@ -13,7 +13,7 @@ import {
   mutePost,
   publishContent,
 } from "@/libs/steem/condenser";
-import { allowDelete } from "@/libs/utils/StateFunctions";
+import { allowDelete } from "@/libs/utils/stateFunctions";
 import { Role } from "@/libs/utils/community";
 import {
   createPatch,
@@ -31,7 +31,6 @@ import { Card } from "@heroui/card";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
-import secureLocalStorage from "react-secure-storage";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { CustomEvent } from "@piwikpro/react-piwik-pro";
@@ -422,7 +421,7 @@ export default function ReplyFooter({
   return (
     <div className={className}>
       <div className="flex flex-col gap-2">
-        <div className="flex justify-between items-center focus:border-0 focus:ring-0 focus:outline-none">
+        <div className="flex flex-col justify-between items-end focus:border-0 focus:ring-0 focus:outline-none">
           <CommentFooter isReply comment={comment} className="p-0" />
 
           <div className="flex">

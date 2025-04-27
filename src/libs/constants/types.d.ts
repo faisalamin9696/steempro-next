@@ -52,7 +52,7 @@ type Feed = {
   max_accepted_payout: number;
   percent_steem_dollars: number;
   is_new: number = 0;
-  isEdit?: boolean = false;
+  isEdit?: boolean;
 };
 
 type Post = Feed & {
@@ -95,10 +95,11 @@ type Message = {
   community?: string | null;
 };
 
-type ChatNotification = {
-  sender: string;
-  count: number;
-  last_read_time?: string;
+type UnReadChat = {
+  sender_usr: string;
+  message_count: number;
+  last_read_time: string;
+  latest_message: string;
   latest_timestamp: string;
 };
 
@@ -189,8 +190,8 @@ type AccountExt = {
   communities?: Community[];
   last_fetch: number;
   encKey: string;
-  unread_count: number = 0;
-  unread_count_chat?: number;
+  unread_count: number;
+  unread_count_chat: number;
   proxied_vsf_votes: string[];
   proxied_votes?: number;
   share?: number;

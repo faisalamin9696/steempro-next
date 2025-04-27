@@ -2,29 +2,37 @@
 import React, { useEffect, useState } from "react";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import SAvatar from "./SAvatar";
-import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  useDisclosure,
+} from "@heroui/modal";
 import { Button } from "@heroui/button";
 import FollowButton from "./FollowButton";
-import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
+import { proxifyImageUrl } from "@/libs/utils/proxifyUrl";
 import FollowersCard from "./FollowersCard";
 import { twMerge } from "tailwind-merge";
 import { IoMdShareAlt } from "react-icons/io";
 import { AppLink } from "@/libs/constants/AppConstants";
-import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
 import { Accordion, AccordionItem } from "@heroui/accordion";
 import ProfileInfoCard2 from "./ProfileInfoCard";
 import { useSession } from "next-auth/react";
 import SLink from "./SLink";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Reputation from "./Reputation";
 import ChatButton from "./ChatButton";
+import ChatModal from "./chat/ChatModal";
 
 type Props = {
   account: AccountExt;
   className?: string;
+  onChatPress: () => void;
 };
 export default function AccountHeader(props: Props) {
-  const { account } = props;
+  const { account, onChatPress } = props;
   const { isTablet } = useDeviceInfo();
   const { data: session } = useSession();
 
@@ -148,7 +156,7 @@ export default function AccountHeader(props: Props) {
                   Share
                 </Button>
               ) : (
-                <ChatButton account={account} />
+                <ChatButton onPress={onChatPress} />
               )}
             </div>
           </div>

@@ -4,7 +4,7 @@ import { useState, useRef, useCallback, memo, useEffect, KeyboardEventHandler, C
 import EditorToolbar from "./components/EditorToolbar";
 import { useDropzone } from "react-dropzone";
 import { KeyboardEvent } from "react";
-import { MAXIMUM_UPLOAD_SIZE, isValidImage } from "@/libs/utils/image";
+import { MAXIMUM_UPLOAD_SIZE, isValidImage } from "@/libs/utils/parseImage";
 import { toast } from "sonner";
 import { toBase64 } from "@/libs/utils/helper";
 import { signImage, uploadImage } from "@/libs/steem/condenser";
@@ -18,7 +18,7 @@ import LoadingCard from "../LoadingCard";
 import "./style.scss";
 import { getAccountsByPrefix } from "@/libs/steem/sds";
 import { useSession } from "next-auth/react";
-import { validate_account_name } from "@/libs/utils/ChainValidation";
+import { validate_account_name } from "@/libs/utils/chainValidation";
 import { useDisclosure } from "@heroui/modal";
 import SnippetModal from "../SnippetModal";
 

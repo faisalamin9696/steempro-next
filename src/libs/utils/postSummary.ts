@@ -2,7 +2,7 @@ import striptags from 'striptags';
 import { Remarkable } from 'remarkable';
 
 const remarkable = new Remarkable({ html: true });
-import textEllipsis from '@/libs/utils/ellibsis';
+import textEllipsis from '@/libs/utils/ellipsis';
 import { FeedBodyLength } from '../constants/AppConstants';
 
 

@@ -28,7 +28,7 @@ import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import moment from "moment";
 import { steemToVest, vestToSteem } from "@/libs/helper/vesting";
 import { isNumeric } from "@/libs/utils/helper";
-import { validate_account_name } from "@/libs/utils/ChainValidation";
+import { validate_account_name } from "@/libs/utils/chainValidation";
 import KeychainButton from "./KeychainButton";
 import { twMerge } from "tailwind-merge";
 

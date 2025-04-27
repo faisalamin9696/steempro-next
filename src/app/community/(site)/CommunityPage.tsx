@@ -2,12 +2,12 @@
 
 import { Tab, Tabs } from "@heroui/tabs";
 import React, { useEffect, useState } from "react";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
+import usePathnameClient from "@/libs/hooks/usePathnameClient";
 import FeedPatternSwitch from "@/components/FeedPatternSwitch";
 import CommunityTrendingsTab from "../(tabs)/trendings/page";
 import CommunityCreatedTab from "../(tabs)/created/page";
 import { CommunityAboutTab } from "../(tabs)/about/CommunityAboutTab";
-import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
 import { MdInfo, MdNewLabel, MdPin } from "react-icons/md";
 import { FaFire } from "react-icons/fa";
 import CommunityPinnedTab from "../(tabs)/pinned/page";

@@ -235,7 +235,7 @@ export function getKeyType(account: AccountExt, key: string) {
           account: account.name,
           type: keyType as Keys,
           key: privKey,
-          memo: privMemoKey,
+          memo: keyType === "MEMO" ? key : privMemoKey,
         }
       : "";
   } catch (e: any) {

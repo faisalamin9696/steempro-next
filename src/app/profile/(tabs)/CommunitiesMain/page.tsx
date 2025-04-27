@@ -4,7 +4,7 @@ import React from "react";
 import { Tab, Tabs } from "@heroui/tabs";
 import ProfileCommunitiesTab from "../communities/page";
 import ProfileSubsribtionsTab from "../subscriptions/page";
-import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
 import { twMerge } from "tailwind-merge";
 
 export default function ProfileCommunitiesMainTab() {

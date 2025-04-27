@@ -1,7 +1,7 @@
 import MainWrapper from "@/components/wrappers/MainWrapper";
 import React from "react";
 import HomeCarousel from "@/components/carousal/HomeCarousal";
-import usePathnameServer from "@/libs/utils/usePathnameServer";
+import usePathnameServer from "@/libs/hooks/usePathnameServer";
 
 export default async function Layout({
   children,

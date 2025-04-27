@@ -10,7 +10,7 @@ import { Role as RoleLevel } from "@/libs/utils/community";
 import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
 import { Avatar, AvatarGroup } from "@heroui/avatar";
 import { Accordion, AccordionItem } from "@heroui/accordion";
-import { getResizedAvatar } from "@/libs/utils/image";
+import { getResizedAvatar } from "@/libs/utils/parseImage";
 import { SlCalender } from "react-icons/sl";
 import { TbHeartDollar } from "react-icons/tb";
 import CommunityMembers from "./community/CommunityMembers";

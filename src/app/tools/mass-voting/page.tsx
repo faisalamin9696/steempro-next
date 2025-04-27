@@ -5,7 +5,7 @@ import MassVotingModal from "@/components/MassVotingModal";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import { getKeyType } from "@/libs/steem/condenser";
 import { getAccountExt } from "@/libs/steem/sds";
-import { getResizedAvatar } from "@/libs/utils/image";
+import { getResizedAvatar } from "@/libs/utils/parseImage";
 import { PrivKey, getCredentials, getSessionKey } from "@/libs/utils/user";
 import { Input, Textarea } from "@heroui/input";
 import { Avatar } from "@heroui/avatar";
@@ -146,7 +146,7 @@ export default function MassVotingPage() {
               className="flex-1"
               onValueChange={setUsername}
               value={username}
-              endContent={<Avatar className="p-1" src={getResizedAvatar(avatar)} size="sm" />}
+              endContent={<Avatar src={getResizedAvatar(avatar)} size="sm" />}
             />
 
             {isLogin() && (

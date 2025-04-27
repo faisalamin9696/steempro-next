@@ -144,7 +144,11 @@ function AppNavbar() {
 
   async function handleRefreshData() {
     mutate("/steem_requests_api/getSteemProps");
-    mutate([session?.user?.name, "null"]);
+    if (session?.user?.name) {
+      await mutate([session.user.name, "null"]);
+      await mutate(`unread-chat-${session.user.name}`);
+      await mutate(`unread-notification-count-${session.user.name}`);
+    }
   }
   return (
     <nav className="z-50 sticky top-0 flex-no-wrap flex w-full items-center justify-between py-2 shadow-md dark:shadow-white/5 lg:flex-wrap lg:justify-start h-16 bg-transparent backdrop-blur-md">
@@ -220,17 +224,23 @@ function AppNavbar() {
             {status === "authenticated" && (
               <Badge
                 size="sm"
-                content={(loginInfo.unread_count || loginInfo.unread_count_chat) ? "" : undefined}
-                showOutline={!!loginInfo.unread_count || !!loginInfo.unread_count_chat}
+                content={
+                  loginInfo.unread_count || loginInfo.unread_count_chat
+                    ? ""
+                    : undefined
+                }
+                showOutline={
+                  !!loginInfo.unread_count || !!loginInfo.unread_count_chat
+                }
                 // content={
                 //   loginInfo.unread_count > 99
                 //     ? "99+"
                 //     : loginInfo.unread_count > 0 && loginInfo.unread_count
                 // }
                 className={twMerge(
-                  "opacity-80 z-0",
+                  " z-0",
                   loginInfo?.unread_count_chat &&
-                    "border-teal-300 animate-pulse"
+                    "border-green-400 animate-pulse border-[2px]"
                 )}
                 color={"primary"}
                 shape="circle"

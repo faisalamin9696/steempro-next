@@ -2,13 +2,13 @@
 
 import { Tabs, Tab } from "@heroui/tabs";
 import React from "react";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
+import usePathnameClient from "@/libs/hooks/usePathnameClient";
 import FeedPatternSwitch from "@/components/FeedPatternSwitch";
 import HomeTrendingsTab from "./(tabs)/trendings/page";
 import HomeCreatedTab from "./(tabs)/created/page";
 import HomePayoutTab from "./(tabs)/payout/page";
 import HomeHotTab from "./(tabs)/hot/page";
-import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
 import { FaFire } from "react-icons/fa";
 import { MdNewLabel, MdWhatshot } from "react-icons/md";
 import { FaCircleDollarToSlot } from "react-icons/fa6";

@@ -18,16 +18,18 @@ export async function getUnreadChatCount(username: string): Promise<number> {
   return data ?? 0;
 }
 
-export async function getUnreadChats(
+
+export async function getUnreadChatsHeads(
   username: string,
   from: number,
   to: number
-): Promise<ChatNotification[]> {
-  const { data } = await supabase.rpc("get_unread_chats", {
+): Promise<UnReadChat[]> {
+  const { data } = await supabase.rpc("get_chat_heads", {
     username: username,
     from_limit: from,
     to_limit: to,
   });
 
-  return (data ?? []) as ChatNotification[];
+  return (data ?? []) as UnReadChat[];
 }
+

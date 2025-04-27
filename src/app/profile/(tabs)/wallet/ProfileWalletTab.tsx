@@ -6,7 +6,7 @@ import BalanceTab from "./(tabs)/BalanceTab";
 import DelegationTab from "./(tabs)/DelegationTab";
 import { vestToSteem } from "@/libs/helper/vesting";
 import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
+import usePathnameClient from "@/libs/hooks/usePathnameClient";
 import { useMutation } from "@tanstack/react-query";
 import { claimRewardBalance } from "@/libs/steem/condenser";
 import { toast } from "sonner";
@@ -19,7 +19,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import PowerDownModal from "@/components/PowerDownModal";
-import { useDeviceInfo } from "@/libs/utils/useDeviceInfo";
+import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
 
 export default function ProfileWalletTab({ data }: { data: AccountExt }) {
   const { username } = usePathnameClient();

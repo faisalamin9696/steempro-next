@@ -9,7 +9,7 @@ import {
   mapSds,
   useAppSelector,
 } from "@/libs/constants/AppFunctions";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
+import usePathnameClient from "@/libs/hooks/usePathnameClient";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Card } from "@heroui/card";

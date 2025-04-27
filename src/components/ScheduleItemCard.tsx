@@ -29,7 +29,7 @@ import { addScheduleHandler } from "@/libs/redux/reducers/ScheduleReducer";
 import secureLocalStorage from "react-secure-storage";
 import { validateCommunity } from "@/libs/utils/helper";
 import { empty_community } from "@/libs/constants/Placeholders";
-import { proxifyImageUrl } from "@/libs/utils/ProxifyUrl";
+import { proxifyImageUrl } from "@/libs/utils/proxifyUrl";
 import STooltip from "./STooltip";
 import {
   parseZonedDateTime,

@@ -1,7 +1,7 @@
 import { getPost } from "@/libs/steem/sds";
-import { getResizedAvatar, getThumbnail } from "@/libs/utils/image";
+import { getResizedAvatar, getThumbnail } from "@/libs/utils/parseImage";
 import { postSummary } from "@/libs/utils/postSummary";
-import usePathnameServer from "@/libs/utils/usePathnameServer";
+import usePathnameServer from "@/libs/hooks/usePathnameServer";
 import { Metadata } from "next";
 import React from "react";
 

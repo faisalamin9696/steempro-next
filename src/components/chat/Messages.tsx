@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import MessageItem from "./MessageItem";
-import useRealtimeMessages from "@/libs/utils/useRealtimeMessages";
+import useRealtimeMessages from "@/libs/hooks/useRealtimeMessages";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import { getDecryptedData } from "./ChatModal";
 import { getCredentials } from "@/libs/utils/user";

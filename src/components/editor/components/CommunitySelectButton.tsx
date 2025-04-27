@@ -8,7 +8,7 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "@/libs/constants/AppFunctions";
-import { getResizedAvatar } from "@/libs/utils/image";
+import { getResizedAvatar } from "@/libs/utils/parseImage";
 import useSWR from "swr";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { IoCloseOutline } from "react-icons/io5";

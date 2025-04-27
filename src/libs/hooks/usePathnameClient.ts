@@ -1,5 +1,5 @@
 import { usePathname } from "next/navigation";
-import { validateCommunity } from "./helper";
+import { validateCommunity } from "../utils/helper";
 import { validCats, validProfileTabs } from "../constants/AppConstants";
 
 interface Params {

@@ -1,27 +1,21 @@
+"use client";
+
 import { Button } from "@heroui/button";
-import React from "react";
+import React, { useEffect } from "react";
 import { BsChatDots } from "react-icons/bs";
 import { useLogin } from "./auth/AuthProvider";
-import ChatModal from "./chat/ChatModal";
 import { useDisclosure } from "@heroui/modal";
+import { useSearchParams } from "next/navigation";
 
-function ChatButton({
-  account,
-  onSuccess,
-}: {
-  account: AccountExt;
-  onSuccess?: () => void;
-}) {
+function ChatButton({ onPress }: { onPress: () => void }) {
   const { authenticateUser, isAuthorized } = useLogin();
-  const chatDisclosure = useDisclosure();
 
   function handleChat() {
     authenticateUser(false, true);
     if (!isAuthorized(true)) {
       return;
     }
-    chatDisclosure.onOpen();
-    onSuccess && onSuccess();
+    onPress();
   }
   return (
     <div>
@@ -37,14 +31,6 @@ function ChatButton({
       >
         Chat
       </Button>
-
-      {chatDisclosure.isOpen && (
-        <ChatModal
-          isOpen={chatDisclosure.isOpen}
-          onOpenChange={chatDisclosure.onOpenChange}
-          account={account}
-        />
-      )}
     </div>
   );
 }

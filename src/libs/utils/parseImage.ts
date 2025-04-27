@@ -1,5 +1,5 @@
 import { filesize } from "filesize";
-import { proxifyImageUrl } from "./ProxifyUrl";
+import { proxifyImageUrl } from "./proxifyUrl";
 import { AppStrings } from "../constants/AppStrings";
 
 const BASE_IMAGE_URL = AppStrings.image_hostings[0];

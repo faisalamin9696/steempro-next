@@ -15,7 +15,7 @@ import { Chip } from "@heroui/chip";
 
 import { FaChevronDown, FaPlus } from "react-icons/fa";
 import useSWR from "swr";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
+import usePathnameClient from "@/libs/hooks/usePathnameClient";
 import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
 import SAvatar from "@/components/SAvatar";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";

@@ -2,7 +2,7 @@
 
 import { getAccountExt, getCommunity } from "@/libs/steem/sds";
 import MainWrapper from "@/components/wrappers/MainWrapper";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
+import usePathnameClient from "@/libs/hooks/usePathnameClient";
 import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import LoadingCard from "@/components/LoadingCard";

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { User } from "@heroui/user";
-import { getResizedAvatar } from "@/libs/utils/image";
+import { getResizedAvatar } from "@/libs/utils/parseImage";
 import { empty_comment } from "@/libs/constants/Placeholders";
 import { Button } from "@heroui/button";
 import { FaPencil } from "react-icons/fa6";

@@ -2,7 +2,7 @@ import { TokenCard } from "@/components/TokenCard";
 import TransferModal from "@/components/TransferModal";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import { vestToSteem } from "@/libs/helper/vesting";
-import usePathnameClient from "@/libs/utils/usePathnameClient";
+import usePathnameClient from "@/libs/hooks/usePathnameClient";
 import {
   useDisclosure,
   Modal,

@@ -1,6 +1,6 @@
 import { getAccountExt } from "@/libs/steem/sds";
-import { getResizedAvatar } from "@/libs/utils/image";
-import usePathnameServer from "@/libs/utils/usePathnameServer";
+import { getResizedAvatar } from "@/libs/utils/parseImage";
+import usePathnameServer from "@/libs/hooks/usePathnameServer";
 import { auth } from "@/auth";
 import { Metadata } from "next";
 

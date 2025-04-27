@@ -19,6 +19,7 @@ import { supabase } from "@/libs/supabase";
 import { clearCommentHandler } from "@/libs/redux/reducers/CommentReducer";
 import Image from "next/image";
 import { MdVpnKey } from "react-icons/md";
+import { BsChatDots, BsChatDotsFill } from "react-icons/bs";
 
 interface Props {
   user: User;
@@ -117,55 +118,60 @@ export default function AccountItemCard(props: Props) {
         props.className
       )}
     >
-      <div className=" flex flex-row gap-2 items-center">
+      <div className=" flex flex-row gap-2 items-start">
         <SAvatar size="xs" username={user.username} />
-        <p className="text-sm">{user.username}</p>
-        <div className="flex flex-row gap-1 items-center w-max">
-          {user.keychainLogin ? (
-            <Image
-              title="Keychain"
-              height={20}
-              width={20}
-              alt="K"
-              src={"/keychain_transparent.svg"}
-            />
-          ) : (
-            <div className="flex flex-row items-center gap-2">
-              <Chip
-                variant="flat"
-                size="sm"
-                title={user.type}
-                className=" justify-center"
-                color={keysColorMap[user.type]}
-              >
-                {user.type[0]}
-              </Chip>
+        <div className=" flex flex-col items-start gap-2">
+          <div className="flex flex-row  gap-2">
+            <p className="text-sm">{user.username}</p>
+            <div className="flex flex-row gap-2 items-center w-max">
+              {user.keychainLogin ? (
+                <Image
+                  title="Keychain"
+                  height={20}
+                  width={20}
+                  alt="K"
+                  src={"/keychain_transparent.svg"}
+                />
+              ) : (
+                <div className="flex flex-row items-center gap-2">
+                  <Chip
+                    variant="flat"
+                    size="sm"
+                    title={user.type}
+                    className=" justify-center"
+                    color={keysColorMap[user.type]}
+                  >
+                    {user.type[0]}
+                  </Chip>
 
-              {!user?.passwordless && (
-                <MdVpnKey className=" text-blue-500" size={16} />
+                  {!user?.passwordless && (
+                    <MdVpnKey className=" text-blue-500" size={16} />
+                  )}
+                </div>
               )}
+              {user.memo ? <BsChatDotsFill className="text-default-700" /> : null}
             </div>
-          )}
-        </div>
-      </div>
+          </div>
 
-      <div>
-        {isDefault ? (
-          <Chip color="success" size="sm" variant="flat">
-            Default
-          </Chip>
-        ) : (
-          <Button
-            size="sm"
-            isLoading={isPending}
-            isDisabled={isPending || isDisabled}
-            radius="full"
-            onPress={handleSwitch}
-            className="min-w-0  h-6 bg-foreground/20"
-          >
-            {switchText ?? "Switch"}
-          </Button>
-        )}
+          <div>
+            {isDefault ? (
+              <Chip color="success" size="sm" variant="flat">
+                Default
+              </Chip>
+            ) : (
+              <Button
+                size="sm"
+                isLoading={isPending}
+                isDisabled={isPending || isDisabled}
+                radius="full"
+                onPress={handleSwitch}
+                className="min-w-0  h-6 bg-foreground/20"
+              >
+                {switchText ?? "Switch"}
+              </Button>
+            )}
+          </div>
+        </div>
       </div>
     </Card>
   );

@@ -6,10 +6,10 @@ import MarkdownViewer from "@/components/body/MarkdownViewer";
 import BodyShort from "@/components/body/BodyShort";
 import CommentCover from "../components/CommentCover";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
-import { hasNsfwTag } from "@/libs/utils/StateFunctions";
+import { hasNsfwTag } from "@/libs/utils/stateFunctions";
 import { getSettings } from "@/libs/utils/user";
 import { twMerge } from "tailwind-merge";
-import { getThumbnail } from "@/libs/utils/image";
+import { getThumbnail } from "@/libs/utils/parseImage";
 import SLink from "@/components/SLink";
 
 export default function CommentListLayout(props: CommentProps) {

@@ -1,5 +1,5 @@
 import MainWrapper from "@/components/wrappers/MainWrapper";
-import usePathnameServer from "@/libs/utils/usePathnameServer";
+import usePathnameServer from "@/libs/hooks/usePathnameServer";
 import React from "react";
 
 export default async function Layout({

@@ -8,7 +8,7 @@ import ViewCountCard from "./ViewCountCard";
 import Image from "next/image";
 import SAvatar from "./SAvatar";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
-import { getThumbnail } from "@/libs/utils/image";
+import { getThumbnail } from "@/libs/utils/parseImage";
 import { twMerge } from "tailwind-merge";
 import SLink from "./SLink";
 

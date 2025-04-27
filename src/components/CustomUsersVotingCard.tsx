@@ -15,7 +15,7 @@ import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
 import { getSettings, updateSettings } from "@/libs/utils/user";
 import SAvatar from "./SAvatar";
 import { toast } from "sonner";
-import { validate_account_name } from "@/libs/utils/ChainValidation";
+import { validate_account_name } from "@/libs/utils/chainValidation";
 import { updateSettingsHandler } from "@/libs/redux/reducers/SettingsReducer";
 import { secureDecrypt } from "@/libs/utils/encryption";
 
