@@ -2,13 +2,7 @@
 
 import { Button } from "@heroui/button";
 import React from "react";
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-} from "@heroui/modal";
+import { Modal, ModalBody, ModalContent, ModalFooter } from "@heroui/modal";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import { Tab, Tabs } from "@heroui/tabs";
 import { BsChatDots } from "react-icons/bs";
@@ -26,7 +20,7 @@ interface Props {
 export default function NotificationsModal(props: Props) {
   const { username, isOpen, onOpenChange } = props;
   if (!username) return null;
-  const loginInfo = useAppSelector((state) => state.loginReducer.value);
+  const commonData = useAppSelector((state) => state.commonReducer.values);
 
   return (
     <Modal
@@ -61,23 +55,21 @@ export default function NotificationsModal(props: Props) {
                   title={
                     <div className="flex flex-row gap-1 items-center">
                       <p>General</p>
-                      {!!loginInfo.unread_count && (
-                        <Badge
-                          color="primary"
-                          variant="solid"
-                          shape="circle"
-                          showOutline={false}
-                          size="sm"
-                          isInvisible={!loginInfo.unread_count}
-                          content={
-                            loginInfo.unread_count > 99
-                              ? "99+"
-                              : loginInfo.unread_count
-                          }
-                        >
-                          <FaRegBell className="m-1" size={18} />
-                        </Badge>
-                      )}
+                      <Badge
+                        color="primary"
+                        variant="solid"
+                        shape="circle"
+                        showOutline={false}
+                        size="sm"
+                        isInvisible={commonData.unread_count < 1}
+                        content={
+                          commonData.unread_count > 99
+                            ? "99+"
+                            : commonData.unread_count
+                        }
+                      >
+                        <FaRegBell className="m-1" size={18} />
+                      </Badge>
                     </div>
                   }
                 >
@@ -93,11 +85,11 @@ export default function NotificationsModal(props: Props) {
                         variant="solid"
                         size="sm"
                         showOutline={false}
-                        isInvisible={!loginInfo.unread_count_chat}
+                        isInvisible={!commonData.unread_count_chat}
                         content={
-                          loginInfo.unread_count_chat > 99
+                          commonData.unread_count_chat > 99
                             ? "99+"
-                            : loginInfo.unread_count_chat
+                            : commonData.unread_count_chat
                         }
                       >
                         <BsChatDots className="m-1" size={18} />

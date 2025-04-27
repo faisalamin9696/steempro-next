@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/modal";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import { getCredentials, sessionKey, getSessionToken } from "@/libs/utils/user";
@@ -12,7 +12,6 @@ import KeychainLogin from "./types/KeychainLogin";
 import MemoLogin from "./types/MemoLogin";
 import KeyLogin from "./types/KeyLogin";
 import UnlockAcccount from "./types/UnlockAccount";
-import { useLogin } from "./AuthProvider";
 
 interface Props {
   open: boolean;
@@ -25,19 +24,19 @@ interface Props {
 export default function AuthModal(props: Props) {
   let { open, onLoginSuccess, addNew, onClose, addMemo } = props;
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
-  let { credentials } = useLogin();
+  const [credentials, setCredentials] = useState(getCredentials());
   const [useKeychain, setUseKeychain] = React.useState(true);
   const { data: session, status } = useSession();
-
   const isLocked =
-    status === "authenticated" &&
-    !sessionKey &&
-    (credentials?.type === "ACTIVE" || !getSessionToken(session.user?.name)) &&
-    !credentials?.keychainLogin;
+    (status === "authenticated" &&
+      !credentials?.passwordless &&
+      !sessionKey &&
+      !credentials?.keychainLogin) ||
+    (credentials?.type === "ACTIVE" && !getSessionToken(session?.user?.name));
 
   useEffect(() => {
-    credentials = getCredentials();
-  }, []);
+    setCredentials(getCredentials());
+  }, [session?.user?.name]);
 
   return (
     <Modal

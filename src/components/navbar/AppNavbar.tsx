@@ -38,6 +38,7 @@ import {
   removeSessionToken,
   getSessionKey,
   removeCredentials,
+  refreshData,
 } from "@/libs/utils/user";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { toast } from "sonner";
@@ -50,7 +51,6 @@ import SAvatar from "../SAvatar";
 import { twMerge } from "tailwind-merge";
 import SLink from "../SLink";
 import { AsyncUtils } from "@/libs/utils/async.utils";
-import { mutate } from "swr";
 import { Spinner } from "@heroui/spinner";
 
 function AppNavbar() {
@@ -70,7 +70,7 @@ function AppNavbar() {
   );
   const logoutDisclosure = useDisclosure();
   const [logoutLoading, setLogoutLoading] = useState(false);
-  const commonInfo = useAppSelector((state) => state.commonReducer.values);
+  const commonData = useAppSelector((state) => state.commonReducer.values);
   const [keyType, setKeyType] = useState(credentials?.type);
 
   // validate the local storage auth
@@ -142,14 +142,6 @@ function AppNavbar() {
     toast.success(`${credentials.username} logged out successfully`);
   }
 
-  async function handleRefreshData() {
-    mutate("/steem_requests_api/getSteemProps");
-    if (session?.user?.name) {
-      await mutate([session.user.name, "null"]);
-      await mutate(`unread-chat-${session.user.name}`);
-      await mutate(`unread-notification-count-${session.user.name}`);
-    }
-  }
   return (
     <nav className="z-50 sticky top-0 flex-no-wrap flex w-full items-center justify-between py-2 shadow-md dark:shadow-white/5 lg:flex-wrap lg:justify-start h-16 bg-transparent backdrop-blur-md">
       <div className="flex w-full flex-wrap items-center justify-between px-4">
@@ -225,12 +217,12 @@ function AppNavbar() {
               <Badge
                 size="sm"
                 content={
-                  loginInfo.unread_count || loginInfo.unread_count_chat
+                  commonData.unread_count + commonData.unread_count_chat > 0
                     ? ""
                     : undefined
                 }
                 showOutline={
-                  !!loginInfo.unread_count || !!loginInfo.unread_count_chat
+                  commonData.unread_count + commonData.unread_count_chat > 0
                 }
                 // content={
                 //   loginInfo.unread_count > 99
@@ -239,7 +231,7 @@ function AppNavbar() {
                 // }
                 className={twMerge(
                   " z-0",
-                  loginInfo?.unread_count_chat &&
+                  commonData.unread_count_chat > 0 &&
                     "border-green-400 animate-pulse border-[2px]"
                 )}
                 color={"primary"}
@@ -324,12 +316,12 @@ function AppNavbar() {
 
                       <Button
                         className=" min-h-0 min-w-0 w-6 h-6"
-                        onPress={handleRefreshData}
+                        onPress={() => refreshData(session?.user?.name)}
                         isIconOnly
                         size="sm"
                         radius="full"
                       >
-                        {commonInfo.isLoadingAccount ? (
+                        {commonData.isLoadingAccount ? (
                           <Spinner size="sm" color="current" />
                         ) : (
                           <MdOutlineRefresh size={18} />
@@ -423,7 +415,9 @@ function AppNavbar() {
             isOpen={accountDisclosure.isOpen}
             onClose={accountDisclosure.onClose}
             handleSwitchSuccess={(user) => {
-              if (user) setCredentials(user);
+              if (user) {
+                setCredentials(user);
+              }
             }}
           />
         )}

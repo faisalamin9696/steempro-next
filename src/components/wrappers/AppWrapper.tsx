@@ -8,7 +8,6 @@ import { addCommonDataHandler } from "@/libs/redux/reducers/CommonReducer";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { saveSteemGlobals } from "@/libs/redux/reducers/SteemGlobalReducer";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next13-progressbar";
 import React, { useEffect, useState } from "react";
 
 // let isPinged = false;
@@ -23,13 +22,11 @@ export default function AppWrapper({
     session?.user?.name
   );
   const dispatch = useAppDispatch();
-  const router = useRouter();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
-
   const { globalData, isValidatingGlobal } = useSteemGlobals();
   const { accountData, isValidatingAccount } = useAccountData(username);
   const { unreadChatCount, unreadNotificationCount } = useUnreadCounts(
-    loginInfo?.name
+    session?.user?.name
   );
 
   // function pingForWitnessVote() {
@@ -61,32 +58,29 @@ export default function AppWrapper({
   }, [isValidatingAccount, isValidatingGlobal]);
 
   useEffect(() => {
-    if (accountData || unreadChatCount) {
+    dispatch(
+      addCommonDataHandler({
+        unread_count: unreadNotificationCount,
+        unread_count_chat: unreadChatCount ?? 0,
+      })
+    );
+  }, [unreadChatCount, unreadNotificationCount]);
+
+  useEffect(() => {
+    if (accountData) {
       dispatch(
         saveLoginHandler({
           ...(accountData ?? loginInfo),
-          unread_count:
-            loginInfo?.name === username ? loginInfo?.unread_count ?? 0 : 0,
-          unread_count_chat:
-            unreadChatCount ?? loginInfo?.unread_count_chat ?? 0,
         })
       );
     }
+  }, [accountData]);
+
+  useEffect(() => {
     if (globalData) {
       dispatch(saveSteemGlobals(globalData));
     }
-  }, [globalData, accountData, unreadChatCount, loginInfo?.name, username]);
-
-  useEffect(() => {
-    if (unreadNotificationCount !== undefined) {
-      dispatch(
-        saveLoginHandler({
-          ...loginInfo,
-          unread_count: unreadNotificationCount,
-        })
-      );
-    }
-  }, [unreadNotificationCount]);
+  }, [globalData]);
 
   return <div>{children}</div>;
 }

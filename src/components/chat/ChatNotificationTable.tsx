@@ -20,6 +20,7 @@ import moment from "moment";
 import { getUnreadChatsHeads } from "@/libs/steem/mysql";
 import { Memo } from "@steempro/dsteem";
 import { MdOutlineRefresh } from "react-icons/md";
+import { addCommonDataHandler } from "@/libs/redux/reducers/CommonReducer";
 
 interface Props {
   onOpenChange: (isOpen: boolean) => void;
@@ -33,7 +34,7 @@ const INITIAL_VISIBLE_COLUMNS = [
 ];
 
 const columns = [
-  { name: "SENDER", uid: "sender_usr", sortable: true },
+  { name: "USER", uid: "sender_usr", sortable: true },
   { name: "TIME", uid: "latest_timestamp", sortable: true },
   { name: "MESSAGES", uid: "message_count", sortable: true },
 ];
@@ -53,6 +54,7 @@ export default function ChatNotificationsTable(props: Props) {
   const [allRows, setAllRows] = useState<UnReadChat[]>([]);
   const [page, setPage] = useState(1);
   const [endReached, setEndReached] = useState(false);
+  const commonData = useAppSelector((state) => state.commonReducer.values);
 
   function getFromAndTo() {
     let from = page * ITEMS_PER_BATCH;
@@ -129,9 +131,7 @@ export default function ChatNotificationsTable(props: Props) {
       });
 
       setAllRows(parserData);
-      dispatch(
-        saveLoginHandler({ ...loginInfo, unread_count_chat: undefined })
-      );
+      dispatch(addCommonDataHandler({ unread_count_chat: 0 }));
       toast.success("Chat marked as seen");
     },
   });
@@ -184,24 +184,26 @@ export default function ChatNotificationsTable(props: Props) {
                   >
                     {notification.sender_usr}
                   </SLink>
-
-                  {credentials?.memo ? (
-                    <div className="w-40">
-                      <p className="truncate text-sm opacity-disabled">
-                        {Memo.decode(
-                          credentials.memo,
-                          notification.latest_message
-                        )?.replace("#", "")}
+                  <div className=" flex flex-row items-center gap-1">
+                    <p className="text-tiny opacity-70 font-bold text-blue-500">{notification.is_self? "You:":""}</p>
+                    {credentials?.memo ? (
+                      <div className="w-20 md:w-40">
+                        <p className="truncate text-sm opacity-disabled">
+                          {Memo.decode(
+                            credentials.memo,
+                            notification.latest_message
+                          )?.replace("#", "")}
+                        </p>
+                      </div>
+                    ) : (
+                      <p
+                        className="text-tiny opacity-disabled cursor-pointer"
+                        onClick={handleAddMemo}
+                      >
+                        Encrypted message
                       </p>
-                    </div>
-                  ) : (
-                    <p
-                      className="text-tiny opacity-disabled cursor-pointer"
-                      onClick={handleAddMemo}
-                    >
-                      Encrypted message
-                    </p>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -217,7 +219,7 @@ export default function ChatNotificationsTable(props: Props) {
             </div>
           );
         case "message_count":
-          return notification.message_count ? (
+          return notification.message_count > 0 && !notification.is_self ? (
             <Chip
               className="capitalize border-none gap-1 text-default-600"
               color={"secondary"}
@@ -263,7 +265,7 @@ export default function ChatNotificationsTable(props: Props) {
                 onPress={handleMarkRead}
                 isLoading={markMutation.isPending}
                 isDisabled={
-                  markMutation.isPending || !loginInfo.unread_count_chat
+                  markMutation.isPending || commonData.unread_count_chat < 1
                 }
                 color="secondary"
                 // endContent={<IoCheckmarkDone className="text-lg" />}

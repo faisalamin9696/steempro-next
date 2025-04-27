@@ -29,6 +29,7 @@ import TableWrapper from "./wrappers/TableWrapper";
 import { CustomCheckbox } from "./CustomCheckbox";
 import { CheckboxGroup } from "@heroui/checkbox";
 import { MdOutlineRefresh } from "react-icons/md";
+import { addCommonDataHandler } from "@/libs/redux/reducers/CommonReducer";
 
 interface Props {
   username: string;
@@ -103,27 +104,35 @@ const filter = {
   },
 };
 
+const ITEMS_PER_BATCH = 50;
 let tempLastRead = 0;
 export default function NotificationsTable(props: Props) {
   const { isOpen, username, onOpenChange } = props;
+  const commonData = useAppSelector((state) => state.commonReducer.values);
 
   function getOffset(): number {
     return offset?.[username] || 0;
   }
+  useEffect(() => {
+    return () => {
+      if (offset[username]) offset[username] = 0;
+    };
+  }, []);
 
   function updateOffset() {
-    if (offset[username]) offset[username] += 50;
-    else offset[username] = 50;
+    if (offset[username]) offset[username] += ITEMS_PER_BATCH;
+    else offset[username] = ITEMS_PER_BATCH;
   }
+
   if (!username) return null;
 
   const URL = `/notifications_api/getFilteredNotificationsByStatus/${username}/all/${JSON.stringify(
     filter
-  )}/50`;
+  )}/${ITEMS_PER_BATCH}`;
   function URL_OFFSET(_offset: number) {
     return `/notifications_api/getFilteredNotificationsByStatus/${username}/all/${JSON.stringify(
       filter
-    )}/50/${_offset}`;
+    )}/${ITEMS_PER_BATCH}/${_offset}`;
   }
 
   const { data: session } = useSession();
@@ -143,17 +152,16 @@ export default function NotificationsTable(props: Props) {
     }
   );
 
+
   useEffect(() => {
     if (data) {
       if (isSelf) {
         const unreadCount = data.filter((obj) => obj.is_read === 0).length;
         if (
-          (unreadCount >= 0 && unreadCount > loginInfo.unread_count) ||
-          unreadCount < 50
+          (unreadCount >= 0 && unreadCount > commonData.unread_count) ||
+          unreadCount < ITEMS_PER_BATCH
         ) {
-          dispatch(
-            saveLoginHandler({ ...loginInfo, unread_count: unreadCount })
-          );
+          dispatch(addCommonDataHandler({ unread_count: unreadCount }));
         }
       }
 
@@ -185,7 +193,7 @@ export default function NotificationsTable(props: Props) {
           !notification.is_read ? { ...notification, is_read: 1 } : notification
         )
       );
-      dispatch(saveLoginHandler({ ...loginInfo, unread_count: undefined }));
+      dispatch(addCommonDataHandler({ unread_count: 0 }));
       toast.success("Marked as read");
       tempLastRead = allRows?.[0]?.time;
     },
@@ -323,7 +331,7 @@ export default function NotificationsTable(props: Props) {
                 variant="solid"
                 onPress={handleMarkRead}
                 isLoading={markMutation.isPending}
-                isDisabled={markMutation.isPending || !loginInfo.unread_count}
+                isDisabled={markMutation.isPending || !commonData.unread_count}
                 color="primary"
                 // endContent={<IoCheckmarkDone className="text-lg" />}
               >

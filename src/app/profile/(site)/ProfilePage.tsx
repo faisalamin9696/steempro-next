@@ -44,8 +44,6 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
         dispatch(
           saveLoginHandler({
             ...data,
-            unread_count: loginInfo.unread_count,
-            unread_count_chat: loginInfo.unread_count_chat,
           })
         );
       else dispatch(addProfileHandler(data));

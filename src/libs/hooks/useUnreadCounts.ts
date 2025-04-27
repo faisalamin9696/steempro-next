@@ -34,30 +34,32 @@ const filter = {
   },
 };
 
-export function useUnreadCounts(loginName?: string | null) {
-  const url = loginName
-    ? `/notifications_api/getFilteredUnreadCount/${loginName}/${JSON.stringify(
+export function useUnreadCounts(username?: string | null) {
+  const url = username
+    ? `/notifications_api/getFilteredUnreadCount/${username}/${JSON.stringify(
         filter
       )}`
     : null;
 
   const { data: unreadChatCount } = useSWR(
-    loginName ? `unread-chat-${loginName}` : null,
-    () => getUnreadChatCount(loginName!),
+    username ? `unread-chat-${username}` : null,
+    () => getUnreadChatCount(username!),
     {
       shouldRetryOnError: true,
       refreshInterval: 310_000,
       errorRetryInterval: 20_000,
+      dedupingInterval: 10_000,
     }
   );
 
   const { data: unreadNotificationCount } = useSWR(
-    url ? `unread-notification-count-${loginName}` : null, // custom key for mutate
+    url ? `unread-notification-count-${username}` : null, // custom key for mutate
     () => fetchSds<number>(url!), // manually call fetchSds with your URL
     {
       shouldRetryOnError: true,
       refreshInterval: 300_000,
       errorRetryInterval: 10_000,
+      dedupingInterval: 10_000,
     }
   );
 

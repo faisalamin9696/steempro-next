@@ -158,9 +158,7 @@ export const empty_profile = (name: string): AccountExt => {
     observer_ignores_author: 0,
     encKey: "",
     status: "idle",
-    unread_count: 0,
     proxied_vsf_votes: [],
-    unread_count_chat: 0,
   };
 };
 

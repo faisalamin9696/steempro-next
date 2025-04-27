@@ -101,6 +101,7 @@ type UnReadChat = {
   last_read_time: string;
   latest_message: string;
   latest_timestamp: string;
+  is_self: boolean;
 };
 
 type AccountExt = {
@@ -190,8 +191,6 @@ type AccountExt = {
   communities?: Community[];
   last_fetch: number;
   encKey: string;
-  unread_count: number;
-  unread_count_chat: number;
   proxied_vsf_votes: string[];
   proxied_votes?: number;
   share?: number;
