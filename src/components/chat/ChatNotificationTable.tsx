@@ -185,7 +185,9 @@ export default function ChatNotificationsTable(props: Props) {
                     {notification.sender_usr}
                   </SLink>
                   <div className=" flex flex-row items-center gap-1">
-                    <p className="text-tiny opacity-70 font-bold text-blue-500">{notification.is_self? "You:":""}</p>
+                    <p className="text-tiny opacity-70 font-bold text-blue-500">
+                      {notification.is_self ? "You:" : ""}
+                    </p>
                     {credentials?.memo ? (
                       <div className="w-20 md:w-40">
                         <p className="truncate text-sm opacity-disabled">
@@ -219,12 +221,12 @@ export default function ChatNotificationsTable(props: Props) {
             </div>
           );
         case "message_count":
-          return notification.message_count > 0 && !notification.is_self ? (
+          return notification.message_count > 0 ? (
             <Chip
-              className="capitalize border-none gap-1 text-default-600"
-              color={"secondary"}
+              className="capitalize border-none gap-1"
+              color={notification.is_self ? "default" : "secondary"}
               size="sm"
-              variant="flat"
+              variant="solid"
             >
               {cellValue}
             </Chip>

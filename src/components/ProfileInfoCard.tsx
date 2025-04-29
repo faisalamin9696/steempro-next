@@ -144,10 +144,7 @@ export default memo(function ProfileInfoCard(props: Props) {
                   Share
                 </Button>
               ) : (
-                <ChatButton
-                 
-                  onPress={chatDisclosure.onOpen}
-                />
+                <ChatButton onPress={chatDisclosure.onOpen} />
               )}
             </div>
           )}
@@ -287,34 +284,32 @@ export default memo(function ProfileInfoCard(props: Props) {
           </div>
         )}
 
-        {!!account.witness_votes?.length ||
-          (account.proxy && (
-            <div className=" flex flex-col items-start gap-2">
-              <div className="flex flex-row font-bold text-left items-center gap-1">
-                <p>Witness {account.proxy ? "proxy" : "votes"}</p>
-              </div>
-              <div className=" flex flex-row items-center gap-4 px-3">
-                <AvatarGroup isBordered size="md" max={5}>
-                  {(account.proxy
-                    ? [account.proxy]
-                    : account.witness_votes
-                  )?.map((people) => (
+        {(!!account.witness_votes || account.proxy) && (
+          <div className=" flex flex-col items-start gap-2">
+            <div className="flex flex-row font-bold text-left items-center gap-1">
+              <p>Witness {account.proxy ? "proxy" : "votes"}</p>
+            </div>
+            <div className=" flex flex-row items-center gap-4 px-3">
+              <AvatarGroup isBordered size="md" max={5}>
+                {(account.proxy ? [account.proxy] : account.witness_votes)?.map(
+                  (people) => (
                     <SLink key={people} className="!ms-1" href={`/@${people}`}>
                       <Avatar key={people} src={getResizedAvatar(people)} />
                     </SLink>
-                  ))}
-                </AvatarGroup>
-                {!account.proxy && (
-                  <p
-                    onClick={() => setWitnessModal(!witnessModal)}
-                    className=" text-tiny hover:underline cursor-pointer"
-                  >
-                    Show all
-                  </p>
+                  )
                 )}
-              </div>
+              </AvatarGroup>
+              {!account.proxy && (
+                <p
+                  onClick={() => setWitnessModal(!witnessModal)}
+                  className=" text-tiny hover:underline cursor-pointer"
+                >
+                  Show all
+                </p>
+              )}
             </div>
-          ))}
+          </div>
+        )}
       </div>
       {/* {profileInfo.flag_text && (
         <div className=" flex flex-col items-start gap-2">
