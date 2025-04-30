@@ -8,7 +8,7 @@ import { Tab, Tabs } from "@heroui/tabs";
 import { BsChatDots } from "react-icons/bs";
 import { FaRegBell } from "react-icons/fa";
 import { Badge } from "@heroui/badge";
-import ChatNotificationsTable from "./chat/ChatNotificationTable";
+import ChatNotificationsTable from "./chat/user/ChatNotificationTable";
 import NotificationsTable from "./NotificationsTable";
 
 interface Props {
@@ -31,7 +31,7 @@ export default function NotificationsModal(props: Props) {
       hideCloseButton
       backdrop="opaque"
       size="lg"
-      placement="top-center"
+      placement="auto"
     >
       <ModalContent>
         {(onClose) => (

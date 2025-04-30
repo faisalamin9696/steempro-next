@@ -7,7 +7,13 @@ import moment from "moment";
 import { abbreviateNumber } from "@/libs/utils/helper";
 import MarkdownViewer from "./body/MarkdownViewer";
 import { Role as RoleLevel } from "@/libs/utils/community";
-import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  useDisclosure,
+} from "@heroui/modal";
 import { Avatar, AvatarGroup } from "@heroui/avatar";
 import { Accordion, AccordionItem } from "@heroui/accordion";
 import { getResizedAvatar } from "@/libs/utils/parseImage";
@@ -16,14 +22,17 @@ import { TbHeartDollar } from "react-icons/tb";
 import CommunityMembers from "./community/CommunityMembers";
 import { CommunityActivities } from "./community/CommunityActivities";
 import SLink from "./SLink";
+import ChatButton from "./ChatButton";
+import CommunityChatModal from "./chat/community/CommunityChatModal";
 
 type Props = {
   community: Community;
   className?: string;
+  onChatPress: () => void;
 };
 
 export default memo(function CommunityInfoCard(props: Props) {
-  const { community } = props;
+  const { community, onChatPress } = props;
 
   const communityInfo: Community =
     useAppSelector((state) => state.communityReducer.values)[
@@ -36,6 +45,7 @@ export default memo(function CommunityInfoCard(props: Props) {
     RoleLevel.atLeast(item.role, "mod")
   );
   const [membersModal, setMembersModal] = useState(false);
+  const chatDisclosure = useDisclosure();
 
   return (
     <div
@@ -45,15 +55,20 @@ export default memo(function CommunityInfoCard(props: Props) {
         props.className
       )}
     >
-      <div className=" flex flex-col">
-        <div className="flex flex-col items-start font-bold text-lg sm:text-2xl mb-0">
-          <p className="text-left">{communityInfo.title}</p>
-          <SLink
-            href={`/@${communityInfo.account}`}
-            className=" font-normal text-sm hover:underline"
-          >
-            @{communityInfo.account}
-          </SLink>
+      <div className=" flex flex-col w-full">
+        <div className="flex flex-row items-start justify-between gap-0">
+          <div className="flex flex-col items-start font-bold text-lg sm:text-2xl mb-0">
+            <p className="text-left">{communityInfo.title}</p>
+            <SLink
+              href={`/@${communityInfo.account}`}
+              className=" font-normal text-sm hover:underline"
+            >
+              @{communityInfo.account}
+            </SLink>
+          </div>
+          <div className="max-1md:hidden">
+            <ChatButton skipMemo isIconOnly onPress={onChatPress} />
+          </div>
         </div>
         <MarkdownViewer
           className="!text-sm !text-default-900/70 !text-left prose-p:!my-2"
@@ -61,7 +76,7 @@ export default memo(function CommunityInfoCard(props: Props) {
         />
       </div>
 
-      <div className="flex flex-col gap-4 w-full  max-w-[65ch]">
+      <div className="flex flex-col gap-4 w-full max-w-[65ch]">
         <div className=" flex flex-row gap-1 items-center text-tiny">
           <SlCalender size={16} className=" me-1" />
           <p>Created</p>
@@ -180,6 +195,14 @@ export default memo(function CommunityInfoCard(props: Props) {
             )}
           </ModalContent>
         </Modal>
+      )}
+
+      {chatDisclosure.isOpen && (
+        <CommunityChatModal
+          isOpen={chatDisclosure.isOpen}
+          onOpenChange={chatDisclosure.onOpenChange}
+          community={communityInfo}
+        />
       )}
     </div>
   );

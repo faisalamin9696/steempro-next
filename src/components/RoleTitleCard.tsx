@@ -4,9 +4,11 @@ import { twMerge } from "tailwind-merge";
 interface Props {
   comment: Feed | Post;
   className?: string;
+  roleClassName?: string;
+  titleClassName?: string;
 }
 export default function RoleTitleCard(props: Props) {
-  const { comment, className } = props;
+  const { comment, className, roleClassName, titleClassName } = props;
 
   if (!comment.author_role && !comment.author_title) return null;
   return (
@@ -17,7 +19,12 @@ export default function RoleTitleCard(props: Props) {
       )}
     >
       {comment.author_role && (
-        <p className="flex-none break-words whitespace-normal">
+        <p
+          className={twMerge(
+            "flex-none break-words whitespace-normal",
+            roleClassName
+          )}
+        >
           {comment.author_role}
         </p>
       )}
@@ -25,7 +32,7 @@ export default function RoleTitleCard(props: Props) {
         <p
           className={twMerge(
             "flex-none bg-foreground/10 dark:bg-foreground/30 text-tiny font-light px-1 rounded-lg break-words whitespace-normal",
-            className
+            titleClassName
           )}
         >
           {comment.author_title}

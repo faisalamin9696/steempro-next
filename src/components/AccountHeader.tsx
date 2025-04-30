@@ -2,13 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import SAvatar from "./SAvatar";
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  useDisclosure,
-} from "@heroui/modal";
+import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import FollowButton from "./FollowButton";
 import { proxifyImageUrl } from "@/libs/utils/proxifyUrl";
@@ -21,10 +15,9 @@ import { Accordion, AccordionItem } from "@heroui/accordion";
 import ProfileInfoCard2 from "./ProfileInfoCard";
 import { useSession } from "next-auth/react";
 import SLink from "./SLink";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Reputation from "./Reputation";
 import ChatButton from "./ChatButton";
-import ChatModal from "./chat/ChatModal";
 
 type Props = {
   account: AccountExt;

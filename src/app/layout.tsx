@@ -61,11 +61,6 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning={true}>
-      <script
-        async
-        src="https://www.googletagmanager.com/gtag/js?id=G-0P05PL9Q91"
-      ></script>
-
       <link
         rel="dns-prefetch"
         href="https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg"

@@ -44,7 +44,7 @@ export default {
   imageFile: imageFile(),
   youTube: youTube(),
   youTubeId:
-    /(?:(?:youtube.com\/watch\?v=)|(?:youtu.be\/)|(?:youtube.com\/embed\/))([A-Za-z0-9\_\-]+)/i,
+    /(?:(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/))|(?:youtu\.be\/))([A-Za-z0-9_-]+)/i,
   vimeo:
     /https?:\/\/(?:vimeo.com\/|player.vimeo.com\/video\/)([0-9]+)\/?(#t=((\d+)s?))?\/?/,
   vimeoId: /(?:vimeo.com\/|player.vimeo.com\/video\/)([0-9]+)/,

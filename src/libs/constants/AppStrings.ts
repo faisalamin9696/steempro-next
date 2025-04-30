@@ -3,6 +3,7 @@ import { AppLink } from "./AppConstants";
 export const AppStrings = {
   official_account: "steempro.com",
   steempro_base_url: "https://steempro.com",
+  steempro_site_url: "https://steempro.com",
   steemit_base_url: "https://steemit.com",
   sds_base_url: "https://sds0.steemworld.org",
   image_hostings: ["https://steemitimages.com"],

@@ -1,15 +1,21 @@
 import moment from "moment";
 import { RewardTypes } from "./AppConstants";
 
-export const empty_comment = (author: string, permlink: string): Post => {
+export const empty_comment = (
+  author: string,
+  permlink: string,
+  body?: string,
+  author_role?: RoleTypes,
+  author_title?: string
+): Post => {
   const timenow = moment().unix();
   return {
     link_id: timenow,
     link_status: 1,
     author_reputation: 0,
     author_status: 1,
-    author_role: "guest",
-    author_title: "",
+    author_role: author_role ?? "guest",
+    author_title: author_title ?? "",
     author: author,
     permlink: permlink,
     parent_author: "",
@@ -48,7 +54,7 @@ export const empty_comment = (author: string, permlink: string): Post => {
     community: "",
     json_metadata: "",
     title: "",
-    body: "",
+    body: body ?? "",
     beneficiaries: [],
     votes: [],
     observer_follows_author: 0,

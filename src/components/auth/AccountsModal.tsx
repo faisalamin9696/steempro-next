@@ -36,7 +36,7 @@ export default function AccountsModal(props: Props) {
             <ModalBody>
               <AvailableAccountList
                 switchText="Switch"
-                className="grid grid-cols-1 md:grid-cols-2 gap-2 items-center"
+                className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center"
                 handleSwitchSuccess={(user) => {
                   onClose();
                   handleSwitchSuccess && handleSwitchSuccess(user);

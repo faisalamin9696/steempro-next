@@ -31,7 +31,7 @@ import { FaLocationDot } from "react-icons/fa6";
 import WitnessVotesCard from "./WitnessVotesCard";
 import SAvatar from "./SAvatar";
 import ChatButton from "./ChatButton";
-import ChatModal from "./chat/ChatModal";
+import ChatModal from "./chat/user/ChatModal";
 
 type Props = {
   account: AccountExt;
@@ -182,7 +182,7 @@ export default memo(function ProfileInfoCard(props: Props) {
         </div>
 
         <div className=" flex flex-col max-w-[300px] w-full gap-2">
-          <div className="flex justify-between items-start gap-2  border-b-1 dark:border-default-300 pb-3">
+          <div className="flex justify-between items-start gap-2 border-b-1 dark:border-default-300 pb-3">
             <div className=" flex flex-row gap-1 items-center text-tiny">
               <FaHeart size={16} className=" me-1" />
               <div
@@ -284,10 +284,27 @@ export default memo(function ProfileInfoCard(props: Props) {
           </div>
         )}
 
-        {(!!account.witness_votes || account.proxy) && (
+        {account.proxy && (
           <div className=" flex flex-col items-start gap-2">
             <div className="flex flex-row font-bold text-left items-center gap-1">
-              <p>Witness {account.proxy ? "proxy" : "votes"}</p>
+              <p>Witness proxy</p>
+            </div>
+            <div className=" flex flex-row items-center gap-4 px-3">
+              <AvatarGroup isBordered size="md" max={5}>
+                {[account.proxy]?.map((people) => (
+                  <SLink key={people} className="!ms-1" href={`/@${people}`}>
+                    <Avatar key={people} src={getResizedAvatar(people)} />
+                  </SLink>
+                ))}
+              </AvatarGroup>
+            </div>
+          </div>
+        )}
+
+        {!!account.witness_votes?.length && (
+          <div className=" flex flex-col items-start gap-2">
+            <div className="flex flex-row font-bold text-left items-center gap-1">
+              <p>Witness votes</p>
             </div>
             <div className=" flex flex-row items-center gap-4 px-3">
               <AvatarGroup isBordered size="md" max={5}>
@@ -299,14 +316,12 @@ export default memo(function ProfileInfoCard(props: Props) {
                   )
                 )}
               </AvatarGroup>
-              {!account.proxy && (
-                <p
-                  onClick={() => setWitnessModal(!witnessModal)}
-                  className=" text-tiny hover:underline cursor-pointer"
-                >
-                  Show all
-                </p>
-              )}
+              <p
+                onClick={() => setWitnessModal(!witnessModal)}
+                className=" text-tiny hover:underline cursor-pointer"
+              >
+                Show all
+              </p>
             </div>
           </div>
         )}
@@ -363,7 +378,7 @@ export default memo(function ProfileInfoCard(props: Props) {
             <>
               <ModalHeader>
                 <div className="flex flex-col gap-2 items-start">
-                  <div className=" flex flex-row items-center gap-1">
+                  <div className=" flex flex-row items-center gap-2">
                     <p>Witness votes by</p>
 
                     <div className="flex gap-1 items-center" key={account.name}>

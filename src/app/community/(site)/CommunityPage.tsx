@@ -73,7 +73,7 @@ export default function CommunityPage(props: Props) {
   }, []);
 
   return (
-    <div>
+    <div className=" mt-4">
       <div className="relative items-center flex-row w-full">
         <Tabs
           destroyInactiveTabPanel={false}

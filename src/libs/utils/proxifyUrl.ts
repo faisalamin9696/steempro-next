@@ -16,10 +16,13 @@ const CAPPED_SIZE = "640x0/";
 const DOUBLE_CAPPED_SIZE = "1280x0/";
 const IMAGE_PROXY_URL = "https://steemitimages.com/";
 export const imageProxy = () => IMAGE_PROXY_URL;
+
 export const defaultSrcSet = (url) =>
   `${url} 1x, ${url.replace(CAPPED_SIZE, DOUBLE_CAPPED_SIZE)} 2x`;
+
 export const isDefaultImageSize = (url) =>
   url?.startsWith(`${imageProxy()}${CAPPED_SIZE}`);
+
 export const defaultWidth = () => Number.parseInt(CAPPED_SIZE.split("x")[0]);
 
 /**
@@ -69,3 +72,8 @@ export function proxifyImageUrl(
   }
   return respUrl;
 }
+
+
+export const getDoubleSize = (url) => {
+  return url.replace(CAPPED_SIZE, DOUBLE_CAPPED_SIZE);
+};

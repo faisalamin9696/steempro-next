@@ -12,8 +12,8 @@ import {
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import useSWR from "swr";
 import { supabase } from "@/libs/supabase";
-import LoadingCard from "../LoadingCard";
-import EmptyChat from "./EmptyChat";
+import LoadingCard from "../../LoadingCard";
+import EmptyChat from "../EmptyChat";
 import { toast } from "sonner";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { sendMessage } from "@/libs/steem/condenser";
@@ -22,9 +22,9 @@ import moment from "moment";
 import { twMerge } from "tailwind-merge";
 import { BsArrowDown } from "react-icons/bs";
 import { Chip } from "@heroui/chip";
-import SAvatar from "../SAvatar";
-import MessageReplyRef from "./MessageReplyRef";
-import ChatInput from "./ChatInput";
+import SAvatar from "../../SAvatar";
+import MessageReplyRef from "../MessageReplyRef";
+import ChatInput from "../ChatInput";
 import sanitize from "sanitize-html";
 import Messages from "./Messages";
 import { useSession } from "next-auth/react";
@@ -105,12 +105,11 @@ export default function ChatModal(props: Props) {
   );
 
   useEffect(() => {
-
     if (error) {
-      toast.error(error);
+      toast.error(error?.message || String(error));
     }
-    
-    if (data) {
+
+    if (data && !error) {
       setMessages(data);
     }
   }, [data, error]);
@@ -158,6 +157,7 @@ export default function ChatModal(props: Props) {
         encMsg,
         refMessage?.tid,
         credentials?.key,
+        undefined,
         credentials.keychainLogin
       ).then((response: any) => {
         if (response?.success) {

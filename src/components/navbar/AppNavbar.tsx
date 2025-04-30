@@ -71,12 +71,10 @@ function AppNavbar() {
   const logoutDisclosure = useDisclosure();
   const [logoutLoading, setLogoutLoading] = useState(false);
   const commonData = useAppSelector((state) => state.commonReducer.values);
-  const [keyType, setKeyType] = useState(credentials?.type);
 
   // validate the local storage auth
   useMemo(async () => {
     const credentials = getCredentials();
-    setKeyType(credentials?.type);
     if (status === "authenticated") {
       if (!sessionKey && !getSessionToken(session.user?.name)) {
         setLocked(true);
@@ -278,7 +276,7 @@ function AppNavbar() {
                     <SAvatar
                       onlyImage
                       borderColor={
-                        keyType ? BorderColorMap[keyType] : undefined
+                        credentials?.type ? BorderColorMap[credentials.type] : undefined
                       }
                       username={session?.user?.name ?? ""}
                       className={twMerge(

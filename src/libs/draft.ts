@@ -1,5 +1,3 @@
-import Cookies from "js-cookie";
-
 type CommentDraft = {
   markdown: string;
 };

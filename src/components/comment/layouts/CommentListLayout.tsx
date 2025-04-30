@@ -101,7 +101,7 @@ export default function CommentListLayout(props: CommentProps) {
       </div>
 
       {!isSearch && (
-        <CommentFooter {...props} comment={commentInfo} className="w-full" />
+        <CommentFooter {...props} comment={commentInfo} className="w-full mt-1" />
       )}
     </div>
   );

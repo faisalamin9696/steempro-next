@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import MessageItem from "./MessageItem";
 import useRealtimeMessages from "@/libs/hooks/useRealtimeMessages";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import { getDecryptedData } from "./ChatModal";
@@ -10,6 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 import { supabase } from "@/libs/supabase";
 import { toast } from "sonner";
 import { Button } from "@heroui/button";
+import MessageItem from "../MessageItem";
 
 interface MessagesProps {
   account: AccountExt;

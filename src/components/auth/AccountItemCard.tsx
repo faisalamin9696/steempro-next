@@ -114,7 +114,7 @@ export default function AccountItemCard(props: Props) {
   return (
     <Card
       className={twMerge(
-        "flex flex-col gap-2 w-full bg-foreground/10 p-2",
+        "flex flex-col gap-2 w-full p-2 shadow-md comment-card",
         props.className
       )}
     >

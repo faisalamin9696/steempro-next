@@ -11,11 +11,11 @@ import { markasReadChat } from "@/libs/steem/condenser";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
 import { useSession } from "next-auth/react";
-import SLink from "../SLink";
-import TimeAgoWrapper from "../wrappers/TimeAgoWrapper";
-import SAvatar from "../SAvatar";
-import { useLogin } from "../auth/AuthProvider";
-import TableWrapper from "../wrappers/TableWrapper";
+import SLink from "../../SLink";
+import TimeAgoWrapper from "../../wrappers/TimeAgoWrapper";
+import SAvatar from "../../SAvatar";
+import { useLogin } from "../../auth/AuthProvider";
+import TableWrapper from "../../wrappers/TableWrapper";
 import moment from "moment";
 import { getUnreadChatsHeads } from "@/libs/steem/mysql";
 import { Memo } from "@steempro/dsteem";
@@ -55,7 +55,7 @@ export default function ChatNotificationsTable(props: Props) {
   const [page, setPage] = useState(1);
   const [endReached, setEndReached] = useState(false);
   const commonData = useAppSelector((state) => state.commonReducer.values);
-
+  
   function getFromAndTo() {
     let from = page * ITEMS_PER_BATCH;
     let to = from + ITEMS_PER_BATCH;
@@ -141,7 +141,6 @@ export default function ChatNotificationsTable(props: Props) {
     if (!isAuthorized()) {
       return;
     }
-    const credentials = getCredentials(getSessionKey(session?.user?.name));
 
     if (!credentials?.key) {
       toast.error("Invalid credentials");
@@ -267,7 +266,10 @@ export default function ChatNotificationsTable(props: Props) {
                 onPress={handleMarkRead}
                 isLoading={markMutation.isPending}
                 isDisabled={
-                  markMutation.isPending || commonData.unread_count_chat < 1
+                  markMutation.isPending ||
+                  (commonData.unread_count_chat < 1 &&
+                    allRows.reduce((sum, item) => sum + item.message_count, 0) <
+                      1)
                 }
                 color="secondary"
                 // endContent={<IoCheckmarkDone className="text-lg" />}

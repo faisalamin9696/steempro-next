@@ -11,7 +11,7 @@ import ErrorCard from "@/components/ErrorCard";
 import ProfilePage from "./ProfilePage";
 import useSWR from "swr";
 import { fetchSds } from "@/libs/constants/AppFunctions";
-import ChatModal from "@/components/chat/ChatModal";
+import ChatModal from "@/components/chat/user/ChatModal";
 import { useDisclosure } from "@heroui/modal";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";

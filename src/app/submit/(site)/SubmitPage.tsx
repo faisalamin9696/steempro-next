@@ -42,7 +42,6 @@ import { AppStrings } from "@/libs/constants/AppStrings";
 import { empty_community } from "@/libs/constants/Placeholders";
 import { getPost } from "@/libs/steem/sds";
 import "./style.scss";
-import secureLocalStorage from "react-secure-storage";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import TagsListCard from "@/components/TagsListCard";
@@ -59,7 +58,6 @@ import { useAppSelector } from "@/libs/constants/AppFunctions";
 import EditorInput from "@/components/editor/EditorInput";
 import { twMerge } from "tailwind-merge";
 import { getPostDraft, savePostDraft } from "@/libs/draft";
-import { validateCommunity } from "@/libs/utils/helper";
 
 interface Props {
   params?: {

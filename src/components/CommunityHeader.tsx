@@ -12,14 +12,16 @@ import SubscribeButton from "./SubscribeButton";
 import { twMerge } from "tailwind-merge";
 import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
 import SLink from "./SLink";
+import ChatButton from "./ChatButton";
 
 type Props = {
   community: Community;
   account: AccountExt;
   className?: string;
+  onChatPress: () => void;
 };
 export default function CommunityHeader(props: Props) {
-  const { community, account } = props;
+  const { community, account, onChatPress } = props;
   const { isTablet } = useDeviceInfo();
 
   const communityInfo: Community =
@@ -81,32 +83,41 @@ export default function CommunityHeader(props: Props) {
                     </SLink>
                   </div>
 
-                  <div className=" flex flex-row items-center gap-2">
-                    <Button
-                      title="Create Post"
-                      radius="full"
-                      size={!isTablet ? "sm" : "md"}
-                      className=" bg-foreground/10"
-                      variant="flat"
-                      startContent={<BiPlus size={24} />}
-                      as={SLink}
-                      isDisabled={communityInfo.observer_role === "muted"}
-                      href={
-                        {
-                          pathname: `/submit`,
-                          query: {
-                            account: communityInfo?.account,
-                            title: communityInfo?.title,
-                          },
-                        } as any
-                      }
-                    >
-                      Create Post
-                    </Button>
-                    <SubscribeButton
-                      size={!isTablet ? "sm" : "md"}
-                      community={communityInfo}
-                    />
+                  <div className=" flex md:flex-row-reverse flex-col items-end relative gap-2">
+                    <div className=" flex flex-row items-center gap-2">
+                      <Button
+                        title="Create Post"
+                        radius="full"
+                        size={!isTablet ? "sm" : "md"}
+                        className=" bg-foreground/10"
+                        variant="flat"
+                        startContent={<BiPlus size={24} />}
+                        as={SLink}
+                        isDisabled={communityInfo.observer_role === "muted"}
+                        href={
+                          {
+                            pathname: `/submit`,
+                            query: {
+                              account: communityInfo?.account,
+                              title: communityInfo?.title,
+                            },
+                          } as any
+                        }
+                      >
+                        Create Post
+                      </Button>
+                      <SubscribeButton
+                        size={!isTablet ? "sm" : "md"}
+                        community={communityInfo}
+                      />
+                    </div>
+                    <div className="max-md:absolute top-10 md:top-12 1md:hidden">
+                      <ChatButton
+                        skipMemo
+                        size={!isTablet ? "sm" : "md"}
+                        onPress={onChatPress}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

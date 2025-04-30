@@ -18,9 +18,10 @@ interface Props {
   isPending?: boolean;
   value: string;
   onValueChange: (value: string) => void;
+  skipMemo?: boolean;
 }
 const ChatInput = forwardRef<HTMLInputElement, Props>(
-  ({ value, onValueChange, isPending, onSubmit }, ref) => {
+  ({ value, onValueChange, isPending, onSubmit, skipMemo }, ref) => {
     const [cooldown, setCooldown] = useState(0);
     const cooldownRef = useRef<NodeJS.Timeout | null>(null);
     const { authenticateUser, isAuthorized } = useLogin();
@@ -79,8 +80,8 @@ const ChatInput = forwardRef<HTMLInputElement, Props>(
         return;
       }
 
-      authenticateUser(false, true);
-      if (!isAuthorized(true)) {
+      authenticateUser(false, skipMemo ? false : true);
+      if (!isAuthorized(skipMemo ? false : true)) {
         return;
       }
 

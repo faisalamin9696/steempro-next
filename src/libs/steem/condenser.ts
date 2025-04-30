@@ -1972,6 +1972,7 @@ export const sendMessage = async (
   message: string,
   ref_tid: string | null | undefined,
   key: string,
+  community?: string,
   isKeychain?: boolean
 ) => {
   const payload = {
@@ -1979,6 +1980,7 @@ export const sendMessage = async (
     recipient: recipient,
     message: message,
     ref_tid: ref_tid,
+    community: community,
     secret: "",
   };
 
