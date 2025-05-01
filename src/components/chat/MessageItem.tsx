@@ -52,7 +52,7 @@ const MessageItem = (props: MessageItemProps) => {
         />
       )}
       <div className=" flex flex-col items-start gap-2 w-full">
-        {!isOwnMessage && (
+        {!isOwnMessage && community && (
           <SLink
             href={`/@${sender}`}
             className="text-tiny hover:text-blue-500 opacity-disabled"
@@ -86,31 +86,35 @@ const MessageItem = (props: MessageItemProps) => {
                 />
               )}
 
-              {!isOwnMessage && (
-                <div className={"flex flex-col items-start gap-2"}>
-                  <RoleTitleCard
-                    className={twMerge("text-tiny")}
-                    roleClassName={`${
-                      roleTitle?.role === "owner" || roleTitle?.role === "admin"
-                        ? "text-green-500"
-                        : roleTitle?.role === "mod"
-                        ? "text-blue-500"
-                        : roleTitle?.role === "member"
-                        ? "text-yellow-500"
-                        : roleTitle?.role === "muted"
-                        ? "text-red-500"
-                        : "text-default-500"
-                    }`}
-                    comment={empty_comment(
-                      "",
-                      "",
-                      "",
-                      roleTitle?.role,
-                      roleTitle?.title
-                    )}
-                  />
-                </div>
-              )}
+              {!isOwnMessage &&
+                community &&
+                roleTitle?.role !== "guest" &&
+                roleTitle?.role && (
+                  <div className={"flex flex-col items-start gap-2"}>
+                    <RoleTitleCard
+                      className={twMerge("text-tiny")}
+                      roleClassName={`${
+                        roleTitle?.role === "owner" ||
+                        roleTitle?.role === "admin"
+                          ? "text-green-500"
+                          : roleTitle?.role === "mod"
+                          ? "text-blue-500"
+                          : roleTitle?.role === "member"
+                          ? "text-yellow-500"
+                          : roleTitle?.role === "muted"
+                          ? "text-red-500"
+                          : "text-default-500"
+                      }`}
+                      comment={empty_comment(
+                        "",
+                        "",
+                        "",
+                        roleTitle?.role,
+                        roleTitle?.title
+                      )}
+                    />
+                  </div>
+                )}
               <p className="text-sm mt-1 break-words whitespace-pre-wrap max-w-full">
                 {message}
               </p>

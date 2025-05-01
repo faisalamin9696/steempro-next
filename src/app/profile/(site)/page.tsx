@@ -54,14 +54,15 @@ export default function page() {
   if (isLoading) return <LoadingCard />;
 
   return (
-    <MainWrapper
-      endClassName="max-h-screen w-[320px] min-w-[320px] 1md:!hidden lg:!block"
-      endContent={<ProfileInfoCard account={data} />}
-    >
-      <AccountHeader account={data} onChatPress={openChat} />
+    <div>
+      <MainWrapper
+        endClassName="max-h-screen w-[320px] min-w-[320px] 1md:!hidden lg:!block"
+        endContent={<ProfileInfoCard account={data} />}
+      >
+        <AccountHeader account={data} onChatPress={openChat} />
 
-      <ProfilePage data={data} />
-
+        <ProfilePage data={data} />
+      </MainWrapper>
       {chatDisclosure.isOpen && data && (
         <ChatModal
           isOpen={chatDisclosure.isOpen}
@@ -69,6 +70,6 @@ export default function page() {
           account={data}
         />
       )}
-    </MainWrapper>
+    </div>
   );
 }

@@ -48,7 +48,6 @@ export default function CommunityChatModal(props: Props) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const [messageAlert, setMessageAlert] = useState(false);
   const [refMessage, setRefMessage] = useState<Message>();
-  const credentials = getCredentials();
   const [messages, setMessages] = useState<Message[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const { data: session } = useSession();
@@ -119,6 +118,7 @@ export default function CommunityChatModal(props: Props) {
     //     timestamp: moment().toISOString(),
     //     ref_tid: refMessage?.tid,
     //     ref_message: refMessage,
+    //     community:community.account
     //   },
     //   ...prev,
     // ]);

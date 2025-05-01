@@ -139,10 +139,28 @@ const Messages = (props: MessagesProps) => {
       target.scrollIntoView({ behavior: "smooth", block: "center" });
       if (!msg.ref_tid) return;
       const targetItem = messageItemRefs.current[msg.ref_tid];
-      targetItem?.animate([{ opacity: 0.6 }, { opacity: 1 }], {
-        duration: 500,
-        easing: "ease-in-out",
-      });
+      if (targetItem) {
+        targetItem.scrollIntoView({ behavior: "smooth", block: "center" });
+        setTimeout(() => {
+          targetItem.animate(
+            [
+              {
+                backgroundColor: "lightblue",
+                borderRadius: "10px",
+              },
+              {
+                backgroundColor: "transparent",
+                borderRadius: "10px",
+              },
+            ],
+            {
+              duration: 1500,
+              easing: "ease-in-out",
+              fill: "forwards",
+            }
+          );
+        }, 500);
+      }
     }
   };
 

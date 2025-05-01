@@ -1,6 +1,10 @@
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import { addCommentHandler } from "@/libs/redux/reducers/CommentReducer";
-import { setUserRole, setUserTitle } from "@/libs/steem/condenser";
+import {
+  setUserRole,
+  setUserRoleTitle,
+  setUserTitle,
+} from "@/libs/steem/condenser";
 import { Role } from "@/libs/utils/community";
 import { Select, SelectItem } from "@heroui/select";
 import {
@@ -79,29 +83,43 @@ export default function AddRoleModal(props: Props) {
     toast.error(error.message || JSON.stringify(error));
   }
   const roleTitleMutation = useMutation({
-    mutationFn: (data: { key: string; isKeychain?: boolean }) =>
-      Promise.all([
-        setUserRole(
-          loginInfo,
-          data.key,
-          {
-            communityId: community.account,
-            account: username,
-            role: role || "guest",
-          },
-          data.isKeychain
-        ),
-        setUserTitle(
+    mutationFn: (data: { key: string; isKeychain?: boolean }) => {
+      if (data.isKeychain) {
+        return setUserRoleTitle(
           loginInfo,
           data.key,
           {
             communityId: community.account,
             account: username,
             title: title,
+            role: role || "guest",
           },
           data.isKeychain
-        ),
-      ]),
+        );
+      } else
+        return Promise.all([
+          setUserRole(
+            loginInfo,
+            data.key,
+            {
+              communityId: community.account,
+              account: username,
+              role: role || "guest",
+            },
+            data.isKeychain
+          ),
+          setUserTitle(
+            loginInfo,
+            data.key,
+            {
+              communityId: community.account,
+              account: username,
+              title: title,
+            },
+            data.isKeychain
+          ),
+        ]);
+    },
     onSuccess() {
       handleSuccess();
     },
@@ -111,8 +129,8 @@ export default function AddRoleModal(props: Props) {
   });
 
   const roleMutation = useMutation({
-    mutationFn: (key: string) =>
-      setUserRole(loginInfo, key, {
+    mutationFn: (data: { key: string; isKeychain?: boolean }) =>
+      setUserRole(loginInfo, data.key, {
         communityId: community.account,
         account: username,
         role: role || "guest",
@@ -142,7 +160,7 @@ export default function AddRoleModal(props: Props) {
     },
   });
 
-  function handleUpdate() {
+  async function handleUpdate() {
     username = username?.replaceAll("@", "").toLowerCase().trim();
 
     if (validate_account_name(username)) {
@@ -186,7 +204,10 @@ export default function AddRoleModal(props: Props) {
 
       // update only role
       if (isRoleChanged && !isTitleChanged) {
-        roleMutation.mutate(credentials.key);
+        roleMutation.mutate({
+          key: credentials.key,
+          isKeychain: credentials.keychainLogin,
+        });
         return;
       }
     } else {

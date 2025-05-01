@@ -47,25 +47,26 @@ export default function Template() {
     }
   }
   return (
-    <MainWrapper
-      endClassName="overflow-y-scroll max-h-screen min-w-[320px] w-[320px] pb-10"
-      endContent={
-        <CommunityInfoCard
+    <div>
+      <MainWrapper
+        endClassName="overflow-y-scroll max-h-screen min-w-[320px] w-[320px] pb-10"
+        endContent={
+          <CommunityInfoCard
+            onChatPress={handleChatPress}
+            key={Math.random()}
+            community={data[0]}
+          />
+        }
+      >
+        <CommunityHeader
           onChatPress={handleChatPress}
-          key={Math.random()}
           community={data[0]}
+          account={data[1]}
         />
-      }
-    >
-      <CommunityHeader
-        onChatPress={handleChatPress}
-        community={data[0]}
-        account={data[1]}
-      />
-      <CommunityCarousel className="mt-2 max-1md:mt-8" />
+        <CommunityCarousel className="mt-2 max-1md:mt-8" />
 
-      <CommunityPage data={data[0]} />
-
+        <CommunityPage data={data[0]} />
+      </MainWrapper>
       {chatDisclosure.isOpen && (
         <CommunityChatModal
           isOpen={chatDisclosure.isOpen}
@@ -73,6 +74,6 @@ export default function Template() {
           community={data[0]}
         />
       )}
-    </MainWrapper>
+    </div>
   );
 }

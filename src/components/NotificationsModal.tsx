@@ -31,7 +31,7 @@ export default function NotificationsModal(props: Props) {
       hideCloseButton
       backdrop="opaque"
       size="lg"
-      placement="auto"
+      placement="top"
     >
       <ModalContent>
         {(onClose) => (
