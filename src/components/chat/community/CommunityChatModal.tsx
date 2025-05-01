@@ -29,6 +29,7 @@ import { useSession } from "next-auth/react";
 import { hasNsfwTag } from "@/libs/utils/stateFunctions";
 import { empty_comment } from "@/libs/constants/Placeholders";
 import CommunityMessages from "./CommunityMessages";
+import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
 
 interface Props {
   community: Community;
@@ -52,6 +53,7 @@ export default function CommunityChatModal(props: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const { data: session } = useSession();
   const members: Role[] = mapSds(community?.roles) ?? [];
+  const { isMobile } = useDeviceInfo();
 
   const isMuted = members.filter(
     (item) => item.account === loginInfo.name && item.role === "muted"
@@ -127,7 +129,7 @@ export default function CommunityChatModal(props: Props) {
 
     setIsPending(true);
 
-    const credentials = getCredentials(getSessionKey());
+    const credentials = getCredentials(getSessionKey(session?.user?.name));
 
     if (!credentials) {
       toast.error("Invalid credentials");
@@ -185,7 +187,7 @@ export default function CommunityChatModal(props: Props) {
       className=" mt-4"
       scrollBehavior="inside"
       backdrop="opaque"
-      size="lg"
+      size={isMobile ? "full" : "lg"}
       placement="top-center"
       classNames={{ base: "h-full" }}
       isDismissable={false}

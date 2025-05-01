@@ -28,6 +28,7 @@ import ChatInput from "../ChatInput";
 import sanitize from "sanitize-html";
 import Messages from "./Messages";
 import { useSession } from "next-auth/react";
+import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
 
 interface Props {
   account: AccountExt;
@@ -75,6 +76,7 @@ export default function ChatModal(props: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const { data: session } = useSession();
+  const { isMobile } = useDeviceInfo();
 
   const { data, error, isLoading } = useSWR<Message[]>(
     session?.user?.name && account.name ? `chat-${account.name}` : null,
@@ -136,7 +138,7 @@ export default function ChatModal(props: Props) {
 
     setIsPending(true);
 
-    const credentials = getCredentials(getSessionKey());
+    const credentials = getCredentials(getSessionKey(session?.user?.name));
 
     if (!credentials?.memo) {
       toast.error("Memo key not found");
@@ -200,7 +202,7 @@ export default function ChatModal(props: Props) {
       className=" mt-4"
       scrollBehavior="inside"
       backdrop="opaque"
-      size="lg"
+      size={isMobile ? "full" : "lg"}
       placement="top-center"
       classNames={{ base: "h-full" }}
       isDismissable={false}

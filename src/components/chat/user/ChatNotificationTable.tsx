@@ -49,13 +49,13 @@ export default function ChatNotificationsTable(props: Props) {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
 
   const isSelf = session?.user?.name === loginInfo.name;
-  const { authenticateUser, isAuthorized, credentials } = useLogin();
+  let { authenticateUser, isAuthorized, credentials } = useLogin();
   const dispatch = useAppDispatch();
   const [allRows, setAllRows] = useState<UnReadChat[]>([]);
   const [page, setPage] = useState(1);
   const [endReached, setEndReached] = useState(false);
   const commonData = useAppSelector((state) => state.commonReducer.values);
-  
+
   function getFromAndTo() {
     let from = page * ITEMS_PER_BATCH;
     let to = from + ITEMS_PER_BATCH;
@@ -141,6 +141,8 @@ export default function ChatNotificationsTable(props: Props) {
     if (!isAuthorized()) {
       return;
     }
+
+    credentials = getCredentials(getSessionKey(session?.user?.name));
 
     if (!credentials?.key) {
       toast.error("Invalid credentials");
