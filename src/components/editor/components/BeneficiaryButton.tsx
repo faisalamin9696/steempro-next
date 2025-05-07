@@ -27,7 +27,7 @@ export default memo(function BeneficiaryButton(props: Props) {
   const [benePopup, setBenePopup] = useState(false);
   const { isMobile } = useDeviceInfo();
 
-  const availableBene = beneficiaries.reduce((sum, cur) => {
+  const availableBene = beneficiaries?.reduce((sum, cur) => {
     return (sum -= cur.weight / 100);
   }, 100);
 

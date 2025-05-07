@@ -1,3 +1,5 @@
+"use client";
+
 import {
   useDisclosure,
   Modal,
@@ -38,7 +40,6 @@ import {
   removeSessionToken,
   getSessionKey,
   removeCredentials,
-  refreshData,
 } from "@/libs/utils/user";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { toast } from "sonner";
@@ -52,6 +53,16 @@ import { twMerge } from "tailwind-merge";
 import SLink from "../SLink";
 import { AsyncUtils } from "@/libs/utils/async.utils";
 import { Spinner } from "@heroui/spinner";
+import { mutate } from "swr";
+
+export async function refreshData(username?: string | null) {
+  mutate("/steem_requests_api/getSteemProps");
+  if (username) {
+    mutate([username, "null"]);
+    mutate(`unread-chat-${username}`);
+    mutate(`unread-notification-count-${username}`);
+  }
+}
 
 function AppNavbar() {
   const { authenticateUser, isAuthorized, credentials, setCredentials } =
@@ -276,7 +287,9 @@ function AppNavbar() {
                     <SAvatar
                       onlyImage
                       borderColor={
-                        credentials?.type ? BorderColorMap[credentials.type] : undefined
+                        credentials?.type
+                          ? BorderColorMap[credentials.type]
+                          : undefined
                       }
                       username={session?.user?.name ?? ""}
                       className={twMerge(

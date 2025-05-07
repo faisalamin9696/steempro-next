@@ -1,10 +1,8 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import AccountItemCard from "./AccountItemCard";
-import {
-  getAllCredentials,
-  getCredentials,
-  refreshData,
-} from "@/libs/utils/user";
+import { getAllCredentials, getCredentials } from "@/libs/utils/user";
 import LoadingCard from "../LoadingCard";
 import { twMerge } from "tailwind-merge";
 
@@ -56,7 +54,6 @@ function AvailableAccountList(props: Props) {
                 user={user}
                 handleSwitchSuccess={(user) => {
                   handleSwitchSuccess(user);
-                  // refreshData(user?.username);
                 }}
                 defaultAccount={credentials}
               />

@@ -294,7 +294,8 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
 
   async function handleDraft() {
     const options = JSON.parse(scheduleInfo?.options ?? "{}");
-    const beneficiaries = options?.["extensions"]?.[0]?.[1]?.["beneficiaries"];
+    const beneficiaries =
+      options?.["extensions"]?.[0]?.[1]?.["beneficiaries"] ?? [];
 
     savePostDraft(
       scheduleInfo.title,

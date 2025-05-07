@@ -7,7 +7,6 @@ import secureLocalStorage from "react-secure-storage";
 import { empty_settings } from "../constants/Placeholders";
 import CryptoJS from "crypto-js";
 import { updateCurrentSetting } from "../constants/AppConstants";
-import { mutate } from "swr";
 const AUTH_STORAGE_KEY = "@secure.j.auth";
 const SETTINGS_STORAGE_KEY = "@secure.j.settings";
 
@@ -335,11 +334,3 @@ export function getUserAuth() {
   if (credentials?.username) return credentials;
 }
 
-export async function refreshData(username?: string | null) {
-  mutate("/steem_requests_api/getSteemProps");
-  if (username) {
-    mutate([username, "null"]);
-    mutate(`unread-chat-${username}`);
-    mutate(`unread-notification-count-${username}`);
-  }
-}
