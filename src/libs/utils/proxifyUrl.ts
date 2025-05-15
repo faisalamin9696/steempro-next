@@ -8,7 +8,7 @@
  * <proxy>/{int}x{int}/[<proxy>/{int}x{int}/]<proxy>/<file url>
  * @type {RegExp}
  */
-const rProxyDomain = /^http(s)?:\/\/steemit(dev|stage)?images.com\//g;
+export const rProxyDomain = /^http(s)?:\/\/steemit(dev|stage)?images.com\//g;
 const rProxyDomainsDimensions =
   /http(s)?:\/\/steemit(dev|stage)?images.com\/([0-9]+x[0-9]+)\//g;
 const NATURAL_SIZE = "0x0/";
@@ -49,6 +49,7 @@ export function proxifyImageUrl(
     const lastProxy = proxyList[proxyList.length - 1];
     respUrl = url.substring(url.lastIndexOf(lastProxy) + lastProxy.length);
   }
+
   if (dimensions) {
     let dims = dimensions + "/";
     if (typeof dimensions !== "string") {
@@ -63,6 +64,10 @@ export function proxifyImageUrl(
       dims = CAPPED_SIZE;
     }
 
+    if (respUrl?.match(/\.gif$/)) {
+      dims = NATURAL_SIZE;
+    }
+
     if (
       (NATURAL_SIZE !== dims && CAPPED_SIZE !== dims) ||
       !rProxyDomain.test(respUrl)
@@ -72,7 +77,6 @@ export function proxifyImageUrl(
   }
   return respUrl;
 }
-
 
 export const getDoubleSize = (url) => {
   return url.replace(CAPPED_SIZE, DOUBLE_CAPPED_SIZE);

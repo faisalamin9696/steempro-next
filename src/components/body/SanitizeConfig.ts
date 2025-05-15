@@ -3,67 +3,16 @@ import {
   getPhishingWarningMessage,
 } from "./htmlReady";
 import { defaultSrcSet, isDefaultImageSize } from "../../libs/utils/proxifyUrl";
+import { validateIframeUrl as validateEmbbeddedPlayerIframeUrl } from "@/components/elements/EmbededPlayers";
+import { AppStrings } from "@/libs/constants/AppStrings";
 import { replaceOldDomains } from "@/libs/utils/parseLinks";
 
-const iframeWhitelist: any = [
-  {
-    re: /^(https?:)?\/\/player.vimeo.com\/video\/.*/i,
-    fn: (src) => {
-      // <iframe src="https://player.vimeo.com/video/179213493" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-      if (!src) return null;
-      const m = src.match(/https:\/\/player\.vimeo\.com\/video\/([0-9]+)/);
-      if (!m || m.length !== 2) return null;
-      return "https://player.vimeo.com/video/" + m[1];
-    },
-  },
-  {
-    re: /^(https?:)?\/\/www.youtube.com\/embed\/.*/i,
-    fn: (src) => {
-      return src.replace(/\?.+$/, ""); // strip query string (yt: autoplay=1,controls=0,showinfo=0, etc)
-    },
-  },
-  {
-    re: /^(https?:)?\/\/3speak.online\/embed\?v=.*/i,
-    fn: (src) => {
-      return src;
-    },
-  },
-  {
-    re: /^https:\/\/w.soundcloud.com\/player\/.*/i,
-    fn: (src) => {
-      if (!src) return null;
-      // <iframe width="100%" height="450" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/257659076&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true"></iframe>
-      const m = src.match(/url=(.+?)&/);
-      if (!m || m.length !== 2) return null;
-      return (
-        "https://w.soundcloud.com/player/?url=" +
-        m[1] +
-        "&auto_play=false&hide_related=false&show_comments=true" +
-        "&show_user=true&show_reposts=false&visual=true"
-      );
-    },
-  },
-  {
-    re: /^(https?:)?\/\/player.twitch.tv\/.*/i,
-    fn: (src) => {
-      //<iframe src="https://player.twitch.tv/?channel=ninja" frameborder="0" allowfullscreen="true" scrolling="no" height="378" width="620">
-      return src;
-    },
-  },
-  {
-    re: /^https:\/\/emb.d.tube\/\#\!\/([a-zA-Z0-9\-\.\/]+)$/,
-    fn: (src) => {
-      // <iframe width="560" height="315" src="https://emb.d.tube/#!/justineh/u6qoydvy" frameborder="0" allowfullscreen></iframe>
-      return src;
-    },
-  },
-];
 export const noImageText = "(Image not shown due to low ratings)";
 export const allowedTags = `
     div, iframe, del,
     a, p, b, i, q, br, ul, li, ol, img, h1, h2, h3, h4, h5, h6, hr,
     blockquote, pre, code, em, strong, center, table, thead, tbody, tr, th, td,
-    strike, sup, sub
+    strike, sup, sub, span, details, summary
 `
   .trim()
   .split(/,\s*/);
@@ -75,10 +24,10 @@ export default ({
   noImage = false,
   sanitizeErrors = [],
 }: {
-  large: boolean;
-  highQualityPost: boolean;
+  large?: boolean;
+  highQualityPost?: boolean;
   noImage?: boolean;
-  sanitizeErrors?: any;
+  sanitizeErrors?: string[];
 }) => ({
   allowedTags,
   // figure, figcaption,
@@ -94,6 +43,8 @@ export default ({
       "allowfullscreen",
       "webkitallowfullscreen",
       "mozallowfullscreen",
+      "sandbox",
+      "class",
     ],
 
     // class attribute is strictly whitelisted (below)
@@ -102,45 +53,72 @@ export default ({
 
     // style is subject to attack, filtering more below
     td: ["style"],
+    th: ["style"],
     img: ["src", "srcset", "alt", "class"],
 
     // title is only set in the case of an external link warning
-    a: ["href", "rel", "title"],
+    a: ["href", "rel", "title", "class", "target", "id"],
+    span: ["data-bg", "style"],
+    p: ["dir"],
   },
   allowedSchemes: ["http", "https", "steem", "esteem"],
   transformTags: {
     iframe: (tagName, attribs) => {
       const srcAtty = attribs.src;
-      for (const item of iframeWhitelist)
-        if (item.re.test(srcAtty)) {
-          const src =
-            typeof item.fn === "function" ? item.fn(srcAtty, item.re) : srcAtty;
-          if (!src) break;
-          return {
-            tagName: "iframe",
-            attribs: {
-              frameborder: "0",
-              allowfullscreen: "allowfullscreen",
-              webkitallowfullscreen: "webkitallowfullscreen", // deprecated but required for vimeo : https://vimeo.com/forums/help/topic:278181
-              mozallowfullscreen: "mozallowfullscreen", // deprecated but required for vimeo
-              src,
-              width: large ? "640" : "480",
-              height: large ? "360" : "270",
-            },
-          };
+      const widthAtty = attribs.width;
+      const heightAtty = attribs.height;
+      const {
+        validUrl,
+        useSandbox,
+        sandboxAttributes,
+        width,
+        height,
+        providerId,
+      } = validateEmbbeddedPlayerIframeUrl(
+        srcAtty,
+        large,
+        widthAtty,
+        heightAtty
+      );
+
+      if (validUrl !== false) {
+        const iframe: any = {
+          tagName: "iframe",
+          attribs: {
+            frameborder: "0",
+            allowfullscreen: "allowfullscreen",
+            webkitallowfullscreen: "webkitallowfullscreen", // deprecated but required for vimeo : https://vimeo.com/forums/help/topic:278181
+            mozallowfullscreen: "mozallowfullscreen", // deprecated but required for vimeo
+            src: validUrl,
+            width,
+            height,
+            class: `${providerId}-iframe`,
+          },
+        };
+        if (useSandbox) {
+          if (sandboxAttributes.length > 0) {
+            iframe.attribs.sandbox = sandboxAttributes.join(" ");
+          } else {
+            iframe.attribs.sandbox = true;
+          }
         }
+        return iframe;
+      }
+
       console.log(
         'Blocked, did not match iframe "src" white list urls:',
         tagName,
         attribs
       );
+
       sanitizeErrors.push("Invalid iframe URL: " + srcAtty);
       return { tagName: "div", text: `(Unsupported ${srcAtty})` };
     },
     img: (tagName, attribs) => {
       if (noImage) return { tagName: "div", text: noImageText };
       //See https://github.com/punkave/sanitize-html/issues/117
-      let { src, alt } = attribs;
+      let { src } = attribs;
+      const { alt } = attribs;
       if (!/^(https?:)?\/\//i.test(src)) {
         console.log(
           "Blocked, image tag src does not appear to be a url",
@@ -148,15 +126,15 @@ export default ({
           attribs
         );
         sanitizeErrors.push("An image in this post did not save properly.");
-        return { tagName: "img", attribs: { src: "" } };
+        return { tagName: "img", attribs: { src: "brokenimg.jpg" } };
       }
 
       // replace http:// with // to force https when needed
       src = src.replace(/^http:\/\//i, "//");
-      let atts: any = { src };
+      const atts: any = { src };
       if (alt && alt !== "") atts.alt = alt;
       if (isDefaultImageSize(src)) {
-        atts["srcset"] = defaultSrcSet(src);
+        atts.srcset = defaultSrcSet(src);
       }
       return { tagName, attribs: atts };
     },
@@ -170,9 +148,13 @@ export default ({
         "text-center",
         "text-right",
         "videoWrapper",
+        "iframeWrapper",
+        "redditWrapper",
+        "tweetWrapper",
         "phishy",
+        "table-responsive",
       ];
-      const validClass = classWhitelist.find((e) => attribs.class === e);
+      const validClass = classWhitelist.find((e) => attribs.class == e);
       if (validClass) attys.class = validClass;
       if (
         validClass === "phishy" &&
@@ -184,10 +166,33 @@ export default ({
         attribs: attys,
       };
     },
+    th: (tagName, attribs) => {
+      const attys: any = {};
+      const allowedStyles = [
+        "text-align:right",
+        "text-align:left",
+        "text-align:center",
+      ];
+      if (allowedStyles.indexOf(attribs.style) !== -1) {
+        attys.style = attribs.style;
+      }
+
+      return {
+        tagName,
+        attribs: attys,
+      };
+    },
     td: (tagName, attribs) => {
       const attys: any = {};
-      if (attribs.style === "text-align:right")
-        attys.style = "text-align:right";
+      const allowedStyles = [
+        "text-align:right",
+        "text-align:left",
+        "text-align:center",
+      ];
+      if (allowedStyles.indexOf(attribs.style) !== -1) {
+        attys.style = attribs.style;
+      }
+
       return {
         tagName,
         attribs: attys,
@@ -196,19 +201,44 @@ export default ({
     a: (tagName, attribs) => {
       let { href } = attribs;
       if (!href) href = "#";
-      href = href.trim();
       href = replaceOldDomains(href);
-      const attys: any = { href };
-      // If it's not a (relative or absolute) steemit URL...
-      if (!href.match(/^(\/(?!\/)|https:\/\/steempro.com)/)) {
-        // attys.target = '_blank' // pending iframe impl https://mathiasbynens.github.io/rel-noopener/
-        attys.rel = highQualityPost ? "noopener" : "nofollow noopener";
+
+      href = href.trim();
+
+      const attys = {
+        ...attribs,
+        href,
+      };
+      // If it's not a (relative or absolute) steem URL...
+      if (
+        !href.match(`^(/(?!/)|${"steemitimages.com"})`) &&
+        !href.match(`^(/(?!/)|https://${AppStrings.steempro_site_url})`) &&
+        !href.match(`^(/(?!/)|steem://)`)
+      ) {
+        attys.target = "_blank";
+        attys.rel = highQualityPost
+          ? "noreferrer noopener"
+          : "nofollow noreferrer noopener";
         attys.title = getExternalLinkWarningMessage();
+        attys.class = "external_link";
       }
       return {
         tagName,
         attribs: attys,
       };
+    },
+    span: (tagName, attribs) => {
+      const data = {
+        tagName,
+        attribs: {
+          ...("data-bg" in attribs
+            ? {
+                style: `background-image: url(${attribs["data-bg"]})`,
+              }
+            : {}),
+        },
+      };
+      return data;
     },
   },
 });

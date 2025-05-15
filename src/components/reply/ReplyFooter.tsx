@@ -92,7 +92,7 @@ export default function ReplyFooter({
   const canEdit = isSelf;
   const allowReply = Role.canComment(comment.community, comment.observer_role);
   const canReply = allowReply && comment.depth < 255;
-  const { users } = JSON.parse(comment.json_metadata ?? `{}`) || [];
+  const { users } = extractMetadata(comment.body) ?? [];
 
   const toggleReply = () => setShowReply(!showReply);
   const toggleEdit = () => {

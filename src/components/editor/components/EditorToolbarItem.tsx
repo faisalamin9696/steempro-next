@@ -17,7 +17,7 @@ export const ToolbarItem = memo((props: ToolbarItemProps) => {
   return (
     <Tooltip
       size="sm"
-      content={description + ` (${shortcut})`}
+      content={description + `${shortcut && `(${shortcut})`} `}
       closeDelay={200}
       delay={1000}
     >

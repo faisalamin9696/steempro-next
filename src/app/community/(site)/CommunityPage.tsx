@@ -1,7 +1,7 @@
 "use client";
 
 import { Tab, Tabs } from "@heroui/tabs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import usePathnameClient from "@/libs/hooks/usePathnameClient";
 import FeedPatternSwitch from "@/components/FeedPatternSwitch";
 import CommunityTrendingsTab from "../(tabs)/trendings/page";
@@ -11,20 +11,18 @@ import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
 import { MdInfo, MdNewLabel, MdPin } from "react-icons/md";
 import { FaFire } from "react-icons/fa";
 import CommunityPinnedTab from "../(tabs)/pinned/page";
-import CommunityMembers from "@/components/community/CommunityMembers";
-import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/modal";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 interface Props {
   data: Community;
+  onLeadershipPress: () => void;
 }
 
 export default function CommunityPage(props: Props) {
-  const { data } = props;
+  const { data, onLeadershipPress } = props;
   let { community, category } = usePathnameClient();
   const { isMobile, isBetween920AndMobile } = useDeviceInfo();
-  const [membersModal, setMembersModal] = useState(false);
   const pathname = usePathname();
 
   const communityTabs = [
@@ -57,7 +55,12 @@ export default function CommunityPage(props: Props) {
     communityTabs.push({
       title: "About",
       key: "about",
-      children: <CommunityAboutTab community={data} />,
+      children: (
+        <CommunityAboutTab
+          onLeadershipPress={onLeadershipPress}
+          community={data}
+        />
+      ),
       icon: <MdInfo size={22} />,
       priority: 5,
     });
@@ -68,7 +71,7 @@ export default function CommunityPage(props: Props) {
 
   useEffect(() => {
     if (category === "roles") {
-      setMembersModal(!membersModal);
+      onLeadershipPress();
     }
   }, []);
 
@@ -111,29 +114,6 @@ export default function CommunityPage(props: Props) {
           </div>
         )}
       </div>
-      <Modal
-        isOpen={membersModal}
-        placement="top-center"
-        scrollBehavior="inside"
-        onOpenChange={setMembersModal}
-        closeButton
-        onClose={() => {
-          history.replaceState({}, "", `/${"trending"}/${community}`);
-        }}
-      >
-        <ModalContent>
-          {() => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                {"Members"}
-              </ModalHeader>
-              <ModalBody>
-                <CommunityMembers community={data} />
-              </ModalBody>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
     </div>
   );
 }

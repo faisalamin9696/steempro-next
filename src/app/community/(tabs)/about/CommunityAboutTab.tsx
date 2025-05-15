@@ -2,6 +2,17 @@ import React from "react";
 
 import CommunityInfoCard from "@/components/CommunityInfoCard";
 
-export function CommunityAboutTab({ community }: { community: Community }) {
-  return <CommunityInfoCard onChatPress={() => {}} community={community} />;
+interface Props {
+  community: Community;
+  onLeadershipPress: () => void;
+}
+export function CommunityAboutTab(props: Props) {
+  const { community, onLeadershipPress } = props;
+  return (
+    <CommunityInfoCard
+      onChatPress={() => {}}
+      community={community}
+      onLeadershipPress={onLeadershipPress}
+    />
+  );
 }

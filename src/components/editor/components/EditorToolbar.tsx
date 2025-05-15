@@ -6,10 +6,17 @@ import {
   FaHeading,
   FaCode,
   FaTable,
+  FaStar,
 } from "react-icons/fa";
 import { Button } from "@heroui/button";
 
-import { LuHeading1, LuHeading2, LuHeading3, LuHeading4, LuLetterText } from "react-icons/lu";
+import {
+  LuHeading1,
+  LuHeading2,
+  LuHeading3,
+  LuHeading4,
+  LuLetterText,
+} from "react-icons/lu";
 
 import {
   Dropdown,
@@ -253,9 +260,21 @@ const EditorToolbar = (props: ToolbarProps) => {
               onSelect={() => {
                 onSelect("snippet");
               }}
-              IconType={LuLetterText }
+              IconType={LuLetterText}
             />
           )}
+
+          <ToolbarItem
+            tooltip={{
+              description: "Add Spoiler",
+              shortcut: ``,
+            }}
+            isDisabled={isDisabled}
+            onSelect={() => {
+              onSelect("spoiler");
+            }}
+            IconType={FaStar}
+          />
         </div>
       </div>
     </div>

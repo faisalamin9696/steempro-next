@@ -70,7 +70,7 @@ type Post = Feed & {
   allow_replies: number;
   allow_votes: number;
   depth: number;
-  beneficiaries: string[];
+  beneficiaries: Beneficiary[];
   votes: string[];
   parent_link_id: number;
 };

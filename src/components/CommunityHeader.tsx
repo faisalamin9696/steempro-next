@@ -2,12 +2,10 @@
 import React, { useState } from "react";
 import { useAppSelector } from "@/libs/constants/AppFunctions";
 import SAvatar from "./SAvatar";
-import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { BiPlus } from "react-icons/bi";
 import { abbreviateNumber } from "@/libs/utils/helper";
 import { proxifyImageUrl } from "@/libs/utils/proxifyUrl";
-import CommunityMembers from "./community/CommunityMembers";
 import SubscribeButton from "./SubscribeButton";
 import { twMerge } from "tailwind-merge";
 import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
@@ -19,9 +17,10 @@ type Props = {
   account: AccountExt;
   className?: string;
   onChatPress: () => void;
+  onLeadershipPress: () => void;
 };
 export default function CommunityHeader(props: Props) {
-  const { community, account, onChatPress } = props;
+  const { community, account, onChatPress, onLeadershipPress } = props;
   const { isTablet } = useDeviceInfo();
 
   const communityInfo: Community =
@@ -124,9 +123,7 @@ export default function CommunityHeader(props: Props) {
               <div className="flex items-center gap-[8px] md:hidden sm:flex">
                 <span
                   className="lowercase text-default-900/80 text-[12px] cursor-pointer hover:underline"
-                  onClick={() => {
-                    setMembersModal(!membersModal);
-                  }}
+                  onClick={onLeadershipPress}
                 >
                   {abbreviateNumber(communityInfo.count_subs)} members
                 </span>
@@ -141,29 +138,6 @@ export default function CommunityHeader(props: Props) {
           </div>
         </div>
       </div>
-
-      {membersModal && (
-        <Modal
-          isOpen={membersModal}
-          onOpenChange={setMembersModal}
-          placement="top-center"
-          scrollBehavior="inside"
-          closeButton
-        >
-          <ModalContent>
-            {() => (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  {"Members"}
-                </ModalHeader>
-                <ModalBody>
-                  <CommunityMembers community={communityInfo} />
-                </ModalBody>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-      )}
     </div>
   );
 }

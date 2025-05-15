@@ -1,12 +1,12 @@
-import { Button } from "@heroui/button";
 import parse, { domToReact } from "html-react-parser";
-import React, { useState } from "react";
+import React from "react";
 import CommentCover from "../comment/components/CommentCover";
 import "./style.scss";
-import { MdOpenInNew } from "react-icons/md";
-import { proxifyImageUrl } from "@/libs/utils/proxifyUrl";
-import { getProxyImageURL } from "@/libs/utils/parseImage";
 import Link from "next/link";
+import { useAppSelector } from "@/libs/constants/AppFunctions";
+import { getSettings } from "@/libs/utils/user";
+import { XEmbed } from "react-social-media-embed";
+import ProcessLink from "./ProcessLink";
 
 export function ParsedBody({
   body,
@@ -15,56 +15,31 @@ export function ParsedBody({
   body: string;
   isNsfw?: boolean;
 }): React.ReactNode {
-  function handleOpenImage(url?: string) {
-    if (url && window)
-      window
-        .open(getProxyImageURL(proxifyImageUrl(url), "large"), "_blank")
-        ?.focus();
-  }
+  const settings =
+    useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
 
-  const [showOpen, setShowOpen] = useState(false);
   const options = {
     replace(domNode) {
       if (domNode?.attribs && domNode?.name === "img") {
         return (
-          <div className="img-container relative">
-            <CommentCover
-              isNsfw={isNsfw}
-              src={domNode?.attribs?.src}
-              alt={domNode?.attribs?.alt}
-              noCard
-              onLoadCompleted={() => setShowOpen(true)}
-            />
-
-            {showOpen && <Button
-              size="sm"
-              isIconOnly
-              title="Open image"
-              variant="flat"
-              onPress={() => handleOpenImage(domNode?.attribs?.src)}
-              radius="full"
-              className="open-button absolute top-0 right-0 m-1"
-            >
-              <MdOpenInNew size={18} />
-            </Button>}
-
-            {/* <NsfwOverlay /> */}
-          </div>
+          <CommentCover
+            isNsfw={isNsfw}
+            src={domNode?.attribs?.src}
+            alt={domNode?.attribs?.alt}
+            noCard
+          />
         );
       }
 
       if (domNode?.name === "a") {
-        // Render the table content using domToReact
-        return (
-          <Link {...domNode?.attribs}>{domToReact(domNode.children)}</Link>
-        );
+        return <ProcessLink domNode={domNode} />;
       }
 
       if (domNode?.name === "table") {
         // Render the table content using domToReact
         return (
           <table className="markdown-body table-scrollable">
-            {domToReact(domNode.children)}
+            {domToReact(domNode.children, options)}
           </table>
         );
       }

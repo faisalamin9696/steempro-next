@@ -21,6 +21,7 @@ import {
   validateCommentBody,
   generateReplyPermlink,
   makeJsonMetadataReply,
+  extractMetadata,
 } from "@/libs/utils/editor";
 import { getCredentials, getSessionKey } from "@/libs/utils/user";
 import { useLogin } from "@/components/auth/AuthProvider";
@@ -70,7 +71,7 @@ export default memo(function PostReplies(props: Props) {
   const [sorting, setSorting] = useState<"created" | "payout" | "upvote_count">(
     "payout"
   );
-  const { users } = JSON.parse(commentInfo.json_metadata ?? `{}`) || [];
+  const { users } = extractMetadata(commentInfo.body) ?? [];
 
   const [isLoading, setIsLoading] = useState(false);
   const draft = getCommentDraft(comment.link_id);

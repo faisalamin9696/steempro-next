@@ -365,25 +365,27 @@ function AppNavbar() {
                       Wallet
                     </Button>
 
-                    <Button
-                      className="w-full justify-start items-center px-1"
-                      size="md"
-                      variant="light"
-                      onPress={() => {
-                        handleUnlock();
-                        handleItemClick();
-                      }}
-                      startContent={
-                        isLocked ? (
-                          <FaUnlock className="text-xl" />
-                        ) : (
-                          <FaLock className="text-xl" />
-                        )
-                      }
-                    >
-                      {isLocked ? "Unlock" : "Lock"} Account
-                    </Button>
-
+                    {!credentials?.passwordless &&
+                      !credentials?.keychainLogin && (
+                        <Button
+                          className="w-full justify-start items-center px-1"
+                          size="md"
+                          variant="light"
+                          onPress={() => {
+                            handleUnlock();
+                            handleItemClick();
+                          }}
+                          startContent={
+                            isLocked ? (
+                              <FaUnlock className="text-xl" />
+                            ) : (
+                              <FaLock className="text-xl" />
+                            )
+                          }
+                        >
+                          {isLocked ? "Unlock" : "Lock"} Account
+                        </Button>
+                      )}
                     <Button
                       className="w-full justify-start items-center px-1"
                       size="md"

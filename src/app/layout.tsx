@@ -70,6 +70,7 @@ export default async function RootLayout({
         href="https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg"
       />
       <link rel="preconnect " href={AppStrings.sds_base_url} />
+      <script async src="https://embed.redditmedia.com/widgets/platform.js" />
 
       <body>
         <SessionProvider session={session}>

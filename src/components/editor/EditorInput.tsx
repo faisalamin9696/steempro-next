@@ -1,6 +1,14 @@
 "use client";
 
-import { useState, useRef, useCallback, memo, useEffect, KeyboardEventHandler, CSSProperties } from "react";
+import {
+  useState,
+  useRef,
+  useCallback,
+  memo,
+  useEffect,
+  KeyboardEventHandler,
+  CSSProperties,
+} from "react";
 import EditorToolbar from "./components/EditorToolbar";
 import { useDropzone } from "react-dropzone";
 import { KeyboardEvent } from "react";
@@ -305,7 +313,7 @@ export default memo(function EditorInput(props: EditorProps) {
         );
         break;
       case "code":
-        insertAtCursor("<code>", "</code>", 1, 1);
+        insertAtCursor("<code>", "</code>", 6, 6);
         break;
       case "link":
         insertAtCursor("[", "](url)", 1, 1);
@@ -327,6 +335,10 @@ export default memo(function EditorInput(props: EditorProps) {
 
       case "center":
         insertAtCursor("<center>\n", "\n</center>", 9, 9);
+        break;
+
+      case "spoiler":
+        insertAtCursor(">! [Click to reveal] Your spoiler content ", "", 42, 42);
         break;
       default:
         break;
@@ -573,7 +585,8 @@ export default memo(function EditorInput(props: EditorProps) {
                 component: (item: { selected: boolean; entity: any }) => {
                   return <SuggestionItem name={item.entity.name} />;
                 },
-                output: (item: any, trigger) => `@${item.name}`,
+                output: (item, trigger) =>
+                  `${trigger}${item.name.replace(/ /g, "_")}`,
               },
             }}
           />

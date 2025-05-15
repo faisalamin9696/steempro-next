@@ -21,6 +21,7 @@ import PostReplies from "@/components/reply/PostReplies";
 import { useSession } from "next-auth/react";
 import SLink from "@/components/SLink";
 import { twMerge } from "tailwind-merge";
+import MarkdownViewer2 from "@/components/body/MarkdownViewer";
 // const DynamicPostReplies = dynamic(
 //   () => import("../../../components/reply/PostReplies")
 // );
@@ -180,7 +181,7 @@ export default function PostPage(props: Props) {
                     <div
                       className={twMerge("flex flex-col items-center lg:ml-4")}
                     >
-                      <MarkdownViewer
+                      <MarkdownViewer2
                         isNsfw={isNsfw}
                         noImage={!!commentInfo.is_muted}
                         text={commentInfo.body}

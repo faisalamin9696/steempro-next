@@ -58,6 +58,7 @@ import { useAppSelector } from "@/libs/constants/AppFunctions";
 import EditorInput from "@/components/editor/EditorInput";
 import { twMerge } from "tailwind-merge";
 import { getPostDraft, savePostDraft } from "@/libs/draft";
+import MarkdownViewer2 from "@/components/body/MarkdownViewer";
 
 interface Props {
   params?: {
@@ -709,6 +710,28 @@ export default function SubmitPage(props: Props) {
                 </Button>
               )}
 
+              {isEdit && (
+                <Button
+                  size="sm"
+                  radius="full"
+                  color="warning"
+                  isDisabled={isLoading}
+                  variant="flat"
+                  onPress={() => {
+                    savePostDraft(
+                      title,
+                      markdown,
+                      tags,
+                      oldPost?.beneficiaries ?? [],
+                      community
+                    );
+                    toast.success("Draft saved");
+                  }}
+                >
+                  Save Draft
+                </Button>
+              )}
+
               {!dateTime && (
                 <PublishButton
                   isDisabled={isLoading}
@@ -760,7 +783,7 @@ export default function SubmitPage(props: Props) {
               isDisabled={isLoading}
             />
             <div className="flex flex-col items-center">
-              <MarkdownViewer text={markdown} />
+              <MarkdownViewer2 text={markdown} />
             </div>
           </Card>
         ) : null}

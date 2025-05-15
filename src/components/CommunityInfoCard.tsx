@@ -29,10 +29,11 @@ type Props = {
   community: Community;
   className?: string;
   onChatPress: () => void;
+  onLeadershipPress: () => void;
 };
 
 export default memo(function CommunityInfoCard(props: Props) {
-  const { community, onChatPress } = props;
+  const { community, onChatPress, onLeadershipPress } = props;
 
   const communityInfo: Community =
     useAppSelector((state) => state.communityReducer.values)[
@@ -44,7 +45,6 @@ export default memo(function CommunityInfoCard(props: Props) {
   const leaderShip = members.filter((item) =>
     RoleLevel.atLeast(item.role, "mod")
   );
-  const [membersModal, setMembersModal] = useState(false);
   const chatDisclosure = useDisclosure();
 
   return (
@@ -93,7 +93,7 @@ export default memo(function CommunityInfoCard(props: Props) {
           <div
             className="flex flex-col items-start flex-1 hover:underline cursor-pointer"
             onClick={() => {
-              setMembersModal(!membersModal);
+              onLeadershipPress();
             }}
           >
             <p className=" font-bold text-sm">
@@ -150,9 +150,7 @@ export default memo(function CommunityInfoCard(props: Props) {
               ))}
             </AvatarGroup>
             <p
-              onClick={() => {
-                setMembersModal(!membersModal);
-              }}
+              onClick={onLeadershipPress}
               className=" text-tiny hover:underline cursor-pointer"
             >
               Show all
@@ -172,29 +170,6 @@ export default memo(function CommunityInfoCard(props: Props) {
               .replaceAll("\n", "\n - ")}`}
           />
         </div>
-      )}
-
-      {membersModal && (
-        <Modal
-          isOpen={membersModal}
-          onOpenChange={setMembersModal}
-          placement="top-center"
-          scrollBehavior="inside"
-          closeButton
-        >
-          <ModalContent>
-            {() => (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  {"Members"}
-                </ModalHeader>
-                <ModalBody>
-                  <CommunityMembers community={communityInfo} />
-                </ModalBody>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
       )}
 
       {chatDisclosure.isOpen && (
