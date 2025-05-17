@@ -1,6 +1,5 @@
 "use client";
 
-import MarkdownViewer from "@/components/body/MarkdownViewer";
 import CommentFooter from "@/components/comment/components/CommentFooter";
 import CommentHeader from "@/components/comment/components/CommentHeader";
 import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
@@ -21,7 +20,7 @@ import PostReplies from "@/components/reply/PostReplies";
 import { useSession } from "next-auth/react";
 import SLink from "@/components/SLink";
 import { twMerge } from "tailwind-merge";
-import MarkdownViewer2 from "@/components/body/MarkdownViewer";
+import MarkdownViewer from "@/components/body/MarkdownViewer";
 // const DynamicPostReplies = dynamic(
 //   () => import("../../../components/reply/PostReplies")
 // );
@@ -181,7 +180,7 @@ export default function PostPage(props: Props) {
                     <div
                       className={twMerge("flex flex-col items-center lg:ml-4")}
                     >
-                      <MarkdownViewer2
+                      <MarkdownViewer
                         isNsfw={isNsfw}
                         noImage={!!commentInfo.is_muted}
                         text={commentInfo.body}

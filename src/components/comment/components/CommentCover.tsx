@@ -77,7 +77,7 @@ export default memo(function CommentCover(props: Props) {
                 height={0}
                 width={640}
                 quality={60}
-                className={twMerge("cursor-zoom-in", show ? "" : "blur-lg")}
+                className={twMerge(show ? "" : "blur-lg")}
                 onLoad={onLoadCompleted}
                 onError={onLoadCompleted}
                 style={{
@@ -105,11 +105,7 @@ export default memo(function CommentCover(props: Props) {
                 alt={alt || "image"}
                 onLoad={onLoadCompleted}
                 onError={onLoadCompleted}
-                className={twMerge(
-                  "cursor-zoom-in",
-                  show ? "" : "blur-md",
-                  "rounded-md"
-                )}
+                className={twMerge(show ? "" : "blur-md", "rounded-md")}
                 style={{
                   // width: "100%",
                   height: "100%",

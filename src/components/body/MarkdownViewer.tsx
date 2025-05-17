@@ -25,7 +25,7 @@ interface Props {
   isProxifyImages?: boolean;
   isNsfw?: boolean;
 }
-export default memo(function MarkdownViewer2(props: Props) {
+export default memo(function MarkdownViewer(props: Props) {
   const {
     allowDangerousHTML = false,
     breaks = true,

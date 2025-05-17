@@ -33,7 +33,7 @@ export function extractImageLink(json_metadata, body = "") {
         : remarkable.render(
             body.replace(/<!--([\s\S]+?)(-->|$)/g, "(html comment removed: $1)")
           );
-      rtags = htmlReady(htmlText, { mutate: false });
+      rtags = htmlReady(htmlText, { mutate: true });
     }
 
     [image_link] = Array.from(rtags.images);

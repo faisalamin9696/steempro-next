@@ -412,6 +412,7 @@ const TransferModal = (props: Props): React.ReactNode => {
                   label="From"
                   size="sm"
                   isReadOnly
+                  autoCapitalize="off"
                   isRequired
                   value={from}
                   onValueChange={setFrom}
@@ -422,6 +423,7 @@ const TransferModal = (props: Props): React.ReactNode => {
                     isRequired
                     label="To"
                     size="sm"
+                    autoCapitalize="off"
                     value={to}
                     onValueChange={setTo}
                     isDisabled={!!oldDelegation || !!isRemove || isPending}

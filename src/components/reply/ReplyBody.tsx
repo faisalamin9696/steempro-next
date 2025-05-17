@@ -1,6 +1,5 @@
 import Reputation from "@/components/Reputation";
 import SAvatar from "@/components/SAvatar";
-import MarkdownViewer from "@/components/body/MarkdownViewer";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import React, { Key, useState } from "react";
 import RoleTitleCard from "../RoleTitleCard";
@@ -19,7 +18,7 @@ import { AppStrings } from "@/libs/constants/AppStrings";
 import CommentEditHistory from "../CommentHistoryViewer";
 import SLink from "../SLink";
 import { twMerge } from "tailwind-merge";
-import MarkdownViewer2 from "../body/MarkdownViewer";
+import MarkdownViewer from "../body/MarkdownViewer";
 
 export default function ReplyBody({
   comment,
@@ -133,7 +132,7 @@ export default function ReplyBody({
           <div
             className={twMerge(comment.is_muted === 1 && "opacity-60", "mt-2")}
           >
-            <MarkdownViewer2
+            <MarkdownViewer
               text={comment.body}
               className={`!prose-sm !w-full !max-w-none`}
             />

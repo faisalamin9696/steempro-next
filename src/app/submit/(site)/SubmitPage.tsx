@@ -37,7 +37,6 @@ import {
   validateCommentBody,
   validateTagInput,
 } from "@/libs/utils/editor";
-import MarkdownViewer from "@/components/body/MarkdownViewer";
 import { AppStrings } from "@/libs/constants/AppStrings";
 import { empty_community } from "@/libs/constants/Placeholders";
 import { getPost } from "@/libs/steem/sds";
@@ -58,7 +57,7 @@ import { useAppSelector } from "@/libs/constants/AppFunctions";
 import EditorInput from "@/components/editor/EditorInput";
 import { twMerge } from "tailwind-merge";
 import { getPostDraft, savePostDraft } from "@/libs/draft";
-import MarkdownViewer2 from "@/components/body/MarkdownViewer";
+import MarkdownViewer from "@/components/body/MarkdownViewer";
 
 interface Props {
   params?: {
@@ -710,7 +709,7 @@ export default function SubmitPage(props: Props) {
                 </Button>
               )}
 
-              {isEdit && (
+              {isEdit && oldPost?.depth === 0 && (
                 <Button
                   size="sm"
                   radius="full"
@@ -722,7 +721,9 @@ export default function SubmitPage(props: Props) {
                       title,
                       markdown,
                       tags,
-                      oldPost?.beneficiaries ?? [],
+                      (oldPost?.beneficiaries ?? []).map((item) => {
+                        return { account: item[0], weight: item[1] };
+                      }),
                       community
                     );
                     toast.success("Draft saved");
@@ -783,7 +784,7 @@ export default function SubmitPage(props: Props) {
               isDisabled={isLoading}
             />
             <div className="flex flex-col items-center">
-              <MarkdownViewer2 text={markdown} />
+              <MarkdownViewer text={markdown} />
             </div>
           </Card>
         ) : null}

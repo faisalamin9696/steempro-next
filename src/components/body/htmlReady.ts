@@ -1,17 +1,26 @@
 import xmldom from "xmldom";
 import { getDoubleSize, proxifyImageUrl } from "../../libs/utils/proxifyUrl";
 import { validate_account_name } from "@/libs/utils/chainValidation";
-import linksRe, { any as linksAny } from "@/libs/utils/parseLinks";
+import linksRe, {
+  any as linksAny,
+  replaceOldDomains,
+  SECTION_LIST,
+  WHITE_LIST,
+} from "@/libs/utils/parseLinks";
 import * as Phishing from "@/libs/utils/phishing";
-
-export const getPhishingWarningMessage = () =>
-  "Alert: recognized as phishnig link";
-export const getExternalLinkWarningMessage = () => "Open external link";
+import {
+  INTERNAL_POST_TAG_REGEX,
+  MENTION_REGEX,
+  POST_REGEX,
+} from "./regexes.const";
 import {
   embedNode as EmbeddedPlayerEmbedNode,
   preprocessHtml,
 } from "@/components/elements/EmbededPlayers";
-import { youtubeRegex } from "./ProcessLink";
+
+export const getPhishingWarningMessage = () =>
+  "Alert: recognized as phishnig link";
+export const getExternalLinkWarningMessage = () => "Open external link";
 
 const noop = () => {};
 const DOMParser = new xmldom.DOMParser({
@@ -19,32 +28,9 @@ const DOMParser = new xmldom.DOMParser({
 });
 const XMLSerializer = new xmldom.XMLSerializer();
 
-export function extractMetadata(data) {
-  if (!data) return null;
-
-  const m1 = data.match(youtubeRegex.main);
-  const url = m1 ? m1[0] : null;
-
-  if (!url) return null;
-
-  const m2 = url.match(youtubeRegex.contentId);
-  const id = m2 && m2.length >= 2 ? m2[2] : null;
-
-  if (!id) return null;
-
-  const startTime = url.match(/t=(\d+)s?/);
-  return {
-    id,
-    url,
-    canonical: url,
-    startTime: startTime ? startTime[1] : 0,
-    thumbnail: "https://img.youtube.com/vi/" + id + "/0.jpg",
-  };
-}
-
 export default function (
   html,
-  { mutate = true, hideImages = false, lightbox = false } = {}
+  { mutate = true, hideImages = false, isProxifyImages = false } = {}
 ) {
   const state: any = { mutate };
   state.hashtags = new Set();
@@ -52,10 +38,11 @@ export default function (
   state.htmltags = new Set();
   state.images = new Set();
   state.links = new Set();
-  state.lightbox = lightbox;
   try {
     const doc = DOMParser.parseFromString(preprocessHtml(html), "text/html");
+
     traverse(doc, state);
+
     if (mutate) {
       if (hideImages) {
         // eslint-disable-next-line no-restricted-syntax
@@ -74,6 +61,7 @@ export default function (
         proxifyImages(doc, state);
       }
     }
+    // console.log('state', state)
     if (!mutate) return state;
     return {
       html: doc ? XMLSerializer.serializeToString(doc) : "",
@@ -81,11 +69,11 @@ export default function (
     };
   } catch (error: any) {
     // xmldom error is bad
-    console.error(
+    console.log(
       "rendering error",
-      JSON.stringify({ error: error.message, html })
+      JSON.stringify({ error: error?.message, html })
     );
-    return { html: "" };
+    return { html: "Error " + error?.message };
   }
 }
 
@@ -108,42 +96,39 @@ function traverse(node, state, depth = 0) {
 
 function link(state, child) {
   const url = child.getAttribute("href");
+
   if (url) {
     state.links.add(url);
     if (state.mutate) {
-      // If this link is not relative, http, https, steem -- add https.
-      if (!/^((#)|(\/(?!\/))|(((steem|https?):)?\/\/))/.test(url)) {
-        child.setAttribute("href", "https://" + url);
+      // If this link is not relative, http, https, steem or esteem -- add https.
+      if (!/^((#)|(\/(?!\/))|(((steem|esteem|https?):)?\/\/))/.test(url)) {
+        child.setAttribute("href", "https://" + replaceOldDomains(url));
       }
 
       // Unlink potential phishing attempts
       if (
         (url.indexOf("#") !== 0 && // Allow in-page links
           child.textContent.match(/(www\.)?steemit\.com/i) &&
-          !url.match(/(steem|https)?:\/\/(.*@)?(www\.)?steemit\.com/i)) ||
+          !url.match(/https?:\/\/(.*@)?(www\.)?steemit\.com/i)) ||
         Phishing.looksPhishy(url)
       ) {
         const phishyDiv = child.ownerDocument.createElement("div");
         phishyDiv.textContent = `${child.textContent} / ${url}`;
         phishyDiv.setAttribute("title", getPhishingWarningMessage());
         phishyDiv.setAttribute("class", "phishy");
-        const parentNode = child.parentNode;
-        parentNode.appendChild(phishyDiv);
-        parentNode.removeChild(child);
+        child.parentNode.replaceChild(phishyDiv, child);
       }
     }
   }
 }
 
 // wrap iframes in div.videoWrapper to control size/aspect ratio
+// wrap iframes in div.videoWrapper to control size/aspect ratio
 function iframe(state, child) {
   const url = child.getAttribute("src");
-
-  // @TODO move this into the centralized EmbeddedPlayer code
   if (url) {
     const { images, links } = state;
-    const yt = extractMetadata(url);
-
+    const yt = youTubeId(url);
     if (yt && images && links) {
       links.add(yt.url);
       images.add("https://img.youtube.com/vi/" + yt.id + "/0.jpg");
@@ -165,7 +150,6 @@ function iframe(state, child) {
   ) {
     return;
   }
-
   const html = XMLSerializer.serializeToString(child);
   const width = child.attributes.getNamedItem("width");
   const height = child.attributes.getNamedItem("height");
@@ -201,6 +185,8 @@ function img(state, child) {
   }
 }
 
+// Assuming doc is a reference to the document object
+
 function proxifyImages(doc, state) {
   if (!doc) return;
 
@@ -230,8 +216,7 @@ function proxifyImages(doc, state) {
     }
   });
 }
-
-function linkifyNode(child, state) {
+function linkifyNode(child: any, state: any) {
   try {
     const tag = child.parentNode.tagName
       ? child.parentNode.tagName.toLowerCase()
@@ -244,7 +229,9 @@ function linkifyNode(child, state) {
 
     child = EmbeddedPlayerEmbedNode(child, state.links, state.images);
 
+    // child = DOMParser.parseFromString(`<span>${child}</span>`);
     const data = XMLSerializer.serializeToString(child);
+
     const content = linkify(
       data,
       state.mutate,
@@ -253,19 +240,64 @@ function linkifyNode(child, state) {
       state.images,
       state.links
     );
+
     if (mutate && content !== data) {
-      const newChild = DOMParser.parseFromString(`<span>${content}</span>`);
-      const parentNode = child.parentNode;
-      parentNode.appendChild(newChild);
-      parentNode.removeChild(child);
-      // eslint-disable-next-line consistent-return
+      const href = child?.nodeValue?.trim();
+
+      let newChild = DOMParser.parseFromString(`<span>${content}</span>`);
+
+      const postMatch = href.match(POST_REGEX);
+      if (postMatch && WHITE_LIST.includes(postMatch[1].replace(/www./, ""))) {
+        const tag = postMatch[2];
+        const author = postMatch[3].replace("@", "");
+        const permlink = postMatch[4];
+        newChild = DOMParser.parseFromString(
+          `<span><a href="/${tag}/@${author}/${permlink}">@${author}/${permlink}</a></span>`
+        );
+      }
+
+      // If profile mention url
+      const mentionMatch = href.match(MENTION_REGEX);
+      if (
+        mentionMatch &&
+        WHITE_LIST.includes(mentionMatch[1].replace(/www./, "")) &&
+        mentionMatch.length === 3
+      ) {
+        const author = mentionMatch[2].replace("@", "").toLowerCase();
+        if (author.indexOf("/") === -1) {
+          newChild = DOMParser.parseFromString(
+            `<span><a href="/@${author}">@${author}</a></span>`
+          );
+        }
+      }
+
+      // If profile with the section link
+      const tpostMatch = href.match(INTERNAL_POST_TAG_REGEX);
+
+      if (
+        (tpostMatch &&
+          tpostMatch.length === 4 &&
+          WHITE_LIST.some((v) => tpostMatch[1].includes(v))) ||
+        (tpostMatch &&
+          tpostMatch.length === 4 &&
+          tpostMatch[1].indexOf("/") == 0)
+      ) {
+        if (SECTION_LIST.some((v) => tpostMatch[3].includes(v))) {
+          const author = tpostMatch[2].replace("@", "").toLowerCase();
+          const section = tpostMatch[3];
+          const href = `/@${author}/${section}`;
+          newChild = DOMParser.parseFromString(
+            `<span><a href="${href}">@${author}/${section}</a></span>`
+          );
+        }
+      }
+      child.parentNode.replaceChild(newChild, child);
       return newChild;
     }
   } catch (error) {
     console.error("linkify_error", error);
   }
 }
-
 function linkify(content, mutate, hashtags, usertags, images, links) {
   // hashtag
   content = content.replace(/(^|\s)(#[-a-z\d]+)/gi, (tag) => {
@@ -281,10 +313,10 @@ function linkify(content, mutate, hashtags, usertags, images, links) {
   // usertag (mention)
   // Cribbed from https://github.com/twitter/twitter-text/blob/v1.14.7/js/twitter-text.js#L90
   content = content.replace(
-    /(^|[^a-zA-Z0-9_!#$%&*@＠/=]|(^|[^a-zA-Z0-9_+~.-/#=]))[@＠]([a-z][-.a-z\d]+[a-z\d])/gi,
+    /(^|[^a-zA-Z0-9_!#$%&*@＠\/]|(^|[^a-zA-Z0-9_+~.-\/#]))[@＠]([a-z][-\.a-z\d]+[a-z\d])/gi,
     (match, preceeding1, preceeding2, user) => {
       const userLower = user.toLowerCase();
-      const valid = validate_account_name(userLower) == null;
+      const valid = validate_account_name(userLower) === null;
 
       if (valid && usertags) usertags.add(userLower);
 
@@ -315,6 +347,28 @@ function linkify(content, mutate, hashtags, usertags, images, links) {
     return `<a href="${ln}">${ln}</a>`;
   });
   return content;
+}
+
+/** @return {id, url} or <b>null</b> */
+function youTubeId(data) {
+  if (!data) return null;
+
+  const m1 = data.match(linksRe.youTube);
+  const url = m1 ? m1[0] : null;
+  if (!url) return null;
+
+  const m2 = url.match(linksRe.youTubeId);
+  const id = m2 && m2.length >= 2 ? m2[1] : null;
+  if (!id) return null;
+
+  const startTime = url.match(/t=(\d+)s?/);
+
+  return {
+    id,
+    url,
+    startTime: startTime ? startTime[1] : 0,
+    thumbnail: "https://img.youtube.com/vi/" + id + "/0.jpg",
+  };
 }
 
 function handleDir(state, child) {

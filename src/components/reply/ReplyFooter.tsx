@@ -622,11 +622,7 @@ export default function ReplyFooter({
                 </p>
               </div>
               {markdown ? (
-                <Card
-                  isBlurred
-                  shadow="sm"
-                  className={"p-2 lg:shadow-none space-y-2"}
-                >
+                <Card isBlurred shadow="none" className={"p-2 space-y-2"}>
                   <MarkdownViewer text={markdown} className="!prose-sm" />
                 </Card>
               ) : null}

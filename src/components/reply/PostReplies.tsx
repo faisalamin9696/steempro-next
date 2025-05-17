@@ -459,7 +459,7 @@ export default memo(function PostReplies(props: Props) {
                   </p>
                 </div>
                 {markdown ? (
-                  <Card shadow="sm" className="p-2 lg:shadow-none space-y-2">
+                  <Card shadow="none" className="p-2 lg:shadow-none space-y-2">
                     <MarkdownViewer text={markdown} />
                   </Card>
                 ) : null}
