@@ -56,7 +56,7 @@ export default memo(function CommunityInfoCard(props: Props) {
       )}
     >
       <div className=" flex flex-col w-full">
-        <div className="flex flex-row items-start justify-between gap-0">
+        <div className="flex flex-col items-start gap-2">
           <div className="flex flex-col items-start font-bold text-lg sm:text-2xl mb-0">
             <p className="text-left">{communityInfo.title}</p>
             <SLink
@@ -67,7 +67,7 @@ export default memo(function CommunityInfoCard(props: Props) {
             </SLink>
           </div>
           <div className="max-1md:hidden">
-            <ChatButton skipMemo isIconOnly onPress={onChatPress} />
+            <ChatButton skipMemo onPress={onChatPress} />
           </div>
         </div>
         <MarkdownViewer

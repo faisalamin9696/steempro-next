@@ -64,6 +64,8 @@ export default memo(function ProfileInfoCard(props: Props) {
     profileInfo?.posting_json_metadata || "{}"
   );
 
+  const json_metadata = JSON.parse(profileInfo?.json_metadata || "{}");
+
   const URL_2 = `/followers_api/getKnownFollowers/${profileInfo?.name}/${
     loginInfo.name || "null"
   }`;
@@ -150,7 +152,10 @@ export default memo(function ProfileInfoCard(props: Props) {
           )}
           <MarkdownViewer
             className="!text-sm !text-default-900/70 !text-left prose-p:!my-2"
-            text={posting_json_metadata?.profile?.about}
+            text={
+              posting_json_metadata?.profile?.about ??
+              json_metadata?.profile?.about
+            }
           />
 
           {website && (

@@ -5,6 +5,7 @@ import useSWR from "swr";
 import LoadingCard from "./LoadingCard";
 import "./style.scss";
 import SLink from "./SLink";
+import SAvatar from "./SAvatar";
 
 interface Props {
   comment: Feed | Post;
@@ -67,101 +68,107 @@ export class EntryPayoutDetail extends Component<DetailProps> {
 
     if (isDeclined) {
       return (
-        <p>
+        <div>
           <span className="value">{"Payout Declined"}</span>
-        </p>
+        </div>
       );
     }
 
     return (
-      <div className="payout-popover-content">
+      <div className="flex flex-col payout-popover-content gap-2">
         {fullPower && (
-          <p>
-            <span className="label">{"Reward"}</span>
+          <div>
+            <span className="label">{"Reward: "}</span>
             <span className="value">{"Power Up 100%"}</span>
-          </p>
+          </div>
         )}
         {pendingPayout > 0 && (
-          <p>
-            <span className="label">{"Pending Payout"}</span>
+          <div>
+            <span className="label">{"Pending Payout: "}</span>
             <span className="value">
-              $ {pendingPayout?.toFixed(3)}
+              ${pendingPayout?.toFixed(3)}
               {/* <FormattedCurrency {...this.props} value={pendingPayout} fixAt={3} /> */}
             </span>
-          </p>
+          </div>
         )}
         {promotedPayout > 0 && (
-          <p>
+          <div>
             <span className="label">{"Promoted"}</span>
             <span className="value">
               {promotedPayout?.toFixed(3)}
               {/* <FormattedCurrency {...this.props} value={promotedPayout} fixAt={3} /> */}
             </span>
-          </p>
+          </div>
         )}
         {authorPayout > 0 && (
-          <p>
-            <span className="label">{"Author Payout"}</span>
+          <div>
+            <span className="label">{"Author Payout: "}</span>
             <span className="value">
-              $ {authorPayout?.toFixed(3)}
+              ${authorPayout?.toFixed(3)}
               {/* <FormattedCurrency {...this.props} value={authorPayout} fixAt={3} /> */}
             </span>
-          </p>
+          </div>
         )}
         {curatorPayout > 0 && (
-          <p>
-            <span className="label">{"Curators Payout"}</span>
+          <div>
+            <span className="label">{"Curators Payout: "}</span>
             <span className="value">
-              $ {curatorPayout?.toFixed(3)}
+              ${curatorPayout?.toFixed(3)}
               {/* <FormattedCurrency {...this.props} value={curatorPayout} fixAt={3} /> */}
             </span>
-          </p>
+          </div>
         )}
         {beneficiary.length > 0 && (
-          <p>
-            <span className="label">{"Beneficiary"}</span>
-            <span className="value">
+          <div className="gap-1 flex flex-col p-1 bg-default-200 rounded-md">
+            <span className="label text-tiny">{"Beneficiaries: "}</span>
+            <span className="value px-1 mt-1">
               {beneficiary.map((x: any, i) => (
                 <Fragment key={i}>
-                  <SLink
-                    className=" hover:text-blue-500 hover:underline"
-                    href={`/@${x[0]}/blogs`}
-                  >
-                    {x[0]}
-                  </SLink>
-                  : {(x[1] / 100).toFixed(0)}% <br />
+                  <div className=" flex flex-row items-center gap-1">
+                    <div className="flex flex-row items-center gap-1">
+                      <SAvatar size="xxs" username={x[0]} />
+                      <SLink
+                        className=" hover:text-blue-500 hover:underline"
+                        href={`/@${x[0]}/blogs`}
+                      >
+                        {x[0]}
+                      </SLink>
+                    </div>
+                    : {(x[1] / 100).toFixed(0)}%
+                  </div>
+                  <br />
                 </Fragment>
               ))}
             </span>
-          </p>
+          </div>
         )}
         {breakdownPayout.length > 0 && (
-          <p>
-            <span className="label">{"Breakdown"}</span>
-            <span className="value">
+          <div className="gap-1 flex flex-col p-1 bg-default-200 rounded-md">
+            <span className="label text-tiny">{"Breakdown: "}</span>
+            <span className="value px-1 mt-1">
               {breakdownPayout.map((x, i) => (
                 <Fragment key={i}>
                   {x} <br />
                 </Fragment>
               ))}
             </span>
-          </p>
+          </div>
         )}
         {payoutDate && (
-          <p>
-            <span className="label">{"Payout"}</span>
+          <div>
+            <span className="label">{"Payout: "}</span>
             <span className="value">{payoutDate}</span>
-          </p>
+          </div>
         )}
 
         {payoutLimitHit && (
-          <p>
-            <span className="label">{"Max accepted"}</span>
+          <div>
+            <span className="label">{"Max accepted: "}</span>
             <span className="value">
               {maxPayout?.toFixed(3)}
               {/* <FormattedCurrency {...this.props} value={maxPayout} fixAt={3} /> */}
             </span>
-          </p>
+          </div>
         )}
       </div>
     );

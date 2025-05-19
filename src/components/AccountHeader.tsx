@@ -149,7 +149,10 @@ export default function AccountHeader(props: Props) {
                   Share
                 </Button>
               ) : (
-                <ChatButton onPress={onChatPress} />
+                <ChatButton
+                  size={!isTablet ? "sm" : "md"}
+                  onPress={onChatPress}
+                />
               )}
             </div>
           </div>

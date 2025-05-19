@@ -9,7 +9,7 @@ interface Props {
   onPress?: (event) => void;
   border?: boolean;
   className?: string;
-  size?: "xs" | "1xs" | "sm" | "md" | "lg" | "xl";
+  size?: "xxs" | "xs" | "1xs" | "sm" | "md" | "lg" | "xl";
   borderColor?: string;
   onlyImage?: boolean;
   quality?: number;
@@ -41,6 +41,8 @@ export default function SAvatar(props: Props) {
       ? 35
       : size === "xs"
       ? 25
+      : size === "xxs"
+      ? 20
       : 60;
 
   if (!username) return null;
