@@ -11,6 +11,7 @@ interface Params {
   permlink: string;
   tag: string;
   community: string;
+  proposalId: number;
 }
 
 const usePathnameServer = async (): Promise<Params> => {
@@ -22,6 +23,7 @@ const usePathnameServer = async (): Promise<Params> => {
     permlink: "",
     tag: "",
     community: "",
+    proposalId: 0,
   };
 
   const splitted_path = pathname.split("/");
@@ -61,6 +63,11 @@ const usePathnameServer = async (): Promise<Params> => {
   else if (validCats.includes(first_param)) {
     params.category = splitted_path[0]?.replace("@", "") ?? "";
     params.tag = splitted_path[1]?.replace("@", "") ?? "";
+  } else if (
+    ["proposals"].includes(first_param) &&
+    splitted_path.length === 2
+  ) {
+    params.proposalId = Number(splitted_path[1]);
   }
 
   return params;

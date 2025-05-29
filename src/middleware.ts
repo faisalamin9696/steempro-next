@@ -101,5 +101,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(new URL("/category", request.nextUrl), {
       headers: request.headers,
     });
-  }
+  } else
+    return NextResponse.rewrite(request.nextUrl, {
+      headers: request.headers,
+    });
 }

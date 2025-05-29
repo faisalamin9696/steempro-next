@@ -1862,25 +1862,32 @@ export const getProposals = async (): Promise<Proposal[]> => {
   });
 };
 
-export const findProposals = (id: number): Promise<Proposal> =>
-  client
-    .call("condenser_api", "find_proposals", [[id]])
-    .then((r: Proposal[]) => {
-      const proposal = r?.[0];
-      if (proposal) {
-        if (
-          new Date(proposal.start_date) < new Date() &&
-          new Date(proposal.end_date) >= new Date()
-        ) {
-          proposal.status = "active";
-        } else if (new Date(r?.[0].end_date) < new Date()) {
-          proposal.status = "expired";
+export const findProposals = (id: number): Promise<Proposal> => {
+  return new Promise((resolve, reject) => {
+    client
+      .call("condenser_api", "find_proposals", [[id]])
+      .then((r: Proposal[]) => {
+        const proposal = r?.[0];
+        if (proposal) {
+          if (
+            new Date(proposal.start_date) < new Date() &&
+            new Date(proposal.end_date) >= new Date()
+          ) {
+            proposal.status = "active";
+          } else if (new Date(r?.[0].end_date) < new Date()) {
+            proposal.status = "expired";
+          } else {
+            proposal.status = "upcoming";
+          }
+          resolve(proposal);
         } else {
-          proposal.status = "upcoming";
+          reject(
+            `No proposal was found for the provided ID: #${id}. Please verify the ID and try again.`
+          );
         }
-      }
-      return proposal;
-    });
+      });
+  });
+};
 
 export interface ProposalVote {
   id: number;
