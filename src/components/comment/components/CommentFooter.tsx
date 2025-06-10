@@ -19,14 +19,14 @@ import {
   getSessionKey,
   getSettings,
   updateSettings,
-} from "@/libs/utils/user";
-import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
+} from "@/utils/user";
+import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
 import { useLogin } from "@/components/auth/AuthProvider";
-import { addCommentHandler } from "@/libs/redux/reducers/CommentReducer";
+import { addCommentHandler } from "@/hooks/redux/reducers/CommentReducer";
 import { toast } from "sonner";
 import { reblogPost, voteComment } from "@/libs/steem/condenser";
 import { getVoteData } from "@/libs/steem/sds";
-import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
+import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import VotingSliderCard from "@/components/VotingSliderCard";
 import { CommentProps } from "../CommentCard";
 import {
@@ -35,7 +35,7 @@ import {
   BiSolidUpvote,
   BiUpvote,
 } from "react-icons/bi";
-import { abbreviateNumber } from "@/libs/utils/helper";
+import { abbreviateNumber } from "@/utils/helper";
 import { FaRegCommentAlt } from "react-icons/fa";
 
 import { RewardBreakdownCard } from "@/components/RewardBreakdownCard";
@@ -46,7 +46,7 @@ import ClickAwayListener from "react-click-away-listener";
 import { useSession } from "next-auth/react";
 import { As } from "@heroui/system";
 import SLink from "@/components/SLink";
-import { AsyncUtils } from "@/libs/utils/async.utils";
+import { AsyncUtils } from "@/utils/async.utils";
 import { SiSteem } from "react-icons/si";
 import { mutate } from "swr";
 

@@ -1,6 +1,5 @@
 import { getPost } from "@/libs/steem/sds";
-import { getThumbnail } from "@/libs/utils/parseImage";
-import usePathnameServer from "@/libs/hooks/usePathnameServer";
+import { getThumbnail } from "@/utils/parseImage";
 import { Metadata } from "next";
 import React from "react";
 import { findProposals } from "@/libs/steem/condenser";
@@ -13,9 +12,9 @@ export default async function Layout({
   return children;
 }
 
-export async function generateMetadata(): Promise<Metadata> {
-  const { proposalId } = await usePathnameServer();
-  const proposal = await findProposals(proposalId);
+export async function generateMetadata({ params }): Promise<Metadata> {
+  const { id } = (await params) as { id: string };
+  const proposal = await findProposals(Number(id));
   if (proposal) {
     const result = await getPost(proposal.creator, proposal.permlink);
 

@@ -12,13 +12,11 @@ import React from "react";
 import useSWR from "swr";
 
 function page() {
-  const params = useParams();
-  const proposalId = params.id as string;
+  const { id } = useParams() as { id: string };
   const { data: session } = useSession();
 
-  const { data, error, isLoading } = useSWR<Proposal>(
-    `proposal-${proposalId}`,
-    () => findProposals(Number(proposalId))
+  const { data, error, isLoading } = useSWR<Proposal>(`proposal-${id}`, () =>
+    findProposals(Number(id))
   );
 
   const {
@@ -50,7 +48,7 @@ function page() {
             <LoadingCard />
           ) : (
             postData?.body && (
-              <div className="flex flex-col w-full items-center">
+              <div className="flex flex-col w-full items-center p-2">
                 <MarkdownViewer
                   text={postData?.body || ""}
                   className=" !max-w-[700px]"

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
-import { fetchSds } from "@/libs/constants/AppFunctions";
+import { fetchSds } from "@/constants/AppFunctions";
 import SAvatar from "@/components/SAvatar";
 import TableWrapper from "./wrappers/TableWrapper";
 import SLink from "./SLink";

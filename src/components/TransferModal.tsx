@@ -12,7 +12,7 @@ import { Checkbox } from "@heroui/checkbox";
 import { Input } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
 import SAvatar from "./SAvatar";
-import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
+import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { useLogin } from "./auth/AuthProvider";
@@ -23,12 +23,12 @@ import {
   transferToSavings,
   transferToVesting,
 } from "@/libs/steem/condenser";
-import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
-import { getCredentials, getSessionKey } from "@/libs/utils/user";
+import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
+import { getCredentials, getSessionKey } from "@/utils/user";
 import moment from "moment";
-import { steemToVest, vestToSteem } from "@/libs/helper/vesting";
-import { isNumeric } from "@/libs/utils/helper";
-import { validate_account_name } from "@/libs/utils/chainValidation";
+import { steemToVest, vestToSteem } from "@/utils/helper/vesting";
+import { isNumeric } from "@/utils/helper";
+import { validate_account_name } from "@/utils/chainValidation";
 import KeychainButton from "./KeychainButton";
 import { twMerge } from "tailwind-merge";
 

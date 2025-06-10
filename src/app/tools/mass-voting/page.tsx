@@ -2,11 +2,11 @@
 
 import { useLogin } from "@/components/auth/AuthProvider";
 import MassVotingModal from "@/components/MassVotingModal";
-import { useAppSelector } from "@/libs/constants/AppFunctions";
+import { useAppSelector } from "@/constants/AppFunctions";
 import { getKeyType } from "@/libs/steem/condenser";
 import { getAccountExt } from "@/libs/steem/sds";
-import { getResizedAvatar } from "@/libs/utils/parseImage";
-import { PrivKey, getCredentials, getSessionKey } from "@/libs/utils/user";
+import { getResizedAvatar } from "@/utils/parseImage";
+import { PrivKey, getCredentials, getSessionKey } from "@/utils/user";
 import { Input, Textarea } from "@heroui/input";
 import { Avatar } from "@heroui/avatar";
 import { Button } from "@heroui/button";

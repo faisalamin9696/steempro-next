@@ -5,16 +5,16 @@ import EditorInput from "@/components/editor/EditorInput";
 import ClearFormButton from "@/components/editor/components/ClearFormButton";
 import PublishButton from "@/components/editor/components/PublishButton";
 import { useLogin } from "@/components/auth/AuthProvider";
-import { useAppSelector, useAppDispatch } from "@/libs/constants/AppFunctions";
-import { addCommentHandler } from "@/libs/redux/reducers/CommentReducer";
-import { addRepliesHandler } from "@/libs/redux/reducers/RepliesReducer";
+import { useAppSelector, useAppDispatch } from "@/constants/AppFunctions";
+import { addCommentHandler } from "@/hooks/redux/reducers/CommentReducer";
+import { addRepliesHandler } from "@/hooks/redux/reducers/RepliesReducer";
 import {
   deleteComment,
   mutePost,
   publishContent,
 } from "@/libs/steem/condenser";
-import { allowDelete } from "@/libs/utils/stateFunctions";
-import { Role } from "@/libs/utils/community";
+import { allowDelete } from "@/utils/stateFunctions";
+import { Role } from "@/utils/community";
 import {
   createPatch,
   extractMetadata,
@@ -22,9 +22,9 @@ import {
   makeJsonMetadata,
   makeJsonMetadataReply,
   validateCommentBody,
-} from "@/libs/utils/editor";
-import { readingTime } from "@/libs/utils/readingTime/reading-time-estimator";
-import { getCredentials, getSessionKey } from "@/libs/utils/user";
+} from "@/utils/editor";
+import { readingTime } from "@/utils/readingTime/reading-time-estimator";
+import { getCredentials, getSessionKey } from "@/utils/user";
 import { Button } from "@heroui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
 import { Card } from "@heroui/card";
@@ -35,12 +35,12 @@ import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { CustomEvent } from "@piwikpro/react-piwik-pro";
 import SLink from "../SLink";
-import { AsyncUtils } from "@/libs/utils/async.utils";
+import { AsyncUtils } from "@/utils/async.utils";
 import {
   getCommentDraft,
   removeCommentDraft,
   saveCommentDraft,
-} from "@/libs/draft";
+} from "@/utils/draft";
 
 export default function ReplyFooter({
   comment,

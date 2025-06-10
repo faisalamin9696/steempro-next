@@ -1,7 +1,7 @@
 "use client";
 
-import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
-import { addRepliesHandler } from "@/libs/redux/reducers/RepliesReducer";
+import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
+import { addRepliesHandler } from "@/hooks/redux/reducers/RepliesReducer";
 import { getPostReplies } from "@/libs/steem/sds";
 import { Button } from "@heroui/button";
 import { Card } from "@heroui/card";
@@ -15,27 +15,27 @@ import ClearFormButton from "@/components/editor/components/ClearFormButton";
 import PublishButton from "@/components/editor/components/PublishButton";
 import moment from "moment";
 import { toast } from "sonner";
-import { addCommentHandler } from "@/libs/redux/reducers/CommentReducer";
+import { addCommentHandler } from "@/hooks/redux/reducers/CommentReducer";
 import { publishContent } from "@/libs/steem/condenser";
 import {
   validateCommentBody,
   generateReplyPermlink,
   makeJsonMetadataReply,
   extractMetadata,
-} from "@/libs/utils/editor";
-import { getCredentials, getSessionKey } from "@/libs/utils/user";
+} from "@/utils/editor";
+import { getCredentials, getSessionKey } from "@/utils/user";
 import { useLogin } from "@/components/auth/AuthProvider";
 import secureLocalStorage from "react-secure-storage";
-import { readingTime } from "@/libs/utils/readingTime/reading-time-estimator";
+import { readingTime } from "@/utils/readingTime/reading-time-estimator";
 import EmptyList from "@/components/EmptyList";
 import { Select, SelectItem } from "@heroui/select";
 import { useSession } from "next-auth/react";
-import { AsyncUtils } from "@/libs/utils/async.utils";
+import { AsyncUtils } from "@/utils/async.utils";
 import {
   getCommentDraft,
   removeCommentDraft,
   saveCommentDraft,
-} from "@/libs/draft";
+} from "@/utils/draft";
 
 interface Props {
   comment: Post | Feed;

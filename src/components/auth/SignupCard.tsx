@@ -1,6 +1,6 @@
 import React from "react";
 import SLink from "../SLink";
-import { SignupLink } from "@/libs/constants/AppConstants";
+import { SignupLink } from "@/constants/AppConstants";
 
 function SignupCard() {
   return (

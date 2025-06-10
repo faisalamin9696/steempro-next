@@ -1,13 +1,13 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useAppSelector } from "@/libs/constants/AppFunctions";
+import { useAppSelector } from "@/constants/AppFunctions";
 import { useMutation } from "@tanstack/react-query";
 import { supabase } from "@/libs/supabase";
 import { toast } from "sonner";
 import { Button } from "@heroui/button";
-import MessageItem from "../MessageItem";
-import useRealtimeCommunityMsgs from "@/libs/hooks/useRealtimeCommunityMsgs";
+import MessageItem from "../components/MessageItem";
+import useRealtimeCommunityMsgs from "@/hooks/useRealtimeCommunityMsgs";
 
 interface MessagesProps {
   community: Community;

@@ -8,8 +8,7 @@ import {
 import { Button } from "@heroui/button";
 import React, { useState } from "react";
 import { DatePicker } from "@heroui/date-picker";
-import { now, getLocalTimeZone } from "@internationalized/date";
-import { ZonedDateTime } from "@internationalized/date";
+import { now, getLocalTimeZone, ZonedDateTime } from "@internationalized/date";
 
 interface Props {
   isOpen: boolean;
@@ -45,7 +44,7 @@ export default function ScheduleModal(props: Props) {
                   hideTimeZone
                   value={dateTime}
                   onChange={setDateTime}
-                  minValue={now(getLocalTimeZone())}
+                  minValue={now(getLocalTimeZone()) as any}
                   showMonthAndYearPickers
                 />
               </div>

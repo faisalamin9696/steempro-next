@@ -1,6 +1,6 @@
 "use client";
 
-import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
+import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
 import React, { useEffect, useState } from "react";
@@ -8,8 +8,8 @@ import useSWR from "swr";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { markasReadChat } from "@/libs/steem/condenser";
-import { getCredentials, getSessionKey } from "@/libs/utils/user";
-import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
+import { getCredentials, getSessionKey } from "@/utils/user";
+import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { useSession } from "next-auth/react";
 import SLink from "../../SLink";
 import TimeAgoWrapper from "../../wrappers/TimeAgoWrapper";
@@ -20,7 +20,7 @@ import moment from "moment";
 import { getUnreadChatsHeads } from "@/libs/steem/mysql";
 import { Memo } from "@steempro/dsteem";
 import { MdOutlineRefresh } from "react-icons/md";
-import { addCommonDataHandler } from "@/libs/redux/reducers/CommonReducer";
+import { addCommonDataHandler } from "@/hooks/redux/reducers/CommonReducer";
 
 interface Props {
   onOpenChange: (isOpen: boolean) => void;

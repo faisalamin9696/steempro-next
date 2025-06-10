@@ -1,10 +1,10 @@
 "use client";
 
 import React, { memo, useState } from "react";
-import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
+import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
 import { twMerge } from "tailwind-merge";
 import moment from "moment";
-import { abbreviateNumber } from "@/libs/utils/helper";
+import { abbreviateNumber } from "@/utils/helper";
 import MarkdownViewer from "./body/MarkdownViewer";
 import {
   Modal,
@@ -15,16 +15,16 @@ import {
 } from "@heroui/modal";
 import { Avatar, AvatarGroup } from "@heroui/avatar";
 import { Button } from "@heroui/button";
-import { getResizedAvatar } from "@/libs/utils/parseImage";
+import { getResizedAvatar } from "@/utils/parseImage";
 import useSWR from "swr";
 import FollowersCard from "./FollowersCard";
-import { proxifyImageUrl } from "@/libs/utils/proxifyUrl";
+import { proxifyImageUrl } from "@/utils/proxifyUrl";
 import FollowButton from "./FollowButton";
 import { IoMdShareAlt } from "react-icons/io";
-import { FaGlobe, FaHeart, FaLocationArrow } from "react-icons/fa";
+import { FaGlobe, FaHeart } from "react-icons/fa";
 import { IoFlash } from "react-icons/io5";
 import { getVoteData } from "@/libs/steem/sds";
-import { AppLink } from "@/libs/constants/AppConstants";
+import { AppLink } from "@/constants/AppConstants";
 import { useSession } from "next-auth/react";
 import SLink from "./SLink";
 import { FaLocationDot } from "react-icons/fa6";
@@ -161,12 +161,12 @@ export default memo(function ProfileInfoCard(props: Props) {
           {website && (
             <div
               title="Website"
-              className=" flex flex-row gap-1 items-start text-tiny break-words w-full"
+              className="flex flex-row gap-1 items-start text-tiny w-full"
             >
-              <FaGlobe size={16} className=" me-1" />
+              <FaGlobe size={16} className="me-1 mt-0.5 shrink-0" />
 
               <SLink
-                className=" hover:underline hover:text-blue-500"
+                className="hover:underline hover:text-blue-500 break-words break-all whitespace-normal w-0 grow"
                 target="_blank"
                 href={website}
               >

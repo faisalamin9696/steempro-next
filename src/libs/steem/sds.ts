@@ -1,6 +1,6 @@
 import moment from "moment";
-import { fetchSds, mapSds } from "../constants/AppFunctions";
-import { FeedBodyLength } from "../constants/AppConstants";
+import { fetchSds, mapSds } from "../../constants/AppFunctions";
+import { FeedBodyLength } from "../../constants/AppConstants";
 
 export const getActiveFeed = async (
   category: ValidCategories,
@@ -168,7 +168,7 @@ export const getPinnedFeed = async (
 
 export const getAccountExt = async (
   account: string,
-  observer: string = "null"
+  observer: string | null = "null"
 ): Promise<AccountExt> => {
   try {
     if (!account) {
@@ -219,7 +219,7 @@ export const getAccountsExt = async (
 
 export const getCommunity = async (
   community: string,
-  observer: string = "null"
+  observer: string | null = "null"
 ): Promise<Community> => {
   try {
     if (!community) {
@@ -272,7 +272,7 @@ export const getAuthorCommunities = async (
 export const getPost = async (
   author: string,
   permlink: string,
-  observer: string = "null",
+  observer: string | null = "null",
   withVotes: boolean = false
 ): Promise<Post> => {
   try {

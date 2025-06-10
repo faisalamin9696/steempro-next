@@ -7,7 +7,7 @@ import {
   getSessionToken,
   saveSessionKey,
   sessionKey,
-} from "@/libs/utils/user";
+} from "@/utils/user";
 import AuthModal from "./AuthModal";
 import { useDisclosure } from "@heroui/modal";
 

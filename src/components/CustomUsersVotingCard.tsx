@@ -11,13 +11,13 @@ import { Card } from "@heroui/card";
 import React, { useState } from "react";
 import IconButton from "./IconButton";
 import { MdAdd, MdClose } from "react-icons/md";
-import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
-import { getSettings, updateSettings } from "@/libs/utils/user";
+import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
+import { getSettings, updateSettings } from "@/utils/user";
 import SAvatar from "./SAvatar";
 import { toast } from "sonner";
-import { validate_account_name } from "@/libs/utils/chainValidation";
-import { updateSettingsHandler } from "@/libs/redux/reducers/SettingsReducer";
-import { secureDecrypt } from "@/libs/utils/encryption";
+import { validate_account_name } from "@/utils/chainValidation";
+import { updateSettingsHandler } from "@/hooks/redux/reducers/SettingsReducer";
+import { secureDecrypt } from "@/utils/encryption";
 
 const STORAGE_KEY = "@secure.j.settings";
 

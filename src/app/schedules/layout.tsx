@@ -7,14 +7,13 @@ export const metadata: Metadata = {
   title: "Scheduled posts",
   description:
     "Manage your scheduled posts easily with SteemPro. View, edit, and delete scheduled posts in one place. Stay organized and keep your content strategy on track.",
-  keywords:"SteemPro, schedule posts, scheduling"};
+  keywords: "SteemPro, schedule posts, scheduling",
+};
 
-export default async function Layout({}: Readonly<{
+export default async function Layout({
+  children,
+}: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <MainWrapper>
-      <SchedulesPage />
-    </MainWrapper>
-  );
+  return <MainWrapper>{children}</MainWrapper>;
 }

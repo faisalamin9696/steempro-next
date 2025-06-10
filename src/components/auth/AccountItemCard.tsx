@@ -2,21 +2,21 @@ import {
   addToCurrent,
   removeSessionToken,
   saveSessionKey,
-} from "@/libs/utils/user";
+} from "@/utils/user";
 import { Chip } from "@heroui/chip";
 import { Button } from "@heroui/button";
 import { Card } from "@heroui/card";
 import React, { useState } from "react";
 import SAvatar from "../SAvatar";
-import { useAppDispatch } from "@/libs/constants/AppFunctions";
+import { useAppDispatch } from "@/constants/AppFunctions";
 import { getAccountExt } from "@/libs/steem/sds";
 import { signIn, useSession } from "next-auth/react";
 import { toast } from "sonner";
-import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
+import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { twMerge } from "tailwind-merge";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/libs/supabase";
-import { clearCommentHandler } from "@/libs/redux/reducers/CommentReducer";
+import { clearCommentHandler } from "@/hooks/redux/reducers/CommentReducer";
 import Image from "next/image";
 import { MdVpnKey } from "react-icons/md";
 import { BsChatDotsFill } from "react-icons/bs";

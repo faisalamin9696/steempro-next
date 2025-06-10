@@ -2,25 +2,24 @@
 
 import useSWR from "swr";
 import PromotionCard from "../PromotionCard";
-import usePathnameClient from "@/libs/hooks/usePathnameClient";
-import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
+import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
 import CarousalMain from "./CarousalMain";
 import { AiFillPushpin } from "react-icons/ai";
 import { Button } from "@heroui/button";
 import { twMerge } from "tailwind-merge";
-import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
+import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 
 interface Props {
   className?: string;
+  communityName: string;
 }
 const CommunityCarousel = (props: Props) => {
-  const { className } = props;
-  const { community } = usePathnameClient();
+  const { className, communityName } = props;
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { isMobile } = useDeviceInfo();
 
   const { data, error } = useSWR<Feed[]>(
-    `/communities_api/getCommunityPinnedPosts/${community}/${
+    `/communities_api/getCommunityPinnedPosts/${communityName}/${
       loginInfo.name || "null"
     }/500`,
     fetchSds<Feed[]>

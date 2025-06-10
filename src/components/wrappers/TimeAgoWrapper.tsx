@@ -1,5 +1,5 @@
 import moment from "moment";
-import { getTimeFromNow } from "@/libs/helper/time";
+import { getTimeFromNow } from "@/utils/helper/time";
 import { twMerge } from "tailwind-merge";
 
 interface Props {

@@ -1,4 +1,4 @@
-import { getResizedAvatar } from "@/libs/utils/parseImage";
+import { getResizedAvatar } from "@/utils/parseImage";
 import { User } from "@heroui/user";
 import React from "react";
 import { twMerge } from "tailwind-merge";

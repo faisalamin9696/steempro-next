@@ -10,18 +10,18 @@ import { Button } from "@heroui/button";
 import { Checkbox } from "@heroui/checkbox";
 import { Input } from "@heroui/input";
 import SAvatar from "./SAvatar";
-import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
+import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { useLogin } from "./auth/AuthProvider";
 import { useMutation } from "@tanstack/react-query";
 import { withdrawVesting } from "@/libs/steem/condenser";
-import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
-import { getCredentials, getSessionKey } from "@/libs/utils/user";
+import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
+import { getCredentials, getSessionKey } from "@/utils/user";
 import moment from "moment";
-import { isNumeric } from "@/libs/utils/helper";
+import { isNumeric } from "@/utils/helper";
 import { Slider } from "@heroui/slider";
-import { steemToVest, vestToSteem } from "@/libs/helper/vesting";
+import { steemToVest, vestToSteem } from "@/utils/helper/vesting";
 import KeychainButton from "./KeychainButton";
 
 interface Props {

@@ -1,23 +1,22 @@
-import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
+import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
 import { subscribeCommunity } from "@/libs/steem/condenser";
 import { Button } from "@heroui/button";
 import { useMutation } from "@tanstack/react-query";
 import React from "react";
 import { toast } from "sonner";
 import { useLogin } from "./auth/AuthProvider";
-import { getCredentials, getSessionKey } from "@/libs/utils/user";
-import { addCommunityHandler } from "@/libs/redux/reducers/CommunityReducer";
-import usePathnameClient from "@/libs/hooks/usePathnameClient";
+import { getCredentials, getSessionKey } from "@/utils/user";
+import { addCommunityHandler } from "@/hooks/redux/reducers/CommunityReducer";
 import { useSession } from "next-auth/react";
 
 type Props = {
   community: Community;
   size?: "sm" | "md" | "lg";
+  username?: string;
 };
 
 export default function SubscribeButton(props: Props) {
-  const { community, size } = props;
-  const { username } = usePathnameClient();
+  const { community, size, username } = props;
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const communityInfo: Community =
     useAppSelector((state) => state.communityReducer.values)[

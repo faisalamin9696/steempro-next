@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { User } from "@heroui/user";
-import { getResizedAvatar } from "@/libs/utils/parseImage";
-import { empty_comment } from "@/libs/constants/Placeholders";
+import { getResizedAvatar } from "@/utils/parseImage";
+import { empty_comment } from "@/constants/Placeholders";
 import { Button } from "@heroui/button";
 import { FaPencil } from "react-icons/fa6";
 import EditRoleModal from "../../EditRoleModal";
-import { Role as RoleCheck } from "@/libs/utils/community";
+import { Role as RoleCheck } from "@/utils/community";
 import SLink from "@/components/SLink";
 import { twMerge } from "tailwind-merge";
 

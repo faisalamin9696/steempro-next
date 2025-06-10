@@ -1,7 +1,7 @@
 import React from "react";
 import { FaEye } from "react-icons/fa";
 import useSWR from "swr";
-import { abbreviateNumber } from "@/libs/utils/helper";
+import { abbreviateNumber } from "@/utils/helper";
 import axios from "axios";
 import { twMerge } from "tailwind-merge";
 

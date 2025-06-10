@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import AccountItemCard from "./AccountItemCard";
-import { getAllCredentials, getCredentials } from "@/libs/utils/user";
+import { getAllCredentials, getCredentials } from "@/utils/user";
 import LoadingCard from "../LoadingCard";
 import { twMerge } from "tailwind-merge";
 

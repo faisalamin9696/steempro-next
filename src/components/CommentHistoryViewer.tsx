@@ -20,7 +20,7 @@ import { FaHistory } from "react-icons/fa";
 
 import { MdSubject } from "react-icons/md";
 import moment from "moment";
-import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
+import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { PiHashFill } from "react-icons/pi";
 import useSWR from "swr";
 import ErrorCard from "./ErrorCard";

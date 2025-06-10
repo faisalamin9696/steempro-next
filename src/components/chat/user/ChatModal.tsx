@@ -9,13 +9,13 @@ import {
   ModalFooter,
   ModalBody,
 } from "@heroui/modal";
-import { useAppSelector } from "@/libs/constants/AppFunctions";
+import { useAppSelector } from "@/constants/AppFunctions";
 import useSWR from "swr";
 import { supabase } from "@/libs/supabase";
 import LoadingCard from "../../LoadingCard";
-import EmptyChat from "../EmptyChat";
+import EmptyChat from "../components/EmptyChat";
 import { toast } from "sonner";
-import { getCredentials, getSessionKey } from "@/libs/utils/user";
+import { getCredentials, getSessionKey } from "@/utils/user";
 import { sendMessage } from "@/libs/steem/condenser";
 import { Memo } from "@steempro/dsteem";
 import moment from "moment";
@@ -23,12 +23,12 @@ import { twMerge } from "tailwind-merge";
 import { BsArrowDown } from "react-icons/bs";
 import { Chip } from "@heroui/chip";
 import SAvatar from "../../SAvatar";
-import MessageReplyRef from "../MessageReplyRef";
-import ChatInput from "../ChatInput";
+import MessageReplyRef from "../components/MessageReplyRef";
+import ChatInput from "../components/ChatInput";
 import sanitize from "sanitize-html";
 import Messages from "./Messages";
 import { useSession } from "next-auth/react";
-import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
+import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 
 interface Props {
   account: AccountExt;

@@ -1,7 +1,7 @@
 import React, { memo } from "react";
-import { getSettings, updateSettings } from "@/libs/utils/user";
-import { updateSettingsHandler } from "@/libs/redux/reducers/SettingsReducer";
-import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
+import { getSettings, updateSettings } from "@/utils/user";
+import { updateSettingsHandler } from "@/hooks/redux/reducers/SettingsReducer";
+import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
 import { LuLayoutList } from "react-icons/lu";
 import {
   Dropdown,

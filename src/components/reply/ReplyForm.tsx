@@ -2,7 +2,7 @@
 
 import React, { memo, useState } from "react";
 import Reply from "./Reply";
-import { useAppSelector } from "@/libs/constants/AppFunctions";
+import { useAppSelector } from "@/constants/AppFunctions";
 import ReplyBody from "./ReplyBody";
 import ReplyFooter from "./ReplyFooter";
 import { twMerge } from "tailwind-merge";

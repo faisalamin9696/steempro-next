@@ -14,7 +14,7 @@ import { BsClipboard2Minus } from "react-icons/bs";
 import { LuHistory } from "react-icons/lu";
 import { FaEllipsis } from "react-icons/fa6";
 import { toast } from "sonner";
-import { AppStrings } from "@/libs/constants/AppStrings";
+import { AppStrings } from "@/constants/AppStrings";
 import CommentEditHistory from "../CommentHistoryViewer";
 import SLink from "../SLink";
 import { twMerge } from "tailwind-merge";

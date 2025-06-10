@@ -1,5 +1,5 @@
 /*global $STM_Config*/
-import { AppStrings } from "@/libs/constants/AppStrings";
+import { AppStrings } from "@/constants/AppStrings";
 import React from "react";
 
 /**

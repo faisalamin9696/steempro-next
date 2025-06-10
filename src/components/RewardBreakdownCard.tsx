@@ -1,6 +1,6 @@
 import React, { Component, Fragment, useState } from "react";
-import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
-import { getTimeFromNow } from "@/libs/helper/time";
+import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
+import { getTimeFromNow } from "@/utils/helper/time";
 import useSWR from "swr";
 import LoadingCard from "./LoadingCard";
 import "./style.scss";

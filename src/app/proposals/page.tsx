@@ -3,10 +3,10 @@
 import ErrorCard from "@/components/ErrorCard";
 import LoadingCard from "@/components/LoadingCard";
 import ProposalItemCard from "@/components/ProposalItemCard";
-import { capitalize } from "@/libs/constants/AppConstants";
+import { capitalize } from "@/constants/AppConstants";
 import { getProposals } from "@/libs/steem/condenser";
 import { getAccountExt } from "@/libs/steem/sds";
-import parseAsset from "@/libs/helper/parse-asset";
+import parseAsset from "@/utils/helper/parse-asset";
 import { Card } from "@heroui/card";
 import {
   Dropdown,

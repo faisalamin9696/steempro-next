@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateHost } from "@/libs/utils/helper";
+import { validateHost } from "@/utils/helper";
 import { executeQuery } from "@/libs/mysql/db";
 
 export async function GET(req: NextRequest) {

@@ -1,7 +1,7 @@
-import { useAppSelector, useAppDispatch } from "@/libs/constants/AppFunctions";
-import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
+import { useAppSelector, useAppDispatch } from "@/constants/AppFunctions";
+import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { voteForWitness } from "@/libs/steem/condenser";
-import { getCredentials, getSessionKey } from "@/libs/utils/user";
+import { getCredentials, getSessionKey } from "@/utils/user";
 import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
 import { Button } from "@heroui/button";
 

@@ -1,15 +1,14 @@
-import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
-import { addProfileHandler } from "@/libs/redux/reducers/ProfileReducer";
+import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
+import { addProfileHandler } from "@/hooks/redux/reducers/ProfileReducer";
 import { followUser, unfollowUser } from "@/libs/steem/condenser";
 import { Button } from "@heroui/button";
 import { useMutation } from "@tanstack/react-query";
 import React from "react";
 import { toast } from "sonner";
 import { useLogin } from "./auth/AuthProvider";
-import { getCredentials, getSessionKey } from "@/libs/utils/user";
+import { getCredentials, getSessionKey } from "@/utils/user";
 import { FaPencil } from "react-icons/fa6";
 import { useRouter } from "next13-progressbar";
-import usePathnameClient from "@/libs/hooks/usePathnameClient";
 import { useSession } from "next-auth/react";
 import { BsPlusCircle } from "react-icons/bs";
 import { SlMinus } from "react-icons/sl";
@@ -22,13 +21,12 @@ type Props = {
 
 export default function FollowButton(props: Props) {
   const { account, size } = props;
-  const { username } = usePathnameClient();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { data: session } = useSession();
   const followingAccount = account?.name;
   const isFollowing = account?.observer_follows_author === 1;
   const dispatch = useAppDispatch();
-  const isSelf = session?.user?.name === username;
+  const isSelf = session?.user?.name === account.name;
 
   const { authenticateUser, isAuthorized } = useLogin();
   const router = useRouter();
@@ -145,7 +143,11 @@ export default function FollowButton(props: Props) {
           // isIconOnly={isPending}
           startContent={
             isPending ? (
-              <Spinner color="current" size="sm" classNames={{ base: " h-[18px] w-[18px]" }} />
+              <Spinner
+                color="current"
+                size="sm"
+                classNames={{ base: " h-[18px] w-[18px]" }}
+              />
             ) : isFollowing ? (
               <SlMinus size={18} />
             ) : (

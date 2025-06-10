@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, ButtonProps } from "@heroui/button";
 import Image from "next/image";
-import { getCredentials } from "@/libs/utils/user";
+import { getCredentials } from "@/utils/user";
 
 const KeychainButton = (props: ButtonProps) => {
   const keuchainImg = require("../../public/keychain2.svg");

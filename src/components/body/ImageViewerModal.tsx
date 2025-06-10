@@ -2,7 +2,7 @@ import {
   defaultSrcSet,
   proxifyImageUrl,
   rProxyDomain,
-} from "@/libs/utils/proxifyUrl";
+} from "@/utils/proxifyUrl";
 import { Button } from "@heroui/button";
 import { Modal, ModalBody, ModalContent, ModalFooter } from "@heroui/modal";
 import Image from "next/image";

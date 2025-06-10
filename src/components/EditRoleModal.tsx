@@ -1,11 +1,11 @@
-import { useAppSelector } from "@/libs/constants/AppFunctions";
-import { addCommentHandler } from "@/libs/redux/reducers/CommentReducer";
+import { useAppSelector } from "@/constants/AppFunctions";
+import { addCommentHandler } from "@/hooks/redux/reducers/CommentReducer";
 import {
   setUserRole,
   setUserRoleTitle,
   setUserTitle,
 } from "@/libs/steem/condenser";
-import { Role } from "@/libs/utils/community";
+import { Role } from "@/utils/community";
 import { Select, SelectItem } from "@heroui/select";
 import {
   Modal,
@@ -21,7 +21,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 import { useLogin } from "./auth/AuthProvider";
-import { getCredentials, getSessionKey } from "@/libs/utils/user";
+import { getCredentials, getSessionKey } from "@/utils/user";
 import { useSession } from "next-auth/react";
 
 interface Props {

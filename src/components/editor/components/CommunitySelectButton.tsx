@@ -7,12 +7,12 @@ import {
   fetchSds,
   useAppDispatch,
   useAppSelector,
-} from "@/libs/constants/AppFunctions";
-import { getResizedAvatar } from "@/libs/utils/parseImage";
+} from "@/constants/AppFunctions";
+import { getResizedAvatar } from "@/utils/parseImage";
 import useSWR from "swr";
-import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
+import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { IoCloseOutline } from "react-icons/io5";
-import { empty_community } from "@/libs/constants/Placeholders";
+import { empty_community } from "@/constants/Placeholders";
 import Image from "next/image";
 
 interface Props {

@@ -1,10 +1,10 @@
 "use client";
 
-import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
+import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
 import React, { useState, useEffect, useRef } from "react";
 import useSWR from "swr";
-import { getSettings } from "@/libs/utils/user";
-import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
+import { getSettings } from "@/utils/user";
+import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import CommentCard from "./comment/CommentCard";
 import { twMerge } from "tailwind-merge";
 import { notFound } from "next/navigation";
@@ -16,13 +16,14 @@ import { ScrollToTopButton } from "./ScrollToTopButton";
 interface Props {
   endPoint: string;
   className?: string;
+  isCommunity?: boolean;
 }
 
 // Scroll to Top Button Component
 
 const itemsPerPage = 16;
 export default function FeedList(props: Props) {
-  const { endPoint, className } = props;
+  const { endPoint, className, isCommunity } = props;
   const { data, error, isLoading } = useSWR<Feed[]>(endPoint, fetchSds);
   const sessionKey = `loadedCount-${endPoint}`;
   const settings =
@@ -104,7 +105,11 @@ export default function FeedList(props: Props) {
       >
         {visiblePosts.map((comment, index) =>
           comment.link_id ? (
-            <CommentCard key={comment.link_id} comment={comment} />
+            <CommentCard
+              isCommunity={isCommunity}
+              key={comment.link_id}
+              comment={comment}
+            />
           ) : null
         )}
       </div>

@@ -3,7 +3,7 @@
 import { Button } from "@heroui/button";
 import React from "react";
 import { Modal, ModalBody, ModalContent, ModalFooter } from "@heroui/modal";
-import { useAppSelector } from "@/libs/constants/AppFunctions";
+import { useAppSelector } from "@/constants/AppFunctions";
 import { Tab, Tabs } from "@heroui/tabs";
 import { BsChatDots } from "react-icons/bs";
 import { FaRegBell } from "react-icons/fa";

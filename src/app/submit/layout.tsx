@@ -1,5 +1,5 @@
 import MainWrapper from "@/components/wrappers/MainWrapper";
-import SubmitPage from "./(site)/SubmitPage";
+import SubmitPage from "./SubmitPage";
 
 export default async function Layout({
   children,

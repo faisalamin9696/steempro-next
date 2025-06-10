@@ -3,10 +3,10 @@
 import React, { useEffect, useState } from "react";
 
 import useSWR from "swr";
-import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
+import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
 import LoadingCard from "@/components/LoadingCard";
 import CommunityCard from "@/components/community/components/CommunityCard";
-import { getTimeFromNow } from "@/libs/helper/time";
+import { getTimeFromNow } from "@/utils/helper/time";
 import SubscribeButton from "@/components/SubscribeButton";
 import TableWrapper from "@/components/wrappers/TableWrapper";
 

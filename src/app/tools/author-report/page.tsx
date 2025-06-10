@@ -1,14 +1,14 @@
 "use client";
 
-import { fetchSds, useAppSelector } from "@/libs/constants/AppFunctions";
-import { getResizedAvatar } from "@/libs/utils/parseImage";
+import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
+import { getResizedAvatar } from "@/utils/parseImage";
 import { Button } from "@heroui/button";
 import { Avatar } from "@heroui/avatar";
 import { Input } from "@heroui/input";
 import React, { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { validateCommunity } from "@/libs/utils/helper";
+import { validateCommunity } from "@/utils/helper";
 import PieChart from "@/components/charts/PieChart";
 
 export default function AuthorReportPage() {

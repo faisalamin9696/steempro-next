@@ -1,6 +1,6 @@
 "use client";
 
-import { fetchSds } from "@/libs/constants/AppFunctions";
+import { fetchSds } from "@/constants/AppFunctions";
 
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
@@ -15,11 +15,11 @@ import {
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { validateCommunity } from "@/libs/utils/helper";
+import { validateCommunity } from "@/utils/helper";
 import SAvatar from "@/components/SAvatar";
 import { FaChevronDown } from "react-icons/fa";
 import LoadingCard from "@/components/LoadingCard";
-import { capitalize } from "@/libs/constants/AppConstants";
+import { capitalize } from "@/constants/AppConstants";
 import SLink from "@/components/SLink";
 import TableWrapper from "@/components/wrappers/TableWrapper";
 

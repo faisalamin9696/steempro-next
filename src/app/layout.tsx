@@ -3,11 +3,10 @@ import "./globals.css";
 import "./markdown.scss";
 import "./main.scss";
 import { Toaster } from "sonner";
-import { AppStrings } from "@/libs/constants/AppStrings";
+import { AppStrings } from "@/constants/AppStrings";
 import { SessionProvider } from "next-auth/react";
 import { Providers } from "./providers";
 import { auth } from "@/auth";
-import Script from "next/script";
 // export const runtime = 'edge' // 'nodejs' (default) | 'edge'
 // const inter = Inter({ subsets: ["latin"] });
 

@@ -3,12 +3,12 @@
 import {
   capitalize,
   DefaultNotificationFilters,
-} from "@/libs/constants/AppConstants";
+} from "@/constants/AppConstants";
 import {
   fetchSds,
   useAppDispatch,
   useAppSelector,
-} from "@/libs/constants/AppFunctions";
+} from "@/constants/AppFunctions";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
 import React, { useEffect, useState } from "react";
@@ -17,11 +17,11 @@ import SAvatar from "./SAvatar";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { validateCommunity } from "@/libs/utils/helper";
+import { validateCommunity } from "@/utils/helper";
 import { markasRead } from "@/libs/steem/condenser";
 import { useLogin } from "./auth/AuthProvider";
-import { getCredentials, getSessionKey } from "@/libs/utils/user";
-import { saveLoginHandler } from "@/libs/redux/reducers/LoginReducer";
+import { getCredentials, getSessionKey } from "@/utils/user";
+import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { useSession } from "next-auth/react";
 import { Badge } from "@heroui/badge";
 import SLink from "./SLink";
@@ -29,7 +29,7 @@ import TableWrapper from "./wrappers/TableWrapper";
 import { CustomCheckbox } from "./CustomCheckbox";
 import { CheckboxGroup } from "@heroui/checkbox";
 import { MdOutlineRefresh } from "react-icons/md";
-import { addCommonDataHandler } from "@/libs/redux/reducers/CommonReducer";
+import { addCommonDataHandler } from "@/hooks/redux/reducers/CommonReducer";
 
 interface Props {
   username: string;

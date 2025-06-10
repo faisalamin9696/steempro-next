@@ -3,7 +3,7 @@
 import React from "react";
 import BodyShort from "../../body/BodyShort";
 import Image from "next/image";
-import { getResizedAvatar, getThumbnail } from "@/libs/utils/parseImage";
+import { getResizedAvatar, getThumbnail } from "@/utils/parseImage";
 import TimeAgoWrapper from "../../wrappers/TimeAgoWrapper";
 import { Card, CardBody } from "@heroui/card";
 import { User } from "@heroui/user";
@@ -12,21 +12,19 @@ import CommentFooter from "../components/CommentFooter";
 import STag from "@/components/STag";
 import "./style.scss";
 import { CommentProps } from "../CommentCard";
-import { abbreviateNumber, validateCommunity } from "@/libs/utils/helper";
-import { useAppSelector } from "@/libs/constants/AppFunctions";
-import { hasNsfwTag } from "@/libs/utils/stateFunctions";
+import { abbreviateNumber, validateCommunity } from "@/utils/helper";
+import { useAppSelector } from "@/constants/AppFunctions";
+import { hasNsfwTag } from "@/utils/stateFunctions";
 import NsfwOverlay from "@/components/NsfwOverlay";
-import { getSettings } from "@/libs/utils/user";
+import { getSettings } from "@/utils/user";
 import RoleTitleCard from "@/components/RoleTitleCard";
 import { twMerge } from "tailwind-merge";
-import usePathnameClient from "@/libs/hooks/usePathnameClient";
 import { MdDisabledVisible } from "react-icons/md";
 import { useSession } from "next-auth/react";
 import SLink from "@/components/SLink";
 
 export default function CommentGridLayout(props: CommentProps) {
-  const { comment } = props;
-  const { community } = usePathnameClient();
+  const { comment, isCommunity } = props;
   const commentInfo: Feed | Post =
     useAppSelector((state) => state.commentReducer.values)[
       `${comment.author}/${comment.permlink}`
@@ -42,7 +40,6 @@ export default function CommentGridLayout(props: CommentProps) {
   const imageWidth = 200;
   const imageHeight = 176;
   const isNsfw = hasNsfwTag(comment) && settings.nsfw !== "Always show";
-  const isCommunity = validateCommunity(community);
 
   return (
     <Card
@@ -233,7 +230,11 @@ export default function CommentGridLayout(props: CommentProps) {
           <span className="ml-1">{commentInfo.children}</span>
         </span>
       </div>
-        <CommentFooter compact className="w-full px-2 py-2" comment={commentInfo} />
+      <CommentFooter
+        compact
+        className="w-full px-2 py-2"
+        comment={commentInfo}
+      />
     </Card>
   );
 }

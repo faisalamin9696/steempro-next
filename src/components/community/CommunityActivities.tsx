@@ -1,7 +1,7 @@
 import EmptyList from "@/components/EmptyList";
 import ErrorCard from "@/components/ErrorCard";
 import LoadingCard from "@/components/LoadingCard";
-import { fetchSds } from "@/libs/constants/AppFunctions";
+import { fetchSds } from "@/constants/AppFunctions";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { ScrollShadow } from "@heroui/scroll-shadow";
@@ -10,7 +10,7 @@ import useSWR from "swr";
 import { twMerge } from "tailwind-merge";
 import CommunityActivityItem from "./components/CommunityActivityItem";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { AsyncUtils } from "@/libs/utils/async.utils";
+import { AsyncUtils } from "@/utils/async.utils";
 
 export function CommunityActivities({ community }: { community: Community }) {
   const [query, setQuery] = useState("");

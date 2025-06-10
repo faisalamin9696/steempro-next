@@ -1,7 +1,7 @@
 "use client";
 
-import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
-import { extractMetadata } from "@/libs/utils/editor";
+import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
+import { extractMetadata } from "@/utils/editor";
 import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
 import { Chip } from "@heroui/chip";
 import { Card } from "@heroui/card";
@@ -23,13 +23,13 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useLogin } from "./auth/AuthProvider";
 import { signMessage, verifyPrivKey } from "@/libs/steem/condenser";
-import { getCredentials, getSessionKey } from "@/libs/utils/user";
+import { getCredentials, getSessionKey } from "@/utils/user";
 import { useSession } from "next-auth/react";
-import { addScheduleHandler } from "@/libs/redux/reducers/ScheduleReducer";
+import { addScheduleHandler } from "@/hooks/redux/reducers/ScheduleReducer";
 import secureLocalStorage from "react-secure-storage";
-import { validateCommunity } from "@/libs/utils/helper";
-import { empty_community } from "@/libs/constants/Placeholders";
-import { proxifyImageUrl } from "@/libs/utils/proxifyUrl";
+import { validateCommunity } from "@/utils/helper";
+import { empty_community } from "@/constants/Placeholders";
+import { proxifyImageUrl } from "@/utils/proxifyUrl";
 import STooltip from "./STooltip";
 import {
   parseZonedDateTime,
@@ -38,7 +38,7 @@ import {
 import { cryptoUtils, Signature } from "@steempro/dsteem";
 import SLink from "./SLink";
 import { twMerge } from "tailwind-merge";
-import { savePostDraft } from "@/libs/draft";
+import { savePostDraft } from "@/utils/draft";
 
 const StatusData = {
   0: { title: "Pending", color: "warning" },

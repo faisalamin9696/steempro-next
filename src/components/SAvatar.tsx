@@ -1,4 +1,4 @@
-import { getResizedAvatar } from "@/libs/utils/parseImage";
+import { getResizedAvatar } from "@/utils/parseImage";
 import Image from "next/image";
 import SLink from "./SLink";
 import { twMerge } from "tailwind-merge";

@@ -126,7 +126,7 @@ const EditorToolbar = (props: ToolbarProps) => {
 
   return (
     <div className={twMerge(className)}>
-      <div className="flex flex-row items-center max-sm:flex-col max-sm:items-start w-full gap-1 max-sm:gap-2 overflow-auto">
+      <div className="flex flex-row items-center max-sm:flex-col max-sm:items-start w-full gap-1 max-sm:gap-2 overflow-auto scrollbar-thin">
         <div className=" flex gap-1 items-center">
           <div title="Headings">{HeadingItem}</div>
 

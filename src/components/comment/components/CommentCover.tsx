@@ -1,7 +1,7 @@
 import NsfwOverlay from "@/components/NsfwOverlay";
 import SLink from "@/components/SLink";
-import { getProxyImageURL } from "@/libs/utils/parseImage";
-import { proxifyImageUrl } from "@/libs/utils/proxifyUrl";
+import { getProxyImageURL } from "@/utils/parseImage";
+import { proxifyImageUrl } from "@/utils/proxifyUrl";
 import { Card } from "@heroui/card";
 import Image from "next/image";
 import { memo, useState } from "react";

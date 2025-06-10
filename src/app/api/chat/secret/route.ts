@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { encryptPrivateKey } from "@/libs/utils/encryption";
+import { encryptPrivateKey } from "@/utils/encryption";
 import moment from "moment";
 
 export async function POST(req: NextRequest) {

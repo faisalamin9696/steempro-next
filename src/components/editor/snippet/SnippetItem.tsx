@@ -4,7 +4,7 @@ import { Button } from "@heroui/button";
 import React, { Key, useState } from "react";
 import { FaEllipsis, FaRegCopy } from "react-icons/fa6";
 import axios from "axios";
-import { getCredentials, getSessionKey } from "@/libs/utils/user";
+import { getCredentials, getSessionKey } from "@/utils/user";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { cryptoUtils, Signature } from "@steempro/dsteem";

@@ -1,7 +1,7 @@
 "use client";
 
 import { getActiveFeed } from "@/libs/steem/sds";
-import { AsyncUtils } from "@/libs/utils/async.utils";
+import { AsyncUtils } from "@/utils/async.utils";
 import React, { useEffect } from "react";
 
 function page() {

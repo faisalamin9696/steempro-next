@@ -1,4 +1,4 @@
-import { capitalize } from "@/libs/constants/AppConstants";
+import { capitalize } from "@/constants/AppConstants";
 import {
   TableHeader,
   Table,
@@ -19,7 +19,7 @@ import { Pagination } from "@heroui/pagination";
 import { Input } from "@heroui/input";
 import React, { Key } from "react";
 import { FaChevronDown } from "react-icons/fa";
-import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
+import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { twMerge } from "tailwind-merge";
 import LoadingCard from "../LoadingCard";
 import EmptyList from "../EmptyList";

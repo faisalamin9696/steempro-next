@@ -1,10 +1,10 @@
-import { useAppSelector } from "@/libs/constants/AppFunctions";
+import { useAppSelector } from "@/constants/AppFunctions";
 import {
   getProposalVotes,
   ProposalVote,
   voteForProposal,
 } from "@/libs/steem/condenser";
-import { getCredentials, getSessionKey } from "@/libs/utils/user";
+import { getCredentials, getSessionKey } from "@/utils/user";
 import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
 import { Button } from "@heroui/button";
 import { useMutation } from "@tanstack/react-query";

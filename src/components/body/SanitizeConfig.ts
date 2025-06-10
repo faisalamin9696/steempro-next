@@ -2,10 +2,10 @@ import {
   getExternalLinkWarningMessage,
   getPhishingWarningMessage,
 } from "./htmlReady";
-import { defaultSrcSet, isDefaultImageSize } from "../../libs/utils/proxifyUrl";
+import { defaultSrcSet, isDefaultImageSize } from "../../utils/proxifyUrl";
 import { validateIframeUrl as validateEmbbeddedPlayerIframeUrl } from "@/components/elements/EmbededPlayers";
-import { AppStrings } from "@/libs/constants/AppStrings";
-import { replaceOldDomains } from "@/libs/utils/parseLinks";
+import { AppStrings } from "@/constants/AppStrings";
+import { replaceOldDomains } from "@/utils/parseLinks";
 
 export const noImageText = "(Image not shown due to low ratings)";
 export const allowedTags = `

@@ -1,7 +1,7 @@
 "use client";
 
-import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
-import { addCommentHandler } from "@/libs/redux/reducers/CommentReducer";
+import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
+import { addCommentHandler } from "@/hooks/redux/reducers/CommentReducer";
 import { deleteComment, mutePost } from "@/libs/steem/condenser";
 import {
   Modal,
@@ -16,7 +16,7 @@ import { useMutation } from "@tanstack/react-query";
 import React from "react";
 import { toast } from "sonner";
 import { useLogin } from "./auth/AuthProvider";
-import { getCredentials, getSessionKey } from "@/libs/utils/user";
+import { getCredentials, getSessionKey } from "@/utils/user";
 import { useSession } from "next-auth/react";
 
 interface Props {

@@ -6,13 +6,13 @@ import {
   IoChevronUpCircleSharp,
   IoCloseCircleSharp,
 } from "react-icons/io5";
-import { useAppSelector } from "@/libs/constants/AppFunctions";
+import { useAppSelector } from "@/constants/AppFunctions";
 import { getVoteData } from "@/libs/steem/sds";
 import { twMerge } from "tailwind-merge";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import "./style.scss";
-import { getSettings } from "@/libs/utils/user";
+import { getSettings } from "@/utils/user";
 
 interface Props {
   comment: Feed | Post;

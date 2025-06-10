@@ -2,7 +2,7 @@ import striptags from "striptags";
 import { Remarkable } from "remarkable";
 
 const remarkable = new Remarkable({ html: true });
-import { extractBodySummary } from "@/libs/utils/extractContent";
+import { extractBodySummary } from "@/utils/extractContent";
 
 function decodeEntities(body: string): string {
   return body?.replace(/&lt;/g, "<")?.replace(/&gt;/g, ">");

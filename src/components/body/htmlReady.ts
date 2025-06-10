@@ -1,13 +1,13 @@
 import xmldom from "xmldom";
-import { getDoubleSize, proxifyImageUrl } from "../../libs/utils/proxifyUrl";
-import { validate_account_name } from "@/libs/utils/chainValidation";
+import { getDoubleSize, proxifyImageUrl } from "../../utils/proxifyUrl";
+import { validate_account_name } from "@/utils/chainValidation";
 import linksRe, {
   any as linksAny,
   replaceOldDomains,
   SECTION_LIST,
   WHITE_LIST,
-} from "@/libs/utils/parseLinks";
-import * as Phishing from "@/libs/utils/phishing";
+} from "@/utils/parseLinks";
+import * as Phishing from "@/utils/phishing";
 import {
   INTERNAL_POST_TAG_REGEX,
   MENTION_REGEX,

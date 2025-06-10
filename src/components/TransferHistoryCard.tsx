@@ -1,10 +1,10 @@
 import SAvatar from "@/components/SAvatar";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
-import { vestToSteem } from "@/libs/helper/vesting";
+import { vestToSteem } from "@/utils/helper/vesting";
 
 import React from "react";
 import SLink from "./SLink";
-import parseAsset from "@/libs/helper/parse-asset";
+import parseAsset from "@/utils/helper/parse-asset";
 
 interface Props {
   op: AccountHistory;

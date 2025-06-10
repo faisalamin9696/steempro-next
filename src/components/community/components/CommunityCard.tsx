@@ -1,9 +1,9 @@
 import React, { memo } from "react";
 import { Card } from "@heroui/card";
 import { User } from "@heroui/user";
-import { abbreviateNumber } from "@/libs/utils/helper";
+import { abbreviateNumber } from "@/utils/helper";
 import TimeAgoWrapper from "../../wrappers/TimeAgoWrapper";
-import { getResizedAvatar } from "@/libs/utils/parseImage";
+import { getResizedAvatar } from "@/utils/parseImage";
 import { twMerge } from "tailwind-merge";
 import SLink from "@/components/SLink";
 import { FaRankingStar } from "react-icons/fa6";

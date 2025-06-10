@@ -1,5 +1,5 @@
-import { useAppSelector } from "@/libs/constants/AppFunctions";
-import { abbreviateNumber } from "@/libs/utils/helper";
+import { useAppSelector } from "@/constants/AppFunctions";
+import { abbreviateNumber } from "@/utils/helper";
 import moment from "moment";
 import React from "react";
 import SAvatar from "./SAvatar";

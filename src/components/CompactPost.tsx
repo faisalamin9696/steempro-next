@@ -4,12 +4,12 @@ import CommentCover from "@/components/comment/components/CommentCover";
 import { Card } from "@heroui/card";
 import React, { memo } from "react";
 import BodyShort from "@/components/body/BodyShort";
-import { useAppSelector } from "@/libs/constants/AppFunctions";
+import { useAppSelector } from "@/constants/AppFunctions";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import { MdAccessTime } from "react-icons/md";
-import { getThumbnail } from "@/libs/utils/parseImage";
-import { hasNsfwTag } from "@/libs/utils/stateFunctions";
-import { getSettings } from "@/libs/utils/user";
+import { getThumbnail } from "@/utils/parseImage";
+import { hasNsfwTag } from "@/utils/stateFunctions";
+import { getSettings } from "@/utils/user";
 import SLink from "./SLink";
 
 interface Props {

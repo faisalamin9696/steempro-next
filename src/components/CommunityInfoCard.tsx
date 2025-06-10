@@ -1,12 +1,12 @@
 "use client";
 
 import React, { memo, useState } from "react";
-import { mapSds, useAppSelector } from "@/libs/constants/AppFunctions";
+import { mapSds, useAppSelector } from "@/constants/AppFunctions";
 import { twMerge } from "tailwind-merge";
 import moment from "moment";
-import { abbreviateNumber } from "@/libs/utils/helper";
+import { abbreviateNumber } from "@/utils/helper";
 import MarkdownViewer from "./body/MarkdownViewer";
-import { Role as RoleLevel } from "@/libs/utils/community";
+import { Role as RoleLevel } from "@/utils/community";
 import {
   Modal,
   ModalBody,
@@ -16,7 +16,7 @@ import {
 } from "@heroui/modal";
 import { Avatar, AvatarGroup } from "@heroui/avatar";
 import { Accordion, AccordionItem } from "@heroui/accordion";
-import { getResizedAvatar } from "@/libs/utils/parseImage";
+import { getResizedAvatar } from "@/utils/parseImage";
 import { SlCalender } from "react-icons/sl";
 import { TbHeartDollar } from "react-icons/tb";
 import CommunityMembers from "./community/CommunityMembers";

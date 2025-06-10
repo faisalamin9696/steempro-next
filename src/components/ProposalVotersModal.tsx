@@ -1,4 +1,4 @@
-import { useAppSelector } from "@/libs/constants/AppFunctions";
+import { useAppSelector } from "@/constants/AppFunctions";
 import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
 import React, { useEffect, useState } from "react";
 import { getProposalVotes } from "@/libs/steem/condenser";
@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { getAccountsExt } from "@/libs/steem/sds";
 import SAvatar from "./SAvatar";
 import SLink from "./SLink";
-import { vestToSteem } from "@/libs/helper/vesting";
+import { vestToSteem } from "@/utils/helper/vesting";
 import LoadingCard from "./LoadingCard";
 import TableWrapper from "./wrappers/TableWrapper";
 import { simpleVotesToSp } from "./ProposalItemCard";

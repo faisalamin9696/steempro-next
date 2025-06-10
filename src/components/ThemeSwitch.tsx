@@ -4,9 +4,9 @@ import { FaSun } from "react-icons/fa";
 import { RiMoonFill, RiSunFill } from "react-icons/ri";
 import { useTheme } from "next-themes";
 import { Switch } from "@heroui/switch";
-import { useAppDispatch, useAppSelector } from "@/libs/constants/AppFunctions";
-import { updateSettingsHandler } from "@/libs/redux/reducers/SettingsReducer";
-import { getSettings, updateSettings } from "@/libs/utils/user";
+import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
+import { updateSettingsHandler } from "@/hooks/redux/reducers/SettingsReducer";
+import { getSettings, updateSettings } from "@/utils/user";
 import { twMerge } from "tailwind-merge";
 
 interface ThemeSwitchProps {

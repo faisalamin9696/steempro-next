@@ -1,6 +1,6 @@
 "use client";
 
-import { store } from "@/libs/redux/store";
+import { store } from "@/hooks/redux/store";
 import { HeroUIProvider } from "@heroui/system";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Provider as ReduxProvider } from "react-redux";
@@ -11,7 +11,7 @@ import { compress, decompress } from "lz-string";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import LoadingCard from "@/components/LoadingCard";
 import { SWRConfig } from "swr";
-import { fetchSds } from "@/libs/constants/AppFunctions";
+import { fetchSds } from "@/constants/AppFunctions";
 import { Next13ProgressBar } from "next13-progressbar";
 import AppWrapper from "@/components/wrappers/AppWrapper";
 import { supabase } from "@/libs/supabase";
@@ -19,9 +19,9 @@ import PiwikPro from "@piwikpro/react-piwik-pro";
 import DrawerContent from "@/components/navbar/components/DrawerContent";
 import AppNavbar from "@/components/navbar/AppNavbar";
 import { ThemeProvider } from "next-themes";
-import { initFirebase } from "@/libs/helper/firabase";
+import { initFirebase } from "@/utils/helper/firabase";
 import { useRouter } from "next/navigation";
-import { cleanupCommentDrafts } from "@/libs/draft";
+import { cleanupCommentDrafts } from "@/utils/draft";
 
 interface Props {
   children: React.ReactNode;

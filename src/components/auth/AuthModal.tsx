@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/modal";
-import { useAppSelector } from "@/libs/constants/AppFunctions";
-import { getCredentials, sessionKey, getSessionToken } from "@/libs/utils/user";
+import { useAppSelector } from "@/constants/AppFunctions";
+import { getCredentials, sessionKey, getSessionToken } from "@/utils/user";
 import { useSession } from "next-auth/react";
 import SAvatar from "../SAvatar";
 import SLink from "../SLink";
 import { Tab, Tabs } from "@heroui/tabs";
 import Image from "next/image";
 import { MdVpnKey } from "react-icons/md";
-import KeychainLogin from "./types/KeychainLogin";
-import MemoLogin from "./types/MemoLogin";
-import KeyLogin from "./types/KeyLogin";
-import UnlockAcccount from "./types/UnlockAccount";
+import KeychainLogin from "./authType/KeychainLogin";
+import MemoLogin from "./authType/MemoLogin";
+import KeyLogin from "./authType/KeyLogin";
+import UnlockAcccount from "./authType/UnlockAccount";
 
 interface Props {
   open: boolean;

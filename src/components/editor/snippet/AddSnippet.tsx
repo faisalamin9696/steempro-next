@@ -5,7 +5,7 @@ import { Input } from "@heroui/input";
 import { toast } from "sonner";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import { getCredentials, getSessionKey } from "@/libs/utils/user";
+import { getCredentials, getSessionKey } from "@/utils/user";
 import { cryptoUtils, Signature } from "@steempro/dsteem";
 import { signMessage } from "@/libs/steem/condenser";
 import moment from "moment";

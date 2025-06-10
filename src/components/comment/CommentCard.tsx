@@ -3,16 +3,17 @@
 import { memo } from "react";
 import "./style.scss";
 
-import { useAppSelector } from "@/libs/constants/AppFunctions";
-import { getSettings } from "@/libs/utils/user";
+import { useAppSelector } from "@/constants/AppFunctions";
+import { getSettings } from "@/utils/user";
 import CommentListLayout from "./layouts/CommentListLayout";
 import CommentBlogLayout from "./layouts/CommentBlogLayout";
 import CommentGridLayout from "./layouts/CommentGridLayout";
-import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
+import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 
 interface Props {
   comment: Feed | Post;
   isReply?: boolean;
+  isCommunity?: boolean;
 }
 
 export interface CommentProps {
@@ -27,6 +28,7 @@ export interface CommentProps {
   onPinClick?: (comment: Feed | Post) => void;
   onPublishClick?: (comment: Feed | Post) => void;
   isSearch?: boolean;
+  isCommunity?: boolean;
 }
 
 export default memo(function CommentCard(props: Props) {
@@ -49,7 +51,7 @@ export default memo(function CommentCard(props: Props) {
         commentLayout = <CommentListLayout {...props} comment={commentInfo} />;
         break;
       case "grid":
-        commentLayout = <CommentGridLayout comment={commentInfo} />;
+        commentLayout = <CommentGridLayout {...props} comment={commentInfo} />;
         break;
       case "blogs":
         commentLayout = <CommentBlogLayout {...props} comment={commentInfo} />;

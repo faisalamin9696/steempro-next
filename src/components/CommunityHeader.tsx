@@ -1,14 +1,14 @@
 "use client";
 import React, { useState } from "react";
-import { useAppSelector } from "@/libs/constants/AppFunctions";
+import { useAppSelector } from "@/constants/AppFunctions";
 import SAvatar from "./SAvatar";
 import { Button } from "@heroui/button";
 import { BiPlus } from "react-icons/bi";
-import { abbreviateNumber } from "@/libs/utils/helper";
-import { proxifyImageUrl } from "@/libs/utils/proxifyUrl";
+import { abbreviateNumber } from "@/utils/helper";
+import { proxifyImageUrl } from "@/utils/proxifyUrl";
 import SubscribeButton from "./SubscribeButton";
 import { twMerge } from "tailwind-merge";
-import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
+import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import SLink from "./SLink";
 import ChatButton from "./ChatButton";
 
@@ -27,8 +27,6 @@ export default function CommunityHeader(props: Props) {
     useAppSelector((state) => state.communityReducer.values)[
       community?.account ?? ""
     ] ?? community;
-
-  const [membersModal, setMembersModal] = useState(false);
 
   const posting_json_metadata = JSON.parse(
     account?.posting_json_metadata || "{}"
@@ -106,6 +104,7 @@ export default function CommunityHeader(props: Props) {
                         Create Post
                       </Button>
                       <SubscribeButton
+                        username={account.name}
                         size={!isTablet ? "sm" : "md"}
                         community={communityInfo}
                       />

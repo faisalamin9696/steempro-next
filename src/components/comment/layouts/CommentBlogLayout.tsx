@@ -5,10 +5,10 @@ import CommentCover from "../components/CommentCover";
 import BodyShort from "@/components/body/BodyShort";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
 import CommentFooter from "../components/CommentFooter";
-import { useAppSelector } from "@/libs/constants/AppFunctions";
-import { hasNsfwTag } from "@/libs/utils/stateFunctions";
-import { getSettings } from "@/libs/utils/user";
-import { getThumbnail } from "@/libs/utils/parseImage";
+import { useAppSelector } from "@/constants/AppFunctions";
+import { hasNsfwTag } from "@/utils/stateFunctions";
+import { getSettings } from "@/utils/user";
+import { getThumbnail } from "@/utils/parseImage";
 import { twMerge } from "tailwind-merge";
 import SLink from "@/components/SLink";
 

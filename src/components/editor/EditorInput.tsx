@@ -12,12 +12,12 @@ import {
 import EditorToolbar from "./components/EditorToolbar";
 import { useDropzone } from "react-dropzone";
 import { KeyboardEvent } from "react";
-import { MAXIMUM_UPLOAD_SIZE, isValidImage } from "@/libs/utils/parseImage";
+import { MAXIMUM_UPLOAD_SIZE, isValidImage } from "@/utils/parseImage";
 import { toast } from "sonner";
-import { toBase64 } from "@/libs/utils/helper";
+import { toBase64 } from "@/utils/helper";
 import { signImage, uploadImage } from "@/libs/steem/condenser";
 import { useLogin } from "../auth/AuthProvider";
-import { getCredentials, getSessionKey } from "@/libs/utils/user";
+import { getCredentials, getSessionKey } from "@/utils/user";
 import { filesize } from "filesize";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import "@webscopeio/react-textarea-autocomplete/style.css";
@@ -26,7 +26,7 @@ import LoadingCard from "../LoadingCard";
 import "./style.scss";
 import { getAccountsByPrefix } from "@/libs/steem/sds";
 import { useSession } from "next-auth/react";
-import { validate_account_name } from "@/libs/utils/chainValidation";
+import { validate_account_name } from "@/utils/chainValidation";
 import { useDisclosure } from "@heroui/modal";
 import SnippetModal from "../SnippetModal";
 

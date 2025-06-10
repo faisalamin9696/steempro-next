@@ -4,12 +4,7 @@ import EmptyList from "@/components/EmptyList";
 import ErrorCard from "@/components/ErrorCard";
 import LoadingCard from "@/components/LoadingCard";
 import CommunitySubscriberItem from "@/components/community/components/CommunitySubscriberItem";
-import {
-  fetchSds,
-  mapSds,
-  useAppSelector,
-} from "@/libs/constants/AppFunctions";
-import usePathnameClient from "@/libs/hooks/usePathnameClient";
+import { fetchSds, mapSds, useAppSelector } from "@/constants/AppFunctions";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Card } from "@heroui/card";
@@ -19,16 +14,17 @@ import { twMerge } from "tailwind-merge";
 import AddRoleModal from "../AddRoleModal";
 import { ScrollShadow } from "@heroui/scroll-shadow";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { Role as RoleCheck } from "@/libs/utils/community";
-import { AsyncUtils } from "@/libs/utils/async.utils";
+import { Role as RoleCheck } from "@/utils/community";
+import { AsyncUtils } from "@/utils/async.utils";
 
 interface Props {
   large?: boolean;
   community?: Community;
   stickyHeader?: boolean;
+  communityName: string;
 }
 export default function CommunityMembers(props: Props) {
-  const { large, stickyHeader } = props;
+  const { large, stickyHeader, communityName } = props;
   const [communityInfo, setCommunityInfo] = useState<Community>();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const [query, setQuery] = useState("");
@@ -36,7 +32,7 @@ export default function CommunityMembers(props: Props) {
   const [isAddRoleOpen, setIsAddRoleOpen] = useState(false);
   const [limit, setLimit] = useState(30);
 
-  const URL = `/communities_api/getCommunity/${usePathnameClient().community}/${
+  const URL = `/communities_api/getCommunity/${communityName}/${
     loginInfo.name || "null"
   }`;
   const { data, isLoading, error, isValidating } = useSWR(

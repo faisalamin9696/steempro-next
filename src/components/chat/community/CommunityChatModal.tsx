@@ -9,27 +9,27 @@ import {
   ModalFooter,
   ModalBody,
 } from "@heroui/modal";
-import { mapSds, useAppSelector } from "@/libs/constants/AppFunctions";
+import { mapSds, useAppSelector } from "@/constants/AppFunctions";
 import useSWR from "swr";
 import { supabase } from "@/libs/supabase";
 import LoadingCard from "../../LoadingCard";
-import EmptyChat from "../EmptyChat";
+import EmptyChat from "../components/EmptyChat";
 import { toast } from "sonner";
-import { getCredentials, getSessionKey } from "@/libs/utils/user";
+import { getCredentials, getSessionKey } from "@/utils/user";
 import { sendMessage } from "@/libs/steem/condenser";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
 import { BsArrowDown } from "react-icons/bs";
 import { Chip } from "@heroui/chip";
 import SAvatar from "../../SAvatar";
-import MessageReplyRef from "../MessageReplyRef";
-import ChatInput from "../ChatInput";
+import MessageReplyRef from "../components/MessageReplyRef";
+import ChatInput from "../components/ChatInput";
 import sanitize from "sanitize-html";
 import { useSession } from "next-auth/react";
-import { hasNsfwTag } from "@/libs/utils/stateFunctions";
-import { empty_comment } from "@/libs/constants/Placeholders";
+import { hasNsfwTag } from "@/utils/stateFunctions";
+import { empty_comment } from "@/constants/Placeholders";
 import CommunityMessages from "./CommunityMessages";
-import { useDeviceInfo } from "@/libs/hooks/useDeviceInfo";
+import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 
 interface Props {
   community: Community;

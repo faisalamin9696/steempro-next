@@ -4,16 +4,16 @@ import {
   fetchSds,
   useAppDispatch,
   useAppSelector,
-} from "@/libs/constants/AppFunctions";
+} from "@/constants/AppFunctions";
 import SAvatar from "./SAvatar";
-import { abbreviateNumber } from "@/libs/utils/helper";
+import { abbreviateNumber } from "@/utils/helper";
 import { SlUserFollowing } from "react-icons/sl";
 import useSWR from "swr";
-import { getResizedAvatar } from "@/libs/utils/parseImage";
+import { getResizedAvatar } from "@/utils/parseImage";
 import STooltip from "./STooltip";
 import LoadingCard from "./LoadingCard";
 import FollowButton from "./FollowButton";
-import { addProfileHandler } from "@/libs/redux/reducers/ProfileReducer";
+import { addProfileHandler } from "@/hooks/redux/reducers/ProfileReducer";
 import SLink from "./SLink";
 import { twMerge } from "tailwind-merge";
 
