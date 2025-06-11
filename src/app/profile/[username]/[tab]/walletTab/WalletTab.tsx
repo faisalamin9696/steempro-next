@@ -22,7 +22,6 @@ import TransferHistoryTab from "./TransferHistoryTab";
 
 export default function WalletTab({ data }: { data: AccountExt }) {
   const { data: session } = useSession();
-
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
   const dispatch = useAppDispatch();
@@ -181,7 +180,7 @@ export default function WalletTab({ data }: { data: AccountExt }) {
             >
               Cancel Power Down
             </Button>
-          )}{" "}
+          )}
         </div>
       )}
 

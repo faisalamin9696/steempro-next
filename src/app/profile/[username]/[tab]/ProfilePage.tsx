@@ -3,7 +3,7 @@
 import { Tab, Tabs } from "@heroui/tabs";
 import React, { useEffect } from "react";
 import FeedPatternSwitch from "@/components/FeedPatternSwitch";
-import { useAppDispatch } from "@/constants/AppFunctions";
+import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
 import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { addProfileHandler } from "@/hooks/redux/reducers/ProfileReducer";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
@@ -39,6 +39,10 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
   let { username, tab } = useParams() as { username: string; tab: string };
   username = username?.toLowerCase();
   tab = tab?.toLowerCase();
+  const profileInfo =
+    useAppSelector((state) => state.profileReducer.value)[data?.name] ?? data;
+  const loginInfo = useAppSelector((state) => state.loginReducer.value);
+
   const dispatch = useAppDispatch();
   const { isMobile } = useDeviceInfo();
   const { data: session } = useSession();
@@ -79,7 +83,7 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
 
   return (
     <div>
-      <AccountHeader account={data} onChatPress={openChat} />
+      <AccountHeader account={profileInfo} onChatPress={openChat} />
       <div className={twMerge("relative items-center flex-row w-full")}>
         <Tabs
           size={"sm"}
@@ -100,21 +104,23 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
             tabContent: " w-full",
           }}
         >
-          {getProfileTabs(username, tab, data).map((tab) => (
-            <Tab
-              as={Link}
-              href={`/@${username}/${tab.key}`}
-              key={`/@${username}/${tab.key}`}
-              title={
-                <div className="flex items-center space-x-2">
-                  {!isMobile && tab?.icon}
-                  <span>{tab.title}</span>
-                </div>
-              }
-            >
-              {tab.children}
-            </Tab>
-          ))}
+          {getProfileTabs(username, tab, isSelf ? loginInfo : profileInfo).map(
+            (tab) => (
+              <Tab
+                as={Link}
+                href={`/@${username}/${tab.key}`}
+                key={`/@${username}/${tab.key}`}
+                title={
+                  <div className="flex items-center space-x-2">
+                    {!isMobile && tab?.icon}
+                    <span>{tab.title}</span>
+                  </div>
+                }
+              >
+                {tab.children}
+              </Tab>
+            )
+          )}
         </Tabs>
 
         {!["notifications", "wallet", "settings"].includes(tab) && (
@@ -123,18 +129,22 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
           </div>
         )}
       </div>
-      {chatDisclosure.isOpen && data && (
+      {chatDisclosure.isOpen && profileInfo && (
         <ChatModal
           isOpen={chatDisclosure.isOpen}
           onOpenChange={chatDisclosure.onOpenChange}
-          account={data}
+          account={profileInfo}
         />
       )}
     </div>
   );
 }
 
-const getProfileTabs = (username: string, tab: string, data: AccountExt) => {
+const getProfileTabs = (
+  username: string,
+  tab: string,
+  walletProfile: AccountExt
+) => {
   const { data: session } = useSession();
   const isSelf = session?.user?.name === username;
 
@@ -165,7 +175,7 @@ const getProfileTabs = (username: string, tab: string, data: AccountExt) => {
     {
       title: "Wallet",
       key: "wallet",
-      children: <WalletTab data={data} />,
+      children: <WalletTab data={walletProfile} />,
       icon: <MdWallet size={22} />,
 
       priority: 4,
