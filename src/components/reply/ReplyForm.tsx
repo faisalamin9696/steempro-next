@@ -53,7 +53,7 @@ export default memo(function ReplyForm(props: Props) {
         <ReplyFooter
           comment={comment}
           expanded={expanded}
-          className="mt-4"
+          className="mt-2"
           isDeep={isDeep}
           rootComment={rootComment}
           toggleExpand={() => setExpanded(!expanded)}

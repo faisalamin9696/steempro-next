@@ -2,10 +2,8 @@ import parse, { domToReact } from "html-react-parser";
 import React from "react";
 import CommentCover from "../comment/components/CommentCover";
 import "./style.scss";
-import Link from "next/link";
 import { useAppSelector } from "@/constants/AppFunctions";
 import { getSettings } from "@/utils/user";
-import { XEmbed } from "react-social-media-embed";
 import ProcessLink from "./ProcessLink";
 
 export function ParsedBody({

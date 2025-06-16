@@ -5,6 +5,7 @@ import { InstagramEmbed, TikTokEmbed, XEmbed } from "react-social-media-embed";
 import { YouTubeEmbed } from "react-social-media-embed";
 import { Tweet } from "react-tweet";
 import { toast } from "sonner";
+import { tweet_components } from "./tweet-components";
 
 function extractTweetId(url) {
   const match = url.match(/(?:twitter|x)\.com\/.*\/status\/(\d+)/);
@@ -50,6 +51,7 @@ function ProcessLink({ domNode }: { domNode: any }) {
           <Link {...domNode?.attribs}>{domToReact(domNode.children)}</Link>
         }
         id={extractTweetId(url)}
+        components={tweet_components}
       />
     );
   }

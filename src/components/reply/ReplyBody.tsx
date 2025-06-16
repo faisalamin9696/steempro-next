@@ -19,6 +19,9 @@ import CommentEditHistory from "../CommentHistoryViewer";
 import SLink from "../SLink";
 import { twMerge } from "tailwind-merge";
 import MarkdownViewer from "../body/MarkdownViewer";
+import { HiOutlineLink } from "react-icons/hi2";
+import { FaFeather } from "react-icons/fa";
+import { GiFeather } from "react-icons/gi";
 
 export default function ReplyBody({
   comment,
@@ -78,44 +81,60 @@ export default function ReplyBody({
 
               <div className="flex flex-col items-start">
                 <div className="flex gap-1 items-center">
-                  <SLink
-                    className=" hover:text-blue-500"
-                    href={`/@${comment.author}`}
-                  >
-                    {comment.author}
-                  </SLink>
-                  <Reputation reputation={comment.author_reputation} />
-                  <SLink
-                    href={`/${comment.category}/@${comment.author}/${comment.permlink}`}
-                  >
-                    <TimeAgoWrapper
-                      handleEditClick={() => {
-                        setShowHistory(!showHistory);
-                      }}
-                      created={comment.created * 1000}
-                      lastUpdate={comment.last_update * 1000}
-                    />
-                  </SLink>
-
-                  <Dropdown>
-                    <DropdownTrigger>
-                      <Button
-                        size="sm"
-                        radius="full"
-                        isIconOnly
-                        variant="light"
+                  <div className="flex flex-col gap-0 items-start">
+                    <div className="flex gap-1 items-center">
+                      <SLink
+                        className=" hover:text-blue-500"
+                        href={`/@${comment.author}`}
                       >
-                        <FaEllipsis className="text-lg" />
-                      </Button>
-                    </DropdownTrigger>
-                    <DropdownMenu
-                      aria-labelledby="comment options"
-                      onAction={handleMenuActions}
-                      hideEmptyContent
-                    >
-                      {renderedItems}
-                    </DropdownMenu>
-                  </Dropdown>
+                        {comment.author}
+                      </SLink>
+                      <Reputation reputation={comment.author_reputation} />
+                      <Dropdown>
+                        <DropdownTrigger>
+                          <Button
+                            size="sm"
+                            radius="full"
+                            isIconOnly
+                            variant="light"
+                          >
+                            <FaEllipsis className="text-lg" />
+                          </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu
+                          aria-labelledby="comment options"
+                          onAction={handleMenuActions}
+                          hideEmptyContent
+                        >
+                          {renderedItems}
+                        </DropdownMenu>
+                      </Dropdown>
+                      {comment.author === comment.root_author && (
+                        <GiFeather
+                          title="Post Author"
+                          className=" opacity-80"
+                          size={14}
+                        />
+                      )}
+                    </div>
+
+                    <div className="flex gap-1 items-center">
+                      <TimeAgoWrapper
+                        className="opacity-65"
+                        handleEditClick={() => {
+                          setShowHistory(!showHistory);
+                        }}
+                        created={comment.created * 1000}
+                        lastUpdate={comment.last_update * 1000}
+                      />
+                      <SLink
+                        className="hover:text-blue-500"
+                        href={`/${comment.category}/@${comment.author}/${comment.permlink}`}
+                      >
+                        <HiOutlineLink />
+                      </SLink>
+                    </div>
+                  </div>
                 </div>
 
                 <RoleTitleCard
@@ -130,7 +149,7 @@ export default function ReplyBody({
         </div>
         {!hideBody && (
           <div
-            className={twMerge(comment.is_muted === 1 && "opacity-60", "mt-2")}
+            className={twMerge(comment.is_muted === 1 && "opacity-60", "mt-4")}
           >
             <MarkdownViewer
               text={comment.body}

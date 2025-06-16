@@ -1,8 +1,4 @@
-import {
-  addToCurrent,
-  removeSessionToken,
-  saveSessionKey,
-} from "@/utils/user";
+import { addToCurrent, removeSessionToken, saveSessionKey } from "@/utils/user";
 import { Chip } from "@heroui/chip";
 import { Button } from "@heroui/button";
 import { Card } from "@heroui/card";
@@ -89,15 +85,19 @@ export default function AccountItemCard(props: Props) {
         // clear redux comments cache
         dispatch(clearCommentHandler());
         saveSessionKey("");
+
         if (!session?.user?.name)
           toast.success(`Login successsful with private ${user.type} key`);
         else toast.success(`Successfully switched to ${user.username}`);
-        handleSwitchSuccess({ ...user, username: account.name });
+
         if (user.username !== defaultAccount?.username) {
           removeSessionToken(user.username);
           removeSessionToken(defaultAccount?.username);
-        } else router.refresh();
+        }
+
+        handleSwitchSuccess({ ...user, username: account.name });
         setIsPending(false);
+        router.refresh();
       } else {
         throw new Error(`Failed to fetch account`);
       }

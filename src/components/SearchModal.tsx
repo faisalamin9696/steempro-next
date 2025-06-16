@@ -62,7 +62,7 @@ export default function SearchModal(props: Props) {
     .replaceAll("@", "")
     ?.replaceAll("#", "")
     .toLowerCase()
-    .trim()}/${filters}`;
+    .trim()}/${query}/${filters}`;
   const PEOPLE_URL = `/accounts_api/getAccountsByPrefix/${query?.trim()}/${
     loginInfo.name || "null"
   }/name,reputation,posting_json_metadata,created`;
@@ -70,7 +70,10 @@ export default function SearchModal(props: Props) {
   const [url, setUrl] = useState<string | undefined>();
   const [rows, setRows] = useState<any[]>([]);
   const [loadingMore, setLoadingMore] = useState(false);
-  const { data, isLoading } = useSWR(url, fetchSds<any[]>);
+  const { data, isLoading } = useSWR(url, fetchSds<any[]>, {
+    refreshInterval: 0,
+    revalidateOnReconnect: false,
+  });
 
   useEffect(() => {
     if (searchText)
