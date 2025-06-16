@@ -1,6 +1,5 @@
 import { getAccountExt, getPost } from "@/libs/steem/sds";
 import { getResizedAvatar, getThumbnail } from "@/utils/parseImage";
-import { postSummary } from "@/utils/postSummary";
 import { Metadata } from "next";
 import React from "react";
 import { auth } from "@/auth";
@@ -8,6 +7,7 @@ import ProfileInfoCard from "@/components/ProfileInfoCard";
 import MainWrapper from "@/components/wrappers/MainWrapper";
 import PostPage from "./PostPage";
 import ErrorCardServer from "@/components/ErrorCardServer";
+import { extractBodySummary } from "@/utils/extractContent";
 
 export default async function Layout({
   children,
@@ -46,16 +46,14 @@ export async function generateMetadata({ params }): Promise<Metadata> {
   author = author?.toLowerCase();
   permlink = permlink?.toLowerCase();
   const result = await getPost(author, permlink);
-  const isPost = result?.depth === 0;
+  const isReply = result?.depth > 0;
 
-  const thumbnail = isPost
-    ? getThumbnail(result.json_images, "640x480")
-    : getResizedAvatar(result?.author, "small");
-
-  const pageTitle = isPost ? result?.title : `RE: ${result?.root_title}`;
-  const pageDescription = isPost
-    ? pageTitle + ` by @${result?.author}`
-    : `${postSummary(result?.body)} by ${result?.author}`;
+  const thumbnail = isReply
+    ? getResizedAvatar(result?.author, "small")
+    : getThumbnail(result.json_images, "640x480");
+  const pageTitle = isReply ? `RE: ${result?.root_title}` : result?.title;
+  const pageDescription =
+    extractBodySummary(result?.body, isReply) + " by " + result?.author;
 
   const keywords = [
     `steempro @${result.author}`,
