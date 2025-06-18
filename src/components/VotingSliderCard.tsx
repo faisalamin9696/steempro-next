@@ -103,7 +103,7 @@ export default function VotingSliderCard(props: Props) {
                 }%`}
               />
 
-              {voteData?.current_vote && (
+              {!!voteData?.current_vote && (
                 <>
                   <div className="opacity-10">|</div>
                   <ItemCard

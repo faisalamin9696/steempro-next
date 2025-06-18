@@ -16,7 +16,7 @@ const supportedProviders = {
     archiveorg,
     bandcamp,
     dtube,
-    gist,
+    // gist,
     mixcloud,
     reddit,
     soundcloud,

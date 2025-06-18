@@ -119,6 +119,11 @@ export default function ReplyBody({
                     </div>
 
                     <div className="flex gap-1 items-center">
+                      <RoleTitleCard
+                        comment={comment}
+                        className="opacity-80 gap-1 text-tiny"
+                      />
+
                       <TimeAgoWrapper
                         className="opacity-65"
                         handleEditClick={() => {
@@ -136,11 +141,6 @@ export default function ReplyBody({
                     </div>
                   </div>
                 </div>
-
-                <RoleTitleCard
-                  comment={comment}
-                  className="text-default-500 gap-1 text-tiny"
-                />
               </div>
             </div>
           </div>
