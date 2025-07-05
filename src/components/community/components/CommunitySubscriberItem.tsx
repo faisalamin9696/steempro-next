@@ -6,7 +6,7 @@ import { Button } from "@heroui/button";
 import { FaPencil } from "react-icons/fa6";
 import EditRoleModal from "../../EditRoleModal";
 import { Role as RoleCheck } from "@/utils/community";
-import SLink from "@/components/SLink";
+import SLink from "@/components/ui/SLink";
 import { twMerge } from "tailwind-merge";
 
 interface Props {

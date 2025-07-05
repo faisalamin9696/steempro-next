@@ -16,7 +16,7 @@ import { updatePostView } from "@/libs/mysql/database";
 import { addRepliesHandler } from "@/hooks/redux/reducers/RepliesReducer";
 import PostReplies from "@/components/reply/PostReplies";
 import { useSession } from "next-auth/react";
-import SLink from "@/components/SLink";
+import SLink from "@/components/ui/SLink";
 import { twMerge } from "tailwind-merge";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
 import SubmitPage from "@/app/submit/SubmitPage";

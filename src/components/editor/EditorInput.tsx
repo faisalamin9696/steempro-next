@@ -21,7 +21,7 @@ import { getCredentials, getSessionKey } from "@/utils/user";
 import { filesize } from "filesize";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import "@webscopeio/react-textarea-autocomplete/style.css";
-import SAvatar from "../SAvatar";
+import SAvatar from "../ui/SAvatar";
 import LoadingCard from "../LoadingCard";
 import "./style.scss";
 import { getAccountsByPrefix } from "@/libs/steem/sds";

@@ -78,6 +78,7 @@
     "react-social-media-embed": "^2.5.18",
     "react-tweet": "^3.2.2",
     "react-zoom-pan-pinch": "^3.7.0",
+    "recharts": "^3.0.2",
     "remarkable": "^2.0.1",
     "sanitize-html": "^2.14.0",
     "sass": "^1.85.0",

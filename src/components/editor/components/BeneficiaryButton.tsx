@@ -9,7 +9,7 @@ import IconButton from "../../IconButton";
 import { toast } from "sonner";
 import { validate_account_name } from "@/utils/chainValidation";
 import { useAppSelector } from "@/constants/AppFunctions";
-import SAvatar from "@/components/SAvatar";
+import SAvatar from "@/components/ui/SAvatar";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 
 interface Props {

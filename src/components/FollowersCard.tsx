@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { fetchSds } from "@/constants/AppFunctions";
-import SAvatar from "@/components/SAvatar";
+import SAvatar from "@/components/ui/SAvatar";
 import TableWrapper from "./wrappers/TableWrapper";
-import SLink from "./SLink";
+import SLink from "./ui/SLink";
 
 export default function FollowersCard({
   username,

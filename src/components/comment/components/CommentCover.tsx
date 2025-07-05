@@ -1,5 +1,5 @@
 import NsfwOverlay from "@/components/NsfwOverlay";
-import SLink from "@/components/SLink";
+import SLink from "@/components/ui/SLink";
 import { getProxyImageURL } from "@/utils/parseImage";
 import { proxifyImageUrl } from "@/utils/proxifyUrl";
 import { Card } from "@heroui/card";

@@ -14,6 +14,8 @@ interface Props {
   onlyImage?: boolean;
   quality?: number;
   alt?: string;
+  content?: React.ReactNode | string;
+  linkClassName?: string;
 }
 export default function SAvatar(props: Props) {
   const {
@@ -27,6 +29,8 @@ export default function SAvatar(props: Props) {
     onlyImage,
     quality,
     alt,
+    content,
+    linkClassName,
   } = props;
   const imageSize =
     size === "xl"
@@ -72,8 +76,12 @@ export default function SAvatar(props: Props) {
   return onlyImage ? (
     avatarImage
   ) : (
-    <SLink href={`/@${username}`} onClick={onPress}>
-      {avatarImage}
+    <SLink
+      href={`/@${username}`}
+      onClick={onPress}
+      className={twMerge("flex flex-row items-center gap-1", linkClassName)}
+    >
+      {avatarImage} {content}
     </SLink>
   );
 }

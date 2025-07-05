@@ -1,5 +1,5 @@
 import React from "react";
-import STag from "./STag";
+import STag from "./ui/STag";
 
 export default function TagsListCard({
   tags = [],

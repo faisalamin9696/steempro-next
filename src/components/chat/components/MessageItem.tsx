@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import SAvatar from "../../SAvatar";
+import SAvatar from "../../ui/SAvatar";
 import { mapSds, useAppSelector } from "@/constants/AppFunctions";
 import MessageReplyRef from "./MessageReplyRef";
 import {
@@ -12,7 +12,7 @@ import { Button } from "@heroui/button";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { LuReply } from "react-icons/lu";
 import "../style.scss";
-import SLink from "../../SLink";
+import SLink from "../../ui/SLink";
 import { twMerge } from "tailwind-merge";
 import RoleTitleCard from "../../RoleTitleCard";
 import { empty_comment } from "@/constants/Placeholders";

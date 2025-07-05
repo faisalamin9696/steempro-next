@@ -3,7 +3,7 @@ import { Chip } from "@heroui/chip";
 import { Button } from "@heroui/button";
 import { Card } from "@heroui/card";
 import React, { useState } from "react";
-import SAvatar from "../SAvatar";
+import SAvatar from "../ui/SAvatar";
 import { useAppDispatch } from "@/constants/AppFunctions";
 import { getAccountExt } from "@/libs/steem/sds";
 import { signIn, useSession } from "next-auth/react";

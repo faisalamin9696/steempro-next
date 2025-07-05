@@ -3,8 +3,8 @@ import { User } from "@heroui/user";
 import React from "react";
 import { twMerge } from "tailwind-merge";
 import TimeAgoWrapper from "../../wrappers/TimeAgoWrapper";
-import SAvatar from "@/components/SAvatar";
-import SLink from "@/components/SLink";
+import SAvatar from "@/components/ui/SAvatar";
+import SLink from "@/components/ui/SLink";
 
 function CommunityActivityItem({
   communityLog,

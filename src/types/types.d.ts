@@ -259,7 +259,7 @@ type AccountHistory = {
   trans_index: number;
   op_index: number;
   virtual: number;
-  op: any[];
+  op: [string, any];
 };
 
 type AccountHistoryOperation = {

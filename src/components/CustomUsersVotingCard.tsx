@@ -13,7 +13,7 @@ import IconButton from "./IconButton";
 import { MdAdd, MdClose } from "react-icons/md";
 import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
 import { getSettings, updateSettings } from "@/utils/user";
-import SAvatar from "./SAvatar";
+import SAvatar from "./ui/SAvatar";
 import { toast } from "sonner";
 import { validate_account_name } from "@/utils/chainValidation";
 import { updateSettingsHandler } from "@/hooks/redux/reducers/SettingsReducer";

@@ -12,7 +12,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { voteComment } from "@/libs/steem/condenser";
 import { toast } from "sonner";
 import { empty_comment } from "@/constants/Placeholders";
-import STooltip from "./STooltip";
+import STooltip from "./ui/STooltip";
 import { FaCheckCircle } from "react-icons/fa";
 import { TiWarning } from "react-icons/ti";
 import { PiArrowArcRightFill } from "react-icons/pi";

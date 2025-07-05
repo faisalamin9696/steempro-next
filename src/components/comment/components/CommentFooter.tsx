@@ -45,7 +45,7 @@ import "./style.scss";
 import ClickAwayListener from "react-click-away-listener";
 import { useSession } from "next-auth/react";
 import { As } from "@heroui/system";
-import SLink from "@/components/SLink";
+import SLink from "@/components/ui/SLink";
 import { AsyncUtils } from "@/utils/async.utils";
 import { SiSteem } from "react-icons/si";
 import { mutate } from "swr";

@@ -4,10 +4,10 @@ import React, { useEffect, useState } from "react";
 
 import useSWR from "swr";
 import { fetchSds } from "@/constants/AppFunctions";
-import SAvatar from "@/components/SAvatar";
+import SAvatar from "@/components/ui/SAvatar";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import LoadingCard from "@/components/LoadingCard";
-import SLink from "./SLink";
+import SLink from "./ui/SLink";
 import TableWrapper from "./wrappers/TableWrapper";
 
 const INITIAL_VISIBLE_COLUMNS = ["voter", "rshares", "time"];

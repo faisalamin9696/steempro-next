@@ -1,5 +1,5 @@
 import React from "react";
-import SLink from "../SLink";
+import SLink from "../ui/SLink";
 import { SignupLink } from "@/constants/AppConstants";
 
 function SignupCard() {

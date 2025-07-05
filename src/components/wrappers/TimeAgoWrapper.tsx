@@ -3,7 +3,7 @@ import { getTimeFromNow } from "@/utils/helper/time";
 import { twMerge } from "tailwind-merge";
 
 interface Props {
-  created?: number;
+  created?: number |string;
   lastUpdate?: number;
   withoutUtc?: boolean;
   lang?: LanguagesCode;

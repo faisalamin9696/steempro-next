@@ -16,11 +16,11 @@ import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { validateCommunity } from "@/utils/helper";
-import SAvatar from "@/components/SAvatar";
+import SAvatar from "@/components/ui/SAvatar";
 import { FaChevronDown } from "react-icons/fa";
 import LoadingCard from "@/components/LoadingCard";
 import { capitalize } from "@/constants/AppConstants";
-import SLink from "@/components/SLink";
+import SLink from "@/components/ui/SLink";
 import TableWrapper from "@/components/wrappers/TableWrapper";
 
 type CommunityReportType = {

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useAppSelector } from "@/constants/AppFunctions";
-import SAvatar from "./SAvatar";
+import SAvatar from "./ui/SAvatar";
 import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import FollowButton from "./FollowButton";
@@ -14,7 +14,7 @@ import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { Accordion, AccordionItem } from "@heroui/accordion";
 import ProfileInfoCard2 from "./ProfileInfoCard";
 import { useSession } from "next-auth/react";
-import SLink from "./SLink";
+import SLink from "./ui/SLink";
 import { usePathname, useRouter } from "next/navigation";
 import Reputation from "./Reputation";
 import ChatButton from "./ChatButton";

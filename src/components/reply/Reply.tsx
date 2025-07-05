@@ -2,7 +2,7 @@
 
 import ReplyForm from "./ReplyForm";
 import { memo, useState } from "react";
-import SAvatar from "@/components/SAvatar";
+import SAvatar from "@/components/ui/SAvatar";
 import { useAppSelector } from "@/constants/AppFunctions";
 import { Button } from "@heroui/button";
 

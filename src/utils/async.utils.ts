@@ -1,9 +1,9 @@
 /* istanbul ignore next */
-const sleep = (duration: number): Promise<void> => {
+const sleep = (durationSeconds: number): Promise<void> => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve();
-    }, duration * 1000);
+    }, durationSeconds * 1000);
   });
 };
 

@@ -17,8 +17,8 @@ import PowerDownModal from "@/components/PowerDownModal";
 import { Chip } from "@heroui/chip";
 import { IoMdAdd, IoMdRemove } from "react-icons/io";
 import { useSession } from "next-auth/react";
-import SLink from "@/components/SLink";
-import { useParams } from "next/navigation";
+import SLink from "@/components/ui/SLink";
+import { useParams, useRouter } from "next/navigation";
 
 const tokens = {
   steem: {
@@ -86,6 +86,7 @@ export default function BalanceTab({
 
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const isSelf = session?.user?.name === username;
+  const router = useRouter();
 
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
   let [key, setKey] = useState<SteemTokens>();
@@ -147,6 +148,10 @@ export default function BalanceTab({
       case "cancel-power-down":
         setPowerDownModal({ isOpen: true, cancel: true });
         break;
+
+      case "trade":
+        router.push("/market");
+        break;
     }
   }
 
@@ -173,6 +178,7 @@ export default function BalanceTab({
                     Transfer to Savings
                   </DropdownItem>
                   <DropdownItem key="power-up">Power Up</DropdownItem>
+                  <DropdownItem key="trade">Trade</DropdownItem>
                 </DropdownMenu>
               )
             }
@@ -274,6 +280,7 @@ export default function BalanceTab({
                   <DropdownItem key="savings-sbd">
                     Transfer to Savings
                   </DropdownItem>
+                  <DropdownItem key="trade">Trade</DropdownItem>
                 </DropdownMenu>
               )
             }

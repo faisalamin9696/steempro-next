@@ -1,4 +1,4 @@
-import SLink from "@/components/SLink";
+import SLink from "@/components/ui/SLink";
 import MainWrapper from "@/components/wrappers/MainWrapper";
 import { AppStrings } from "@/constants/AppStrings";
 import { Button } from "@heroui/button";

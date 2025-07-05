@@ -1,8 +1,8 @@
 import "./style.scss";
 import { Card, CardBody } from "@heroui/card";
 import { Button } from "@heroui/button";
-import SAvatar from "@/components/SAvatar";
-import SLink from "./SLink";
+import SAvatar from "@/components/ui/SAvatar";
+import SLink from "./ui/SLink";
 
 interface Props {
   username: string;

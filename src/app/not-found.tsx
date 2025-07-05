@@ -1,4 +1,4 @@
-import SLink from "@/components/SLink";
+import SLink from "@/components/ui/SLink";
 import { Button, ButtonGroup } from "@heroui/button";
 import React from "react";
 

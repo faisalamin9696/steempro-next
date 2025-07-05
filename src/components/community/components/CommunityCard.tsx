@@ -5,7 +5,7 @@ import { abbreviateNumber } from "@/utils/helper";
 import TimeAgoWrapper from "../../wrappers/TimeAgoWrapper";
 import { getResizedAvatar } from "@/utils/parseImage";
 import { twMerge } from "tailwind-merge";
-import SLink from "@/components/SLink";
+import SLink from "@/components/ui/SLink";
 import { FaRankingStar } from "react-icons/fa6";
 
 interface Props {

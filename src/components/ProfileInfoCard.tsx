@@ -26,10 +26,10 @@ import { IoFlash } from "react-icons/io5";
 import { getVoteData } from "@/libs/steem/sds";
 import { AppLink } from "@/constants/AppConstants";
 import { useSession } from "next-auth/react";
-import SLink from "./SLink";
+import SLink from "./ui/SLink";
 import { FaLocationDot } from "react-icons/fa6";
 import WitnessVotesCard from "./WitnessVotesCard";
-import SAvatar from "./SAvatar";
+import SAvatar from "./ui/SAvatar";
 import ChatButton from "./ChatButton";
 import ChatModal from "./chat/user/ChatModal";
 

@@ -12,7 +12,7 @@ import BodyShort from "./body/BodyShort";
 import { RiDraftLine } from "react-icons/ri";
 import { TbClockEdit } from "react-icons/tb";
 import { MdDelete } from "react-icons/md";
-import STag from "./STag";
+import STag from "./ui/STag";
 import { FaClock, FaInfoCircle } from "react-icons/fa";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import moment from "moment";
@@ -30,13 +30,13 @@ import secureLocalStorage from "react-secure-storage";
 import { validateCommunity } from "@/utils/helper";
 import { empty_community } from "@/constants/Placeholders";
 import { proxifyImageUrl } from "@/utils/proxifyUrl";
-import STooltip from "./STooltip";
+import STooltip from "./ui/STooltip";
 import {
   parseZonedDateTime,
   parseAbsoluteToLocal,
 } from "@internationalized/date";
 import { cryptoUtils, Signature } from "@steempro/dsteem";
-import SLink from "./SLink";
+import SLink from "./ui/SLink";
 import { twMerge } from "tailwind-merge";
 import { savePostDraft } from "@/utils/draft";
 

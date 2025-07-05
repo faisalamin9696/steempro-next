@@ -13,9 +13,13 @@ import { PrivKey } from "../../utils/user";
 import { toast } from "sonner";
 import { CurrentSetting } from "../../constants/AppConstants";
 import { steemToVest } from "../../utils/helper/vesting";
-import { encryptPrivateKey } from "../../utils/encryption";
-import moment from "moment";
 global.Buffer = global.Buffer || require("buffer").Buffer;
+
+const getExpirationISO = () => {
+  const expireSeconds = 60 * 60 * 24 * 27; // 27 days
+  const date = new Date(Date.now() + expireSeconds * 1000);
+  return date.toISOString().split(".")[0]; // Remove milliseconds for Steem format
+};
 
 const IMAGE_API = AppStrings.image_hostings[0];
 
@@ -2116,3 +2120,122 @@ export function requestKeychainSignBuffer(
     );
   });
 }
+
+export const createMarketOrder = async (
+  account: AccountExt,
+  amount_to_sell: string,
+  min_to_receive: string,
+  key: string,
+  isKeychain?: boolean
+) => {
+  const orderid = Math.floor(Date.now() / 1000);
+
+  let operation = {
+    owner: account.name,
+    orderid: orderid,
+    amount_to_sell: amount_to_sell,
+    min_to_receive: min_to_receive,
+    fill_or_kill: false,
+    expiration: getExpirationISO(),
+    // 24 hours
+  };
+
+  const opArray: Operation = ["limit_order_create", operation];
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestBroadcast(
+        account.name,
+        [opArray],
+        "Active",
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
+  const keyData = getKeyType(account, key);
+
+  if (keyData && PrivKey.atLeast(keyData.type, "ACTIVE")) {
+    const privateKey = PrivateKey.fromString(key);
+    return new Promise((resolve, reject) => {
+      client.broadcast
+        .sendOperations([opArray], privateKey)
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((err) => {
+          reject(err);
+          console.error("Market order error", err);
+        });
+    });
+  }
+
+  return Promise.reject(
+    new Error(
+      "Check private key permission! Required private active key or above."
+    )
+  );
+};
+
+export const cancelMarketOrder = async (
+  account: AccountExt,
+  orderid: number,
+  key: string,
+  isKeychain?: boolean
+) => {
+  const operation = {
+    owner: account.name,
+    orderid: orderid,
+  };
+  const op = ["limit_order_cancel", operation];
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestBroadcast(
+        account.name,
+        [op],
+        "Active",
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
+  const keyData = getKeyType(account, key);
+
+  if (keyData && PrivKey.atLeast(keyData.type, "ACTIVE")) {
+    const privateKey = PrivateKey.fromString(key);
+    return new Promise((resolve, reject) => {
+      client.broadcast
+        .sendOperations([["limit_order_cancel", operation]], privateKey)
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((err) => {
+          reject(err);
+          console.error("Market order error", err);
+        });
+    });
+  }
+
+  return Promise.reject(
+    new Error(
+      "Check private key permission! Required private active key or above."
+    )
+  );
+};

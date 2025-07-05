@@ -12,7 +12,7 @@ import { Input } from "@heroui/input";
 import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
 import useSWR from "swr";
 import LoadingCard from "./LoadingCard";
-import SAvatar from "./SAvatar";
+import SAvatar from "./ui/SAvatar";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import { FaSearch } from "react-icons/fa";
 import Reputation from "./Reputation";

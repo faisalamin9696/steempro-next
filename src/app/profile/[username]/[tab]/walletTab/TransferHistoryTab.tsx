@@ -9,23 +9,22 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@heroui/dropdown";
-import { FaChevronDown } from "react-icons/fa";
+import { FaChevronDown, FaFilter } from "react-icons/fa";
 import useSWR from "swr";
 import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
-import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import LoadingCard from "@/components/LoadingCard";
 import moment from "moment";
-import { TransferHistoryCard } from "@/components/TransferHistoryCard";
 import { capitalize } from "@/constants/AppConstants";
 import TableWrapper from "@/components/wrappers/TableWrapper";
 import { useParams } from "next/navigation";
+import OperationItem from "@/components/OperationItem";
+import { BiFilter } from "react-icons/bi";
+import { BsFilterCircle } from "react-icons/bs";
+import { IoFilterOutline } from "react-icons/io5";
 
-const INITIAL_VISIBLE_COLUMNS = ["op", "time"];
+const INITIAL_VISIBLE_COLUMNS = ["op"];
 
-const columns = [
-  { name: "OPERATION", uid: "op", sortable: false },
-  { name: "TIME", uid: "time", sortable: true },
-];
+const columns = [{ name: "", uid: "op", sortable: false }];
 
 const statusOptions = [
   { name: "Normal Transfer", uid: "transfer" },
@@ -33,6 +32,8 @@ const statusOptions = [
   { name: "Author Reward", uid: "author_reward" },
   { name: "curation Reward", uid: "curation_reward" },
   { name: "Claim Reward", uid: "claim_reward_balance" },
+  // { name: "Producer Reward", uid: "producer_reward" },
+  // { name: "Price Feed", uid: "feed_publish" },
 ];
 
 const start_date = moment().subtract(30, "days").unix();
@@ -80,28 +81,17 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
   }, [allRows, filterValue, statusFilter]);
 
   const renderCell = React.useCallback(
-    (history: AccountHistory, columnKey) => {
-      const cellValue = history[columnKey];
+    (operation: AccountHistory, columnKey) => {
+      const cellValue = operation[columnKey];
       switch (columnKey) {
         case "op":
           return (
-            <TransferHistoryCard
-              key={history.id}
-              op={history}
-              context={username}
+            <OperationItem
               steem_per_share={globalData.steem_per_share}
+              operation={operation}
             />
           );
 
-        case "time":
-          return (
-            <div className="flex flex-col">
-              <TimeAgoWrapper
-                className="text-bold text-tiny text-default-600"
-                created={history.time * 1000}
-              />
-            </div>
-          );
         default:
           return cellValue;
       }
@@ -124,18 +114,22 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
       tableColumns={columns}
       filteredItems={filteredItems}
       filterValue={filterValue}
+      isStriped={false}
+      classNames={{ th: "!h-0 !bg-transparent" }}
       onFilterValueChange={setFilterValue}
       renderCell={renderCell}
       sortDescriptor={{ column: "time", direction: "descending" }}
+      searchPlaceHolder="Search transcations..."
       topContentDropdown={
         <Dropdown>
           <DropdownTrigger className="hidden sm:flex">
             <Button
               size="sm"
-              endContent={<FaChevronDown className="text-small" />}
               variant="flat"
+              startContent={<IoFilterOutline size={18} />}
+              className="font-semibold text-small"
             >
-              FILTER
+              Filter
             </Button>
           </DropdownTrigger>
           <DropdownMenu

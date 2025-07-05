@@ -1,9 +1,9 @@
-import SAvatar from "@/components/SAvatar";
+import SAvatar from "@/components/ui/SAvatar";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
 import { vestToSteem } from "@/utils/helper/vesting";
 
 import React from "react";
-import SLink from "./SLink";
+import SLink from "./ui/SLink";
 import parseAsset from "@/utils/helper/parse-asset";
 
 interface Props {

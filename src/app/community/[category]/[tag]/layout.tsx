@@ -45,17 +45,18 @@ export async function generateMetadata(
   const pageDescription = about || "";
 
   const keywords = [
-    `${community} community`,
-    `${community} ${category}`,
-    `${title}`,
-    `${category} discussions`,
-    `${category} topics`,
-    `community ${category}`,
-    `latest ${category} in ${community}`,
-    `#${community}`,
-    `#${category} on SteemPro`,
-    `${community} updates`,
+    `${community} community discussions`,
+    `${community} ${category} content`,
+    `${title} - ${community} on SteemPro`,
+    `latest ${category} from ${community}`,
+    `top ${category} topics in ${community}`,
+    `#${community} news and updates`,
+    `#${category} posts on SteemPro`,
+    `${category} conversations at ${community}`,
+    `${community} ${category} insights`,
+    `${community} trending ${category}`,
   ];
+
   return {
     title: pageTitle,
     description: pageDescription,

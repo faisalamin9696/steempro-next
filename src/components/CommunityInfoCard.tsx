@@ -21,7 +21,7 @@ import { SlCalender } from "react-icons/sl";
 import { TbHeartDollar } from "react-icons/tb";
 import CommunityMembers from "./community/CommunityMembers";
 import { CommunityActivities } from "./community/CommunityActivities";
-import SLink from "./SLink";
+import SLink from "./ui/SLink";
 import ChatButton from "./ChatButton";
 import CommunityChatModal from "./chat/community/CommunityChatModal";
 

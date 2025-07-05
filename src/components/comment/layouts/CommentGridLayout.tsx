@@ -9,7 +9,7 @@ import { Card, CardBody } from "@heroui/card";
 import { User } from "@heroui/user";
 import Reputation from "@/components/Reputation";
 import CommentFooter from "../components/CommentFooter";
-import STag from "@/components/STag";
+import STag from "@/components/ui/STag";
 import "./style.scss";
 import { CommentProps } from "../CommentCard";
 import { abbreviateNumber, validateCommunity } from "@/utils/helper";
@@ -21,7 +21,7 @@ import RoleTitleCard from "@/components/RoleTitleCard";
 import { twMerge } from "tailwind-merge";
 import { MdDisabledVisible } from "react-icons/md";
 import { useSession } from "next-auth/react";
-import SLink from "@/components/SLink";
+import SLink from "@/components/ui/SLink";
 
 export default function CommentGridLayout(props: CommentProps) {
   const { comment, isCommunity } = props;

@@ -4,8 +4,8 @@ import { getTimeFromNow } from "@/utils/helper/time";
 import useSWR from "swr";
 import LoadingCard from "./LoadingCard";
 import "./style.scss";
-import SLink from "./SLink";
-import SAvatar from "./SAvatar";
+import SLink from "./ui/SLink";
+import SAvatar from "./ui/SAvatar";
 
 interface Props {
   comment: Feed | Post;

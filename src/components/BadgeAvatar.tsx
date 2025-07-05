@@ -1,5 +1,5 @@
 import { Badge } from "@heroui/badge";
-import STooltip from "./STooltip";
+import STooltip from "./ui/STooltip";
 import { getResizedAvatar } from "@/utils/parseImage";
 import Image from "next/image";
 import { twMerge } from "tailwind-merge";

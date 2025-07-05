@@ -10,7 +10,7 @@ import { MdAccessTime } from "react-icons/md";
 import { getThumbnail } from "@/utils/parseImage";
 import { hasNsfwTag } from "@/utils/stateFunctions";
 import { getSettings } from "@/utils/user";
-import SLink from "./SLink";
+import SLink from "./ui/SLink";
 
 interface Props {
   comment: Feed;

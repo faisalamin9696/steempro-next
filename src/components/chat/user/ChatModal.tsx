@@ -22,7 +22,7 @@ import moment from "moment";
 import { twMerge } from "tailwind-merge";
 import { BsArrowDown } from "react-icons/bs";
 import { Chip } from "@heroui/chip";
-import SAvatar from "../../SAvatar";
+import SAvatar from "../../ui/SAvatar";
 import MessageReplyRef from "../components/MessageReplyRef";
 import ChatInput from "../components/ChatInput";
 import sanitize from "sanitize-html";

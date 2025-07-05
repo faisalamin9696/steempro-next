@@ -1,7 +1,7 @@
 import "./style.scss";
 import { Button } from "@heroui/button";
 import { IconType } from "react-icons";
-import SLink from "./SLink";
+import SLink from "./ui/SLink";
 
 interface Props {
   title: string;

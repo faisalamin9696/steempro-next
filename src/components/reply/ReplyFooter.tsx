@@ -34,7 +34,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { CustomEvent } from "@piwikpro/react-piwik-pro";
-import SLink from "../SLink";
+import SLink from "../ui/SLink";
 import { AsyncUtils } from "@/utils/async.utils";
 import {
   getCommentDraft,

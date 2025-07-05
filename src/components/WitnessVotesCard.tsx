@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import SAvatar from "@/components/SAvatar";
+import SAvatar from "@/components/ui/SAvatar";
 import TableWrapper from "./wrappers/TableWrapper";
-import SLink from "./SLink";
+import SLink from "./ui/SLink";
 
 export default function WitnessVotesCard({
   witnesses,

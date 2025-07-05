@@ -1,6 +1,6 @@
 "use client";
 
-import SAvatar from "@/components/SAvatar";
+import SAvatar from "@/components/ui/SAvatar";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
 import { abbreviateNumber } from "@/utils/helper";
@@ -10,7 +10,7 @@ import { RiLinkM } from "react-icons/ri";
 import { replaceOldDomains } from "@/utils/parseLinks";
 import WitnessVoteButton from "@/components/WitnessVoteButton";
 import { validate_account_name } from "@/utils/chainValidation";
-import SLink from "@/components/SLink";
+import SLink from "@/components/ui/SLink";
 import TableWrapper from "@/components/wrappers/TableWrapper";
 import WitnessVotersModal from "@/components/WitnessVotersModal";
 import { simpleVotesToSp } from "@/components/ProposalItemCard";

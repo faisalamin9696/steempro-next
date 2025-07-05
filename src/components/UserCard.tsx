@@ -5,16 +5,16 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "@/constants/AppFunctions";
-import SAvatar from "./SAvatar";
+import SAvatar from "./ui/SAvatar";
 import { abbreviateNumber } from "@/utils/helper";
 import { SlUserFollowing } from "react-icons/sl";
 import useSWR from "swr";
 import { getResizedAvatar } from "@/utils/parseImage";
-import STooltip from "./STooltip";
+import STooltip from "./ui/STooltip";
 import LoadingCard from "./LoadingCard";
 import FollowButton from "./FollowButton";
 import { addProfileHandler } from "@/hooks/redux/reducers/ProfileReducer";
-import SLink from "./SLink";
+import SLink from "./ui/SLink";
 import { twMerge } from "tailwind-merge";
 
 interface Props {

@@ -1,5 +1,5 @@
 import Reputation from "@/components/Reputation";
-import SAvatar from "@/components/SAvatar";
+import SAvatar from "@/components/ui/SAvatar";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import React, { Key, useState } from "react";
 import RoleTitleCard from "../RoleTitleCard";
@@ -16,7 +16,7 @@ import { FaEllipsis } from "react-icons/fa6";
 import { toast } from "sonner";
 import { AppStrings } from "@/constants/AppStrings";
 import CommentEditHistory from "../CommentHistoryViewer";
-import SLink from "../SLink";
+import SLink from "../ui/SLink";
 import { twMerge } from "tailwind-merge";
 import MarkdownViewer from "../body/MarkdownViewer";
 import { HiOutlineLink } from "react-icons/hi2";

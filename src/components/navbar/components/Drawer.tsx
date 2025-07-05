@@ -8,7 +8,7 @@ import Image from "next/image";
 import { MdClose } from "react-icons/md";
 import DrawerContent from "./DrawerContent";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
-import SLink from "@/components/SLink";
+import SLink from "@/components/ui/SLink";
 import ThemeSwitch from "@/components/ThemeSwitch";
 import { usePathname } from "next/navigation";
 

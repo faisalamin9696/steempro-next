@@ -1,4 +1,4 @@
-import SLink from "@/components/SLink";
+import SLink from "@/components/ui/SLink";
 import ThemeSwitch from "@/components/ThemeSwitch";
 import { DiscordServerLink, GitHubLink } from "@/constants/AppConstants";
 import { Button } from "@heroui/button";
@@ -9,7 +9,7 @@ import React from "react";
 import { AiFillProject, AiOutlineProject } from "react-icons/ai";
 import { HiOutlineUserGroup, HiUserGroup } from "react-icons/hi2";
 import { IoHome, IoHomeOutline } from "react-icons/io5";
-import { MdOutlinePolicy, MdPolicy } from "react-icons/md";
+import { MdAreaChart, MdOutlineAreaChart, MdOutlinePolicy, MdPolicy } from "react-icons/md";
 import {
   RiCalendar2Fill,
   RiCalendar2Line,
@@ -79,6 +79,12 @@ function DrawerContent() {
       href: `/proposals`,
       unFocusedIcon: <AiOutlineProject size={iconSize} />,
       focusedIcon: <AiFillProject size={iconSize} />,
+    },
+    {
+      title: "Market",
+      href: `/market`,
+      unFocusedIcon: <MdOutlineAreaChart  size={iconSize} />,
+      focusedIcon: <MdAreaChart size={iconSize} />,
     },
 
     {

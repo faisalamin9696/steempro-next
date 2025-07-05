@@ -16,7 +16,7 @@ import { Chip } from "@heroui/chip";
 import { FaChevronDown, FaPlus } from "react-icons/fa";
 import useSWR from "swr";
 import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
-import SAvatar from "@/components/SAvatar";
+import SAvatar from "@/components/ui/SAvatar";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import TransferModal from "@/components/TransferModal";
@@ -26,7 +26,7 @@ import { vestToSteem } from "@/utils/helper/vesting";
 import moment from "moment";
 import { capitalize } from "@/constants/AppConstants";
 import { useSession } from "next-auth/react";
-import SLink from "@/components/SLink";
+import SLink from "@/components/ui/SLink";
 import TableWrapper from "@/components/wrappers/TableWrapper";
 import { useParams } from "next/navigation";
 

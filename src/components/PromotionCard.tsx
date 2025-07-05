@@ -6,11 +6,11 @@ import useSWR from "swr";
 import { Card } from "@heroui/card";
 import ViewCountCard from "./ViewCountCard";
 import Image from "next/image";
-import SAvatar from "./SAvatar";
+import SAvatar from "./ui/SAvatar";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import { getThumbnail } from "@/utils/parseImage";
 import { twMerge } from "tailwind-merge";
-import SLink from "./SLink";
+import SLink from "./ui/SLink";
 
 interface Props {
   authPerm: string;

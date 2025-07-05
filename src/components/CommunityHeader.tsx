@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useAppSelector } from "@/constants/AppFunctions";
-import SAvatar from "./SAvatar";
+import SAvatar from "./ui/SAvatar";
 import { Button } from "@heroui/button";
 import { BiPlus } from "react-icons/bi";
 import { abbreviateNumber } from "@/utils/helper";
@@ -9,7 +9,7 @@ import { proxifyImageUrl } from "@/utils/proxifyUrl";
 import SubscribeButton from "./SubscribeButton";
 import { twMerge } from "tailwind-merge";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
-import SLink from "./SLink";
+import SLink from "./ui/SLink";
 import ChatButton from "./ChatButton";
 
 type Props = {

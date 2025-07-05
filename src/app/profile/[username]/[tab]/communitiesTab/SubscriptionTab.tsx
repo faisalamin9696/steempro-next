@@ -3,7 +3,7 @@
 import notFound from "@/app/not-found";
 import CommentSkeleton from "@/components/comment/components/CommentSkeleton";
 import CommunityCard from "@/components/community/components/CommunityCard";
-import SLink from "@/components/SLink";
+import SLink from "@/components/ui/SLink";
 import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { Button } from "@heroui/button";

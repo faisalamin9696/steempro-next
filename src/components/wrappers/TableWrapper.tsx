@@ -47,6 +47,7 @@ interface Props extends TableProps {
   cellWrapper?: (item: any, children: React.ReactNode) => React.ReactNode;
   stickyTop?: boolean;
   emptyContent?: React.ReactNode;
+  searchPlaceHolder?: string;
 }
 
 function TableWrapper(props: Props) {
@@ -73,6 +74,7 @@ function TableWrapper(props: Props) {
     topRowContent,
     topContentClassName,
     emptyContent,
+    searchPlaceHolder,
   } = props;
 
   const [page, setPage] = React.useState(1);
@@ -208,7 +210,7 @@ function TableWrapper(props: Props) {
                 "text-default-500 bg-default-400/20 dark:bg-default-500/20",
             }}
             className={twMerge("w-full sm:max-w-[50%]", inputClassName)}
-            placeholder="Search..."
+            placeholder={searchPlaceHolder ?? "Search..."}
             onClear={() => onClear()}
             onValueChange={onSearchChange}
             value={filterValue}

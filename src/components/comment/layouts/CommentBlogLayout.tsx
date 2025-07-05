@@ -10,7 +10,7 @@ import { hasNsfwTag } from "@/utils/stateFunctions";
 import { getSettings } from "@/utils/user";
 import { getThumbnail } from "@/utils/parseImage";
 import { twMerge } from "tailwind-merge";
-import SLink from "@/components/SLink";
+import SLink from "@/components/ui/SLink";
 
 export default function CommentBlogLayout(props: CommentProps) {
   const { comment, isReply } = props;

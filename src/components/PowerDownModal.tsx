@@ -9,7 +9,7 @@ import {
 import { Button } from "@heroui/button";
 import { Checkbox } from "@heroui/checkbox";
 import { Input } from "@heroui/input";
-import SAvatar from "./SAvatar";
+import SAvatar from "./ui/SAvatar";
 import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
