@@ -126,14 +126,14 @@ const PowerDownStatus = ({ account, onUpdate }: PowerDownStatusProps) => {
           </div>
         </div>
 
-        {true && (
+        {isOwnAccount && (
           <Button
             onPress={handleCancelPowerDown}
             variant="bordered"
             size="sm"
             radius="sm"
             isDisabled={false}
-            className="border-orange-300 text-danger-600 hover:bg-orange-200"
+            className="border-orange-300 text-orange-600 hover:bg-orange-200"
           >
             {false ? (
               <Spinner

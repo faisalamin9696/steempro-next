@@ -104,7 +104,7 @@ const PendingRewards = ({ account }: PendingRewardsProps) => {
   }, [rewardVests]);
 
   // Don't show if not own account or no pending rewards
-  if (!isOwnAccount || !hasPendingRewards) {
+  if (!hasPendingRewards) {
     return null;
   }
 
@@ -158,21 +158,23 @@ const PendingRewards = ({ account }: PendingRewardsProps) => {
         </div>
       </div>
 
-      <Button
-        onPress={handleClaimReward}
-        variant="bordered"
-        size="sm"
-        radius="sm"
-        isDisabled={claimMutation.isPending}
-        className="border-success-300 text-success-700 hover:bg-green-200"
-      >
-        {claimMutation.isPending ? (
-          <Spinner color="success" size="sm" className="h-[18px] w-[18px]" />
-        ) : (
-          <FaGift size={14} />
-        )}
-        Redeem
-      </Button>
+      {isOwnAccount && (
+        <Button
+          onPress={handleClaimReward}
+          variant="bordered"
+          size="sm"
+          radius="sm"
+          isDisabled={claimMutation.isPending}
+          className="border-success-300 text-success-700 hover:bg-success-200"
+        >
+          {claimMutation.isPending ? (
+            <Spinner color="success" size="sm" className="h-[18px] w-[18px]" />
+          ) : (
+            <FaGift size={14} />
+          )}
+          Redeem
+        </Button>
+      )}
     </div>
   );
 };
