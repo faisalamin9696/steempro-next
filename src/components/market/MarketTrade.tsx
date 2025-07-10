@@ -74,7 +74,7 @@ function MarketTrade(props: Props) {
           data.key,
           data.isKeychain
         ),
-        AsyncUtils.sleep(3),
+        AsyncUtils.sleep(4),
       ]),
     onSuccess(data, variables) {
       const action = variables.tradeType === "buy" ? "Buying" : "Selling";

@@ -21,6 +21,13 @@ import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
 import { AsyncUtils } from "@/utils/async.utils";
 import { saveOpenOrdersReducer } from "@/hooks/redux/reducers/OpenOrderReducer";
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+} from "@heroui/modal";
 
 interface OpenOrder {
   id: number;
@@ -39,7 +46,7 @@ interface OpenOrder {
   };
 }
 
-const OpenOrders = () => {
+function OpenOrders() {
   const { data: session } = useSession();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { userOrders, isLoading, refetch, error } = getOpenOrders(
@@ -47,10 +54,8 @@ const OpenOrders = () => {
   );
   const [currentPage, setCurrentPage] = useState(1);
   const ordersPerPage = 10;
-  const { authenticateUser, isAuthorized } = useLogin();
   const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (userOrders) {
@@ -62,7 +67,7 @@ const OpenOrders = () => {
   const paginatedData = useMemo(() => {
     const indexOfLastOrder = currentPage * ordersPerPage;
     const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
-    const openOrders = userOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+    const openOrders = userOrders?.slice(indexOfFirstOrder, indexOfLastOrder);
     const totalPages = Math.ceil(userOrders.length / ordersPerPage);
 
     return {
@@ -82,71 +87,6 @@ const OpenOrders = () => {
       setCurrentPage((prev) => prev - 1);
     }
   };
-
-  const orderMutation = useMutation({
-    mutationFn: (data: {
-      order: OpenOrder;
-      key: string;
-      isKeychain?: boolean;
-    }) =>
-      Promise.all([
-        cancelMarketOrder(
-          loginInfo,
-          data.order.orderid,
-          data.key,
-          data.isKeychain
-        ),
-        AsyncUtils.sleep(3),
-      ]),
-    onSuccess(data, variables) {
-
-      if (variables.order.order_type === "buy") {
-        const newSbd = Math.max(
-          0,
-          loginInfo?.balance_sbd + variables.order.sbd_amount
-        );
-        dispatch(
-          saveLoginHandler({ ...loginInfo, balance_sbd: newSbd.toFixed(3) })
-        );
-      } else {
-        const newSteem = Math.max(
-          0,
-          loginInfo?.balance_steem + variables.order.steem_amount
-        );
-        dispatch(
-          saveLoginHandler({ ...loginInfo, balance_steem: newSteem.toFixed(3) })
-        );
-      }
-
-      // invalidate recenet orders data
-      queryClient.invalidateQueries({ queryKey: ["orderBook"] });
-      refetch();
-      toast.success(`Order canceled successfully`, {});
-    },
-    onError(error) {
-      toast.error("Trade Error", {
-        description: error.message || "Unknown error occurred",
-      });
-    },
-  });
-
-  function cancelLimitOrder(order: OpenOrder) {
-    authenticateUser();
-    if (!isAuthorized()) return;
-
-    const credentials = getCredentials(getSessionKey(session?.user?.name));
-
-    if (!credentials?.key) {
-      toast.error("Invalid credentials");
-      return;
-    }
-
-    orderMutation.mutate({
-      order,
-      key: credentials.key,
-      isKeychain: credentials.keychainLogin,
-    });
-  }
 
   if (isLoading) {
     return (
@@ -262,56 +202,42 @@ const OpenOrders = () => {
                 </TableCell>
 
                 <TableCell className="p-2 font-mono">
-                  <Popover
-                    isOpen={isOpen}
-                    onOpenChange={(open) => setIsOpen(open)}
-                    placement={"left"}
-                  >
-                    <PopoverTrigger>
-                      <Button
-                        variant="flat"
-                        isLoading={orderMutation.isPending}
-                        radius="sm"
-                        size="sm"
-                      >
-                        Cancel
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent>
-                      <div className="px-1 py-2">
-                        <div className="text-small font-bold">
-                          {"Confirmation"}
-                        </div>
-                        <div className="text-tiny flex">
-                          Cancel order #{order.orderid} from {loginInfo.name}?
-                        </div>
+                  <OpenOrderAction
+                    order={order}
+                    onSuccess={(variables) => {
+                      if (variables.order.order_type === "buy") {
+                        const newSbd = Math.max(
+                          0,
+                          loginInfo?.balance_sbd + variables.order.sbd_amount
+                        );
+                        dispatch(
+                          saveLoginHandler({
+                            ...loginInfo,
+                            balance_sbd: newSbd.toFixed(3),
+                          })
+                        );
+                      } else {
+                        const newSteem = Math.max(
+                          0,
+                          loginInfo?.balance_steem +
+                            variables.order.steem_amount
+                        );
+                        dispatch(
+                          saveLoginHandler({
+                            ...loginInfo,
+                            balance_steem: newSteem.toFixed(3),
+                          })
+                        );
+                      }
 
-                        <div className=" flex flex-col items-start gap-2">
-                          <div className="text-tiny flex mt-2 space-x-2">
-                            <Button
-                              size="sm"
-                              onPress={() => {
-                                setIsOpen(false);
-                              }}
-                            >
-                              Cancel
-                            </Button>
-                            <Button
-                              size="sm"
-                              color={"success"}
-                              variant="solid"
-                              onPress={() => {
-                                setIsOpen(false);
-                                cancelLimitOrder(order);
-                              }}
-                            >
-                              Confirm
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
+                      // invalidate recenet orders data
+                      queryClient.invalidateQueries({
+                        queryKey: ["orderBook"],
+                      });
+                      refetch();
+                      toast.success(`Order canceled successfully`);
+                    }}
+                  />
                 </TableCell>
               </TableRow>
             ))}
@@ -351,7 +277,7 @@ const OpenOrders = () => {
       </CardBody>
     </Card>
   );
-};
+}
 
 export default OpenOrders;
 
@@ -413,4 +339,110 @@ function getOpenOrders(username?: string | null) {
     error: error?.message || null,
     refetch,
   };
+}
+
+function OpenOrderAction({
+  order,
+  onSuccess,
+}: {
+  order: OpenOrder;
+  onSuccess: (variables: {
+    order: OpenOrder;
+    key: string;
+    isKeychain?: boolean;
+  }) => void;
+}) {
+  const [confirmation, setConfirmation] = useState(false);
+  const { authenticateUser, isAuthorized } = useLogin();
+  const loginInfo = useAppSelector((state) => state.loginReducer.value);
+  const { data: session } = useSession();
+  const orderMutation = useMutation({
+    mutationFn: (data: {
+      order: OpenOrder;
+      key: string;
+      isKeychain?: boolean;
+    }) =>
+      Promise.all([
+        cancelMarketOrder(
+          loginInfo,
+          data.order.orderid,
+          data.key,
+          data.isKeychain
+        ),
+        AsyncUtils.sleep(4),
+      ]),
+    onSuccess(data, variables) {
+      onSuccess(variables);
+    },
+    onError(error) {
+      toast.error("Trade Error", {
+        description: error.message || "Unknown error occurred",
+      });
+    },
+  });
+
+  function cancelLimitOrder(order: OpenOrder) {
+    authenticateUser();
+    if (!isAuthorized()) return;
+
+    const credentials = getCredentials(getSessionKey(session?.user?.name));
+
+    if (!credentials?.key) {
+      toast.error("Invalid credentials");
+      return;
+    }
+
+    orderMutation.mutate({
+      order,
+      key: credentials.key,
+      isKeychain: credentials.keychainLogin,
+    });
+  }
+
+  return (
+    <div>
+      <Button
+        variant="flat"
+        isLoading={orderMutation.isPending}
+        radius="sm"
+        size="sm"
+        onPress={() => setConfirmation(!confirmation)}
+      >
+        Cancel
+      </Button>
+
+      {confirmation && (
+        <Modal isOpen={confirmation} onOpenChange={setConfirmation}>
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  {"Confirmation"}
+                </ModalHeader>
+                <ModalBody>
+                  <div className="text-tiny flex">
+                    Cancel order #{order.orderid} from {loginInfo.name}?
+                  </div>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="danger" variant="light" onPress={onClose}>
+                    Close
+                  </Button>
+                  <Button
+                    color="primary"
+                    onPress={() => {
+                      onClose();
+                      cancelLimitOrder(order);
+                    }}
+                  >
+                    Confirm
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+      )}
+    </div>
+  );
 }
