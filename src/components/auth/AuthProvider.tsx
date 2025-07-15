@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import React, { createContext, useContext, useState } from "react";
 import {
   getCredentials,
+  getSessionKey,
   getSessionToken,
   saveSessionKey,
   sessionKey,
@@ -15,9 +16,11 @@ import { useDisclosure } from "@heroui/modal";
 interface AuthContextType {
   credentials?: User;
   authenticateUser: (addNew?: boolean, onlyMemo?: boolean) => void;
-  isAuthorized: (memo?: boolean) => boolean;
+  isAuthorized: (memo?: boolean, key?: string) => boolean;
+  isAuthorizedActive: (key?: string) => boolean;
   isLogin: () => boolean;
   setCredentials: React.Dispatch<React.SetStateAction<User | undefined>>;
+  authenticateUserActive: (isKeychain?: boolean) => User | undefined;
 }
 
 // Create the context with an initial value
@@ -45,6 +48,8 @@ export const AuthProvider = (props: Props) => {
   );
   const [addNew, setAddNew] = useState(false);
   const [addMemo, setAddMemo] = useState(false);
+  const [requestActive, setRequestActive] = useState(false);
+  const [activeKey, setActiveKey] = useState("");
 
   // useEffect(() => {
   //     setCredentials(getCredentials());
@@ -58,8 +63,14 @@ export const AuthProvider = (props: Props) => {
     );
   }
 
-  function isAuthorized(memo?: boolean) {
+  function isAuthorized(memo?: boolean, key?: string) {
     credentials = getCredentials();
+
+    if (key) {
+      setActiveKey("");
+      return true;
+    }
+
     if (memo) {
       if (!credentials?.memo || !isLogin()) return false;
     }
@@ -73,7 +84,27 @@ export const AuthProvider = (props: Props) => {
     return isLogin() && (!!sessionKey || !!token);
   }
 
+  function isAuthorizedActive(key?: string) {
+    credentials = getCredentials();
+
+    if (key) {
+      if (activeKey) setActiveKey("");
+      return true;
+    }
+    if (credentials?.keychainLogin) return true;
+
+    if (isLogin() && key) {
+      return true;
+    }
+    if (isLogin() && credentials?.type === "ACTIVE" && !sessionKey) {
+      return false;
+    }
+    const token = getSessionToken(session?.user?.name ?? credentials?.username);
+    return isLogin() && (!!sessionKey || !!token);
+  }
+
   function authenticateUser(addNew?: boolean, onlyMemo?: boolean) {
+    if (requestActive) setRequestActive(false);
     if (addNew) {
       setAddNew(true);
       authDisclosure.onOpen();
@@ -110,26 +141,70 @@ export const AuthProvider = (props: Props) => {
     }
   }
 
+  function authenticateUserActive(isKeychain?: boolean) {
+    if (isKeychain) return { ...credentials, keychainLogin: true } as User;
+
+    if (credentials?.keychainLogin) {
+      return { ...credentials, key: "keychain", type: "POSTING" } as User;
+    }
+    // if active key and not session login as for password
+    if (credentials?.type !== "ACTIVE" && !activeKey) {
+      setRequestActive(true);
+      authDisclosure.onOpen();
+      return;
+    }
+
+    if (activeKey) {
+      return { ...credentials, key: activeKey } as User;
+    }
+
+    // if active key and not session login as for password
+    if (credentials?.type === "ACTIVE" && !sessionKey) {
+      authDisclosure.onOpen();
+      return;
+    }
+
+    const token = getSessionToken(session?.user?.name ?? credentials?.username);
+
+    if (isLogin() && !token && credentials?.type === "ACTIVE") {
+      return getCredentials(
+        getSessionKey(session?.user?.name ?? credentials?.username)
+      );
+    }
+
+    if (isLogin() && !!token)
+      return getCredentials(
+        getSessionKey(session?.user?.name ?? credentials?.username)
+      );
+  }
+
   return (
     <AuthContext.Provider
       value={{
         authenticateUser,
+        authenticateUserActive,
         credentials,
         isAuthorized,
         isLogin,
         setCredentials: setCredentials,
+        isAuthorizedActive,
       }}
     >
       {children}
 
       {authDisclosure.isOpen && (
         <AuthModal
+          onActiveSuccess={(key) => {
+            if (requestActive) setRequestActive(false);
+            setActiveKey(key);
+          }}
+          requestActive={requestActive}
           addMemo={addMemo}
           addNew={addNew}
-          open={authDisclosure.isOpen}
-          onClose={() => {
-            setAddNew(false);
-            setAddMemo(false);
+          isOpen={authDisclosure.isOpen}
+          onOpenChange={(isOpen) => {
+            setAddNew(isOpen);
+            setAddMemo(isOpen);
             authDisclosure.onClose();
           }}
           onLoginSuccess={(user) => {

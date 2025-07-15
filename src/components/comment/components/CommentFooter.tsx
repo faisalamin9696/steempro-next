@@ -1,9 +1,4 @@
 import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
   useDisclosure,
 } from "@heroui/modal";
 import { Button, PressEvent } from "@heroui/button";
@@ -49,6 +44,7 @@ import SLink from "@/components/ui/SLink";
 import { AsyncUtils } from "@/utils/async.utils";
 import { SiSteem } from "react-icons/si";
 import { mutate } from "swr";
+import SModal from "@/components/ui/SModal";
 
 interface WrapperProps {
   children: React.ReactNode;
@@ -155,7 +151,7 @@ export default memo(function CommentFooter(props: CommentProps) {
           optimisticData: (current) => [
             {
               ...current?.[0], // safe access to current data
-              ...newChanges,   // merge new changes
+              ...newChanges, // merge new changes
             },
             current?.[1] ?? null,
           ],
@@ -266,7 +262,7 @@ export default memo(function CommentFooter(props: CommentProps) {
           optimisticData: (current) => [
             {
               ...current?.[0], // safe access to current data
-              observer_resteem: 1,   // merge new changes
+              observer_resteem: 1, // merge new changes
             },
             current?.[1] ?? null,
           ],
@@ -313,9 +309,9 @@ export default memo(function CommentFooter(props: CommentProps) {
         fetchedUser?.weight ?? settings.voteOptions.value ?? 100;
       timer = longPressUpvote
         ? setTimeout(() => {
-          handleVibrate();
-          castVote(voteWeight, false, true);
-        }, 800)
+            handleVibrate();
+            castVote(voteWeight, false, true);
+          }, 800)
         : undefined;
     }
     return () => clearTimeout(timer);
@@ -332,9 +328,9 @@ export default memo(function CommentFooter(props: CommentProps) {
         fetchedUser?.weight ?? settings.voteOptions.value ?? 100;
       timer = longPressDownvote
         ? setTimeout(() => {
-          handleVibrate();
-          castVote(voteWeight, true, true);
-        }, 800)
+            handleVibrate();
+            castVote(voteWeight, true, true);
+          }, 800)
         : undefined;
     }
     return () => clearTimeout(timer);
@@ -551,15 +547,19 @@ export default memo(function CommentFooter(props: CommentProps) {
             hoverable
             onPress={() => setBreakdownModal(!breakdownModal)}
             className="pr-2"
-            title={`${!comment.max_accepted_payout
-              ? "Declined"
-              : "$" + comment.payout?.toLocaleString()
-              }  Payout`}
+            title={`${
+              !comment.max_accepted_payout
+                ? "Declined"
+                : "$" + comment.payout?.toLocaleString()
+            }  Payout`}
           >
             <Popover
               placement="top"
               onOpenChange={setBreakdownModal}
               isOpen={breakdownModal}
+              size="md"
+              className=" w-64"
+              classNames={{ content: "bg-primary-300 rounded-md" }}
             >
               <PopoverTrigger>
                 <Button
@@ -569,7 +569,8 @@ export default memo(function CommentFooter(props: CommentProps) {
                   size="sm"
                   variant="light"
                 >
-                  {(comment.payout && !comment.percent_steem_dollars) || !comment.max_accepted_payout ? (
+                  {(comment.payout && !comment.percent_steem_dollars) ||
+                  !comment.max_accepted_payout ? (
                     <SiSteem size={20} />
                   ) : (
                     <PiCurrencyCircleDollarFill size={24} />
@@ -593,35 +594,24 @@ export default memo(function CommentFooter(props: CommentProps) {
         }
       </div>
 
-      <Modal
+      <SModal
         isOpen={voterDisclosure.isOpen}
-        onClose={voterDisclosure.onClose}
-        placement="top-center"
-        hideCloseButton
-        scrollBehavior="inside"
-        size="lg"
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">Voters</ModalHeader>
-              <ModalBody>
-                <VotersCard comment={comment} isOpen={voterDisclosure.isOpen} />
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  color="danger"
-                  variant="flat"
-                  size="sm"
-                  onPress={onClose}
-                >
-                  Close
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+        onOpenChange={voterDisclosure.onOpenChange}
+        modalProps={{
+          scrollBehavior: "inside",
+          hideCloseButton: true,
+          size: "lg",
+        }}
+        title={() => "Voters"}
+        body={() => (
+          <VotersCard comment={comment} isOpen={voterDisclosure.isOpen} />
+        )}
+        footer={(onClose) => (
+          <Button color="danger" variant="flat" size="sm" onPress={onClose}>
+            Close
+          </Button>
+        )}
+      />
     </div>
   );
 });

@@ -1,10 +1,3 @@
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-} from "@heroui/modal";
 import { Button } from "@heroui/button";
 import React, { useEffect, useMemo, useState } from "react";
 import { Tab, Tabs } from "@heroui/tabs";
@@ -23,16 +16,17 @@ import CommentListLayout from "./comment/layouts/CommentListLayout";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { AsyncUtils } from "@/utils/async.utils";
 import { twMerge } from "tailwind-merge";
+import SModal from "./ui/SModal";
 
 type SearchTypes = "posts" | "comments" | "tags" | "people";
 
 interface Props {
   isOpen: boolean;
-  onClose: () => void;
+  onOpenChange: (isOpen: boolean) => void;
 }
 
 export default function SearchModal(props: Props) {
-  const { isOpen, onClose } = props;
+  const { isOpen, onOpenChange } = props;
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const [searchType, setSearchType] = useState<SearchTypes>("posts");
   let [searchText, setSearchText] = useState("");
@@ -153,167 +147,157 @@ export default function SearchModal(props: Props) {
   }, [searchType]);
 
   return (
-    <Modal
+    <SModal
       isOpen={isOpen}
-      onClose={onClose}
-      className=" mt-4"
-      scrollBehavior="inside"
-      backdrop="blur"
-      size="2xl"
-      hideCloseButton
-      placement="top"
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">Search</ModalHeader>
-            <ModalBody id="scrollDiv" className=" pb-4">
-              <div className=" flex flex-col gap-4">
-                <div className=" flex items-center gap-2">
-                  <Button
-                    isIconOnly
-                    onPress={handleSearch}
-                    size="sm"
-                    color="primary"
-                    variant="flat"
+      onOpenChange={onOpenChange}
+      modalProps={{
+        scrollBehavior: "inside",
+        size: "xl",
+        backdrop: "blur",
+        placement: "top",
+      }}
+      title={() => "Search"}
+      body={(onClose) => (
+        <div className=" flex flex-col gap-4">
+          <div className=" flex items-center gap-2">
+            <Button
+              isIconOnly
+              onPress={handleSearch}
+              size="sm"
+              color="primary"
+              variant="flat"
+            >
+              <FaSearch />
+            </Button>
+            <Input
+              size="sm"
+              isClearable
+              className="flex-[7]"
+              placeholder="Search..."
+              autoCapitalize="off"
+              onKeyUp={handleKeyPress}
+              value={searchText}
+              onClear={() => setSearchText("")}
+              onValueChange={(value) => setSearchText(value)}
+            />
+
+            {searchType !== "people" && searchType !== "tags" && (
+              <Input
+                size="sm"
+                value={searchAuthor}
+                onValueChange={(value) => setSearchAuthor(value)}
+                onKeyUp={handleKeyPress}
+                autoCapitalize="off"
+                className=" flex-[3]"
+                placeholder="Author"
+              />
+            )}
+
+            {searchType === "tags" && (
+              <Input
+                size="sm"
+                value={searchTags}
+                autoCapitalize="off"
+                onValueChange={(value) => setSearchTags(value)}
+                onKeyUp={handleKeyPress}
+                className=" flex-[3]"
+                placeholder="Hashtag"
+              />
+            )}
+          </div>
+
+          <Tabs
+            variant={"light"}
+            radius={isMobile ? "full" : "sm"}
+            disableAnimation={isMobile}
+            size="sm"
+            onSelectionChange={(key) => {
+              setSearchType(key?.toString() as SearchTypes);
+            }}
+            aria-label="Search filters"
+          >
+            <Tab key="posts" title="Posts" />
+            <Tab key="comments" title="Comments" />
+            <Tab key="tags" title="Tag" />
+            <Tab key="people" title="People" />
+          </Tabs>
+
+          {isLoading && <LoadingCard />}
+
+          <InfiniteScroll
+            className="gap-2"
+            dataLength={rows?.length}
+            next={handleEndReached}
+            hasMore={rows?.length < (data?.length ?? 0)}
+            loader={<ListLoader />}
+            scrollableTarget="scrollDiv"
+            endMessage={
+              !isLoading && (
+                <EmptyList text={data ? undefined : "Search anything"} />
+              )
+            }
+          >
+            <div className=" flex flex-col gap-2 px-1">
+              {rows?.map((item, index) => {
+                const posting_json_metadata = JSON.parse(
+                  item?.posting_json_metadata || "{}"
+                );
+                return item?.["permlink"] ? (
+                  <div
+                    key={index}
+                    className="flex flex-col gap-2"
+                    onClick={onClose}
                   >
-                    <FaSearch />
-                  </Button>
-                  <Input
-                    size="sm"
-                    isClearable
-                    className="flex-[7]"
-                    placeholder="Search..."
-                    autoCapitalize="off"
-                    onKeyUp={handleKeyPress}
-                    value={searchText}
-                    onClear={() => setSearchText("")}
-                    onValueChange={(value) => setSearchText(value)}
-                  />
-
-                  {searchType !== "people" && searchType !== "tags" && (
-                    <Input
-                      size="sm"
-                      value={searchAuthor}
-                      onValueChange={(value) => setSearchAuthor(value)}
-                      onKeyUp={handleKeyPress}
-                      autoCapitalize="off"
-                      className=" flex-[3]"
-                      placeholder="Author"
-                    />
-                  )}
-
-                  {searchType === "tags" && (
-                    <Input
-                      size="sm"
-                      value={searchTags}
-                      autoCapitalize="off"
-                      onValueChange={(value) => setSearchTags(value)}
-                      onKeyUp={handleKeyPress}
-                      className=" flex-[3]"
-                      placeholder="Hashtag"
-                    />
-                  )}
-                </div>
-
-                <Tabs
-                  variant={"light"}
-                  radius={isMobile ? "full" : "sm"}
-                  disableAnimation={isMobile}
-                  size="sm"
-                  onSelectionChange={(key) => {
-                    setSearchType(key?.toString() as SearchTypes);
-                  }}
-                  aria-label="Search filters"
-                >
-                  <Tab key="posts" title="Posts" />
-                  <Tab key="comments" title="Comments" />
-                  <Tab key="tags" title="Tag" />
-                  <Tab key="people" title="People" />
-                </Tabs>
-
-                {isLoading && <LoadingCard />}
-
-                <InfiniteScroll
-                  className="gap-2"
-                  dataLength={rows?.length}
-                  next={handleEndReached}
-                  hasMore={rows?.length < (data?.length ?? 0)}
-                  loader={<ListLoader />}
-                  scrollableTarget="scrollDiv"
-                  endMessage={
-                    !isLoading && (
-                      <EmptyList text={data ? undefined : "Search anything"} />
-                    )
-                  }
-                >
-                  <div className=" flex flex-col gap-2 px-1">
-                    {rows?.map((item, index) => {
-                      const posting_json_metadata = JSON.parse(
-                        item?.posting_json_metadata || "{}"
-                      );
-                      return item?.["permlink"] ? (
-                        <div
-                          key={index}
-                          className="flex flex-col gap-2"
-                          onClick={onClose}
-                        >
-                          <CommentListLayout compact comment={item} isSearch />
-                        </div>
-                      ) : (
-                        <div
-                          key={index}
-                          className={`flex items-start h-full dark:bg-foreground/10
-                                                bg-white  overflow-hidden rounded-lg shadow-lg p-2 gap-4`}
-                        >
-                          <SAvatar
-                            onPress={onClose}
-                            className="cursor-pointer"
-                            size="sm"
-                            username={item?.name || ""}
-                          />
-                          <div className="flex flex-col items-start justify-center">
-                            <div className="flex items-start  gap-2">
-                              <div className=" flex-col items-start">
-                                <h4 className="text-sm font-semibold leading-none text-default-600">
-                                  {posting_json_metadata?.profile?.name}
-                                </h4>
-                                <h5
-                                  className={twMerge(
-                                    "text-sm tracking-tight text-default-500"
-                                  )}
-                                >
-                                  @{item?.name}
-                                </h5>
-                              </div>
-                              <Reputation reputation={item?.reputation} />
-                            </div>
-                            <div className="flex text-sm gap-1 text-default-600 items-center">
-                              <p className="text-default-500 text-tiny">
-                                Joined
-                              </p>
-                              <TimeAgoWrapper
-                                className="text-tiny"
-                                created={(item?.created || 0) * 1000}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
+                    <CommentListLayout compact comment={item} isSearch />
                   </div>
-                </InfiniteScroll>
-              </div>
-            </ModalBody>
-
-            <ModalFooter>
-              <Button color="danger" variant="flat" onPress={onClose} size="sm">
-                Close
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+                ) : (
+                  <div
+                    key={index}
+                    className={`flex items-start h-full dark:bg-foreground/10
+                                                bg-white  overflow-hidden rounded-lg shadow-lg p-2 gap-4`}
+                  >
+                    <SAvatar
+                      onPress={onClose}
+                      className="cursor-pointer"
+                      size="sm"
+                      username={item?.name || ""}
+                    />
+                    <div className="flex flex-col items-start justify-center">
+                      <div className="flex items-start  gap-2">
+                        <div className=" flex-col items-start">
+                          <h4 className="text-sm font-semibold leading-none text-default-600">
+                            {posting_json_metadata?.profile?.name}
+                          </h4>
+                          <h5
+                            className={twMerge(
+                              "text-sm tracking-tight text-default-500"
+                            )}
+                          >
+                            @{item?.name}
+                          </h5>
+                        </div>
+                        <Reputation reputation={item?.reputation} />
+                      </div>
+                      <div className="flex text-sm gap-1 text-default-600 items-center">
+                        <p className="text-default-500 text-tiny">Joined</p>
+                        <TimeAgoWrapper
+                          className="text-tiny"
+                          created={(item?.created || 0) * 1000}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </InfiniteScroll>
+        </div>
+      )}
+      footer={(onClose) => (
+        <Button color="danger" variant="flat" onPress={onClose} size="sm">
+          Cancel
+        </Button>
+      )}
+    />
   );
 }

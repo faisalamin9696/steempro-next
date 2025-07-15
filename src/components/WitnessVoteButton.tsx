@@ -1,26 +1,26 @@
 import { useAppSelector, useAppDispatch } from "@/constants/AppFunctions";
 import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { voteForWitness } from "@/libs/steem/condenser";
-import { getCredentials, getSessionKey } from "@/utils/user";
-import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
-import { Button } from "@heroui/button";
-
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
-import { BiSolidUpvote, BiUpvote } from "react-icons/bi";
 import { toast } from "sonner";
 import { useLogin } from "./auth/AuthProvider";
-import { useSession } from "next-auth/react";
-import KeychainButton from "./KeychainButton";
+import { twMerge } from "tailwind-merge";
+import ConfirmationPopup from "./ui/ConfirmationPopup";
 
-export default function WitnessVoteButton({ witness }: { witness: Witness }) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function WitnessVoteButton({
+  isVoted,
+  witness,
+  isDisabled,
+  className,
+}: {
+  isVoted: boolean;
+  witness: string;
+  isDisabled: boolean;
+  className?: string;
+}) {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const dispatch = useAppDispatch();
-  const { authenticateUser, isAuthorized } = useLogin();
-  const { data: session } = useSession();
-
-  const isVoted = loginInfo?.witness_votes?.includes(witness.name);
+  const { authenticateUserActive, isAuthorizedActive } = useLogin();
 
   const voteMutation = useMutation({
     mutationFn: (data: { key: string; isKeychain?: boolean }) =>
@@ -28,7 +28,7 @@ export default function WitnessVoteButton({ witness }: { witness: Witness }) {
         loginInfo,
         data.key,
         {
-          witness: witness.name,
+          witness: witness,
           approved: !isVoted,
         },
         data.isKeychain
@@ -43,7 +43,7 @@ export default function WitnessVoteButton({ witness }: { witness: Witness }) {
           saveLoginHandler({
             ...loginInfo,
             witness_votes: loginInfo.witness_votes.filter(
-              (item) => item !== witness.name
+              (item) => item !== witness
             ),
           })
         );
@@ -51,7 +51,7 @@ export default function WitnessVoteButton({ witness }: { witness: Witness }) {
         dispatch(
           saveLoginHandler({
             ...loginInfo,
-            witness_votes: [...loginInfo.witness_votes, witness.name],
+            witness_votes: [...loginInfo.witness_votes, witness],
           })
         );
       toast.success(isVoted ? "Witness Removed" : "Witness Approved");
@@ -59,12 +59,10 @@ export default function WitnessVoteButton({ witness }: { witness: Witness }) {
   });
 
   async function handleVote(isKeychain?: boolean) {
-    if (!isKeychain) {
-      authenticateUser();
-      if (!isAuthorized()) return;
+    const credentials = authenticateUserActive(isKeychain);
+    if (!isAuthorizedActive(credentials?.key)) {
+      return;
     }
-
-    const credentials = getCredentials(getSessionKey(session?.user?.name));
 
     if (!credentials?.key) {
       toast.error("Invalid credentials");
@@ -76,69 +74,28 @@ export default function WitnessVoteButton({ witness }: { witness: Witness }) {
       isKeychain: isKeychain || credentials.keychainLogin,
     });
   }
+
   return (
-    <Popover
-      isOpen={isOpen}
-      onOpenChange={(open) => setIsOpen(open)}
-      placement={"left"}
-    >
-      <PopoverTrigger>
-        <Button
-          isIconOnly
-          variant="flat"
-          isDisabled={voteMutation.isPending}
-          isLoading={voteMutation.isPending}
-          color={isVoted ? "success" : "default"}
-          radius="sm"
-          size="sm"
-        >
-          {isVoted ? (
-            <BiSolidUpvote className="text-xl" />
-          ) : (
-            <BiUpvote className="text-xl" />
-          )}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent>
-        <div className="px-1 py-2">
-          <div className="text-small font-bold">{"Confirmation"}</div>
-          <div className="text-tiny flex">
-            {isVoted
-              ? `Remove withness ${witness.name}?`
-              : `Approve witness ${witness.name}?`}
-          </div>
-
-          <div className=" flex flex-col items-start gap-2">
-            <div className="text-tiny flex mt-2 space-x-2">
-              <Button
-                onPress={() => setIsOpen(false)}
-                size="sm"
-                color="default"
-              >
-                Cancel
-              </Button>
-              <Button
-                size="sm"
-                color={isVoted ? "danger" : "success"}
-                variant="solid"
-                onPress={() => {
-                  setIsOpen(false);
-                  handleVote();
-                }}
-              >
-                {isVoted ? "Remove" : "Approve"}
-              </Button>
-            </div>
-
-            <KeychainButton
-              onPress={() => {
-                setIsOpen(false);
-                handleVote(true);
-              }}
-            />
-          </div>
-        </div>
-      </PopoverContent>
-    </Popover>
+    <ConfirmationPopup
+      popoverProps={{ placement: "left" }}
+      triggerProps={{
+        size: "sm",
+        color: isVoted ? "danger" : "default",
+        radius: "none",
+        className: twMerge(
+          `text-xs sm:text-sm px-2 sm:px-4 text-white`,
+          !isVoted && "bg-steem",
+          className
+        ),
+        isDisabled: isDisabled || voteMutation.isPending,
+        isLoading: voteMutation.isPending,
+      }}
+      buttonTitle={isVoted ? "Unvote" : "Vote"}
+      subTitle={
+        isVoted ? `Unvote withness ${witness}?` : `Vote witness ${witness}?`
+      }
+      onKeychainPress={() => handleVote(true)}
+      onConfirm={handleVote}
+    />
   );
 }

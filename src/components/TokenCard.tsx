@@ -8,6 +8,7 @@ import Image from "next/image";
 interface TokenCardProps {
   title: string;
   description?: string | React.ReactNode;
+  shortDesc?: string;
   endContent?: React.ReactNode;
   actionContent?: React.ReactNode;
   symbol?: string;
@@ -25,6 +26,7 @@ export const TokenCard = (props: TokenCardProps) => {
     actionContent,
     symbol,
     iconSrc,
+    shortDesc,
     handleInfoClick,
   } = props;
 
@@ -36,21 +38,30 @@ export const TokenCard = (props: TokenCardProps) => {
     <Card shadow="sm" key={tokenKey} className="px-2  dark:bg-foreground/10">
       <CardBody className=" justify-between flex flex-row max-lg:flex-col  gap-4">
         <div className="flex flex-col items-start gap-2 max-lg:flex-col w-full">
-          <div className="flex flex-row gap-1 items-center">
-            <div className=" flex flex-row gap-2 items-center">
-              {iconSrc && <Image alt="" width={35} height={35} src={iconSrc} />}
-              <p className="text-md font-bold">{title}</p>
-            </div>
+          <div className="flex flex-col gap-2 items-start">
+            <div className="flex flex-row gap-1 items-center">
+              <div className=" flex flex-row gap-2 items-start">
+                {iconSrc && (
+                  <Image alt="" width={35} height={35} src={iconSrc} />
+                )}
+                <div className=" space-y-1">
+                  <div className="flex flex-row items-center gap-1">
+                    <p className="text-md font-bold">{title}</p>
 
-            <Button
-              radius="full"
-              isIconOnly
-              size="sm"
-              variant="light"
-              onPress={handleInfo}
-            >
-              <BsInfoCircle className="text-sm" />
-            </Button>
+                    <Button
+                      radius="full"
+                      isIconOnly
+                      size="sm"
+                      variant="light"
+                      onPress={handleInfo}
+                    >
+                      <BsInfoCircle className="text-sm" />
+                    </Button>
+                  </div>
+                  <p className="text-sm text-default-400">{shortDesc}</p>
+                </div>
+              </div>
+            </div>
           </div>
           <div className="py-6 flex flex-col justify-between items-start  w-full">
             <div className="flex flex-row gap-2 items-start w-full justify-end">
@@ -84,20 +95,6 @@ export const TokenCard = (props: TokenCardProps) => {
               ) : null}
             </div>
           </div>
-          {/* <Accordion>
-                    <AccordionItem
-                        disableIndicatorAnimation
-                        classNames={{
-                            indicator: 'h-2 w-full items-center flex flex-col'
-                        }}
-                        key={description} isCompact
-                        indicator={({ isOpen }) => <div className='w-full flex flex-col items-center opacity-30 hover:opacity-100'>
-                            {isOpen ? <FaSortDown className=' text-lg mt-[-4px]' /> : <FaSortUp className=' text-lg' />}
-                        </div>}
-                    >
-                        <p>{description}</p>
-                    </AccordionItem>
-                </Accordion> */}
         </div>
       </CardBody>
     </Card>

@@ -4,13 +4,7 @@ import MainWrapper from "@/components/wrappers/MainWrapper";
 import CommunityCarousel from "@/components/carousal/CommunityCarousal";
 import CommunityHeader from "@/components/CommunityHeader";
 import CommunityInfoCard from "@/components/CommunityInfoCard";
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  useDisclosure,
-} from "@heroui/modal";
+import { useDisclosure } from "@heroui/modal";
 import CommunityChatModal from "@/components/chat/community/CommunityChatModal";
 import { toast } from "sonner";
 import { useAppSelector } from "@/constants/AppFunctions";
@@ -20,9 +14,11 @@ import { FaFire } from "react-icons/fa";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { MdInfo, MdNewLabel, MdPin } from "react-icons/md";
 import { Tab, Tabs } from "@heroui/tabs";
-import Link from "next/link";
 import FeedPatternSwitch from "@/components/FeedPatternSwitch";
 import { useParams, usePathname } from "next/navigation";
+import SModal from "@/components/ui/SModal";
+import { useEffect } from "react";
+import SLink from "@/components/ui/SLink";
 
 export default function CommunityPage({
   account,
@@ -44,6 +40,12 @@ export default function CommunityPage({
     useAppSelector((state) => state.communityReducer.values)[
       community.account
     ] ?? community;
+
+  useEffect(() => {
+    if (category === "roles") {
+      leadershipDisclosure.onOpenChange();
+    }
+  }, [category]);
 
   const communityTabs = [
     {
@@ -137,7 +139,7 @@ export default function CommunityPage({
             >
               {sortedCommunityTabs.map((tab) => (
                 <Tab
-                  as={Link}
+                  as={SLink}
                   href={`/${tab.key}/${"hive-" + tag}`}
                   key={`/${tab.key}/${"hive-" + tag}`}
                   title={
@@ -166,36 +168,22 @@ export default function CommunityPage({
           community={communityInfo}
         />
       )}
-
-      {leadershipDisclosure.isOpen && (
-        <Modal
-          isOpen={leadershipDisclosure.isOpen}
-          onOpenChange={leadershipDisclosure.onOpenChange}
-          placement="top-center"
-          scrollBehavior="inside"
-          closeButton
-          onClose={() => {
-            if (category === "roles")
-              history.replaceState({}, "", `/${"trending"}/${"hive-" + tag}`);
-          }}
-        >
-          <ModalContent>
-            {() => (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  {"Members"}
-                </ModalHeader>
-                <ModalBody>
-                  <CommunityMembers
-                    communityName={"hive-" + tag}
-                    community={communityInfo}
-                  />
-                </ModalBody>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-      )}
+      <SModal
+        modalProps={{ scrollBehavior: "inside" }}
+        isOpen={leadershipDisclosure.isOpen}
+        onOpenChange={leadershipDisclosure.onOpenChange}
+        title={() => "Members"}
+        onClose={() => {
+          if (category === "roles")
+            history.replaceState({}, "", `/${"trending"}/${"hive-" + tag}`);
+        }}
+        body={() => (
+          <CommunityMembers
+            communityName={"hive-" + tag}
+            community={communityInfo}
+          />
+        )}
+      />
     </div>
   );
 }

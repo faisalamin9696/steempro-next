@@ -4,9 +4,9 @@ import React from "react";
 import { Tab, Tabs } from "@heroui/tabs";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { twMerge } from "tailwind-merge";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ProfileTabPage from "../ProfileTabPage";
+import SLink from "@/components/ui/SLink";
 
 interface Props {
   username: string;
@@ -59,7 +59,7 @@ export default function PostsTab(props: Props) {
       >
         {profileTabs.map((tab) => (
           <Tab
-            as={Link}
+            as={SLink}
             key={`/@${username}/${tab.key}`}
             title={tab.title}
             href={`/@${username}/${tab.key}`}

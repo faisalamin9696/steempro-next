@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Textarea } from "@heroui/input";
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-} from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { Checkbox } from "@heroui/checkbox";
 import { Input } from "@heroui/input";
@@ -14,7 +7,6 @@ import { Select, SelectItem } from "@heroui/select";
 import SAvatar from "./ui/SAvatar";
 import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
 import { toast } from "sonner";
-import { useSession } from "next-auth/react";
 import { useLogin } from "./auth/AuthProvider";
 import { useMutation } from "@tanstack/react-query";
 import {
@@ -24,13 +16,13 @@ import {
   transferToVesting,
 } from "@/libs/steem/condenser";
 import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
-import { getCredentials, getSessionKey } from "@/utils/user";
 import moment from "moment";
 import { steemToVest, vestToSteem } from "@/utils/helper/vesting";
 import { isNumeric } from "@/utils/helper";
 import { validate_account_name } from "@/utils/chainValidation";
 import KeychainButton from "./KeychainButton";
 import { twMerge } from "tailwind-merge";
+import SModal from "./ui/SModal";
 
 type AssetTypes = "STEEM" | "SBD" | "VESTS";
 
@@ -83,8 +75,7 @@ const TransferModal = (props: Props): React.ReactNode => {
 
   const dispatch = useAppDispatch();
   const [confirmCheck, setConfirmCheck] = useState(false);
-  const { data: session } = useSession();
-  const { authenticateUser, isAuthorized } = useLogin();
+  const { isAuthorizedActive, authenticateUserActive } = useLogin();
 
   let [from, setFrom] = useState(loginInfo.name);
   let [to, setTo] = useState(
@@ -306,14 +297,11 @@ const TransferModal = (props: Props): React.ReactNode => {
       return;
     }
 
-    if (!isKeychain) {
-      authenticateUser();
-      if (!isAuthorized()) {
-        return;
-      }
+    const credentials = authenticateUserActive(isKeychain);
+    if (!isAuthorizedActive(credentials?.key)) {
+      return;
     }
 
-    const credentials = getCredentials(getSessionKey(session?.user?.name));
     if (!credentials?.key) {
       toast.error("Invalid credentials");
       return;
@@ -395,175 +383,176 @@ const TransferModal = (props: Props): React.ReactNode => {
     : `Transfer to ${savings ? "Savings" : "Account"}`;
 
   return (
-    <Modal
+    <SModal
       isOpen={isOpen}
-      placement="center"
-      hideCloseButton
-      isDismissable={false}
       onOpenChange={onOpenChange}
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
-            <ModalBody className=" flex flex-col gap-6">
-              <div className="flex gap-2 items-center">
-                <Input
-                  label="From"
-                  size="sm"
-                  isReadOnly
-                  autoCapitalize="off"
-                  isRequired
-                  value={from}
-                  onValueChange={setFrom}
-                  endContent={<SAvatar size="xs" username={from} />}
-                />
-                {(!basic || delegation) && (
-                  <Input
-                    isRequired
-                    label="To"
-                    size="sm"
-                    autoCapitalize="off"
-                    value={to}
-                    onValueChange={setTo}
-                    isDisabled={!!oldDelegation || !!isRemove || isPending}
-                    endContent={<SAvatar size="xs" username={toImage} />}
-                  />
-                )}
-              </div>
-
+      modalProps={{
+        placement: "center",
+        isDismissable: false,
+        hideCloseButton: true,
+      }}
+      title={() => title}
+      body={() => (
+        <div className="flex flex-col gap-6">
+          <div className="flex gap-2 items-center">
+            <Input
+              label="From"
+              size="sm"
+              isReadOnly
+              autoCapitalize="off"
+              isRequired
+              value={from}
+              onValueChange={setFrom}
+              endContent={<SAvatar size="xs" username={from} />}
+            />
+            {(!basic || delegation) && (
               <Input
                 isRequired
-                label="Amount"
+                label="To"
                 size="sm"
-                value={amount}
-                onValueChange={setAmount}
-                type="number"
-                min={0}
-                isDisabled={!!isRemove}
-                step={0.001}
-                endContent={
-                  <Select
-                    aria-label="Select asset"
-                    variant="flat"
-                    onChange={(key) => {
-                      setAsset(key.target.value as AssetTypes);
-                    }}
-                    selectedKeys={[asset]}
-                    isDisabled={powewrup || delegation || isPending}
-                    size="sm"
-                    placeholder="Asset"
-                    className=" max-w-[100px]"
-                    selectorIcon={delegation && <></>}
-                    classNames={{
-                      value: "text-tiny",
-                      innerWrapper: delegation ? "w-15" : " w-10",
-                    }}
-                  >
-                    <SelectItem className="text-xs" key={"STEEM"}>
-                      {"STEEM"}
-                    </SelectItem>
-                    <SelectItem key={"SBD"}>{"SBD"}</SelectItem>
-                    <SelectItem
-                      key={"VESTS"}
-                      className={twMerge(delegation ? "block" : "hidden")}
-                    >
-                      {"STEEM POWER"}
-                    </SelectItem>
-                  </Select>
-                }
-                description={
-                  <div className="ps-1 flex flex-row gap-4 items-center">
-                    <p>Available balance: </p>
-                    <button
-                      className=" font-mono"
-                      onClick={() => {
-                        setAmount(availableBalance?.toFixed(3)?.toString());
-                      }}
-                    >
-                      {availableBalance?.toLocaleString()}{" "}
-                      {delegation ? "SP" : asset}
-                    </button>
-                  </div>
-                }
+                autoCapitalize="off"
+                value={to}
+                onValueChange={setTo}
+                isDisabled={!!oldDelegation || !!isRemove || isPending}
+                endContent={<SAvatar size="xs" username={toImage} />}
               />
+            )}
+          </div>
 
-              {!savings && !powewrup && !delegation && (
-                <Textarea
-                  spellCheck={"false"}
-                  value={memo}
-                  onValueChange={setMemo}
-                  label="Memo"
-                />
-              )}
-
-              <Checkbox
+          <Input
+            isRequired
+            label="Amount"
+            size="sm"
+            value={amount}
+            onValueChange={setAmount}
+            type="number"
+            min={0}
+            isDisabled={!!isRemove}
+            step={0.001}
+            endContent={
+              <Select
+                aria-label="Select asset"
+                variant="flat"
+                onChange={(key) => {
+                  setAsset(key.target.value as AssetTypes);
+                }}
+                disallowEmptySelection
+                selectedKeys={[asset]}
+                isDisabled={powewrup || delegation || isPending}
                 size="sm"
-                isSelected={confirmCheck}
-                isDisabled={isPending}
-                onValueChange={setConfirmCheck}
+                placeholder="Asset"
+                className=" max-w-[100px]"
+                selectorIcon={delegation && <></>}
+                classNames={{
+                  value: "text-tiny",
+                  innerWrapper: delegation ? "w-15" : " w-10",
+                }}
               >
-                Confirm{" "}
-                {powewrup
-                  ? "Power Up"
-                  : isRemove
-                  ? "Remove"
-                  : delegation
-                  ? "Delegation"
-                  : `Transfer`}
-              </Checkbox>
-            </ModalBody>
-            <ModalFooter className=" justify-between">
-              <KeychainButton
-                isDisabled={!confirmCheck || isPending}
-                onPress={() => handleTransfer(true)}
-              />
-
-              <div className=" flex items-center gap-2">
-                <Button
-                  size="sm"
-                  color="danger"
-                  variant="light"
-                  onPress={onClose}
-                  isDisabled={isPending}
+                <SelectItem className="text-xs" key={"STEEM"}>
+                  {"STEEM"}
+                </SelectItem>
+                <SelectItem key={"SBD"}>{"SBD"}</SelectItem>
+                <SelectItem
+                  key={"VESTS"}
+                  className={twMerge(delegation ? "block" : "hidden")}
                 >
-                  Cancel
-                </Button>
-
-                {(savings || powewrup) && (
-                  <Button
-                    size="sm"
-                    onPress={() => setBasic(!basic)}
-                    variant="flat"
-                    isDisabled={isPending}
-                  >
-                    {basic ? "Advance" : "Basic"}
-                  </Button>
-                )}
-
-                <Button
-                  size="sm"
-                  color="primary"
-                  onPress={() => handleTransfer()}
-                  isLoading={isPending}
-                  isDisabled={!confirmCheck || isPending}
+                  {"STEEM POWER"}
+                </SelectItem>
+              </Select>
+            }
+            description={
+              <div className="ps-1 flex flex-row gap-4 items-center">
+                <p>Available balance: </p>
+                <button
+                  className=" font-mono"
+                  onClick={() => {
+                    setAmount(availableBalance?.toFixed(3)?.toString());
+                  }}
                 >
-                  {delegation
-                    ? isRemove
-                      ? "Remove"
-                      : !!oldDelegation
-                      ? "Update"
-                      : "Delegate"
-                    : powewrup
-                    ? "Power Up"
-                    : "Transfer"}
-                </Button>
+                  {availableBalance?.toLocaleString()}{" "}
+                  {delegation ? "SP" : asset}
+                </button>
               </div>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+            }
+          />
+
+          {!savings && !powewrup && !delegation && (
+            <Textarea
+              spellCheck={"false"}
+              value={memo}
+              onValueChange={setMemo}
+              label="Memo"
+            />
+          )}
+          <div className="flex flex-row justify-between">
+            <Checkbox
+              size="sm"
+              isSelected={confirmCheck}
+              isDisabled={isPending}
+              onValueChange={setConfirmCheck}
+            >
+              Confirm{" "}
+              {powewrup
+                ? "Power Up"
+                : isRemove
+                ? "Remove"
+                : delegation
+                ? "Delegation"
+                : `Transfer`}
+            </Checkbox>
+          </div>
+        </div>
+      )}
+      footer={(onClose) => (
+        <div className="flex flex-row w-full justify-between items-center">
+          <KeychainButton
+            isDisabled={!confirmCheck || isPending}
+            onPress={() => handleTransfer(true)}
+          />
+
+          <div className=" flex flex-row items-center gap-2">
+            <Button
+              size="sm"
+              color="danger"
+              variant="light"
+              onPress={onClose}
+              isDisabled={isPending}
+            >
+              Cancel
+            </Button>
+
+            {(savings || powewrup) && (
+              <Button
+                size="sm"
+                onPress={() => setBasic(!basic)}
+                variant="flat"
+                isDisabled={isPending}
+              >
+                {basic ? "Advance" : "Basic"}
+              </Button>
+            )}
+
+            <Button
+              size="sm"
+              color="primary"
+              onPress={() => handleTransfer()}
+              isLoading={isPending}
+              isDisabled={!confirmCheck || isPending}
+            >
+              {delegation
+                ? isRemove
+                  ? "Remove"
+                  : !!oldDelegation
+                  ? "Update"
+                  : "Delegate"
+                : powewrup
+                ? "Power Up"
+                : "Transfer"}
+            </Button>
+          </div>
+        </div>
+      )}
+    />
   );
 };
 

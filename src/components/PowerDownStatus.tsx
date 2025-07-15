@@ -85,7 +85,7 @@ const PowerDownStatus = ({ account, onUpdate }: PowerDownStatusProps) => {
             <Chip
               color="secondary"
               variant="flat"
-              className="bg-orange-200 text-orange-800 hover:bg-orange-100"
+              className="bg-orange-200 text-orange-800"
             >
               <div className="flex flex-row items-center gap-2">
                 <BsArrowDown className="w-3 h-3 mr-1" />

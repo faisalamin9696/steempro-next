@@ -1,5 +1,4 @@
 import { useAppSelector } from "@/constants/AppFunctions";
-import { addCommentHandler } from "@/hooks/redux/reducers/CommentReducer";
 import {
   setUserRole,
   setUserRoleTitle,
@@ -7,13 +6,6 @@ import {
 } from "@/libs/steem/condenser";
 import { Role } from "@/utils/community";
 import { Select, SelectItem } from "@heroui/select";
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-} from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { useMutation } from "@tanstack/react-query";
@@ -25,6 +17,7 @@ import { useSession } from "next-auth/react";
 import { validate_account_name } from "@/utils/chainValidation";
 import { getResizedAvatar } from "@/utils/parseImage";
 import { Avatar } from "@heroui/avatar";
+import SModal from "./ui/SModal";
 
 interface Props {
   community: Community;
@@ -225,81 +218,70 @@ export default function AddRoleModal(props: Props) {
     roleMutation.isPending ||
     titleMutation.isPending ||
     roleTitleMutation.isPending;
+
   return (
-    <Modal
+    <SModal
       isOpen={isOpen}
-      hideCloseButton
-      isDismissable={!isPending}
       onOpenChange={onOpenChange}
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              Set role, title
-            </ModalHeader>
-            <ModalBody>
-              <div className="flex flex-col gap-4">
-                <Input
-                  className="w-full"
-                  maxLength={32}
-                  label="Username"
-                  size="sm"
-                  classNames={{ base: "items-center" }}
-                  value={username}
-                  onValueChange={setUsername}
-                  endContent={
-                    <Avatar src={getResizedAvatar(avatar)} size="sm" />
-                  }
-                />
+      title={() => "Set role, title"}
+      modalProps={{ hideCloseButton: true, isDismissable: !isPending }}
+      body={() => (
+        <div className="flex flex-col gap-4">
+          <Input
+            className="w-full"
+            maxLength={32}
+            label="Username"
+            size="sm"
+            classNames={{ base: "items-center" }}
+            value={username}
+            onValueChange={setUsername}
+            endContent={<Avatar src={getResizedAvatar(avatar)} size="sm" />}
+          />
 
-                <Input
-                  className="w-full"
-                  maxLength={32}
-                  label="Title"
-                  size="sm"
-                  classNames={{ base: "items-center" }}
-                  value={title}
-                  onValueChange={setTitle}
-                />
+          <Input
+            className="w-full"
+            maxLength={32}
+            label="Title"
+            size="sm"
+            classNames={{ base: "items-center" }}
+            value={title}
+            onValueChange={setTitle}
+          />
 
-                <Select
-                  size="sm"
-                  aria-label="Select role"
-                  items={items}
-                  label="Role"
-                  className="max-w-xs"
-                  defaultSelectedKeys={[role]}
-                  onChange={handleRoleSelectionChange}
-                  classNames={{ base: "items-center" }}
-                >
-                  {(item) => (
-                    <SelectItem key={item.value}>{item.item}</SelectItem>
-                  )}
-                </Select>
-              </div>
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                color="danger"
-                isDisabled={isPending}
-                variant="light"
-                onPress={onClose}
-              >
-                Close
-              </Button>
-              <Button
-                color="primary"
-                isDisabled={isPending}
-                isLoading={isPending}
-                onPress={handleUpdate}
-              >
-                Update
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+          <Select
+            size="sm"
+            aria-label="Select role"
+            items={items}
+            label="Role"
+            className="max-w-xs"
+            defaultSelectedKeys={[role]}
+            onChange={handleRoleSelectionChange}
+            classNames={{ base: "items-center" }}
+          >
+            {(item) => <SelectItem key={item.value}>{item.item}</SelectItem>}
+          </Select>
+        </div>
+      )}
+      footer={(onClose) => (
+        <>
+          <Button
+            color="danger"
+            isDisabled={isPending}
+            variant="light"
+            onPress={onClose}
+          >
+            Close
+          </Button>
+          <Button
+            color="primary"
+            isDisabled={isPending}
+            isLoading={isPending}
+            onPress={handleUpdate}
+          >
+            Update
+          </Button>
+        </>
+      )}
+    />
   );
 }

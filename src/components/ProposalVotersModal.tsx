@@ -1,5 +1,4 @@
 import { useAppSelector } from "@/constants/AppFunctions";
-import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
 import React, { useEffect, useState } from "react";
 import { getProposalVotes } from "@/libs/steem/condenser";
 import useSWR from "swr";
@@ -11,7 +10,7 @@ import LoadingCard from "./LoadingCard";
 import TableWrapper from "./wrappers/TableWrapper";
 import { simpleVotesToSp } from "./ProposalItemCard";
 import { twMerge } from "tailwind-merge";
-import Link from "next/link";
+import SModal from "./ui/SModal";
 
 interface Props {
   proposal: Proposal;
@@ -188,7 +187,7 @@ export default function ProposalVotersModal(props: Props) {
         account.proxy && allRows.some((row) => row.name === account.proxy);
 
       const title = isInvalidProxy
-        ? `proxy to @${account.proxy}\n${account.proxy} who didn't vote`
+        ? `proxy to @${account.proxy}\n who didn't vote`
         : isValidProxy
         ? `Proxy to @${account.proxy}`
         : undefined;
@@ -199,12 +198,24 @@ export default function ProposalVotersModal(props: Props) {
               <div className="flex flex-col gap-2">
                 <div className="flex gap-2 items-center">
                   <SAvatar size="xs" username={account.name} />
-                  <SLink
-                    className=" hover:text-blue-500"
-                    href={`/@${account.name}`}
-                  >
-                    {account.name}
-                  </SLink>
+
+                  <div className="flex flex-col gap-1">
+                    <SLink
+                      className=" hover:text-blue-500"
+                      href={`/@${account.name}`}
+                    >
+                      {account.name}
+                    </SLink>
+
+                    <p
+                      className={twMerge(
+                        "text-xs text-default-500",
+                        isInvalidProxy && "text-warning-500"
+                      )}
+                    >
+                      {title}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -262,75 +273,66 @@ export default function ProposalVotersModal(props: Props) {
   );
 
   return (
-    <Modal
-      size="xl"
+    <SModal
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      placement="center"
-      scrollBehavior="inside"
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-2">
-              <div className=" flex flex-row gap-2 items-center">
-                <p>Voters</p>
-                <div className="text-xs opacity-disabled flex flex-row items-center gap-1">
-                  <p>Proposal</p>
-                  <Link
-                    className=" hover:text-blue-500"
-                    href={`/proposals/${proposal.id}`}
-                  >
-                    #{proposal.id}
-                  </Link>
-                </div>
-              </div>
-              <div className="text-tiny font-normal flex flex-col gap-1">
-                <p
-                  title="Direct votes from voters"
-                  className="opacity-disabled"
-                >
-                  Effective votes:{" "}
-                  {totalEffVotes.votes.toLocaleString() + " SP"} (
-                  {totalEffVotes.voters})
-                </p>
-                <p
-                  title="Voters witness proxy didn't vote"
-                  className="opacity-disabled"
-                >
-                  Non-effective votes:{" "}
-                  {totalNonEffVotes.votes.toLocaleString() + " SP"} (
-                  {totalNonEffVotes.voters})
-                </p>
-              </div>
-            </ModalHeader>
-            <ModalBody>
-              {isLoading ? (
-                <LoadingCard />
-              ) : (
-                allRows && (
-                  <TableWrapper
-                    filterValue={filterValue}
-                    isCompact={false}
-                    hidePaginationActions
-                    initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
-                    tableColumns={columns}
-                    filteredItems={filteredItems}
-                    onFilterValueChange={setFilterValue}
-                    renderCell={renderCell}
-                    mobileVisibleColumns={["name", "vests_own", "share"]}
-                    baseVarient
-                    sortDescriptor={{
-                      column: "share",
-                      direction: "descending",
-                    }}
-                  />
-                )
-              )}
-            </ModalBody>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+      modalProps={{ scrollBehavior: "inside", size: "xl" }}
+      title={() => (
+        <div className=" flex flex-row gap-2 items-center">
+          <p>Voters</p>
+          <div className="text-sm opacity-disabled flex flex-row items-center gap-1">
+            <p>Proposal</p>
+            <SLink
+              className=" hover:text-blue-500"
+              href={`/proposals/${proposal.id}`}
+            >
+              #{proposal.id}
+            </SLink>
+          </div>
+        </div>
+      )}
+      subTitle={() => (
+        <div className="text-sm font-normal flex flex-col gap-1">
+          <p title="Direct votes from voters" className="opacity-disabled">
+            Effective votes: {totalEffVotes.votes.toLocaleString() + " SP"} (
+            {totalEffVotes.voters})
+          </p>
+          <p
+            title="Voters witness proxy didn't vote"
+            className="opacity-disabled"
+          >
+            Non-effective votes:{" "}
+            {totalNonEffVotes.votes.toLocaleString() + " SP"} (
+            {totalNonEffVotes.voters})
+          </p>
+        </div>
+      )}
+      body={() => (
+        <>
+          {isLoading ? (
+            <LoadingCard />
+          ) : (
+            allRows && (
+              <TableWrapper
+                filterValue={filterValue}
+                isCompact={false}
+                hidePaginationActions
+                initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
+                tableColumns={columns}
+                filteredItems={filteredItems}
+                onFilterValueChange={setFilterValue}
+                renderCell={renderCell}
+                mobileVisibleColumns={["name", "vests_own", "share"]}
+                baseVarient
+                sortDescriptor={{
+                  column: "share",
+                  direction: "descending",
+                }}
+              />
+            )
+          )}
+        </>
+      )}
+    />
   );
 }

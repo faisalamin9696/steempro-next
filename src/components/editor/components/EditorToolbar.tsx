@@ -1,21 +1,9 @@
-import {
-  FaQuoteLeft,
-  FaItalic,
-  FaBold,
-  FaLink,
-  FaHeading,
-  FaCode,
-  FaTable,
-  FaStar,
-} from "react-icons/fa";
-import { Button } from "@heroui/button";
 
 import {
   LuHeading1,
   LuHeading2,
   LuHeading3,
   LuHeading4,
-  LuLetterText,
 } from "react-icons/lu";
 
 import {
@@ -24,10 +12,26 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@heroui/dropdown";
-import { BsImage, BsJustify, BsTextCenter } from "react-icons/bs";
 import { ToolbarItem } from "./EditorToolbarItem";
 import { Tooltip } from "@heroui/tooltip";
 import { twMerge } from "tailwind-merge";
+import { RiCollapseDiagonalFill } from "react-icons/ri";
+import { PiClipboardText, PiFilesFill } from "react-icons/pi";
+import {
+  TbAlignCenter,
+  TbAlignJustified,
+  TbBold,
+  TbCode,
+  TbHeading,
+  TbItalic,
+  TbLink,
+  TbQuote,
+  TbTable,
+} from "react-icons/tb";
+import { BiImageAdd } from "react-icons/bi";
+import { Divider } from "@heroui/divider";
+import { GrMultiple } from "react-icons/gr";
+import { AiOutlineFileSearch } from "react-icons/ai";
 
 interface ToolbarProps {
   onSelect: any;
@@ -46,7 +50,7 @@ const EditorToolbar = (props: ToolbarProps) => {
       isDisabled={isDisabled}
       shadow="sm"
       size="sm"
-      className="min-w-0"
+      className="min-w-0 "
       placement="bottom-end"
     >
       <Tooltip
@@ -56,18 +60,18 @@ const EditorToolbar = (props: ToolbarProps) => {
         size="sm"
         content="Headings"
       >
-        <div>
+        <div className="flex flex-col">
           <DropdownTrigger>
-            <Button isIconOnly size="sm">
-              <FaHeading className="text-lg rounded-none" />
-            </Button>
+            <button className="hover:bg-foreground/15 rounded-md p-[2px]">
+              <TbHeading size={22} />
+            </button>
           </DropdownTrigger>
         </div>
       </Tooltip>
 
       <DropdownMenu
         variant="faded"
-        className="rounded-xl"
+        className="rounded-xl "
         onAction={(key) => {
           onSelect(key);
         }}
@@ -127,142 +131,153 @@ const EditorToolbar = (props: ToolbarProps) => {
   return (
     <div className={twMerge(className)}>
       <div className="flex flex-row items-center max-sm:flex-col max-sm:items-start w-full gap-1 max-sm:gap-2 overflow-auto scrollbar-thin">
-        <div className=" flex gap-1 items-center flex-wrap">
-          <div title="Headings">{HeadingItem}</div>
+        <div className="flex flex-row  w-full py-1 justify-between items-start ">
+          <div className=" flex flex-row gap-2 items-center flex-wrap transition-all">
+            <div title="Headings" className="flex flex-col items-end">
+              {HeadingItem}
+            </div>
 
-          <ToolbarItem
-            tooltip={{
-              description: "Bold",
-              shortcut: `${masterKey + "B"}`,
-            }}
-            isDisabled={isDisabled}
-            onSelect={() => {
-              onSelect("b");
-            }}
-            IconType={FaBold}
-          />
-
-          <ToolbarItem
-            tooltip={{
-              description: "Italic",
-              shortcut: `${masterKey + "i"}`,
-            }}
-            isDisabled={isDisabled}
-            onSelect={() => {
-              onSelect("i");
-            }}
-            IconType={FaItalic}
-          />
-
-          <ToolbarItem
-            tooltip={{
-              description: "Quote",
-              shortcut: `${masterKey + "Q"}`,
-            }}
-            isDisabled={isDisabled}
-            onSelect={() => {
-              onSelect("q");
-            }}
-            IconType={FaQuoteLeft}
-          />
-
-          <ToolbarItem
-            tooltip={{
-              description: "Code",
-              shortcut: `${masterKey + "C"}`,
-            }}
-            isDisabled={isDisabled}
-            onSelect={() => {
-              onSelect("code");
-            }}
-            IconType={FaCode}
-          />
-
-          <ToolbarItem
-            tooltip={{
-              description: "Table",
-              shortcut: `${masterKey + "T"}`,
-            }}
-            isDisabled={isDisabled}
-            onSelect={() => {
-              onSelect("table");
-            }}
-            IconType={FaTable}
-          />
-
-          <ToolbarItem
-            tooltip={{
-              description: "Link",
-              shortcut: `${masterKey + "Q"}`,
-            }}
-            isDisabled={isDisabled}
-            onSelect={() => {
-              onSelect("link");
-            }}
-            IconType={FaLink}
-          />
-
-          <ToolbarItem
-            tooltip={{
-              description: "Image",
-              shortcut: `${masterKey + "D"}`,
-            }}
-            isDisabled={isDisabled}
-            onSelect={() => {
-              onSelect("image");
-            }}
-            IconType={BsImage}
-          />
-
-          <ToolbarItem
-            tooltip={{
-              description: "Justify",
-              shortcut: `${masterKey + "J"}`,
-            }}
-            isDisabled={isDisabled}
-            onSelect={() => {
-              onSelect("justify");
-            }}
-            IconType={BsJustify}
-          />
-
-          <ToolbarItem
-            tooltip={{
-              description: "Center",
-              shortcut: `${masterKey + "E"}`,
-            }}
-            isDisabled={isDisabled}
-            onSelect={() => {
-              onSelect("center");
-            }}
-            IconType={BsTextCenter}
-          />
-
-          {!isSnipping && (
             <ToolbarItem
               tooltip={{
-                description: "Snippet",
-                shortcut: `${masterKey + "X"}`,
+                description: "Bold",
+                shortcut: `${masterKey + "B"}`,
               }}
               isDisabled={isDisabled}
               onSelect={() => {
-                onSelect("snippet");
+                onSelect("b");
               }}
-              IconType={LuLetterText}
+              IconType={TbBold}
             />
-          )}
 
-          <ToolbarItem
-            tooltip={{
-              description: "Add Spoiler",
-              shortcut: ``,
-            }}
-            isDisabled={isDisabled}
-            onSelect={() => {
-              onSelect("spoiler");
-            }}
-            IconType={FaStar}
-          />
+            <ToolbarItem
+              tooltip={{
+                description: "Italic",
+                shortcut: `${masterKey + "i"}`,
+              }}
+              isDisabled={isDisabled}
+              onSelect={() => {
+                onSelect("i");
+              }}
+              IconType={TbItalic}
+            />
+
+            <ToolbarItem
+              tooltip={{
+                description: "Quote",
+                shortcut: `${masterKey + "Q"}`,
+              }}
+              isDisabled={isDisabled}
+              onSelect={() => {
+                onSelect("q");
+              }}
+              IconType={TbQuote}
+            />
+
+            <ToolbarItem
+              tooltip={{
+                description: "Code",
+                shortcut: `${masterKey + "C"}`,
+              }}
+              isDisabled={isDisabled}
+              onSelect={() => {
+                onSelect("code");
+              }}
+              IconType={TbCode}
+            />
+
+            <Divider orientation="vertical" className="h-4 hidden sm:block" />
+
+            <ToolbarItem
+              tooltip={{
+                description: "Table",
+                shortcut: `${masterKey + "T"}`,
+              }}
+              isDisabled={isDisabled}
+              onSelect={() => {
+                onSelect("table");
+              }}
+              IconType={TbTable}
+            />
+
+            <ToolbarItem
+              tooltip={{
+                description: "Link",
+                shortcut: `${masterKey + "Q"}`,
+              }}
+              isDisabled={isDisabled}
+              onSelect={() => {
+                onSelect("link");
+              }}
+              IconType={TbLink}
+            />
+
+            <ToolbarItem
+              tooltip={{
+                description: "Image",
+                shortcut: `${masterKey + "D"}`,
+              }}
+              isDisabled={isDisabled}
+              onSelect={() => {
+                onSelect("image");
+              }}
+              IconType={BiImageAdd}
+            />
+
+            <Divider orientation="vertical" className="h-4 hidden sm:block" />
+
+            <ToolbarItem
+              tooltip={{
+                description: "Justify",
+                shortcut: `${masterKey + "J"}`,
+              }}
+              isDisabled={isDisabled}
+              onSelect={() => {
+                onSelect("justify");
+              }}
+              IconType={TbAlignJustified}
+            />
+
+            <ToolbarItem
+              tooltip={{
+                description: "Center",
+                shortcut: `${masterKey + "E"}`,
+              }}
+              isDisabled={isDisabled}
+              onSelect={() => {
+                onSelect("center");
+              }}
+              IconType={TbAlignCenter}
+            />
+
+            <Divider orientation="vertical" className="h-4 hidden sm:block" />
+
+            <ToolbarItem
+              tooltip={{
+                description: "Add Spoiler",
+                shortcut: ``,
+              }}
+              isDisabled={isDisabled}
+              onSelect={() => {
+                onSelect("spoiler");
+              }}
+              IconType={RiCollapseDiagonalFill}
+            />
+          </div>
+          <div>
+            {!isSnipping && (
+              <ToolbarItem
+                tooltip={{
+                  description: "Snippet & Template",
+                  shortcut: `${masterKey + "X"}`,
+                }}
+                isDisabled={isDisabled}
+                onSelect={() => {
+                  onSelect("snippet");
+                }}
+                IconType={AiOutlineFileSearch  }
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -51,14 +51,23 @@ import ScheduleModal from "@/components/ScheduleModal";
 import { IoClose } from "react-icons/io5";
 import { ZonedDateTime } from "@internationalized/date";
 import { CustomEvent } from "@piwikpro/react-piwik-pro";
-import { cryptoUtils, Signature } from "@steempro/dsteem";
+import { Authority, cryptoUtils, Signature } from "@steempro/dsteem";
 import { AsyncUtils } from "@/utils/async.utils";
-import { useAppSelector } from "@/constants/AppFunctions";
+import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
 import EditorInput from "@/components/editor/EditorInput";
 import { twMerge } from "tailwind-merge";
 import { getPostDraft, savePostDraft } from "@/utils/draft";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
+import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 
+export function hasSteemProPostingAuthority(
+  authority: Authority["account_auths"]
+): boolean {
+  return authority.some(
+    ([account, weight]) =>
+      account === AppStrings.official_account && weight === 1
+  );
+}
 interface Props {
   params?: {
     oldPost?: Post;
@@ -103,9 +112,15 @@ export default function SubmitPage(props: Props) {
   const [isPicker, setIsPicker] = useState(false);
   const [dateTime, setDateTime] = useState<ZonedDateTime | null>();
   const isLoading = isPosting || isScheduling;
+  const dispatch = useAppDispatch();
 
   // const [openAuth, setOpenAuth] = useState(false);
-  const { authenticateUser, isAuthorized } = useLogin();
+  const {
+    authenticateUser,
+    isAuthorized,
+    isAuthorizedActive,
+    authenticateUserActive,
+  } = useLogin();
 
   const pathname = usePathname();
   const splitted_path = pathname.split("/");
@@ -494,17 +509,27 @@ export default function SubmitPage(props: Props) {
       return;
     }
 
-    authenticateUser();
-
-    if (!isAuthorized()) {
-      return;
-    }
-
     try {
-      const credentials = getCredentials(getSessionKey(session?.user?.name));
+      let credentials: User | undefined;
+
+      if (hasSteemProPostingAuthority(loginInfo.posting_account_auths)) {
+        authenticateUser();
+
+        if (!isAuthorized()) {
+          return;
+        }
+
+        credentials = getCredentials(getSessionKey(session?.user?.name));
+      } else {
+        credentials = authenticateUserActive();
+
+        if (!isAuthorizedActive(credentials?.key)) {
+          return;
+        }
+      }
+
       if (!credentials?.key) {
-        toast.error("Invalid credentials");
-        return;
+        return toast.error("Invalid credentials");
       }
 
       let parent_permlink = _tags[0] || "steempro";
@@ -535,6 +560,17 @@ export default function SubmitPage(props: Props) {
         credentials.keychainLogin
       )
         .then(() => {
+          if (!hasSteemProPostingAuthority(loginInfo.posting_account_auths)) {
+            dispatch(
+              saveLoginHandler({
+                ...loginInfo,
+                posting_account_auths: loginInfo.posting_account_auths.concat([
+                  AppStrings.official_account,
+                  1,
+                ]),
+              })
+            );
+          }
           if (credentials.keychainLogin) {
             const hash = cryptoUtils.sha256(loginInfo.name);
 
@@ -593,7 +629,7 @@ export default function SubmitPage(props: Props) {
     >
       <div
         className={twMerge(
-          `flex flex-col w-full  gap-2`,
+          `flex flex-col w-full gap-2`,
           !oldPost &&
             "1md:w-[50%] 1md:float-start 1md:sticky 1md:z-[1] 1md:self-start 1md:top-[80px] pb-5"
         )}
@@ -615,7 +651,7 @@ export default function SubmitPage(props: Props) {
             />
 
             <Input
-              size="sm"
+              size="md"
               value={title}
               onValueChange={setTitle}
               className="text-default-900 "
@@ -629,7 +665,7 @@ export default function SubmitPage(props: Props) {
             />
 
             <Input
-              size="sm"
+              size="md"
               value={tags}
               className="text-default-900 "
               onValueChange={setTags}
@@ -769,11 +805,11 @@ export default function SubmitPage(props: Props) {
         )}
       >
         <div className=" items-center flex justify-between">
-          <p className="float-left text-default-900/70 font-bold">
+          <p className="float-left text-default-800 font-bold">
             {"Preview"}
           </p>
 
-          <p className="float-right text-sm font-light text-default-900">
+          <p className="float-right text-sm font-light text-default-500">
             {rpm?.words} words, {rpm?.text}
           </p>
         </div>

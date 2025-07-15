@@ -15,7 +15,7 @@ interface DetailProps {
   data: Post;
   globalData: SteemProps;
 }
-export class EntryPayoutDetail extends Component<DetailProps> {
+export class PayoutDetail extends Component<DetailProps> {
   render() {
     const { data, globalData } = this.props;
 
@@ -51,10 +51,6 @@ export class EntryPayoutDetail extends Component<DetailProps> {
     if (pendingPayout > 0) {
       if (pendingPayoutPrintedSbd > 0) {
         breakdownPayout.push(`${pendingPayoutPrintedSbd?.toFixed(3)} SBD`);
-
-        // breakdownPayout.push(
-        //     formattedNumber(pendingPayoutPrintedSbd, { fractionDigits: 3, suffix: "SBD" })
-        // );
       }
 
       if (pendingPayoutPrintedSteem > 0) {
@@ -75,7 +71,7 @@ export class EntryPayoutDetail extends Component<DetailProps> {
     }
 
     return (
-      <div className="flex flex-col payout-popover-content gap-2">
+      <div className="flex flex-col payout-popover-content gap-2 w-full">
         {fullPower && (
           <div>
             <span className="label">{"Reward: "}</span>
@@ -119,17 +115,18 @@ export class EntryPayoutDetail extends Component<DetailProps> {
           </div>
         )}
         {beneficiary.length > 0 && (
-          <div className="gap-1 flex flex-col p-1 bg-default-200 rounded-md">
-            <span className="label text-tiny">{"Beneficiaries: "}</span>
-            <span className="value px-1 mt-1">
+          <div className="flex flex-row flex-wrap p-2 bg-default-100 rounded-md gap-2">
+            <span className="text-sm text-default-500">
+              {"Beneficiaries: "}
+            </span>
+            <span className="value px-1">
               {beneficiary.map((x: any, i) => (
                 <Fragment key={i}>
                   <div className=" flex flex-row items-center gap-1">
                     <div className="flex flex-row items-center gap-1">
-                      <SAvatar size="xxs" username={x[0]} />
                       <SLink
                         className=" hover:text-blue-500 hover:underline"
-                        href={`/@${x[0]}/blogs`}
+                        href={`/@${x[0]}`}
                       >
                         {x[0]}
                       </SLink>
@@ -142,10 +139,13 @@ export class EntryPayoutDetail extends Component<DetailProps> {
             </span>
           </div>
         )}
+
         {breakdownPayout.length > 0 && (
-          <div className="gap-1 flex flex-col p-1 bg-default-200 rounded-md">
-            <span className="label text-tiny">{"Breakdown: "}</span>
-            <span className="value px-1 mt-1">
+          <div className="gap-2 flex flex-row flex-wrap p-2 bg-default-100 rounded-md">
+            <span className="label text-sm text-default-500">
+              {"Breakdown: "}
+            </span>
+            <span className="value px-1">
               {breakdownPayout.map((x, i) => (
                 <Fragment key={i}>
                   {x} <br />
@@ -154,10 +154,18 @@ export class EntryPayoutDetail extends Component<DetailProps> {
             </span>
           </div>
         )}
+
         {payoutDate && (
           <div>
             <span className="label">{"Payout: "}</span>
-            <span className="value">{payoutDate}</span>
+            <span className="value" title={new Date(data.cashout_time * 1000).toLocaleString()}>{payoutDate}</span>
+          </div>
+        )}
+
+        {!payoutDate && !authorPayout && !curatorPayout && (
+          <div>
+            <span className="label">{"Payout: "}</span>
+            <span className="value">{"Reward distributed"}</span>
           </div>
         )}
 
@@ -202,5 +210,5 @@ export const RewardBreakdownCard = (props: Props) => {
     return <></>;
   }
 
-  return <EntryPayoutDetail data={data} globalData={globalData} />;
+  return <PayoutDetail data={data} globalData={globalData} />;
 };

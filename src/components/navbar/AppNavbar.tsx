@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  useDisclosure,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-} from "@heroui/modal";
+import { useDisclosure } from "@heroui/modal";
 
 import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
@@ -54,6 +47,7 @@ import SLink from "../ui/SLink";
 import { AsyncUtils } from "@/utils/async.utils";
 import { Spinner } from "@heroui/spinner";
 import { mutate } from "swr";
+import SModal from "../ui/SModal";
 
 export async function refreshData(username?: string | null) {
   mutate("/steem_requests_api/getSteemProps");
@@ -420,13 +414,13 @@ function AppNavbar() {
         </div>
         <SearchModal
           isOpen={searchDisclosure.isOpen}
-          onClose={searchDisclosure.onClose}
+          onOpenChange={searchDisclosure.onOpenChange}
         />
 
         {accountDisclosure.isOpen && (
           <AccountsModal
             isOpen={accountDisclosure.isOpen}
-            onClose={accountDisclosure.onClose}
+            onOpenChange={accountDisclosure.onOpenChange}
             handleSwitchSuccess={(user) => {
               if (user) {
                 setCredentials(user);
@@ -441,42 +435,38 @@ function AppNavbar() {
         />
       </div>
 
-      {logoutDisclosure.isOpen && (
-        <Modal
-          isOpen={logoutDisclosure.isOpen}
-          onClose={logoutDisclosure.onClose}
-          size="md"
-          hideCloseButton
-        >
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  Confirmation
-                </ModalHeader>
-                <ModalBody>
-                  <p>Do you really want to logout {session?.user?.name}?</p>
-                </ModalBody>
-                <ModalFooter>
-                  <Button color="primary" variant="light" onPress={onClose}>
-                    Cancel
-                  </Button>
-                  <Button
-                    color="danger"
-                    isLoading={logoutLoading}
-                    isDisabled={logoutLoading}
-                    onPress={() => {
-                      handleLogout();
-                    }}
-                  >
-                    Logout
-                  </Button>
-                </ModalFooter>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-      )}
+      <SModal
+        isOpen={logoutDisclosure.isOpen}
+        onOpenChange={logoutDisclosure.onOpenChange}
+        modalProps={{ hideCloseButton: true, isDismissable: !logoutLoading }}
+        title={() => "Confirmation"}
+        subTitle={() => (
+          <p>Do you really want to logout {session?.user?.name}?</p>
+        )}
+        footer={(onClose) => (
+          <>
+            <Button
+              color="default"
+              isDisabled={logoutLoading}
+              variant="light"
+              onPress={onClose}
+            >
+              Cancel
+            </Button>
+            <Button
+              color="danger"
+              isLoading={logoutLoading}
+              className="text-white"
+              onPress={() => {
+                handleLogout();
+              }}
+            >
+              Logout
+            </Button>
+          </>
+        )}
+        body={(onClose) => <></>}
+      />
     </nav>
   );
 }

@@ -2,13 +2,6 @@
 
 import { Button } from "@heroui/button";
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-} from "@heroui/modal";
 import { mapSds, useAppSelector } from "@/constants/AppFunctions";
 import useSWR from "swr";
 import { supabase } from "@/libs/supabase";
@@ -30,6 +23,7 @@ import { hasNsfwTag } from "@/utils/stateFunctions";
 import { empty_comment } from "@/constants/Placeholders";
 import CommunityMessages from "./CommunityMessages";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
+import SModal from "@/components/ui/SModal";
 
 interface Props {
   community: Community;
@@ -181,111 +175,103 @@ export default function CommunityChatModal(props: Props) {
   }
 
   return (
-    <Modal
+    <SModal
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      className=" mt-4"
-      scrollBehavior="inside"
-      backdrop="opaque"
-      size={isMobile ? "full" : "lg"}
-      placement="top-center"
-      classNames={{ base: "h-full" }}
-      isDismissable={false}
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1 justify-between">
-              <div className="flex flex-col gap-1">
-                <div className="flex flex-row gap-2 items-center text-center">
-                  <p>Community Chat</p>
-                  <Chip
-                    avatar={<SAvatar username={community.account} />}
-                    variant="flat"
-                  >
-                    {community.title || community.account}
-                  </Chip>
-                </div>
-                <p className="text-xs font-normal text-default-500">
-                  This conversation is public and visible to others.
-                </p>
-              </div>
-            </ModalHeader>
-            <ModalBody className="scrollbar-thin pb-10" id="scrollDiv">
-              <div className="flex flex-col w-full">
-                <div className="flex flex-col gap-4 py-1">
-                  {isLoading ? (
-                    <LoadingCard />
-                  ) : !messages.length ? null : (
-                    <CommunityMessages
-                      community={community}
-                      messages={messages}
-                      setRefMessage={(message) => {
-                        setRefMessage(message);
-                        setTimeout(() => {
-                          inputRef.current?.focus();
-                        }, 200);
-                      }}
-                      messageAlert={messageAlert}
-                      setMessageAlert={setMessageAlert}
-                      handleNewMessage={(newMsg) => {
-                        // setMessages((prev) => [
-                        //   ...prev,
-                        //    newMsg,
-                        // ]);
-                      }}
-                    />
-                  )}
-                  <div ref={bottomRef} />
-                </div>
-
-                {data && !messages.length && (
-                  <EmptyChat username={"community members"} />
-                )}
-              </div>
-            </ModalBody>
-
-            <ModalFooter>
-              <div className="sticky bottom-4 rounded-md flex flex-row items-center w-full gap-4">
-                {refMessage && (
-                  <MessageReplyRef
-                    fullWidth
-                    className="absolute left-0 bottom-14 transition-opacity duration-300"
-                    text={refMessage.message}
-                    handleClose={() => setRefMessage(undefined)}
-                  />
-                )}
-
-                <ChatInput
-                  skipMemo
-                  ref={inputRef}
-                  value={message}
-                  onValueChange={setMessage}
-                  onSubmit={handleSend}
-                  isPending={isPending}
+      modalProps={{
+        size: isMobile ? "full" : "lg",
+        classNames: { base: "h-full" },
+        isDismissable: false,
+        scrollBehavior: "inside",
+        backdrop: "blur",
+      }}
+      title={() => (
+        <div className="flex flex-col gap-1">
+          <div className="flex flex-row gap-2 items-center text-center">
+            <p>Community Chat</p>
+            <Chip
+              avatar={<SAvatar username={community.account} />}
+              variant="flat"
+            >
+              {community.title || community.account}
+            </Chip>
+          </div>
+        </div>
+      )}
+      subTitle={() => "This conversation is public and visible to others."}
+      body={() => (
+        <div className="scrollbar-thin pb-10" id="scrollDiv">
+          <div className="flex flex-col w-full">
+            <div className="flex flex-col gap-4 py-1">
+              {isLoading ? (
+                <LoadingCard />
+              ) : !messages.length ? null : (
+                <CommunityMessages
+                  community={community}
+                  messages={messages}
+                  setRefMessage={(message) => {
+                    setRefMessage(message);
+                    setTimeout(() => {
+                      inputRef.current?.focus();
+                    }, 200);
+                  }}
+                  messageAlert={messageAlert}
+                  setMessageAlert={setMessageAlert}
+                  handleNewMessage={(newMsg) => {
+                    // setMessages((prev) => [
+                    //   ...prev,
+                    //    newMsg,
+                    // ]);
+                  }}
                 />
+              )}
+              <div ref={bottomRef} />
+            </div>
 
-                {messageAlert && (
-                  <Button
-                    onPress={scrollToBottom}
-                    color="default"
-                    variant="solid"
-                    size="sm"
-                    isIconOnly
-                    radius="full"
-                    className={twMerge(
-                      `absolute right-1 bottom-20 transition-opacity duration-300`,
-                      messageAlert ? " opacity-100" : " opacity-0"
-                    )}
-                  >
-                    <BsArrowDown size={18} />
-                  </Button>
-                )}
-              </div>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+            {data && !messages.length && (
+              <EmptyChat username={"community members"} />
+            )}
+          </div>
+        </div>
+      )}
+      footer={() => (
+        <div className="sticky bottom-4 rounded-md flex flex-row items-center w-full gap-4">
+          {refMessage && (
+            <MessageReplyRef
+              fullWidth
+              className="absolute left-0 bottom-14 transition-opacity duration-300"
+              text={refMessage.message}
+              handleClose={() => setRefMessage(undefined)}
+            />
+          )}
+
+          <ChatInput
+            skipMemo
+            ref={inputRef}
+            value={message}
+            onValueChange={setMessage}
+            onSubmit={handleSend}
+            isPending={isPending}
+          />
+
+          {messageAlert && (
+            <Button
+              onPress={scrollToBottom}
+              color="default"
+              variant="solid"
+              size="sm"
+              isIconOnly
+              radius="full"
+              className={twMerge(
+                `absolute right-1 bottom-20 transition-opacity duration-300`,
+                messageAlert ? " opacity-100" : " opacity-0"
+              )}
+            >
+              <BsArrowDown size={18} />
+            </Button>
+          )}
+        </div>
+      )}
+    />
   );
 }

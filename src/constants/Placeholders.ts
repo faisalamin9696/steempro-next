@@ -226,5 +226,6 @@ export const empty_settings = (): Setting => {
       enabled: false,
       usersList: [],
     },
+    favouriteBene:[]
   };
 };

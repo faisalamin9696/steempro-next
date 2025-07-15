@@ -92,7 +92,7 @@ export default memo(function FeedPatternSwitch() {
         </DropdownMenu>
       </Dropdown>
 
-      {/* <IconButton
+      {/* <Button
         size="md"
         className={twMerge(
           "text-xl",
@@ -103,10 +103,10 @@ export default memo(function FeedPatternSwitch() {
           updateStyle("list");
         }}
       /> */}
-      {/* <IconButton size='md'
+      {/* <Button size='md'
                     className={twMerge('text-xl', settings.feedStyle === 'blog' && 'text-secondary')}
                     IconType={TbLayoutList} onClick={() => { updateStyle('blog') }} /> */}
-      {/* <IconButton
+      {/* <Button
         size="md"
         className={twMerge(
           "text-xl",
@@ -117,7 +117,7 @@ export default memo(function FeedPatternSwitch() {
           updateStyle("grid");
         }}
       /> */}
-      {/* <IconButton
+      {/* <Button
                 className={twMerge('text-xl', settings.feedStyle === 'grid' && 'text-secondary')}
                 IconType={BsFillGrid3X3GapFill} onClick={() => { updateStyle('grid') }} /> */}
     </div>

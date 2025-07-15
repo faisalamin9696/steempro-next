@@ -1,5 +1,5 @@
 import { Card, CardBody, CardHeader } from "@heroui/card";
-import React, { memo, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Table,
   TableBody,
@@ -11,23 +11,18 @@ import {
 import { Button } from "@heroui/button";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { cancelMarketOrder, client } from "@/libs/steem/condenser";
+import { client, cancelMarketOrder } from "@/libs/steem/condenser";
 import { useLogin } from "../auth/AuthProvider";
-import { getCredentials, getSessionKey } from "@/utils/user";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
 import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
-import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
 import { AsyncUtils } from "@/utils/async.utils";
 import { saveOpenOrdersReducer } from "@/hooks/redux/reducers/OpenOrderReducer";
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-} from "@heroui/modal";
+import SModal from "../ui/SModal";
+import KeychainButton from "../KeychainButton";
+import { Spinner } from "@heroui/spinner";
+import { MdOutlineRefresh } from "react-icons/md";
 
 interface OpenOrder {
   id: number;
@@ -49,9 +44,10 @@ interface OpenOrder {
 function OpenOrders() {
   const { data: session } = useSession();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
-  const { userOrders, isLoading, refetch, error } = getOpenOrders(
+  const { data, isLoading, refetch, error, isRefetching } = getOpenOrders(
     session?.user?.name
   );
+  const userOrders = data ?? [];
   const [currentPage, setCurrentPage] = useState(1);
   const ordersPerPage = 10;
   const queryClient = useQueryClient();
@@ -88,12 +84,30 @@ function OpenOrders() {
     }
   };
 
+  function Header() {
+    return (
+      <CardBody className="text-default-700 flex flex-row text-lg sm:text-xl items-center gap-4">
+        <p>Open Orders</p>
+        <Button
+          className=" min-h-0 min-w-0 w-6 h-6"
+          onPress={() => refetch()}
+          isIconOnly
+          size="sm"
+          radius="full"
+        >
+          {isLoading || isRefetching ? (
+            <Spinner size="sm" color="current" />
+          ) : (
+            <MdOutlineRefresh size={18} />
+          )}
+        </Button>
+      </CardBody>
+    );
+  }
   if (isLoading) {
     return (
       <Card>
-        <CardBody className="text-default-700 flex flex-row text-lg sm:text-xl items-center gap-2">
-          Open Orders
-        </CardBody>
+        <Header />
         <CardBody className="p-4">
           <div className="flex items-center justify-center h-32">
             <div className="text-center">
@@ -109,9 +123,7 @@ function OpenOrders() {
   if (error) {
     return (
       <Card>
-        <CardBody className="text-default-700 flex flex-row text-lg sm:text-xl items-center gap-2">
-          Open Orders
-        </CardBody>
+        <Header />
         <CardBody className="p-4">
           <div className="flex items-center justify-center h-32">
             <div className="text-center">
@@ -121,7 +133,9 @@ function OpenOrders() {
               <p className="text-destructive text-sm font-medium">
                 Failed to load orders
               </p>
-              <p className="text-muted-foreground text-xs mt-1">{error}</p>
+              <p className="text-muted-foreground text-xs mt-1">
+                {error?.message}
+              </p>
             </div>
           </div>
         </CardBody>
@@ -132,9 +146,7 @@ function OpenOrders() {
   if (!paginatedData.openOrders || paginatedData.openOrders.length === 0) {
     return (
       <Card>
-        <CardBody className="text-default-700 flex flex-row text-lg sm:text-xl items-center gap-2">
-          Open Orders
-        </CardBody>
+        <Header />
         <CardBody className="p-4">
           <div className="flex items-center justify-center h-32">
             <div className="text-center">
@@ -151,11 +163,7 @@ function OpenOrders() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardBody className="text-default-700 flex flex-row text-lg sm:text-xl items-center gap-2">
-          Open Orders
-        </CardBody>
-      </CardHeader>
+      <Header />
       <CardBody className="p-0">
         <Table className="mb-4">
           <TableHeader>
@@ -282,12 +290,7 @@ function OpenOrders() {
 export default OpenOrders;
 
 function getOpenOrders(username?: string | null) {
-  const {
-    data: userOrders,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery<OpenOrder[] | null>({
+  const data = useQuery<OpenOrder[] | null>({
     queryKey: ["openOrders"],
     enabled: !!username,
     queryFn: async () => {
@@ -333,12 +336,7 @@ function getOpenOrders(username?: string | null) {
     retry: 2,
   });
 
-  return {
-    userOrders: userOrders ?? [],
-    isLoading,
-    error: error?.message || null,
-    refetch,
-  };
+  return data;
 }
 
 function OpenOrderAction({
@@ -353,9 +351,8 @@ function OpenOrderAction({
   }) => void;
 }) {
   const [confirmation, setConfirmation] = useState(false);
-  const { authenticateUser, isAuthorized } = useLogin();
+  const { authenticateUserActive, isAuthorizedActive } = useLogin();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
-  const { data: session } = useSession();
   const orderMutation = useMutation({
     mutationFn: (data: {
       order: OpenOrder;
@@ -381,12 +378,11 @@ function OpenOrderAction({
     },
   });
 
-  function cancelLimitOrder(order: OpenOrder) {
-    authenticateUser();
-    if (!isAuthorized()) return;
-
-    const credentials = getCredentials(getSessionKey(session?.user?.name));
-
+  function cancelLimitOrder(order: OpenOrder, isKeychain?: boolean) {
+    const credentials = authenticateUserActive(isKeychain);
+    if (!isAuthorizedActive(credentials?.key)) {
+      return;
+    }
     if (!credentials?.key) {
       toast.error("Invalid credentials");
       return;
@@ -400,49 +396,47 @@ function OpenOrderAction({
   }
 
   return (
-    <div>
-      <Button
-        variant="flat"
-        isLoading={orderMutation.isPending}
-        radius="sm"
-        size="sm"
-        onPress={() => setConfirmation(!confirmation)}
-      >
-        Cancel
-      </Button>
-
-      {confirmation && (
-        <Modal isOpen={confirmation} onOpenChange={setConfirmation}>
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  {"Confirmation"}
-                </ModalHeader>
-                <ModalBody>
-                  <div className="text-tiny flex">
-                    Cancel order #{order.orderid} from {loginInfo.name}?
-                  </div>
-                </ModalBody>
-                <ModalFooter>
-                  <Button color="danger" variant="light" onPress={onClose}>
-                    Close
-                  </Button>
-                  <Button
-                    color="primary"
-                    onPress={() => {
-                      onClose();
-                      cancelLimitOrder(order);
-                    }}
-                  >
-                    Confirm
-                  </Button>
-                </ModalFooter>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
+    <SModal
+      triggerProps={{
+        variant: "flat",
+        isLoading: orderMutation.isPending,
+        radius: "sm",
+        size: "sm",
+      }}
+      buttonTitle="Cancel"
+      isOpen={confirmation}
+      onOpenChange={setConfirmation}
+      title={() => "Confirmation"}
+      body={() => (
+        <div className="text-tiny flex">
+          Cancel order #{order.orderid} from {loginInfo.name}?
+        </div>
       )}
-    </div>
+      footer={(onClose) => (
+        <div className="flex flex-row items-center gap-2 justify-between w-full">
+          <KeychainButton
+            onPress={() => {
+              onClose();
+              cancelLimitOrder(order, true);
+            }}
+          />
+          <div className="flex flex-row items-center gap-2">
+            <Button color="danger" variant="light" onPress={onClose}>
+              Cancel
+            </Button>
+
+            <Button
+              color="primary"
+              onPress={() => {
+                onClose();
+                cancelLimitOrder(order);
+              }}
+            >
+              Confirm
+            </Button>
+          </div>
+        </div>
+      )}
+    />
   );
 }

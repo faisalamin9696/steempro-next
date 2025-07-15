@@ -1,9 +1,7 @@
 import { useAppSelector } from "@/constants/AppFunctions";
-import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
 import React, { useEffect, useState } from "react";
-import { getProposalVotes } from "@/libs/steem/condenser";
 import useSWR from "swr";
-import { getAccountsExt, getWitnessVotes } from "@/libs/steem/sds";
+import { getWitnessVotes } from "@/libs/steem/sds";
 import SAvatar from "./ui/SAvatar";
 import SLink from "./ui/SLink";
 import { vestToSteem } from "@/utils/helper/vesting";
@@ -13,19 +11,20 @@ import { simpleVotesToSp } from "./ProposalItemCard";
 import { twMerge } from "tailwind-merge";
 import { abbreviateNumber } from "@/utils/helper";
 import Link from "next/link";
+import SModal from "./ui/SModal";
 
 interface Props {
-  witness: Witness;
+  witness: { name: string; received_votes: number; votes: string };
   isOpen: boolean;
-  onOpenChange: () => void;
+  onOpenChange: (isOpen: boolean) => void;
 }
 
 const INITIAL_VISIBLE_COLUMNS = ["account", "sp_own", "proxied_sp", "share"];
 
 const columns = [
   { name: "VOTER", uid: "account", sortable: true },
-  { name: "OWN (SP)", uid: "sp_own", sortable: true },
-  { name: "PROXIED (SP)", uid: "proxied_sp", sortable: true },
+  { name: "OWN (MV)", uid: "sp_own", sortable: true },
+  { name: "PROXIED (MV)", uid: "proxied_sp", sortable: true },
   { name: "SHARE", uid: "share", sortable: true },
 ];
 
@@ -46,13 +45,6 @@ export default function WitnessVotersModal(props: Props) {
   );
 
   const [allRows, setAllRows] = useState<WitnessVoteProps[]>([]);
-
-  const votesStr =
-    simpleVotesToSp(
-      witness.received_votes,
-      globalData.total_vesting_shares,
-      globalData.total_vesting_fund_steem
-    )?.toLocaleString() + " SP";
 
   const fetchVotersData = async (): Promise<WitnessVoteProps[]> => {
     let witnessVoters = await getWitnessVotes(witness.name);
@@ -132,7 +124,7 @@ export default function WitnessVotersModal(props: Props) {
         case "sp_own":
           return (
             <div className="flex flex-col">
-              <p className={twMerge("text-bold text-small capitalize")}>
+              <p className={twMerge("text-bold text-small uppercase")}>
                 {ownSp?.toLocaleString()}
               </p>
             </div>
@@ -141,7 +133,7 @@ export default function WitnessVotersModal(props: Props) {
         case "proxied_sp":
           return (
             <div className="flex flex-col">
-              <p className={twMerge("text-bold text-small capitalize")}>
+              <p className={twMerge("text-bold text-small uppercase")}>
                 {proxiedSp?.toLocaleString()}
               </p>
             </div>
@@ -163,61 +155,47 @@ export default function WitnessVotersModal(props: Props) {
   );
 
   return (
-    <Modal
-      size="xl"
+    <SModal
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      placement="center"
-      scrollBehavior="inside"
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-2">
-              <div className=" flex flex-row gap-2 items-center">
-                <p>Voters</p>
-                <div className="text-xs opacity-disabled flex flex-row items-center gap-1">
-                  <p>Witness</p>
-                  <Link
-                    className=" hover:text-blue-500"
-                    href={`/@${witness.name}`}
-                  >
-                    @{witness.name}
-                  </Link>
-                </div>
-              </div>
-              <p className="text-tiny font-normal">
-                <span className="opacity-disabled">Total votes:</span>{" "}
-                {votesStr}
-              </p>
-            </ModalHeader>
-            <ModalBody>
-              {isLoading ? (
-                <LoadingCard />
-              ) : (
-                allRows && (
-                  <TableWrapper
-                    filterValue={filterValue}
-                    isCompact={false}
-                    hidePaginationActions
-                    initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
-                    tableColumns={columns}
-                    filteredItems={filteredItems}
-                    onFilterValueChange={setFilterValue}
-                    renderCell={renderCell}
-                    mobileVisibleColumns={["account", "sp_own", "share"]}
-                    baseVarient
-                    sortDescriptor={{
-                      column: "share",
-                      direction: "descending",
-                    }}
-                  />
-                )
-              )}
-            </ModalBody>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+      modalProps={{ size: "xl", scrollBehavior: "inside" }}
+      title={() => (
+        <div className=" flex flex-row gap-2 items-center">
+          <p>Voters of</p>
+          <SAvatar
+            size="xs"
+            linkClassName="flex-row-reverse"
+            content={<p className="font-normal text-sm">{witness.name}</p>}
+            username={witness.name}
+          />
+        </div>
+      )}
+      body={() => (
+        <>
+          {isLoading ? (
+            <LoadingCard />
+          ) : (
+            allRows && (
+              <TableWrapper
+                filterValue={filterValue}
+                isCompact={false}
+                hidePaginationActions
+                initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
+                tableColumns={columns}
+                filteredItems={filteredItems}
+                onFilterValueChange={setFilterValue}
+                renderCell={renderCell}
+                mobileVisibleColumns={["account", "sp_own", "share"]}
+                baseVarient
+                sortDescriptor={{
+                  column: "share",
+                  direction: "descending",
+                }}
+              />
+            )
+          )}
+        </>
+      )}
+    />
   );
 }

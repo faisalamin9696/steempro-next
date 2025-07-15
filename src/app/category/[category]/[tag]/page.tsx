@@ -9,8 +9,8 @@ import { FaCircleDollarToSlot } from "react-icons/fa6";
 import { MdWhatshot, MdNewLabel } from "react-icons/md";
 import { twMerge } from "tailwind-merge";
 import { useParams, usePathname } from "next/navigation";
-import Link from "next/link";
 import CategoryTabPage from "./CategoryTabPage";
+import SLink from "@/components/ui/SLink";
 
 export default function CategoryPage() {
   let { category, tag } = useParams() as { category: string; tag: string };
@@ -65,7 +65,7 @@ export default function CategoryPage() {
       >
         {homeTabs.map((tab) => (
           <Tab
-            as={Link}
+            as={SLink}
             href={`/${tab.key}/${tag}`}
             key={`/${tab.key}/${tag}`}
             title={

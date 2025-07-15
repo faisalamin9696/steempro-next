@@ -4,7 +4,7 @@ import SLink from "./SLink";
 import { twMerge } from "tailwind-merge";
 
 interface Props {
-  username: string;
+  username?: string;
   loadSize?: "small" | "medium" | "large";
   onPress?: (event) => void;
   border?: boolean;

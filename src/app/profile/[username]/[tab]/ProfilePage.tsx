@@ -23,7 +23,6 @@ import {
   useRouter,
   useSearchParams,
 } from "next/navigation";
-import Link from "next/link";
 import ProfileTabPage from "./ProfileTabPage";
 import ChatModal from "@/components/chat/user/ChatModal";
 import { useDisclosure } from "@heroui/modal";
@@ -34,6 +33,7 @@ import CommunitiesTab from "./communitiesTab/CommunitiesTab";
 import WalletTab from "./walletTab/WalletTab";
 import NotificationsTable from "@/components/NotificationsTable";
 import SettingsPage from "@/app/settings/SettingsPage";
+import SLink from "@/components/ui/SLink";
 
 export default function ProfilePage({ data }: { data: AccountExt }) {
   let { username, tab } = useParams() as { username: string; tab: string };
@@ -107,7 +107,7 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
           {getProfileTabs(username, tab, isSelf ? loginInfo : profileInfo).map(
             (tab) => (
               <Tab
-                as={Link}
+                as={SLink}
                 href={`/@${username}/${tab.key}`}
                 key={`/@${username}/${tab.key}`}
                 title={

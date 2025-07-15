@@ -8,9 +8,9 @@ import { FaFire } from "react-icons/fa";
 import { MdNewLabel, MdWhatshot } from "react-icons/md";
 import { FaCircleDollarToSlot } from "react-icons/fa6";
 import { twMerge } from "tailwind-merge";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import HomeTabPage from "./HomeTabPage";
+import SLink from "@/components/ui/SLink";
 
 export default function HomePage() {
   let { category } = useParams() as { category: string };
@@ -61,7 +61,7 @@ export default function HomePage() {
       >
         {categoryTabs.map((tab) => (
           <Tab
-            as={Link}
+            as={SLink}
             href={`/${tab.key}`}
             key={`/${tab.key}`}
             title={

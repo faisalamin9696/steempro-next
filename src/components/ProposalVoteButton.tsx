@@ -4,26 +4,27 @@ import {
   ProposalVote,
   voteForProposal,
 } from "@/libs/steem/condenser";
-import { getCredentials, getSessionKey } from "@/utils/user";
-import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
-import { Button } from "@heroui/button";
 import { useMutation } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BiSolidUpvote, BiUpvote } from "react-icons/bi";
 import { toast } from "sonner";
 import { useLogin } from "./auth/AuthProvider";
 import { useSession } from "next-auth/react";
-import KeychainButton from "./KeychainButton";
 import useSWR, { useSWRConfig } from "swr";
+import ConfirmationPopup from "./ui/ConfirmationPopup";
+import { twMerge } from "tailwind-merge";
 
 export default function ProposalVoteButton({
   proposal,
+  className,
+  getVoteStatus,
 }: {
   proposal: Proposal;
+  className?: string;
+  getVoteStatus?: (isVoted: boolean) => void;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
-  const { authenticateUser, isAuthorized } = useLogin();
+  const { authenticateUserActive, isAuthorizedActive } = useLogin();
   const { data: session } = useSession();
   const [isVoted, setIsVoted] = useState(false);
   const { mutate } = useSWRConfig();
@@ -41,6 +42,10 @@ export default function ProposalVoteButton({
       setIsVoted(voted);
     }
   }, [data]);
+
+  useEffect(() => {
+    getVoteStatus?.(isVoted);
+  }, [isVoted]);
 
   const voteMutation = useMutation({
     mutationFn: (data: { key: string; isKeychain?: boolean }) =>
@@ -66,13 +71,10 @@ export default function ProposalVoteButton({
   });
 
   async function handleVote(isKeychain?: boolean) {
-    if (!isKeychain) {
-      authenticateUser();
-      if (!isAuthorized()) return;
+    const credentials = authenticateUserActive(isKeychain);
+    if (!isAuthorizedActive(credentials?.key)) {
+      return;
     }
-
-    const credentials = getCredentials(getSessionKey(session?.user?.name));
-
     if (!credentials?.key) {
       toast.error("Invalid credentials");
       return;
@@ -86,68 +88,28 @@ export default function ProposalVoteButton({
 
   if (!data) return null;
   return (
-    <Popover
-      isOpen={isOpen}
-      onOpenChange={(open) => setIsOpen(open)}
-      placement={"left"}
-    >
-      <PopoverTrigger>
-        <Button
-          isIconOnly
-          variant={isVoted ? "flat" : "solid"}
-          isDisabled={voteMutation.isPending}
-          isLoading={voteMutation.isPending}
-          color={isVoted ? "success" : "default"}
-          radius="sm"
-          size="sm"
-        >
-          {isVoted ? (
-            <BiSolidUpvote className="text-xl" />
-          ) : (
-            <BiUpvote className="text-xl" />
-          )}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent>
-        <div className="px-1 py-2">
-          <div className="text-small font-bold">{"Confirmation"}</div>
-          <div className="text-tiny flex">
-            {isVoted
-              ? `Remove vote for proposal #${proposal.id}?`
-              : `Approve proposal #${proposal.id}?`}
-          </div>
-
-          <div className=" flex flex-col items-start gap-2">
-            <div className="text-tiny flex mt-2 space-x-2">
-              <Button
-                onPress={() => setIsOpen(false)}
-                size="sm"
-                color="default"
-              >
-                Cancel
-              </Button>
-              <Button
-                size="sm"
-                color={isVoted ? "danger" : "success"}
-                variant="solid"
-                onPress={() => {
-                  setIsOpen(false);
-                  handleVote();
-                }}
-              >
-                {isVoted ? "Remove" : "Approve"}
-              </Button>
-            </div>
-
-            <KeychainButton
-              onPress={() => {
-                setIsOpen(false);
-                handleVote(true);
-              }}
-            />
-          </div>
-        </div>
-      </PopoverContent>
-    </Popover>
+    <ConfirmationPopup
+      popoverProps={{ placement: "left" }}
+      triggerProps={{
+        size: "sm",
+        color: isVoted ? "danger" : "default",
+        radius: "none",
+        className: twMerge(
+          `text-xs sm:text-sm px-2 sm:px-4 text-white`,
+          !isVoted && "bg-steem",
+          className
+        ),
+        isDisabled: voteMutation.isPending,
+        isLoading: voteMutation.isPending,
+      }}
+      buttonTitle={isVoted ? "Unvote" : "Vote"}
+      subTitle={
+        isVoted
+          ? `Unvote proposal #${proposal.id}?`
+          : `Vote proposal #${proposal.id}?`
+      }
+      onKeychainPress={() => handleVote(true)}
+      onConfirm={handleVote}
+    />
   );
 }

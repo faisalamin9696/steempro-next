@@ -2,51 +2,29 @@
 
 import ErrorCard from "@/components/ErrorCard";
 import LoadingCard from "@/components/LoadingCard";
-import ProposalItemCard from "@/components/ProposalItemCard";
-import { capitalize } from "@/constants/AppConstants";
 import { getProposals } from "@/libs/steem/condenser";
 import { getAccountExt } from "@/libs/steem/sds";
 import parseAsset from "@/utils/helper/parse-asset";
-import { Card } from "@heroui/card";
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-} from "@heroui/dropdown";
-import { Button } from "@heroui/button";
+import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Input } from "@heroui/input";
 import React, { useEffect, useMemo, useState } from "react";
-import { FaChevronDown } from "react-icons/fa";
-import { MdSearch } from "react-icons/md";
+import {
+  FaFileInvoiceDollar,
+  FaListAlt,
+  FaSearch,
+  FaVoteYea,
+} from "react-icons/fa";
 import useSWR from "swr";
+import ProposalItem from "@/components/ProposalItem";
+import { Table, TableBody, TableRow } from "@/components/ui/Table";
+import { DaoStats } from "@/components/DaoStats";
 
-const FundindCard = ({
-  title,
-  description,
-}: {
-  title?: string;
-  description: string;
-}) => {
-  return (
-    <div className=" flex flex-col items-center gap-2">
-      <Card radius="md" className="py-1 px-2 bg-primary text-white text-sm">
-        {title} SBD
-      </Card>
-      <p className="text-xs opacity-80">{description}</p>
-    </div>
-  );
-};
 const initialSatus = ["all"];
 
 function Proposals() {
   const { data, error, isLoading } = useSWR<Proposal[]>(
     "proposals-list",
     getProposals
-  );
-
-  const { data: accountData } = useSWR<AccountExt>("proposal-fund", () =>
-    getAccountExt("steem.dao")
   );
 
   const [allRows, setAllRows] = useState<Proposal[]>([]);
@@ -84,42 +62,6 @@ function Proposals() {
     }
   }, [data]);
 
-  const DaoStats = ({
-    proposals,
-    account,
-  }: {
-    proposals: Proposal[];
-    account: AccountExt;
-  }) => {
-    const totalBudget = account.balance_sbd;
-    const dailyBudget = totalBudget / 100;
-    let _thresholdProposalId: number | null = null;
-    const dailyFunded = proposals?.reduce((a, b) => {
-      const dp = parseAsset(b.daily_pay);
-      const _sum_amount = a + Number(dp.amount);
-      if (_sum_amount >= dailyBudget && !_thresholdProposalId) {
-        _thresholdProposalId = b.id;
-      }
-      return _sum_amount <= dailyBudget ? _sum_amount : a;
-    }, 0);
-
-    return (
-      <div className=" flex flex-row items-center justify-center mt-6 mb-4 gap-2">
-        <FundindCard
-          title={dailyFunded?.toLocaleString()}
-          description="Daily Funded"
-        />
-        <FundindCard
-          title={dailyBudget?.toLocaleString()}
-          description="Daily Budget"
-        />
-        <FundindCard
-          title={totalBudget?.toLocaleString()}
-          description="Total Budget"
-        />
-      </div>
-    );
-  };
   if (error) {
     return <ErrorCard message={error} />;
   }
@@ -128,70 +70,64 @@ function Proposals() {
 
   return (
     <div className="flex flex-col gap-4 pb-10">
-      <div className="flex flex-col items-center gap-2 text-center">
-        <p className="text-blue-500 text-3xl font-semibold">Proposals</p>
-        <p className="text-xs opacity-disabled">
-          Power Your Ideas with the Steem Proposal System (SPS)
-        </p>
-        <p className=" text-center max-w-[80%] opacity-80">
-          The SPS is Steem's on-chain funding system that empowers the
-          community! Anyone can submit a proposal, and if it gains enough
-          support through community votes, it gets funded, no middlemen, just
-          pure decentralization!
+      <div className="flex flex-col items-center sm:items-start gap-2 text-center">
+        <p className="text-xl font-bold sm:text-3xl">Steem Proposals</p>
+        <p className="text-sm text-default-500">
+          Fund community-driven ideas through the Steem Proposal System (SPS).
+          Vote on initiatives that improve the ecosystem and benefit the
+          network.
         </p>
       </div>
 
-      {data && accountData && (
-        <DaoStats proposals={data} account={accountData} />
-      )}
+      <DaoStats proposals={data} />
 
-      <div className=" flex flex-row items-center justify-between">
-        <Input
-          radius="full"
-          className="max-w-[70%]"
-          classNames={{
-            inputWrapper:
-              "text-default-500 bg-default-400/20 dark:bg-default-500/20",
-          }}
-          placeholder="Search"
-          size="md"
-          value={filterValue}
-          onValueChange={setFilterValue}
-          startContent={<MdSearch size={20} />}
-          type="search"
-        />
-        <div className="flex gap-3">
-          <Dropdown>
-            <DropdownTrigger className="hidden sm:flex">
-              <Button
-                endContent={<FaChevronDown className="text-small" />}
-                variant="flat"
-              >
-                Status
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu
-              disallowEmptySelection
-              aria-label="Table Columns"
-              closeOnSelect={false}
-              selectedKeys={visibleColumns}
-              selectionMode="multiple"
-              onSelectionChange={setVisibleColumns}
-            >
-              {["all", "active", "upcoming"].map((column) => (
-                <DropdownItem key={column.toLowerCase()} className="capitalize">
-                  {capitalize(column)}
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          </Dropdown>
-        </div>
-      </div>
-      <div className="flex flex-col w-full gap-4">
-        {filteredItems?.map((proposal) => {
-          return <ProposalItemCard proposal={proposal} />;
-        })}
-      </div>
+      <Card className="space-y-4">
+        <CardBody className="space-y-4">
+          <CardHeader className="pb-3 flex flex-col items-start gap-2">
+            <div className="flex flex-col sm:flex-row justify-between w-full">
+              <CardBody className="flex flex-row items-center gap-2 text-lg sm:text-xl font-semibold">
+                <FaFileInvoiceDollar size={24} className="text-steem" />
+                DAO Proposals
+              </CardBody>
+              <CardBody className="text-default-500 text-sm text-end">
+                Showing {filteredItems.length} of {allRows.length} proposals
+              </CardBody>
+            </div>
+            <div className="flex flex-col items-start gap-3 w-full">
+              <Input
+                startContent={<FaSearch className="text-default-500" />}
+                placeholder="Search proposal..."
+                className="max-w-lg"
+                value={filterValue}
+                onValueChange={setFilterValue}
+                isClearable
+              />
+            </div>
+          </CardHeader>
+
+          <Table>
+            <TableBody>
+              <div className="flex flex-col gap-2">
+                {filteredItems?.map((proposal) => {
+                  return (
+                    <TableRow
+                      key={proposal.id}
+                      className="text-xs hover:bg-muted/20 w-full "
+                    >
+                      <ProposalItem
+                        returnProposal={allRows.find(
+                          (p) => p.proposal_id === 0
+                        )}
+                        proposal={proposal}
+                      />
+                    </TableRow>
+                  );
+                })}
+              </div>
+            </TableBody>
+          </Table>
+        </CardBody>
+      </Card>
     </div>
   );
 }

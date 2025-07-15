@@ -39,6 +39,7 @@ import { cryptoUtils, Signature } from "@steempro/dsteem";
 import SLink from "./ui/SLink";
 import { twMerge } from "tailwind-merge";
 import { savePostDraft } from "@/utils/draft";
+import ConfirmationPopup from "./ui/ConfirmationPopup";
 
 const StatusData = {
   0: { title: "Pending", color: "warning" },
@@ -60,8 +61,6 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDrafting, setIsDrafting] = useState(false);
-
-  const [deletePopup, setDeletePopup] = useState(false);
 
   const metadata = extractMetadata(scheduleInfo.body);
   const targetUrl = scheduleInfo?.permlink
@@ -435,52 +434,19 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
                 </div>
               }
 
-              <Popover
-                isOpen={deletePopup}
-                onOpenChange={(open) => setDeletePopup(open)}
-                placement={"top-start"}
-              >
-                <PopoverTrigger>
-                  <Button
-                    title="Delete"
-                    size="sm"
-                    variant="flat"
-                    isDisabled={isPending}
-                    isLoading={isDeleting}
-                    color="danger"
-                    startContent={<MdDelete className=" text-xl" />}
-                  />
-                </PopoverTrigger>
-                <PopoverContent>
-                  <div className="px-1 py-2">
-                    <div className="text-small font-bold">{"Confirmation"}</div>
-                    <div className="text-tiny flex">
-                      {"Do you really delete this post?"}
-                    </div>
-
-                    <div className="text-tiny flex mt-2 space-x-2">
-                      <Button
-                        size="sm"
-                        color="default"
-                        onPress={() => setDeletePopup(false)}
-                      >
-                        No
-                      </Button>
-                      <Button
-                        size="sm"
-                        color="danger"
-                        variant="solid"
-                        onPress={() => {
-                          setDeletePopup(false);
-                          handleDelete();
-                        }}
-                      >
-                        Yes
-                      </Button>
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
+              <ConfirmationPopup
+                triggerProps={{
+                  title: "Delete",
+                  size: "sm",
+                  variant: "flat",
+                  isDisabled: isPending,
+                  isLoading: isDeleting,
+                  color: "danger",
+                  startContent: <MdDelete className=" text-xl" />,
+                }}
+                subTitle="Do you really delete this post?"
+                onConfirm={handleDelete}
+              />
             </div>
           </div>
         </div>

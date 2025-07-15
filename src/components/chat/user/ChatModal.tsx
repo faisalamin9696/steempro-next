@@ -2,13 +2,6 @@
 
 import { Button } from "@heroui/button";
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-} from "@heroui/modal";
 import { useAppSelector } from "@/constants/AppFunctions";
 import useSWR from "swr";
 import { supabase } from "@/libs/supabase";
@@ -29,6 +22,7 @@ import sanitize from "sanitize-html";
 import Messages from "./Messages";
 import { useSession } from "next-auth/react";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
+import SModal from "@/components/ui/SModal";
 
 interface Props {
   account: AccountExt;
@@ -194,112 +188,95 @@ export default function ChatModal(props: Props) {
       setMessageAlert(false);
     }
   }
+  <SModal
+    isOpen={isOpen}
+    onOpenChange={onOpenChange}
+    modalProps={{
+      scrollBehavior: "inside",
+      isDismissable: false,
+      backdrop: "blur",
+      classNames: { base: "h-full" },
+    }}
+    title={() => (
+      <div className="flex flex-col gap-1">
+        <div className="flex flex-row gap-2 items-center text-center">
+          <p>Private Chat Room</p>
+          <Chip avatar={<SAvatar username={account.name} />} variant="flat">
+            {account.name}
+          </Chip>
+        </div>
+      </div>
+    )}
+    subTitle={() => "This conversation is secured with end-to-end encryption."}
+    body={() => (
+      <div className="scrollbar-thin pb-10" id="scrollDiv">
+        <div className="flex flex-col w-full">
+          <div className="flex flex-col gap-4 py-1">
+            {isLoading ? (
+              <LoadingCard />
+            ) : !messages.length ? null : (
+              <Messages
+                account={account}
+                messages={messages}
+                setRefMessage={(message) => {
+                  setRefMessage(message);
+                  setTimeout(() => {
+                    inputRef.current?.focus();
+                  }, 200);
+                }}
+                messageAlert={messageAlert}
+                setMessageAlert={setMessageAlert}
+                handleNewMessage={(newMsg) => {
+                  // setMessages((prev) => [
+                  //   ...prev,
+                  //   getDecryptedData(credentials?.memo!, newMsg),
+                  // ]);
+                }}
+              />
+            )}
+            <div ref={bottomRef} />
+          </div>
 
-  return (
-    <Modal
-      isOpen={isOpen}
-      onOpenChange={onOpenChange}
-      className=" mt-4"
-      scrollBehavior="inside"
-      backdrop="opaque"
-      size={isMobile ? "full" : "lg"}
-      placement="top-center"
-      classNames={{ base: "h-full" }}
-      isDismissable={false}
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1 justify-between">
-              <div className="flex flex-col gap-1">
-                <div className="flex flex-row gap-2 items-center text-center">
-                  <p>Private Chat Room</p>
-                  <Chip
-                    avatar={<SAvatar username={account.name} />}
-                    variant="flat"
-                  >
-                    {account.name}
-                  </Chip>
-                </div>
-                <p className="text-xs font-normal text-default-500">
-                  This conversation is secured with end-to-end encryption.
-                </p>
-              </div>
-            </ModalHeader>
-            <ModalBody className="scrollbar-thin pb-10" id="scrollDiv">
-              <div className="flex flex-col w-full">
-                <div className="flex flex-col gap-4 py-1">
-                  {isLoading ? (
-                    <LoadingCard />
-                  ) : !messages.length ? null : (
-                    <Messages
-                      account={account}
-                      messages={messages}
-                      setRefMessage={(message) => {
-                        setRefMessage(message);
-                        setTimeout(() => {
-                          inputRef.current?.focus();
-                        }, 200);
-                      }}
-                      messageAlert={messageAlert}
-                      setMessageAlert={setMessageAlert}
-                      handleNewMessage={(newMsg) => {
-                        // setMessages((prev) => [
-                        //   ...prev,
-                        //   getDecryptedData(credentials?.memo!, newMsg),
-                        // ]);
-                      }}
-                    />
-                  )}
-                  <div ref={bottomRef} />
-                </div>
-
-                {data && !messages.length && (
-                  <EmptyChat username={account.name} />
-                )}
-              </div>
-            </ModalBody>
-
-            <ModalFooter>
-              <div className="sticky bottom-4 rounded-md flex flex-row items-center w-full gap-4">
-                {refMessage && (
-                  <MessageReplyRef
-                    fullWidth
-                    className="absolute left-0 bottom-14 transition-opacity duration-300"
-                    text={refMessage.message}
-                    handleClose={() => setRefMessage(undefined)}
-                  />
-                )}
-
-                <ChatInput
-                  ref={inputRef}
-                  value={message}
-                  onValueChange={setMessage}
-                  onSubmit={handleSend}
-                  isPending={isPending}
-                />
-
-                {messageAlert && (
-                  <Button
-                    onPress={scrollToBottom}
-                    color="default"
-                    variant="solid"
-                    size="sm"
-                    isIconOnly
-                    radius="full"
-                    className={twMerge(
-                      `absolute right-1 bottom-20 transition-opacity duration-300`,
-                      messageAlert ? " opacity-100" : " opacity-0"
-                    )}
-                  >
-                    <BsArrowDown size={18} />
-                  </Button>
-                )}
-              </div>
-            </ModalFooter>
-          </>
+          {data && !messages.length && <EmptyChat username={account.name} />}
+        </div>
+      </div>
+    )}
+    footer={() => (
+      <div className="sticky bottom-4 rounded-md flex flex-row items-center w-full gap-4">
+        {refMessage && (
+          <MessageReplyRef
+            fullWidth
+            className="absolute left-0 bottom-14 transition-opacity duration-300"
+            text={refMessage.message}
+            handleClose={() => setRefMessage(undefined)}
+          />
         )}
-      </ModalContent>
-    </Modal>
-  );
+
+        <ChatInput
+          ref={inputRef}
+          value={message}
+          onValueChange={setMessage}
+          onSubmit={handleSend}
+          isPending={isPending}
+        />
+
+        {messageAlert && (
+          <Button
+            onPress={scrollToBottom}
+            color="default"
+            variant="solid"
+            size="sm"
+            isIconOnly
+            radius="full"
+            className={twMerge(
+              `absolute right-1 bottom-20 transition-opacity duration-300`,
+              messageAlert ? " opacity-100" : " opacity-0"
+            )}
+          >
+            <BsArrowDown size={18} />
+          </Button>
+        )}
+      </div>
+    )}
+  />;
 }

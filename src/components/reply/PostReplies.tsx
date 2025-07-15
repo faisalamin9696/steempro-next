@@ -22,6 +22,7 @@ import {
   generateReplyPermlink,
   makeJsonMetadataReply,
   extractMetadata,
+  makeOptions,
 } from "@/utils/editor";
 import { getCredentials, getSessionKey } from "@/utils/user";
 import { useLogin } from "@/components/auth/AuthProvider";
@@ -36,6 +37,8 @@ import {
   removeCommentDraft,
   saveCommentDraft,
 } from "@/utils/draft";
+import BeneficiaryButton from "../editor/components/BeneficiaryButton";
+import { RewardTypes } from "@/constants/AppConstants";
 
 interface Props {
   comment: Post | Feed;
@@ -51,10 +54,13 @@ export default memo(function PostReplies(props: Props) {
     (state) => state.commentReducer.values
   )[`${comment.author}/${comment.permlink}`] ?? comment) as Post;
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
+  const draft = getCommentDraft(comment.link_id);
 
   const [limit, setLimit] = useState(defaultLimit);
   const dispatch = useAppDispatch();
-
+  const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>(
+    draft.beneficiaries ?? []
+  );
   const postReplies = (useAppSelector((state) => state.repliesReducer.values)[
     `${commentInfo.author}/${commentInfo.permlink}`
   ] ?? []) as Post[];
@@ -74,7 +80,6 @@ export default memo(function PostReplies(props: Props) {
   const { users } = extractMetadata(commentInfo.body) ?? [];
 
   const [isLoading, setIsLoading] = useState(false);
-  const draft = getCommentDraft(comment.link_id);
   const [markdown, setMarkdown] = useState(draft.markdown);
   const rpm = readingTime(markdown);
 
@@ -85,7 +90,7 @@ export default memo(function PostReplies(props: Props) {
   const editorDiv = useRef<any>(null);
 
   function saveDraft() {
-    saveCommentDraft(comment.link_id, markdown);
+    saveCommentDraft(comment.link_id, markdown, beneficiaries);
   }
 
   useEffect(() => {
@@ -162,6 +167,7 @@ export default memo(function PostReplies(props: Props) {
 
   function clearForm() {
     setMarkdown("");
+    setBeneficiaries([]);
   }
 
   function handleClear() {
@@ -288,15 +294,25 @@ export default memo(function PostReplies(props: Props) {
       // generating the permlink for the comment author
       let permlink = generateReplyPermlink(commentInfo.author);
 
+      let cbody = markdown.replace(
+        /[\x00-\x09\x0B-\x0C\x0E-\x1F\x7F-\x9F]/g,
+        ""
+      );
       const postData: PostingContent = {
         author: loginInfo,
         title: "",
-        body: markdown,
+        body: cbody,
         parent_author: commentInfo.author,
         parent_permlink: commentInfo.permlink,
         json_metadata: makeJsonMetadataReply(),
         permlink: permlink,
       };
+
+      let options = makeOptions({
+        author: loginInfo.name,
+        permlink,
+        beneficiaries: beneficiaries,
+      });
 
       // test case
       // handleOnPublished(postData);
@@ -304,7 +320,7 @@ export default memo(function PostReplies(props: Props) {
 
       replyMutation.mutate({
         postData,
-        options: null,
+        options: beneficiaries?.length ? options : null,
         key: credentials.key,
         isKeychain: credentials.keychainLogin,
       });
@@ -402,7 +418,7 @@ export default memo(function PostReplies(props: Props) {
           className="focus:border-0 focus:ring-0 focus:outline-none"
         >
           {showReply && (
-            <div className="flex flex-col mt-2 gap-2 animate-appearance-in">
+            <div className="flex flex-col mt-2 gap-2 animate-appearance-in ">
               <EditorInput
                 value={markdown}
                 users={[
@@ -419,11 +435,31 @@ export default memo(function PostReplies(props: Props) {
               />
 
               <div className="flex justify-between">
-                <ClearFormButton
-                  isDisabled={isPosting}
-                  onClearPress={handleClear}
-                />
+                <div className="flex flex-row gap-2">
+                  <ClearFormButton
+                    isDisabled={isPosting}
+                    onClearPress={handleClear}
+                  />
 
+                  <BeneficiaryButton
+                    isDisabled={isLoading}
+                    onSelectBeneficiary={(bene) => {
+                      setBeneficiaries([
+                        ...beneficiaries,
+                        { ...bene, weight: bene.weight },
+                      ]);
+                    }}
+                    onRemove={(bene) => {
+                      setBeneficiaries(
+                        beneficiaries?.filter(
+                          (item) => item.account !== bene.account
+                        )
+                      );
+                    }}
+                    beneficiaries={beneficiaries}
+                    favourites={[{ account: comment.author, weight: 500 }]}
+                  />
+                </div>
                 <div className="flex gap-2 ">
                   {
                     <Button

@@ -1,11 +1,11 @@
 import { domToReact } from "html-react-parser";
 import Link from "next/link";
 import React from "react";
-import { InstagramEmbed, TikTokEmbed, XEmbed } from "react-social-media-embed";
+import { InstagramEmbed, TikTokEmbed } from "react-social-media-embed";
 import { YouTubeEmbed } from "react-social-media-embed";
 import { Tweet } from "react-tweet";
-import { toast } from "sonner";
 import { tweet_components } from "./tweet-components";
+import SLink from "../ui/SLink";
 
 function extractTweetId(url) {
   const match = url.match(/(?:twitter|x)\.com\/.*\/status\/(\d+)/);
@@ -48,7 +48,7 @@ function ProcessLink({ domNode }: { domNode: any }) {
     return (
       <Tweet
         fallback={
-          <Link {...domNode?.attribs}>{domToReact(domNode.children)}</Link>
+          <SLink {...domNode?.attribs}>{domToReact(domNode.children)}</SLink>
         }
         id={extractTweetId(url)}
         components={tweet_components}
@@ -80,7 +80,7 @@ function ProcessLink({ domNode }: { domNode: any }) {
     );
   }
 
-  return <Link {...domNode?.attribs}>{domToReact(domNode.children)}</Link>;
+  return <SLink {...domNode?.attribs}>{domToReact(domNode.children)}</SLink>;
 }
 
 export default ProcessLink;

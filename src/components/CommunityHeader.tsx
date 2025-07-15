@@ -10,7 +10,7 @@ import SubscribeButton from "./SubscribeButton";
 import { twMerge } from "tailwind-merge";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import SLink from "./ui/SLink";
-import ChatButton from "./ChatButton";
+import ChatButton from "./ui/ChatButton";
 
 type Props = {
   community: Community;

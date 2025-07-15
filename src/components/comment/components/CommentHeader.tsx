@@ -402,10 +402,10 @@ export default function CommentHeader(props: Props) {
       <MuteDeleteModal
         comment={comment}
         isOpen={confirmationModal.isOpen}
-        onClose={() =>
+        onOpenChange={(open) =>
           setConfirmationModal({
             ...confirmationModal,
-            isOpen: !confirmationModal.isOpen,
+            isOpen: open,
           })
         }
         mute={confirmationModal.mute}

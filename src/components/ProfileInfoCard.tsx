@@ -7,10 +7,6 @@ import moment from "moment";
 import { abbreviateNumber } from "@/utils/helper";
 import MarkdownViewer from "./body/MarkdownViewer";
 import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
   useDisclosure,
 } from "@heroui/modal";
 import { Avatar, AvatarGroup } from "@heroui/avatar";
@@ -30,8 +26,9 @@ import SLink from "./ui/SLink";
 import { FaLocationDot } from "react-icons/fa6";
 import WitnessVotesCard from "./WitnessVotesCard";
 import SAvatar from "./ui/SAvatar";
-import ChatButton from "./ChatButton";
 import ChatModal from "./chat/user/ChatModal";
+import ChatButton from "./ui/ChatButton";
+import SModal from "./ui/SModal";
 
 type Props = {
   account: AccountExt;
@@ -321,12 +318,15 @@ export default memo(function ProfileInfoCard(props: Props) {
                   )
                 )}
               </AvatarGroup>
-              <p
-                onClick={() => setWitnessModal(!witnessModal)}
-                className=" text-tiny hover:underline cursor-pointer"
-              >
-                Show all
-              </p>
+              {(account.proxy ? [account.proxy] : account.witness_votes)
+                ?.length > 5 && (
+                <p
+                  onClick={() => setWitnessModal(!witnessModal)}
+                  className=" text-tiny hover:underline cursor-pointer"
+                >
+                  Show all
+                </p>
+              )}
             </div>
           </div>
         )}
@@ -343,74 +343,47 @@ export default memo(function ProfileInfoCard(props: Props) {
           />
         </div>
       )} */}
-      <Modal
+
+      <SModal
         isOpen={followerModal.isOpen}
-        onOpenChange={(isOpen) => {
-          setFollowerModal({ isOpen: isOpen });
+        onOpenChange={(open) => {
+          setFollowerModal({ isOpen: open });
         }}
-        placement="top-center"
-        scrollBehavior="inside"
-        closeButton
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                {followerModal.isFollowing ? "Following" : "Followers"}
-              </ModalHeader>
-              <ModalBody>
-                <FollowersCard
-                  isFollowing={followerModal.isFollowing}
-                  username={profileInfo.name}
-                />
-              </ModalBody>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+        modalProps={{ scrollBehavior: "inside" }}
+        title={() => (followerModal.isFollowing ? "Following" : "Followers")}
+        body={() => (
+          <FollowersCard
+            isFollowing={followerModal.isFollowing}
+            username={profileInfo.name}
+          />
+        )}
+      />
 
-      <Modal
+      <SModal
         isOpen={witnessModal}
-        onOpenChange={(isOpen) => {
-          setWitnessModal(false);
-        }}
-        placement="top-center"
-        scrollBehavior="inside"
-        closeButton
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader>
-                <div className="flex flex-col gap-2 items-start">
-                  <div className=" flex flex-row items-center gap-2">
-                    <p>Witness votes by</p>
+        onOpenChange={setWitnessModal}
+        modalProps={{ scrollBehavior: "inside" }}
+        title={() => (
+          <div className=" flex flex-row items-center gap-2">
+            <p>Witness votes by</p>
 
-                    <div className="flex gap-1 items-center" key={account.name}>
-                      <SAvatar size="xs" username={account.name} />
-                      <SLink
-                        className="hover:text-blue-500 text-sm font-normal"
-                        href={`/@${account.name}`}
-                      >
-                        @{account.name}
-                      </SLink>
-                    </div>
-                  </div>
-
-                  <p className="text-xs opacity-disabled">
-                    {`@${account.name} have ${
-                      30 - (account?.witness_votes?.length || 0)
-                    } votes remaining. Can vote for a maximum of 30 witnesses.`}
-                  </p>
-                </div>
-              </ModalHeader>
-              <ModalBody>
-                <WitnessVotesCard witnesses={account.witness_votes} />
-              </ModalBody>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+            <div className="flex gap-1 items-center" key={account.name}>
+              <SAvatar
+                size="xs"
+                linkClassName=""
+                username={account.name}
+                content={<p className="text-sm font-normal">{account.name}</p>}
+              />
+            </div>
+          </div>
+        )}
+        subTitle={() =>
+          `@${account.name} have ${
+            30 - (account?.witness_votes?.length || 0)
+          } votes remaining. Can vote for a maximum of 30 witnesses.`
+        }
+        body={() => <WitnessVotesCard witnesses={account.witness_votes} />}
+      />
 
       {chatDisclosure.isOpen && (
         <ChatModal

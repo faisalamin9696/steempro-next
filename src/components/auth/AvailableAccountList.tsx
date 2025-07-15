@@ -10,18 +10,32 @@ interface Props {
   handleSwitchSuccess: (user?: User) => void;
   className?: string;
   switchText?: string;
+  filter?: { username: string; type: Keys };
 }
 function AvailableAccountList(props: Props) {
-  const { handleSwitchSuccess, switchText, className } = props;
+  const { handleSwitchSuccess, switchText, className, filter } = props;
   const [accounts, setAccounts] = useState<User[]>();
   const [isPending, setIsPending] = useState(true);
   const credentials = getCredentials();
 
   useEffect(() => {
     const allCredentials = getAllCredentials();
-    setAccounts(allCredentials);
+    let filtered = allCredentials;
+    if (filter) {
+      const isDefault =
+        credentials?.username === filter.username &&
+        credentials?.type === filter.type;
 
-    if (!allCredentials.length) {
+      filtered = allCredentials.filter(
+        (item) =>
+          item.username === filter.username &&
+          item.type === filter.type &&
+          !isDefault
+      );
+    }
+    setAccounts(filtered);
+
+    if (!filtered.length) {
       setIsPending(false);
       return;
     }

@@ -7,13 +7,6 @@ import {
 } from "@/libs/steem/condenser";
 import { Role } from "@/utils/community";
 import { Select, SelectItem } from "@heroui/select";
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-} from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { useMutation } from "@tanstack/react-query";
@@ -23,6 +16,7 @@ import { toast } from "sonner";
 import { useLogin } from "./auth/AuthProvider";
 import { getCredentials, getSessionKey } from "@/utils/user";
 import { useSession } from "next-auth/react";
+import SModal from "./ui/SModal";
 
 interface Props {
   comment: Post | Feed;
@@ -194,75 +188,65 @@ export default function EditRoleModal(props: Props) {
     roleMutation.isPending ||
     titleMutation.isPending ||
     roleTitleMutation.isPending;
-  return (
-    <Modal
-      isOpen={isOpen}
-      hideCloseButton
-      isDismissable={!isPending}
-      onOpenChange={onOpenChange}
-      placement="top-center"
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              Update title, role
-            </ModalHeader>
-            <ModalBody>
-              <div className="flex flex-col gap-4">
-                <Input
-                  className="w-full"
-                  maxLength={32}
-                  label="Title"
-                  size="sm"
-                  classNames={{ base: "items-center" }}
-                  value={title}
-                  onValueChange={setTitle}
-                />
 
-                {!(
-                  Role.level(comment.observer_role) <=
-                  Role.level(comment.author_role)
-                ) && (
-                  <Select
-                    size="sm"
-                    aria-label="Select role"
-                    items={items}
-                    label="Role"
-                    className="max-w-xs"
-                    defaultSelectedKeys={[role]}
-                    disabledKeys={[comment.author_role]}
-                    onChange={handleRoleSelectionChange}
-                    classNames={{ base: "items-center" }}
-                  >
-                    {(item) => (
-                      <SelectItem key={item.value}>{item.item}</SelectItem>
-                    )}
-                  </Select>
-                )}
-              </div>
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                color="danger"
-                isDisabled={isPending}
-                variant="light"
-                onPress={onClose}
-              >
-                Close
-              </Button>
-              <Button
-                color="primary"
-                isDisabled={isPending}
-                isLoading={isPending}
-                onPress={handleUpdate}
-              >
-                Update
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+  return (
+    <SModal
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      modalProps={{ hideCloseButton: true, isDismissable: !isPending }}
+      title={() => "Update title, role"}
+      body={() => (
+        <div className="flex flex-col gap-4">
+          <Input
+            className="w-full"
+            maxLength={32}
+            label="Title"
+            size="sm"
+            classNames={{ base: "items-center" }}
+            value={title}
+            onValueChange={setTitle}
+            isClearable
+          />
+
+          {!(
+            Role.level(comment.observer_role) <= Role.level(comment.author_role)
+          ) && (
+            <Select
+              size="sm"
+              aria-label="Select role"
+              items={items}
+              label="Role"
+              className="max-w-xs"
+              defaultSelectedKeys={[role]}
+              disabledKeys={[comment.author_role]}
+              onChange={handleRoleSelectionChange}
+              classNames={{ base: "items-center" }}
+            >
+              {(item) => <SelectItem key={item.value}>{item.item}</SelectItem>}
+            </Select>
+          )}
+        </div>
+      )}
+      footer={(onClose) => (
+        <>
+          <Button
+            color="danger"
+            isDisabled={isPending}
+            variant="light"
+            onPress={onClose}
+          >
+            Close
+          </Button>
+          <Button
+            color="primary"
+            isDisabled={isPending}
+            isLoading={isPending}
+            onPress={handleUpdate}
+          >
+            Update
+          </Button>
+        </>
+      )}
+    />
   );
 }

@@ -22,6 +22,7 @@ function ProposalItemCard({ proposal }: { proposal: Proposal }) {
     moment(proposal.start_date),
     "days"
   );
+  
   const totalPayout = durationInDays * parseFloat(daily_pay);
   const votesStr =
     simpleVotesToSp(
@@ -106,13 +107,13 @@ function ProposalItemCard({ proposal }: { proposal: Proposal }) {
                 </div>
               </div>
 
-              <Link
+              <SLink
                 href={`/@${proposal.creator}/${proposal.permlink}`}
                 className="flex flex-row items-start gap-2 text-xs text-blue-500 max-w-fit"
               >
                 <IoMdLink size={20} />
                 {`${proposal.creator}/${proposal.permlink}`}
-              </Link>
+              </SLink>
 
               <div className=" flex flex-row gap-2 items-center">
                 <p className="text-xs opacity-disabled">Votes:</p>

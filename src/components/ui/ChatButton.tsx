@@ -3,7 +3,7 @@
 import { Button } from "@heroui/button";
 import React from "react";
 import { BsChatDots } from "react-icons/bs";
-import { useLogin } from "./auth/AuthProvider";
+import { useLogin } from "../auth/AuthProvider";
 
 function ChatButton({
   onPress,

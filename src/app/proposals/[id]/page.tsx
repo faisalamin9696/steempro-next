@@ -3,9 +3,11 @@
 import MarkdownViewer from "@/components/body/MarkdownViewer";
 import ErrorCard from "@/components/ErrorCard";
 import LoadingCard from "@/components/LoadingCard";
+import ProposalItem from "@/components/ProposalItem";
 import ProposalItemCard from "@/components/ProposalItemCard";
 import { findProposals } from "@/libs/steem/condenser";
 import { getPost } from "@/libs/steem/sds";
+import { Card } from "@heroui/card";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import React from "react";
@@ -43,7 +45,9 @@ function page() {
     <div className=" flex flex-col gap-4">
       {data && (
         <div className=" flex flex-col gap-4">
-          <ProposalItemCard proposal={data} />
+          <Card>
+            <ProposalItem proposal={data} />
+          </Card>
           {isLoadingPost ? (
             <LoadingCard />
           ) : (

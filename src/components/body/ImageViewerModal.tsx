@@ -1,10 +1,4 @@
-import {
-  defaultSrcSet,
-  proxifyImageUrl,
-  rProxyDomain,
-} from "@/utils/proxifyUrl";
 import { Button } from "@heroui/button";
-import { Modal, ModalBody, ModalContent, ModalFooter } from "@heroui/modal";
 import Image from "next/image";
 import React, { useRef, useState } from "react";
 import { BiZoomIn, BiZoomOut } from "react-icons/bi";
@@ -16,6 +10,7 @@ import {
 } from "react-zoom-pan-pinch";
 import { twMerge } from "tailwind-merge";
 import { Spinner } from "@heroui/spinner";
+import SModal from "../ui/SModal";
 
 interface Props {
   isOpen: boolean;
@@ -91,69 +86,58 @@ function ImageViewerModal(props: Props) {
   }
 
   return (
-    <Modal
+    <SModal
       isOpen={isOpen}
-      scrollBehavior={"inside"}
       onOpenChange={onOpenChange}
-      size="4xl"
-      hideCloseButton
-      placement="center"
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            {/* <ModalHeader className="flex flex-col gap-1">
-              Modal Title
-            </ModalHeader> */}
-            <ModalBody>
-              <TransformWrapper ref={transformComponentRef}>
-                {(utils) => (
-                  <React.Fragment>
-                    <Controls
-                      {...utils}
-                      isLoaded={isLoaded}
-                      handleOpenImage={handleOpenImage}
+      modalProps={{
+        scrollBehavior: "inside",
+        size: "2xl",
+        hideCloseButton: true,
+      }}
+      body={() => (
+        <TransformWrapper ref={transformComponentRef}>
+          {(utils) => (
+            <React.Fragment>
+              <Controls
+                {...utils}
+                isLoaded={isLoaded}
+                handleOpenImage={handleOpenImage}
+              />
+              <div className="justify-center flex flex-col items-center gap-2">
+                <TransformComponent>
+                  <div className="flex flex-col justify-center w-full">
+                    <Image
+                      className={twMerge(
+                        "zoomable",
+                        isFetching && "bg-background/50"
+                      )}
+                      alt={"image"}
+                      src={src}
+                      height={0}
+                      width={0}
+                      onLoad={onLoadCompleted}
+                      onError={onLoadCompleted}
+                      style={{
+                        width: "auto",
+                        height: "auto",
+                        objectFit: "contain",
+                      }}
                     />
-                    <div className="justify-center flex flex-col items-center">
-                      <TransformComponent>
-                        <div className="flex flex-col justify-center w-full">
-                          <Image
-                            className={twMerge(
-                              "zoomable",
-                              isFetching && "bg-background/50"
-                            )}
-                            alt={"image"}
-                            src={src}
-                            height={0}
-                            width={0}
-                            onLoad={onLoadCompleted}
-                            onError={onLoadCompleted}
-                            style={{
-                              width: "auto",
-                              height: "auto",
-                              objectFit: "contain",
-                            }}
-                          />
-                        </div>
-                      </TransformComponent>
+                  </div>
+                </TransformComponent>
 
-                      <div className="text-sm opacity-disabled mt-2">
-                        {props.alt}
-                      </div>
-                    </div>
-                  </React.Fragment>
-                )}
-              </TransformWrapper>
-            </ModalBody>
-            <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
-                Close
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+                <div className="text-sm opacity-disabled mt-2">{props.alt}</div>
+              </div>
+            </React.Fragment>
+          )}
+        </TransformWrapper>
+      )}
+      footer={(onClose) => (
+        <Button color="danger" variant="light" onPress={onClose}>
+          Close
+        </Button>
+      )}
+    />
   );
 }
 

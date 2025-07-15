@@ -245,6 +245,7 @@ export function getSettings(): Setting {
     return empty_settings();
   }
 }
+
 export function updateSettings(setting: Setting) {
   const lsSettings =
     (secureLocalStorage.getItem("settings") as Setting) ?? empty_settings();
@@ -265,7 +266,8 @@ export class PrivKey {
 
     return level;
   };
-  static atLeast = (type: Keys, target: Keys): boolean => {
+  static atLeast = (type: Keys | undefined, target: Keys): boolean => {
+    if (!type) return false;
     const roleLevel = PrivKey.level(type);
     const targetLevel = PrivKey.level(target);
     return roleLevel >= targetLevel;
@@ -333,4 +335,3 @@ export function getUserAuth() {
   const credentials = JSON.parse(credentialsString || `{}`) as User;
   if (credentials?.username) return credentials;
 }
-

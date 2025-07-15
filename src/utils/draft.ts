@@ -53,12 +53,16 @@ export function getPostDraft(): PostDraft {
   }
 }
 
-export function saveCommentDraft(linkId: number, markdown: string) {
+export function saveCommentDraft(
+  linkId: number,
+  markdown: string,
+  beneficiaries?: Beneficiary[]
+) {
   const existing = localStorage.getItem("comment_drafts");
   const drafts = existing
     ? (JSON.parse(existing) as Record<
         number,
-        { markdown: string; expiresAt: number }
+        { markdown: string; expiresAt: number; beneficiaries: Beneficiary[] }
       >)
     : {};
 
@@ -66,6 +70,7 @@ export function saveCommentDraft(linkId: number, markdown: string) {
     drafts[linkId] = {
       markdown,
       expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000, // expires in 7 days
+      beneficiaries: beneficiaries ?? [],
     };
 
     localStorage.setItem("comment_drafts", JSON.stringify(drafts));
@@ -78,12 +83,12 @@ export function getCommentDraft(linkId: number) {
 
   const drafts = JSON.parse(existing) as Record<
     number,
-    { markdown: string; expiresAt: number }
+    { markdown: string; expiresAt: number; beneficiaries: Beneficiary[] }
   >;
   const draft = drafts[linkId];
-  if (!draft) return { markdown: "" };
+  if (!draft) return { markdown: "", beneficiaries: [] };
 
-  return { markdown: draft.markdown };
+  return { markdown: draft.markdown, beneficiaries: draft.beneficiaries ?? [] };
 }
 
 export function removeCommentDraft(linkId: number) {

@@ -1,23 +1,18 @@
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-} from "@heroui/modal";
 import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
-import { Card } from "@heroui/card";
-import React, { useState } from "react";
-import IconButton from "./IconButton";
+import { Card, CardBody } from "@heroui/card";
+import React, { useRef, useState } from "react";
 import { MdAdd, MdClose } from "react-icons/md";
 import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
-import { getSettings, updateSettings } from "@/utils/user";
+import { updateSettings } from "@/utils/user";
 import SAvatar from "./ui/SAvatar";
 import { toast } from "sonner";
 import { validate_account_name } from "@/utils/chainValidation";
 import { updateSettingsHandler } from "@/hooks/redux/reducers/SettingsReducer";
 import { secureDecrypt } from "@/utils/encryption";
+import SModal from "./ui/SModal";
+import { FaAt, FaMinus, FaPlus } from "react-icons/fa";
+import { BeneficiaryItem } from "./editor/components/BeneficiaryButton";
 
 const STORAGE_KEY = "@secure.j.settings";
 
@@ -49,6 +44,7 @@ function CustomUsersVotingCard(props: Props) {
 
   function clearForm() {
     setUsername("");
+    setWeight("");
   }
 
   function handleAddUser() {
@@ -85,7 +81,7 @@ function CustomUsersVotingCard(props: Props) {
     clearForm();
   }
 
-  function handleRemveUser(user: {
+  function handleRemoveUser(user: {
     name: string;
     weight: number;
     community: string;
@@ -107,86 +103,119 @@ function CustomUsersVotingCard(props: Props) {
     clearForm();
   }
 
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const updateWeight = (delta: number) => {
+    setWeight((prev) => {
+      let num = Number(prev) || 0;
+      num += delta;
+
+      // Wrap between 1 and 100
+      if (num > 100) num = 1;
+      if (num < 1) num = 100;
+
+      return num.toString();
+    });
+  };
+
+  const handleLongPress = (delta: number) => {
+    intervalRef.current = setInterval(() => {
+      updateWeight(delta);
+    }, 200);
+  };
+
+  const stopLongPress = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
   return (
-    <Modal
+    <SModal
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      className=" mt-4"
-      scrollBehavior="inside"
-      backdrop="blur"
-      size="md"
-      hideCloseButton
-      placement="top"
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              <p>Users</p>
-              <p className=" opacity-disabled text-xs">
-                Set vote weight for a user (Only for LongPress voting)
-              </p>
-            </ModalHeader>
-            <ModalBody id="scrollDiv" className=" pb-4">
-              <div className="my-4 flex flex-col gap-6">
-                <div className=" flex gap-2 items-end w-full">
-                  <Input
-                    classNames={{ label: "text-default-900/80" }}
-                    className="w-[70%]"
-                    autoCapitalize="off"
-                    labelPlacement="outside"
-                    label={"Username"}
-                    size="sm"
-                    onValueChange={setUsername}
-                    variant="flat"
-                    value={username}
-                    spellCheck="false"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleAddUser();
-                      }
-                    }}
-                  />
+      modalProps={{
+        scrollBehavior: "inside",
+        backdrop: "blur",
+        hideCloseButton: true,
+        size: "lg",
+      }}
+      title={() => "Users"}
+      subTitle={() => `Set vote weight for a user (Only for LongPress voting)`}
+      body={() => (
+        <div className="my-4 flex flex-col gap-6">
+          <div className=" flex flex-col xs:flex-row items-end gap-2 1xs:gap-4 1xs:items-end 1xs:justify-between w-full">
+            <div className="flex flex-row gap-2 items-start w-full">
+              <Input
+                classNames={{ label: "text-default-900/80" }}
+                className="w-[70%]"
+                autoCapitalize="off"
+                labelPlacement="outside"
+                label={"Username"}
+                placeholder="Account"
+                startContent={<FaAt className="text-default-600" />}
+                size="sm"
+                onValueChange={setUsername}
+                isClearable
+                variant="flat"
+                value={username}
+                spellCheck="false"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleAddUser();
+                  }
+                }}
+              />
 
-                  <Input
-                    className="w-[30%]"
-                    classNames={{ label: "text-default-900/80" }}
-                    labelPlacement="outside"
-                    label={"Weight"}
+              <div className="flex flex-col gap-1">
+                <p className="text-xs">Reward (%)</p>
+                <div className="flex flex-row gap-2 items-center">
+                  <Button
                     size="sm"
-                    onValueChange={setWeight}
-                    value={weight}
-                    variant="flat"
-                    max={100}
-                    min={1}
-                    maxLength={3}
-                    errorMessage="Invalid value"
-                    type="number"
-                    startContent={
-                      <div className="pointer-events-none flex items-center">
-                        <span className="text-default-900/80 text-small">
-                          %
-                        </span>
-                      </div>
-                    }
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleAddUser();
-                      }
-                    }}
-                  />
+                    isIconOnly
+                    onMouseDown={() => handleLongPress(-1)}
+                    onMouseUp={stopLongPress}
+                    onMouseLeave={stopLongPress}
+                    onTouchStart={() => handleLongPress(-1)}
+                    onTouchEnd={stopLongPress}
+                    onPress={() => updateWeight(-1)}
+                    className="transition"
+                  >
+                    <FaMinus />
+                  </Button>
 
-                  <IconButton
-                    className="mt-6 rounded-md"
-                    color="success"
-                    variant="flat"
+                  <p className="text-sm text-default-800 w-6 text-center">
+                    {weight || "0"}
+                  </p>
+
+                  <Button
                     size="sm"
-                    IconType={MdAdd}
-                    onPress={handleAddUser}
-                    iconClassName="text-xl"
-                  />
+                    isIconOnly
+                    onMouseDown={() => handleLongPress(1)}
+                    onMouseUp={stopLongPress}
+                    onMouseLeave={stopLongPress}
+                    onTouchStart={() => handleLongPress(1)}
+                    onTouchEnd={stopLongPress}
+                    onPress={() => updateWeight(1)}
+                    className="transition"
+                  >
+                    <FaPlus />
+                  </Button>
+                </div>
+              </div>
+            </div>
 
-                  {/* <Input
+            <Button
+              onPress={handleAddUser}
+              color="success"
+              variant="flat"
+              size="md"
+            >
+              Add
+              <MdAdd size={28} />
+            </Button>
+
+            {/* <Input
                     classNames={{ label: "text-default-900/80" }}
                     className="w-[30%]"
                     autoCapitalize="off"
@@ -197,48 +226,38 @@ function CustomUsersVotingCard(props: Props) {
                     variant="flat"
                     value={community}
                   /> */}
-                </div>
+          </div>
 
-                <div
-                  className="flex-col space-y-2 md:space-y-0 md:grid md:grid-flow-row md:grid-cols-2 
-                            gap-2 md:gap-4 "
-                >
-                  {settings.longPressVote.usersList?.map((user) => {
-                    return (
-                      <div className="flex w-full" key={user.name}>
-                        <Card className="gap-2 w-full flex-row items-center rounded-full comment-card ">
-                          <SAvatar size="xs" username={user.name} />
-                          <div className="flex gap-2 flex-1 items-center">
-                            <p>{user.name}</p>
-                            <p className=" text-sm">{user.weight}%</p>
-                          </div>
-                          <IconButton
-                            className="bg-red-400  
-                                            min-w-0 !w-5 !h-5"
-                            IconType={MdClose}
-                            size="sm"
-                            onPress={() => {
-                              handleRemveUser(user);
-                            }}
-                            iconClassName="text-white"
-                          />
-                        </Card>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </ModalBody>
-
-            <ModalFooter>
-              <Button color="danger" variant="flat" onPress={onClose} size="sm">
-                Close
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+          <div className="flex flex-col gap-2">
+            {settings.longPressVote.usersList?.map((user) => {
+              return (
+                <Card className="bg-foreground/5" shadow="sm" key={user.name}>
+                  <CardBody>
+                    <BeneficiaryItem
+                      beneficiary={{
+                        account: user.name,
+                        weight: user.weight * 100,
+                      }}
+                      handleRemoveBeneficiary={() => handleRemoveUser(user)}
+                      handleEditBeneficiary={(bene) => {
+                        handleRemoveUser(user);
+                        setUsername(bene.account);
+                        setWeight((bene.weight / 100).toString());
+                      }}
+                    />
+                  </CardBody>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      footer={(onClose) => (
+        <Button color="danger" variant="flat" onPress={onClose} size="sm">
+          Close
+        </Button>
+      )}
+    />
   );
 }
 

@@ -41,12 +41,12 @@ export default memo(function Reply(props: Props) {
             <>
               <div className="flex flex-col gap-2 items-center">
                 <SAvatar
-                  size="1xs"
+                  size="sm"
                   username={commentInfo.author}
                   className="hidden sm:block"
                 />
-                {commentInfo?.depth >= 2 && !!commentInfo.children && (
-                  <div className="w-[1px] border-default-200 h-full bg-foreground/5 " />
+                {commentInfo?.depth >= 1 && !!commentInfo.children && (
+                  <div className="w-[1px] border-default-200 h-full bg-foreground/10 " />
                 )}
               </div>
               <div className=" flex items-start gap-2 w-full ">

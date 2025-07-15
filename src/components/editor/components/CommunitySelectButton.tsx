@@ -14,6 +14,7 @@ import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { IoCloseOutline } from "react-icons/io5";
 import { empty_community } from "@/constants/Placeholders";
 import Image from "next/image";
+import SAvatar from "@/components/ui/SAvatar";
 
 interface Props {
   community?: Community;
@@ -84,7 +85,10 @@ export default memo(function CommunitySelectButton(props: Props) {
                 ]
               : []
           }
-          size="sm"
+          listboxProps={{
+            emptyContent: "No community available",
+          }}
+          size="md"
           isDisabled={onlyCommunity || isDisabled}
           items={
             onlyCommunity
@@ -102,17 +106,12 @@ export default memo(function CommunitySelectButton(props: Props) {
             return items.map((item) => {
               return (
                 <div key={item.key} className="flex gap-2 items-center">
-                  <Image
-                    loading="lazy"
-                    className="avatar rounded-full object-contain"
-                    height={28}
-                    width={28}
-                    src={getResizedAvatar(item.data?.account)}
-                    alt={""}
-                  />
+
+                  <SAvatar username={item.data?.account} size="xs"/>
+                  
                   <div className="flex flex-col">
                     <span className="text-small">{item.data?.title}</span>
-                    <span className="text-tiny text-default-400">
+                    <span className="text-tiny text-default-500">
                       {item.data?.account}
                     </span>
                   </div>

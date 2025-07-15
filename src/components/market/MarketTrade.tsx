@@ -5,13 +5,13 @@ import { Input } from "@heroui/input";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useLogin } from "../auth/AuthProvider";
-import { getCredentials, getSessionKey } from "@/utils/user";
 import { useSession } from "next-auth/react";
 import { createMarketOrder } from "@/libs/steem/condenser";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MarketTicker } from "@/hooks/useMarketData";
 import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { AsyncUtils } from "@/utils/async.utils";
+import KeychainButton from "../KeychainButton";
 
 interface Props {
   ticker?: MarketTicker;
@@ -28,7 +28,7 @@ function MarketTrade(props: Props) {
     "price" | "steem" | "sbd" | null
   >(null);
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
-  const { authenticateUser, isAuthorized } = useLogin();
+  const { authenticateUserActive, isAuthorizedActive } = useLogin();
   const { data: session } = useSession();
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
@@ -117,13 +117,13 @@ function MarketTrade(props: Props) {
     },
   });
 
-  const handleTradeOrder = () => {
+  const handleTradeOrder = (isKeychain?: boolean) => {
     if (!amountSteem || !price) return;
 
-    authenticateUser();
-    if (!isAuthorized()) return;
-
-    const credentials = getCredentials(getSessionKey(session?.user?.name));
+    const credentials = authenticateUserActive(isKeychain);
+    if (!isAuthorizedActive(credentials?.key)) {
+      return;
+    }
 
     if (!credentials?.key) {
       toast.error("Invalid credentials");
@@ -310,19 +310,24 @@ function MarketTrade(props: Props) {
             }
           />
         </div>
-
-        <Button
-          onPress={handleTradeOrder}
-          className={`w-full text-white text-sm sm:text-base  ${
-            tradeType === "buy"
-              ? "bg-green-600 hover:bg-green-700"
-              : "bg-red-600 hover:bg-red-700"
-          }`}
-          isDisabled={!amountSteem || !price}
-          isLoading={orderMutation.isPending}
-        >
-          Place {tradeType === "buy" ? "Buy" : "Sell"} Order
-        </Button>
+        <div className="flex flex-row justify-between gap-2 items-center">
+          <KeychainButton
+            isDisabled={!amountSteem || !price || orderMutation.isPending}
+            onPress={() => handleTradeOrder(true)}
+          />
+          <Button
+            onPress={() => handleTradeOrder()}
+            className={`flex-1 text-white text-sm sm:text-base  ${
+              tradeType === "buy"
+                ? "bg-green-600 hover:bg-green-700"
+                : "bg-red-600 hover:bg-red-700"
+            }`}
+            isDisabled={!amountSteem || !price}
+            isLoading={orderMutation.isPending}
+          >
+            Place {tradeType === "buy" ? "Buy" : "Sell"} Order
+          </Button>
+        </div>
       </CardBody>
     </Card>
   );

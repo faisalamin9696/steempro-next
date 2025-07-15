@@ -177,13 +177,13 @@ type AccountExt = {
   savings_sbd_seconds: string;
   savings_sbd_seconds_last_update: number;
   savings_sbd_last_interest_payment: number;
-  owner_account_auths: string[];
+  owner_account_auths: [string, number][];
   owner_weight_threshold: number;
   owner_key_auths: string[];
-  active_account_auths: string[];
+  active_account_auths: [string, number][];
   active_key_auths: string[];
   active_weight_threshold: number;
-  posting_account_auths: string[];
+  posting_account_auths: [string, number][];
   posting_key_auths: string[];
   posting_weight_threshold: number;
   memo_key: string;
@@ -391,6 +391,7 @@ type Setting = {
     enabled: boolean;
     usersList: { name: string; weight: number; community: string }[];
   };
+  favouriteBene: Beneficiary[];
 };
 
 type FeedStyle = "blogs" | "list" | "grid";
@@ -674,3 +675,16 @@ type Proposal = {
 };
 
 type AssetTypes = "STEEM" | "SBD" | "VESTS";
+
+type MergedWitness = Witness & {
+  voted: boolean;
+  votes: string;
+  rank: number;
+  version: string;
+  url: string;
+  missedBlocks: number;
+  lastBlock: number;
+  isDisabledByKey: boolean;
+  hasInvalidVersion: boolean;
+  isDisabled: boolean;
+};

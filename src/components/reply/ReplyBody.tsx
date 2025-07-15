@@ -35,7 +35,7 @@ export default function ReplyBody({
   hideBody?: boolean;
 }) {
   const menuItems = [
-    { show: true, key: "copy", name: "Copy SLink", icon: BsClipboard2Minus },
+    { show: true, key: "copy", name: "Copy Link", icon: BsClipboard2Minus },
     { show: true, key: "history", name: "Edit History", icon: LuHistory },
   ];
   const [showHistory, setShowHistory] = useState(false);
@@ -122,6 +122,7 @@ export default function ReplyBody({
                       <RoleTitleCard
                         comment={comment}
                         className="opacity-80 gap-1 text-tiny"
+                        titleClassName="max-sm:hidden"
                       />
 
                       <TimeAgoWrapper

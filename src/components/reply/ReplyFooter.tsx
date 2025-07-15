@@ -41,6 +41,8 @@ import {
   removeCommentDraft,
   saveCommentDraft,
 } from "@/utils/draft";
+import BeneficiaryButton from "../editor/components/BeneficiaryButton";
+import ConfirmationPopup from "../ui/ConfirmationPopup";
 
 export default function ReplyFooter({
   comment,
@@ -76,7 +78,6 @@ export default function ReplyFooter({
   const queryClient = useQueryClient();
   const [showEdit, setShowEdit] = useState(false);
 
-  const [deletePopup, setDeletePopup] = useState(false);
   const [confirmationModal, setConfirmationModal] = useState<{
     isOpen: boolean;
     muteNote?: string;
@@ -454,58 +455,19 @@ export default function ReplyFooter({
             )}
 
             {canDelete && (
-              <div>
-                <Popover
-                  isOpen={deletePopup}
-                  onOpenChange={(open) => setDeletePopup(open)}
-                  placement={"top-start"}
-                >
-                  <PopoverTrigger>
-                    <Button
-                      size="sm"
-                      variant="light"
-                      isLoading={deleteMutation.isPending}
-                      isDisabled={
-                        deleteMutation.isPending || showReply || showEdit
-                      }
-                      className="text-tiny min-w-0 min-h-0"
-                    >
-                      Delete
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <div className="px-1 py-2">
-                      <div className="text-small font-bold">
-                        {"Confirmation"}
-                      </div>
-                      <div className="text-tiny flex">
-                        {"Do you really want to delete?"}
-                      </div>
-
-                      <div className="text-tiny flex mt-2 space-x-2">
-                        <Button
-                          onPress={() => setDeletePopup(false)}
-                          size="sm"
-                          color="default"
-                        >
-                          No
-                        </Button>
-                        <Button
-                          size="sm"
-                          color="danger"
-                          variant="solid"
-                          onPress={() => {
-                            setDeletePopup(false);
-                            handleDelete();
-                          }}
-                        >
-                          Yes
-                        </Button>
-                      </div>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
+              <ConfirmationPopup
+                popoverProps={{ placement: "top-start" }}
+                triggerProps={{
+                  size: "sm",
+                  variant: "light",
+                  isLoading: deleteMutation.isPending,
+                  isDisabled: deleteMutation.isPending || showReply || showEdit,
+                  className: "text-tiny min-w-0 min-h-0",
+                }}
+                buttonTitle="Delete"
+                subTitle="Do you really want to delete?"
+                onConfirm={handleDelete}
+              />
             )}
 
             {canMute && (
@@ -564,7 +526,7 @@ export default function ReplyFooter({
         tabIndex={-1}
       >
         {showReply || showEdit ? (
-          <div className="flex flex-col mt-2 gap-2 animate-appearance-in">
+          <div className="flex flex-col mt-2 gap-2 animate-appearance-in ">
             <EditorInput
               users={[
                 comment.author,
@@ -606,7 +568,7 @@ export default function ReplyFooter({
                   onPress={handlePublish}
                   isLoading={isPosting}
                   tooltip=""
-                  buttonText={showEdit ? "Update" : "Send"}
+                  buttonText={showEdit ? "Update" : "Reply"}
                 />
               </div>
             </div>
@@ -634,10 +596,10 @@ export default function ReplyFooter({
       <MuteDeleteModal
         comment={comment}
         isOpen={confirmationModal.isOpen}
-        onClose={() =>
+        onOpenChange={(open) =>
           setConfirmationModal({
             ...confirmationModal,
-            isOpen: !confirmationModal.isOpen,
+            isOpen: open,
           })
         }
         mute={true}

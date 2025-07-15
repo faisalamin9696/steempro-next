@@ -31,7 +31,7 @@ export default memo(function ReplyForm(props: Props) {
 
   return (
     <div className="flex flex-col w-full gap-4">
-      <div className="flex flex-col gap-2 p-2 bg-foreground/5 w-full rounded-lg">
+      <div className="flex flex-col gap-2 p-2 bg-foreground/5 w-full rounded-lg ">
         <ReplyBody
           hideBody={isEditing}
           comment={comment}
@@ -64,7 +64,11 @@ export default memo(function ReplyForm(props: Props) {
       <div className={twMerge("flex flex-col ")} style={{}}>
         {expanded &&
           replies?.map((item: Post) => (
-            <Reply key={item.link_id} comment={item} rootComment={rootComment} />
+            <Reply
+              key={item.link_id}
+              comment={item}
+              rootComment={rootComment}
+            />
           ))}
       </div>
     </div>

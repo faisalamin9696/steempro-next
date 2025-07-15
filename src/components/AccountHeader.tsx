@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { useAppSelector } from "@/constants/AppFunctions";
 import SAvatar from "./ui/SAvatar";
-import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import FollowButton from "./FollowButton";
 import { proxifyImageUrl } from "@/utils/proxifyUrl";
@@ -17,7 +16,8 @@ import { useSession } from "next-auth/react";
 import SLink from "./ui/SLink";
 import { usePathname, useRouter } from "next/navigation";
 import Reputation from "./Reputation";
-import ChatButton from "./ChatButton";
+import ChatButton from "./ui/ChatButton";
+import SModal from "./ui/SModal";
 
 type Props = {
   account: AccountExt;
@@ -174,31 +174,18 @@ export default function AccountHeader(props: Props) {
         </AccordionItem>
       </Accordion>
 
-      {followerModal.isOpen && (
-        <Modal
-          isOpen={followerModal.isOpen}
-          onOpenChange={(isOpen) => setFollowerModal({ isOpen: isOpen })}
-          placement="top-center"
-          scrollBehavior="inside"
-          closeButton
-        >
-          <ModalContent>
-            {() => (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  {followerModal.isFollowing ? "Following" : "Followers"}
-                </ModalHeader>
-                <ModalBody>
-                  <FollowersCard
-                    username={profileInfo.name}
-                    isFollowing={followerModal.isFollowing}
-                  />
-                </ModalBody>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-      )}
+      <SModal
+        isOpen={followerModal.isOpen}
+        onOpenChange={(isOpen) => setFollowerModal({ isOpen: isOpen })}
+        modalProps={{ scrollBehavior: "inside" }}
+        title={() => (followerModal.isFollowing ? "Following" : "Followers")}
+        body={() => (
+          <FollowersCard
+            username={profileInfo.name}
+            isFollowing={followerModal.isFollowing}
+          />
+        )}
+      />
     </div>
   );
 }

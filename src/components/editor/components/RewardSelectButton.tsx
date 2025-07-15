@@ -3,8 +3,8 @@ import { Button } from "@heroui/button";
 import { RadioGroup, Radio } from "@heroui/radio";
 
 import React, { memo, useState } from "react";
-import { FaDollarSign } from "react-icons/fa";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
+import { SiSteem } from "react-icons/si";
 
 export const rewardTypes: Payout[] = [
   { title: "Decline Payout", shortTitle: "Declined", payout: 0 },
@@ -42,18 +42,19 @@ export default memo(function RewardSelectButton(props: Props) {
             size="sm"
             isDisabled={isDisabled}
             color="default"
-            startContent={<FaDollarSign className="text-xl" />}
+            startContent={<SiSteem size={22} />}
             radius="lg"
             variant="shadow"
+            className="px-2"
           >
-            {isMobile ? "" : "Reward:"} {selectedValue.shortTitle}
+            {selectedValue.shortTitle}
           </Button>
         </PopoverTrigger>
         <PopoverContent>
-          <div className="px-1 py-2">
-            <div className="space-y-1">
-              <p className="flex text-small font-bold">{"Reward type"}</p>
-              <p className="text-tiny">
+          <div className="flex flex-col gap-2 px-1 py-2">
+            <div className="flex flex-col gap-1">
+              <p className="flex text-medium font-semibold">{"Reward type"}</p>
+              <p className="text-sm text-default-500">
                 {"What type of tokens do you want as rewards?"}
               </p>
             </div>

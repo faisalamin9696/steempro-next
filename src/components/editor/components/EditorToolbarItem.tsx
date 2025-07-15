@@ -1,4 +1,3 @@
-import { Button } from "@heroui/button";
 import { Tooltip } from "@heroui/tooltip";
 import { memo } from "react";
 import { IconType } from "react-icons";
@@ -17,19 +16,17 @@ export const ToolbarItem = memo((props: ToolbarItemProps) => {
   return (
     <Tooltip
       size="sm"
-      content={description + `${shortcut && `(${shortcut})`} `}
+      content={description + `${shortcut && ` (${shortcut})`} `}
       closeDelay={200}
       delay={1000}
     >
-      <Button
-        size={size ?? "sm"}
-        isDisabled={isDisabled}
-        isIconOnly
-        className="border-none"
-        onPress={() => onSelect && onSelect("b")}
+      <button
+        className="hover:bg-foreground/15 rounded-md p-[2px]"
+        disabled={isDisabled}
+        onClick={() => onSelect && onSelect("b")}
       >
-        <IconType className="text-lg rounded-none" />
-      </Button>
+        <IconType size={22} />
+      </button>
     </Tooltip>
   );
 });

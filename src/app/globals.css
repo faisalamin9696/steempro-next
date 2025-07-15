@@ -8,7 +8,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: rgb(15, 23, 42);
+    --background: rgb(1, 6, 12);
   }
 }
 
@@ -18,7 +18,7 @@
 }
 
 [data-theme="dark"] {
-  --background: rgb(15, 23, 42);
+  --background: rgb(1, 6, 12);
 }
 
 @layer utilities {

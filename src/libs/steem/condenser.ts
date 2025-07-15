@@ -13,6 +13,8 @@ import { PrivKey } from "../../utils/user";
 import { toast } from "sonner";
 import { CurrentSetting } from "../../constants/AppConstants";
 import { steemToVest } from "../../utils/helper/vesting";
+import { WitnessDataProps } from "@/app/witnesses/page";
+import { hasSteemProPostingAuthority } from "@/app/submit/SubmitPage";
 global.Buffer = global.Buffer || require("buffer").Buffer;
 
 const getExpirationISO = () => {
@@ -1713,13 +1715,8 @@ export const grantPostingPermission = async (
   privateKey: string,
   isKeychain?: boolean
 ) => {
-  const checkAuth = account.posting_account_auths;
-  // check for existing permission in the auth list
-  for (var i = 0, len = checkAuth.length; i < len; i++) {
-    if (checkAuth[i][0] === AppStrings.official_account) {
-      // official account exist in list
-      return Promise.resolve();
-    }
+  if (hasSteemProPostingAuthority(account.posting_account_auths)) {
+    return Promise.resolve();
   }
 
   if (isKeychain) {
@@ -1744,19 +1741,20 @@ export const grantPostingPermission = async (
 
   const keyData = getKeyType(account, privateKey);
 
-  const newPosting = Object.assign(
-    {},
-    {
-      ...account.posting_account_auths,
-    },
-    {
-      account_auths: [
-        ...account.posting_account_auths,
-        [AppStrings.official_account, account.posting_weight_threshold],
-      ],
-    }
-  );
-  newPosting.account_auths.sort();
+  const currentPosting = {
+    account_auths: account.posting_account_auths,
+    key_auths: account.posting_key_auths,
+    weight_threshold: account.posting_weight_threshold,
+  };
+  // Add new authority
+  const accountAuths = new Map(currentPosting.account_auths);
+  accountAuths.set(AppStrings.official_account, 1);
+
+  const newPosting = {
+    weight_threshold: currentPosting.weight_threshold,
+    account_auths: Array.from(accountAuths.entries()),
+    key_auths: currentPosting.key_auths,
+  };
 
   const opArray: any[] = [
     [
@@ -2229,6 +2227,127 @@ export const cancelMarketOrder = async (
         .catch((err) => {
           reject(err);
           console.error("Market order error", err);
+        });
+    });
+  }
+
+  return Promise.reject(
+    new Error(
+      "Check private key permission! Required private active key or above."
+    )
+  );
+};
+
+export const updateWitnessConfiguration = async (
+  account: AccountExt,
+  witness: Witness,
+  key: string,
+  isKeychain?: boolean
+) => {
+  const operation = {
+    owner: witness.name,
+    url: witness.url,
+    block_signing_key: witness.signing_key,
+    props: {
+      account_creation_fee: witness.props.account_creation_fee,
+      maximum_block_size: witness.props.maximum_block_size,
+      sbd_interest_rate: witness.props.sbd_interest_rate,
+      account_subsidy_budget: witness.props.account_subsidy_budget,
+      account_subsidy_decay: witness.props.account_subsidy_decay,
+    },
+    fee: "0.000 STEEM",
+  };
+
+  const opArray: Operation = ["witness_update", operation];
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestBroadcast(
+        account.name,
+        [opArray],
+        "Active",
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
+  const keyData = getKeyType(account, key);
+
+  if (keyData && PrivKey.atLeast(keyData.type, "ACTIVE")) {
+    const privateKey = PrivateKey.fromString(key);
+    return new Promise((resolve, reject) => {
+      client.broadcast
+        .sendOperations([opArray], privateKey)
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((err) => {
+          reject(err);
+          console.error("Witness setting error", err);
+        });
+    });
+  }
+
+  return Promise.reject(
+    new Error(
+      "Check private key permission! Required private active key or above."
+    )
+  );
+};
+
+export const updateWitnessProxy = async (
+  account: AccountExt,
+  proxy: string,
+  key: string,
+  isKeychain?: boolean
+) => {
+  const operation = {
+    account: account.name,
+    proxy: proxy,
+  };
+
+  const opArray: Operation = ["account_witness_proxy", operation];
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      window.steem_keychain.requestBroadcast(
+        account.name,
+        [opArray],
+        "Active",
+        function (response) {
+          if (response?.success) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      );
+    });
+  }
+
+  const keyData = getKeyType(account, key);
+
+  if (keyData && PrivKey.atLeast(keyData.type, "ACTIVE")) {
+    const privateKey = PrivateKey.fromString(key);
+    return new Promise((resolve, reject) => {
+      client.broadcast
+        .sendOperations([opArray], privateKey)
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((err) => {
+          reject(err);
+          console.error("Witness proxy error", err);
         });
     });
   }

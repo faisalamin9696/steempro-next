@@ -76,7 +76,7 @@ function MemoLogin(props: Props) {
   return (
     <div className="flex flex-col gap-4">
       <Input
-        size="sm"
+        size="md"
         autoFocus
         value={memoKey}
         isRequired

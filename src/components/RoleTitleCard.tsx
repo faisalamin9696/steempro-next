@@ -11,6 +11,7 @@ export default function RoleTitleCard(props: Props) {
   const { comment, className, roleClassName, titleClassName } = props;
 
   if (!comment.author_role && !comment.author_title) return null;
+  
   return (
     <div
       className={twMerge(

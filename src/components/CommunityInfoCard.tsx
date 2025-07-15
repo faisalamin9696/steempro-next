@@ -1,29 +1,22 @@
 "use client";
 
-import React, { memo, useState } from "react";
+import React, { memo } from "react";
 import { mapSds, useAppSelector } from "@/constants/AppFunctions";
 import { twMerge } from "tailwind-merge";
 import moment from "moment";
 import { abbreviateNumber } from "@/utils/helper";
 import MarkdownViewer from "./body/MarkdownViewer";
 import { Role as RoleLevel } from "@/utils/community";
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  useDisclosure,
-} from "@heroui/modal";
+import { useDisclosure } from "@heroui/modal";
 import { Avatar, AvatarGroup } from "@heroui/avatar";
 import { Accordion, AccordionItem } from "@heroui/accordion";
 import { getResizedAvatar } from "@/utils/parseImage";
 import { SlCalender } from "react-icons/sl";
 import { TbHeartDollar } from "react-icons/tb";
-import CommunityMembers from "./community/CommunityMembers";
 import { CommunityActivities } from "./community/CommunityActivities";
 import SLink from "./ui/SLink";
-import ChatButton from "./ChatButton";
 import CommunityChatModal from "./chat/community/CommunityChatModal";
+import ChatButton from "./ui/ChatButton";
 
 type Props = {
   community: Community;
@@ -149,12 +142,14 @@ export default memo(function CommunityInfoCard(props: Props) {
                 </SLink>
               ))}
             </AvatarGroup>
-            <p
-              onClick={onLeadershipPress}
-              className=" text-tiny hover:underline cursor-pointer"
-            >
-              Show all
-            </p>
+            {leaderShip?.length > 5 && (
+              <p
+                onClick={onLeadershipPress}
+                className=" text-tiny hover:underline cursor-pointer"
+              >
+                Show all
+              </p>
+            )}
           </div>
         </div>
       </div>

@@ -27,46 +27,38 @@
     max-width: 50%;
   }
 
-  thead {
-    font-weight: 600;
-    border-style: none;
-  }
-
-  table {
-    th {
-      border-style: none;
-      padding: 6px;
-      word-wrap: break-word;
-      white-space: nowrap;
-      @apply align-top bg-gray-200 dark:bg-gray-900 max-w-fit overflow-clip text-wrap flex-nowrap text-start;
-      vertical-align: inherit;
-    }
-
-    td {
-      padding: 6px;
-      display: table-cell;
-      vertical-align: middle;
-    }
-
-    tbody {
-      tr {
-        @apply odd:bg-white odd:dark:bg-gray-900 even:bg-gray-100 even:dark:bg-gray-800;
-      }
-    }
-  }
-
-  table td {
-    @apply align-top bg-gray-200 dark:bg-gray-900 max-w-fit overflow-clip text-wrap flex-nowrap text-start;
-  }
-
-  table thead th {
-    word-break: normal;
-  }
-
   .table-scrollable {
-    min-width: 100% !important;
-    overflow-x: auto;
-    overflow-y: auto;
+    @apply w-full overflow-x-auto !min-w-full;
+  }
+
+  /* Main table styles */
+  table {
+    @apply w-full table-auto border-collapse text-sm;
+
+    th {
+      @apply bg-gray-100  dark:bg-gray-800 dark:text-gray-200 text-left p-3 font-semibold text-gray-900 whitespace-nowrap;
+    }
+
+    /* Body cells */
+    td {
+      @apply p-3 align-middle text-gray-800 dark:text-gray-100 break-normal;
+    }
+
+    tbody tr:nth-child(odd) {
+      @apply bg-white dark:bg-gray-900;
+    }
+
+    /* Optional: border for aesthetics */
+
+    th,
+    td {
+      @apply border border-gray-300 dark:border-gray-700;
+    }
+  }
+
+  /* Header cells */
+  table thead {
+    @apply bg-gray-100 dark:bg-gray-800 text-left p-3 font-semibold text-gray-900 dark:text-gray-200 whitespace-nowrap;
   }
 
   .MarkdownViewer__negative_group {

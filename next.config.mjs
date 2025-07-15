@@ -71,7 +71,7 @@ const nextConfig = {
       // community mapping
       {
         source:
-          "/:category(created|trending|hot|payout|about|pinned)/hive-:tag",
+          "/:category(created|trending|hot|payout|about|pinned|roles)/hive-:tag",
         destination: "/community/:category/:tag",
       },
 

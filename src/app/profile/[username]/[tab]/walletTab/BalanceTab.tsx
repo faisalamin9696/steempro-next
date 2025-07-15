@@ -2,15 +2,7 @@ import { TokenCard } from "@/components/TokenCard";
 import TransferModal from "@/components/TransferModal";
 import { useAppSelector } from "@/constants/AppFunctions";
 import { vestToSteem } from "@/utils/helper/vesting";
-import {
-  useDisclosure,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/modal";
-import { Button } from "@heroui/button";
+import { useDisclosure } from "@heroui/modal";
 import { DropdownMenu, DropdownItem } from "@heroui/dropdown";
 import React, { Key, useState } from "react";
 import PowerDownModal from "@/components/PowerDownModal";
@@ -19,6 +11,8 @@ import { IoMdAdd, IoMdRemove } from "react-icons/io";
 import { useSession } from "next-auth/react";
 import SLink from "@/components/ui/SLink";
 import { useParams, useRouter } from "next/navigation";
+import SModal from "@/components/ui/SModal";
+import Image from "next/image";
 
 const tokens = {
   steem: {
@@ -26,6 +20,9 @@ const tokens = {
     title: "STEEM",
     description: `Tradeable tokens that may be transferred anywhere at anytime.
         Steem can be converted to STEEM POWER in a process called powering up.`,
+    shortDesc:
+      "Tradeable tokens that can be transferred anytime or powered up into STEEM POWER.",
+    iconSrc: "/steem-logo.svg",
   },
   steem_power: {
     symbol: undefined,
@@ -33,16 +30,21 @@ const tokens = {
     description: `Influence tokens which give you more control over post payouts and allow you to earn on curation rewards.
         Part of users's STEEM POWER is currently delegated. Delegation is donated for influence or to help new users perform actions on Steemit. Your delegation amount can fluctuate.
         STEEM POWER increases at an APR of approximately 2.77%, subject to blockchain variance. See FAQ for details.`,
+    shortDesc:
+      "Influence tokens that boost curation rewards, post payouts, and may be delegated or grow via 2.77% APR.",
+    iconSrc: "/sp-logo.svg",
   },
   steem_dollar: {
     symbol: undefined,
     title: "STEEM DOLLARS",
-    description: `Tradeable tokens that may be transferred anywhere at anytime.`,
+    description: "Tradeable tokens transferable anytime, anywhere.",
+    iconSrc: "/sbd-logo.svg",
   },
   saving: {
     symbol: undefined,
     title: "SAVINGS",
-    description: `Balances subject to 3 day withdraw waiting period.`,
+    description: "Balances have a 3-day withdrawal waiting period.",
+    iconSrc: "/savings-logo.svg",
   },
 };
 
@@ -83,12 +85,16 @@ export default function BalanceTab({
   let { username } = useParams() as { username: string };
   username = username?.toLowerCase();
   const { data: session } = useSession();
-
+  const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const isSelf = session?.user?.name === username;
   const router = useRouter();
+  const totalOwnSp = vestToSteem(data.vests_own, globalData.steem_per_share);
+  const totalAvailableSp = vestToSteem(
+    data.vests_own - data.vests_out - data.powerdown + data.powerdown_done,
+    globalData.steem_per_share
+  );
 
-  const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
   let [key, setKey] = useState<SteemTokens>();
   const [powerDownModal, setPowerDownModal] = useState<{
     isOpen: boolean;
@@ -161,9 +167,10 @@ export default function BalanceTab({
         <>
           <TokenCard
             tokenKey="steem"
-            iconSrc="/steem-logo.svg"
+            iconSrc={tokens.steem.iconSrc}
             symbol={tokens.steem.symbol}
             description={tokens.steem.description}
+            shortDesc={tokens.steem.shortDesc}
             title={tokens.steem.title}
             endContent={
               <div className="flex gap-2">
@@ -187,19 +194,28 @@ export default function BalanceTab({
 
           <TokenCard
             tokenKey="steem_power"
-            iconSrc="/sp-logo.svg"
+            iconSrc={tokens.steem_power.iconSrc}
             symbol={tokens.steem_power.symbol}
             description={steem_power_desc(username)}
             title={tokens.steem_power.title}
+            shortDesc={tokens.steem_power.shortDesc}
             endContent={
-              <div className="flex flex-col gap-2 items-end">
-                <p>
-                  {vestToSteem(
-                    data.vests_own,
-                    globalData.steem_per_share
-                  )?.toLocaleString()}
-                </p>
-                <div className="flex gap-2 items-center">
+              <div className="flex flex-col gap-2 items-end ">
+                <div className="flex flex-row items-center gap-2">
+                  {!!totalOwnSp && totalOwnSp !== totalAvailableSp && (
+                    <p
+                      title={"Total: " + totalOwnSp?.toLocaleString()}
+                      className="text-default-500"
+                    >
+                      ({totalOwnSp?.toLocaleString()})
+                    </p>
+                  )}
+
+                  <p title={"Available: " + totalAvailableSp?.toLocaleString()}>
+                    {totalAvailableSp?.toLocaleString()} SP
+                  </p>
+                </div>
+                <div className="flex flex-row gap-2 items-center ">
                   {!!data.vests_out && (
                     <Chip
                       title="Outgoing delegation"
@@ -262,9 +278,10 @@ export default function BalanceTab({
 
           <TokenCard
             tokenKey="steem_dollar"
-            iconSrc="/sbd-logo.svg"
+            iconSrc={tokens.steem_dollar.iconSrc}
             description={tokens.steem_dollar.description}
             title={tokens.steem_dollar.title}
+            shortDesc={tokens.steem_dollar.description}
             endContent={
               <div>
                 <p>${data.balance_sbd?.toLocaleString()} SBD</p>
@@ -289,7 +306,8 @@ export default function BalanceTab({
 
           <TokenCard
             tokenKey={"saving"}
-            iconSrc="/savings-logo.svg"
+            iconSrc={tokens.saving.iconSrc}
+            shortDesc={tokens.saving.description}
             description={tokens.saving.description}
             title={tokens.saving.title}
             endContent={
@@ -325,45 +343,34 @@ export default function BalanceTab({
         />
       )}
 
-      {balanceDisclosure.isOpen && (
-        <Modal
-          isOpen={balanceDisclosure.isOpen}
-          onOpenChange={balanceDisclosure.onOpenChange}
-          hideCloseButton
-        >
-          <ModalContent>
-            {() =>
-              key && (
-                <>
-                  <ModalHeader className="flex flex-col gap-1">
-                    {tokens[key]["title"]}
-                  </ModalHeader>
-                  <ModalBody>
-                    <div>
-                      {tokens[key].title === "STEEM POWER"
-                        ? steem_power_desc(username)
-                        : tokens[key]["description"]}
-                    </div>
-                  </ModalBody>
-                  <ModalFooter>
-                    <Button
-                      color="danger"
-                      variant="flat"
-                      onPress={balanceDisclosure.onClose}
-                      size="sm"
-                    >
-                      Close
-                    </Button>
-                    {/* <Button color="primary" onClick={onClose}>
-                                    Action
-                                </Button> */}
-                  </ModalFooter>
-                </>
-              )
-            }
-          </ModalContent>
-        </Modal>
-      )}
+      <SModal
+        isOpen={balanceDisclosure.isOpen}
+        onOpenChange={balanceDisclosure.onOpenChange}
+        title={() =>
+          key && (
+            <div className="flex flex-row items-center gap-2">
+              {tokens[key].iconSrc && (
+                <Image
+                  alt=""
+                  width={35}
+                  height={35}
+                  src={tokens[key].iconSrc}
+                />
+              )}
+              {tokens[key]["title"]}
+            </div>
+          )
+        }
+        body={() =>
+          key && (
+            <div className=" text-sm text-default-600">
+              {tokens[key].title === "STEEM POWER"
+                ? steem_power_desc(username)
+                : tokens[key]["description"]}
+            </div>
+          )
+        }
+      />
     </div>
   );
 }
