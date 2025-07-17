@@ -81,39 +81,33 @@ function Proposals() {
 
       <DaoStats proposals={data} />
 
-      <Card className="space-y-4">
+      <Card>
+        <CardHeader className="pb-3 flex flex-col items-start gap-4 p-6">
+          <div className="flex flex-col sm:flex-row justify-between w-full">
+            <div className="flex flex-row items-center gap-2 text-lg sm:text-xl font-semibold">
+              <FaFileInvoiceDollar size={24} className="text-steem" />
+              DAO Proposals
+            </div>
+            <div className="text-default-500 text-sm text-end">
+              Showing {filteredItems.length} of {allRows.length} proposals
+            </div>
+          </div>
+          <Input
+            startContent={<FaSearch className="text-default-500" />}
+            placeholder="Search proposal..."
+            className="max-w-lg"
+            value={filterValue}
+            onValueChange={setFilterValue}
+            isClearable
+          />
+        </CardHeader>
         <CardBody className="space-y-4">
-          <CardHeader className="pb-3 flex flex-col items-start gap-2">
-            <div className="flex flex-col sm:flex-row justify-between w-full">
-              <CardBody className="flex flex-row items-center gap-2 text-lg sm:text-xl font-semibold">
-                <FaFileInvoiceDollar size={24} className="text-steem" />
-                DAO Proposals
-              </CardBody>
-              <CardBody className="text-default-500 text-sm text-end">
-                Showing {filteredItems.length} of {allRows.length} proposals
-              </CardBody>
-            </div>
-            <div className="flex flex-col items-start gap-3 w-full">
-              <Input
-                startContent={<FaSearch className="text-default-500" />}
-                placeholder="Search proposal..."
-                className="max-w-lg"
-                value={filterValue}
-                onValueChange={setFilterValue}
-                isClearable
-              />
-            </div>
-          </CardHeader>
-
           <Table>
             <TableBody>
               <div className="flex flex-col gap-2">
                 {filteredItems?.map((proposal) => {
                   return (
-                    <TableRow
-                      key={proposal.id}
-                      className="text-xs hover:bg-muted/20 w-full "
-                    >
+                    <TableRow key={proposal.id} className="px-4 pb-4">
                       <ProposalItem
                         returnProposal={allRows.find(
                           (p) => p.proposal_id === 0

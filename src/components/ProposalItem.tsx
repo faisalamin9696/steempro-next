@@ -173,7 +173,7 @@ const ProposalItem = ({
   };
 
   return (
-    <div key={proposal.id} className="p-2 sm:p-4">
+    <div key={proposal.id}>
       <div className="space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
           <div className="flex-1 min-w-0">

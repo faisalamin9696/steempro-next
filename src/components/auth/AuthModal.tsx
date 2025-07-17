@@ -62,6 +62,7 @@ export default function AuthModal(props: Props) {
         hideCloseButton: true,
         size: "md",
         backdrop: requestActive || isLocked || addMemo ? "blur" : "opaque",
+        placement: "top-center",
       }}
       title={() =>
         (isLocked && !addNew && !addMemo) || (requestActive && isLocked) ? (

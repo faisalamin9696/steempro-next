@@ -112,9 +112,9 @@ export default function AccountItemCard(props: Props) {
     defaultAccount?.type === user.type;
 
   return (
-    <Card
+    <Card shadow="sm"
       className={twMerge(
-        "flex flex-col gap-2 w-full p-2 shadow-md comment-card",
+        "flex flex-col gap-2 w-full p-2 comment-card",
         props.className
       )}
     >

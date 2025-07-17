@@ -132,16 +132,16 @@ function WitnessListTab(props: Props) {
 
   return (
     <>
-      <Card className="space-y-4">
-        <CardHeader className="pb-3 flex flex-col items-start gap-2">
+      <Card>
+        <CardHeader className="pb-3 flex flex-col items-start  gap-4 p-6">
           <div className="flex flex-col sm:flex-row justify-between w-full">
-            <CardBody className="flex flex-row items-center gap-2 text-lg sm:text-xl font-semibold">
+            <div className="flex flex-row items-center gap-2 text-lg sm:text-xl font-semibold">
               <FaVoteYea size={24} className="text-steem" />
               Top Witnesses (100)
-            </CardBody>
-            <CardBody className="text-default-500 text-sm text-end">
+            </div>
+            <div className="text-default-500 text-sm text-end">
               Vote for up to 30 witnesses to secure the Steem blockchain
-            </CardBody>
+            </div>
           </div>
           <div className="flex flex-col items-start gap-3 w-full">
             <Input
@@ -152,7 +152,7 @@ function WitnessListTab(props: Props) {
               onValueChange={setFilterValue}
               isClearable
             />
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 sm:items-center">
+            <div className="flex flex-row gap-4 items-center">
               <div className="flex items-center space-x-2">
                 <Switch
                   size="sm"
@@ -236,14 +236,10 @@ function WitnessListTab(props: Props) {
                         reported_price: witness.reported_price,
                       };
                       return (
-                        <TableRow
-                          key={witness.name}
-                          className="text-xs hover:bg-muted/20 w-full "
-                        >
+                        <TableRow key={witness.name} className="px-4 pb-4">
                           <div
                             key={witness.name}
                             className={twMerge(
-                              `p-2 sm:p-4`,
                               witness.isDisabled ? "opacity-60" : "",
                               witness.name === witnessRef
                                 ? "bg-green-600/20  animate-appearance-in"

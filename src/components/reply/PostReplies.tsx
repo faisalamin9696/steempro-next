@@ -11,7 +11,6 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import Reply from "./Reply";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
 import EditorInput from "@/components/editor/EditorInput";
-import ClearFormButton from "@/components/editor/components/ClearFormButton";
 import PublishButton from "@/components/editor/components/PublishButton";
 import moment from "moment";
 import { toast } from "sonner";
@@ -26,7 +25,6 @@ import {
 } from "@/utils/editor";
 import { getCredentials, getSessionKey } from "@/utils/user";
 import { useLogin } from "@/components/auth/AuthProvider";
-import secureLocalStorage from "react-secure-storage";
 import { readingTime } from "@/utils/readingTime/reading-time-estimator";
 import EmptyList from "@/components/EmptyList";
 import { Select, SelectItem } from "@heroui/select";
@@ -39,6 +37,9 @@ import {
 } from "@/utils/draft";
 import BeneficiaryButton from "../editor/components/BeneficiaryButton";
 import { RewardTypes } from "@/constants/AppConstants";
+import RewardSelectButton, {
+  rewardTypes,
+} from "../editor/components/RewardSelectButton";
 
 interface Props {
   comment: Post | Feed;
@@ -61,6 +62,8 @@ export default memo(function PostReplies(props: Props) {
   const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>(
     draft.beneficiaries ?? []
   );
+  const [reward, setReward] = useState(rewardTypes[1]);
+
   const postReplies = (useAppSelector((state) => state.repliesReducer.values)[
     `${commentInfo.author}/${commentInfo.permlink}`
   ] ?? []) as Post[];
@@ -175,7 +178,7 @@ export default memo(function PostReplies(props: Props) {
     setMarkdown("");
   }
 
-  function handleOnPublished(postData: PostingContent) {
+  function handleOnPublished(postData: PostingContent, options: any) {
     const time = moment().unix();
 
     let newComment: Post = {
@@ -211,7 +214,14 @@ export default memo(function PostReplies(props: Props) {
       downvote_count: 0,
       cashout_time: moment().add(7, "days").unix(),
       is_new: 1,
+      ...(options ?? {}),
     };
+
+    if (newComment.max_accepted_payout) {
+      newComment.max_accepted_payout = parseFloat(
+        String(newComment.max_accepted_payout)
+      );
+    }
 
     queryClient.setQueryData(queryKey, {
       ...commentInfo,
@@ -262,8 +272,8 @@ export default memo(function PostReplies(props: Props) {
         toast.error(error.message || JSON.stringify(error));
         return;
       }
-      const { postData } = variables;
-      handleOnPublished(postData);
+      const { postData, options } = variables;
+      handleOnPublished(postData, options);
     },
   });
 
@@ -311,6 +321,7 @@ export default memo(function PostReplies(props: Props) {
       let options = makeOptions({
         author: loginInfo.name,
         permlink,
+        operationType: reward?.payout,
         beneficiaries: beneficiaries,
       });
 
@@ -320,7 +331,7 @@ export default memo(function PostReplies(props: Props) {
 
       replyMutation.mutate({
         postData,
-        options: beneficiaries?.length ? options : null,
+        options: options,
         key: credentials.key,
         isKeychain: credentials.keychainLogin,
       });
@@ -436,13 +447,12 @@ export default memo(function PostReplies(props: Props) {
 
               <div className="flex justify-between">
                 <div className="flex flex-row gap-2">
-                  <ClearFormButton
+                  {/* <ClearFormButton
                     isDisabled={isPosting}
                     onClearPress={handleClear}
-                  />
-
+                  /> */}
                   <BeneficiaryButton
-                    isDisabled={isLoading}
+                    isDisabled={isPosting}
                     onSelectBeneficiary={(bene) => {
                       setBeneficiaries([
                         ...beneficiaries,
@@ -458,6 +468,12 @@ export default memo(function PostReplies(props: Props) {
                     }}
                     beneficiaries={beneficiaries}
                     favourites={[{ account: comment.author, weight: 500 }]}
+                  />
+
+                  <RewardSelectButton
+                    isDisabled={isPosting}
+                    selectedValue={reward}
+                    onSelectReward={setReward}
                   />
                 </div>
                 <div className="flex gap-2 ">

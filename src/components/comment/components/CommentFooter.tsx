@@ -559,7 +559,7 @@ export default memo(function CommentFooter(props: CommentProps) {
               isOpen={breakdownModal}
               size="md"
               className=" w-64"
-              classNames={{ content: "bg-primary-300 rounded-md" }}
+              color="primary"
             >
               <PopoverTrigger>
                 <Button

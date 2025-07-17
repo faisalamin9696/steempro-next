@@ -18,7 +18,11 @@ export default function AccountsModal(props: Props) {
     <SModal
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      modalProps={{ scrollBehavior: "inside", hideCloseButton: true }}
+      modalProps={{
+        scrollBehavior: "inside",
+        hideCloseButton: true,
+        placement: "top-center",
+      }}
       title={() => "Accounts"}
       body={() => (
         <AvailableAccountList

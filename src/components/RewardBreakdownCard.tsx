@@ -1,11 +1,10 @@
-import React, { Component, Fragment, useState } from "react";
+import React, { Component } from "react";
 import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
 import { getTimeFromNow } from "@/utils/helper/time";
 import useSWR from "swr";
 import LoadingCard from "./LoadingCard";
 import "./style.scss";
 import SLink from "./ui/SLink";
-import SAvatar from "./ui/SAvatar";
 
 interface Props {
   comment: Feed | Post;
@@ -15,7 +14,38 @@ interface DetailProps {
   data: Post;
   globalData: SteemProps;
 }
-export class PayoutDetail extends Component<DetailProps> {
+
+export const RewardBreakdownCard = (props: Props) => {
+  const { comment } = props;
+
+  const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
+  const URL = `/posts_api/getPost/${comment.author}/${
+    comment.permlink
+  }/${false}`;
+
+  const { data, isLoading, error } = useSWR(
+    comment.max_accepted_payout !== 0 && URL,
+    fetchSds<Post>
+  );
+
+  if (comment.max_accepted_payout === 0) {
+    return (
+      <p>
+        <span className="value">{"Payout Declined"}</span>
+      </p>
+    );
+  }
+  if (isLoading) {
+    return <LoadingCard />;
+  }
+  if (!data || error) {
+    return <></>;
+  }
+
+  return <PayoutDetail data={data} globalData={globalData} />;
+};
+
+class PayoutDetail extends Component<DetailProps> {
   render() {
     const { data, globalData } = this.props;
 
@@ -71,144 +101,110 @@ export class PayoutDetail extends Component<DetailProps> {
     }
 
     return (
-      <div className="flex flex-col payout-popover-content gap-2 w-full">
+      <div className="flex flex-col gap-3 w-full text-sm text-white">
+        {/* Power Up Indicator */}
         {fullPower && (
-          <div>
-            <span className="label">{"Reward: "}</span>
-            <span className="value">{"Power Up 100%"}</span>
+          <div className="flex justify-between">
+            <span className="font-medium text-white">Reward</span>
+            <span className="text-green-300 font-semibold">Power Up 100%</span>
           </div>
         )}
+
+        {/* Main Payouts */}
         {pendingPayout > 0 && (
-          <div>
-            <span className="label">{"Pending Payout: "}</span>
-            <span className="value">
-              ${pendingPayout?.toFixed(3)}
-              {/* <FormattedCurrency {...this.props} value={pendingPayout} fixAt={3} /> */}
-            </span>
+          <div className="flex justify-between">
+            <span className="font-medium text-white">Pending Payout</span>
+            <span className="font-semibold">${pendingPayout.toFixed(3)}</span>
           </div>
         )}
         {promotedPayout > 0 && (
-          <div>
-            <span className="label">{"Promoted"}</span>
-            <span className="value">
-              {promotedPayout?.toFixed(3)}
-              {/* <FormattedCurrency {...this.props} value={promotedPayout} fixAt={3} /> */}
-            </span>
+          <div className="flex justify-between">
+            <span className="font-medium text-white">Promoted</span>
+            <span className="font-semibold">${promotedPayout.toFixed(3)}</span>
           </div>
         )}
         {authorPayout > 0 && (
-          <div>
-            <span className="label">{"Author Payout: "}</span>
-            <span className="value">
-              ${authorPayout?.toFixed(3)}
-              {/* <FormattedCurrency {...this.props} value={authorPayout} fixAt={3} /> */}
-            </span>
+          <div className="flex justify-between">
+            <span className="font-medium text-white">Author Payout</span>
+            <span className="font-semibold">${authorPayout.toFixed(3)}</span>
           </div>
         )}
         {curatorPayout > 0 && (
-          <div>
-            <span className="label">{"Curators Payout: "}</span>
-            <span className="value">
-              ${curatorPayout?.toFixed(3)}
-              {/* <FormattedCurrency {...this.props} value={curatorPayout} fixAt={3} /> */}
+          <div className="flex justify-between">
+            <span className="font-medium text-white">
+              Curators Payout
             </span>
+            <span className="font-semibold">${curatorPayout.toFixed(3)}</span>
           </div>
         )}
+
+        {/* Beneficiaries Section */}
         {beneficiary.length > 0 && (
-          <div className="flex flex-row flex-wrap p-2 bg-default-100 rounded-md gap-2">
-            <span className="text-sm text-default-500">
-              {"Beneficiaries: "}
-            </span>
-            <span className="value px-1">
-              {beneficiary.map((x: any, i) => (
-                <Fragment key={i}>
-                  <div className=" flex flex-row items-center gap-1">
-                    <div className="flex flex-row items-center gap-1">
-                      <SLink
-                        className=" hover:text-blue-500 hover:underline"
-                        href={`/@${x[0]}`}
-                      >
-                        {x[0]}
-                      </SLink>
-                    </div>
-                    : {(x[1] / 100).toFixed(0)}%
-                  </div>
-                  <br />
-                </Fragment>
+          <div className="bg-background p-3 rounded-lg text-default-900">
+            <p className="text-sm font-semibold mb-2">
+              Beneficiaries
+            </p>
+            <div className="flex flex-col gap-1 text-default-900">
+              {beneficiary.map((x: any, i: number) => (
+                <div key={i} className="flex justify-between items-center">
+                  <SLink
+                    className="text-blue-600 hover:underline"
+                    href={`/@${x[0]}`}
+                  >
+                    @{x[0]}
+                  </SLink>
+                  <span className="text-default-900 font-medium">
+                    {(x[1] / 100).toFixed(0)}%
+                  </span>
+                </div>
               ))}
-            </span>
+            </div>
           </div>
         )}
 
+        {/* Breakdown Section */}
         {breakdownPayout.length > 0 && (
-          <div className="gap-2 flex flex-row flex-wrap p-2 bg-default-100 rounded-md">
-            <span className="label text-sm text-default-500">
-              {"Breakdown: "}
-            </span>
-            <span className="value px-1">
+          <div className="bg-background p-3 rounded-lg text-default-900">
+            <p className=" text-sm font-semibold mb-2">
+              Breakdown
+            </p>
+            <div className="space-y-1 text-default-900">
               {breakdownPayout.map((x, i) => (
-                <Fragment key={i}>
-                  {x} <br />
-                </Fragment>
+                <div key={i}>{x}</div>
               ))}
-            </span>
+            </div>
           </div>
         )}
 
+        {/* Payout Info */}
         {payoutDate && (
-          <div>
-            <span className="label">{"Payout: "}</span>
-            <span className="value" title={new Date(data.cashout_time * 1000).toLocaleString()}>{payoutDate}</span>
-          </div>
-        )}
-
-        {!payoutDate && !authorPayout && !curatorPayout && (
-          <div>
-            <span className="label">{"Payout: "}</span>
-            <span className="value">{"Reward distributed"}</span>
-          </div>
-        )}
-
-        {payoutLimitHit && (
-          <div>
-            <span className="label">{"Max accepted: "}</span>
-            <span className="value">
-              {maxPayout?.toFixed(3)}
-              {/* <FormattedCurrency {...this.props} value={maxPayout} fixAt={3} /> */}
+          <div className="flex justify-between">
+            <span className="font-medium text-white">Payout Date</span>
+            <span
+              className="font-semibold"
+              title={new Date(data.cashout_time * 1000).toLocaleString()}
+            >
+              {payoutDate}
             </span>
+          </div>
+        )}
+        {!payoutDate && !authorPayout && !curatorPayout && (
+          <div className="flex justify-between">
+            <span className="font-medium text-white">Payout</span>
+            <span className="text-white font-semibold">
+              Reward Distributed
+            </span>
+          </div>
+        )}
+
+        {/* Max Payout Info */}
+        {payoutLimitHit && (
+          <div className="flex justify-between">
+            <span className="font-medium text-white">Max Accepted</span>
+            <span className="font-semibold">${maxPayout.toFixed(3)}</span>
           </div>
         )}
       </div>
     );
   }
 }
-
-export const RewardBreakdownCard = (props: Props) => {
-  const { comment } = props;
-
-  const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
-  const URL = `/posts_api/getPost/${comment.author}/${
-    comment.permlink
-  }/${false}`;
-
-  const { data, isLoading, error } = useSWR(
-    comment.max_accepted_payout !== 0 && URL,
-    fetchSds<Post>
-  );
-
-  if (comment.max_accepted_payout === 0) {
-    return (
-      <p>
-        <span className="value">{"Payout Declined"}</span>
-      </p>
-    );
-  }
-  if (isLoading) {
-    return <LoadingCard />;
-  }
-  if (!data || error) {
-    return <></>;
-  }
-
-  return <PayoutDetail data={data} globalData={globalData} />;
-};

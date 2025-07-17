@@ -26,7 +26,6 @@ import {
 import { readingTime } from "@/utils/readingTime/reading-time-estimator";
 import { getCredentials, getSessionKey } from "@/utils/user";
 import { Button } from "@heroui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
 import { Card } from "@heroui/card";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
@@ -41,7 +40,6 @@ import {
   removeCommentDraft,
   saveCommentDraft,
 } from "@/utils/draft";
-import BeneficiaryButton from "../editor/components/BeneficiaryButton";
 import ConfirmationPopup from "../ui/ConfirmationPopup";
 
 export default function ReplyFooter({
