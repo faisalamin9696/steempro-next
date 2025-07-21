@@ -48,6 +48,7 @@ import { AsyncUtils } from "@/utils/async.utils";
 import { Spinner } from "@heroui/spinner";
 import { mutate } from "swr";
 import SModal from "../ui/SModal";
+import Lottie from "lottie-react";
 
 export async function refreshData(username?: string | null) {
   mutate("/steem_requests_api/getSteemProps");
@@ -63,15 +64,16 @@ function AppNavbar() {
     useLogin();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { data: session, status } = useSession();
+  const isAuthenticated = status === "authenticated";
   const [isPopOpen, setIsPopOpen] = React.useState(false);
   const accountDisclosure = useDisclosure();
   const notiDisclosure = useDisclosure();
+  const crateDisclosure = useDisclosure();
+
   const searchDisclosure = useDisclosure();
   const dispatch = useAppDispatch();
   const [isLocked, setLocked] = useState(
-    status === "authenticated" &&
-      !sessionKey &&
-      !getSessionToken(session.user?.name)
+    isAuthenticated && !sessionKey && !getSessionToken(session.user?.name)
   );
   const logoutDisclosure = useDisclosure();
   const [logoutLoading, setLogoutLoading] = useState(false);
@@ -80,7 +82,7 @@ function AppNavbar() {
   // validate the local storage auth
   useMemo(async () => {
     const credentials = getCredentials();
-    if (status === "authenticated") {
+    if (isAuthenticated) {
       if (!sessionKey && !getSessionToken(session.user?.name)) {
         setLocked(true);
       } else {
@@ -193,7 +195,6 @@ function AppNavbar() {
               type="search"
               onClick={searchDisclosure.onOpen}
             />
-
             <Button
               size="sm"
               isIconOnly
@@ -215,8 +216,7 @@ function AppNavbar() {
             >
               <LuPencilLine size={24} className="text-default-600" />
             </Button>
-
-            {status === "authenticated" && (
+            {isAuthenticated && (
               <Badge
                 size="sm"
                 content={
@@ -252,8 +252,7 @@ function AppNavbar() {
                 </Button>
               </Badge>
             )}
-
-            {status !== "authenticated" && (
+            {!isAuthenticated && (
               <Button
                 isIconOnly={status !== "unauthenticated"}
                 radius="lg"
@@ -267,8 +266,7 @@ function AppNavbar() {
                 Login
               </Button>
             )}
-
-            {status === "authenticated" && (
+            {isAuthenticated && (
               <Popover
                 placement="top"
                 color="default"

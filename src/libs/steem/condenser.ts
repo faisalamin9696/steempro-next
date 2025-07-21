@@ -2358,3 +2358,132 @@ export const updateWitnessProxy = async (
     )
   );
 };
+
+export const broadcastCrateData = async (
+  account: AccountExt,
+  reward: number,
+  key: string,
+  isKeychain?: boolean
+) => {
+  if (!reward) {
+    return Promise.reject(new Error("Something went wrong!"));
+  }
+
+  const encResponse = await axios.post("/api/encrypt", {
+    data: reward,
+  });
+
+  if (!encResponse?.data?.encData) {
+    return Promise.reject(new Error("Something went wrong!"));
+  }
+
+  const payload = {
+    username: account.name,
+    reward: encResponse?.data?.encData,
+    secret: "",
+  };
+
+  const custom_json = {
+    id: "steempro_crate",
+    required_auths: [],
+    required_posting_auths: [account.name],
+    json: JSON.stringify(payload),
+  };
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    const secretResponse = await axios.post("/api/chat/secret");
+
+    if (secretResponse?.data?.secret) {
+      // Parse JSON string to object
+      const parsed = JSON.parse(custom_json.json);
+      // Update secret
+      parsed.secret = secretResponse?.data?.secret;
+      // Re-stringify and update custom_json
+      custom_json.json = JSON.stringify(parsed);
+      const opArray: Operation = ["custom_json", custom_json];
+
+      const props = await client.database.getDynamicGlobalProperties();
+      const headBlockNumber = props.head_block_number;
+      const headBlockId = props.head_block_id;
+      const expireTime = 40000;
+
+      const op = {
+        ref_block_num: headBlockNumber & 0xffff,
+        ref_block_prefix: Buffer.from(headBlockId, "hex").readUInt32LE(4),
+        expiration: new Date(Date.now() + expireTime).toISOString(),
+        operations: [opArray], // Add operations here
+      };
+
+      return new Promise((resolve, reject) => {
+        window.steem_keychain.requestSignTx(
+          account.name,
+          op,
+          "Posting",
+          async (response) => {
+            if (!response.error) {
+              try {
+                const isValid = await client.database.verifyAuthority(
+                  response.result
+                );
+                if (!isValid) {
+                  reject(new Error("Failed to verify transaction"));
+                }
+                const result = await client.broadcast.send(response.result);
+                if (!result.id) {
+                  reject(new Error("Transaction is expired try again"));
+                } else {
+                  resolve({ success: true, tx_id: result.id });
+                }
+              } catch (error: any) {
+                const isExpired = error?.message?.includes("trx.exp=");
+                if (isExpired)
+                  reject(new Error("Transaction is expired try again"));
+                reject(new Error("Something went wrong!"));
+              }
+            }
+            reject(response);
+          }
+        );
+      });
+    }
+  }
+
+  const keyData = getKeyType(account, key);
+
+  if (keyData && PrivKey.atLeast(keyData.type, "POSTING")) {
+    const secretResponse = await axios.post("/api/chat/secret");
+    if (secretResponse?.data?.secret) {
+      // Parse JSON string to object
+      const parsed = JSON.parse(custom_json.json);
+      // Update secret
+      parsed.secret = secretResponse?.data?.secret;
+      // Re-stringify and update custom_json
+      custom_json.json = JSON.stringify(parsed);
+      const opArray: Operation = ["custom_json", custom_json];
+
+      const privateKey = PrivateKey.fromString(key);
+      return new Promise((resolve, reject) => {
+        client.broadcast
+          .sendOperations([opArray], privateKey)
+          .then(async (result) => {
+            if (!result.id) {
+              reject(new Error("Something went wrong!"));
+            } else {
+              resolve({ success: true, tx_id: result.id });
+            }
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    }
+  }
+
+  return Promise.reject(
+    new Error(
+      "Check private key permission! Required private posting key or above."
+    )
+  );
+};
