@@ -83,7 +83,7 @@
     "remarkable": "^2.0.1",
     "sanitize-html": "^2.14.0",
     "sass": "^1.85.0",
-    "sharp": "^0.34.3",
+    "sharp": "^0.33.5",
     "sonner": "^2.0.6",
     "speakingurl": "^14.0.1",
     "ssh2": "^1.16.0",
