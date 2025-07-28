@@ -439,8 +439,6 @@ export default memo(function PostReplies(props: Props) {
                   ...(users ?? []),
                 ]}
                 onChange={setMarkdown}
-                onImageUpload={() => {}}
-                onImageInvalid={() => {}}
                 rows={6}
                 isDisabled={isPosting}
               />

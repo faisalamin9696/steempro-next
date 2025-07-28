@@ -15,7 +15,7 @@ export const MObileAppLink =
 export const GitHubLink = "https://github.com/faisalamin9696/steempro-next";
 export const DiscordServerLink = "https://discord.gg/SXpWY8FGCB";
 export const FeedBodyLength = 500;
-export const FeedFetchLimit = 1000;
+export const FeedPerPage = 16;
 
 // export const isDev = false;
 

@@ -1,6 +1,4 @@
-import {
-  useDisclosure,
-} from "@heroui/modal";
+import { useDisclosure } from "@heroui/modal";
 import { Button, PressEvent } from "@heroui/button";
 import { Card } from "@heroui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
@@ -595,6 +593,7 @@ export default memo(function CommentFooter(props: CommentProps) {
       </div>
 
       <SModal
+        bodyClassName="mt-0 p-0"
         isOpen={voterDisclosure.isOpen}
         onOpenChange={voterDisclosure.onOpenChange}
         modalProps={{
@@ -602,12 +601,11 @@ export default memo(function CommentFooter(props: CommentProps) {
           hideCloseButton: true,
           size: "lg",
         }}
-        title={() => "Voters"}
         body={() => (
           <VotersCard comment={comment} isOpen={voterDisclosure.isOpen} />
         )}
         footer={(onClose) => (
-          <Button color="danger" variant="flat" size="sm" onPress={onClose}>
+          <Button color="danger" variant="flat" onPress={onClose}>
             Close
           </Button>
         )}

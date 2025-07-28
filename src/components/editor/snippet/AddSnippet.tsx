@@ -137,8 +137,6 @@ function AddSnippet(props: Props) {
       <EditorInput
         value={body}
         onChange={setBody}
-        onImageUpload={() => { }}
-        onImageInvalid={() => { }}
         maxLength={5000}
         isSnipping
         isDisabled={isPending}

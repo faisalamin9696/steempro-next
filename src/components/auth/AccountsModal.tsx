@@ -22,12 +22,13 @@ export default function AccountsModal(props: Props) {
         scrollBehavior: "inside",
         hideCloseButton: true,
         placement: "top-center",
+        size:'xl'
       }}
       title={() => "Accounts"}
       body={() => (
         <AvailableAccountList
           switchText="Switch"
-          className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center"
           handleSwitchSuccess={(user) => {
             onOpenChange(false);
             handleSwitchSuccess && handleSwitchSuccess(user);

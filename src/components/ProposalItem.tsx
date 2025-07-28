@@ -8,14 +8,11 @@ import ProposalVoteButton from "./ProposalVoteButton";
 import moment from "moment";
 import { useDisclosure } from "@heroui/modal";
 import { abbreviateNumber } from "@/utils/helper";
-import { simpleVotesToSp } from "./ProposalItemCard";
 import { useAppSelector } from "@/constants/AppFunctions";
 import { vestToSteem } from "@/utils/helper/vesting";
 import { useState } from "react";
 import { BiDollar } from "react-icons/bi";
 import ProposalVotersModal from "./ProposalVotersModal";
-import Link from "next/link";
-import { IoMdLink } from "react-icons/io";
 import SLink from "./ui/SLink";
 
 export const getProposalStatus = (start_date: string, end_date: string) => {
@@ -26,8 +23,17 @@ export const getProposalStatus = (start_date: string, end_date: string) => {
   if (now > end) return "expired";
   return "active";
 };
+export function simpleVotesToSp(
+  total_votes: number,
+  total_vesting_shares,
+  total_vesting_fund_steem
+) {
+  const total_vests = parseFloat(total_vesting_shares);
+  const total_vest_steem = parseFloat(total_vesting_fund_steem);
+  return total_vest_steem * (total_votes / total_vests) * 0.000001;
+}
 
-const formatSteemPower = (sp: number): string => {
+export const formatSteemPower = (sp: number): string => {
   if (sp >= 1_000_000_000) {
     return `${(sp / 1_000_000_000).toFixed(2)}B`;
   }
@@ -199,7 +205,7 @@ const ProposalItem = ({
                   content={proposal.creator}
                 />
               </span>
-              <span className="hidden sm:inline">•</span>
+              <span className="inline">•</span>
 
               <span className="flex flex-row gap-2">
                 to
@@ -210,12 +216,12 @@ const ProposalItem = ({
                 />
               </span>
 
-              <span className="hidden sm:inline">•</span>
+              <span className="inline">•</span>
               <SLink
                 className="hover:text-blue-500 font-semibold text-sm"
                 href={`/proposals/${proposal.id}`}
               >
-                <p className=" opacity-disabled">ID #{proposal.id}</p>
+                <p className="text-default-500">ID #{proposal.id}</p>
               </SLink>
             </div>
 
@@ -274,12 +280,12 @@ const ProposalItem = ({
             <Button
               as={SLink}
               size="sm"
-              variant="bordered"
+              variant="flat"
               className="text-xs sm:text-sm px-2 sm:px-3 rounded-s-none"
               href={`/@${proposal.creator}/${proposal.permlink}`}
             >
               <FaExternalLinkAlt className="w-3 h-3 sm:mr-1" />
-              <span className="hidden sm:inline">View</span>
+              <span className="inline">View</span>
             </Button>
           </div>
         </div>

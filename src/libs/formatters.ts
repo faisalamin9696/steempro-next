@@ -8,13 +8,15 @@ export const formatAmount = (amount) => {
   if (typeof amount === "string") {
     if (amount.trim() === "") return "0.000";
     const numericPart = amount.split(" ")[0];
+    const symbol = amount.split(" ")[1];
+
     const parsed = parseFloat(numericPart);
-    return isNaN(parsed) ? "0.000" : parsed.toFixed(3);
+    return isNaN(parsed) ? "0.000" : parsed.toLocaleString() + ` ${symbol || ""}`;
   }
 
   // Handle number
   if (typeof amount === "number") {
-    return isNaN(amount) ? "0.000" : amount.toFixed(3);
+    return isNaN(amount) ? "0.000" : amount.toLocaleString();
   }
 
   // Handle object format
@@ -24,13 +26,13 @@ export const formatAmount = (amount) => {
       if (isNaN(numericAmount)) return "0.000";
       const precision = amount.precision;
       const result = numericAmount / Math.pow(10, precision);
-      return isNaN(result) ? "0.000" : result.toFixed(3);
+      return isNaN(result) ? "0.000" : result.toLocaleString();
     }
   }
 
   // Fallback - try to parse as number
   const parsed = parseFloat(amount);
-  return isNaN(parsed) ? "0.000" : parsed.toFixed(3);
+  return isNaN(parsed) ? "0.000" : parsed.toLocaleString();
 };
 
 export const formatAmountFromObject = (amountData) => {

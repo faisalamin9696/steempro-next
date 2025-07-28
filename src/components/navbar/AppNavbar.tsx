@@ -48,7 +48,7 @@ import { AsyncUtils } from "@/utils/async.utils";
 import { Spinner } from "@heroui/spinner";
 import { mutate } from "swr";
 import SModal from "../ui/SModal";
-import Lottie from "lottie-react";
+// import Lottie from "lottie-react";
 
 export async function refreshData(username?: string | null) {
   mutate("/steem_requests_api/getSteemProps");
@@ -68,7 +68,7 @@ function AppNavbar() {
   const [isPopOpen, setIsPopOpen] = React.useState(false);
   const accountDisclosure = useDisclosure();
   const notiDisclosure = useDisclosure();
-  const crateDisclosure = useDisclosure();
+  // const crateDisclosure = useDisclosure();
 
   const searchDisclosure = useDisclosure();
   const dispatch = useAppDispatch();

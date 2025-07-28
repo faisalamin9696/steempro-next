@@ -9,22 +9,15 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@heroui/dropdown";
-import { FaChevronDown, FaFilter } from "react-icons/fa";
 import useSWR from "swr";
 import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
 import LoadingCard from "@/components/LoadingCard";
 import moment from "moment";
 import { capitalize } from "@/constants/AppConstants";
-import TableWrapper from "@/components/wrappers/TableWrapper";
 import { useParams } from "next/navigation";
 import OperationItem from "@/components/OperationItem";
-import { BiFilter } from "react-icons/bi";
-import { BsFilterCircle } from "react-icons/bs";
 import { IoFilterOutline } from "react-icons/io5";
-
-const INITIAL_VISIBLE_COLUMNS = ["op"];
-
-const columns = [{ name: "", uid: "op", sortable: false }];
+import STable from "@/components/ui/STable";
 
 const statusOptions = [
   { name: "Normal Transfer", uid: "transfer" },
@@ -55,18 +48,10 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
   );
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
   const [allRows, setAllRows] = useState<AccountHistory[]>([]);
-  const [filterValue, setFilterValue] = React.useState<any>("");
-  const hasSearchFilter = Boolean(filterValue);
   const [statusFilter, setStatusFilter] = React.useState<any>("all");
+
   const filteredItems = React.useMemo(() => {
     let filteredHistory = [...allRows];
-    if (hasSearchFilter) {
-      filteredHistory = filteredHistory.filter((history) =>
-        JSON.stringify(history.op)
-          .toLowerCase()
-          .includes(filterValue.toLowerCase())
-      );
-    }
 
     if (
       statusFilter !== "all" &&
@@ -78,26 +63,7 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
     }
 
     return filteredHistory;
-  }, [allRows, filterValue, statusFilter]);
-
-  const renderCell = React.useCallback(
-    (operation: AccountHistory, columnKey) => {
-      const cellValue = operation[columnKey];
-      switch (columnKey) {
-        case "op":
-          return (
-            <OperationItem
-              steem_per_share={globalData.steem_per_share}
-              operation={operation}
-            />
-          );
-
-        default:
-          return cellValue;
-      }
-    },
-    [globalData]
-  );
+  }, [allRows, statusFilter]);
 
   useEffect(() => {
     if (historyData) {
@@ -109,45 +75,51 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
   if (isLoading) return <LoadingCard />;
 
   return (
-    <TableWrapper
-      initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
-      tableColumns={columns}
-      filteredItems={filteredItems}
-      filterValue={filterValue}
-      isStriped={false}
-      classNames={{ th: "!h-0 !bg-transparent" }}
-      onFilterValueChange={setFilterValue}
-      renderCell={renderCell}
-      sortDescriptor={{ column: "time", direction: "descending" }}
-      searchPlaceHolder="Search transcations..."
-      topContentDropdown={
-        <Dropdown>
-          <DropdownTrigger className="hidden sm:flex">
-            <Button
-              size="sm"
-              variant="flat"
-              startContent={<IoFilterOutline size={18} />}
-              className="font-semibold text-small"
+    <STable
+    titleClassName="w-full"
+      title={
+        <div className="flex flex-row items-center justify-between w-full">
+          <p>Transaction History</p>
+
+          <Dropdown>
+            <DropdownTrigger>
+              <Button
+                size="sm"
+                variant="flat"
+                startContent={<IoFilterOutline size={18} />}
+                className="font-semibold text-small"
+              >
+                Filter
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              disallowEmptySelection
+              aria-label="Table Columns"
+              closeOnSelect={false}
+              selectedKeys={statusFilter}
+              selectionMode="multiple"
+              onSelectionChange={setStatusFilter}
             >
-              Filter
-            </Button>
-          </DropdownTrigger>
-          <DropdownMenu
-            disallowEmptySelection
-            aria-label="Table Columns"
-            closeOnSelect={false}
-            selectedKeys={statusFilter}
-            selectionMode="multiple"
-            onSelectionChange={setStatusFilter}
-          >
-            {statusOptions.map((status) => (
-              <DropdownItem key={status.uid} className="capitalize">
-                {capitalize(status.name)}
-              </DropdownItem>
-            ))}
-          </DropdownMenu>
-        </Dropdown>
+              {statusOptions.map((status) => (
+                <DropdownItem key={status.uid} className="capitalize">
+                  {capitalize(status.name)}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+        </div>
       }
+      description="View your transaction history, including transfers, rewards, and more."
+     
+      data={filteredItems}
+      tableRow={(operation: AccountHistory) => {
+        return (
+          <OperationItem
+            steem_per_share={globalData.steem_per_share}
+            operation={operation}
+          />
+        );
+      }}
     />
   );
 }

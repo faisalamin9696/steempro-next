@@ -3,21 +3,12 @@
 import ErrorCard from "@/components/ErrorCard";
 import LoadingCard from "@/components/LoadingCard";
 import { getProposals } from "@/libs/steem/condenser";
-import { getAccountExt } from "@/libs/steem/sds";
-import parseAsset from "@/utils/helper/parse-asset";
-import { Card, CardBody, CardHeader } from "@heroui/card";
-import { Input } from "@heroui/input";
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  FaFileInvoiceDollar,
-  FaListAlt,
-  FaSearch,
-  FaVoteYea,
-} from "react-icons/fa";
+import { FaFileInvoiceDollar } from "react-icons/fa";
 import useSWR from "swr";
 import ProposalItem from "@/components/ProposalItem";
-import { Table, TableBody, TableRow } from "@/components/ui/Table";
 import { DaoStats } from "@/components/DaoStats";
+import STable from "@/components/ui/STable";
 
 const initialSatus = ["all"];
 
@@ -26,41 +17,6 @@ function Proposals() {
     "proposals-list",
     getProposals
   );
-
-  const [allRows, setAllRows] = useState<Proposal[]>([]);
-  const [filterValue, setFilterValue] = useState("");
-  const [visibleColumns, setVisibleColumns] = React.useState<any>(
-    new Set(initialSatus)
-  );
-
-  const hasSearchFilter = Boolean(filterValue);
-  const filteredItems = useMemo(() => {
-    let filteredProposals = [...allRows];
-
-    if (hasSearchFilter)
-      filteredProposals = filteredProposals.filter((proposal) =>
-        (proposal.creator
-          .toLowerCase()
-          .includes(filterValue.toLowerCase().trim()) ||
-          proposal.receiver
-            .toLowerCase()
-            .includes(filterValue.toLowerCase().trim()) ||
-          proposal.subject
-            .toLowerCase()
-            .includes(filterValue.toLowerCase().trim())) &&
-        Array.from(visibleColumns).includes("all")
-          ? true
-          : Array.from(visibleColumns).includes(proposal.status)
-      );
-
-    return filteredProposals;
-  }, [allRows, filterValue, visibleColumns]);
-
-  useEffect(() => {
-    if (data) {
-      setAllRows(data);
-    }
-  }, [data]);
 
   if (error) {
     return <ErrorCard message={error} />;
@@ -72,7 +28,7 @@ function Proposals() {
     <div className="flex flex-col gap-4 pb-10">
       <div className="flex flex-col items-center sm:items-start gap-2 text-center">
         <p className="text-xl font-bold sm:text-3xl">Steem Proposals</p>
-        <p className="text-sm text-default-500">
+        <p className="text-sm text-default-500 text-center sm:text-start">
           Fund community-driven ideas through the Steem Proposal System (SPS).
           Vote on initiatives that improve the ecosystem and benefit the
           network.
@@ -81,47 +37,19 @@ function Proposals() {
 
       <DaoStats proposals={data} />
 
-      <Card>
-        <CardHeader className="pb-3 flex flex-col items-start gap-4 p-6">
-          <div className="flex flex-col sm:flex-row justify-between w-full">
-            <div className="flex flex-row items-center gap-2 text-lg sm:text-xl font-semibold">
-              <FaFileInvoiceDollar size={24} className="text-steem" />
-              DAO Proposals
-            </div>
-            <div className="text-default-500 text-sm text-end">
-              Showing {filteredItems.length} of {allRows.length} proposals
-            </div>
-          </div>
-          <Input
-            startContent={<FaSearch className="text-default-500" />}
-            placeholder="Search proposal..."
-            className="max-w-lg"
-            value={filterValue}
-            onValueChange={setFilterValue}
-            isClearable
+      <STable
+        filterByValue={["subject", "creator", "receiver"]}
+        data={data || []}
+        title="DAO Proposals"
+        titleIcon={FaFileInvoiceDollar}
+        subTitle={(filteredItems)=>`Showing ${filteredItems?.length} of ${data?.length} proposals`}
+        tableRow={(proposal) => (
+          <ProposalItem
+            returnProposal={data?.find((p) => p.proposal_id === 0)}
+            proposal={proposal}
           />
-        </CardHeader>
-        <CardBody className="space-y-4">
-          <Table>
-            <TableBody>
-              <div className="flex flex-col gap-2">
-                {filteredItems?.map((proposal) => {
-                  return (
-                    <TableRow key={proposal.id} className="px-4 pb-4">
-                      <ProposalItem
-                        returnProposal={allRows.find(
-                          (p) => p.proposal_id === 0
-                        )}
-                        proposal={proposal}
-                      />
-                    </TableRow>
-                  );
-                })}
-              </div>
-            </TableBody>
-          </Table>
-        </CardBody>
-      </Card>
+        )}
+      />
     </div>
   );
 }

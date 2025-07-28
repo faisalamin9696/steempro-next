@@ -60,7 +60,7 @@ export default function AuthModal(props: Props) {
         scrollBehavior: "inside",
         isDismissable: false,
         hideCloseButton: true,
-        size: "md",
+        size: "xl",
         backdrop: requestActive || isLocked || addMemo ? "blur" : "opaque",
         placement: "top-center",
       }}

@@ -116,3 +116,48 @@ export function validateHost(host?: string | null) {
 
   return validHosts.includes(host);
 }
+
+/**
+ * Type-safe object sorting by key
+ * @param array Array to sort
+ * @param key Key to sort by
+ * @param direction 'asc' or 'desc'
+ * @returns New sorted array
+ */
+export function sortByKey<T extends object>(
+  array: T[],
+  key: keyof T,
+  direction: "asc" | "desc" = "asc"
+): T[] {
+  return [...array].sort((a, b) => {
+    const aValue = a[key];
+    const bValue = b[key];
+
+    // Handle null/undefined cases
+    if (aValue == null || bValue == null) {
+      if (aValue == null && bValue == null) return 0;
+      return aValue == null ? 1 : -1;
+    }
+
+    // Type-safe date checking
+    const isDate = (x: unknown): x is Date => x instanceof Date;
+
+    // Numeric comparison
+    if (typeof aValue === "number" && typeof bValue === "number") {
+      return direction === "asc" ? aValue - bValue : bValue - aValue;
+    }
+
+    // Date comparison
+    if (isDate(aValue) && isDate(bValue)) {
+      const diff = aValue.getTime() - bValue.getTime();
+      return direction === "asc" ? diff : -diff;
+    }
+
+    // String comparison (fallback)
+    const aString = String(aValue);
+    const bString = String(bValue);
+    return direction === "asc"
+      ? aString.localeCompare(bString)
+      : bString.localeCompare(aString);
+  });
+}

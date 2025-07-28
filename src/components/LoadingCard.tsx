@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function LoadingCard() {
+export default function LoadingCard({ text }: { text?: string }) {
   return (
     <div className="flex items-center justify-center m-6 rounded-lg">
       <div
@@ -8,7 +8,7 @@ export default function LoadingCard() {
             leading-none text-center bg-blue-900 text-white
             rounded-full animate-pulse`}
       >
-        Loading...
+        {text ?? "Loading..."}
       </div>
     </div>
   );

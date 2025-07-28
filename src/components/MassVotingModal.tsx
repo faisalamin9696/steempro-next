@@ -89,8 +89,7 @@ export default function MassVotingModal(props: Props) {
       } catch (error) {
         updateStatus(pending_post, "failed", String(error));
       } finally {
-        await AsyncUtils.sleep(2);
-
+        await AsyncUtils.sleep(3);
         if (all_links.length <= 0) {
           toast.success("Completed");
           setCompleted(true);
@@ -148,60 +147,65 @@ export default function MassVotingModal(props: Props) {
                 className=" flex gap-2 items-center justify-between"
                 key={index ?? item}
               >
-                <a className=" text-tiny">{item}</a>
-                <STooltip content={error}>
-                  <Button
-                    isLoading={status === "pending"}
-                    color={
-                      status === "success"
-                        ? "success"
-                        : status === "failed"
-                        ? "danger"
-                        : "default"
-                    }
-                    variant="flat"
-                    size="sm"
-                    isIconOnly
-                  >
-                    {status === "success" ? (
-                      <FaCheckCircle className="text-xl" />
-                    ) : status === "failed" ? (
-                      <TiWarning className="text-xl" />
-                    ) : undefined}
-                  </Button>
-                </STooltip>
+                <a className="text-sm overflow-hidden break-words">{item}</a>
 
-                {itemStatus?.status === "failed" && (
-                  <Button
-                    title="Retry"
-                    isIconOnly
-                    size="sm"
-                    onPress={() => {
-                      let [permlink, author] = item?.split("/").reverse();
-                      setCompleted(false);
-                      updateStatus(item, "pending");
+                <div className="flex flex-row gap-1">
+                  <STooltip content={error}>
+                    <Button
+                      isLoading={status === "pending"}
+                      color={
+                        status === "success"
+                          ? "success"
+                          : status === "failed"
+                          ? "danger"
+                          : "default"
+                      }
+                      variant="flat"
+                      size="sm"
+                      isIconOnly
+                    >
+                      {status === "success" ? (
+                        <FaCheckCircle className="text-xl" />
+                      ) : status === "failed" ? (
+                        <TiWarning className="text-xl" />
+                      ) : undefined}
+                    </Button>
+                  </STooltip>
 
-                      voteComment(
-                        data.voter_account,
-                        empty_comment(author, permlink),
-                        data.voter_key,
-                        parseFloat(data.weight),
-                        isKeychain
-                      )
-                        .then(() => {
-                          updateStatus(item, "success");
-                        })
-                        .catch((e) => {
-                          updateStatus(item, "failed", String(e));
-                        })
-                        .finally(() => {
-                          setCompleted(true);
-                        });
-                    }}
-                  >
-                    <PiArrowArcRightFill className="text-xl" />
-                  </Button>
-                )}
+                  {itemStatus?.status === "failed" && (
+                    <Button
+                      title="Retry"
+                      isIconOnly
+                      size="sm"
+                      onPress={() => {
+                        let [permlink, author] = item?.split("/").reverse();
+                        author = author.replace("@", "");
+
+                        setCompleted(false);
+                        updateStatus(item, "pending");
+
+                        voteComment(
+                          data.voter_account,
+                          empty_comment(author, permlink),
+                          data.voter_key,
+                          parseFloat(data.weight),
+                          isKeychain
+                        )
+                          .then(() => {
+                            updateStatus(item, "success");
+                          })
+                          .catch((e) => {
+                            updateStatus(item, "failed", String(e));
+                          })
+                          .finally(() => {
+                            setCompleted(true);
+                          });
+                      }}
+                    >
+                      <PiArrowArcRightFill className="text-xl" />
+                    </Button>
+                  )}
+                </div>
               </div>
             );
           })}

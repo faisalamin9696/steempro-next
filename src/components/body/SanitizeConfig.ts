@@ -126,7 +126,7 @@ export default ({
           attribs
         );
         sanitizeErrors.push("An image in this post did not save properly.");
-        return { tagName: "img", attribs: { src: "brokenimg.jpg" } };
+        return { tagName: "img", attribs: { src: "/brokenimg.jpg" } };
       }
 
       // replace http:// with // to force https when needed

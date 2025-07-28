@@ -112,16 +112,50 @@ export default function AccountItemCard(props: Props) {
     defaultAccount?.type === user.type;
 
   return (
-    <Card shadow="sm"
+    <Card
+      shadow="sm"
       className={twMerge(
         "flex flex-col gap-2 w-full p-2 comment-card",
         props.className
       )}
     >
-      <div className=" flex flex-col-reverse gap-2 items-start">
-        <div className="flex flex-row  gap-2">
-          <p className="text-sm">{user.username}</p>
-          <div className="flex flex-row gap-2 items-center w-max">
+      <div className=" flex flex-col gap-2 items-start">
+        <div className="flex flex-row items-start gap-2">
+          <SAvatar size="1xs" username={user.username} />
+
+          <div className="flex flex-col items-start gap-2">
+            <p className="text-sm">{user.username}</p>
+
+            {isDefault ? (
+              <Button
+                size="sm"
+                isLoading={isPending}
+                radius="full"
+                variant="flat"
+                disabled
+                className="min-w-0 w-full h-6"
+                color="success"
+                
+              >
+                {"Default"}
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                isLoading={isPending}
+                isDisabled={isPending || isDisabled}
+                radius="full"
+                variant="solid"
+                onPress={handleSwitch}
+                className="min-w-0 w-full h-6"
+                color="primary"
+              >
+                {switchText ?? "Switch"}
+              </Button>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-1 items-center">
             {user.keychainLogin ? (
               <Image
                 title="Keychain"
@@ -149,27 +183,6 @@ export default function AccountItemCard(props: Props) {
             )}
             {user.memo ? <BsChatDotsFill className="text-default-700" /> : null}
           </div>
-        </div>
-
-        <div className="flex flex-row items-cenetrt gap-2">
-          <SAvatar size="xs" username={user.username} />
-
-          {isDefault ? (
-            <Chip color="success" size="sm" variant="flat">
-              Default
-            </Chip>
-          ) : (
-            <Button
-              size="sm"
-              isLoading={isPending}
-              isDisabled={isPending || isDisabled}
-              radius="full"
-              onPress={handleSwitch}
-              className="min-w-0 h-6 bg-foreground/20"
-            >
-              {switchText ?? "Switch"}
-            </Button>
-          )}
         </div>
       </div>
     </Card>

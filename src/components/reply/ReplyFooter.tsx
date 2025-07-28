@@ -534,8 +534,6 @@ export default function ReplyFooter({
               ]}
               value={markdown}
               onChange={setMarkdown}
-              onImageUpload={() => {}}
-              onImageInvalid={() => {}}
               rows={6}
               isDisabled={isPosting}
             />

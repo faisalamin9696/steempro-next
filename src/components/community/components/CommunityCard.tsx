@@ -7,6 +7,7 @@ import { getResizedAvatar } from "@/utils/parseImage";
 import { twMerge } from "tailwind-merge";
 import SLink from "@/components/ui/SLink";
 import { FaRankingStar } from "react-icons/fa6";
+import MarkdownViewer from "@/components/body/MarkdownViewer";
 
 interface Props {
   community: Community;
@@ -29,9 +30,8 @@ export const CommunityCard = memo((props: Props) => {
         props.className
       )}
     >
-      <div className="flex flex-col items-start">
+      <div className="flex flex-col items-start gap-2">
         <div className="top-2 right-3 absolute">{endContent}</div>
-
         <User
           classNames={{
             description: "text-default-900/60 dark:text-gray-200 text-sm mt-1",
@@ -82,20 +82,19 @@ export const CommunityCard = memo((props: Props) => {
           }
         />
         {!compact && (
-          <p
-            title={community.about}
-            className={twMerge(compact ? "text-tiny line-clamp-2" : "")}
-          >
-            {community.about}
-          </p>
+          <MarkdownViewer
+            text={community.about}
+            className={twMerge(
+              "text-default-500 !text-sm prose-p:!my-2",
+              compact ? "text-xs line-clamp-2 " : ""
+            )}
+          />
         )}
       </div>
-      <div
-        className={twMerge("flex flex-row gap-4", compact ? "text-tiny" : "")}
-      >
+      <div className={twMerge("flex flex-row gap-4", compact ? "text-sm" : "")}>
         <div className="flex gap-2 items-center " title="Rank">
           <p className=" text-default-500">
-            <FaRankingStar size={16} />
+            <FaRankingStar size={18} />
           </p>
           <p className="font-semibold text-default-600 ">{community.rank}</p>
         </div>

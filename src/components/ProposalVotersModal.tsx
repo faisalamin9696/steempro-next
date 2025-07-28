@@ -7,10 +7,22 @@ import SAvatar from "./ui/SAvatar";
 import SLink from "./ui/SLink";
 import { vestToSteem } from "@/utils/helper/vesting";
 import LoadingCard from "./LoadingCard";
-import TableWrapper from "./wrappers/TableWrapper";
-import { simpleVotesToSp } from "./ProposalItemCard";
+import { simpleVotesToSp } from "./ProposalItem";
 import { twMerge } from "tailwind-merge";
 import SModal from "./ui/SModal";
+import STable from "./ui/STable";
+import { Chip } from "@heroui/chip";
+import { sortByKey } from "@/utils/helper";
+import { capitalize } from "@/constants/AppConstants";
+import { Button } from "@heroui/button";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@heroui/dropdown";
+import { IoFilterOutline } from "react-icons/io5";
+import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 
 interface Props {
   proposal: Proposal;
@@ -18,24 +30,17 @@ interface Props {
   onOpenChange: () => void;
 }
 
-const INITIAL_VISIBLE_COLUMNS = [
-  "name",
-  "vests_own",
-  "proxied_vsf_votes",
-  "share",
-];
-
-const columns = [
-  { name: "VOTER", uid: "name", sortable: true },
-  { name: "OWN SP", uid: "vests_own", sortable: true },
-  { name: "PROXIED SP", uid: "proxied_vsf_votes", sortable: true },
-  { name: "SHARE", uid: "share", sortable: true },
+const sortOptions = [
+  { name: "Share", uid: "share" },
+  { name: "Username", uid: "username" },
+  { name: "Proxied", uid: "proxied_votes" },
 ];
 
 export default function ProposalVotersModal(props: Props) {
   let { proposal, isOpen, onOpenChange } = props;
   const shouldFetch = isOpen;
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
+  const { isMobile } = useDeviceInfo();
 
   const { data, isLoading } = useSWR<AccountExt[]>(
     shouldFetch ? `proposals-votes-${proposal.id}` : null,
@@ -154,184 +159,181 @@ export default function ProposalVotersModal(props: Props) {
     if (data) setAllRows(data);
   }, [data]);
 
-  const [filterValue, setFilterValue] = React.useState<any>("");
-
-  const hasSearchFilter = Boolean(filterValue);
+  const [sortBY, setSortBy] = React.useState<
+    "share" | "name" | "proxied_votes"
+  >("share");
 
   const filteredItems = React.useMemo(() => {
-    let filteredVotes = [...allRows];
+    let sortedItems = [...allRows];
 
-    if (hasSearchFilter) {
-      filteredVotes = filteredVotes.filter((votes) =>
-        votes.name.toLowerCase().includes(filterValue.toLowerCase())
-      );
-    }
+    // Apply sorting
+    sortedItems = sortByKey(
+      sortedItems,
+      sortBY,
+      ["share", "proxied_votes"].includes(sortBY) ? "desc" : "asc"
+    );
 
-    return filteredVotes;
-  }, [allRows, filterValue]);
+    return sortedItems;
+  }, [allRows, sortBY]);
 
-  const renderCell = React.useCallback(
-    (account: AccountExt, columnKey) => {
-      const cellValue = account[columnKey];
-      const ownSp = vestToSteem(
-        account.vests_own,
-        globalData.steem_per_share
-      ).toLocaleString();
-
-      const ownProxied = account.proxied_votes?.toLocaleString();
-
-      const isInvalidProxy =
-        account.proxy && !allRows.some((row) => row.name === account.proxy);
-
-      const isValidProxy =
-        account.proxy && allRows.some((row) => row.name === account.proxy);
-
-      const title = isInvalidProxy
-        ? `proxy to @${account.proxy}\n who didn't vote`
-        : isValidProxy
-        ? `Proxy to @${account.proxy}`
-        : undefined;
-      switch (columnKey) {
-        case "name":
-          return (
-            <div className="flex flex-row items-start gap-1">
-              <div className="flex flex-col gap-2">
-                <div className="flex gap-2 items-center">
-                  <SAvatar size="xs" username={account.name} />
-
-                  <div className="flex flex-col gap-1">
-                    <SLink
-                      className=" hover:text-blue-500"
-                      href={`/@${account.name}`}
-                    >
-                      {account.name}
-                    </SLink>
-
-                    <p
-                      className={twMerge(
-                        "text-xs text-default-500",
-                        isInvalidProxy && "text-warning-500"
-                      )}
-                    >
-                      {title}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-
-        case "vests_own":
-          return (
-            <div className="flex flex-col" title={title}>
-              <p
-                className={twMerge(
-                  "text-bold text-small capitalize",
-                  isInvalidProxy && "line-through text-warning-500"
-                )}
-              >
-                {isValidProxy ? `(${ownSp})` : ownSp}
-              </p>
-            </div>
-          );
-
-        case "proxied_vsf_votes":
-          return (
-            <div className="flex flex-col" title={title}>
-              <p
-                className={twMerge(
-                  "text-bold text-small capitalize",
-                  isInvalidProxy && "line-through text-warning-500"
-                )}
-              >
-                {isValidProxy ? `(${ownProxied})` : ownProxied}
-              </p>
-            </div>
-          );
-
-        case "share":
-          return (
-            <div className="flex flex-col" title={title}>
-              <p
-                className={twMerge(
-                  "text-bold text-small capitalize",
-                  isInvalidProxy && "line-through text-warning-500"
-                )}
-              >
-                {isValidProxy
-                  ? `(${account.share?.toLocaleString()})`
-                  : account.share?.toLocaleString()}
-                %
-              </p>
-            </div>
-          );
-        default:
-          return cellValue;
-      }
-    },
-    [allRows, globalData]
-  );
 
   return (
     <SModal
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       modalProps={{ scrollBehavior: "inside", size: "xl" }}
-      title={() => (
-        <div className=" flex flex-row gap-2 items-center">
-          <p>Voters</p>
-          <div className="text-sm opacity-disabled flex flex-row items-center gap-1">
-            <p>Proposal</p>
-            <SLink
-              className=" hover:text-blue-500"
-              href={`/proposals/${proposal.id}`}
-            >
-              #{proposal.id}
-            </SLink>
-          </div>
-        </div>
-      )}
-      subTitle={() => (
-        <div className="text-sm font-normal flex flex-col gap-1">
-          <p title="Direct votes from voters" className="opacity-disabled">
-            Effective votes: {totalEffVotes.votes.toLocaleString() + " SP"} (
-            {totalEffVotes.voters})
-          </p>
-          <p
-            title="Voters witness proxy didn't vote"
-            className="opacity-disabled"
-          >
-            Non-effective votes:{" "}
-            {totalNonEffVotes.votes.toLocaleString() + " SP"} (
-            {totalNonEffVotes.voters})
-          </p>
-        </div>
-      )}
+      bodyClassName="mt-0 p-0"
       body={() => (
         <>
           {isLoading ? (
             <LoadingCard />
           ) : (
-            allRows && (
-              <TableWrapper
-                filterValue={filterValue}
-                isCompact={false}
-                hidePaginationActions
-                initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
-                tableColumns={columns}
-                filteredItems={filteredItems}
-                onFilterValueChange={setFilterValue}
-                renderCell={renderCell}
-                mobileVisibleColumns={["name", "vests_own", "share"]}
-                baseVarient
-                sortDescriptor={{
-                  column: "share",
-                  direction: "descending",
-                }}
-              />
+            filteredItems && (
+              <div>
+                <STable
+                  stickyHeader={!isMobile}
+                  itemsPerPage={30}
+                  bodyClassName="grid grid-cols-[repeat(auto-fit,minmax(230px,1fr))] gap-4"
+                  titleClassName="flex flex-col gap-4 w-full"
+                  title={
+                    <div className="flex flex-row items-center justify-between w-full">
+                      <div className=" flex flex-row gap-2 items-center">
+                        <p>Voters</p>
+                        <div className="text-sm text-default-500 flex flex-row items-center gap-1">
+                          <p>Proposal</p>
+                          <SLink
+                            className=" hover:text-blue-500"
+                            href={`/proposals/${proposal.id}`}
+                          >
+                            #{proposal.id}
+                          </SLink>
+                        </div>
+                      </div>
+                      <Dropdown>
+                        <DropdownTrigger>
+                          <Button
+                            size="sm"
+                            variant="flat"
+                            startContent={<IoFilterOutline size={18} />}
+                            className="font-semibold text-small"
+                          >
+                            {sortOptions?.find((s) => s.uid === sortBY)?.name}
+                          </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu
+                          disallowEmptySelection
+                          aria-label="Table Columns"
+                          closeOnSelect={true}
+                          selectedKeys={[sortBY]}
+                          selectionMode="single"
+                          onSelectionChange={(item) =>
+                            setSortBy(item.currentKey?.toString() as any)
+                          }
+                        >
+                          {sortOptions.map((status) => (
+                            <DropdownItem
+                              key={status.uid}
+                              className="capitalize"
+                            >
+                              {capitalize(status.name)}
+                            </DropdownItem>
+                          ))}
+                        </DropdownMenu>
+                      </Dropdown>
+                    </div>
+                  }
+                  
+                  data={filteredItems || []}
+                  tableRow={(account: AccountExt) => {
+                    const ownSp = vestToSteem(
+                      account.vests_own,
+                      globalData.steem_per_share
+                    ).toLocaleString();
+
+                    const ownProxied = account.proxied_votes?.toLocaleString();
+
+                    const isInvalidProxy =
+                      account.proxy &&
+                      !allRows.some((row) => row.name === account.proxy);
+
+                    const isValidProxy =
+                      account.proxy &&
+                      allRows.some((row) => row.name === account.proxy);
+
+                    const title = isInvalidProxy
+                      ? `proxy to @${account.proxy}\n who didn't vote`
+                      : isValidProxy
+                      ? `Proxy to @${account.proxy}`
+                      : undefined;
+                    return (
+                      <div className="flex gap-2 items-start">
+                        <SAvatar size="1xs" username={account.name} />
+
+                        <div className=" flex flex-col gap-2">
+                          <div className="flex flex-row gap-2">
+                            <SLink
+                              className=" hover:text-blue-500"
+                              href={`/@${account.name}`}
+                            >
+                              {account.name}
+                            </SLink>
+
+                            <Chip
+                              className="capitalize border-none gap-1 text-default-600"
+                              color={"success"}
+                              size="sm"
+                              variant="flat"
+                            >
+                              {account.share?.toLocaleString()}%
+                            </Chip>
+                          </div>
+
+                          <p>own: {ownSp} SP</p>
+                          {!!parseFloat(ownProxied || "0") && (
+                            <p>proxied: {ownProxied} SP</p>
+                          )}
+
+                          <p
+                            className={twMerge(
+                              "text-xs text-default-500",
+                              isInvalidProxy && "text-warning-500"
+                            )}
+                          >
+                            {title}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  }}
+                  description={
+                    <div className="flex flex-row text-start justify-between">
+                      <div className="flex flex-wrap gap-2">
+                        <Chip variant="flat" color="success" title="Direct votes from voters">
+                          Effective SP:{" "}
+                          {totalEffVotes.votes.toLocaleString() + " SP"} (
+                          {totalEffVotes.voters})
+                        </Chip>
+                        <Chip variant="flat"
+                          color="warning"
+                          title="Voters witness proxy didn't vote"
+                        >
+                          Non-effective SP:{" "}
+                          {totalNonEffVotes.votes.toLocaleString() + " SP"} (
+                          {totalNonEffVotes.voters})
+                        </Chip>
+                      </div>
+                    </div>
+                  }
+                />
+              </div>
             )
           )}
         </>
+      )}
+      footer={(onClose) => (
+        <Button color="danger" variant="flat" onPress={onClose}>
+          Close
+        </Button>
       )}
     />
   );

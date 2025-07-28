@@ -52,10 +52,10 @@
 
     th,
     td {
-      @apply border border-gray-300 dark:border-gray-700 p-2;
+      @apply border border-gray-300 dark:border-gray-700 !p-2;
 
       white-space: normal;
-      overflow-wrap:normal; // ← ✅ breaks long unbreakable strings like URLs
+      overflow-wrap: normal; // ← ✅ breaks long unbreakable strings like URLs
       word-break: break-word;
     }
   }
@@ -107,8 +107,16 @@
     @apply bg-[#f8f8f8] dark:bg-[#2c3a45] outline-none outline-2 rounded-md outline-gray-200 dark:outline-gray-500;
   }
 
-  code {
-    @apply dark:bg-[#8382805d] bg-[#b1b0ac48] rounded-[4px] p-1;
+  :not(pre) > code {
+    @apply dark:bg-[#8382805d] bg-[#b1b0ac48] rounded-[4px] p-1 clear-both;
+    padding: 0.2em 0.4em;
+    border-radius: 0.25em;
+  }
+
+  pre code {
+    padding: 0.25rem; /* p-1 equivalent */
+    display: block;
+    overflow-x: auto;
   }
 
   code::before,

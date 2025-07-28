@@ -4,15 +4,33 @@ import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { fetchSds } from "@/constants/AppFunctions";
 import SAvatar from "@/components/ui/SAvatar";
-import TableWrapper from "./wrappers/TableWrapper";
 import SLink from "./ui/SLink";
+import STable from "./ui/STable";
+import { useDeviceInfo } from "@/hooks/useDeviceInfo";
+import { capitalize } from "@/constants/AppConstants";
+import { Button } from "@heroui/button";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@heroui/dropdown";
+import { IoFilterOutline } from "react-icons/io5";
+import { sortByKey } from "@/utils/helper";
+
+const sortOptions = [
+  { name: "A → Z", uid: "asc" },
+  { name: "Z → A", uid: "desc" },
+];
 
 export default function FollowersCard({
   username,
   isFollowing,
+  title,
 }: {
   username: string;
   isFollowing?: boolean;
+  title?: string;
 }) {
   const URL = `/followers_api/get${
     isFollowing ? "Following" : "Followers"
@@ -22,6 +40,17 @@ export default function FollowersCard({
 
   const { data, isLoading } = useSWR(URL, fetchSds<string[]>);
   const [allRows, setAllRows] = useState<{ username: string }[]>([]);
+  const { isMobile } = useDeviceInfo();
+  const [sortBY, setSortBy] = React.useState<"asc" | "desc">("asc");
+
+  const filteredItems = React.useMemo(() => {
+    let sortedItems = [...allRows];
+
+    // Apply sorting
+    sortedItems = sortByKey(sortedItems, "username", sortBY);
+
+    return sortedItems;
+  }, [allRows, sortBY]);
 
   useEffect(() => {
     if (data) {
@@ -33,41 +62,62 @@ export default function FollowersCard({
     }
   }, [data]);
 
-  const [filterValue, setFilterValue] = React.useState<string>("");
-  const hasSearchFilter = Boolean(filterValue);
-
-  const filteredItems = React.useMemo(() => {
-    let filteredFollowers = [...allRows];
-
-    if (hasSearchFilter) {
-      filteredFollowers = filteredFollowers.filter((item) =>
-        item.username.toLowerCase().includes(filterValue.toLowerCase().trim())
-      );
-    }
-
-    return filteredFollowers;
-  }, [allRows, filterValue]);
-
   return (
-    <TableWrapper
-      isLoading={isLoading}
-      topContentDropdown={<></>}
-      baseVarient
-      hidePaginationActions
-      inputClassName="!max-w-[75%]"
-      sortDescriptor={{ column: "username", direction: "ascending" }}
-      initialVisibleColumns={["username"]}
-      tableColumns={[{ name: "USERNAME", uid: "username", sortable: true }]}
-      filteredItems={filteredItems}
-      onFilterValueChange={setFilterValue}
-      renderCell={(row) => {
-        return (
-          <div className="flex gap-2 items-center p-2" key={row.username}>
-            <SAvatar size="xs" username={row.username} />
-            <SLink className="hover:text-blue-500" href={`/@${row.username}`}>{row.username}</SLink>
+    <div>
+      <STable
+        stickyHeader={!isMobile}
+        itemsPerPage={20}
+        data={filteredItems || []}
+        isLoading={isLoading}
+        titleClassName="w-full"
+        title={
+          <div className="flex flex-row items-center justify-between w-full">
+            <p>{title ?? "Followers"}</p>
+
+            <Dropdown>
+              <DropdownTrigger>
+                <Button
+                  size="sm"
+                  variant="flat"
+                  startContent={<IoFilterOutline size={18} />}
+                  className="font-semibold text-small"
+                >
+                  {sortOptions?.find((s) => s.uid === sortBY)?.name}
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={true}
+                selectedKeys={[sortBY]}
+                selectionMode="single"
+                onSelectionChange={(item) =>
+                  setSortBy(item.currentKey?.toString() as any)
+                }
+              >
+                {sortOptions.map((status) => (
+                  <DropdownItem key={status.uid} className="capitalize">
+                    {capitalize(status.name)}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
           </div>
-        );
-      }}
-    />
+        }
+        filterByValue={["username"]}
+        tableRow={(item) => (
+          <div className="flex gap-2 items-center" key={item.username}>
+            <SAvatar size="1xs" username={item.username} />
+            <SLink
+              className="hover:text-blue-500 text-sm"
+              href={`/@${item.username}`}
+            >
+              {item.username}
+            </SLink>
+          </div>
+        )}
+        
+      />
+    </div>
   );
 }

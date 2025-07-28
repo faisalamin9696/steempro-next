@@ -631,7 +631,7 @@ export default function SubmitPage(props: Props) {
         className={twMerge(
           `flex flex-col w-full gap-2`,
           !oldPost &&
-            "1md:w-[50%] 1md:float-start 1md:sticky 1md:z-[1] 1md:self-start 1md:top-[80px] pb-5"
+          "1md:w-[50%] 1md:float-start 1md:sticky 1md:z-[1] 1md:self-start 1md:top-[80px] pb-5"
         )}
       >
         {!isEditComment && (
@@ -680,12 +680,13 @@ export default function SubmitPage(props: Props) {
           </>
         )}
 
+
+
         <EditorInput
           value={markdown}
           isDisabled={isLoading}
           onChange={setMarkdown}
-          onImageUpload={() => {}}
-          onImageInvalid={() => {}}
+
         />
 
         <div className="flex gap-2 relativeitems-center flex-row">

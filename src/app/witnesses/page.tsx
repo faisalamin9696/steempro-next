@@ -6,10 +6,10 @@ import { Tab, Tabs } from "@heroui/tabs";
 import { useWitnessData } from "@/hooks/useWitnesses";
 import { FaUsers } from "react-icons/fa";
 import { FiSettings } from "react-icons/fi";
-import WitnessListTab from "./(tabs)/WitnessListTab";
 import WitnessProxyTab from "./(tabs)/WitnessProxyTab";
 import { SiTraefikproxy } from "react-icons/si";
 import MyWitnessTab from "./(tabs)/MyWitnessTab";
+import WitnessListTab from "./(tabs)/WitnessListTab";
 
 export interface WitnessDataProps {
   witnesses: MergedWitness[];
@@ -29,8 +29,9 @@ export default function WitnessPage() {
         <p className="text-xl font-bold sm:text-3xl">
           Steem Witnesses (aka "Block Producers")
         </p>
-        <p className="text-sm text-default-500">
-          Trusted witnesses keep the Steem blockchain secure and operational by producing blocks
+        <p className="text-sm text-default-500 text-center sm:text-start">
+          Trusted witnesses keep the Steem blockchain secure and operational by
+          producing blocks
         </p>
       </div>
 

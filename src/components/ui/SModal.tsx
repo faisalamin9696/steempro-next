@@ -8,6 +8,7 @@ import {
   ModalProps,
 } from "@heroui/modal";
 import React from "react";
+import { twMerge } from "tailwind-merge";
 
 type RenderFn = (onClose: () => void) => React.ReactNode;
 
@@ -24,6 +25,7 @@ interface Props {
   shouldDestroy?: boolean;
   onClose?: () => void;
   hideTrigger?: boolean;
+  bodyClassName?: string;
 }
 export default function SModal(props: Props) {
   const {
@@ -39,6 +41,7 @@ export default function SModal(props: Props) {
     shouldDestroy,
     onClose,
     hideTrigger,
+    bodyClassName,
   } = props;
 
   const shouldShowButton =
@@ -63,19 +66,23 @@ export default function SModal(props: Props) {
           <ModalContent>
             {(onClose) => (
               <>
-                <ModalHeader className="flex flex-col gap-1 pb-0">
-                  <div className="flex justify-between w-full">
-                    <div className="space-y-1 w-full">
-                      <h2 className="text-medium sm:text-lg font-semibold">
-                        {title?.(onClose)}
-                      </h2>
-                      <p className="text-default-500 text-sm font-normal">
-                        {subTitle?.(onClose)}
-                      </p>
+                {(title || subTitle) && (
+                  <ModalHeader className="flex flex-col gap-1 pb-0">
+                    <div className="flex justify-between w-full">
+                      <div className="space-y-1 w-full">
+                        <h2 className="text-medium sm:text-lg font-semibold">
+                          {title?.(onClose)}
+                        </h2>
+                        <p className="text-default-500 text-sm font-normal">
+                          {subTitle?.(onClose)}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </ModalHeader>
-                <ModalBody className="mt-2">{body?.(onClose)}</ModalBody>
+                  </ModalHeader>
+                )}
+                <ModalBody className={twMerge("mt-2", bodyClassName)}>
+                  {body?.(onClose)}
+                </ModalBody>
                 <ModalFooter>{footer?.(onClose)}</ModalFooter>
               </>
             )}

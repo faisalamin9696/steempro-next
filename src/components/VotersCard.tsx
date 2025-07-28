@@ -8,14 +8,24 @@ import SAvatar from "@/components/ui/SAvatar";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import LoadingCard from "@/components/LoadingCard";
 import SLink from "./ui/SLink";
-import TableWrapper from "./wrappers/TableWrapper";
+import STable from "./ui/STable";
+import { Chip } from "@heroui/chip";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@heroui/dropdown";
+import { Button } from "@heroui/button";
+import { capitalize } from "@/constants/AppConstants";
+import { sortByKey } from "@/utils/helper";
+import { IoFilterOutline } from "react-icons/io5";
+import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 
-const INITIAL_VISIBLE_COLUMNS = ["voter", "rshares", "time"];
-
-const columns = [
-  { name: "VOTER", uid: "voter", sortable: true },
-  { name: "VALUE", uid: "rshares", sortable: true },
-  { name: "TIME", uid: "time", sortable: true },
+const sortOptions = [
+  { name: "Vote value", uid: "rshares" },
+  { name: "Username", uid: "voter" },
+  { name: "New", uid: "time" },
 ];
 
 export default function VotersCard({
@@ -31,90 +41,115 @@ export default function VotersCard({
 
   const { data, isLoading } = useSWR(isOpen ? URL : null, fetchSds<PostVote[]>);
   const [allRows, setAllRows] = useState<PostVote[]>([]);
+  const { isMobile } = useDeviceInfo();
 
   useEffect(() => {
     if (data) setAllRows(data);
   }, [data]);
 
-  const [filterValue, setFilterValue] = React.useState<any>("");
-  const hasSearchFilter = Boolean(filterValue);
+  const [sortBY, setSortBy] = React.useState<"rshares" | "voter" | "time">(
+    "rshares"
+  );
 
   const filteredItems = React.useMemo(() => {
-    let filteredVotes = [...allRows];
+    let sortedItems = [...allRows];
 
-    if (hasSearchFilter) {
-      filteredVotes = filteredVotes.filter((votes) =>
-        votes.voter.toLowerCase().includes(filterValue.toLowerCase())
-      );
-    }
-    return filteredVotes;
-  }, [allRows, filterValue]);
+    // Apply sorting
+    sortedItems = sortByKey(
+      sortedItems,
+      sortBY,
+      ["rshares", "time"].includes(sortBY) ? "desc" : "asc"
+    );
 
-  const renderCell = React.useCallback(
-    (votes: PostVote, columnKey) => {
-      const cellValue = votes[columnKey];
+    return sortedItems;
+  }, [allRows, sortBY]);
 
-      switch (columnKey) {
-        case "voter":
+  if (isLoading) return <LoadingCard />;
+
+  return (
+    <div>
+      <STable
+        stickyHeader={!isMobile}
+        filterByValue={"voter"}
+        title={
+          <div className="flex flex-row items-center justify-between w-full">
+            <p>Voters</p>
+
+            <Dropdown>
+              <DropdownTrigger>
+                <Button
+                  size="sm"
+                  variant="flat"
+                  startContent={<IoFilterOutline size={18} />}
+                  className="font-semibold text-small"
+                >
+                  {sortOptions?.find((s) => s.uid === sortBY)?.name}
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={true}
+                selectedKeys={[sortBY]}
+                selectionMode="single"
+                onSelectionChange={(item) =>
+                  setSortBy(item.currentKey?.toString() as any)
+                }
+              >
+                {sortOptions.map((status) => (
+                  <DropdownItem key={status.uid} className="capitalize">
+                    {capitalize(status.name)}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+        }
+        data={filteredItems}
+        itemsPerPage={20}
+        titleClassName="pb-4 w-full"
+        tableRow={(votes) => {
+          const ratio = (comment?.payout ?? 1) / (comment?.net_rshares ?? 1);
+          const voteAmount = (votes.rshares * ratio)?.toLocaleString();
+
           return (
-            <div className="flex flex-row items-start gap-1">
-              <div className="flex flex-col gap-2">
-                <div className="flex gap-2 items-center">
-                  <SAvatar size="xs" username={votes.voter} />
+            <div className="flex gap-2 items-start">
+              <SAvatar size="1xs" username={votes.voter} />
+
+              <div className=" flex flex-col gap-2">
+                <div className="flex flex-row gap-2">
                   <SLink
                     className=" hover:text-blue-500"
                     href={`/@${votes.voter}`}
                   >
                     {votes.voter}
                   </SLink>
+
+                  <Chip
+                    className="capitalize border-none gap-1 text-default-600"
+                    color={"success"}
+                    size="sm"
+                    variant="flat"
+                  >
+                    ${voteAmount}
+                  </Chip>
+                </div>
+
+                <div className="flex flex-row gap-2">
+                  <TimeAgoWrapper
+                    className="text-bold text-default-600"
+                    created={votes.time * 1000}
+                  />
+                  •
+                  <p className="text-bold text-xs capitalize">
+                    {votes.percent / 100}%
+                  </p>
                 </div>
               </div>
             </div>
           );
-
-        case "rshares":
-          const ratio = (comment?.payout ?? 1) / (comment?.net_rshares ?? 1);
-          const voteAmount = votes.rshares * ratio;
-
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">
-                ${voteAmount.toLocaleString()}
-              </p>
-              <p className="text-bold text-small capitalize">
-                {votes.percent / 100}%
-              </p>
-            </div>
-          );
-
-        case "time":
-          return (
-            <TimeAgoWrapper
-              className="text-bold text-default-600"
-              created={votes.time * 1000}
-            />
-          );
-
-        default:
-          return cellValue;
-      }
-    },
-    [comment]
-  );
-
-  if (isLoading) return <LoadingCard />;
-
-  return (
-    <TableWrapper
-      filterValue={filterValue}
-      initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
-      tableColumns={columns}
-      filteredItems={filteredItems}
-      onFilterValueChange={setFilterValue}
-      renderCell={renderCell}
-      baseVarient
-      hidePaginationActions
-      sortDescriptor={{ column: "rshares", direction: "descending" }}
-    />
+        }}
+      />
+    </div>
   );
 }

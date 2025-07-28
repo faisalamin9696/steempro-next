@@ -6,9 +6,7 @@ import { twMerge } from "tailwind-merge";
 import moment from "moment";
 import { abbreviateNumber } from "@/utils/helper";
 import MarkdownViewer from "./body/MarkdownViewer";
-import {
-  useDisclosure,
-} from "@heroui/modal";
+import { useDisclosure } from "@heroui/modal";
 import { Avatar, AvatarGroup } from "@heroui/avatar";
 import { Button } from "@heroui/button";
 import { getResizedAvatar } from "@/utils/parseImage";
@@ -350,12 +348,18 @@ export default memo(function ProfileInfoCard(props: Props) {
           setFollowerModal({ isOpen: open });
         }}
         modalProps={{ scrollBehavior: "inside" }}
-        title={() => (followerModal.isFollowing ? "Following" : "Followers")}
+        bodyClassName="mt-0 p-0"
         body={() => (
           <FollowersCard
+            title={followerModal.isFollowing ? "Following" : "Followers"}
             isFollowing={followerModal.isFollowing}
             username={profileInfo.name}
           />
+        )}
+        footer={(onClose) => (
+          <Button color="danger" variant="flat" onPress={onClose}>
+            Close
+          </Button>
         )}
       />
 
@@ -363,26 +367,13 @@ export default memo(function ProfileInfoCard(props: Props) {
         isOpen={witnessModal}
         onOpenChange={setWitnessModal}
         modalProps={{ scrollBehavior: "inside" }}
-        title={() => (
-          <div className=" flex flex-row items-center gap-2">
-            <p>Witness votes by</p>
-
-            <div className="flex gap-1 items-center" key={account.name}>
-              <SAvatar
-                size="xs"
-                linkClassName=""
-                username={account.name}
-                content={<p className="text-sm font-normal">{account.name}</p>}
-              />
-            </div>
-          </div>
+        bodyClassName="mt-0 p-0"
+        body={() => <WitnessVotesCard account={account} />}
+        footer={(onClose) => (
+          <Button color="danger" variant="flat" onPress={onClose}>
+            Close
+          </Button>
         )}
-        subTitle={() =>
-          `@${account.name} have ${
-            30 - (account?.witness_votes?.length || 0)
-          } votes remaining. Can vote for a maximum of 30 witnesses.`
-        }
-        body={() => <WitnessVotesCard witnesses={account.witness_votes} />}
       />
 
       {chatDisclosure.isOpen && (

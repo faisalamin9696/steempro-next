@@ -4,7 +4,6 @@ import MarkdownViewer from "@/components/body/MarkdownViewer";
 import ErrorCard from "@/components/ErrorCard";
 import LoadingCard from "@/components/LoadingCard";
 import ProposalItem from "@/components/ProposalItem";
-import ProposalItemCard from "@/components/ProposalItemCard";
 import { findProposals } from "@/libs/steem/condenser";
 import { getPost } from "@/libs/steem/sds";
 import { Card } from "@heroui/card";

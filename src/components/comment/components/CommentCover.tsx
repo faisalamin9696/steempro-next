@@ -38,6 +38,7 @@ export default memo(function CommentCover(props: Props) {
       {noCard ? (
         <div className="relative">
           <Image
+            unoptimized
             onClick={imageDisclosure.onOpen}
             className={twMerge(
               " cursor-zoom-in",

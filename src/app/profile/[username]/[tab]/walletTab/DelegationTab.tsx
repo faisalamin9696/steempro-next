@@ -1,48 +1,32 @@
 "use client";
 
-import React, { Key, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { Button } from "@heroui/button";
-
-import {
-  DropdownTrigger,
-  Dropdown,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/dropdown";
+import { Button, ButtonGroup } from "@heroui/button";
 
 import { Chip } from "@heroui/chip";
 
-import { FaChevronDown, FaPlus } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import useSWR from "swr";
 import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
 import SAvatar from "@/components/ui/SAvatar";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
-import { BiDotsVerticalRounded } from "react-icons/bi";
 import TransferModal from "@/components/TransferModal";
 import LoadingCard from "@/components/LoadingCard";
 import { useLogin } from "@/components/auth/AuthProvider";
 import { vestToSteem } from "@/utils/helper/vesting";
 import moment from "moment";
-import { capitalize } from "@/constants/AppConstants";
 import { useSession } from "next-auth/react";
 import SLink from "@/components/ui/SLink";
-import TableWrapper from "@/components/wrappers/TableWrapper";
 import { useParams } from "next/navigation";
+import { FiEdit } from "react-icons/fi";
+import STable from "@/components/ui/STable";
 
 const statusColorMap = {
   incoming: "success",
   expiring: "danger",
   outgoing: "warning",
 };
-
-const INITIAL_VISIBLE_COLUMNS = ["from", "vests", "status"];
-
-const columns = [
-  { name: "ACCOUNT", uid: "from", sortable: true },
-  { name: "AMOUNT", uid: "vests", sortable: true },
-  { name: "STATUS", uid: "status", sortable: true },
-];
 
 const statusOptions = [
   { name: "Incoming", uid: "incoming" },
@@ -108,7 +92,9 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
   }, [outgoingData, incomingData, expiringData]);
 
   const [filterValue, setFilterValue] = React.useState<any>("");
-  const [statusFilter, setStatusFilter] = React.useState<any>("all");
+  const [statusFilter, setStatusFilter] = React.useState<
+    ("all" | "incoming" | "outgoing" | "expiring")[]
+  >(["all"]);
   const hasSearchFilter = Boolean(filterValue);
 
   const filteredItems = React.useMemo(() => {
@@ -122,181 +108,226 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
       );
     }
     if (
-      statusFilter !== "all" &&
+      !statusFilter.includes("all") &&
       Array.from(statusFilter)?.length !== statusOptions.length
     ) {
       filteredDelegations = filteredDelegations.filter((delegation) =>
-        Array.from(statusFilter).includes(delegation.status)
+        Array.from(statusFilter).includes(delegation.status?.toLowerCase())
       );
     }
 
     return filteredDelegations;
   }, [allRows, filterValue, statusFilter]);
 
-  async function handleMenuActions(key: Key, delegation: Delegation) {
-    switch (key) {
-      case "edit":
-        setTransferModal({
-          isOpen: !transferModal.isOpen,
-          delegatee: delegation.to,
-          oldDelegation: delegation.vests,
-          delegation: delegation,
-        });
-        break;
-      case "remove":
-        setTransferModal({
-          isOpen: !transferModal.isOpen,
-          delegatee: delegation.to,
-          oldDelegation: delegation.vests,
-          delegation: delegation,
-          isRemove: true,
-        });
-        break;
-    }
-  }
+  if (isPending) return <LoadingCard />;
 
-  const renderCell = React.useCallback(
-    (delegation: Delegation, columnKey) => {
-      const cellValue = delegation[columnKey];
+  const totalExpiring = allRows
+    .filter((d) => d.status === "expiring")
+    .reduce((sum, d) => sum + d.vests, 0);
 
-      switch (columnKey) {
-        case "from":
+  return (
+    <>
+      <STable
+        bodyClassName="grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-x-6 gap-y-4"
+        data={filteredItems}
+        description={
+          "Incoming • Outgoing • Expiring – Adjust or Remove Delegations"
+        }
+        titleClassName="w-full"
+        filterByValue={["from", "to"]}
+        title={
+          <div className="flex flex-row justify-between items-center w-full gap-2">
+            <p>Total Delegation</p>
+
+            <Button
+              size="sm"
+              onPress={() => {
+                authenticateUser();
+                if (!isAuthorized()) return;
+                setTransferModal({ isOpen: !transferModal.isOpen });
+              }}
+              className="min-w-0"
+              color="primary"
+              endContent={<FaPlus />}
+            >
+              New Delegation
+            </Button>
+          </div>
+        }
+        titleExtra={
+          <div className="flex flex-wrap gap-2">
+            {!!data.vests_in && (
+              <Chip
+                size="sm"
+                variant="flat"
+                color="success"
+                classNames={{
+                  closeButton: "ms-1",
+                }}
+                onClick={() => {
+                  setStatusFilter(["incoming"]);
+                }}
+                onClose={
+                  !statusFilter.includes("incoming")
+                    ? undefined
+                    : () => setStatusFilter(["all"])
+                }
+                className="text-sm cursor-pointer hover:bg-success-100 transition-colors"
+              >
+                Incoming{": "}
+                {vestToSteem(
+                  data.vests_in,
+                  globalData.steem_per_share
+                )?.toLocaleString() + " SP"}
+              </Chip>
+            )}
+            {!!data.vests_out && (
+              <Chip
+                classNames={{
+                  closeButton: "ms-1",
+                }}
+                size="sm"
+                variant="flat"
+                color="warning"
+                className="text-sm cursor-pointer hover:bg-warning-100 transition-colors"
+                onClick={() => {
+                  setStatusFilter(["outgoing"]);
+                }}
+                onClose={
+                  !statusFilter.includes("outgoing")
+                    ? undefined
+                    : () => setStatusFilter(["all"])
+                }
+              >
+                Outgoing{": "}
+                {vestToSteem(
+                  data.vests_out,
+                  globalData.steem_per_share
+                )?.toLocaleString() + " SP"}
+              </Chip>
+            )}
+
+            {!!totalExpiring && (
+              <Chip
+                classNames={{
+                  closeButton: "ms-1",
+                }}
+                size="sm"
+                variant="flat"
+                color="danger"
+                className="text-sm cursor-pointer hover:bg-danger-100 transition-colors"
+                onClick={() => {
+                  setStatusFilter(["expiring"]);
+                }}
+                onClose={
+                  !statusFilter.includes("expiring")
+                    ? undefined
+                    : () => setStatusFilter(["all"])
+                }
+              >
+                Expiring{": "}
+                {vestToSteem(
+                  totalExpiring,
+                  globalData.steem_per_share
+                )?.toLocaleString() + " SP"}
+              </Chip>
+            )}
+          </div>
+        }
+        tableRow={(delegation: Delegation) => {
           const canEdit =
             delegation["status"] === "outgoing" &&
-            delegation.from === loginInfo.name;
-          const canRemove =
-            delegation["status"] === "incoming" &&
             delegation.from === loginInfo.name;
 
           const username =
             delegation.status === "incoming" ? delegation.from : delegation.to;
-          return (
-            <div className="flex flex-row items-center gap-2">
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button isIconOnly size="sm" variant="light" radius="full">
-                    <BiDotsVerticalRounded className="text-default-600 text-xl" />
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disabledKeys={
-                    !(canEdit || canRemove) ? ["edit", "remove"] : []
-                  }
-                  onAction={(keys) => handleMenuActions(keys, delegation)}
-                >
-                  <DropdownItem key={`edit`}>Edit</DropdownItem>
-                  <DropdownItem key={`remove`} color="danger">
-                    Remove
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
 
-              <div className="flex gap-2 items-center">
-                <SAvatar size="xs" username={username} />
-                <SLink className=" hover:text-blue-500" href={`/@${username}`}>
-                  {username}
-                </SLink>
+          return (
+            <div className="flex flex-row items-center justify-between gap-3">
+              <div className="flex gap-3 items-start">
+                <SAvatar size="1xs" username={username} />
+                <div className=" flex flex-col gap-2">
+                  <div className="flex flex-row gap-2">
+                    <SLink
+                      className=" hover:text-blue-500"
+                      href={`/@${username}`}
+                    >
+                      {username}
+                    </SLink>
+
+                    <Chip
+                      className="capitalize border-none gap-1 text-default-600"
+                      color={statusColorMap[delegation["status"]]}
+                      size="sm"
+                      variant="flat"
+                    >
+                      {delegation.status}
+                    </Chip>
+                  </div>
+
+                  <div className="flex flex-row gap-2">
+                    <TimeAgoWrapper
+                      className="text-bold text-tiny text-default-500"
+                      created={
+                        (delegation.status === "expiring"
+                          ? delegation?.expiration ?? 0
+                          : delegation.time) * 1000
+                      }
+                    />
+                    •
+                    <p className="text-bold text-xs capitalize">
+                      {vestToSteem(
+                        delegation.vests,
+                        globalData.steem_per_share
+                      )?.toLocaleString()}{" "}
+                      SP
+                    </p>
+                  </div>
+                </div>
               </div>
+
+              {canEdit && (
+                <ButtonGroup className="flex flex-row gap-0">
+                  <Button
+                    size="sm"
+                    variant="solid"
+                    color="danger"
+                    onPress={() => {
+                      setTransferModal({
+                        isOpen: !transferModal.isOpen,
+                        delegatee: delegation.to,
+                        oldDelegation: delegation.vests,
+                        delegation: delegation,
+                        isRemove: true,
+                      });
+                    }}
+                    className="text-xs sm:text-sm text-white"
+                  >
+                    <span className="inline">Remove</span>
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="flat"
+                    className="text-xs sm:text-sm"
+                    onPress={() => {
+                      setTransferModal({
+                        isOpen: !transferModal.isOpen,
+                        delegatee: delegation.to,
+                        oldDelegation: delegation.vests,
+                        delegation: delegation,
+                      });
+                    }}
+                  >
+                    <FiEdit className="w-3 h-3 sm:mr-1" />
+                    <span className="inline">Edit</span>
+                  </Button>
+                </ButtonGroup>
+              )}
             </div>
           );
-
-        case "vests":
-          return (
-            <div className="flex flex-col gap-2">
-              <p className="text-bold text-xs capitalize">
-                {vestToSteem(
-                  cellValue,
-                  globalData.steem_per_share
-                )?.toLocaleString()}{" "}
-                SP
-              </p>
-              <TimeAgoWrapper
-                className="text-bold text-tiny text-default-500"
-                created={
-                  (delegation.status === "expiring"
-                    ? delegation?.expiration ?? 0
-                    : delegation.time) * 1000
-                }
-              />
-            </div>
-          );
-        case "status":
-          return (
-            <Chip
-              className="capitalize border-none gap-1 text-default-600"
-              color={statusColorMap[delegation["status"]]}
-              size="sm"
-              variant="dot"
-            >
-              {cellValue}
-            </Chip>
-          );
-
-        default:
-          return cellValue;
-      }
-    },
-    [globalData, loginInfo]
-  );
-
-  if (isPending) return <LoadingCard />;
-
-  return (
-    <>
-      <TableWrapper
-        initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
-        tableColumns={columns}
-        filterValue={filterValue}
-        filteredItems={filteredItems}
-        onFilterValueChange={setFilterValue}
-        renderCell={renderCell}
-        sortDescriptor={{ column: "vests", direction: "descending" }}
-        headerColumnTitle="Status"
-        topContentDropdown={
-          <Dropdown>
-            <DropdownTrigger className="hidden sm:flex">
-              <Button
-                size="sm"
-                endContent={<FaChevronDown className="text-small" />}
-                variant="flat"
-              >
-                Status
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu
-              disallowEmptySelection
-              aria-label="Table Columns"
-              closeOnSelect={false}
-              selectedKeys={statusFilter}
-              selectionMode="multiple"
-              onSelectionChange={(e) => {
-                setStatusFilter(e);
-              }}
-            >
-              {statusOptions.map((status) => (
-                <DropdownItem key={status.uid} className="capitalize">
-                  {capitalize(status.name)}
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          </Dropdown>
-        }
-        topContentEnd={
-          <Button
-            size="sm"
-            onPress={() => {
-              authenticateUser();
-              if (!isAuthorized()) return;
-              setTransferModal({ isOpen: !transferModal.isOpen });
-            }}
-            className="min-w-0"
-            color="primary"
-            endContent={<FaPlus />}
-          >
-            Add New
-          </Button>
-        }
+        }}
       />
+
       {transferModal.isOpen && (
         <TransferModal
           asset={"VESTS"}

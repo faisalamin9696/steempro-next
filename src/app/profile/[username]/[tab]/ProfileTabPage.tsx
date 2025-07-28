@@ -1,7 +1,9 @@
 "use client";
 
 import FeedList from "@/components/FeedList";
-import { getEndPoint, useAppSelector } from "@/constants/AppFunctions";
+import { FeedPerPage } from "@/constants/AppConstants";
+import { getEndPoint } from "@/constants/AppFunctions";
+import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import React from "react";
 import { twMerge } from "tailwind-merge";
@@ -15,16 +17,24 @@ export default function ProfileTabPage() {
   let { username, tab } = useParams() as Props;
   username = username?.toLowerCase();
   tab = tab?.toLowerCase();
-  const loginInfo = useAppSelector((state) => state.loginReducer.value);
+  const { data: session } = useSession();
+
+  const getKey = (pageIndex: number, previousPageData: Feed[] | null) => {
+    // Return null when we reach the end
+    if (previousPageData && previousPageData.length === 0) return null;
+
+    return getEndPoint(
+      getTabEndPoint(tab),
+      `${username}/${session?.user?.name || "null"}`,
+      500,
+      FeedPerPage, // page size
+      pageIndex * FeedPerPage // offset
+    );
+  };
 
   return (
     <div className={twMerge("flex flex-col space-y-2")}>
-      <FeedList
-        endPoint={getEndPoint(
-          getTabEndPoint(tab),
-          `${username}/${loginInfo.name || "null"}`
-        )}
-      />
+      <FeedList dataKey={getKey} />
     </div>
   );
 }

@@ -47,7 +47,6 @@ const OperationItem = ({ operation, steem_per_share }: OperationItemProps) => {
   return (
     <Card className="overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200">
       {/* Operation Header - Primary Focus */}
-      <div className="p-5">
         <div className="flex items-start justify-between">
           <div className="flex items-start space-x-4 flex-1">
             {/* Operation Icon */}
@@ -148,11 +147,10 @@ const OperationItem = ({ operation, steem_per_share }: OperationItemProps) => {
             {isExpanded ? <FaChevronDown /> : <FaChevronRight />}
           </Button>
         </div>
-      </div>
 
       {/* Raw Operation Data - Expandable */}
       {isExpanded && (
-        <div className="px-5 pb-5 bg-secondary/20 border-t border-border/50">
+        <div className="px-4 mt-4 pb-4 bg-secondary/20 rounded border-t-1 border-default-700/30">
           <div className="space-y-4 pt-4">
             <div className="flex items-center space-x-2 text-sm font-medium text-foreground">
               <FaCode className="w-4 h-4" />

@@ -1,64 +1,81 @@
-import {
-  fetchSds,
-  getFeedScrollItems,
-  updateFeedScroll,
-  useAppSelector,
-} from "@/constants/AppFunctions";
-import { notFound } from "next/navigation";
-import React, { memo, useMemo, useState, useCallback, useEffect } from "react";
+"use client";
+
+import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
+import React, { useState, useEffect, useRef } from "react";
 import useSWR from "swr";
-import { Button } from "@heroui/button";
-import InfiniteScroll from "react-infinite-scroll-component";
-import CommentCard from "./comment/CommentCard";
-import CommentSkeleton from "./comment/components/CommentSkeleton";
 import { getSettings } from "@/utils/user";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
+import CommentCard from "./comment/CommentCard";
 import { twMerge } from "tailwind-merge";
+import { notFound } from "next/navigation";
+import CommentSkeleton from "./comment/components/CommentSkeleton";
+import { Spinner } from "@heroui/spinner";
 import EmptyList from "./EmptyList";
-import { AsyncUtils } from "@/utils/async.utils";
 import { ScrollToTopButton } from "./ScrollToTopButton";
 
 interface Props {
   endPoint: string;
   className?: string;
+  isCommunity?: boolean;
 }
 
 // Scroll to Top Button Component
 
-export default function FeedList_Old(props: Props) {
-  const { endPoint, className } = props;
+const itemsPerPage = 16;
+export default function FeedList(props: Props) {
+  const { endPoint, className, isCommunity } = props;
   const { data, error, isLoading } = useSWR<Feed[]>(endPoint, fetchSds);
-  const [rows, setRows] = useState<Feed[]>([]);
-  const [loadingMore, setLoadingMore] = useState(false);
+  const sessionKey = `loadedCount-${endPoint}`;
   const settings =
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
+  const [allPosts, setAllPosts] = useState<Feed[]>([]);
+  const [visiblePosts, setVisiblePosts] = useState<Feed[]>([]);
+  const savedLoadedCount = Number(
+    sessionStorage.getItem(sessionKey) ?? itemsPerPage
+  );
+
+  const [loadedCount, setLoadedCount] = useState(savedLoadedCount);
+  const observerRef = useRef(null);
   const { isMobile } = useDeviceInfo();
   const isGridStyle = settings.feedStyle === "grid" && !isMobile;
 
-  // Memoize the initial rows to avoid unnecessary updates
-  useMemo(() => {
+  // populating data to state
+  useEffect(() => {
     if (data) {
-      setRows(data.slice(0, getFeedScrollItems(endPoint)));
+      setAllPosts(data);
+      setVisiblePosts(data.slice(0, itemsPerPage)); // Render first 16 posts
     }
   }, [data]);
 
-  // Memoize the function to load more rows
-  const loadMoreRows = useCallback((mainData: Feed[], rowsData: Feed[]) => {
-    const newStart = mainData?.slice(rowsData?.length ?? 0);
-    return newStart?.slice(0, 16) ?? [];
-  }, []);
+  // set visible items on screen
+  useEffect(() => {
+    if (!allPosts.length) return;
+    setVisiblePosts(allPosts.slice(0, loadedCount));
+  }, [loadedCount, allPosts]);
 
-  // Handle reaching the end of the list
-  const handleEndReached = useCallback(async () => {
-    if (data && rows.length < data.length) {
-      setLoadingMore(true);
-      await AsyncUtils.sleep(2.5); // Simulate network delay
-      const newRows = loadMoreRows(data, rows);
-      updateFeedScroll(endPoint, [...rows, ...newRows].length);
-      setRows((prevRows) => [...prevRows, ...newRows]);
-      setLoadingMore(false);
-    }
-  }, [data, rows, loadMoreRows]);
+  // on end reached
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          // loadin more with delay simlulation
+          setTimeout(() => {
+            if (loadedCount < allPosts.length) {
+              setLoadedCount((prev) => prev + itemsPerPage);
+              sessionStorage.setItem(
+                sessionKey,
+                (loadedCount + itemsPerPage).toString()
+              );
+            }
+          }, 1500);
+        }
+      },
+      { rootMargin: "40px" }
+    );
+
+    if (observerRef.current) observer.observe(observerRef.current);
+    return () => observer.disconnect();
+  }, [loadedCount, allPosts]);
 
   // Loading state
   if (isLoading) {
@@ -75,50 +92,36 @@ export default function FeedList_Old(props: Props) {
     return notFound();
   }
 
-  // List loader component
-  const ListLoader = memo(() => (
-    <div className="flex justify-center items-center">
-      <Button
-        color="default"
-        variant="light"
-        className="self-center"
-        isIconOnly
-        isLoading={loadingMore}
-        isDisabled
-        onPress={handleEndReached}
-      />
-    </div>
-  ));
-
   return (
-    <>
-      <InfiniteScroll
-        className="gap-2 !overflow-visible"
-        dataLength={rows.length}
-        next={handleEndReached}
-        hasMore={rows.length < (data?.length ?? 0)}
-        loader={<ListLoader />}
-        endMessage={<EmptyList />}
-      >
-        <div
-          className={twMerge(
-            isGridStyle
+    <div>
+      <div
+        className={twMerge(
+          isGridStyle
+            ? className
               ? className
-                ? className
-                : "grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4"
-              : "flex flex-col gap-2"
-          )}
-        >
-          {rows.map((comment, index) =>
-            comment.link_id ? (
-              <CommentCard key={comment.link_id} comment={comment} />
-            ) : null
-          )}
+              : "grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4"
+            : "flex flex-col gap-2"
+        )}
+      >
+        {visiblePosts.map((comment, index) =>
+          comment.link_id ? (
+            <CommentCard
+              isCommunity={isCommunity}
+              key={comment.link_id}
+              comment={comment}
+            />
+          ) : null
+        )}
+      </div>
+      {loadedCount < allPosts.length && (
+        <div ref={observerRef} className="flex w-full justify-center p-4">
+          <Spinner variant="gradient" size="md" />
         </div>
-      </InfiniteScroll>
+      )}
 
-      {/* Scroll to Top Button */}
-      <ScrollToTopButton />
-    </>
+      {(data && loadedCount >= allPosts.length) ||
+        (allPosts.length <= 0 && <EmptyList />)}
+
+    </div>
   );
 }

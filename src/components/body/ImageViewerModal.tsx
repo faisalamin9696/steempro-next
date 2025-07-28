@@ -93,6 +93,7 @@ function ImageViewerModal(props: Props) {
         scrollBehavior: "inside",
         size: "2xl",
         hideCloseButton: true,
+        placement: 'center'
       }}
       body={() => (
         <TransformWrapper ref={transformComponentRef}>
@@ -107,6 +108,7 @@ function ImageViewerModal(props: Props) {
                 <TransformComponent>
                   <div className="flex flex-col justify-center w-full">
                     <Image
+                      unoptimized
                       className={twMerge(
                         "zoomable",
                         isFetching && "bg-background/50"
@@ -126,7 +128,7 @@ function ImageViewerModal(props: Props) {
                   </div>
                 </TransformComponent>
 
-                <div className="text-sm opacity-disabled mt-2">{props.alt}</div>
+                <div className="text-sm text-default-500 mt-2">{props.alt}</div>
               </div>
             </React.Fragment>
           )}

@@ -7,11 +7,21 @@ import SLink from "./ui/SLink";
 import { vestToSteem } from "@/utils/helper/vesting";
 import LoadingCard from "./LoadingCard";
 import TableWrapper from "./wrappers/TableWrapper";
-import { simpleVotesToSp } from "./ProposalItemCard";
+import { simpleVotesToSp } from "./ProposalItem";
 import { twMerge } from "tailwind-merge";
-import { abbreviateNumber } from "@/utils/helper";
-import Link from "next/link";
+import { abbreviateNumber, sortByKey } from "@/utils/helper";
 import SModal from "./ui/SModal";
+import STable from "./ui/STable";
+import { Chip } from "@heroui/chip";
+import { Button } from "@heroui/button";
+import { capitalize } from "@/constants/AppConstants";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@heroui/dropdown";
+import { IoFilterOutline } from "react-icons/io5";
 
 interface Props {
   witness: { name: string; received_votes: number; votes: string };
@@ -19,13 +29,10 @@ interface Props {
   onOpenChange: (isOpen: boolean) => void;
 }
 
-const INITIAL_VISIBLE_COLUMNS = ["account", "sp_own", "proxied_sp", "share"];
-
-const columns = [
-  { name: "VOTER", uid: "account", sortable: true },
-  { name: "OWN (MV)", uid: "sp_own", sortable: true },
-  { name: "PROXIED (MV)", uid: "proxied_sp", sortable: true },
-  { name: "SHARE", uid: "share", sortable: true },
+const sortOptions = [
+  { name: "Share", uid: "share" },
+  { name: "Username", uid: "account" },
+  { name: "Proxied", uid: "proxied_sp" },
 ];
 
 interface WitnessVoteProps {
@@ -80,121 +87,138 @@ export default function WitnessVotersModal(props: Props) {
     if (data) setAllRows(data);
   }, [data]);
 
-  const [filterValue, setFilterValue] = React.useState<any>("");
-
-  const hasSearchFilter = Boolean(filterValue);
+  const [sortBY, setSortBy] = React.useState<
+    "share" | "account" | "proxied_sp"
+  >("share");
 
   const filteredItems = React.useMemo(() => {
-    let filteredVotes = [...allRows];
+    let sortedItems = [...allRows];
 
-    if (hasSearchFilter) {
-      filteredVotes = filteredVotes.filter((votes) =>
-        votes.account.toLowerCase().includes(filterValue.toLowerCase())
-      );
-    }
+    // Apply sorting
+    sortedItems = sortByKey(
+      sortedItems,
+      sortBY,
+      ["share", "proxied_sp"].includes(sortBY) ? "desc" : "asc"
+    );
 
-    return filteredVotes;
-  }, [allRows, filterValue]);
-
-  const renderCell = React.useCallback(
-    (item: WitnessVoteProps, columnKey) => {
-      const cellValue = item[columnKey];
-
-      const ownSp = abbreviateNumber(item.sp_own);
-      const proxiedSp = abbreviateNumber(item.proxied_sp);
-
-      switch (columnKey) {
-        case "account":
-          return (
-            <div className="flex flex-row items-start gap-1">
-              <div className="flex flex-col gap-2">
-                <div className="flex gap-2 items-center">
-                  <SAvatar size="xs" username={item.account} />
-                  <SLink
-                    className=" hover:text-blue-500"
-                    href={`/@${item.account}`}
-                  >
-                    {item.account}
-                  </SLink>
-                </div>
-              </div>
-            </div>
-          );
-
-        case "sp_own":
-          return (
-            <div className="flex flex-col">
-              <p className={twMerge("text-bold text-small uppercase")}>
-                {ownSp?.toLocaleString()}
-              </p>
-            </div>
-          );
-
-        case "proxied_sp":
-          return (
-            <div className="flex flex-col">
-              <p className={twMerge("text-bold text-small uppercase")}>
-                {proxiedSp?.toLocaleString()}
-              </p>
-            </div>
-          );
-
-        case "share":
-          return (
-            <div className="flex flex-col">
-              <p className={twMerge("text-bold text-small capitalize")}>
-                {item.share?.toLocaleString()}%
-              </p>
-            </div>
-          );
-        default:
-          return cellValue;
-      }
-    },
-    [globalData, data]
-  );
+    return sortedItems;
+  }, [allRows, sortBY]);
 
   return (
     <SModal
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      modalProps={{ size: "xl", scrollBehavior: "inside" }}
-      title={() => (
-        <div className=" flex flex-row gap-2 items-center">
-          <p>Voters of</p>
-          <SAvatar
-            size="xs"
-            linkClassName="flex-row-reverse"
-            content={<p className="font-normal text-sm">{witness.name}</p>}
-            username={witness.name}
-          />
-        </div>
-      )}
+      modalProps={{
+        size: "xl",
+        scrollBehavior: "inside",
+        hideCloseButton: false,
+      }}
+      bodyClassName="mt-0 p-0"
       body={() => (
         <>
           {isLoading ? (
             <LoadingCard />
           ) : (
             allRows && (
-              <TableWrapper
-                filterValue={filterValue}
-                isCompact={false}
-                hidePaginationActions
-                initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
-                tableColumns={columns}
-                filteredItems={filteredItems}
-                onFilterValueChange={setFilterValue}
-                renderCell={renderCell}
-                mobileVisibleColumns={["account", "sp_own", "share"]}
-                baseVarient
-                sortDescriptor={{
-                  column: "share",
-                  direction: "descending",
-                }}
-              />
+              <div>
+                <STable
+                  data={filteredItems || []}
+                  stickyHeader
+                  titleClassName="w-full"
+                  title={
+                    <div className="flex flex-row items-center justify-between w-full">
+                      <div className=" flex flex-row gap-2 items-center">
+                        <p>Voters of</p>
+                        <SAvatar
+                          size="xs"
+                          linkClassName="flex-row-reverse"
+                          content={
+                            <p className="font-normal text-sm">
+                              {witness.name}
+                            </p>
+                          }
+                          username={witness.name}
+                        />
+                      </div>
+
+                      <Dropdown>
+                        <DropdownTrigger>
+                          <Button
+                            size="sm"
+                            variant="flat"
+                            startContent={<IoFilterOutline size={18} />}
+                            className="font-semibold text-small"
+                          >
+                            {sortOptions?.find((s) => s.uid === sortBY)?.name}
+                          </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu
+                          disallowEmptySelection
+                          aria-label="Table Columns"
+                          closeOnSelect={true}
+                          selectedKeys={[sortBY]}
+                          selectionMode="single"
+                          onSelectionChange={(item) =>
+                            setSortBy(item.currentKey?.toString() as any)
+                          }
+                        >
+                          {sortOptions.map((status) => (
+                            <DropdownItem
+                              key={status.uid}
+                              className="capitalize"
+                            >
+                              {capitalize(status.name)}
+                            </DropdownItem>
+                          ))}
+                        </DropdownMenu>
+                      </Dropdown>
+                    </div>
+                  }
+                  tableRow={(item: WitnessVoteProps) => {
+                    const ownSp = item.sp_own?.toLocaleString();
+                    const ownProxied = item.proxied_sp?.toLocaleString();
+
+                    return (
+                      <div className="flex gap-2 items-start">
+                        <SAvatar size="1xs" username={item.account} />
+
+                        <div className=" flex flex-col gap-2">
+                          <div className="flex flex-row gap-2">
+                            <SLink
+                              className=" hover:text-blue-500"
+                              href={`/@${item.account}`}
+                            >
+                              {item.account}
+                            </SLink>
+
+                            <Chip
+                              className="capitalize border-none gap-1 text-default-600"
+                              color={"success"}
+                              size="sm"
+                              variant="flat"
+                            >
+                              {item.share?.toLocaleString()}%
+                            </Chip>
+                          </div>
+
+                          <p>own: {ownSp} SP</p>
+                          {!!parseFloat(ownProxied || "0") && (
+                            <p>proxied: {ownProxied} SP</p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  }}
+                />
+              </div>
             )
           )}
         </>
+      )}
+      footer={(onClose) => (
+        <Button color="danger" variant="flat" onPress={onClose}>
+          Close
+        </Button>
       )}
     />
   );

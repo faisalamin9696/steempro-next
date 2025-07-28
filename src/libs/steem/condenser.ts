@@ -13,7 +13,6 @@ import { PrivKey } from "../../utils/user";
 import { toast } from "sonner";
 import { CurrentSetting } from "../../constants/AppConstants";
 import { steemToVest } from "../../utils/helper/vesting";
-import { WitnessDataProps } from "@/app/witnesses/page";
 import { hasSteemProPostingAuthority } from "@/app/submit/SubmitPage";
 global.Buffer = global.Buffer || require("buffer").Buffer;
 
@@ -238,11 +237,11 @@ export function getKeyType(account: AccountExt, key: string) {
 
     return keyType
       ? {
-          account: account.name,
-          type: keyType as Keys,
-          key: privKey,
-          memo: keyType === "MEMO" ? key : privMemoKey,
-        }
+        account: account.name,
+        type: keyType as Keys,
+        key: privKey,
+        memo: keyType === "MEMO" ? key : privMemoKey,
+      }
       : "";
   } catch (e: any) {
     throw new Error(String(e));

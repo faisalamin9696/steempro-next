@@ -69,8 +69,10 @@ export default function MassVotingPage() {
         return;
       }
 
-    if (!weight || parseFloat(weight) < 1 || parseFloat(weight) > 100) {
-      toast.info("Invalid vote weight");
+    const weightValue = Number(weight);
+
+    if (!weight || isNaN(weightValue) || weightValue < 1 || weightValue > 100) {
+      toast.info("Weight percentage must be from 1–100");
       return;
     }
 
@@ -157,7 +159,7 @@ export default function MassVotingPage() {
                   setUsername(session?.user?.name || "");
                 }}
                 variant={"flat"}
-                color={advance ? "primary" : "secondary"}
+                color={advance ? "success" : "primary"}
               >
                 {`Use ${advance ? "default" : "different"} account`}
               </Button>
@@ -183,7 +185,7 @@ export default function MassVotingPage() {
             onValueChange={setWeight}
             isRequired
             label="Vote weight"
-            placeholder="Enter vote weight 0.1-100 %"
+            placeholder="Enter vote weight 1-100 %"
             inputMode="decimal"
             type="number"
             step={0.1}
@@ -199,20 +201,19 @@ export default function MassVotingPage() {
             value={links}
             onValueChange={setLinks}
             placeholder="Paste the links here (separate by space)"
-            disableAutosize
-            rows={6}
+            disableAnimation
+            classNames={{
+              input: "resize-y",
+            }}
           />
 
-          <Button
-            className="self-start"
-            onPress={handleVoting}
-            isLoading={loading}
-          >
+          <Button onPress={handleVoting} isLoading={loading} color="primary">
             Start Voting
           </Button>
         </div>
       </div>
 
+      {votingModal.isOpen && (
         <MassVotingModal
           isOpen={votingModal.isOpen}
           handleOnComplete={() => {
@@ -225,6 +226,7 @@ export default function MassVotingPage() {
           data={votingModal.voterCredentials}
           links={votingModal.links}
         />
+      )}
     </div>
   );
 }

@@ -1,17 +1,16 @@
 "use client";
 
+import "@webscopeio/react-textarea-autocomplete/style.css";
+import "./style.scss";
 import {
   useState,
   useRef,
   useCallback,
   memo,
   useEffect,
-  KeyboardEventHandler,
   CSSProperties,
 } from "react";
-import EditorToolbar from "./components/EditorToolbar";
 import { useDropzone } from "react-dropzone";
-import { KeyboardEvent } from "react";
 import { MAXIMUM_UPLOAD_SIZE, isValidImage } from "@/utils/parseImage";
 import { toast } from "sonner";
 import { toBase64 } from "@/utils/helper";
@@ -20,55 +19,68 @@ import { useLogin } from "../auth/AuthProvider";
 import { getCredentials, getSessionKey } from "@/utils/user";
 import { filesize } from "filesize";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import "@webscopeio/react-textarea-autocomplete/style.css";
 import SAvatar from "../ui/SAvatar";
 import LoadingCard from "../LoadingCard";
-import "./style.scss";
 import { getAccountsByPrefix } from "@/libs/steem/sds";
 import { useSession } from "next-auth/react";
 import { validate_account_name } from "@/utils/chainValidation";
 import { useDisclosure } from "@heroui/modal";
 import SnippetModal from "../SnippetModal";
-
-const tableTemplete = `|	Column 1	|	Column 2	|	Column 3	|
-|	------------	|	------------	|	------------	|
-|	     Text     	|	     Text     	|	     Text     	|`;
+import { Button } from "@heroui/button";
+import { AiOutlineFileSearch } from "react-icons/ai";
+import { BiImageAdd, BiHide } from "react-icons/bi";
+import {
+  TbBold,
+  TbItalic,
+  TbH1,
+  TbH2,
+  TbList,
+  TbListNumbers,
+  TbQuote,
+  TbCode,
+  TbLink,
+  TbAlignLeft,
+  TbAlignCenter,
+  TbAlignRight,
+  TbAlignJustified,
+  TbTable,
+} from "react-icons/tb";
+import { KeyboardEvent } from "react";
 
 const MAX_FILE_TO_UPLOAD = 10;
 
 interface EditorProps {
   value: string;
   onChange: (value: string) => void;
-  onImageUpload: (
-    blon: any,
-    insertionStatus: (image: any, imageName: string) => void,
-    setImageState: () => void
-  ) => void;
-  onImageInvalid: () => void;
   rows?: number;
   isDisabled?: boolean;
   users?: string[];
   maxLength?: number;
   isSnipping?: boolean;
-  onKeyDown?: KeyboardEventHandler<HTMLTextAreaElement> | undefined;
   containerStyle?: CSSProperties | undefined;
 }
 
 let timeout: any = null;
 let imagesToUpload: { file: any; temporaryTag: string }[] = [];
 
+interface UploadImageInput {
+  file: File;
+  temporaryTag: string;
+}
+
+const getFileExtension = (file: File): string => {
+  return file.name.split(".").pop()?.toLowerCase() || "";
+};
+
 export default memo(function EditorInput(props: EditorProps) {
   let {
     value,
-    onImageUpload,
-    onImageInvalid,
     onChange,
     users,
     rows,
     isDisabled,
     maxLength,
     isSnipping,
-    onKeyDown,
     containerStyle,
   } = props;
 
@@ -78,7 +90,6 @@ export default memo(function EditorInput(props: EditorProps) {
     require("@webscopeio/react-textarea-autocomplete").default;
 
   const postInput = useRef<any>(null);
-  const postBodyRef = useRef<HTMLDivElement>(null);
   let [imagesUploadCount, setImagesUploadCount] = useState(0);
   const snippetDisclosure = useDisclosure();
 
@@ -134,13 +145,48 @@ export default memo(function EditorInput(props: EditorProps) {
   });
 
   useEffect(() => {
-    if (postInput) {
-      postInput?.current?.addEventListener("paste", handlePastedImage);
+    if (postInput?.current) {
+      postInput.current.addEventListener("paste", handlePastedImage);
     }
 
     return () =>
       postInput?.current?.removeEventListener("paste", handlePastedImage);
   }, []);
+
+  function hotKeyHandler(event: KeyboardEvent<HTMLDivElement>) {
+    const textarea = postInput.current;
+    if (!textarea) return;
+
+    // allow only Alt key
+    if (document.activeElement !== textarea) return;
+
+    if (event.ctrlKey || event.metaKey) {
+      switch (event.key.toLowerCase()) {
+        case "b":
+          event.preventDefault();
+          insertMarkdown("**", "**");
+          break;
+        case "i":
+          event.preventDefault();
+          insertMarkdown("*", "*");
+          break;
+        case "u":
+          event.preventDefault();
+          insertMarkdown("<u>", "</u>");
+          break;
+        case "k":
+          event.preventDefault();
+          insertMarkdown("![alt](url", ")");
+          break;
+        case "e":
+          event.preventDefault();
+          insertMarkdown("`", "`");
+          break;
+        default:
+          break;
+      }
+    }
+  }
 
   function handlePastedImage(e: any) {
     if (e.clipboardData && e.clipboardData.items) {
@@ -152,7 +198,6 @@ export default memo(function EditorInput(props: EditorProps) {
           const blob = item.getAsFile();
 
           if (!isValidImage(blob)) {
-            onImageInvalid();
             return;
           }
 
@@ -182,168 +227,139 @@ export default memo(function EditorInput(props: EditorProps) {
     }
   }
 
-  function insertAtCursor(
-    before: string,
-    after: string,
-    deltaStart = 0,
-    deltaEnd = 0
-  ) {
-    if (!postInput) return;
-    const startPos = postInput?.current?.selectionStart;
-    const endPos = postInput?.current?.selectionEnd;
-    const newValue =
-      value.substring(0, startPos) +
-      before +
-      value.substring(startPos, endPos) +
-      after +
-      value.substring(endPos, value.length);
+  const insertMarkdown = (before: string, after: string = "") => {
+    if (!postInput.current) return;
 
-    setValue(newValue, startPos + deltaStart, endPos + deltaEnd);
-  }
+    const start = postInput.current.selectionStart;
+    const end = postInput.current.selectionEnd;
+    const selectedText = value.substring(start, end);
+    const newText = before + selectedText + after;
 
-  const shortcutHandler = {
-    h1: () => insertCode("h1"),
-    h2: () => insertCode("h2"),
-    h3: () => insertCode("h3"),
-    h4: () => insertCode("h4"),
-    h5: () => insertCode("h5"),
-    h6: () => insertCode("h6"),
-    bold: () => insertCode("b"),
-    italic: () => insertCode("i"),
-    quote: () => insertCode("q"),
-    code: () => insertCode("code"),
-    table: () => insertCode("table"),
-    link: () => insertCode("link"),
-    image: () => insertCode("image"),
-    justify: () => insertCode("justify"),
-    center: () => insertCode("center"),
-    snippet: () => insertCode("snippet"),
+    const newContent =
+      value.substring(0, start) + newText + value.substring(end);
+    setValue(newContent);
+
+    // Focus and set cursor position
+    setTimeout(() => {
+      if (postInput.current) {
+        postInput.current.focus();
+        postInput.current.setSelectionRange(
+          start + before.length,
+          start + before.length + selectedText.length
+        );
+        const cursorPos = 5;
+        scrollToCursor(postInput.current, start + before.length + selectedText.length);
+      }
+    }, 0);
   };
 
-  function hotKeyHandler(e: KeyboardEvent<HTMLDivElement>) {
-    // allow only Alt key
-    if (!e.altKey) {
-      return;
-    }
-    e.preventDefault();
+  function scrollToCursor(textarea, pos) {
+    // Create a temporary span to measure the position
+    const span = document.createElement("span");
+    const textBeforeCursor = textarea.value.substring(0, pos);
+    span.textContent = textBeforeCursor;
 
-    switch (e.key) {
-      case "1":
-        shortcutHandler.h1();
-        break;
-      case "2":
-        shortcutHandler.h2();
-        break;
-      case "3":
-        shortcutHandler.h3();
-        break;
-      case "3":
-        shortcutHandler.h4();
-        break;
-      case "b":
-        shortcutHandler.bold();
-        break;
-      case "i":
-        shortcutHandler.italic();
-        break;
-      case "q":
-        shortcutHandler.quote();
-        break;
-      case "c":
-        shortcutHandler.code();
-        break;
-      case "t":
-        shortcutHandler.table();
-        break;
-      case "link":
-        shortcutHandler.link();
-        break;
+    // Style the span to match the textarea's text
+    const style = window.getComputedStyle(textarea);
+    span.style.font = style.font;
+    span.style.whiteSpace = "pre-wrap";
+    span.style.width = textarea.clientWidth + "px";
+    span.style.position = "absolute";
+    span.style.visibility = "hidden";
+    span.style.left = "-9999px";
 
-      case "x":
-        shortcutHandler.snippet();
-        break;
+    document.body.appendChild(span);
 
-      case "j":
-        shortcutHandler.justify();
-        break;
+    // Calculate the height of the text before the cursor
+    const height = span.offsetHeight;
+    document.body.removeChild(span);
 
-      case "e":
-        shortcutHandler.center();
-        break;
-      case "d":
-        shortcutHandler.image();
-        break;
-      default:
-        return;
+    // Scroll the textarea
+    textarea.scrollTop = height - textarea.clientHeight / 2;
+  }
+
+  function handleImageSelection() {
+    authenticateUser();
+    if (isAuthorized()) {
+      open();
     }
   }
 
-  function insertCode(type: string) {
-    if (!postInput) return;
-    // postInput?.current?.focus();
-
-    switch (type) {
-      case "h1":
-        insertAtCursor("# ", "", 2, 2);
-        break;
-      case "h2":
-        insertAtCursor("## ", "", 3, 3);
-        break;
-      case "h3":
-        insertAtCursor("### ", "", 4, 4);
-        break;
-      case "h4":
-        insertAtCursor("#### ", "", 5, 5);
-        break;
-      case "b":
-        insertAtCursor("**", "**", 2, 2);
-        break;
-      case "i":
-        insertAtCursor("*", "*", 1, 1);
-        break;
-      case "q":
-        insertAtCursor("> ", "", 2, 2);
-        break;
-      case "table":
-        insertAtCursor(
-          tableTemplete,
-          "",
-          tableTemplete.length,
-          tableTemplete.length
-        );
-        break;
-      case "code":
-        insertAtCursor("<code>", "</code>", 6, 6);
-        break;
-      case "link":
-        insertAtCursor("[", "](url)", 1, 1);
-        break;
-      case "image":
-        authenticateUser();
-        if (isAuthorized()) {
-          open();
-        }
-        // insertAtCursor('![', '](url)', 2, 2);
-        break;
-      case "snippet":
-        snippetDisclosure.onOpen();
-        break;
-
-      case "justify":
-        insertAtCursor('<div class="text-justify">\n\n', "\n</div>", 2, 2);
-        break;
-
-      case "center":
-        insertAtCursor("<center>\n", "\n</center>", 9, 9);
-        break;
-
-      case "spoiler":
-        insertAtCursor(">! [Click to reveal] Your spoiler content ", "", 42, 42);
-        break;
-      default:
-        break;
-    }
-  }
+  const toolbarActions = [
+    {
+      icon: TbBold,
+      action: () => insertMarkdown("**", "**"),
+      title: "Bold (Ctrl+B)",
+    },
+    {
+      icon: TbItalic,
+      action: () => insertMarkdown("*", "*"),
+      title: "Italic (Ctrl+I)",
+    },
+    { icon: TbH1, action: () => insertMarkdown("# "), title: "Heading 1" },
+    {
+      icon: TbH2,
+      action: () => insertMarkdown("## "),
+      title: "Heading 2",
+      showDivider: true,
+    },
+    { icon: TbList, action: () => insertMarkdown("- "), title: "Bullet List" },
+    {
+      icon: TbListNumbers,
+      action: () => insertMarkdown("1. "),
+      title: "Numbered List",
+      showDivider: true,
+    },
+    { icon: TbQuote, action: () => insertMarkdown("> "), title: "Quote" },
+    {
+      icon: TbCode,
+      action: () => insertMarkdown("```", "```"),
+      title: "Code (Ctrl+E)",
+    },
+    // { icon: TbFile, action: () => insertMarkdown('```\n', '\n```'), title: 'Code Block' },
+    {
+      icon: TbLink,
+      action: () => insertMarkdown("[Url](https://", ")"),
+      title: "Link (Ctrl+K)",
+      showDivider: true,
+    },
+    { icon: BiImageAdd, action: () => handleImageSelection(), title: "Image" },
+    {
+      icon: BiHide,
+      action: () => insertMarkdown(">! [Click to reveal]", "Your spoiler content "),
+      title: "Spoiler",
+      showDivider: true,
+    },
+    {
+      icon: TbAlignLeft,
+      action: () => insertMarkdown('<div class="pull-left">', "</div>"),
+      title: "Align Left",
+    },
+    {
+      icon: TbAlignCenter,
+      action: () => insertMarkdown("<center>", "</center>"),
+      title: "Align Center",
+    },
+    {
+      icon: TbAlignRight,
+      action: () => insertMarkdown('<div class="pull-right">', "</div>"),
+      title: "Align Right",
+    },
+    {
+      icon: TbAlignJustified,
+      action: () => insertMarkdown('<div class="text-justify">', "</div>"),
+      title: "Justify",
+      showDivider: true,
+    },
+    {
+      icon: TbTable,
+      action: () =>
+        insertMarkdown(
+          "| Header 1 | Header 2 |\n|----------|----------|\n| Cell 1   | Cell 2   |\n"
+        ),
+      title: "Table",
+    },
+  ];
 
   function handleChange(text: string) {
     setValue(text);
@@ -411,35 +427,35 @@ export default memo(function EditorInput(props: EditorProps) {
     }
   };
 
-  // upload images
-  const _uploadImage = async (image) => {
-    const username = credentials?.username;
+  const _uploadImage = async (image?: UploadImageInput) => {
+    if (!image) {
+      throw new Error("Invalid image");
+    }
 
-    const fresh_credentials = getCredentials(
-      getSessionKey(session?.user?.name ?? username)
-    );
-    if (!fresh_credentials?.key || !fresh_credentials?.username) {
+    const credentials = getCredentials(getSessionKey(session?.user?.name));
+
+    if (!credentials?.key || !credentials?.username) {
       toast.error("Invalid credentials");
       return;
     }
 
+    const imageName = image.file.name?.substring(0, 20) || "image";
+    const imageExt = image.file.type || "";
+
     toast.promise(
       async () => {
-        // Testing
-        // await AsyncUtils.sleep(5);
-        // return true
-        const data = await toBase64(image.file);
-        let sign = await signImage(
-          fresh_credentials.username,
-          data,
-          fresh_credentials.key,
-          fresh_credentials?.keychainLogin
+        const base64Data = await toBase64(image.file);
+        const signature = await signImage(
+          credentials.username,
+          base64Data,
+          credentials.key,
+          credentials.keychainLogin
         );
 
         const result = await uploadImage(
           image.file,
-          fresh_credentials?.username,
-          sign
+          credentials.username,
+          signature
         );
         return result;
       },
@@ -447,53 +463,50 @@ export default memo(function EditorInput(props: EditorProps) {
         closeButton: false,
         loading: "Uploading...",
         success: (res: any) => {
-          // Testing
-          // const url = `https://cdn.steemitimages.com/DQmdyoAZ8pJGUSsqPjuKqYU4LBXeP75h8awmh964PVaE7zc/IMG_0.9163441659792777.jpeg`
-          // const Image_name = image.file.name;
-          // const imageMd = `![${Image_name}](${url})`;
-          // insertImage({ url: image.temporaryTag, isPlaceholder: false, imgMd: imageMd })
-          // // Replace temporary image MD tag with the real one
-          // uploadNextImage();
-          // return `Uploaded`;
+          if (!res?.url) throw new Error("No image URL returned");
 
-          if (res?.url) {
-            const Image_name: string = image.file.name;
-            // res.data.hash = res.data.url.split("/").pop();
-            const imageMd = `![${Image_name?.substring(0, 20) || ""}](${
-              res.url
-            })`;
-            insertImage({
-              url: image.temporaryTag,
-              isPlaceholder: false,
-              imgMd: imageMd,
-            });
-            uploadNextImage();
-            return `Uploaded`;
-          } else {
-            throw new Error(`Failed`);
-          }
+          const imageMd = `![${imageName}](${res.url})`;
+
+          insertImage({
+            url: image.temporaryTag,
+            isPlaceholder: false,
+            imgMd: imageMd,
+          });
+
+          uploadNextImage();
+          return "Uploaded successfully";
         },
-        error: (error) => {
-          console.log("Upload error", error);
+        error: (error: any) => {
+          const imageMd = `![${
+            imageName +
+            (getFileExtension(image.file) && `.${getFileExtension(image.file)}`)
+          }](UPLOAD FAILED)`;
 
-          if (error.toString().includes("code 413")) {
-            // console.log('Large file size')
-            return "Large file size";
-          } else if (error.toString().includes("code 429")) {
-            // console.log('Limit exceed')
-            return "Limit exceed";
-          } else if (error.toString().includes("code 400")) {
-            // console.log('Invalid Image', error)
-            return "Invalid Image";
-          } else {
-            return error?.message || JSON.stringify(error);
-          }
+          insertImage({
+            url: image.temporaryTag,
+            isPlaceholder: false,
+            imgMd: imageMd,
+          });
+
+          console.error("Upload error:", error);
+          const message = extractUploadErrorMessage(error);
+          return message;
         },
         finally() {
           uploadNextImage();
         },
       }
     );
+  };
+
+  const extractUploadErrorMessage = (error: any): string => {
+    const errStr = error?.toString() || "";
+
+    if (errStr.includes("code 413")) return "Image is too large";
+    if (errStr.includes("code 429")) return "Upload limit exceeded";
+    if (errStr.includes("code 400")) return "Invalid image file";
+
+    return error?.message || "Unknown upload error occurred";
   };
 
   const SuggestionItem = ({ name }: { name: string }) => {
@@ -507,11 +520,7 @@ export default memo(function EditorInput(props: EditorProps) {
 
   return (
     <div {...getRootProps()}>
-      <div
-        className="body-input relative"
-        onKeyDown={hotKeyHandler}
-        ref={postBodyRef}
-      >
+      <div className="body-input relative" onKeyDown={hotKeyHandler}>
         {isDragActive && (
           <div className="flex flex-row justify-center w-full absolute  h-full rounded-lg z-[11] backdrop-blur-[2px] bg-foreground/10">
             <div className="text-center self-center">
@@ -528,11 +537,42 @@ export default memo(function EditorInput(props: EditorProps) {
         )}
 
         <div className="flex flex-col gap-2">
-          <EditorToolbar
-            isSnipping={isSnipping}
-            isDisabled={isDisabled}
-            onSelect={insertCode}
-          />
+          {/* Toolbar */}
+          <div className="flex flex-row justify-between">
+            <div className="flex items-center gap-1 flex-wrap">
+              {toolbarActions.map((action, index) => (
+                <div className="flex flex-wrap gap-1 items-center">
+                  <Button
+                    key={index}
+                    variant="ghost"
+                    size="sm"
+                    isIconOnly
+                    onPress={action.action}
+                    title={action.title}
+                    className="border hover:!bg-primary-500 hover:text-primary-foreground transition-colors"
+                  >
+                    <action.icon size={20} />
+                  </Button>
+
+                  {/* {action?.showDivider && <Divider orientation="vertical" className="h-4 hidden sm:block" />
+                                } */}
+                </div>
+              ))}
+            </div>
+            {!isSnipping && (
+              <Button
+                key={"snippet"}
+                variant="ghost"
+                size="sm"
+                isIconOnly
+                onPress={() => snippetDisclosure.onOpen()}
+                title={"Snippet & Templates"}
+                className="border hover:!bg-primary-500 hover:text-primary-foreground transition-colors"
+              >
+                <AiOutlineFileSearch size={20} />
+              </Button>
+            )}
+          </div>
 
           <ReactTextareaAutocomplete
             style={{ fontSize: 14 }}
@@ -540,7 +580,6 @@ export default memo(function EditorInput(props: EditorProps) {
               postInput.current = ref;
             }}
             value={value}
-            onKeyDown={onKeyDown}
             dropdownStyle={{ zIndex: 14 }}
             containerStyle={containerStyle}
             movePopupAsYouType
@@ -604,12 +643,7 @@ export default memo(function EditorInput(props: EditorProps) {
 
       <SnippetModal
         handleOnSelect={(snippet) => {
-          insertAtCursor(
-            snippet.body,
-            "",
-            snippet.body.length + 1,
-            snippet.body.length + 1
-          );
+          insertMarkdown(snippet.body, "");
           snippetDisclosure.onOpenChange();
         }}
         isOpen={snippetDisclosure.isOpen}

@@ -1,7 +1,9 @@
 "use client";
 
 import FeedList from "@/components/FeedList";
+import { FeedPerPage } from "@/constants/AppConstants";
 import { getEndPoint, useAppSelector } from "@/constants/AppFunctions";
+import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import React from "react";
 
@@ -12,13 +14,24 @@ type Props = {
 function HomeTabPage() {
   let { category } = useParams() as Props;
   category = category?.toLowerCase();
-  const loginInfo = useAppSelector((state) => state.loginReducer.value);
+  const { data: session } = useSession();
+
+  const getKey = (pageIndex: number, previousPageData: Feed[] | null) => {
+    // Return null when we reach the end
+    if (previousPageData && previousPageData.length === 0) return null;
+
+    return getEndPoint(
+      getTabEndPoint(category),
+      session?.user?.name || "null",
+      500,
+      FeedPerPage, // page size
+      pageIndex * FeedPerPage // offset
+    );
+  };
 
   return (
     <div className="flex flex-col space-y-2">
-      <FeedList
-        endPoint={getEndPoint(getTabEndPoint(category), loginInfo.name)}
-      />
+      <FeedList dataKey={getKey} />
     </div>
   );
 }

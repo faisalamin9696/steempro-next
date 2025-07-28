@@ -2,6 +2,7 @@ import { getResizedAvatar } from "@/utils/parseImage";
 import Image from "next/image";
 import SLink from "./SLink";
 import { twMerge } from "tailwind-merge";
+import { useEffect, useState } from "react";
 
 interface Props {
   username?: string;
@@ -51,20 +52,24 @@ export default function SAvatar(props: Props) {
 
   if (!username) return null;
 
+  const [imgSrc, setImgSrc] = useState(
+    getResizedAvatar(username, loadSize ?? "small")
+  );
+
+  useEffect(() => {
+    setImgSrc(getResizedAvatar(username, loadSize ?? "small"));
+  }, [username]);
+
   const avatarImage = (
     <Image
       title={username}
       quality={quality}
-      onError={(e) => {
-        e.currentTarget.src = "/image-placeholder.png";
-      }}
+      onError={() => setImgSrc("/image-placeholder.png")}
       alt={alt ?? ""}
       height={imageSize}
       width={imageSize}
-      style={{
-        borderColor: borderColor,
-      }}
-      src={`${getResizedAvatar(username, loadSize ?? "small")}`}
+      style={{ borderColor }}
+      src={imgSrc}
       className={twMerge(
         "max-w-none shadow-lg rounded-full",
         border && "border",

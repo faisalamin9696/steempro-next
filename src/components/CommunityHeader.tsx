@@ -81,7 +81,7 @@ export default function CommunityHeader(props: Props) {
                   </div>
 
                   <div className=" flex md:flex-row-reverse flex-col items-end relative gap-2">
-                    <div className=" flex flex-row items-center gap-2">
+                    <div className=" flex flex-wrap justify-end gap-2">
                       <Button
                         title="Create Post"
                         radius="full"
@@ -108,13 +108,13 @@ export default function CommunityHeader(props: Props) {
                         size={!isTablet ? "sm" : "md"}
                         community={communityInfo}
                       />
-                    </div>
-                    <div className="max-md:absolute top-10 md:top-12 1md:hidden">
-                      <ChatButton
-                        skipMemo
-                        size={!isTablet ? "sm" : "md"}
-                        onPress={onChatPress}
-                      />
+                      <div className="1md:hidden">
+                        <ChatButton
+                          skipMemo
+                          size={!isTablet ? "sm" : "md"}
+                          onPress={onChatPress}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>

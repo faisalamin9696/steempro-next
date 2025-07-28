@@ -97,21 +97,19 @@ export default function SubscribeButton(props: Props) {
 
   return (
     <div className="flex flex-row items-start gap-1 justify-center">
-      {!isSelf && (
-        <Button
-          isDisabled={isPending}
-          color={isSubscribed ? "danger" : "success"}
-          radius="full"
-          size={size ?? "md"}
-          isLoading={isPending}
-          title={isSubscribed ? "Leave community" : "Join community"}
-          variant={"flat"}
-          onPress={handleFollow}
-          isIconOnly={isPending}
-        >
-          {isPending ? "" : isSubscribed ? "Leave" : "Join"}
-        </Button>
-      )}
+      <Button
+        isDisabled={isPending}
+        color={isSubscribed ? "danger" : "success"}
+        radius="full"
+        size={size ?? "md"}
+        isLoading={isPending}
+        title={isSubscribed ? "Leave community" : "Join community"}
+        variant={"flat"}
+        onPress={handleFollow}
+        isIconOnly={isPending}
+      >
+        {isPending ? "" : isSubscribed ? "Leave" : "Join"}
+      </Button>
     </div>
   );
 }

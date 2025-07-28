@@ -178,12 +178,18 @@ export default function AccountHeader(props: Props) {
         isOpen={followerModal.isOpen}
         onOpenChange={(isOpen) => setFollowerModal({ isOpen: isOpen })}
         modalProps={{ scrollBehavior: "inside" }}
-        title={() => (followerModal.isFollowing ? "Following" : "Followers")}
+        bodyClassName="mt-0 p-0"
         body={() => (
           <FollowersCard
+            title={followerModal.isFollowing ? "Following" : "Followers"}
             username={profileInfo.name}
             isFollowing={followerModal.isFollowing}
           />
+        )}
+        footer={(onClose) => (
+          <Button color="danger" variant="flat" onPress={onClose}>
+            Close
+          </Button>
         )}
       />
     </div>
