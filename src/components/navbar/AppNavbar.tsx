@@ -48,6 +48,7 @@ import { AsyncUtils } from "@/utils/async.utils";
 import { Spinner } from "@heroui/spinner";
 import { mutate } from "swr";
 import SModal from "../ui/SModal";
+import { Chip } from "@heroui/chip";
 // import Lottie from "lottie-react";
 
 export async function refreshData(username?: string | null) {
@@ -342,7 +343,10 @@ function AppNavbar() {
                       onPress={handleItemClick}
                       startContent={<FaUserCircle className="text-xl" />}
                     >
-                      Profile
+                      Profile{" "}
+                      <span className=" text-default-500">
+                        ({session?.user?.name})
+                      </span>
                     </Button>
 
                     <Button

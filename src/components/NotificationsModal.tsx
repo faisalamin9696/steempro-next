@@ -95,7 +95,7 @@ export default function NotificationsModal(props: Props) {
         </Tabs>
       )}
       footer={(onClose) => (
-        <Button color="danger" variant="flat" onPress={onClose} size="sm">
+        <Button color="danger" variant="flat" onPress={onClose}>
           Close
         </Button>
       )}

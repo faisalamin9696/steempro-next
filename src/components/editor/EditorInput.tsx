@@ -170,17 +170,17 @@ export default memo(function EditorInput(props: EditorProps) {
           event.preventDefault();
           insertMarkdown("*", "*");
           break;
-        case "u":
-          event.preventDefault();
-          insertMarkdown("<u>", "</u>");
-          break;
         case "k":
           event.preventDefault();
           insertMarkdown("![alt](url", ")");
           break;
         case "e":
           event.preventDefault();
-          insertMarkdown("`", "`");
+          insertMarkdown("```", "```");
+          break;
+        case "j":
+          event.preventDefault();
+          insertMarkdown('<div class="text-justify">\n\n', "\n</div>");
           break;
         default:
           break;
@@ -248,7 +248,10 @@ export default memo(function EditorInput(props: EditorProps) {
           start + before.length + selectedText.length
         );
         const cursorPos = 5;
-        scrollToCursor(postInput.current, start + before.length + selectedText.length);
+        scrollToCursor(
+          postInput.current,
+          start + before.length + selectedText.length
+        );
       }
     }, 0);
   };
@@ -326,29 +329,31 @@ export default memo(function EditorInput(props: EditorProps) {
     { icon: BiImageAdd, action: () => handleImageSelection(), title: "Image" },
     {
       icon: BiHide,
-      action: () => insertMarkdown(">! [Click to reveal]", "Your spoiler content "),
+      action: () =>
+        insertMarkdown(">! [Click to reveal]", "Your spoiler content "),
       title: "Spoiler",
       showDivider: true,
     },
     {
       icon: TbAlignLeft,
-      action: () => insertMarkdown('<div class="pull-left">', "</div>"),
+      action: () => insertMarkdown('<div class="pull-left">\n\n', "\n</div>"),
       title: "Align Left",
     },
     {
       icon: TbAlignCenter,
-      action: () => insertMarkdown("<center>", "</center>"),
+      action: () => insertMarkdown("<center>\n", "\n</center>"),
       title: "Align Center",
     },
     {
       icon: TbAlignRight,
-      action: () => insertMarkdown('<div class="pull-right">', "</div>"),
+      action: () => insertMarkdown('<div class="pull-right">\n\n', "\n</div>"),
       title: "Align Right",
     },
     {
       icon: TbAlignJustified,
-      action: () => insertMarkdown('<div class="text-justify">', "</div>"),
-      title: "Justify",
+      action: () =>
+        insertMarkdown('<div class="text-justify">\n\n', "\n</div>"),
+      title: "Justify (Ctrl+J)",
       showDivider: true,
     },
     {
@@ -440,7 +445,6 @@ export default memo(function EditorInput(props: EditorProps) {
     }
 
     const imageName = image.file.name?.substring(0, 20) || "image";
-    const imageExt = image.file.type || "";
 
     toast.promise(
       async () => {
@@ -463,7 +467,7 @@ export default memo(function EditorInput(props: EditorProps) {
         closeButton: false,
         loading: "Uploading...",
         success: (res: any) => {
-          if (!res?.url) throw new Error("No image URL returned");
+          if (!res?.url) throw new Error(res?.error || "No image URL returned");
 
           const imageMd = `![${imageName}](${res.url})`;
 
@@ -550,6 +554,7 @@ export default memo(function EditorInput(props: EditorProps) {
                     onPress={action.action}
                     title={action.title}
                     className="border hover:!bg-primary-500 hover:text-primary-foreground transition-colors"
+                    isDisabled={isDisabled}
                   >
                     <action.icon size={20} />
                   </Button>
@@ -565,6 +570,7 @@ export default memo(function EditorInput(props: EditorProps) {
                 variant="ghost"
                 size="sm"
                 isIconOnly
+                isDisabled={isDisabled}
                 onPress={() => snippetDisclosure.onOpen()}
                 title={"Snippet & Templates"}
                 className="border hover:!bg-primary-500 hover:text-primary-foreground transition-colors"

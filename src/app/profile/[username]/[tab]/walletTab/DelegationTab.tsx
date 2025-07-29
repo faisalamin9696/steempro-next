@@ -1,11 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-
 import { Button, ButtonGroup } from "@heroui/button";
-
 import { Chip } from "@heroui/chip";
-
 import { FaPlus } from "react-icons/fa";
 import useSWR from "swr";
 import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
@@ -21,18 +18,26 @@ import SLink from "@/components/ui/SLink";
 import { useParams } from "next/navigation";
 import { FiEdit } from "react-icons/fi";
 import STable from "@/components/ui/STable";
+import { sortByKey } from "@/utils/helper";
+import { capitalize } from "@/constants/AppConstants";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@heroui/dropdown";
+import { IoFilterOutline } from "react-icons/io5";
+
+const sortOptions = [
+  { name: "Low → High", uid: "asc" },
+  { name: "High → Low", uid: "desc" },
+];
 
 const statusColorMap = {
   incoming: "success",
   expiring: "danger",
   outgoing: "warning",
 };
-
-const statusOptions = [
-  { name: "Incoming", uid: "incoming" },
-  { name: "Expiring", uid: "expiring" },
-  { name: "Outgoing", uid: "outgoing" },
-];
 
 export default function DelegationTab({ data }: { data: AccountExt }) {
   let { username } = useParams() as { username: string };
@@ -41,6 +46,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
   const URL_INCOMING = `/delegations_api/getIncomingDelegations/${username}`;
   const URL_EXPIRING = `/delegations_api/getExpiringDelegations/${username}`;
   const { data: session } = useSession();
+  const [sortBY, setSortBy] = React.useState<"asc" | "desc">("desc");
 
   const { data: outgoingData, isLoading: isLoading1 } = useSWR(
     URL_OUTGOING,
@@ -91,33 +97,23 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
     ]);
   }, [outgoingData, incomingData, expiringData]);
 
-  const [filterValue, setFilterValue] = React.useState<any>("");
   const [statusFilter, setStatusFilter] = React.useState<
     ("all" | "incoming" | "outgoing" | "expiring")[]
   >(["all"]);
-  const hasSearchFilter = Boolean(filterValue);
 
   const filteredItems = React.useMemo(() => {
-    let filteredDelegations = [...allRows];
+    const sortedItems = sortByKey(allRows, "vests", sortBY);
 
-    if (hasSearchFilter) {
-      filteredDelegations = filteredDelegations.filter(
-        (delegation) =>
-          delegation.from.toLowerCase().includes(filterValue.toLowerCase()) ||
-          delegation.to.toLowerCase().includes(filterValue.toLowerCase())
-      );
-    }
-    if (
-      !statusFilter.includes("all") &&
-      Array.from(statusFilter)?.length !== statusOptions.length
-    ) {
+    let filteredDelegations = [...sortedItems];
+
+    if (!statusFilter.includes("all")) {
       filteredDelegations = filteredDelegations.filter((delegation) =>
         Array.from(statusFilter).includes(delegation.status?.toLowerCase())
       );
     }
 
     return filteredDelegations;
-  }, [allRows, filterValue, statusFilter]);
+  }, [allRows, statusFilter, sortBY]);
 
   if (isPending) return <LoadingCard />;
 
@@ -128,13 +124,44 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
   return (
     <>
       <STable
-        bodyClassName="grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-x-6 gap-y-4"
+        itemsPerPage={30}
+        bodyClassName="grid grid-cols-[repeat(auto-fit,minmax(280,1fr))] sm:grid-cols-[repeat(auto-fit,minmax(400,1fr))] gap-x-6 gap-y-4"
         data={filteredItems}
         description={
           "Incoming • Outgoing • Expiring – Adjust or Remove Delegations"
         }
         titleClassName="w-full"
         filterByValue={["from", "to"]}
+        searchEndContent={
+          <Dropdown>
+            <DropdownTrigger>
+              <Button
+                size="sm"
+                variant="flat"
+                startContent={<IoFilterOutline size={18} />}
+                className="font-semibold text-small"
+              >
+                {sortOptions?.find((s) => s.uid === sortBY)?.name}
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              disallowEmptySelection
+              aria-label="Table Columns"
+              closeOnSelect={true}
+              selectedKeys={[sortBY]}
+              selectionMode="single"
+              onSelectionChange={(item) =>
+                setSortBy(item.currentKey?.toString() as any)
+              }
+            >
+              {sortOptions.map((status) => (
+                <DropdownItem key={status.uid} className="capitalize">
+                  {capitalize(status.name)}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+        }
         title={
           <div className="flex flex-row justify-between items-center w-full gap-2">
             <p>Total Delegation</p>
@@ -243,9 +270,10 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
             delegation.status === "incoming" ? delegation.from : delegation.to;
 
           return (
-            <div className="flex flex-row items-center justify-between gap-3">
-              <div className="flex gap-3 items-start">
-                <SAvatar size="1xs" username={username} />
+            <div className="flex gap-2 items-start">
+              <SAvatar size="1xs" username={username} />
+
+              <div className="flex flex-wrap justify-between w-full gap-2">
                 <div className=" flex flex-col gap-2">
                   <div className="flex flex-row gap-2">
                     <SLink
@@ -284,45 +312,44 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                     </p>
                   </div>
                 </div>
+                {canEdit && (
+                  <ButtonGroup className="flex flex-row">
+                    <Button
+                      size="sm"
+                      variant="solid"
+                      color="danger"
+                      onPress={() => {
+                        setTransferModal({
+                          isOpen: !transferModal.isOpen,
+                          delegatee: delegation.to,
+                          oldDelegation: delegation.vests,
+                          delegation: delegation,
+                          isRemove: true,
+                        });
+                      }}
+                      className="text-xs sm:text-sm text-white"
+                    >
+                      <span className="inline">Remove</span>
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="flat"
+                      className="text-xs sm:text-sm"
+                      onPress={() => {
+                        setTransferModal({
+                          isOpen: !transferModal.isOpen,
+                          delegatee: delegation.to,
+                          oldDelegation: delegation.vests,
+                          delegation: delegation,
+                        });
+                      }}
+                    >
+                      <FiEdit className="w-3 h-3 sm:mr-1" />
+                      <span className="inline">Edit</span>
+                    </Button>
+                  </ButtonGroup>
+                )}
               </div>
-
-              {canEdit && (
-                <ButtonGroup className="flex flex-row gap-0">
-                  <Button
-                    size="sm"
-                    variant="solid"
-                    color="danger"
-                    onPress={() => {
-                      setTransferModal({
-                        isOpen: !transferModal.isOpen,
-                        delegatee: delegation.to,
-                        oldDelegation: delegation.vests,
-                        delegation: delegation,
-                        isRemove: true,
-                      });
-                    }}
-                    className="text-xs sm:text-sm text-white"
-                  >
-                    <span className="inline">Remove</span>
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="flat"
-                    className="text-xs sm:text-sm"
-                    onPress={() => {
-                      setTransferModal({
-                        isOpen: !transferModal.isOpen,
-                        delegatee: delegation.to,
-                        oldDelegation: delegation.vests,
-                        delegation: delegation,
-                      });
-                    }}
-                  >
-                    <FiEdit className="w-3 h-3 sm:mr-1" />
-                    <span className="inline">Edit</span>
-                  </Button>
-                </ButtonGroup>
-              )}
             </div>
           );
         }}

@@ -30,10 +30,9 @@ function ChatButton({
       title="Create Post"
       radius="full"
       size={size ?? "md"}
-      className=" bg-secondary/70"
       variant="solid"
       href="/"
-      color="primary"
+      color="secondary"
       isIconOnly={isIconOnly}
       startContent={isIconOnly ? undefined : <BsChatDots size={18} />}
       onPress={handleChat}

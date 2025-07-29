@@ -32,6 +32,7 @@ interface STableProps {
   isPaginated?: boolean; // New prop to toggle between paginated and infinite loading
   skipCard?: boolean; // Optional prop to skip Card wrapper
   stickyHeader?: boolean; // Optional prop to make header sticky
+  searchEndContent?: React.ReactNode;
 }
 
 function STable(props: STableProps) {
@@ -55,6 +56,7 @@ function STable(props: STableProps) {
     isPaginated = false, // Default to infinite loading
     skipCard,
     stickyHeader,
+    searchEndContent,
   } = props;
 
   const [filterValue, setFilterValue] = useState("");
@@ -187,14 +189,18 @@ function STable(props: STableProps) {
       </div>
       <div className="flex flex-col items-start gap-3 w-full">
         {allowSearch && filterByValue && (
-          <Input
-            startContent={<FaSearch className="text-default-500" />}
-            placeholder="Search..."
-            className="max-w-lg"
-            value={filterValue}
-            onValueChange={setFilterValue}
-            isClearable
-          />
+          <div className="flex flex-row w-full items-center justify-between gap-2">
+            <Input
+              startContent={<FaSearch className="text-default-500" />}
+              placeholder="Search..."
+              className="max-w-lg flex-1"
+              value={filterValue}
+              onValueChange={setFilterValue}
+              isClearable
+            />
+
+            {searchEndContent}
+          </div>
         )}
         {titleExtra}
       </div>
@@ -278,6 +284,12 @@ function STable(props: STableProps) {
                       <EmptyList text="No more results" />
                     </div>
                   )}
+
+                {data?.length === 0 && (
+                  <div className="text-center text-sm text-muted-foreground py-4">
+                    <EmptyList  />
+                  </div>
+                )}
               </>
             )}
           </>

@@ -257,7 +257,7 @@ export default memo(function BeneficiaryButton(props: Props) {
                   isClearable
                 />
 
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-[6px]">
                   <p className="text-xs">Reward (%)</p>
                   <div className="flex flex-row gap-2 items-center">
                     <Button

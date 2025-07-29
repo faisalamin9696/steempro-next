@@ -161,3 +161,20 @@ export function sortByKey<T extends object>(
       : bString.localeCompare(aString);
   });
 }
+
+export function sortByKeyDesc<T>(array: T[], key: keyof T): T[] {
+  return [...array].sort((a, b) => {
+    if (typeof a[key] === "number" && typeof b[key] === "number") {
+      return (b[key] as number) - (a[key] as number);
+    }
+    return String(b[key]).localeCompare(String(a[key]));
+  });
+}
+
+export function sortByNestedKeyDesc(array, keyPath) {
+  return [...array].sort((a, b) => {
+    const valueA = keyPath.split(".").reduce((o, k) => o?.[k], a);
+    const valueB = keyPath.split(".").reduce((o, k) => o?.[k], b);
+    return valueB - valueA;
+  });
+}

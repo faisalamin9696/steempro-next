@@ -190,7 +190,7 @@ const CommentEditHistory: React.FC<Props> = ({
         </div>
       )}
       footer={(onClose) => (
-        <Button color="danger" variant="flat" onPress={onClose} size="sm">
+        <Button color="danger" variant="flat" onPress={onClose}>
           Close
         </Button>
       )}
