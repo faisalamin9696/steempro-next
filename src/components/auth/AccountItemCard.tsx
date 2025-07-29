@@ -133,7 +133,7 @@ export default function AccountItemCard(props: Props) {
                 radius="full"
                 variant="flat"
                 disabled
-                className="min-w-0 w-full h-6"
+                className="min-w-0 h-6"
                 color="success"
                 
               >
@@ -147,7 +147,7 @@ export default function AccountItemCard(props: Props) {
                 radius="full"
                 variant="solid"
                 onPress={handleSwitch}
-                className="min-w-0 w-full h-6"
+                className="min-w-0 h-6"
                 color="primary"
               >
                 {switchText ?? "Switch"}
