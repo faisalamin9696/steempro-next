@@ -144,7 +144,7 @@ function DrawerContent() {
             <div className=" flex flex-col" key={index}>
               <Button
                 radius="sm"
-                variant={isFocused ? "solid" : "light"}
+                variant={isFocused ? "flat" : "light"}
                 className={twMerge(
                   "w-full justify-start gap-4",
                   isFocused && " font-semibold"

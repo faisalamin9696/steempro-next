@@ -70,7 +70,12 @@ function ConfirmationPopup(props: Props) {
                 />
               )}
 
-              <div className="flex flex-row justify-between items-center gap-2">
+              <div
+                className={twMerge(
+                  "flex flex-row justify-between items-center gap-2",
+                  !onKeychainPress && "w-full justify-end"
+                )}
+              >
                 <Button
                   onPress={() => setPopup(false)}
                   size="sm"

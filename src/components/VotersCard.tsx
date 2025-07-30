@@ -106,7 +106,7 @@ export default function VotersCard({
           </div>
         }
         data={filteredItems}
-        itemsPerPage={20}
+        itemsPerPage={30}
         titleClassName="pb-4 w-full"
         tableRow={(votes) => {
           const ratio = (comment?.payout ?? 1) / (comment?.net_rshares ?? 1);

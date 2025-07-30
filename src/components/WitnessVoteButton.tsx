@@ -80,15 +80,15 @@ export default function WitnessVoteButton({
       popoverProps={{ placement: "left" }}
       triggerProps={{
         size: "sm",
-        color: isVoted ? "danger" : "default",
+        color: isVoted ? "danger" : "success",
         radius: "none",
         className: twMerge(
-          `text-xs sm:text-sm px-2 sm:px-4 text-white`,
-          !isVoted && "bg-steem",
+          `px-2 sm:px-4`,
           className
         ),
         isDisabled: isDisabled || voteMutation.isPending,
         isLoading: voteMutation.isPending,
+        variant: "flat",
       }}
       buttonTitle={isVoted ? "Unvote" : "Vote"}
       subTitle={

@@ -7,7 +7,7 @@ import SLink from "./ui/SLink";
 import { vestToSteem } from "@/utils/helper/vesting";
 import LoadingCard from "./LoadingCard";
 import TableWrapper from "./wrappers/TableWrapper";
-import { simpleVotesToSp } from "./ProposalItem";
+import { simpleVotesToSp } from "./ProposalItemCard";
 import { twMerge } from "tailwind-merge";
 import { abbreviateNumber, sortByKey } from "@/utils/helper";
 import SModal from "./ui/SModal";
@@ -125,6 +125,7 @@ export default function WitnessVotersModal(props: Props) {
                   data={filteredItems || []}
                   stickyHeader
                   titleClassName="w-full"
+                  itemsPerPage={30}
                   title={
                     <div className="flex flex-row items-center justify-between w-full">
                       <div className=" flex flex-row gap-2 items-center">

@@ -66,7 +66,7 @@ export default function FollowersCard({
     <div>
       <STable
         stickyHeader={!isMobile}
-        itemsPerPage={20}
+        itemsPerPage={30}
         data={filteredItems || []}
         isLoading={isLoading}
         titleClassName="w-full"

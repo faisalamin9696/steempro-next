@@ -10,9 +10,9 @@ export default function AboutPage() {
   return (
     <div className="flex flex-col gap-10 justify-between">
       <div>
-        <Card className="dark:bg-white/20 items-center p-6 sm:p-10 rounded-lg flex flex-col gap-2">
-          <h1 className="text-lg font-bold font-serif">About Us</h1>
-          <p className=" text-center">
+        <Card className="items-center p-6 sm:p-10 flex flex-col gap-2">
+          <h1 className="text-xl font-bold">About Us</h1>
+          <p className=" text-center text-default-500">
             SteemPro is a decentralized mobile and web application designed for
             the Steem blockchain, providing users with a secure platform for
             executing broadcast operations. Additionally, the application
@@ -21,7 +21,7 @@ export default function AboutPage() {
           </p>
         </Card>
 
-        <h2 className="text-2xl font-bold text-center mt-4">Our Team</h2>
+        <h2 className="text-xl font-bold text-center mt-4">Our Team</h2>
         <div className="flex flex-row max-sm:flex-col gap-6 justify-center p-4">
           <AboutItem
             username={"faisalamin"}

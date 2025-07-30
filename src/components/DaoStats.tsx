@@ -3,7 +3,7 @@ import parseAsset from "@/utils/helper/parse-asset";
 import { Card, CardBody } from "@heroui/card";
 import useSWR from "swr";
 import { twMerge } from "tailwind-merge";
-import { getProposalStatus, isProposalFunded } from "./ProposalItem";
+import { getProposalStatus, isProposalFunded } from "./ProposalItemCard";
 
 const FundindCard = ({
   title,

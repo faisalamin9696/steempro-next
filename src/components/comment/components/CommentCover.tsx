@@ -21,6 +21,10 @@ interface Props {
   targetUrl?: string;
   onLoadCompleted?: () => void;
 }
+function getStaticFrameFromGif(gifUrl: string): string {
+  // Append parameter to get first frame (service-dependent)
+  return `${gifUrl?.replace("0x0", "640x0")}`;
+}
 export default memo(function CommentCover(props: Props) {
   let { size, src, thumbnail, className, noCard, alt, isNsfw, targetUrl } =
     props;
@@ -32,6 +36,7 @@ export default memo(function CommentCover(props: Props) {
     if (isFetching) setIsFetching(false);
     props.onLoadCompleted && props.onLoadCompleted();
   }
+  const isGif = src?.includes(".gif");
 
   return !!src ? (
     <>
@@ -74,7 +79,7 @@ export default memo(function CommentCover(props: Props) {
             <div className="relative">
               <Image
                 alt={alt || "image"}
-                src={src}
+                src={isGif ? getStaticFrameFromGif(src) : src}
                 height={0}
                 width={640}
                 quality={60}
@@ -100,7 +105,7 @@ export default memo(function CommentCover(props: Props) {
               }}
             >
               <Image
-                src={src}
+                src={isGif ? getStaticFrameFromGif(src) : src}
                 width={size === "xs" ? 130 : size === "sm" ? 220 : 200}
                 height={size === "xs" ? 70 : size === "sm" ? 120 : 160}
                 alt={alt || "image"}

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, ButtonGroup } from "@heroui/button";
 import { Chip } from "@heroui/chip";
-import { FaPlus } from "react-icons/fa";
+import { FaEdit, FaPlus } from "react-icons/fa";
 import useSWR from "swr";
 import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
 import SAvatar from "@/components/ui/SAvatar";
@@ -125,7 +125,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
     <>
       <STable
         itemsPerPage={30}
-        bodyClassName="grid grid-cols-[repeat(auto-fit,minmax(280,1fr))] sm:grid-cols-[repeat(auto-fit,minmax(400,1fr))] gap-x-6 gap-y-4"
+        bodyClassName="grid grid-cols-[repeat(auto-fit,minmax(350,1fr))] gap-8"
         data={filteredItems}
         description={
           "Incoming • Outgoing • Expiring – Adjust or Remove Delegations"
@@ -270,10 +270,10 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
             delegation.status === "incoming" ? delegation.from : delegation.to;
 
           return (
-            <div className="flex gap-2 items-start">
+            <div className="flex gap-2 items-center">
               <SAvatar size="1xs" username={username} />
 
-              <div className="flex flex-wrap justify-between w-full gap-2">
+              <div className="flex flex-row items-center justify-between w-full gap-2">
                 <div className=" flex flex-col gap-2">
                   <div className="flex flex-row gap-2">
                     <SLink
@@ -313,10 +313,27 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                   </div>
                 </div>
                 {canEdit && (
-                  <ButtonGroup className="flex flex-row">
+                  <div className="flex flex-col self-start">
                     <Button
                       size="sm"
-                      variant="solid"
+                      variant="flat"
+                      className="rounded-b-none px-2 sm:px-3"
+                      onPress={() => {
+                        setTransferModal({
+                          isOpen: !transferModal.isOpen,
+                          delegatee: delegation.to,
+                          oldDelegation: delegation.vests,
+                          delegation: delegation,
+                        });
+                      }}
+                    >
+                      <FaEdit size={14}/>
+                      <span className="inline">Edit</span>
+                    </Button>
+
+                    <Button
+                      size="sm"
+                      variant="flat"
                       color="danger"
                       onPress={() => {
                         setTransferModal({
@@ -327,27 +344,11 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                           isRemove: true,
                         });
                       }}
-                      className="text-xs sm:text-sm text-white"
+                      className="rounded-t-none px-2 sm:px-3"
                     >
                       <span className="inline">Remove</span>
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="flat"
-                      className="text-xs sm:text-sm"
-                      onPress={() => {
-                        setTransferModal({
-                          isOpen: !transferModal.isOpen,
-                          delegatee: delegation.to,
-                          oldDelegation: delegation.vests,
-                          delegation: delegation,
-                        });
-                      }}
-                    >
-                      <FiEdit className="w-3 h-3 sm:mr-1" />
-                      <span className="inline">Edit</span>
-                    </Button>
-                  </ButtonGroup>
+                  </div>
                 )}
               </div>
             </div>

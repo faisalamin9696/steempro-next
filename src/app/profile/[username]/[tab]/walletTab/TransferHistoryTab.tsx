@@ -76,7 +76,9 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
 
   return (
     <STable
-    titleClassName="w-full"
+      itemsPerPage={30}
+      filterByValue={["op.[1].['from']", "op.[1].['to']", "op.[1].['memo']"]}
+      titleClassName="w-full"
       title={
         <div className="flex flex-row items-center justify-between w-full">
           <p>Transaction History</p>
@@ -110,7 +112,7 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
         </div>
       }
       description="View your transaction history, including transfers, rewards, and more."
-     
+      bodyClassName="flex flex-col gap-6"
       data={filteredItems}
       tableRow={(operation: AccountHistory) => {
         return (

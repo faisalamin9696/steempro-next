@@ -8,7 +8,6 @@ import CommunityCard from "@/components/community/components/CommunityCard";
 import SubscribeButton from "@/components/SubscribeButton";
 import STable from "@/components/ui/STable";
 import { Switch } from "@heroui/switch";
-import { FaUsersLine } from "react-icons/fa6";
 import {
   Dropdown,
   DropdownItem,
@@ -19,6 +18,7 @@ import { Button } from "@heroui/button";
 import { IoFilterOutline } from "react-icons/io5";
 import { sortByKey } from "@/utils/helper";
 import { capitalize } from "@/constants/AppConstants";
+import { HiUserGroup } from "react-icons/hi2";
 
 const statusOptions = [
   { name: "Rank", uid: "rank" },
@@ -76,10 +76,12 @@ export default function CommunitiesPage() {
         </p>
       </div>
       <STable
-        titleIcon={FaUsersLine}
+        titleIcon={HiUserGroup}
         filterByValue={["title", "account"]}
         data={filteredItems || []}
+        itemsPerPage={25}
         titleClassName="w-full"
+        bodyClassName="grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-6"
         title={
           <div className="flex flex-row items-center justify-between w-full">
             <p>Explore & Engage</p>

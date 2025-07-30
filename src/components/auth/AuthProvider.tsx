@@ -146,6 +146,12 @@ export const AuthProvider = (props: Props) => {
   }
 
   function authenticateUserActive(isKeychain?: boolean) {
+    if (!isLogin()) {
+      setRequestActive(false);
+      authDisclosure.onOpen();
+      return;
+    }
+
     if (isKeychain) return { ...credentials, keychainLogin: true } as User;
 
     if (credentials?.keychainLogin) {

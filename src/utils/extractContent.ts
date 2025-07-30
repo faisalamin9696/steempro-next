@@ -1,11 +1,6 @@
 import sanitize from "sanitize-html";
-import { Remarkable } from "remarkable";
 import remarkableStripper from "@/utils/remarkableStripper";
 import { htmlDecode } from "./htmlDecode";
-
-const remarkable = new Remarkable({ html: true });
-
-
 
 /**
  * Short description - remove bold and header, links with titles.

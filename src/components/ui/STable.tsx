@@ -35,6 +35,24 @@ interface STableProps {
   searchEndContent?: React.ReactNode;
 }
 
+const getNestedValue = (obj: any, path: string) => {
+  return path.split(".").reduce((acc, part) => {
+    // Handle array indices like [1]
+    const arrayMatch = part.match(/^\[(\d+)\]$/);
+    if (arrayMatch) {
+      return acc?.[parseInt(arrayMatch[1], 10)];
+    }
+
+    // Handle quoted keys like ['from']
+    const quotedKeyMatch = part.match(/^\['(.+)'\]$/);
+    if (quotedKeyMatch) {
+      return acc?.[quotedKeyMatch[1]];
+    }
+
+    // Handle regular dot notation
+    return acc?.[part];
+  }, obj);
+};
 function STable(props: STableProps) {
   const {
     title,
@@ -48,7 +66,7 @@ function STable(props: STableProps) {
     data,
     tableRow,
     titleExtra,
-    itemsPerPage = 10,
+    itemsPerPage = 15,
     isLoading = false,
     placeholder,
     filterByValue,
@@ -62,25 +80,25 @@ function STable(props: STableProps) {
   const [filterValue, setFilterValue] = useState("");
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-  // Common filtered items logic
+  // Filter items based on filterValue and filterByValue
   const filteredItems = useMemo(() => {
-    if (!filterByValue) return data;
+    if (!filterByValue || !filterValue) return data;
+
+    const lowerFilter = filterValue.toLowerCase();
 
     return data.filter((item) => {
-      // Handle array case
+      // Handle array case (multiple fields to search)
       if (Array.isArray(filterByValue)) {
-        return filterByValue.some((key) => {
-          const value = item?.[key];
-          if (typeof value !== "string") return false;
-          return value.toLowerCase().includes(filterValue.toLowerCase());
+        return filterByValue.some((path) => {
+          const value = getNestedValue(item, path);
+          return String(value).toLowerCase().includes(lowerFilter);
         });
       }
-      // Handle string case
-      const value = item?.[filterByValue];
-      if (typeof value !== "string") return false;
-      return value.toLowerCase().includes(filterValue.toLowerCase());
+      // Handle string case (single field to search)
+      const value = getNestedValue(item, filterByValue);
+      return String(value).toLowerCase().includes(lowerFilter);
     });
-  }, [data, filterValue, filterByValue]);
+  }, [data, filterByValue, filterValue]);
 
   // Paginated table logic
   const [currentPage, setCurrentPage] = useState(1);
@@ -168,7 +186,7 @@ function STable(props: STableProps) {
             {TitleIcon && (
               <TitleIcon
                 size={24}
-                className={twMerge("text-steem", titleIconClassName)}
+                className={twMerge("", titleIconClassName)}
               />
             )}
             {title}
@@ -287,7 +305,7 @@ function STable(props: STableProps) {
 
                 {data?.length === 0 && (
                   <div className="text-center text-sm text-muted-foreground py-4">
-                    <EmptyList  />
+                    <EmptyList />
                   </div>
                 )}
               </>

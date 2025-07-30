@@ -7,7 +7,7 @@ import SAvatar from "./ui/SAvatar";
 import SLink from "./ui/SLink";
 import { vestToSteem } from "@/utils/helper/vesting";
 import LoadingCard from "./LoadingCard";
-import { simpleVotesToSp } from "./ProposalItem";
+import { simpleVotesToSp } from "./ProposalItemCard";
 import { twMerge } from "tailwind-merge";
 import SModal from "./ui/SModal";
 import STable from "./ui/STable";

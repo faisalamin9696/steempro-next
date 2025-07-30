@@ -3,14 +3,12 @@
 import ErrorCard from "@/components/ErrorCard";
 import LoadingCard from "@/components/LoadingCard";
 import { getProposals } from "@/libs/steem/condenser";
-import React, { useEffect, useMemo, useState } from "react";
+import React from "react";
 import { FaFileInvoiceDollar } from "react-icons/fa";
 import useSWR from "swr";
-import ProposalItem from "@/components/ProposalItem";
+import ProposalItemCard from "@/components/ProposalItemCard";
 import { DaoStats } from "@/components/DaoStats";
 import STable from "@/components/ui/STable";
-
-const initialSatus = ["all"];
 
 function Proposals() {
   const { data, error, isLoading } = useSWR<Proposal[]>(
@@ -41,10 +39,11 @@ function Proposals() {
         filterByValue={["subject", "creator", "receiver"]}
         data={data || []}
         title="DAO Proposals"
+        bodyClassName="flex flex-col gap-6 mt-6"
         titleIcon={FaFileInvoiceDollar}
         subTitle={(filteredItems)=>`Showing ${filteredItems?.length} of ${data?.length} proposals`}
         tableRow={(proposal) => (
-          <ProposalItem
+          <ProposalItemCard
             returnProposal={data?.find((p) => p.proposal_id === 0)}
             proposal={proposal}
           />

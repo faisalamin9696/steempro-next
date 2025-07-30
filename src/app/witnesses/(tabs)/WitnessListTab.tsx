@@ -7,13 +7,15 @@ import { Chip } from "@heroui/chip";
 import { Switch } from "@heroui/switch";
 import React, { useEffect, useState } from "react";
 import { BiUserCheck } from "react-icons/bi";
-import { FaChevronDown, FaCode, FaVoteYea } from "react-icons/fa";
+import { FaChevronDown, FaCode } from "react-icons/fa";
 import { FiAlertCircle, FiExternalLink } from "react-icons/fi";
 import { twMerge } from "tailwind-merge";
 import { WitnessDataProps } from "../page";
 import ErrorCard from "@/components/ErrorCard";
 import SLink from "@/components/ui/SLink";
 import STable from "@/components/ui/STable";
+import { RiUserStarFill } from "react-icons/ri";
+import WitnessItemCard from "@/components/WitnessItemCard";
 
 interface Props {
   data: WitnessDataProps;
@@ -93,9 +95,9 @@ function WitnessListTab(props: Props) {
       <STable
         filterByValue={["name", "signing_key"]}
         data={filteredWitnesses ?? witnessList}
-        itemsPerPage={30}
+        itemsPerPage={25}
         title={"Top Witnesses (100)"}
-        titleIcon={FaVoteYea}
+        titleIcon={RiUserStarFill}
         subTitle={() =>
           "Vote for up to 30 witnesses to secure the Steem blockchain"
         }
@@ -159,6 +161,7 @@ function WitnessListTab(props: Props) {
             ))}
           </div>
         }
+        bodyClassName="flex flex-col gap-8 mt-6"
         tableRow={(witness: MergedWitness) => {
           const imporantFields = {
             rank: witness.rank,
@@ -187,118 +190,38 @@ function WitnessListTab(props: Props) {
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex flex-col gap-2">
-                  <div className="flex flex-row items-start gap-4 mb-1 sm:mb-2">
-                    <div className="flex flex-row items-center gap-2">
-                      <div
-                        className={`font-medium text-deault-800 text-sm sm:text-base ${
-                          witness.isDisabled ? "line-through" : ""
-                        }`}
-                      >
-                        #{witness.rank}
-                      </div>
-                      <div
-                        className={`font-semibold text-deault-900 truncate text-sm sm:text-base ${
-                          witness.isDisabled ? "line-through" : ""
-                        }`}
-                      >
-                        <SAvatar
-                          content={`${witness.name}`}
-                          size="xs"
-                          username={witness.name}
-                        />
-                      </div>
-                    </div>
-                    {(witness.voted ||
-                      witness.isDisabledByKey ||
-                      witness.hasInvalidVersion) && (
-                      <div className="flex flex-row gap-2 flex-wrap">
-                        {witness.voted && (
-                          <Chip size="sm" className="bg-steem text-xs">
-                            <div className="flex flex-row gap-1 items-center">
-                              <BiUserCheck size={18} />
-                              Voted
-                            </div>
-                          </Chip>
-                        )}
-
-                        {witness.isDisabledByKey && (
-                          <Chip
-                            size="sm"
-                            variant="flat"
-                            className="text-red-500 bg-red-500/30 text-xs"
-                          >
-                            Disabled
-                          </Chip>
-                        )}
-
-                        {witness.hasInvalidVersion && (
-                          <>
-                            <Chip
-                              size="sm"
-                              variant="flat"
-                              className="text-orange-500 border-orange-500/30 text-xs"
-                            >
-                              Invalid Version
-                            </Chip>
-                          </>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                  <div
-                    className={`flex flex-row items-center gap-4 text-sm text-default-500 ${
-                      witness.isDisabled ? "line-through" : ""
-                    }`}
-                  >
-                    <div
-                      className="flex items-center gap-1 cursor-pointer text-steem"
-                      onClick={() => {
-                        setWitnessVoteModal({
-                          isOpen: !witnessVoteModal.isOpen,
-                          witness: {
-                            name: witness.name,
-                            received_votes: witness.received_votes,
-                            votes: witness.votes,
-                          },
-                        });
-                      }}
-                    >
-                      <span>Votes: {witness.votes}</span>
-                    </div>
-                    <span className="hidden sm:inline">•</span>
-                    <span>Missed: {witness.missedBlocks}</span>
-                    <span
-                      title={`Updated at ${new Date(
-                        witness.last_price_report * 1000
-                      ).toLocaleString()}`}
-                    >
-                      Price: {witness.reported_price.base}
-                    </span>
-
-                    <span>
-                      <Button
-                        variant="flat"
-                        size="sm"
-                        onPress={() => setIsExpanded(!isExpanded)}
-                        className="flex items-center space-x-1 text-default-600"
-                        isIconOnly
-                      >
-                        {isExpanded ? <FaChevronDown /> : <FaCode size={18} />}
-                      </Button>
-                    </span>
-                  </div>
+                  <WitnessItemCard
+                    witness={witness}
+                    endContent={
+                      <span>
+                        <Button
+                          variant="flat"
+                          size="sm"
+                          onPress={() => setIsExpanded(!isExpanded)}
+                          className="flex items-center space-x-1 text-default-600"
+                          isIconOnly
+                        >
+                          {isExpanded ? (
+                            <FaChevronDown />
+                          ) : (
+                            <FaCode size={16} />
+                          )}
+                        </Button>
+                      </span>
+                    }
+                  />
 
                   {isExpanded &&
                     imporantFields &&
                     typeof imporantFields === "object" &&
                     Object.keys(imporantFields).length > 2 && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-3 border-border/30">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-3 border-default-900/30">
                         {Object.entries(imporantFields).map(([key, value]) => (
                           <div key={key} className="space-y-1">
-                            <div className="text-xs text-muted-foreground capitalize font-medium">
+                            <div className="text-xs text-muted-foreground capitalize font-medium text-default-500">
                               {key.replace(/_/g, " ")}
                             </div>
-                            <div className="text-sm font-mono bg-background/60 p-2 rounded border border-border/30">
+                            <div className="text-sm bg-background/60 p-2 rounded border border-default-900/30">
                               <span className="break-all">
                                 {formatPreviewValue(key, value)}
                               </span>
@@ -313,7 +236,7 @@ function WitnessListTab(props: Props) {
                     className="rounded-s-md"
                     isVoted={witness.voted}
                     witness={witness.name}
-                    isDisabled={!userData?.name || !!currentProxy}
+                    isDisabled={!!currentProxy}
                   />
                   {/* {witness.name === loggedInUser && (
                                     <Button
@@ -330,9 +253,9 @@ function WitnessListTab(props: Props) {
                     target="_blank"
                     href={witness.url ?? `/@${witness.name}`}
                     variant="flat"
-                    className="text-xs sm:text-sm px-2 sm:px-3 rounded-s-none"
+                    className="px-2 sm:px-3 rounded-s-none"
                   >
-                    <FiExternalLink size={16} />
+                    <FiExternalLink size={14} />
                     Info
                   </Button>
                 </div>

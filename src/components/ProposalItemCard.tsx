@@ -66,7 +66,7 @@ const VoteDisplay = ({
     const formattedSp = formatSteemPower(steemPower);
     return (
       <div className="flex flex-row gap-1 cursor-pointer" onClick={onPress}>
-        <span className="text-green-600 font-medium">~{formattedSp}</span>
+        <span className="text-steem font-medium">~{formattedSp}</span>
         <span className="text-default-500">SP</span>
       </div>
     );
@@ -90,7 +90,7 @@ export const isProposalFunded = (
   }
 };
 
-const ProposalItem = ({
+const ProposalItemCard = ({
   returnProposal,
   proposal,
 }: {
@@ -133,7 +133,7 @@ const ProposalItem = ({
         variant="bordered"
         className={`text-xs ${
           funded
-            ? "text-green-600 border-green-400 bg-green-100"
+            ? ""
             : "text-default-600 border-default-400 bg-default-50"
         }`}
       >
@@ -252,7 +252,7 @@ const ProposalItem = ({
         <div className="flex flex-wrap items-center gap-2 mb-2">
           {getFundingBadge(proposal)}
           {isVoted && (
-            <Chip variant="flat" className="text-xs bg-green-600 text-white">
+            <Chip variant="flat" color="success" className="text-xs text-white">
               <div className="flex flex-row items-center gap-1">
                 <FaVoteYea size={16} />
                 You Voted
@@ -260,7 +260,7 @@ const ProposalItem = ({
             </Chip>
           )}
         </div>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-4 text-xs sm:text-sm">
             <div className="flex items-center gap-1">
               <VoteDisplay
@@ -273,7 +273,7 @@ const ProposalItem = ({
 
           <div className="flex flex-row gap-0">
             <ProposalVoteButton
-              className="rounded-s-md"
+              className="rounded-s-md px-2 sm:px-3"
               proposal={proposal}
               getVoteStatus={setIsVoted}
             />
@@ -281,10 +281,10 @@ const ProposalItem = ({
               as={SLink}
               size="sm"
               variant="flat"
-              className="text-xs sm:text-sm px-2 sm:px-3 rounded-s-none"
+              className="rounded-s-none px-2 sm:px-3"
               href={`/@${proposal.creator}/${proposal.permlink}`}
             >
-              <FaExternalLinkAlt className="w-3 h-3 sm:mr-1" />
+              <FaExternalLinkAlt size={14} className="sm:mr-1 " />
               <span className="inline">View</span>
             </Button>
           </div>
@@ -300,4 +300,4 @@ const ProposalItem = ({
   );
 };
 
-export default ProposalItem;
+export default ProposalItemCard;

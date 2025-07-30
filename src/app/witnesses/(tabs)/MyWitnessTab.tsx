@@ -17,6 +17,7 @@ import { updateWitnessConfiguration } from "@/libs/steem/condenser";
 import { useAppSelector } from "@/constants/AppFunctions";
 import SModal from "@/components/ui/SModal";
 import KeychainButton from "@/components/KeychainButton";
+import WitnessItemCard from "@/components/WitnessItemCard";
 
 type Props = {
   witness: MergedWitness;
@@ -125,76 +126,7 @@ function MyWitnessTab(props: Props) {
       >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex flex-col gap-2">
-            <div className="flex flex-row items-start gap-4 mb-1 sm:mb-2">
-              <div className="flex flex-row items-center gap-2">
-                <div
-                  className={`font-medium text-deault-800 text-sm sm:text-base ${
-                    witness.isDisabled ? "line-through" : ""
-                  }`}
-                >
-                  #{witness.rank}
-                </div>
-                <div
-                  className={`font-semibold text-deault-900 truncate text-sm sm:text-base ${
-                    witness.isDisabled ? "line-through" : ""
-                  }`}
-                >
-                  <SAvatar
-                    content={`${witness.name}`}
-                    size="xs"
-                    username={witness.name}
-                  />
-                </div>
-              </div>
-
-              {!witness.isDisabledByKey && (
-                <Chip size="sm" className="bg-steem text-xs">
-                  <div className="flex flex-row gap-1 items-center">
-                    <BiUserCheck size={18} />
-                    Active
-                  </div>
-                </Chip>
-              )}
-
-              {(witness.isDisabledByKey || witness.hasInvalidVersion) && (
-                <div className="flex flex-row gap-2 flex-wrap">
-                  {witness.isDisabledByKey && (
-                    <Chip
-                      size="sm"
-                      variant="flat"
-                      className="text-red-500 bg-red-500/30 text-xs"
-                    >
-                      Disabled
-                    </Chip>
-                  )}
-
-                  {witness.hasInvalidVersion && (
-                    <>
-                      <Chip
-                        size="sm"
-                        variant="flat"
-                        className="text-orange-500 border-orange-500/30 text-xs"
-                      >
-                        Invalid Version
-                      </Chip>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-            <div
-              className={`flex flex-row items-center gap-4 text-sm text-default-500 ${
-                witness.isDisabled ? "line-through" : ""
-              }`}
-            >
-              <div className="flex items-center gap-1 cursor-pointer">
-                <span>Votes: {witness.votes}</span>
-              </div>
-              <span className="hidden sm:inline">•</span>
-              <span>Version: {witness.version}</span>
-              <span className="hidden sm:inline">•</span>
-              <span>Missed: {witness.missedBlocks}</span>
-            </div>
+            <WitnessItemCard witness={witness} />
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <DetailItem
@@ -250,8 +182,9 @@ function MyWitnessTab(props: Props) {
             <ButtonGroup size="sm">
               {!witness.isDisabledByKey && (
                 <Button
-                  variant="solid"
-                  className="text-xs sm:text-sm px-2 sm:px-3 text-white"
+                  size="sm"
+                  variant="flat"
+                  className="px-2 sm:px-3"
                   color="danger"
                   isDisabled={witness.isDisabled}
                   onPress={() => {
@@ -264,14 +197,15 @@ function MyWitnessTab(props: Props) {
               )}
 
               <Button
-                variant="bordered"
-                className="text-xs sm:text-sm px-2 sm:px-3"
+                size="sm"
+                variant="flat"
+                className=" px-2 sm:px-3"
                 onPress={() => {
                   setSignKey(witness.signing_key);
                   onOpenChange();
                 }}
               >
-                <FaPencil size={16} />
+                <FaPencil size={14} />
                 Edit
               </Button>
             </ButtonGroup>
