@@ -92,7 +92,7 @@ export default function SettingsPage({ username }: { username?: string }) {
   let { authenticateUser, isAuthorized, credentials } = useLogin();
 
   useEffect(() => {
-    setParsedData(JSON.parse(loginInfo?.posting_json_metadata ?? `{}`));
+    setParsedData(JSON.parse(loginInfo?.posting_json_metadata || `{}`));
   }, [loginInfo?.posting_json_metadata]);
 
   const isChanged =
@@ -322,7 +322,7 @@ export default function SettingsPage({ username }: { username?: string }) {
   return (
     <div className="flex flex-col gap-6 ">
       <div className="flex flex-col gap-4 max-w-2xl">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-default-600">
           <IoIosSettings size={iconSize} />
           <p className="text-sm">General</p>
 
@@ -331,7 +331,7 @@ export default function SettingsPage({ username }: { username?: string }) {
 
         <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
           <Select
-            startContent={<TbServerBolt size={iconSize - 4} />}
+            startContent={<TbServerBolt className={className} size={iconSize - 4} />}
             aria-label="Select RPC Node"
             variant="flat"
             label="Select RPC Node"
@@ -357,7 +357,7 @@ export default function SettingsPage({ username }: { username?: string }) {
           </Select>
 
           <Select
-            startContent={<MdDisabledVisible size={iconSize - 4} />}
+            startContent={<MdDisabledVisible className={className} size={iconSize - 4} />}
             aria-label="(NSFW) content"
             disallowEmptySelection
             variant="flat"
@@ -387,7 +387,7 @@ export default function SettingsPage({ username }: { username?: string }) {
           </Select>
 
           <Select
-            startContent={<FaChevronCircleUp size={iconSize - 4} />}
+            startContent={<FaChevronCircleUp className={className} size={iconSize - 4} />}
             aria-label="Vote value"
             variant="flat"
             disallowEmptySelection
@@ -414,7 +414,7 @@ export default function SettingsPage({ username }: { username?: string }) {
 
           <div className=" flex flex-row items-center gap-2">
             <Select
-              startContent={<RiArrowUpDoubleFill size={iconSize - 4} />}
+              startContent={<RiArrowUpDoubleFill className={className} size={iconSize - 4} />}
               aria-label="Long press vote"
               variant="flat"
               disallowEmptySelection
@@ -460,7 +460,7 @@ export default function SettingsPage({ username }: { username?: string }) {
       </div>
 
       {isSelf && (
-        <div className="flex flex-col gap-4  max-w-2xl">
+        <div className="flex flex-col gap-4  max-w-2xl text-default-600">
           <div className="flex items-center gap-2">
             <RiUserSettingsFill size={iconSize} />
             <p className="text-sm">Profile</p>

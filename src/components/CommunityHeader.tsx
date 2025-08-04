@@ -60,7 +60,7 @@ export default function CommunityHeader(props: Props) {
         </div>
 
         <div className=" flex flex-row items-center max-sm:items-start justify-between w-full mt-1 max-sm:gap-2 max-md:py-2">
-          <div className="flex flex-row gap-2 w-full">
+          <div className="flex flex-row gap-2 w-full items-start">
             <SAvatar
               username={communityInfo.account}
               size="md"
@@ -69,8 +69,8 @@ export default function CommunityHeader(props: Props) {
 
             <div className="flex flex-col items-start w-full">
               <div className="flex flex-col items-start mb-0 w-full">
-                <div className=" flex flex-row justify-between w-full items-start">
-                  <div className=" flex flex-col font-bold text-lg sm:text-2xl">
+                <div className=" flex flex-wrap justify-between w-full items-start gap-2">
+                  <div className=" flex flex-col font-bold text-lg sm:text-2xld">
                     <p>{communityInfo.title}</p>
                     <SLink
                       href={`/@${communityInfo.account}`}
@@ -78,59 +78,57 @@ export default function CommunityHeader(props: Props) {
                     >
                       @{communityInfo.account}
                     </SLink>
-                  </div>
-
-                  <div className=" flex md:flex-row-reverse flex-col items-end relative gap-2">
-                    <div className=" flex flex-wrap justify-end gap-2">
-                      <Button
-                        title="Create Post"
-                        radius="full"
-                        size={!isTablet ? "sm" : "md"}
-                        className=" bg-foreground/10"
-                        variant="flat"
-                        startContent={<BiPlus size={24} />}
-                        as={SLink}
-                        isDisabled={communityInfo.observer_role === "muted"}
-                        href={
-                          {
-                            pathname: `/submit`,
-                            query: {
-                              account: communityInfo?.account,
-                              title: communityInfo?.title,
-                            },
-                          } as any
-                        }
+                    <div className="flex items-center gap-[8px] md:hidden sm:flex">
+                      <span
+                        className="lowercase text-default-900/80 text-[12px] cursor-pointer hover:underline"
+                        onClick={onLeadershipPress}
                       >
-                        Create Post
-                      </Button>
-                      <SubscribeButton
-                        username={account.name}
-                        size={!isTablet ? "sm" : "md"}
-                        community={communityInfo}
-                      />
-                      <div className="1md:hidden">
-                        <ChatButton
-                          skipMemo
-                          size={!isTablet ? "sm" : "md"}
-                          onPress={onChatPress}
-                        />
+                        {abbreviateNumber(communityInfo.count_subs)} members
+                      </span>
+                      <div className="flex flex-row items-center justify-center gap-[4px]">
+                        <span className="inline-flex bg-green-500 rounded-full w-[0.5rem] h-[0.5rem]"></span>
+                        <span className="lowercase text-default-900/80 text-[12px]">
+                          {abbreviateNumber(communityInfo.count_authors)} active
+                        </span>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-[8px] md:hidden sm:flex">
-                <span
-                  className="lowercase text-default-900/80 text-[12px] cursor-pointer hover:underline"
-                  onClick={onLeadershipPress}
-                >
-                  {abbreviateNumber(communityInfo.count_subs)} members
-                </span>
-                <div className="flex flex-row items-center justify-center gap-[4px]">
-                  <span className="inline-flex bg-green-500 rounded-full w-[0.5rem] h-[0.5rem]"></span>
-                  <span className="lowercase text-default-900/80 text-[12px]">
-                    {abbreviateNumber(communityInfo.count_authors)} active
-                  </span>
+
+                  <div className=" flex flex-wrap gap-2">
+                    <Button
+                      title="Create Post"
+                      radius="full"
+                      size={!isTablet ? "sm" : "md"}
+                      className=" bg-foreground/10"
+                      variant="flat"
+                      startContent={<BiPlus size={24} />}
+                      as={SLink}
+                      isDisabled={communityInfo.observer_role === "muted"}
+                      href={
+                        {
+                          pathname: `/submit`,
+                          query: {
+                            account: communityInfo?.account,
+                            title: communityInfo?.title,
+                          },
+                        } as any
+                      }
+                    >
+                      Create Post
+                    </Button>
+                    <SubscribeButton
+                      username={account.name}
+                      size={!isTablet ? "sm" : "md"}
+                      community={communityInfo}
+                    />
+                    <div className="1md:hidden">
+                      <ChatButton
+                        skipMemo
+                        size={!isTablet ? "sm" : "md"}
+                        onPress={onChatPress}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

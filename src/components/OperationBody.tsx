@@ -34,7 +34,10 @@ function OperationBody({
       permlink: string,
       children?: React.ReactNode
     ) => (
-      <SLink href={`/@${author}/${permlink}`} className="hover:text-blue-500 font-semibold hover:underline">
+      <SLink
+        href={`/@${author}/${permlink}`}
+        className="hover:text-blue-500 font-semibold hover:underline"
+      >
         {children ?? `@${author}/${permlink}`}
       </SLink>
     );
@@ -61,13 +64,21 @@ function OperationBody({
           </>
         );
 
-      case "withdraw_vesting":
-        return wrap(
-          <>
-            {userLink(opData.account)} started power down of{" "}
-            {formatAmount(opData.vesting_shares)}
-          </>
-        );
+      case "withdraw_vesting": {
+        const isStop = parseFloat(opData.vesting_shares) === 0;
+        const powerdownVests = extractVestsAmount(opData.vesting_shares);
+        const powerdownSP = vestToSteem(powerdownVests, steem_per_share);
+
+        if (isStop)
+          return wrap(<>{userLink(opData.account)} stopped power down</>);
+        else
+          return wrap(
+            <>
+              {userLink(opData.account)} started power down of{" "}
+              {formatAmount(powerdownSP)} {"SP"}
+            </>
+          );
+      }
 
       case "comment":
         return opData.parent_author

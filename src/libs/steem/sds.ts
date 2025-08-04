@@ -296,6 +296,33 @@ export const getPost = async (
   }
 };
 
+export const getPostWithReplies = async (
+  author: string,
+  permlink: string,
+  observer: string | null = "null",
+  withVotes: boolean = true
+): Promise<Post[]> => {
+  try {
+    if (!author) {
+      throw new Error("Invalid request");
+    }
+    const R_API = `/posts_api/getPostWithReplies/${author}/${permlink}/${withVotes}/${observer}`;
+    console.log(R_API);
+
+    const response = await fetchSds<any>(R_API);
+    // if the response is successful, parse the JSON and check if it's valid
+    if (response) {
+      return response as Post[];
+    } else {
+      throw new Error(response);
+    }
+  } catch (error: any) {
+    // log and re-throw any errors that occur
+    console.error("Failed to fetch post:", error);
+    throw new Error(error);
+  }
+};
+
 export const getVoteData = (
   account: AccountExt,
   steemprops: SteemProps,

@@ -1,10 +1,9 @@
 import { useDisclosure } from "@heroui/modal";
-import { Button, PressEvent } from "@heroui/button";
+import { Button, ButtonGroup, PressEvent } from "@heroui/button";
 import { Card } from "@heroui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
 import React, { memo, useEffect, useState } from "react";
 import { PiCurrencyCircleDollarFill } from "react-icons/pi";
-import { SlLoop } from "react-icons/sl";
 import { useMutation } from "@tanstack/react-query";
 import {
   calculatePowerUsage,
@@ -29,7 +28,7 @@ import {
   BiUpvote,
 } from "react-icons/bi";
 import { abbreviateNumber } from "@/utils/helper";
-import { FaRegCommentAlt } from "react-icons/fa";
+import { FaRegComment } from "react-icons/fa";
 
 import { RewardBreakdownCard } from "@/components/RewardBreakdownCard";
 import { twMerge } from "tailwind-merge";
@@ -43,6 +42,9 @@ import { AsyncUtils } from "@/utils/async.utils";
 import { SiSteem } from "react-icons/si";
 import { mutate } from "swr";
 import SModal from "@/components/ui/SModal";
+import { AiOutlineRetweet } from "react-icons/ai";
+import ConfirmationPopup from "@/components/ui/ConfirmationPopup";
+import { updateSettingsHandler } from "@/hooks/redux/reducers/SettingsReducer";
 
 interface WrapperProps {
   children: React.ReactNode;
@@ -66,7 +68,7 @@ export default memo(function CommentFooter(props: CommentProps) {
 
   const dispatch = useAppDispatch();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
-  const settings =
+  let settings =
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
 
   const isUpvoted =
@@ -77,8 +79,6 @@ export default memo(function CommentFooter(props: CommentProps) {
   const isResteemd = !!comment.observer_resteem;
   const isVoting =
     comment.status === "upvoting" || comment.status === "downvoting";
-  const [breakdownModal, setBreakdownModal] = useState(false);
-  const [resteemPopup, setResteemPopup] = useState(false);
   const [upvotePopup, setUpvotePopup] = useState(false);
   const [downvotePopup, setDownvotePopup] = useState(false);
   const [longPressUpvote, setLongPressUpvote] = useState<
@@ -113,29 +113,29 @@ export default memo(function CommentFooter(props: CommentProps) {
         return;
       }
 
-      const downvote = weight < 0;
+      const isDownvote = weight < 0;
       const vData = getVoteData(loginInfo, globalData);
-      const remove = weight === 0;
+      const isRemove = weight === 0;
 
       const vote_value =
         (weight / 100) *
         (vData.current_vote *
-          (downvote
+          (isDownvote
             ? loginInfo.downvote_mana_percent
             : loginInfo.upvote_mana_percent) *
           0.01);
 
       const newChanges: Post | Feed = {
         ...comment,
-        observer_vote: remove ? 0 : 1,
-        [downvote ? "downvote_count" : "upvote_count"]: downvote
-          ? comment.downvote_count + 1
-          : comment.upvote_count + 1,
+        observer_vote: isRemove ? 0 : 1,
+        [isDownvote ? "downvote_count" : "upvote_count"]: isDownvote
+          ? comment.downvote_count + (isRemove ? -1 : +1)
+          : comment.upvote_count + +(isRemove ? -1 : +1),
         observer_vote_percent: weight,
-        payout: remove
+        payout: isRemove
           ? comment.payout
-          : comment.payout + (downvote ? -vote_value : vote_value),
-        observer_vote_rshares: remove ? 0 : comment.observer_vote_rshares,
+          : comment.payout + (isDownvote ? -vote_value : vote_value),
+        observer_vote_rshares: isRemove ? 0 : comment.observer_vote_rshares,
         status: "idle",
       };
 
@@ -161,10 +161,10 @@ export default memo(function CommentFooter(props: CommentProps) {
       dispatch(addCommentHandler(newChanges));
 
       // update the login user data
-      const downvote_per = downvote
+      const downvote_per = isDownvote
         ? loginInfo.downvote_mana_percent - calculatePowerUsage(weight)
         : loginInfo.downvote_mana_percent;
-      const upvote_per = !downvote
+      const upvote_per = !isDownvote
         ? loginInfo.upvote_mana_percent - calculatePowerUsage(weight)
         : loginInfo.upvote_mana_percent;
       dispatch(
@@ -174,17 +174,20 @@ export default memo(function CommentFooter(props: CommentProps) {
           downvote_mana_percent: downvote_per,
         })
       );
-      const settings = getSettings();
-
-      if (settings.voteOptions.remember) {
-        const voteToSave = downvote ? -weight : weight;
-        updateSettings({
-          ...settings,
-          voteOptions: {
-            ...settings.voteOptions,
-            value: isLongPress ? settings.voteOptions.value : voteToSave,
-          },
-        });
+      if (!isRemove) {
+        settings = getSettings();
+        if (settings.voteOptions.remember) {
+          const voteToSave = isDownvote ? -weight : weight;
+          const newSettings = {
+            ...settings,
+            voteOptions: {
+              ...settings.voteOptions,
+              value: isLongPress ? settings.voteOptions.value : voteToSave,
+            },
+          };
+          updateSettings(newSettings);
+          dispatch(updateSettingsHandler(newSettings));
+        }
       }
 
       if (variables.weight < 0) {
@@ -338,12 +341,12 @@ export default memo(function CommentFooter(props: CommentProps) {
     <div className={twMerge("flex flex-col p-1 gap-1 w-full ", className)}>
       <div
         className={twMerge(
-          "flex flex-row max-xs:flex-col items-center max-xs:items-start gap-2",
+          "flex flex-wrap items-center max-xs:items-start gap-2",
           !isReply && "justify-between"
         )}
       >
         <div className={twMerge("flex", compact ? "gap-3" : "gap-4")}>
-          <div className="flex flex-row items-center gap-2 relative  ">
+          <div className="flex flex-wrap items-center gap-2 relative  ">
             {(upvotePopup || downvotePopup) && (
               <ClickAwayListener
                 onClickAway={closeVotingModal}
@@ -359,11 +362,12 @@ export default memo(function CommentFooter(props: CommentProps) {
                 </div>
               </ClickAwayListener>
             )}
-            <ButtonWrapper>
+
+            <ButtonGroup className="gap-0" size="sm" radius="full" isIconOnly>
               <Button
                 radius="full"
                 title="Upvote"
-                variant="light"
+                variant="solid"
                 onPress={() => {
                   authenticateUser();
                   if (!isAuthorized()) {
@@ -377,20 +381,27 @@ export default memo(function CommentFooter(props: CommentProps) {
                 isLoading={comment.status === "upvoting"}
                 isIconOnly
                 size="sm"
-                className={twMerge(isUpvoted && "text-success-400")}
+                className={twMerge(
+                  "bg-foreground/10",
+                  isUpvoted ? "text-success-400" : "text-default-700"
+                )}
               >
                 {isUpvoted ? (
-                  <BiSolidUpvote className={"text-lg"} />
+                  <BiSolidUpvote size={18} />
                 ) : (
-                  <BiUpvote className="text-lg" />
+                  <BiUpvote size={18} />
                 )}
               </Button>
 
               {!!comment.upvote_count && (
                 <button
                   title={`${comment.upvote_count} Votes`}
-                  className="text-tiny"
                   onClick={voterDisclosure.onOpen}
+                  disabled={isVoting}
+                  className={twMerge(
+                    "text-sm bg-foreground/10 disabled:bg-foreground/5 uppercase text-default-700 h-8 text-center",
+                    "hover:text-opacity-hover disabled:text-opacity-disabled"
+                  )}
                 >
                   {abbreviateNumber(comment.upvote_count)}
                 </button>
@@ -399,7 +410,7 @@ export default memo(function CommentFooter(props: CommentProps) {
               <Button
                 isIconOnly
                 size="sm"
-                variant="light"
+                variant="solid"
                 title="Downvote"
                 isDisabled={isVoting}
                 onPressStart={setLongPressDownvote}
@@ -412,28 +423,22 @@ export default memo(function CommentFooter(props: CommentProps) {
                   }
                   setDownvotePopup(!downvotePopup);
                 }}
-                className={twMerge(isDownvoted && "text-danger-400")}
+                className={twMerge(
+                  "bg-foreground/10",
+                  isDownvoted ? "text-danger-400" : "text-default-700"
+                )}
                 radius="full"
               >
                 {isDownvoted ? (
-                  <BiSolidDownvote className="text-lg" />
+                  <BiSolidDownvote size={18} />
                 ) : (
-                  <BiDownvote className="text-lg" />
+                  <BiDownvote size={18} />
                 )}
               </Button>
-            </ButtonWrapper>
+            </ButtonGroup>
 
             {!isReply && !compact && (
-              <ButtonWrapper
-                href={
-                  isDetails
-                    ? undefined
-                    : `/${comment.category}/@${comment.author}/${comment.permlink}#comments`
-                }
-                as={isDetails ? undefined : SLink}
-                passHref={!isDetails}
-                hoverable
-                className={twMerge("px-2")}
+              <Button
                 onPress={() =>
                   isDetails &&
                   document
@@ -441,155 +446,111 @@ export default memo(function CommentFooter(props: CommentProps) {
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
                 title={`${comment.children} Comments`}
-              >
-                <Button
-                  className=" cursor-default disabled:text-default-foreground disabled:opacity-90"
-                  title="Comments"
-                  isDisabled
-                  radius="full"
-                  isIconOnly
-                  size="sm"
-                  variant="light"
-                >
-                  <FaRegCommentAlt className="text-lg" />
-                </Button>
-
-                {!!comment.children && (
-                  <div className="text-tiny">
-                    {abbreviateNumber(comment.children)}
-                  </div>
+                radius="full"
+                size="sm"
+                variant="solid"
+                href={
+                  isDetails
+                    ? undefined
+                    : `/${comment.category}/@${comment.author}/${comment.permlink}#comments`
+                }
+                as={isDetails ? undefined : SLink}
+                passHref={!isDetails}
+                isIconOnly={!comment.children ? true : false}
+                className={twMerge(
+                  "bg-foreground/10",
+                  !comment.children ? "w-12" : ""
                 )}
-              </ButtonWrapper>
+              >
+                <div className="flex flex-row gap-2 items-center text-default-700">
+                  <FaRegComment size={18} />
+
+                  {!!comment.children && (
+                    <div className="text-sm">
+                      {abbreviateNumber(comment.children)}
+                    </div>
+                  )}
+                </div>
+              </Button>
             )}
 
             {!isReply && (
-              <ButtonWrapper
-                title={`${comment.resteem_count} Resteems`}
-                hoverable
-                onPress={() => setResteemPopup(!resteemPopup)}
-                isDisabled={reblogMutation.isPending}
-              >
-                <Popover
-                  isOpen={resteemPopup}
-                  onOpenChange={setResteemPopup}
-                  placement={"top-start"}
-                >
-                  <PopoverTrigger>
-                    <Button
-                      title="Resteem"
-                      className={twMerge(
-                        "min-w-0  shadow-lg cursor-default disabled:text-default-foreground disabled:opacity-90 flex flex-row items-center gap-2",
-                        " px-3",
-                        compact && "px-4"
-                      )}
-                      variant={isResteemd ? "flat" : "light"}
-                      radius="full"
-                      color={isResteemd ? "success" : undefined}
-                      isDisabled={true}
-                      isLoading={reblogMutation.isPending}
-                      size="sm"
-                    >
-                      {!reblogMutation.isPending && (
-                        <SlLoop className="text-lg text-default-900" />
-                      )}
-                      {!compact && !!comment.resteem_count && (
-                        <div className="text-tiny text-default-900">
-                          {abbreviateNumber(comment.resteem_count)}
-                        </div>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <div className="px-1 py-2">
-                      <div className="text-small font-bold">
-                        {"Confirmation"}
+              <ConfirmationPopup
+                triggerProps={{
+                  title: `${comment.resteem_count} Resteems`,
+                  isDisabled: reblogMutation.isPending,
+                  variant: isResteemd ? "flat" : "solid",
+                  radius: "full",
+                  color: isResteemd ? "success" : undefined,
+                  isLoading: reblogMutation.isPending,
+                  size: "sm",
+                  isIconOnly: !comment.resteem_count ? true : false,
+                  className: twMerge(
+                    "bg-foreground/10",
+                    !comment.resteem_count ? "w-12" : ""
+                  ),
+                }}
+                subTitle="Resteem this post?"
+                buttonTitle={
+                  <div className="flex flex-row items-center gap-2 text-default-700">
+                    {!reblogMutation.isPending && (
+                      <AiOutlineRetweet className="text-lg" />
+                    )}
+                    {!!comment.resteem_count && (
+                      <div className="text-sm">
+                        {abbreviateNumber(comment.resteem_count)}
                       </div>
-                      <div className="text-tiny flex">
-                        {"Resteem this post?"}
-                      </div>
-
-                      <div className="text-tiny flex mt-2 space-x-2">
-                        <Button
-                          onPress={() => setResteemPopup(false)}
-                          size="sm"
-                          color="default"
-                        >
-                          No
-                        </Button>
-                        <Button
-                          size="sm"
-                          color="secondary"
-                          variant="solid"
-                          onPress={() => {
-                            setResteemPopup(false);
-                            if (isResteemd) {
-                              toast.success("Already resteem");
-                              return;
-                            }
-                            handleResteem();
-                          }}
-                        >
-                          Yes
-                        </Button>
-                      </div>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </ButtonWrapper>
+                    )}
+                  </div>
+                }
+                onConfirm={() => {
+                  if (isResteemd) {
+                    toast.success("Already resteem");
+                    return;
+                  }
+                  handleResteem();
+                }}
+              />
             )}
           </div>
         </div>
 
-        {
-          <ButtonWrapper
-            hoverable
-            onPress={() => setBreakdownModal(!breakdownModal)}
-            className="pr-2"
-            title={`${
-              !comment.max_accepted_payout
-                ? "Declined"
-                : "$" + comment.payout?.toLocaleString()
-            }  Payout`}
-          >
-            <Popover
-              placement="top"
-              onOpenChange={setBreakdownModal}
-              isOpen={breakdownModal}
-              size="md"
-              className=" w-64"
-              color="primary"
+        <Popover placement="top" size="md" className=" w-64" color="primary">
+          <PopoverTrigger>
+            <Button
+              radius="full"
+              size="sm"
+              className="px-1 pr-2 bg-foreground/10"
+              title={`${
+                !comment.max_accepted_payout
+                  ? "Declined"
+                  : "$" + comment.payout?.toLocaleString()
+              }  Payout`}
             >
-              <PopoverTrigger>
-                <Button
-                  radius="full"
-                  isDisabled
-                  isIconOnly
-                  size="sm"
-                  variant="light"
-                >
-                  {(comment.payout && !comment.percent_steem_dollars) ||
-                  !comment.max_accepted_payout ? (
-                    <SiSteem size={20} />
-                  ) : (
-                    <PiCurrencyCircleDollarFill size={24} />
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent>
-                <RewardBreakdownCard comment={comment} />
-              </PopoverContent>
-            </Popover>
+              <div className="flex flex-row items-center gap-3 text-default-700">
+                {(comment.payout && !comment.percent_steem_dollars) ||
+                !comment.max_accepted_payout ? (
+                  <SiSteem size={20} />
+                ) : (
+                  <PiCurrencyCircleDollarFill size={24} />
+                )}
 
-            <div
-              className={twMerge(
-                "text-tiny",
-                !comment.max_accepted_payout && "line-through opacity-disabled"
-              )}
-            >
-              {comment.payout?.toFixed(2)}
-            </div>
-          </ButtonWrapper>
-        }
+                <div
+                  className={twMerge(
+                    "text-sm",
+                    !comment.max_accepted_payout &&
+                      "line-through opacity-disabled"
+                  )}
+                >
+                  {comment.payout?.toFixed(2)}
+                </div>
+              </div>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <RewardBreakdownCard comment={comment} />
+          </PopoverContent>
+        </Popover>
       </div>
 
       <SModal

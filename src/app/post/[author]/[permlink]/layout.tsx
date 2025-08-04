@@ -1,4 +1,4 @@
-import { getAccountExt, getPost } from "@/libs/steem/sds";
+import { getAccountExt, getPost, getPostWithReplies } from "@/libs/steem/sds";
 import { getResizedAvatar, getThumbnail } from "@/utils/parseImage";
 import { Metadata } from "next";
 import React from "react";
@@ -22,10 +22,10 @@ export default async function Layout({
 
   const session = await auth();
 
-  let post: Post, account: AccountExt;
+  let posts: Post[], account: AccountExt;
 
   try {
-    post = await getPost(author, permlink, session?.user?.name);
+    posts = await getPostWithReplies(author, permlink, session?.user?.name);
     account = await getAccountExt(author, session?.user?.name);
   } catch (error) {
     return <ErrorCardServer message="An error occurred while fetching post." />;
@@ -36,7 +36,7 @@ export default async function Layout({
       endClassName={"1md:block min-w-[320px] w-[320px]"}
       endContent={<ProfileInfoCard account={account} />}
     >
-      <PostPage data={post} />
+      <PostPage data={posts} />
     </MainWrapper>
   );
 }

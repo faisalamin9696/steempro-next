@@ -81,7 +81,7 @@ export default function CommunitiesPage() {
         data={filteredItems || []}
         itemsPerPage={25}
         titleClassName="w-full"
-        bodyClassName="grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-6"
+        bodyClassName="grid grid-cols-1 1md:grid-cols-2 gap-6"
         title={
           <div className="flex flex-row items-center justify-between w-full">
             <p>Explore & Engage</p>

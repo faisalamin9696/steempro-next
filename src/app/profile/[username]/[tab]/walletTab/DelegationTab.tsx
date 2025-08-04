@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Button, ButtonGroup } from "@heroui/button";
+import React, { Key, useEffect, useState } from "react";
+import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
-import { FaEdit, FaPlus } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import useSWR from "swr";
 import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
 import SAvatar from "@/components/ui/SAvatar";
@@ -16,7 +16,6 @@ import moment from "moment";
 import { useSession } from "next-auth/react";
 import SLink from "@/components/ui/SLink";
 import { useParams } from "next/navigation";
-import { FiEdit } from "react-icons/fi";
 import STable from "@/components/ui/STable";
 import { sortByKey } from "@/utils/helper";
 import { capitalize } from "@/constants/AppConstants";
@@ -26,7 +25,10 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@heroui/dropdown";
-import { IoFilterOutline } from "react-icons/io5";
+import { IoFilterOutline, IoSwapHorizontal } from "react-icons/io5";
+import { MdDelete, MdEditSquare } from "react-icons/md";
+import { SlOptions } from "react-icons/sl";
+import { RiArrowLeftDownLine, RiArrowRightUpLine } from "react-icons/ri";
 
 const sortOptions = [
   { name: "Low → High", uid: "asc" },
@@ -121,11 +123,33 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
     .filter((d) => d.status === "expiring")
     .reduce((sum, d) => sum + d.vests, 0);
 
+  async function handleMenuActions(key: Key, delegation: Delegation) {
+    switch (key) {
+      case "edit":
+        setTransferModal({
+          isOpen: !transferModal.isOpen,
+          delegatee: delegation.to,
+          oldDelegation: delegation.vests,
+          delegation: delegation,
+        });
+        break;
+      case "remove":
+        setTransferModal({
+          isOpen: !transferModal.isOpen,
+          delegatee: delegation.to,
+          oldDelegation: delegation.vests,
+          delegation: delegation,
+          isRemove: true,
+        });
+        break;
+    }
+  }
+
   return (
     <>
       <STable
         itemsPerPage={30}
-        bodyClassName="grid grid-cols-[repeat(auto-fit,minmax(350,1fr))] gap-8"
+        bodyClassName="grid grid-cols-1 md:grid-cols-2 gap-8"
         data={filteredItems}
         description={
           "Incoming • Outgoing • Expiring – Adjust or Remove Delegations"
@@ -139,7 +163,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                 size="sm"
                 variant="flat"
                 startContent={<IoFilterOutline size={18} />}
-                className="font-semibold text-small"
+                className="font-semibold text-xs sm:text-sm"
               >
                 {sortOptions?.find((s) => s.uid === sortBY)?.name}
               </Button>
@@ -189,7 +213,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                 variant="flat"
                 color="success"
                 classNames={{
-                  closeButton: "ms-1",
+                  closeButton: "ms-1 text-xl",
                 }}
                 onClick={() => {
                   setStatusFilter(["incoming"]);
@@ -201,17 +225,19 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                 }
                 className="text-sm cursor-pointer hover:bg-success-100 transition-colors"
               >
-                Incoming{": "}
-                {vestToSteem(
-                  data.vests_in,
-                  globalData.steem_per_share
-                )?.toLocaleString() + " SP"}
+                <div className="flex flex-row gap-2 items-center">
+                  <RiArrowLeftDownLine size={20} />
+                  {vestToSteem(
+                    data.vests_in,
+                    globalData.steem_per_share
+                  )?.toLocaleString() + " SP"}
+                </div>
               </Chip>
             )}
             {!!data.vests_out && (
               <Chip
                 classNames={{
-                  closeButton: "ms-1",
+                  closeButton: "ms-1 text-xl",
                 }}
                 size="sm"
                 variant="flat"
@@ -226,18 +252,21 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                     : () => setStatusFilter(["all"])
                 }
               >
-                Outgoing{": "}
-                {vestToSteem(
-                  data.vests_out,
-                  globalData.steem_per_share
-                )?.toLocaleString() + " SP"}
+                <div className="flex flex-row gap-2 items-center">
+                  <RiArrowRightUpLine size={20} />
+
+                  {vestToSteem(
+                    data.vests_out,
+                    globalData.steem_per_share
+                  )?.toLocaleString() + " SP"}
+                </div>
               </Chip>
             )}
 
             {!!totalExpiring && (
               <Chip
                 classNames={{
-                  closeButton: "ms-1",
+                  closeButton: "ms-1 text-xl",
                 }}
                 size="sm"
                 variant="flat"
@@ -252,11 +281,13 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                     : () => setStatusFilter(["all"])
                 }
               >
-                Expiring{": "}
-                {vestToSteem(
-                  totalExpiring,
-                  globalData.steem_per_share
-                )?.toLocaleString() + " SP"}
+                <div className="flex flex-row gap-2 items-center">
+                  <IoSwapHorizontal size={20} />
+                  {vestToSteem(
+                    totalExpiring,
+                    globalData.steem_per_share
+                  )?.toLocaleString() + " SP"}
+                </div>
               </Chip>
             )}
           </div>
@@ -291,6 +322,44 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                     >
                       {delegation.status}
                     </Chip>
+
+                    {canEdit && (
+                      <Dropdown>
+                        <DropdownTrigger>
+                          <Button
+                            isIconOnly
+                            size="sm"
+                            variant="light"
+                            radius="full"
+                          >
+                            <SlOptions size={16} />
+                          </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu
+                          variant="flat"
+                          onAction={(keys) =>
+                            handleMenuActions(keys, delegation)
+                          }
+                        >
+                          <DropdownItem key={`edit`}>
+                            <div className="flex flex-row items-center gap-2">
+                              <MdEditSquare size={16} /> Edit
+                            </div>
+                          </DropdownItem>
+                          <DropdownItem
+                            variant="flat"
+                            key={`remove`}
+                            color="danger"
+                            className="text-danger"
+                          >
+                            <div className="flex flex-row items-center gap-2">
+                              <MdDelete size={16} />
+                              Remove
+                            </div>
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </Dropdown>
+                    )}
                   </div>
 
                   <div className="flex flex-row gap-2">
@@ -312,44 +381,6 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                     </p>
                   </div>
                 </div>
-                {canEdit && (
-                  <div className="flex flex-col self-start">
-                    <Button
-                      size="sm"
-                      variant="flat"
-                      className="rounded-b-none px-2 sm:px-3"
-                      onPress={() => {
-                        setTransferModal({
-                          isOpen: !transferModal.isOpen,
-                          delegatee: delegation.to,
-                          oldDelegation: delegation.vests,
-                          delegation: delegation,
-                        });
-                      }}
-                    >
-                      <FaEdit size={14}/>
-                      <span className="inline">Edit</span>
-                    </Button>
-
-                    <Button
-                      size="sm"
-                      variant="flat"
-                      color="danger"
-                      onPress={() => {
-                        setTransferModal({
-                          isOpen: !transferModal.isOpen,
-                          delegatee: delegation.to,
-                          oldDelegation: delegation.vests,
-                          delegation: delegation,
-                          isRemove: true,
-                        });
-                      }}
-                      className="rounded-t-none px-2 sm:px-3"
-                    >
-                      <span className="inline">Remove</span>
-                    </Button>
-                  </div>
-                )}
               </div>
             </div>
           );

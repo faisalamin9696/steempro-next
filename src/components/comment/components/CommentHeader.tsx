@@ -41,6 +41,7 @@ import SLink from "@/components/ui/SLink";
 import { twMerge } from "tailwind-merge";
 import Image from "next/image";
 import { Card } from "@heroui/card";
+import { Chip } from "@heroui/chip";
 
 interface Props {
   comment: Post | Feed;
@@ -281,9 +282,9 @@ export default function CommentHeader(props: Props) {
             )}
             <Reputation reputation={comment.author_reputation} />
             {!!comment.is_pinned && (
-              <p className="ms-1 px-1 rounded-full text-tiny bg-success/50">
+              <Chip color="success" variant="flat" size="sm" className="ms-1 h-5 px-0">
                 Pinned
-              </p>
+              </Chip>
             )}
             {!isReply && !compact ? (
               <Dropdown>

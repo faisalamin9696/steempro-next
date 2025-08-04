@@ -116,10 +116,7 @@ const ProposalItemCard = ({
   const getFundingBadge = (proposal: Proposal) => {
     if (proposal.proposal_id === 0) {
       return (
-        <Chip
-          variant="bordered"
-          className="text-xs text-orange-600 border-orange-400 bg-orange-100"
-        >
+        <Chip variant="flat" color="warning" className="text-xs">
           <div className="flex flex-row items-center gap-1">
             <BiDollar size={16} />
             Funding Threshold
@@ -130,12 +127,10 @@ const ProposalItemCard = ({
     const funded = isProposalFunded(proposal, returnProposal);
     return (
       <Chip
+        size="sm"
         variant="bordered"
-        className={`text-xs ${
-          funded
-            ? ""
-            : "text-default-600 border-default-400 bg-default-50"
-        }`}
+        color="default"
+        className={`text-xs border-1`}
       >
         <div className="flex flex-row items-center gap-1">
           <BiDollar size={16} />
@@ -173,9 +168,9 @@ const ProposalItemCard = ({
 
   const getCategoryColor = (dailyPay: string) => {
     const amount = parseFloat(dailyPay);
-    if (amount >= 1000) return "text-red-600 border-red-400 bg-red-50";
-    if (amount >= 100) return "text-orange-600 border-orange-400 bg-orange-50";
-    return "text-green-600 border-green-400 bg-green-50";
+    if (amount >= 1000) return "danger";
+    if (amount >= 100) return "warning";
+    return "success";
   };
 
   return (
@@ -190,8 +185,10 @@ const ProposalItemCard = ({
                 </SLink>
               </h3>
               <Chip
+                size="sm"
                 variant="bordered"
-                className={`text-sm ${getCategoryColor(proposal.daily_pay)}`}
+                color={getCategoryColor(proposal.daily_pay)}
+                className={`text-sm border-1`}
               >
                 {daily_pay} SBD/day
               </Chip>
@@ -242,8 +239,9 @@ const ProposalItemCard = ({
           <div className="flex items-center gap-2">
             {getStatusIcon()}
             <Chip
+              size="sm"
               variant="bordered"
-              className={`text-sm capitalize ${getStatusColor()}`}
+              className={`text-sm border-1 capitalize ${getStatusColor()}`}
             >
               {proposalStatus}
             </Chip>
@@ -252,7 +250,7 @@ const ProposalItemCard = ({
         <div className="flex flex-wrap items-center gap-2 mb-2">
           {getFundingBadge(proposal)}
           {isVoted && (
-            <Chip variant="flat" color="success" className="text-xs text-white">
+            <Chip variant="flat" color="success" className="text-xs">
               <div className="flex flex-row items-center gap-1">
                 <FaVoteYea size={16} />
                 You Voted

@@ -82,7 +82,7 @@ function MemoLogin(props: Props) {
         isRequired
         onValueChange={setMemoKey}
         isDisabled={isPending}
-        label="Memo key"
+        label="Private memo key"
         placeholder="Enter memo key for private chat"
         type="password"
         onKeyDown={(e) => {

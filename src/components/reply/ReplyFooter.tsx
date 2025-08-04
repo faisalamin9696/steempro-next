@@ -63,6 +63,7 @@ export default function ReplyFooter({
     useAppSelector((state) => state.repliesReducer.values)[
       `${rootComment?.author}/${rootComment?.permlink}`
     ] ?? [];
+    
   const [showReply, setShowReply] = useState(false);
   const [markdown, setMarkdown] = useState("");
   const rpm = readingTime(markdown);

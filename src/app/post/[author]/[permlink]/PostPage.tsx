@@ -20,23 +20,24 @@ import SLink from "@/components/ui/SLink";
 import { twMerge } from "tailwind-merge";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
 import SubmitPage from "@/app/submit/SubmitPage";
-// const DynamicPostReplies = dynamic(
-//   () => import("../../../components/reply/PostReplies")
-// );
 
 interface Props {
-  data: Post;
+  data: Post[];
 }
 
 export default function PostPage(props: Props) {
   const { data } = props;
+  const post = data?.[0];
+  const replies = data?.slice(1);
+
   const pathname = usePathname();
   const { data: session } = useSession();
   const dispatch = useAppDispatch();
+
   const commentInfo: Post =
     useAppSelector((state) => state.commentReducer.values)[
-      `${data.author}/${data.permlink}`
-    ] ?? data;
+      `${post.author}/${post.permlink}`
+    ] ?? post;
 
   const settings =
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
@@ -46,8 +47,6 @@ export default function PostPage(props: Props) {
   const isSelf = session?.user?.name === commentInfo.author;
 
   useEffect(() => {
-    // clear the replies store
-    dispatch(addRepliesHandler({ comment: commentInfo, replies: [] }));
     // scroll initial page to top
     window.scrollTo({
       top: 0,
@@ -56,14 +55,24 @@ export default function PostPage(props: Props) {
   }, [pathname]);
 
   useEffect(() => {
-    if (data) {
+
+    dispatch(
+      addRepliesHandler({
+        comment: commentInfo,
+        replies: replies,
+      })
+    );
+  }, []);
+
+  useEffect(() => {
+    if (post && location.pathname?.split("/")?.length === 3) {
       window.history.replaceState(
         {},
         "",
-        `/${data?.category}/@${data?.author}/${data?.permlink}`
+        `/${post?.category}/@${post?.author}/${post?.permlink}`
       );
     }
-    dispatch(addCommentHandler(data));
+    dispatch(addCommentHandler(post));
   }, []);
 
   useEffect(() => {
@@ -76,14 +85,14 @@ export default function PostPage(props: Props) {
   }, []);
 
   useEffect(() => {
-    if (data) {
+    if (post) {
       const docId = window.location.hash.replace("#", "");
       const section = document.getElementById(docId);
       if (docId === "comments" && section) {
         section.scrollIntoView({ behavior: "smooth" });
       }
     }
-  }, [data]);
+  }, [post]);
 
   if (editMode) {
     return (

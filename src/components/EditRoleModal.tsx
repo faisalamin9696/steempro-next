@@ -206,6 +206,7 @@ export default function EditRoleModal(props: Props) {
             value={title}
             onValueChange={setTitle}
             isClearable
+            isDisabled={isPending}
           />
 
           {!(
@@ -216,6 +217,7 @@ export default function EditRoleModal(props: Props) {
               aria-label="Select role"
               items={items}
               label="Role"
+              isDisabled={isPending}
               className="max-w-xs"
               defaultSelectedKeys={[role]}
               disabledKeys={[comment.author_role]}

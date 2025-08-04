@@ -24,7 +24,7 @@ const formatPreviewValue = (
     return "N/A";
   }
   if (
-    key === "reward" &&
+    (key === "reward" || key === "vesting_shares" || key==="reward_vests") &&
     typeof value === "string" &&
     value?.toLowerCase()?.includes("vests")
   ) {
@@ -54,18 +54,17 @@ const OperationItem = ({ operation, steem_per_share }: OperationItemProps) => {
   useState<React.ReactNode>(null);
   const operationIcon = getOperationIcon(opType);
   // Check if this is a comment operation for post linking
-  const isComment = opType === "comment";
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
 
   return (
-    <Card className="shadow-sm hover:shadow-lg transition-all duration-200 rounded-none">
+    <Card shadow="none" radius="none">
       {/* Operation Header - Primary Focus */}
       <div className="flex items-start justify-between gap-2">
-        <div className="flex items-start space-x-4 flex-1">
+        <div className="flex items-start gap-4 flex-1">
           {/* Operation Icon */}
           <div className="relative max-sm:hidden">
             <div className="w-10 h-10 bg-secondary/30 rounded-lg flex items-center justify-center">
-              <span className="text-xl">{operationIcon}</span>
+              <span className="text-2xl">{operationIcon}</span>
             </div>
           </div>
 

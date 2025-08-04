@@ -3,7 +3,7 @@ export const getOperationIcon = (type: string): string => {
     case "transfer":
       return "💸"; // Money transfer
     case "transfer_to_vesting":
-      return "📥"; // Powering up
+      return "⚡"; // Powering up
     case "withdraw_vesting":
       return "📤"; // Powering down
     case "comment":

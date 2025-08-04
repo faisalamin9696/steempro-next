@@ -2,12 +2,10 @@
 
 import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
 import { addRepliesHandler } from "@/hooks/redux/reducers/RepliesReducer";
-import { getPostReplies } from "@/libs/steem/sds";
 import { Button } from "@heroui/button";
 import { Card } from "@heroui/card";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { memo, useEffect, useRef, useState } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
 import Reply from "./Reply";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
 import EditorInput from "@/components/editor/EditorInput";
@@ -26,7 +24,6 @@ import {
 import { getCredentials, getSessionKey } from "@/utils/user";
 import { useLogin } from "@/components/auth/AuthProvider";
 import { readingTime } from "@/utils/readingTime/reading-time-estimator";
-import EmptyList from "@/components/EmptyList";
 import { Select, SelectItem } from "@heroui/select";
 import { useSession } from "next-auth/react";
 import { AsyncUtils } from "@/utils/async.utils";
@@ -36,56 +33,48 @@ import {
   saveCommentDraft,
 } from "@/utils/draft";
 import BeneficiaryButton from "../editor/components/BeneficiaryButton";
-import { RewardTypes } from "@/constants/AppConstants";
 import RewardSelectButton, {
   rewardTypes,
 } from "../editor/components/RewardSelectButton";
+import InfiniteListProps from "../ui/InfiniteList";
+import ReplySkeleton from "./ReplySkeleton";
 
 interface Props {
   comment: Post | Feed;
   onReplyClick?: () => {};
 }
 
-const defaultLimit = 10;
-
 export default memo(function PostReplies(props: Props) {
   const { comment } = props;
 
-  const commentInfo: Post = (useAppSelector(
-    (state) => state.commentReducer.values
-  )[`${comment.author}/${comment.permlink}`] ?? comment) as Post;
+  const commentInfo: Post =
+    useAppSelector((state) => state.commentReducer.values)[
+      `${comment.author}/${comment.permlink}`
+    ] ?? comment;
+
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const draft = getCommentDraft(comment.link_id);
-
-  const [limit, setLimit] = useState(defaultLimit);
   const dispatch = useAppDispatch();
   const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>(
     draft.beneficiaries ?? []
   );
   const [reward, setReward] = useState(rewardTypes[1]);
 
-  const postReplies = (useAppSelector((state) => state.repliesReducer.values)[
-    `${commentInfo.author}/${commentInfo.permlink}`
-  ] ?? []) as Post[];
+  const postReplies =
+    useAppSelector((state) => state.repliesReducer.values)[
+      `${comment.author}/${comment.permlink}`
+    ] || [];
 
-  const rootReplies = postReplies
-    ?.slice(0, limit)
-    ?.filter((item: Post) => item.depth === commentInfo.depth + 1);
+  const rootReplies = postReplies?.filter(
+    (item: Post) => item.depth === commentInfo.depth + 1
+  );
 
-  const queryKey = [`post-${commentInfo.author}-${commentInfo.permlink}`];
-  const queryClient = useQueryClient();
-  const mutationKey = [
-    `repliesMutation-${`${commentInfo?.author}/${commentInfo?.permlink}`}`,
-  ];
   const [sorting, setSorting] = useState<"created" | "payout" | "upvote_count">(
     "payout"
   );
   const { users } = extractMetadata(commentInfo.body) ?? [];
-
-  const [isLoading, setIsLoading] = useState(false);
   const [markdown, setMarkdown] = useState(draft.markdown);
   const rpm = readingTime(markdown);
-
   const [showReply, setShowReply] = useState(false);
   const [isPosting, setPosting] = useState(false);
   const { authenticateUser, isAuthorized } = useLogin();
@@ -104,69 +93,13 @@ export default memo(function PostReplies(props: Props) {
     return () => clearTimeout(timeout);
   }, [markdown]);
 
-  const repliesMutation = useMutation({
-    mutationKey,
-    mutationFn: () =>
-      getPostReplies(commentInfo.author, commentInfo.permlink, loginInfo.name),
-    onSuccess(data) {
-      setIsLoading(false);
-      // setAllReplies(
-      //   data?.sort((a, b) => b[sorting as string] - a[sorting as string]) ?? []
-      // );
-      dispatch(
-        addRepliesHandler({
-          comment: commentInfo,
-          replies: data?.sort(
-            (a, b) => b[sorting as string] - a[sorting as string]
-          ),
-        })
-      );
-    },
-  });
-
-  // useEffect(() => {
-  //   setRootReplies(
-  //     allReplies
-  //       ?.sort((a, b) => b[sorting as string] - a[sorting as string])
-  //       ?.filter((item: Post) => item.depth === commentInfo.depth + 1)
-  //       ?.slice(0, limit)
-  //   );
-  // }, [sorting]);
-
   useEffect(() => {
     if (showReply) {
       editorDiv?.current?.focus();
     }
   }, [showReply]);
 
-  useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    const docId = window.location.hash.replace("#", "");
-    const section = document.getElementById(docId);
-    if (docId === "comments" && section) {
-      timeout = setTimeout(() => {
-        handleLoadComments();
-      }, 1500);
-    }
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, []);
-
   const toggleReply = () => setShowReply(!showReply);
-
-  async function handleLoadComments() {
-    setIsLoading(true);
-    repliesMutation.mutate();
-  }
-
-  async function handleLoadMore() {
-    setIsLoading(true);
-    await AsyncUtils.sleep(1.5);
-    setLimit((prev) => prev + defaultLimit);
-    setIsLoading(false);
-  }
 
   function clearForm() {
     setMarkdown("");
@@ -223,20 +156,11 @@ export default memo(function PostReplies(props: Props) {
       );
     }
 
-    queryClient.setQueryData(queryKey, {
-      ...commentInfo,
-      children: commentInfo?.children + 1,
-    });
-
     // update the redux state for the post
     dispatch(
       addCommentHandler({ ...commentInfo, children: commentInfo?.children + 1 })
     );
 
-    // update the redux state for the current comment
-    // dispatch(addCommentHandler({ ...commentInfo, children: commentInfo?.children + 1 }));
-
-    // update the redux state for the root post replies
     dispatch(
       addRepliesHandler({
         comment: commentInfo,
@@ -356,73 +280,34 @@ export default memo(function PostReplies(props: Props) {
           Reply
         </Button>
 
-        <div>
-          {repliesMutation.isSuccess && (
-            <div className="w-36 items-center">
-              <Select
-                radius="full"
-                variant="flat"
-                color="default"
-                size="sm"
-                label="Sort"
-                selectedKeys={[sorting]}
-                labelPlacement="outside-left"
-                classNames={{ base: "items-center" }}
-                selectionMode="single"
-                onChange={(key) => {
-                  const sortBy = key.target.value as string;
-                  setSorting(sortBy as any);
-                  const sorted = [...postReplies]?.sort(
-                    (a, b) => b[sortBy] - a[sortBy]
-                  );
+        <div className="w-36 items-center">
+          <Select
+            radius="full"
+            variant="flat"
+            color="default"
+            size="sm"
+            label="Sort"
+            selectedKeys={[sorting]}
+            labelPlacement="outside-left"
+            classNames={{ base: "items-center" }}
+            selectionMode="single"
+            onChange={(key) => {
+              const sortBy = key.target.value as string;
+              setSorting(sortBy as any);
+            }}
+          >
+            <SelectItem key={"payout"}>Trending</SelectItem>
+            <SelectItem key={"upvote_count"}>Votes</SelectItem>
+            <SelectItem key={"created"}>Age</SelectItem>
 
-                  // reset the limit for new sorted replies
-                  setLimit(defaultLimit);
-
-                  dispatch(
-                    addRepliesHandler({
-                      comment: commentInfo,
-                      replies: sorted,
-                    })
-                  );
-
-                  // setRootReplies((prevData) =>
-                  //   prevData?.sort((a, b) => b[sortBy] - a[sortBy])
-                  // );
-                  // repliesMutation.mutate();
-                }}
-              >
-                <SelectItem key={"created"}>Age</SelectItem>
-
-                <SelectItem key={"payout"}>Trending</SelectItem>
-
-                {/* <SelectItem key={"upvote_count"}>
+            {/* <SelectItem key={"upvote_count"}>
                   Votes
                 </SelectItem> */}
-              </Select>
-            </div>
-          )}
+          </Select>
         </div>
       </div>
 
       <div className=" mt-4 flex flex-col py-4 gap-4">
-        {repliesMutation.isSuccess ? null : !commentInfo.children ? (
-          <EmptyList />
-        ) : (
-          <div className="flex flex-row gap-2 items-center justify-center">
-            <Button
-              color="default"
-              variant="flat"
-              isDisabled={repliesMutation.isPending}
-              className="self-center"
-              onPress={handleLoadComments}
-              isLoading={isLoading || repliesMutation.isPending}
-            >
-              Load comments
-            </Button>
-          </div>
-        )}
-
         <div
           ref={editorDiv}
           tabIndex={-1}
@@ -518,36 +403,28 @@ export default memo(function PostReplies(props: Props) {
           )}
         </div>
 
-        <InfiniteScroll
-          dataLength={limit}
-          next={handleLoadMore}
-          hasMore={(repliesMutation?.data?.length ?? 0) > limit}
-          loader={
-            <div className="flex justify-center items-center">
-              <Button
-                color="default"
-                variant="flat"
-                className="self-center"
-                onPress={handleLoadMore}
-                isLoading
-                isDisabled
-              >
-                Loading...
-              </Button>
-            </div>
-          }
-          endMessage={repliesMutation.isSuccess && <EmptyList />}
-        >
-          <div className="flex flex-col ">
-            {rootReplies?.splice(0, limit)?.map((reply: Post, index) => {
-              return !reply.link_id ? null : (
-                <div key={index ?? reply.link_id}>
-                  <Reply comment={reply} rootComment={commentInfo} />
-                </div>
-              );
-            })}
-          </div>
-        </InfiniteScroll>
+        <div>
+          <InfiniteListProps
+            sortBy={(a, b) => b[sorting] - a[sorting]}
+            sortDirection="asc"
+            data={rootReplies?.filter(
+              (item: Post) => item.depth === commentInfo.depth + 1
+            )}
+            renderItem={(reply, index) => (
+              <div key={index ?? reply.link_id}>
+                <Reply comment={reply} rootComment={commentInfo} />
+              </div>
+            )}
+            itemsPerPage={10}
+            loadingComponent={
+              <div className="flex flex-col space-y-2">
+                <ReplySkeleton />
+                <ReplySkeleton />
+              </div>
+            }
+            endText="No more replies"
+          />
+        </div>
       </div>
     </div>
   );

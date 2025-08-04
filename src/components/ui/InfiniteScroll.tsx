@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import useSWRInfinite from "swr/infinite";
 import { Fetcher } from "swr";
-import CommentSkeleton from "./comment/components/CommentSkeleton";
+import CommentSkeleton from "../comment/components/CommentSkeleton";
 import { Spinner } from "@heroui/spinner";
-import EmptyList from "./EmptyList";
+import EmptyList from "../EmptyList";
 import { AsyncUtils } from "@/utils/async.utils";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { useAppSelector } from "@/constants/AppFunctions";
@@ -23,6 +23,8 @@ type InfiniteScrollProps<T> = {
   keyExtractor?: (item: T, index: number) => string;
   initialSize?: number;
   pageSize?: number;
+  totalItems?: number; // New prop for total items in dataset
+  autoLoadThreshold?: number; // Items remaining before triggering auto-load
 };
 
 const InfiniteScroll = <T,>({
@@ -46,6 +48,8 @@ const InfiniteScroll = <T,>({
   keyExtractor = (_, index) => index.toString(),
   initialSize = 1,
   pageSize = FeedPerPage,
+  totalItems, // Optional total items count
+  autoLoadThreshold = 5, // Load more when 5 items away from end
 }: InfiniteScrollProps<T>) => {
   const {
     data: pages,
@@ -63,6 +67,9 @@ const InfiniteScroll = <T,>({
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
   const { isMobile } = useDeviceInfo();
   const isGridStyle = settings.feedStyle === "grid" && !isMobile;
+  const [isFetching, setIsFetching] = useState(false);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   const items = pages?.flat() || [];
   const isLoadingMore =
@@ -71,41 +78,52 @@ const InfiniteScroll = <T,>({
   const isReachingEnd =
     isEmpty || (pages && pages[pages.length - 1]?.length < pageSize);
 
-  // Track whether we're currently loading to prevent duplicate triggers
-  const [isFetching, setIsFetching] = useState(false);
+  // Calculate remaining items for auto-load simulation
+  const remainingItems = totalItems ? totalItems - items.length : 0;
 
-  // Load more items when reaching bottom
+  // Enhanced load more function
   const loadMore = useCallback(async () => {
     if (isFetching || isLoadingMore || isReachingEnd) return;
+    
     setIsFetching(true);
     try {
-      AsyncUtils.sleep(1.5);
+      await AsyncUtils.sleep(1.5); // Optional delay for smoother UX
       await setSize(size + 1);
     } finally {
       setIsFetching(false);
     }
   }, [isFetching, isLoadingMore, isReachingEnd, setSize, size]);
 
-  // Handle scroll events on document body
+  // Auto-load when approaching end of list (simulated pagination)
   useEffect(() => {
-    const handleScroll = () => {
-      if (isFetching || isLoadingMore || isReachingEnd) return;
+    if (totalItems && items.length > 0 && remainingItems <= autoLoadThreshold) {
+      loadMore();
+    }
+  }, [items.length, remainingItems, autoLoadThreshold, loadMore, totalItems]);
 
-      const scrollPosition =
-        window.innerHeight + document.documentElement.scrollTop;
-      const scrollHeight = document.documentElement.scrollHeight;
-      const isNearBottom = scrollPosition >= scrollHeight - threshold;
+  // Intersection Observer for scroll-based loading (original functionality)
+  useEffect(() => {
+    if (!sentinelRef.current) return;
 
-      if (isNearBottom) {
+    const handleIntersect: IntersectionObserverCallback = (entries) => {
+      const [entry] = entries;
+      if (entry.isIntersecting && !isFetching && !isLoadingMore && !isReachingEnd) {
         loadMore();
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    window.addEventListener("resize", handleScroll);
+    observerRef.current = new IntersectionObserver(handleIntersect, {
+      root: null,
+      rootMargin: `${threshold}px`,
+      threshold: 0.1,
+    });
+
+    observerRef.current.observe(sentinelRef.current);
+
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleScroll);
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
     };
   }, [threshold, isLoadingMore, isReachingEnd, loadMore, isFetching]);
 
@@ -134,6 +152,9 @@ const InfiniteScroll = <T,>({
           </React.Fragment>
         ))}
       </div>
+
+      {/* Sentinel element for intersection observer */}
+      <div ref={sentinelRef} style={{ height: '1px' }} />
 
       {(isLoadingMore || isValidating) && loader}
 

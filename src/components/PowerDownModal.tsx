@@ -63,6 +63,9 @@ const PowerDownModal = (props: Props): React.ReactNode => {
         saveLoginHandler({
           ...loginInfo,
           powerdown: withdrawVests,
+          vests_own: cancel
+            ? loginInfo.vests_own - loginInfo.powerdown_done
+            : loginInfo.vests_own,
           next_powerdown: cancel ? 0 : moment().add(7, "days").unix(),
           powerdown_rate: cancel ? 0 : Number(withdrawVests) / 4,
         })

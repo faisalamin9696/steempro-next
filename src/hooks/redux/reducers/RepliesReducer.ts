@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 interface InfoState {
-  values: Record<string, any>; // Ensure `values` remains an object
+  values: Record<string, Post[]>; // Ensure `values` remains an object
 }
 
 export const initialstate: InfoState = {

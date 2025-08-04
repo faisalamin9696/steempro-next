@@ -1,5 +1,5 @@
 import React from "react";
-import InfiniteScroll from "./InfiniteScroll";
+import InfiniteScroll from "./ui/InfiniteScroll";
 import { fetchSds } from "@/constants/AppFunctions";
 import CommentCard from "./comment/CommentCard";
 import { FeedPerPage } from "@/constants/AppConstants";

@@ -14,10 +14,12 @@ interface Props {
 
 export default memo(function ReplyForm(props: Props) {
   const { comment, rootComment } = props;
+  
   const postReplies =
     useAppSelector((state) => state.repliesReducer.values)[
       `${rootComment.author}/${rootComment.permlink}`
     ] ?? [];
+
   const isDeep = comment?.depth - rootComment?.depth > 6;
 
   const [expanded, setExpanded] = useState(!isDeep);

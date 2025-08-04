@@ -1,8 +1,5 @@
 import React, { useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import SAvatar from "@/components/ui/SAvatar";
-import { Chip } from "@heroui/chip";
-import { BiUserCheck } from "react-icons/bi";
 import { Button, ButtonGroup } from "@heroui/button";
 import { FaPencil } from "react-icons/fa6";
 import { Card } from "@heroui/card";
@@ -119,7 +116,7 @@ function MyWitnessTab(props: Props) {
   }
 
   return (
-    <div className="border border-gray-200/20 rounded-lg p-3 sm:p-4">
+    <Card>
       <div
         key={witness.name}
         className={twMerge(`p-4`, witness.isDisabled ? "opacity-60" : "")}
@@ -296,7 +293,7 @@ function MyWitnessTab(props: Props) {
           </div>
         )}
       />
-    </div>
+    </Card>
   );
 }
 
@@ -310,7 +307,7 @@ const DetailItem = ({
   subTitle: string | React.ReactNode;
 }) => {
   return (
-    <Card>
+    <Card className="border border-gray-200/10">
       <div className="flex flex-col gap-2 p-2 text-sm">
         <p className="text-xs text-default-500">{title}</p>
         <div className="break-words break-all whitespace-normal">

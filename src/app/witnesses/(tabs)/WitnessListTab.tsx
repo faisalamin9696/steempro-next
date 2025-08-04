@@ -3,10 +3,8 @@ import WitnessVoteButton from "@/components/WitnessVoteButton";
 import WitnessVotersModal from "@/components/WitnessVotersModal";
 import { validate_account_name } from "@/utils/chainValidation";
 import { Button } from "@heroui/button";
-import { Chip } from "@heroui/chip";
 import { Switch } from "@heroui/switch";
 import React, { useEffect, useState } from "react";
-import { BiUserCheck } from "react-icons/bi";
 import { FaChevronDown, FaCode } from "react-icons/fa";
 import { FiAlertCircle, FiExternalLink } from "react-icons/fi";
 import { twMerge } from "tailwind-merge";
@@ -198,7 +196,7 @@ function WitnessListTab(props: Props) {
                           variant="flat"
                           size="sm"
                           onPress={() => setIsExpanded(!isExpanded)}
-                          className="flex items-center space-x-1 text-default-600"
+                          className="flex items-center space-x-1 text-default-500"
                           isIconOnly
                         >
                           {isExpanded ? (
@@ -210,42 +208,14 @@ function WitnessListTab(props: Props) {
                       </span>
                     }
                   />
-
-                  {isExpanded &&
-                    imporantFields &&
-                    typeof imporantFields === "object" &&
-                    Object.keys(imporantFields).length > 2 && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-3 border-default-900/30">
-                        {Object.entries(imporantFields).map(([key, value]) => (
-                          <div key={key} className="space-y-1">
-                            <div className="text-xs text-muted-foreground capitalize font-medium text-default-500">
-                              {key.replace(/_/g, " ")}
-                            </div>
-                            <div className="text-sm bg-background/60 p-2 rounded border border-default-900/30">
-                              <span className="break-all">
-                                {formatPreviewValue(key, value)}
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
                 </div>
-                <div className="flex gap-0">
+                <div className="flex gap-0 w-full sm:w-auto sm:justify-normal justify-end">
                   <WitnessVoteButton
                     className="rounded-s-md"
                     isVoted={witness.voted}
                     witness={witness.name}
                     isDisabled={!!currentProxy}
                   />
-                  {/* {witness.name === loggedInUser && (
-                                    <Button
-                                      variant="bordered"
-                                      className="text-xs sm:text-sm px-2 sm:px-3"
-                                    >
-                                      Disable
-                                    </Button>
-                                  )} */}
 
                   <Button
                     as={SLink}
@@ -260,6 +230,26 @@ function WitnessListTab(props: Props) {
                   </Button>
                 </div>
               </div>
+
+              {isExpanded &&
+                imporantFields &&
+                typeof imporantFields === "object" &&
+                Object.keys(imporantFields).length > 2 && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-3 border-default-900/30">
+                    {Object.entries(imporantFields).map(([key, value]) => (
+                      <div key={key} className="space-y-1">
+                        <div className="text-xs text-muted-foreground capitalize font-medium text-default-500">
+                          {key.replace(/_/g, " ")}
+                        </div>
+                        <div className="text-sm bg-background/60 p-2 rounded border border-default-900/30">
+                          <span className="break-all">
+                            {formatPreviewValue(key, value)}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
             </div>
           );
         }}
