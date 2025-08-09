@@ -195,13 +195,7 @@ const getProfileTabs = (
       title: "Notifications",
       key: "notifications",
       icon: <MdNotifications size={22} />,
-      children: (
-        <NotificationsTable
-          username={username}
-          onOpenChange={() => {}}
-          isOpen={true}
-        />
-      ),
+      children: <NotificationsTable username={username} isOpen={true} />,
       priority: 2,
     });
 

@@ -4,7 +4,7 @@ import React from "react";
 import { Tab, Tabs } from "@heroui/tabs";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { twMerge } from "tailwind-merge";
-import SubsribtionTab from "./SubscriptionTab";
+import SubscriptionTab from "./SubscriptionTab";
 import ProfileTabPage from "../ProfileTabPage";
 
 interface Props {
@@ -23,7 +23,7 @@ export default function CommunitiesTab(props: Props) {
     {
       title: "Subscriptions",
       key: "subscriptions",
-      children: <SubsribtionTab />,
+      children: <SubscriptionTab />,
     },
   ];
 
@@ -33,7 +33,7 @@ export default function CommunitiesTab(props: Props) {
     <div className={twMerge("relative items-center flex-row w-full")}>
       <Tabs
         size="sm"
-        color={"primary"}
+        color={"secondary"}
         disableAnimation={isMobile}
         variant={"underlined"}
         radius={isMobile ? "full" : "sm"}

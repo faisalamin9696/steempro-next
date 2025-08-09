@@ -36,7 +36,7 @@ import BeneficiaryButton from "../editor/components/BeneficiaryButton";
 import RewardSelectButton, {
   rewardTypes,
 } from "../editor/components/RewardSelectButton";
-import InfiniteListProps from "../ui/InfiniteList";
+import InfiniteList from "../ui/InfiniteList";
 import ReplySkeleton from "./ReplySkeleton";
 
 interface Props {
@@ -404,7 +404,7 @@ export default memo(function PostReplies(props: Props) {
         </div>
 
         <div>
-          <InfiniteListProps
+          <InfiniteList
             sortBy={(a, b) => b[sorting] - a[sorting]}
             sortDirection="asc"
             data={rootReplies?.filter(

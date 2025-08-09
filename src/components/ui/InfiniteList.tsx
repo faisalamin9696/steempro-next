@@ -13,7 +13,7 @@ interface InfiniteListProps<T> {
   endText?: string;
 }
 
-const InfiniteListProps = <T,>({
+const InfiniteList = <T,>({
   data,
   itemsPerPage = 10,
   renderItem,
@@ -134,4 +134,4 @@ const InfiniteListProps = <T,>({
   );
 };
 
-export default InfiniteListProps;
+export default InfiniteList;

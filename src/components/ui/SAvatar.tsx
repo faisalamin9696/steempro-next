@@ -86,7 +86,8 @@ export default function SAvatar(props: Props) {
       onClick={onPress}
       className={twMerge("flex flex-row items-center gap-1", linkClassName)}
     >
-      {avatarImage} {content}
+      {avatarImage}{" "}
+      <p className="transition-colors hover:text-blue-500">{content}</p>
     </SLink>
   );
 }

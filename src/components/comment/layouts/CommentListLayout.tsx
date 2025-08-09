@@ -52,7 +52,7 @@ export default function CommentListLayout(props: CommentProps) {
                 commentInfo.is_muted ? " blur-[2px]" : ""
               )}
             >
-              <div className="pl-1 text-container space-y-2">
+              <div className="pl-1 text-container space-y-2 flex-1">
                 <div className=" text-start font-bold text-md">
                   {commentInfo.title}
                 </div>

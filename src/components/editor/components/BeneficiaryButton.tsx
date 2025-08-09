@@ -381,7 +381,7 @@ export default memo(function BeneficiaryButton(props: Props) {
         </form>
       )}
       footer={(onClose) => (
-        <Button variant="light" onPress={onClose}>
+        <Button color="danger" variant="light" onPress={onClose}>
           Cancel
         </Button>
       )}

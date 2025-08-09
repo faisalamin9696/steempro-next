@@ -23,7 +23,6 @@ import { useSession } from "next-auth/react";
 import SLink from "./ui/SLink";
 import { FaLocationDot } from "react-icons/fa6";
 import WitnessVotesCard from "./WitnessVotesCard";
-import SAvatar from "./ui/SAvatar";
 import ChatModal from "./chat/user/ChatModal";
 import ChatButton from "./ui/ChatButton";
 import SModal from "./ui/SModal";

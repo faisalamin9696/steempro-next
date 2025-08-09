@@ -3,7 +3,10 @@
 import notFound from "@/app/not-found";
 import CommentSkeleton from "@/components/comment/components/CommentSkeleton";
 import CommunityCard from "@/components/community/components/CommunityCard";
+import SubscribeButton from "@/components/SubscribeButton";
+import InfiniteList from "@/components/ui/InfiniteList";
 import SLink from "@/components/ui/SLink";
+import STable from "@/components/ui/STable";
 import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { Button } from "@heroui/button";
@@ -13,7 +16,7 @@ import React from "react";
 import { LuPencilLine } from "react-icons/lu";
 import useSWR from "swr";
 
-export default function SubsribtionTab() {
+export default function SubscriptionTab() {
   let { username } = useParams() as { username: string };
   username = username?.toLowerCase();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
@@ -37,55 +40,47 @@ export default function SubsribtionTab() {
   if (error) return notFound();
 
   return (
-    <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6">
-      {data?.map((community, index) => {
+    <STable
+      filterByValue={["title", "account", "about"]}
+      title={null}
+      data={data?.sort((a, b) => a.rank - b.rank) || []}
+      tableRow={(community) => {
         return (
-          <SLink
-            key={index ?? community.id}
-            className={`w-full`}
-            href={
-              {
-                pathname: `/submit`,
-                query: {
-                  account: community?.account,
-                  title: community?.title,
-                },
-              } as any
+          <CommunityCard
+            community={community}
+            className="!bg-transparent shadow-none px-2 py-0"
+            endContent={
+              <div className="flex flex-wrap gap-2 items-center">
+                <SubscribeButton size="sm" community={community} />
+                {isSelf && (
+                  <Button
+                    size={!isTablet ? "sm" : "md"}
+                    isIconOnly
+                    variant="flat"
+                    title="Create post"
+                    as={SLink}
+                    href={
+                      {
+                        pathname: `/submit`,
+                        query: {
+                          account: community?.account,
+                          title: community?.title,
+                        },
+                      } as any
+                    }
+                    color="default"
+                    radius="full"
+                  >
+                    <LuPencilLine className="text-lg" />
+                  </Button>
+                )}
+              </div>
             }
-          >
-            <CommunityCard
-              community={community}
-              compact
-              endContent={
-                <div className="flex gap-1 items-center">
-                  {isSelf && (
-                    <Button
-                      size={!isTablet ? "sm" : "md"}
-                      isIconOnly
-                      variant="flat"
-                      title="Create post"
-                      as={SLink}
-                      href={
-                        {
-                          pathname: `/submit`,
-                          query: {
-                            account: community?.account,
-                            title: community?.title,
-                          },
-                        } as any
-                      }
-                      color="default"
-                      radius="full"
-                    >
-                      <LuPencilLine className="text-lg" />
-                    </Button>
-                  )}
-                </div>
-              }
-            />
-          </SLink>
+          />
         );
-      })}
-    </div>
+      }}
+      itemsPerPage={20}
+      bodyClassName="grid grid-cols-1 1md:grid-cols-2 lg:grid-cols-1 1xl:grid-cols-2 gap-6"
+    />
   );
 }

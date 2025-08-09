@@ -26,7 +26,7 @@ function WitnessItemCard(props: Props) {
             <p className="text-sm">#{witness.rank}</p>
           </Chip>
           <div
-            className={`font-semibold text-deault-900 truncate text-sm sm:text-base ${
+            className={` font-semibold text-deault-900 truncate text-sm sm:text-base ${
               witness.isDisabled ? "line-through" : ""
             }`}
           >

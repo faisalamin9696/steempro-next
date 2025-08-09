@@ -18,6 +18,7 @@ interface STableProps {
   titleIconClassName?: string;
   titleClassName?: string;
   bodyClassName?: string;
+  titleWrapperClassName?: string;
   subTitle?: (filteredItems?: any[]) => string | React.ReactNode;
   titleExtra?: React.ReactNode;
   subTitleClassName?: string;
@@ -33,6 +34,8 @@ interface STableProps {
   skipCard?: boolean; // Optional prop to skip Card wrapper
   stickyHeader?: boolean; // Optional prop to make header sticky
   searchEndContent?: React.ReactNode;
+  endContent?: (filteredItems?: any[]) => string | React.ReactNode;
+  loader?: React.ReactNode;
 }
 
 const getNestedValue = (obj: any, path: string) => {
@@ -59,6 +62,7 @@ function STable(props: STableProps) {
     titleIcon: TitleIcon,
     titleIconClassName,
     titleClassName,
+    titleWrapperClassName,
     subTitle,
     subTitleClassName,
     description,
@@ -75,6 +79,8 @@ function STable(props: STableProps) {
     skipCard,
     stickyHeader,
     searchEndContent,
+    endContent,
+    loader = <LoadingMoreCard />,
   } = props;
 
   const [filterValue, setFilterValue] = useState("");
@@ -176,7 +182,12 @@ function STable(props: STableProps) {
       )}
     >
       <div className="flex flex-col items-start gap-2 w-full">
-        <div className="flex flex-col sm:flex-row justify-between w-full">
+        <div
+          className={twMerge(
+            "flex flex-col sm:flex-row justify-between w-full",
+            titleWrapperClassName
+          )}
+        >
           <div
             className={twMerge(
               "flex flex-row items-center gap-2 text-lg sm:text-xl font-semibold",
@@ -292,7 +303,7 @@ function STable(props: STableProps) {
                     ref={loadMoreRef}
                     className="text-center text-sm text-muted-foreground py-4"
                   >
-                    <LoadingMoreCard />
+                    {loader}
                   </div>
                 )}
 
@@ -308,6 +319,7 @@ function STable(props: STableProps) {
                     <EmptyList />
                   </div>
                 )}
+                {endContent?.(isPaginated ? paginatedData.data : visibleItems)}
               </>
             )}
           </>

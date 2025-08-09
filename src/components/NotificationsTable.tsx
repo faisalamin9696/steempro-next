@@ -21,21 +21,35 @@ import { validateCommunity } from "@/utils/helper";
 import { markasRead } from "@/libs/steem/condenser";
 import { useLogin } from "./auth/AuthProvider";
 import { getCredentials, getSessionKey } from "@/utils/user";
-import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { useSession } from "next-auth/react";
 import { Badge } from "@heroui/badge";
 import SLink from "./ui/SLink";
-import TableWrapper from "./wrappers/TableWrapper";
-import { CustomCheckbox } from "./CustomCheckbox";
-import { CheckboxGroup } from "@heroui/checkbox";
 import { MdOutlineRefresh } from "react-icons/md";
 import { addCommonDataHandler } from "@/hooks/redux/reducers/CommonReducer";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@heroui/dropdown";
+import { IoFilterOutline } from "react-icons/io5";
+import STable from "./ui/STable";
+import { Spinner } from "@heroui/spinner";
 
 interface Props {
   username: string;
-  onOpenChange: (isOpen: boolean) => void;
   isOpen: boolean;
+  onOpenChange?: (isOpen: boolean) => void;
 }
+
+const sortOptions = [
+  { name: "All", uid: "all" },
+  { name: "Vote", uid: "vote" },
+  { name: "Reply", uid: "reply" },
+  { name: "Mention", uid: "mention" },
+  { name: "Resteem", uid: "resteem" },
+  { name: "Follow", uid: "follow" },
+];
 
 const typeColorMap = {
   reply: "secondary",
@@ -55,22 +69,6 @@ const typeColorMap = {
   set_label: "default",
   mute_post: "default",
 };
-
-const INITIAL_VISIBLE_COLUMNS = ["account", "time", "type"];
-
-const columns = [
-  { name: "ACCOUNT", uid: "account", sortable: true },
-  { name: "TIME", uid: "time", sortable: true },
-  { name: "TYPE", uid: "type", sortable: true },
-];
-
-const typeOptions = [
-  { name: "vote", uid: "vote" },
-  { name: "Reply", uid: "reply" },
-  { name: "Mention", uid: "mention" },
-  { name: "Resteem", uid: "resteem" },
-  { name: "Follow", uid: "follow" },
-];
 
 let offset = {};
 const defFilter = DefaultNotificationFilters;
@@ -106,8 +104,9 @@ const filter = {
 
 const ITEMS_PER_BATCH = 50;
 let tempLastRead = 0;
+
 export default function NotificationsTable(props: Props) {
-  const { isOpen, username, onOpenChange } = props;
+  const { username, isOpen, onOpenChange } = props;
   const commonData = useAppSelector((state) => state.commonReducer.values);
 
   function getOffset(): number {
@@ -129,6 +128,7 @@ export default function NotificationsTable(props: Props) {
   const URL = `/notifications_api/getFilteredNotificationsByStatus/${username}/all/${JSON.stringify(
     filter
   )}/${ITEMS_PER_BATCH}`;
+
   function URL_OFFSET(_offset: number) {
     return `/notifications_api/getFilteredNotificationsByStatus/${username}/all/${JSON.stringify(
       filter
@@ -142,8 +142,6 @@ export default function NotificationsTable(props: Props) {
   const { authenticateUser, isAuthorized } = useLogin();
   const dispatch = useAppDispatch();
   const [allRows, setAllRows] = useState<SDSNotification[]>([]);
-  const [groupSelected, setGroupSelected] = React.useState<string[]>([]);
-
   const { data, isLoading, mutate, isValidating } = useSWR(
     URL,
     fetchSds<SDSNotification[]>,
@@ -152,6 +150,23 @@ export default function NotificationsTable(props: Props) {
     }
   );
 
+  const [isEndReached, setIsEndReached] = useState(false);
+
+  const [sortBY, setSortBy] = React.useState<
+    "vote" | "reply" | "mention" | "follow" | "all"
+  >("all");
+
+  const filteredItems = React.useMemo(() => {
+    let sortedItems = [...allRows];
+
+    if (sortBY === "all") {
+      return sortedItems;
+    }
+    // Apply sorting
+    sortedItems = sortedItems?.filter((item) => item.type === sortBY);
+
+    return sortedItems;
+  }, [allRows, sortBY]);
 
   useEffect(() => {
     if (data) {
@@ -163,6 +178,10 @@ export default function NotificationsTable(props: Props) {
         ) {
           dispatch(addCommonDataHandler({ unread_count: unreadCount }));
         }
+      }
+
+      if (data.length < ITEMS_PER_BATCH) {
+        setIsEndReached(true);
       }
 
       setAllRows(data);
@@ -177,7 +196,12 @@ export default function NotificationsTable(props: Props) {
         toast.error(error.message || JSON.stringify(error));
         return;
       }
-      if (data) setAllRows((prev) => [...prev, ...data]);
+      if (data) {
+        if (data?.length < ITEMS_PER_BATCH) {
+          setIsEndReached(true);
+        }
+        setAllRows((prev) => [...prev, ...data]);
+      }
     },
   });
   const markMutation = useMutation({
@@ -215,100 +239,6 @@ export default function NotificationsTable(props: Props) {
       isKeychain: credentials.keychainLogin,
     });
   }
-  const [filterValue, setFilterValue] = React.useState<any>("");
-  const [statusFilter, setStatusFilter] = React.useState<any>("all");
-
-  const hasSearchFilter = Boolean(filterValue);
-
-  const filteredItems = React.useMemo(() => {
-    let filteredNotifications = [...allRows];
-
-    if (hasSearchFilter) {
-      filteredNotifications = filteredNotifications.filter((notification) =>
-        notification.account.toLowerCase().includes(filterValue.toLowerCase())
-      );
-    }
-    if (
-      groupSelected.length > 0 &&
-      groupSelected.length !== typeOptions.length
-    ) {
-      filteredNotifications = filteredNotifications.filter((notification) =>
-        groupSelected.includes(notification.type)
-      );
-    }
-
-    return filteredNotifications;
-  }, [allRows, filterValue, groupSelected]);
-
-  const renderCell = React.useCallback(
-    (notification: SDSNotification, columnKey) => {
-      const cellValue = notification[columnKey];
-
-      switch (columnKey) {
-        case "account":
-          const voteValue =
-            (notification.voted_rshares / globalData.recent_reward_claims) *
-            globalData.total_reward_fund *
-            globalData.median_price;
-
-          return (
-            <div className="flex flex-row items-center">
-              <div className="flex gap-2 items-center">
-                <Badge
-                  className="h-2 w-2"
-                  showOutline={false}
-                  color="success"
-                  size="sm"
-                  isInvisible={
-                    !!notification.is_read || notification.time < tempLastRead
-                  }
-                  placement="bottom-right"
-                  shape="circle"
-                >
-                  <SAvatar size="1xs" username={notification.account} />
-                </Badge>
-                <div>
-                  <SLink
-                    className=" hover:text-blue-500"
-                    href={`/@${notification.account}`}
-                  >
-                    {notification.account}
-                  </SLink>
-                  {notification.type === "vote" && (
-                    <p className="text-tiny">${voteValue?.toLocaleString()}</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          );
-
-        case "time":
-          return (
-            <div className="text-bold text-small">
-              <TimeAgoWrapper
-                className="text-bold text-tiny text-default-600"
-                created={notification.time * 1000}
-              />
-            </div>
-          );
-        case "type":
-          return (
-            <Chip
-              className="capitalize border-none gap-1 text-default-600"
-              color={typeColorMap[notification.type] as any}
-              size="sm"
-              variant="dot"
-            >
-              {cellValue}
-            </Chip>
-          );
-
-        default:
-          return cellValue;
-      }
-    },
-    [globalData]
-  );
 
   const topContent = React.useMemo(() => {
     return (
@@ -319,6 +249,7 @@ export default function NotificationsTable(props: Props) {
               <Button
                 size="sm"
                 isIconOnly
+                variant="flat"
                 isLoading={isValidating}
                 onPress={() => mutate()}
               >
@@ -342,16 +273,7 @@ export default function NotificationsTable(props: Props) {
         </div>
       </div>
     );
-  }, [
-    filterValue,
-    statusFilter,
-    allRows,
-    hasSearchFilter,
-    markMutation.isPending,
-    loginInfo,
-    isValidating,
-    isSelf,
-  ]);
+  }, [allRows, markMutation.isPending, loginInfo, isValidating, isSelf]);
 
   const getTargetUrl = (item: SDSNotification): string => {
     let targetUrl = "";
@@ -382,66 +304,138 @@ export default function NotificationsTable(props: Props) {
   };
 
   return (
-    <TableWrapper
-      filteredItems={filteredItems}
-      filterValue={filterValue}
-      renderCell={renderCell}
-      skipPaging
-      isCompact={false}
-      isLoading={isLoading}
-      stickyTop={isSelf}
-      topRowContent={
-        <div className="flex flex-col gap-1 w-full px-1">
-          <CheckboxGroup
-            className="gap-1"
-            orientation="horizontal"
-            value={groupSelected}
-            onValueChange={setGroupSelected}
-          >
-            {typeOptions.map((status) => (
-              <CustomCheckbox
-                className="capitalize"
-                key={status.uid}
-                value={status.uid}
+    <div>
+      <STable
+        isLoading={isLoading}
+        skipCard={isSelf}
+        title={!isSelf ? null : "Notifications"}
+        titleWrapperClassName="flex-row"
+        subTitle={() => topContent}
+        filterByValue={["account", "type"]}
+        searchEndContent={
+          <Dropdown>
+            <DropdownTrigger>
+              <Button
+                size="sm"
+                variant="flat"
+                startContent={<IoFilterOutline size={18} />}
+                className="font-semibold text-small"
               >
-                {capitalize(status.name)}
-              </CustomCheckbox>
-            ))}
-          </CheckboxGroup>
-        </div>
-      }
-      classNames={{
-        base: ["w-full", "overflow-auto", "mb-4", "h-full"],
-      }}
-      sortDescriptor={{ column: "time", direction: "descending" }}
-      initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
-      tableColumns={columns}
-      onFilterValueChange={setFilterValue}
-      bottomContent={
-        allRows?.length > 0 && !isLoading ? (
-          <div className="flex w-full justify-center">
-            <Button
-              size="sm"
-              isDisabled={isLoading || loadMoreMutation.isPending}
-              isLoading={loadMoreMutation.isPending}
-              radius="full"
-              variant="shadow"
-              onPress={() => {
-                updateOffset();
-                loadMoreMutation.mutate(getOffset());
-              }}
+                {sortOptions?.find((s) => s.uid === sortBY)?.name}
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              disallowEmptySelection
+              aria-label="Table Columns"
+              closeOnSelect={true}
+              selectedKeys={[sortBY]}
+              selectionMode="single"
+              onSelectionChange={(item) =>
+                setSortBy(item.currentKey?.toString() as any)
+              }
             >
-              Load More
-            </Button>
+              {sortOptions.map((status) => (
+                <DropdownItem key={status.uid} className="capitalize">
+                  {capitalize(status.name)}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+        }
+        data={filteredItems}
+        bodyClassName={
+          isSelf ? "flex flex-col gap-2" : "grid grid-cols-1 sm:grid-cols-2"
+        }
+        itemsPerPage={ITEMS_PER_BATCH}
+        titleClassName="pb-4 w-full"
+        tableRow={(notification: SDSNotification) => {
+          const voteAmount = (
+            (notification.voted_rshares / globalData.recent_reward_claims) *
+            globalData.total_reward_fund *
+            globalData.median_price
+          )?.toLocaleString();
+
+          const isVote = notification.type === "vote";
+          return (
+            <SLink
+              onClick={() => onOpenChange?.(!isOpen)}
+              href={getTargetUrl(notification)}
+              className="flex gap-2 items-start"
+            >
+              <Badge
+                className="h-2 w-2"
+                showOutline={false}
+                color="success"
+                size="sm"
+                isInvisible={
+                  !!notification.is_read || notification.time < tempLastRead
+                }
+                placement="bottom-right"
+                shape="circle"
+              >
+                <SAvatar size="1xs" username={notification.account} />
+              </Badge>
+
+              <div className=" flex flex-col gap-2">
+                <div className="flex flex-row gap-2 items-center">
+                  <SLink
+                    className=" hover:text-blue-500"
+                    href={`/@${notification.account}`}
+                  >
+                    {notification.account}
+                  </SLink>
+
+                  <Chip
+                    className="capitalize border-none gap-1 text-default-600"
+                    color={typeColorMap[notification.type] as any}
+                    size="sm"
+                    variant={isVote ? "flat" : "dot"}
+                  >
+                    {isVote ? `$${voteAmount}` : `${notification.type}`}
+                  </Chip>
+                </div>
+
+                <div className="flex flex-row gap-2">
+                  <TimeAgoWrapper
+                    className="text-bold text-default-600"
+                    created={notification.time * 1000}
+                  />
+                  {/* •
+                  <p className="text-bold text-xs capitalize">
+                    {notification.percent / 100}%
+                  </p> */}
+                </div>
+              </div>
+            </SLink>
+          );
+        }}
+        loader={
+          <div className="flex flex-row w-full justify-center">
+            <Spinner size="sm" />
           </div>
-        ) : null
-      }
-      topContentDropdown={topContent}
-      cellWrapper={(item, children) => (
-        <SLink href={getTargetUrl(item)} onClick={() => onOpenChange(!isOpen)}>
-          {children}
-        </SLink>
-      )}
-    />
+        }
+        endContent={(items) =>
+          allRows?.length > 0 &&
+          items?.length === allRows?.length &&
+          !isEndReached ? (
+            <div className="flex w-full justify-center">
+              <Button
+                size="sm"
+                isDisabled={isLoading || loadMoreMutation.isPending}
+                isLoading={loadMoreMutation.isPending}
+                radius="full"
+                variant="shadow"
+                onPress={() => {
+                  updateOffset();
+                  loadMoreMutation.mutate(getOffset());
+                }}
+              >
+                {loadMoreMutation.isPending ? "Loading" : `Load more`}
+              </Button>
+            </div>
+          ) : null
+        }
+      />
+    </div>
   );
 }

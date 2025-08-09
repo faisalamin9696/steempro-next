@@ -130,7 +130,7 @@ function SnippetItem(props: Props) {
         </p>
         <MarkdownViewer
           text={snippet.body}
-          className="max-h-36 overflow-y-auto px-2 prose-a:pointer-events-none"
+          className="max-h-36 overflow-y-auto px-2 prose-a:pointer-events-none !text-sm"
         />
       </Card>
       <div className=" p-2">

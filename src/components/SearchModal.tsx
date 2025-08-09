@@ -1,150 +1,103 @@
-import { Button } from "@heroui/button";
-import React, { useEffect, useMemo, useState } from "react";
-import { Tab, Tabs } from "@heroui/tabs";
-import { Input } from "@heroui/input";
-import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
-import useSWR from "swr";
-import LoadingCard from "./LoadingCard";
-import SAvatar from "./ui/SAvatar";
-import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
-import { FaSearch } from "react-icons/fa";
-import Reputation from "./Reputation";
-import InfiniteScroll from "react-infinite-scroll-component";
-import EmptyList from "./EmptyList";
-import { FeedBodyLength } from "@/constants/AppConstants";
-import CommentListLayout from "./comment/layouts/CommentListLayout";
-import { useDeviceInfo } from "@/hooks/useDeviceInfo";
-import { AsyncUtils } from "@/utils/async.utils";
-import { twMerge } from "tailwind-merge";
+import { useState, useCallback, useRef } from "react";
+import { FiSearch, FiTrendingUp, FiUser } from "react-icons/fi";
 import SModal from "./ui/SModal";
+import { Input } from "@heroui/input";
+import { Tab, Tabs } from "@heroui/tabs";
+import { Button } from "@heroui/button";
+import { FeedBodyLength } from "@/constants/AppConstants";
+import InfiniteScroll from "./ui/InfiniteScroll";
+import { fetchSds } from "@/constants/AppFunctions";
+import CommentListLayout from "./comment/layouts/CommentListLayout";
+import SAvatar from "./ui/SAvatar";
+import Reputation from "./Reputation";
+import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
+import { twMerge } from "tailwind-merge";
 
 type SearchTypes = "posts" | "comments" | "tags" | "people";
+
+const getSearchApi = (
+  type: SearchTypes,
+  query: string,
+  author?: string,
+  limit = 30,
+  offset = 0
+) => {
+  query = query.trim();
+  author = author?.trim();
+  const searchParams = `${"any"}/${"null"}/${FeedBodyLength}/${"time"}/${"DESC"}/${limit}/${offset}`;
+  switch (type) {
+    case "posts":
+      if (author)
+        return `/content_search_api/getPostsByAuthorText/${author}/${query}/${searchParams}`;
+      else return `/content_search_api/getPostsByText/${query}/${searchParams}`;
+    case "comments":
+      if (author)
+        return `/content_search_api/getCommentsByAuthorText/${author}/${query}/${searchParams}`;
+      else
+        return `/content_search_api/getCommentsByText/${query}/${searchParams}`;
+    case "tags":
+      if (author)
+        return `/content_search_api/getPostsByAuthorTagsText/${author}/${query}/${query}/${searchParams}`;
+      else
+        return `/content_search_api/getPostsByTagsText/${query}/${query}/${searchParams}`;
+    default:
+      query = query.replace("@", "");
+      return `/accounts_api/getAccountsByPrefix/${query}/${"null"}/name,reputation,posting_json_metadata,created/${limit}/${offset}`;
+  }
+};
 
 interface Props {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
 }
 
-export default function SearchModal(props: Props) {
+export const SearchModal = (props: Props) => {
   const { isOpen, onOpenChange } = props;
-  const loginInfo = useAppSelector((state) => state.loginReducer.value);
-  const [searchType, setSearchType] = useState<SearchTypes>("posts");
-  let [searchText, setSearchText] = useState("");
-  let [query, setQuery] = useState("");
-  const { isMobile } = useDeviceInfo();
+  const [query, setQuery] = useState("");
+  const [author, setAuthor] = useState("");
+  const [activeTab, setActiveTab] = useState<SearchTypes>("posts");
+  const [searchParams, setSearchParams] = useState<{
+    query: string;
+    author: string;
+    activeTab: SearchTypes;
+  } | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const searchTriggerRef = useRef(0);
 
-  const [searchAuthor, setSearchAuthor] = useState("");
-  const [searchTags, setSearchTags] = useState("");
+  const handleSearch = useCallback(() => {
+    if (query.trim().length === 0) return;
+    setIsSearching(true);
+    // Update search params which will trigger the InfiniteScroll
+    setSearchParams({
+      query,
+      author,
+      activeTab,
+    });
+    searchTriggerRef.current += 1; // Force InfiniteScroll to reset
+    setIsSearching(false);
+  }, [query, author, activeTab]);
 
-  const filters = `any/${
-    loginInfo.name || null
-  }/${FeedBodyLength}/time/DESC/100`;
-  const POST_BY_TEXT_URL = `/content_search_api/getPostsByText/"${query?.trim()}"/${filters}`;
-  const POST_BY_TAGS_TEXT_URL = `/content_search_api/getPostsByTagsText/${searchTags
-    .replaceAll("@", "")
-    ?.replaceAll("#", "")
-    .toLowerCase()
-    .trim()}/"${query}"/${filters}`;
-  const POST_BY_AUTHOR_TEXT_URL = `/content_search_api/getPostsByAuthorText/${searchAuthor
-    .replaceAll("@", "")
-    ?.replaceAll("#", "")
-    .toLowerCase()
-    .trim()}/"${query}"/${filters}`;
+  const getKey = useCallback(
+    (pageIndex: number, previousPageData: any[] | null) => {
+      if (!searchParams) return null; // Don't search until button is clicked
+      if (previousPageData && previousPageData.length === 0) return null;
 
-  const COMMENTS_BY_TEXT_URL = `/content_search_api/getCommentsByText/"${query?.trim()}"/${filters}`;
-  const COMMENTS_BY_AUTHOR_TEXT_URL = `/content_search_api/getCommentsByAuthorText/${searchAuthor
-    .replaceAll("@", "")
-    ?.replaceAll("#", "")
-    .toLowerCase()
-    .trim()}/${query}/${filters}`;
-  const PEOPLE_URL = `/accounts_api/getAccountsByPrefix/${query?.trim()}/${
-    loginInfo.name || "null"
-  }/name,reputation,posting_json_metadata,created`;
+      return getSearchApi(
+        searchParams.activeTab,
+        searchParams.query,
+        searchParams.author,
+        30,
+        pageIndex * 30
+      );
+    },
+    [searchParams, searchTriggerRef.current] // Include trigger ref to force refresh
+  );
 
-  const [url, setUrl] = useState<string | undefined>();
-  const [rows, setRows] = useState<any[]>([]);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const { data, isLoading } = useSWR(url, fetchSds<any[]>, {
-    refreshInterval: 0,
-    revalidateOnReconnect: false,
-  });
-
-  useEffect(() => {
-    if (searchText)
-      setQuery(searchText?.replaceAll("@", "")?.replaceAll("#", ""));
-  }, [searchText]);
-
-  useMemo(() => {
-    if (data) {
-      setRows(data.slice(0, 8));
-    }
-  }, [data]);
-
-  function getUrl() {
-    switch (searchType) {
-      case "posts":
-        if (query && searchAuthor) return POST_BY_AUTHOR_TEXT_URL;
-        else query;
-        return POST_BY_TEXT_URL;
-      case "comments":
-        if (query && searchAuthor) return COMMENTS_BY_AUTHOR_TEXT_URL;
-        else return COMMENTS_BY_TEXT_URL;
-      case "tags":
-        if (query && searchTags) return POST_BY_TAGS_TEXT_URL;
-        else return POST_BY_TEXT_URL;
-      case "people":
-        return PEOPLE_URL;
-
-      default:
-        return undefined;
-    }
-  }
-
-  function handleSearch() {
-    setUrl(!!query ? getUrl() : undefined);
-  }
-
-  function ListLoader(): React.ReactNode {
-    return (
-      <div className="flex justify-center items-center">
-        <Button
-          color="default"
-          variant="light"
-          className="self-center"
-          isIconOnly
-          isLoading={loadingMore}
-          isDisabled
-          onPress={handleEndReached}
-        ></Button>
-      </div>
-    );
-  }
-
-  function loadMoreRows(mainData: Feed[], rowsData: Feed[]) {
-    let newStart = mainData?.slice(rowsData?.length ?? 0);
-    const newRow = newStart?.slice(0, 8);
-    return newRow ?? [];
-  }
-
-  async function handleEndReached() {
-    if (data) {
-      setLoadingMore(true);
-      await AsyncUtils.sleep(2.5);
-      const newRows = loadMoreRows(data, rows);
-      setRows([...rows, ...newRows!]);
-      setLoadingMore(false);
-    }
-  }
-
-  function handleKeyPress(e) {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       handleSearch();
     }
-  }
-
-  useMemo(() => {
-    handleSearch();
-  }, [searchType]);
+  };
 
   return (
     <SModal
@@ -156,142 +109,165 @@ export default function SearchModal(props: Props) {
         backdrop: "blur",
         placement: "top",
       }}
-      title={() => "Search"}
       body={(onClose) => (
-        <div className=" flex flex-col gap-4">
-          <div className=" flex items-center gap-2">
-            <Button
-              isIconOnly
-              onPress={handleSearch}
-              size="sm"
-              color="primary"
-              variant="flat"
-            >
-              <FaSearch />
-            </Button>
-            <Input
-              size="sm"
-              isClearable
-              className="flex-[7]"
-              placeholder="Search..."
-              autoCapitalize="off"
-              onKeyUp={handleKeyPress}
-              value={searchText}
-              onClear={() => setSearchText("")}
-              onValueChange={(value) => setSearchText(value)}
-            />
-
-            {searchType !== "people" && searchType !== "tags" && (
-              <Input
-                size="sm"
-                value={searchAuthor}
-                onValueChange={(value) => setSearchAuthor(value)}
-                onKeyUp={handleKeyPress}
-                autoCapitalize="off"
-                className=" flex-[3]"
-                placeholder="Author"
-              />
-            )}
-
-            {searchType === "tags" && (
-              <Input
-                size="sm"
-                value={searchTags}
-                autoCapitalize="off"
-                onValueChange={(value) => setSearchTags(value)}
-                onKeyUp={handleKeyPress}
-                className=" flex-[3]"
-                placeholder="Hashtag"
-              />
-            )}
-          </div>
-
-          <Tabs
-            variant={"light"}
-            radius={isMobile ? "full" : "sm"}
-            disableAnimation={isMobile}
-            size="sm"
-            onSelectionChange={(key) => {
-              setSearchType(key?.toString() as SearchTypes);
-            }}
-            aria-label="Search filters"
-          >
-            <Tab key="posts" title="Posts" />
-            <Tab key="comments" title="Comments" />
-            <Tab key="tags" title="Tag" />
-            <Tab key="people" title="People" />
-          </Tabs>
-
-          {isLoading && <LoadingCard />}
-
-          <InfiniteScroll
-            className="gap-2"
-            dataLength={rows?.length}
-            next={handleEndReached}
-            hasMore={rows?.length < (data?.length ?? 0)}
-            loader={<ListLoader />}
-            scrollableTarget="scrollDiv"
-            endMessage={
-              !isLoading && (
-                <EmptyList text={data ? undefined : "Search anything"} />
-              )
-            }
-          >
-            <div className=" flex flex-col gap-2 px-1">
-              {rows?.map((item, index) => {
-                const posting_json_metadata = JSON.parse(
-                  item?.posting_json_metadata || "{}"
-                );
-                return item?.["permlink"] ? (
-                  <div
-                    key={index}
-                    className="flex flex-col gap-2"
-                    onClick={onClose}
-                  >
-                    <CommentListLayout compact comment={item} isSearch />
-                  </div>
-                ) : (
-                  <div
-                    key={index}
-                    className={`flex items-start h-full dark:bg-foreground/10
-                                                bg-white  overflow-hidden rounded-lg shadow-lg p-2 gap-4`}
-                  >
-                    <SAvatar
-                      onPress={onClose}
-                      className="cursor-pointer"
-                      size="sm"
-                      username={item?.name || ""}
-                    />
-                    <div className="flex flex-col items-start justify-center">
-                      <div className="flex items-start  gap-2">
-                        <div className=" flex-col items-start">
-                          <h4 className="text-sm font-semibold leading-none text-default-600">
-                            {posting_json_metadata?.profile?.name}
-                          </h4>
-                          <h5
-                            className={twMerge(
-                              "text-sm tracking-tight text-default-500"
-                            )}
-                          >
-                            @{item?.name}
-                          </h5>
-                        </div>
-                        <Reputation reputation={item?.reputation} />
-                      </div>
-                      <div className="flex text-sm gap-1 text-default-600 items-center">
-                        <p className="text-default-500 text-tiny">Joined</p>
-                        <TimeAgoWrapper
-                          className="text-tiny"
-                          created={(item?.created || 0) * 1000}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+        <>
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 rounded-full bg-primary text-primary-foreground">
+                <FiSearch className="w-5 h-5" />
+              </div>
+              <div className="flex flex-col">
+                <div>
+                  <h2 className="text-xl font-bold text-card-foreground">
+                    Search
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Discover posts, comments, tags, and people
+                  </p>
+                </div>
+              </div>
             </div>
-          </InfiniteScroll>
-        </div>
+
+            <div className="flex flex-col gap-2 justify-evenly">
+              <div className="flex flex-row gap-3">
+                <Input
+                  className="flex-1"
+                  size="md"
+                  placeholder={`Search for ${activeTab}...`}
+                  value={query}
+                  onValueChange={setQuery}
+                  onKeyDown={handleKeyDown}
+                  startContent={<FiSearch />}
+                  isClearable
+                />
+
+                <Button
+                  variant="flat"
+                  color="primary"
+                  size="md"
+                  onPress={handleSearch}
+                  isLoading={isSearching}
+                  endContent={<FiSearch size={16} />}
+                >
+                  Search
+                </Button>
+              </div>
+
+              {activeTab !== "people" && (
+                <Input
+                  size="md"
+                  placeholder={`Filter by author...`}
+                  startContent={<FiUser />}
+                  value={author}
+                  onValueChange={setAuthor}
+                  onKeyDown={handleKeyDown}
+                  isClearable
+                />
+              )}
+            </div>
+
+            <Tabs
+              variant="underlined"
+              color="primary"
+              size="md"
+              selectedKey={activeTab}
+              className="mt-2"
+              onSelectionChange={(key) => {
+                setActiveTab(key as typeof activeTab);
+                // Reset search when tab changes
+                setSearchParams(null);
+              }}
+              classNames={{
+                tab: "!w-full capitalize px-0",
+                tabList: "w-full capitalize px-0",
+              }}
+            >
+              {["posts", "comments", "tags", "people"].map((tab) => (
+                <Tab key={tab} value={tab} title={tab}>
+                  {!searchParams ? (
+                    <div className="flex flex-col text-center py-12">
+                      <div className="p-4 rounded-full bg-primary/10 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                        <FiTrendingUp className="w-8 h-8 text-primary" />
+                      </div>
+                      <h3 className="font-semibold text-card-foreground mb-2">
+                        Type and click search
+                      </h3>
+                      <p className="text-default-500 text-sm">
+                        Click the search button to find {tab} on the blockchain
+                      </p>
+                    </div>
+                  ) : (
+                    <div>
+                      <InfiniteScroll
+                        getKey={getKey}
+                        fetcher={fetchSds}
+                        keyExtractor={(item, index) => index?.toString() || ""}
+                        renderItem={(item, index) => {
+                          const posting_json_metadata = JSON.parse(
+                            item?.posting_json_metadata || "{}"
+                          );
+                          return activeTab !== "people" ? (
+                            <div
+                              key={index}
+                              className="flex flex-col gap-2"
+                              onClick={onClose}
+                            >
+                              <CommentListLayout
+                                compact
+                                comment={item}
+                                isSearch
+                              />
+                            </div>
+                          ) : (
+                            <div
+                              key={index}
+                              className={`flex items-start h-full dark:bg-foreground/10
+                                                bg-white  overflow-hidden rounded-lg shadow-lg p-2 gap-4`}
+                            >
+                              <SAvatar
+                                onPress={onClose}
+                                className="cursor-pointer"
+                                size="sm"
+                                username={item?.name || ""}
+                              />
+                              <div className="flex flex-col items-start justify-center">
+                                <div className="flex items-start  gap-2">
+                                  <div className=" flex-col items-start">
+                                    <h4 className="text-sm font-semibold leading-none text-default-600">
+                                      {posting_json_metadata?.profile?.name}
+                                    </h4>
+                                    <h5
+                                      className={twMerge(
+                                        "text-sm tracking-tight text-default-500"
+                                      )}
+                                    >
+                                      @{item?.name}
+                                    </h5>
+                                  </div>
+                                  <Reputation reputation={item?.reputation} />
+                                </div>
+                                <div className="flex text-sm gap-1 text-default-600 items-center">
+                                  <p className="text-default-500 text-tiny">
+                                    Joined
+                                  </p>
+                                  <TimeAgoWrapper
+                                    className="text-tiny"
+                                    created={(item?.created || 0) * 1000}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        }}
+                        pageSize={30}
+                      />
+                    </div>
+                  )}
+                </Tab>
+              ))}
+            </Tabs>
+          </div>
+        </>
       )}
       footer={(onClose) => (
         <Button color="danger" variant="flat" onPress={onClose} size="sm">
@@ -300,4 +276,4 @@ export default function SearchModal(props: Props) {
       )}
     />
   );
-}
+};

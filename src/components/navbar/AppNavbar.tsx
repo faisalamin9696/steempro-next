@@ -40,7 +40,6 @@ import { useLogin } from "../auth/AuthProvider";
 import AppDrawer from "./components/Drawer";
 import AccountsModal from "../auth/AccountsModal";
 import NotificationsModal from "../NotificationsModal";
-import SearchModal from "../SearchModal";
 import SAvatar from "../ui/SAvatar";
 import { twMerge } from "tailwind-merge";
 import SLink from "../ui/SLink";
@@ -48,7 +47,7 @@ import { AsyncUtils } from "@/utils/async.utils";
 import { Spinner } from "@heroui/spinner";
 import { mutate } from "swr";
 import SModal from "../ui/SModal";
-import { Chip } from "@heroui/chip";
+import { SearchModal } from "../SearchModal";
 // import Lottie from "lottie-react";
 
 export async function refreshData(username?: string | null) {

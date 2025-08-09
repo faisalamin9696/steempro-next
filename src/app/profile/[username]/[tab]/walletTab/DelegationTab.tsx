@@ -226,7 +226,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                 className="text-sm cursor-pointer hover:bg-success-100 transition-colors"
               >
                 <div className="flex flex-row gap-2 items-center">
-                  <RiArrowLeftDownLine size={20} />
+                  <RiArrowLeftDownLine size={16} />
                   {vestToSteem(
                     data.vests_in,
                     globalData.steem_per_share
@@ -253,7 +253,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                 }
               >
                 <div className="flex flex-row gap-2 items-center">
-                  <RiArrowRightUpLine size={20} />
+                  <RiArrowRightUpLine size={16} />
 
                   {vestToSteem(
                     data.vests_out,
@@ -282,7 +282,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                 }
               >
                 <div className="flex flex-row gap-2 items-center">
-                  <IoSwapHorizontal size={20} />
+                  <IoSwapHorizontal size={16} />
                   {vestToSteem(
                     totalExpiring,
                     globalData.steem_per_share

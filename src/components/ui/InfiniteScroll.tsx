@@ -19,6 +19,7 @@ type InfiniteScrollProps<T> = {
   loadingComponent?: React.ReactNode;
   errorComponent?: React.ReactNode;
   className?: string;
+  itemsClassName?: string;
   loader?: React.ReactNode;
   keyExtractor?: (item: T, index: number) => string;
   initialSize?: number;
@@ -40,6 +41,7 @@ const InfiniteScroll = <T,>({
   ),
   errorComponent = <EmptyList text="Error loading data" />,
   className = "",
+  itemsClassName = "",
   loader = (
     <div style={{ textAlign: "center", padding: "40px" }}>
       <Spinner variant="gradient" size="md" />
@@ -84,7 +86,7 @@ const InfiniteScroll = <T,>({
   // Enhanced load more function
   const loadMore = useCallback(async () => {
     if (isFetching || isLoadingMore || isReachingEnd) return;
-    
+
     setIsFetching(true);
     try {
       await AsyncUtils.sleep(1.5); // Optional delay for smoother UX
@@ -107,7 +109,12 @@ const InfiniteScroll = <T,>({
 
     const handleIntersect: IntersectionObserverCallback = (entries) => {
       const [entry] = entries;
-      if (entry.isIntersecting && !isFetching && !isLoadingMore && !isReachingEnd) {
+      if (
+        entry.isIntersecting &&
+        !isFetching &&
+        !isLoadingMore &&
+        !isReachingEnd
+      ) {
         loadMore();
       }
     };
@@ -143,7 +150,8 @@ const InfiniteScroll = <T,>({
             ? className
               ? className
               : "grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4"
-            : "flex flex-col gap-2"
+            : "flex flex-col gap-2",
+          itemsClassName
         )}
       >
         {items.map((item, index) => (
@@ -154,9 +162,9 @@ const InfiniteScroll = <T,>({
       </div>
 
       {/* Sentinel element for intersection observer */}
-      <div ref={sentinelRef} style={{ height: '1px' }} />
+      <div ref={sentinelRef} style={{ height: "1px" }} />
 
-      {(isLoadingMore || isValidating) && loader}
+      {(isFetching || isLoadingMore || isValidating) && loader}
 
       {isReachingEnd && !isEmpty && (
         <div style={{ textAlign: "center", padding: "10px" }}>

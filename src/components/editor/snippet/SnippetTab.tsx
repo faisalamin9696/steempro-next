@@ -64,19 +64,19 @@ function SnippetTab(props: Props) {
         <>
           <div className=" flex flex-row items-center justify-between gap-4">
             <Input
-              radius="full"
+              size="sm"
               classNames={{
                 inputWrapper:
                   "text-default-500 bg-default-400/20 dark:bg-default-500/20",
               }}
-              placeholder="Search by title..."
-              size="md"
+              placeholder="Search..."
               value={filterValue}
               onValueChange={setFilterValue}
               startContent={<MdSearch size={20} />}
               type="search"
             />
             <Button
+              size="sm"
               onPress={() => {
                 setAddNew({ isOpen: true });
               }}

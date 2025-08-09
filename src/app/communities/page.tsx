@@ -77,7 +77,7 @@ export default function CommunitiesPage() {
       </div>
       <STable
         titleIcon={HiUserGroup}
-        filterByValue={["title", "account"]}
+        filterByValue={["title", "account", "about"]}
         data={filteredItems || []}
         itemsPerPage={25}
         titleClassName="w-full"

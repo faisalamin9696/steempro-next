@@ -36,9 +36,8 @@ export default function NotificationsModal(props: Props) {
         <Tabs
           variant={"solid"}
           classNames={{
-            tabList: "gap-4 w-full relative rounded-none p-0",
-            cursor: "w-full bg-primary-200",
-            tab: " px-0 h-12",
+            tabList: "gap-4",
+            cursor: "bg-primary-200",
           }}
         >
           <Tab
@@ -68,6 +67,7 @@ export default function NotificationsModal(props: Props) {
           </Tab>
           <Tab
             key="chat"
+            
             title={
               <div className="flex flex-row gap-2 items-center">
                 <p>Chat</p>

@@ -8,6 +8,10 @@ import { twMerge } from "tailwind-merge";
 import SLink from "@/components/ui/SLink";
 import { FaRankingStar } from "react-icons/fa6";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
+import { PiShootingStar } from "react-icons/pi";
+import { GiStarMedal } from "react-icons/gi";
+import { IoMedalSharp } from "react-icons/io5";
+import { FaMedal } from "react-icons/fa";
 
 interface Props {
   community: Community;
@@ -94,23 +98,23 @@ export const CommunityCard = memo((props: Props) => {
       <div className={twMerge("flex flex-row gap-4", compact ? "text-sm" : "")}>
         <div className="flex gap-2 items-center " title="Rank">
           <p className=" text-default-500">
-            <FaRankingStar size={18} />
+            <FaMedal size={18} />
           </p>
-          <p className="font-semibold text-default-600 ">{community.rank}</p>
+          <p className="font-semibold text-default-600 text-sm">{community.rank}</p>
         </div>
         <div className="flex gap-1 items-center">
-          <p className="font-semibold text-default-600 ">
+          <p className="font-semibold text-default-600 text-sm">
             {abbreviateNumber(community.count_subs)}
           </p>
-          <p className=" text-default-500">
+          <p className=" text-default-500 text-sm">
             {compact ? "Subs" : "Subscribers"}
           </p>
         </div>
         <div className="flex gap-1 items-center">
-          <p className="font-semibold text-default-600 ">
+          <p className="font-semibold text-default-600 text-sm">
             ${abbreviateNumber(community.count_pending)}
           </p>
-          <p className="text-default-500">
+          <p className="text-default-500 text-sm">
             {compact ? "Reward" : "Pending Reward"}
           </p>
         </div>

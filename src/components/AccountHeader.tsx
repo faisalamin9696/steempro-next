@@ -11,7 +11,7 @@ import { IoMdShareAlt } from "react-icons/io";
 import { AppLink } from "@/constants/AppConstants";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { Accordion, AccordionItem } from "@heroui/accordion";
-import ProfileInfoCard2 from "./ProfileInfoCard";
+import ProfileInfoCard from "./ProfileInfoCard";
 import { useSession } from "next-auth/react";
 import SLink from "./ui/SLink";
 import { usePathname, useRouter } from "next/navigation";
@@ -168,9 +168,9 @@ export default function AccountHeader(props: Props) {
           key="about"
           aria-label="About"
           title="About"
-          classNames={{ title: "text-sm", base: "py-2" }}
+          classNames={{ title: "text-sm", base: "py-2", content:'p-0' }}
         >
-          <ProfileInfoCard2 compact account={profileInfo} />
+          <ProfileInfoCard className="!bg-transparent" compact account={profileInfo} />
         </AccordionItem>
       </Accordion>
 

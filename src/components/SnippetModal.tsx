@@ -21,9 +21,8 @@ function SnippetModal(props: Props) {
       body={() => (
         <div className=" flex flex-col gap-4">
           <Tabs
-            radius="full"
             color="default"
-            size="md"
+            size="sm"
             aria-label="snippet tab"
           >
             <Tab key="snippet" title="Snippets">

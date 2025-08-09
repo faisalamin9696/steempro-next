@@ -2,42 +2,31 @@
 
 import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
 import { Button } from "@heroui/button";
-import { Chip } from "@heroui/chip";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { markasReadChat } from "@/libs/steem/condenser";
 import { getCredentials, getSessionKey } from "@/utils/user";
-import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { useSession } from "next-auth/react";
 import SLink from "../../ui/SLink";
-import TimeAgoWrapper from "../../wrappers/TimeAgoWrapper";
 import SAvatar from "../../ui/SAvatar";
 import { useLogin } from "../../auth/AuthProvider";
-import TableWrapper from "../../wrappers/TableWrapper";
-import moment from "moment";
 import { getUnreadChatsHeads } from "@/libs/steem/mysql";
 import { Memo } from "@steempro/dsteem";
 import { MdOutlineRefresh } from "react-icons/md";
 import { addCommonDataHandler } from "@/hooks/redux/reducers/CommonReducer";
+import STable from "@/components/ui/STable";
+import { Chip } from "@heroui/chip";
+import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
+import moment from "moment";
+import { Spinner } from "@heroui/spinner";
 
 interface Props {
   onOpenChange: (isOpen: boolean) => void;
   isOpen: boolean;
 }
 
-const INITIAL_VISIBLE_COLUMNS = [
-  "sender_usr",
-  "latest_timestamp",
-  "message_count",
-];
-
-const columns = [
-  { name: "USER", uid: "sender_usr", sortable: true },
-  { name: "TIME", uid: "latest_timestamp", sortable: true },
-  { name: "MESSAGES", uid: "message_count", sortable: true },
-];
 
 const ITEMS_PER_BATCH = 30;
 
@@ -45,15 +34,12 @@ export default function ChatNotificationsTable(props: Props) {
   const { isOpen, onOpenChange } = props;
 
   const { data: session } = useSession();
-  const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
-
   const isSelf = session?.user?.name === loginInfo.name;
   let { authenticateUser, isAuthorized, credentials } = useLogin();
   const dispatch = useAppDispatch();
   const [allRows, setAllRows] = useState<UnReadChat[]>([]);
   const [page, setPage] = useState(1);
-  const [endReached, setEndReached] = useState(false);
   const commonData = useAppSelector((state) => state.commonReducer.values);
 
   function getFromAndTo() {
@@ -78,11 +64,15 @@ export default function ChatNotificationsTable(props: Props) {
     }
   );
 
+  const [isEndReached, setIsEndReached] = useState(
+    (data?.length || 0) < ITEMS_PER_BATCH
+  );
+
   useEffect(() => {
     if (data) {
       setAllRows(data);
       if (data.length < ITEMS_PER_BATCH) {
-        setEndReached(true);
+        setIsEndReached(true);
       }
     }
   }, [data]);
@@ -107,7 +97,7 @@ export default function ChatNotificationsTable(props: Props) {
         setAllRows((prev) => [...prev, ...data]);
         setPage(page + 1);
         if (data.length < ITEMS_PER_BATCH) {
-          setEndReached(true);
+          setIsEndReached(true);
         }
       }
     },
@@ -154,91 +144,6 @@ export default function ChatNotificationsTable(props: Props) {
       isKeychain: credentials.keychainLogin,
     });
   }
-  const [filterValue, setFilterValue] = React.useState<any>("");
-  const hasSearchFilter = Boolean(filterValue);
-  const filteredItems = React.useMemo(() => {
-    let filteredNotifications = [...allRows];
-
-    if (hasSearchFilter) {
-      filteredNotifications = filteredNotifications.filter((notification) =>
-        notification.sender_usr
-          .toLowerCase()
-          .includes(filterValue.toLowerCase())
-      );
-    }
-    return filteredNotifications;
-  }, [allRows, filterValue]);
-
-  const renderCell = React.useCallback(
-    (notification: UnReadChat, columnKey) => {
-      const cellValue = notification[columnKey];
-      switch (columnKey) {
-        case "sender_usr":
-          return (
-            <div className="flex flex-col gap-1 items-start">
-              <div className="flex gap-2 items-center">
-                <SAvatar size="1xs" username={notification.sender_usr} />
-                <div className="flex flex-col gap-1">
-                  <SLink
-                    className=" hover:text-blue-500"
-                    href={`/@${notification.sender_usr}?chat`}
-                  >
-                    {notification.sender_usr}
-                  </SLink>
-                  <div className=" flex flex-row items-center gap-1">
-                    <p className="text-tiny opacity-70 font-bold text-blue-500">
-                      {notification.is_self ? "You:" : ""}
-                    </p>
-                    {credentials?.memo ? (
-                      <div className="w-20 md:w-40">
-                        <p className="truncate text-sm opacity-disabled">
-                          {Memo.decode(
-                            credentials.memo,
-                            notification.latest_message
-                          )?.replace("#", "")}
-                        </p>
-                      </div>
-                    ) : (
-                      <p
-                        className="text-tiny opacity-disabled cursor-pointer"
-                        onClick={handleAddMemo}
-                      >
-                        Encrypted message
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-
-        case "latest_timestamp":
-          return (
-            <div className="text-bold text-small">
-              <TimeAgoWrapper
-                className="text-bold text-tiny text-default-600"
-                created={moment(notification.latest_timestamp).unix() * 1000}
-              />
-            </div>
-          );
-        case "message_count":
-          return notification.message_count > 0 ? (
-            <Chip
-              className="capitalize border-none gap-1"
-              color={notification.is_self ? "default" : "secondary"}
-              size="sm"
-              variant="solid"
-            >
-              {cellValue}
-            </Chip>
-          ) : null;
-
-        default:
-          return cellValue;
-      }
-    },
-    [globalData]
-  );
 
   const getTargetUrl = (item: UnReadChat): string => {
     let targetUrl = `/@${item.sender_usr}${"?chat"}`;
@@ -247,97 +152,143 @@ export default function ChatNotificationsTable(props: Props) {
 
   const topContent = React.useMemo(() => {
     return (
-      <div className="flex flex-col gap-4 p-1">
-        <div className="flex justify-between gap-3 items-end">
-          <div className="flex gap-3">
-            {isSelf && (
-              <Button
-                size="sm"
-                isIconOnly
-                isLoading={isValidating}
-                onPress={() => mutate()}
-              >
-                <MdOutlineRefresh size={18} />
-              </Button>
-            )}
+      <div className="flex flex-row gap-2">
+        {isSelf && (
+          <Button
+            size="sm"
+            isIconOnly
+            isLoading={isValidating}
+            onPress={() => mutate()}
+          >
+            <MdOutlineRefresh size={18} />
+          </Button>
+        )}
 
-            {isSelf && (
-              <Button
-                size="sm"
-                variant="solid"
-                onPress={handleMarkRead}
-                isLoading={markMutation.isPending}
-                isDisabled={
-                  markMutation.isPending ||
-                  (commonData.unread_count_chat < 1 &&
-                    allRows.reduce((sum, item) => sum + item.message_count, 0) <
-                      1)
-                }
-                color="secondary"
-                // endContent={<IoCheckmarkDone className="text-lg" />}
-              >
-                Mark as seen
-              </Button>
-            )}
-          </div>
-        </div>
+        {isSelf && (
+          <Button
+            size="sm"
+            variant="solid"
+            onPress={handleMarkRead}
+            isLoading={markMutation.isPending}
+            isDisabled={
+              markMutation.isPending ||
+              (commonData.unread_count_chat < 1 &&
+                allRows.reduce((sum, item) => sum + item.message_count, 0) < 1)
+            }
+            color="secondary"
+            // endContent={<IoCheckmarkDone className="text-lg" />}
+          >
+            Mark as seen
+          </Button>
+        )}
       </div>
     );
-  }, [
-    filterValue,
-    allRows,
-    hasSearchFilter,
-    markMutation.isPending,
-    loginInfo,
-    isValidating,
-    isSelf,
-  ]);
+  }, [allRows, markMutation.isPending, loginInfo, isValidating, isSelf]);
 
   return (
-    <TableWrapper
-      filteredItems={filteredItems}
-      filterValue={filterValue}
-      renderCell={renderCell}
-      skipPaging
-      isCompact={false}
-      isLoading={isLoading}
-      stickyTop={isSelf}
-      classNames={{
-        base: ["w-full", "overflow-auto", "mb-4", "h-full"],
-      }}
-      sortDescriptor={{ column: "time", direction: "descending" }}
-      initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
-      tableColumns={columns}
-      onFilterValueChange={setFilterValue}
-      bottomContent={
-        !isLoading && allRows.length ? (
-          <div className="flex w-full justify-center">
-            <Button
-              size="sm"
-              isDisabled={isLoading || loadMoreMutation.isPending || endReached}
-              isLoading={loadMoreMutation.isPending}
-              radius="full"
-              variant="shadow"
-              onPress={() => {
-                loadMoreMutation.mutate();
+    <div>
+      <STable
+        isLoading={isLoading}
+        skipCard={isSelf}
+        title={!isSelf ? null : "Chats"}
+        subTitle={() => topContent}
+        filterByValue={["sender_usr"]}
+        data={allRows}
+        bodyClassName={
+          isSelf ? "flex flex-col gap-2" : "grid grid-cols-1 sm:grid-cols-2"
+        }
+        itemsPerPage={ITEMS_PER_BATCH}
+        titleClassName="pb-4 w-full"
+        tableRow={(chat: UnReadChat) => {
+          return (
+            <SLink
+              href={getTargetUrl(chat)}
+              className="flex gap-2 items-center"
+              onClick={() => {
+                onOpenChange(!isOpen);
               }}
             >
-              Load More
-            </Button>
+              <SAvatar size="1xs" username={chat.sender_usr} />
+              <div className="flex flex-col gap-1">
+                <div className="flex flex-row items-center gap-2">
+                  <SLink
+                    className=" hover:text-blue-500 text-sm"
+                    href={`/@${chat.sender_usr}?chat`}
+                  >
+                    {chat.sender_usr}
+                  </SLink>
+
+                  {!!chat.message_count && (
+                    <Chip
+                      className="capitalize border-none gap-1"
+                      color={chat.is_self ? "default" : "secondary"}
+                      size="sm"
+                      variant="solid"
+                    >
+                      {chat.message_count}
+                    </Chip>
+                  )}
+                </div>
+
+                <div className=" flex flex-row items-center gap-1">
+                  {chat.is_self && (
+                    <p className="text-sm opacity-70 font-bold text-blue-500">
+                      {chat.is_self ? "You:" : ""}
+                    </p>
+                  )}
+                  {credentials?.memo ? (
+                    <div className="w-20 md:w-40">
+                      <p className="truncate text-sm opacity-70">
+                        {Memo.decode(
+                          credentials.memo,
+                          chat.latest_message
+                        )?.replace("#", "")}
+                      </p>
+                    </div>
+                  ) : (
+                    <p
+                      className="text-sm opacity-70 cursor-pointer"
+                      onClick={handleAddMemo}
+                    >
+                      Encrypted message
+                    </p>
+                  )}
+                </div>
+
+                <TimeAgoWrapper
+                  className="text-tiny text-default-500"
+                  created={moment(chat.latest_timestamp).unix() * 1000}
+                />
+              </div>
+            </SLink>
+          );
+        }}
+        loader={
+          <div className="flex flex-row w-full justify-center">
+            <Spinner size="sm" />
           </div>
-        ) : null
-      }
-      topContentDropdown={topContent}
-      cellWrapper={(item, children) => (
-        <SLink
-          href={getTargetUrl(item)}
-          onClick={() => {
-            onOpenChange(!isOpen);
-          }}
-        >
-          {children}
-        </SLink>
-      )}
-    />
+        }
+        endContent={(items) =>
+          allRows?.length > 0 &&
+          items?.length === allRows?.length &&
+          !isEndReached ? (
+            <div className="flex w-full justify-center">
+              <Button
+                size="sm"
+                isDisabled={isLoading || loadMoreMutation.isPending}
+                isLoading={loadMoreMutation.isPending}
+                radius="full"
+                variant="shadow"
+                onPress={() => {
+                  loadMoreMutation.mutate();
+                }}
+              >
+                Load More
+              </Button>
+            </div>
+          ) : null
+        }
+      />
+    </div>
   );
 }
