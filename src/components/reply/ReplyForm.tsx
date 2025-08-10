@@ -1,38 +1,49 @@
 "use client";
 
-import React, { memo, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import Reply from "./Reply";
 import { useAppSelector } from "@/constants/AppFunctions";
 import ReplyBody from "./ReplyBody";
 import ReplyFooter from "./ReplyFooter";
 import { twMerge } from "tailwind-merge";
+import { difference } from "lodash";
 
 interface Props {
   comment: Post;
   rootComment: Post | Feed;
+  isExpanded?: (expanded: boolean) => void;
 }
 
 export default memo(function ReplyForm(props: Props) {
   const { comment, rootComment } = props;
-  
+
   const postReplies =
     useAppSelector((state) => state.repliesReducer.values)[
       `${rootComment.author}/${rootComment.permlink}`
     ] ?? [];
 
-  const isDeep = comment?.depth - rootComment?.depth > 6;
+  const excludeRoot = difference(
+    postReplies,
+    postReplies?.filter((item) => item.depth === rootComment.depth + 1)
+  );
+
+  const isDeep = comment?.depth - rootComment?.depth > 5;
 
   const [expanded, setExpanded] = useState(!isDeep);
   const [isEditing, setIsEditing] = useState(false);
 
   const getReplies = (permlink) => {
-    return postReplies?.filter((item) => item.parent_permlink === permlink);
+    return excludeRoot?.filter((item) => item.parent_permlink === permlink);
   };
 
   const replies = getReplies(comment.permlink);
 
+  useEffect(() => {
+    props.isExpanded?.(expanded);
+  }, [expanded]);
+
   return (
-    <div className="flex flex-col w-full gap-4">
+    <div className="flex flex-col w-full gap-4" >
       <div className="flex flex-col gap-2 p-2 bg-foreground/5 w-full rounded-lg ">
         <ReplyBody
           hideBody={isEditing}

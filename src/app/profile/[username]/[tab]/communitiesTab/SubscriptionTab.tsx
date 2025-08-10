@@ -4,7 +4,6 @@ import notFound from "@/app/not-found";
 import CommentSkeleton from "@/components/comment/components/CommentSkeleton";
 import CommunityCard from "@/components/community/components/CommunityCard";
 import SubscribeButton from "@/components/SubscribeButton";
-import InfiniteList from "@/components/ui/InfiniteList";
 import SLink from "@/components/ui/SLink";
 import STable from "@/components/ui/STable";
 import { fetchSds, useAppSelector } from "@/constants/AppFunctions";

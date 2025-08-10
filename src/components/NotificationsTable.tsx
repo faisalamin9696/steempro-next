@@ -416,7 +416,7 @@ export default function NotificationsTable(props: Props) {
         }
         endContent={(items) =>
           allRows?.length > 0 &&
-          items?.length === allRows?.length &&
+          (items?.length || 0) <= allRows?.length &&
           !isEndReached ? (
             <div className="flex w-full justify-center">
               <Button

@@ -1,10 +1,14 @@
 "use client";
 
 import ReplyForm from "./ReplyForm";
-import { memo, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import SAvatar from "@/components/ui/SAvatar";
 import { useAppSelector } from "@/constants/AppFunctions";
 import { Button } from "@heroui/button";
+import { BiVerticalTop } from "react-icons/bi";
+import "./style.css";
+import { twMerge } from "tailwind-merge";
+import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 
 interface Props {
   comment: Post;
@@ -17,6 +21,36 @@ export default memo(function Reply(props: Props) {
     (state) => state.commentReducer.values
   )[`${comment.author}/${comment.permlink}`] ?? comment) as Post;
   const [hidden, setHidden] = useState(!!commentInfo.is_muted);
+  const [expanded, setExpanded] = useState(false);
+  const { isMobile } = useDeviceInfo();
+  const [showGotoButton, setShowGotoButton] = useState(false);
+  const avatarRef = useRef<HTMLDivElement>(null);
+  const commentRef = useRef<HTMLDivElement>(null);
+  const headerHeight = 80; // Adjust to match your header height
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentAvatar = avatarRef.current;
+      const currentComment = commentRef.current;
+
+      if (!currentAvatar || !currentComment) return;
+
+      const avatarRect = currentAvatar.getBoundingClientRect();
+      const commentRect = currentComment.getBoundingClientRect();
+
+      // Avatar is sticky when its top position equals headerHeight
+      const isAvatarSticky = avatarRect.top <= headerHeight;
+
+      // Comment is out of view when its top is above the viewport
+      const isCommentOutOfView = commentRect.top < 0;
+
+      // Only show button when avatar is sticky AND comment is scrolled up
+      setShowGotoButton(isAvatarSticky && isCommentOutOfView);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <div className="flex-col w-full relative">
@@ -36,21 +70,66 @@ export default memo(function Reply(props: Props) {
           </Button>
         </div>
       ) : (
-        <div className="flex gap-2 ">
+        <div
+          ref={commentRef}
+          className="flex gap-2 relative"
+          id={commentInfo.link_id.toString()}
+        >
           {!commentInfo.link_id ? null : (
             <>
-              <div className="flex flex-col gap-2 items-center">
+              {/* Sticky avatar & line container */}
+              <div
+                ref={avatarRef}
+                className={twMerge(
+                  "flex flex-col gap-2 items-center",
+                  "sm:sticky sm:top-20 sm:h-min sm:self-start"
+                )}
+              >
                 <SAvatar
-                  size="sm"
+                  size="1xs"
                   username={commentInfo.author}
                   className="hidden sm:block"
                 />
-                {commentInfo?.depth >= 1 && !!commentInfo.children && (
-                  <div className="w-[1px] border-default-200 h-full bg-foreground/10 " />
-                )}
+                {expanded &&
+                  commentInfo?.depth >= 1 &&
+                  !!commentInfo.children &&
+                  (isMobile ? (
+                    <div className="w-[1px] border-default-200 h-full bg-foreground/10 " />
+                  ) : (
+                    showGotoButton && (
+                      <Button
+                        className="transition-opacity duration-200"
+                        onPress={() => {
+                          const section = document.getElementById(
+                            commentInfo.link_id.toString()
+                          );
+                          if (section) {
+                            section.scrollIntoView({
+                              behavior: "smooth",
+                              block: "start",
+                              inline: "center",
+                            });
+                          }
+                        }}
+                        color="default"
+                        variant="flat"
+                        isIconOnly
+                        size="sm"
+                        radius="full"
+                      >
+                        <BiVerticalTop size={20} />
+                      </Button>
+                    )
+                  ))}
               </div>
-              <div className=" flex items-start gap-2 w-full ">
-                <ReplyForm {...props} comment={commentInfo} />
+
+              {/* Content area */}
+              <div className="flex-1 flex items-start gap-2 w-full">
+                <ReplyForm
+                  {...props}
+                  isExpanded={setExpanded}
+                  comment={commentInfo}
+                />
               </div>
             </>
           )}

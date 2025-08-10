@@ -55,7 +55,6 @@ export default function PostPage(props: Props) {
   }, [pathname]);
 
   useEffect(() => {
-
     dispatch(
       addRepliesHandler({
         comment: commentInfo,
@@ -89,7 +88,7 @@ export default function PostPage(props: Props) {
       const docId = window.location.hash.replace("#", "");
       const section = document.getElementById(docId);
       if (docId === "comments" && section) {
-        section.scrollIntoView({ behavior: "smooth" });
+        section.scrollIntoView({ behavior: "smooth", block: "center" });
       }
     }
   }, [post]);
@@ -225,7 +224,7 @@ export default function PostPage(props: Props) {
             </>
           )}
 
-          <div id="comments" className="flex flex-col items-center">
+          <div className="flex flex-col items-center">
             <div className="flex flex-col w-full max-w-[65ch] self-center">
               <PostReplies comment={commentInfo} />
             </div>

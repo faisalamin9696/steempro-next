@@ -27,7 +27,6 @@ interface Props {
   isOpen: boolean;
 }
 
-
 const ITEMS_PER_BATCH = 30;
 
 export default function ChatNotificationsTable(props: Props) {
@@ -193,6 +192,7 @@ export default function ChatNotificationsTable(props: Props) {
         title={!isSelf ? null : "Chats"}
         subTitle={() => topContent}
         filterByValue={["sender_usr"]}
+        titleWrapperClassName="flex-row"
         data={allRows}
         bodyClassName={
           isSelf ? "flex flex-col gap-2" : "grid grid-cols-1 sm:grid-cols-2"

@@ -443,7 +443,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                   isDetails &&
                   document
                     .getElementById(`comments`)
-                    ?.scrollIntoView({ behavior: "smooth" })
+                    ?.scrollIntoView({ behavior: "smooth", block: "center" })
                 }
                 title={`${comment.children} Comments`}
                 radius="full"

@@ -1,5 +1,7 @@
 import React from "react";
 import STag from "./ui/STag";
+import { Chip } from "@heroui/chip";
+import SLink from "./ui/SLink";
 
 export default function TagsListCard({
   tags = [],
@@ -13,8 +15,17 @@ export default function TagsListCard({
       {tags
         ?.filter((tag) => !!tag)
         ?.map((tag, index) => {
-          return <STag isDisabled={isDisabled} key={`${tag}-${index}`} tag={tag} />;
-          // <Chip isDisabled={isDisabled} as={SLink} href={`/trending/${tag}`} key={tag}>{tag}</Chip>
+          return (
+            <Chip
+              color="primary"
+              variant="flat"
+              isDisabled={isDisabled}
+              as={SLink}
+              href={`/trending/${tag}`}
+            >
+              {`#${tag}`}
+            </Chip>
+          );
         })}
     </div>
   );
