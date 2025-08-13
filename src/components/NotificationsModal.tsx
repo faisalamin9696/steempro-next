@@ -8,8 +8,8 @@ import { BsChatDots } from "react-icons/bs";
 import { FaRegBell } from "react-icons/fa";
 import { Badge } from "@heroui/badge";
 import ChatNotificationsTable from "./chat/user/ChatNotificationTable";
-import NotificationsTable from "./NotificationsTable";
 import SModal from "./ui/SModal";
+import NotificationsTable from "./NotificationsTable";
 
 interface Props {
   username: string;
@@ -67,7 +67,6 @@ export default function NotificationsModal(props: Props) {
           </Tab>
           <Tab
             key="chat"
-            
             title={
               <div className="flex flex-row gap-2 items-center">
                 <p>Chat</p>

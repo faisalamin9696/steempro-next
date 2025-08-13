@@ -20,6 +20,7 @@ import SLink from "@/components/ui/SLink";
 import { twMerge } from "tailwind-merge";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
 import SubmitPage from "@/app/submit/SubmitPage";
+import { PiWarning } from "react-icons/pi";
 
 interface Props {
   data: Post[];
@@ -45,6 +46,11 @@ export default function PostPage(props: Props) {
   const toggleEditMode = () => setEditMode(!editMode);
   const isNsfw = hasNsfwTag(commentInfo) && settings?.nsfw !== "Always show";
   const isSelf = session?.user?.name === commentInfo.author;
+  const isLowQuality =
+    (!!commentInfo.is_muted || commentInfo.author_role === "muted") &&
+    commentInfo.is_muted !== 2;
+
+  const [showLowQuality, setShowLowQuality] = useState(isLowQuality);
 
   useEffect(() => {
     // scroll initial page to top
@@ -119,110 +125,139 @@ export default function PostPage(props: Props) {
     >
       {commentInfo ? (
         <div className="rounded-2xl w-full gap-4 flex flex-col">
-          {!!commentInfo.is_muted && commentInfo.is_muted !== 2 ? (
-            <div className=" flex items-center gap justify-between mt-2">
-              <p>The post was hidden due to low rating</p>
+          <>
+            {!!commentInfo.depth && (
+              <Card className="flex flex-col p-4 gap-2">
+                <p className="text-tiny">
+                  You are viewing a single comment's thread from:
+                </p>
+                <p className="text-medium">RE: {commentInfo.root_title}</p>
+                <div className="flex gap-2 items-center">
+                  •
+                  <SLink
+                    className="text-sm text-default-600 hover:text-blue-500"
+                    href={`/@${commentInfo.root_author}/${commentInfo.root_permlink}`}
+                  >
+                    View the full context
+                  </SLink>
+                </div>
 
-              <Button
-                onPress={() => {
-                  // temporary set the is_muted status to 2
-                  dispatch(addCommentHandler({ ...commentInfo, is_muted: 2 }));
-                }}
-                size="sm"
-                variant="flat"
-                color="warning"
-              >
-                Show
-              </Button>
-            </div>
-          ) : (
-            <>
-              {!!commentInfo.depth && (
-                <Card className="flex flex-col p-4 gap-2">
-                  <p className="text-tiny">
-                    You are viewing a single comment's thread from:
-                  </p>
-                  <p className="text-medium">RE: {commentInfo.root_title}</p>
+                {commentInfo.depth >= 2 && (
                   <div className="flex gap-2 items-center">
                     •
                     <SLink
                       className="text-sm text-default-600 hover:text-blue-500"
-                      href={`/@${commentInfo.root_author}/${commentInfo.root_permlink}`}
+                      href={`/@${commentInfo.parent_author}/${commentInfo.parent_permlink}`}
                     >
-                      View the full context
+                      View the direct parent
                     </SLink>
                   </div>
+                )}
+              </Card>
+            )}
 
-                  {commentInfo.depth >= 2 && (
-                    <div className="flex gap-2 items-center">
-                      •
-                      <SLink
-                        className="text-sm text-default-600 hover:text-blue-500"
-                        href={`/@${commentInfo.parent_author}/${commentInfo.parent_permlink}`}
-                      >
-                        View the direct parent
-                      </SLink>
-                    </div>
-                  )}
-                </Card>
-              )}
+            <div className="flex flex-col px-1 items-center">
+              <Card
+                shadow="none"
+                className="w-full gap-4 bg-transparent overflow-visible"
+              >
+                <div className={twMerge("space-y-4 flex-col lg:ml-4")}>
+                  <div className="flex flex-wrap items-start gap-4 w-full justify-between">
+                    <CommentHeader
+                      isDetail
+                      size="md"
+                      hidden={isLowQuality}
+                      handleEdit={toggleEditMode}
+                      comment={commentInfo}
+                      className={!isLowQuality ? "w-full" : "opacity-45"}
+                    />
 
-              <div className="flex flex-col px-1 items-center">
-                <Card
-                  shadow="none"
-                  className="w-full gap-4 bg-transparent overflow-visible"
-                >
-                  <div className="space-y-4 flex-col lg:ml-4">
-                    <>
-                      <CommentHeader
-                        isDetail
-                        size="md"
-                        handleEdit={toggleEditMode}
-                        comment={commentInfo}
-                        className="w-full"
-                      />
-                    </>
-                    <h2 className="text-xl font-bold text-black dark:text-white">
+                    {isLowQuality && (
+                      <div className="flex flex-col justify-end items-end gap-1 w-full sm:w-auto">
+                        {isLowQuality && (
+                          <div className="flex flex-row gap-2 items-center">
+                            <PiWarning />
+                            <p className=" font-mono text-sm ">
+                              Hidden due to low rating
+                            </p>
+                          </div>
+                        )}
+                        <Button
+                          onPress={() => {
+                            setShowLowQuality(!showLowQuality);
+                          }}
+                          size="sm"
+                          variant="flat"
+                          color="warning"
+                        >
+                          {showLowQuality
+                            ? `Reveal ${
+                                !!commentInfo.depth ? "Comment" : "Post"
+                              }`
+                            : `Hide ${
+                                !!commentInfo.depth ? "Comment" : "Post"
+                              }`}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                  {
+                    <h2
+                      className={twMerge(
+                        "text-xl font-bold",
+                        isLowQuality && "opacity-45"
+                      )}
+                    >
                       {commentInfo.title}
                     </h2>
-                  </div>
+                  }
+                </div>
 
-                  <div className=" flex flex-col w-full gap-4 max-w-[65ch] self-center">
+                <div className=" flex flex-col w-full gap-4 max-w-[65ch] self-center">
+                  {!showLowQuality && (
                     <div
-                      className={twMerge("flex flex-col items-center lg:ml-4")}
+                      className={twMerge(
+                        "flex flex-col gap-4 self-center ",
+                        isLowQuality && "opacity-45"
+                      )}
                     >
-                      <MarkdownViewer
-                        isNsfw={isNsfw}
-                        noImage={!!commentInfo.is_muted}
-                        text={commentInfo.body}
-                      />
-                    </div>
-
-                    <div className="w-full  self-center">
-                      <TagsListCard
-                        tags={
-                          commentInfo.depth === 0
-                            ? JSON.parse(commentInfo.json_metadata ?? `{}`)
-                                ?.tags ?? []
-                            : []
-                        }
-                      />
-                    </div>
-
-                    <div className="flex flex-row w-full sticky bottom-2 justify-center">
-                      <CardFooter className="w-full p-1 overflow-visible bg-white/90 rounded-full dark:bg-black/90">
-                        <CommentFooter
-                          comment={commentInfo}
-                          isDetails
-                          className={"w-full"}
+                      <div
+                        className={twMerge(
+                          "flex flex-col items-center lg:ml-4"
+                        )}
+                      >
+                        <MarkdownViewer
+                          isNsfw={isNsfw}
+                          noImage={!!commentInfo.is_muted}
+                          text={commentInfo.body}
                         />
-                      </CardFooter>
+                      </div>
+
+                      <div className="w-full  self-center">
+                        <TagsListCard
+                          tags={
+                            commentInfo.depth === 0
+                              ? JSON.parse(commentInfo.json_metadata ?? `{}`)
+                                  ?.tags ?? []
+                              : []
+                          }
+                        />
+                      </div>
                     </div>
+                  )}
+                  <div className="flex flex-row w-full sticky bottom-2 justify-center">
+                    <CardFooter className="w-full p-1 overflow-visible bg-white/90 rounded-full dark:bg-black/90">
+                      <CommentFooter
+                        comment={commentInfo}
+                        isDetails
+                        className={"w-full"}
+                      />
+                    </CardFooter>
                   </div>
-                </Card>
-              </div>
-            </>
-          )}
+                </div>
+              </Card>
+            </div>
+          </>
 
           <div className="flex flex-col items-center">
             <div className="flex flex-col w-full max-w-[65ch] self-center">

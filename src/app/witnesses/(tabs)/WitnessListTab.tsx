@@ -14,12 +14,15 @@ import SLink from "@/components/ui/SLink";
 import STable from "@/components/ui/STable";
 import { RiUserStarFill } from "react-icons/ri";
 import WitnessItemCard from "@/components/WitnessItemCard";
+import { SiTraefikproxy } from "react-icons/si";
 
 interface Props {
   data: WitnessDataProps;
+  handleManageProxy: () => void;
 }
 
 function WitnessListTab(props: Props) {
+  const { handleManageProxy } = props;
   const {
     witnesses: witnessList,
     userData,
@@ -120,7 +123,7 @@ function WitnessListTab(props: Props) {
             </div>
 
             {currentProxy && (
-              <div className="bg-orange-100 border border-orange-200 p-3 rounded-lg">
+              <div className="flex flex-row items-center justify-between bg-orange-100 border border-orange-200 p-3 rounded-lg">
                 <div className="flex flex-row items-center gap-2 text-orange-700">
                   <FiAlertCircle className="w-4 h-4" />
                   <div className="flex flex-row gap-2 items-center text-sm font-medium">
@@ -133,6 +136,18 @@ function WitnessListTab(props: Props) {
                     />
                   </div>
                 </div>
+
+                <Button
+                  onPress={handleManageProxy}
+                  variant="bordered"
+                  size="sm"
+                  radius="sm"
+                  isDisabled={false}
+                  className="border-orange-300 text-orange-600 hover:bg-orange-200"
+                >
+                  <SiTraefikproxy size={12} />
+                  Manage
+                </Button>
               </div>
             )}
           </div>

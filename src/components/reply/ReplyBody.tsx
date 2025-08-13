@@ -20,8 +20,8 @@ import SLink from "../ui/SLink";
 import { twMerge } from "tailwind-merge";
 import MarkdownViewer from "../body/MarkdownViewer";
 import { HiOutlineLink } from "react-icons/hi2";
-import { FaFeather } from "react-icons/fa";
 import { GiFeather } from "react-icons/gi";
+import { PiWarning } from "react-icons/pi";
 
 export default function ReplyBody({
   comment,
@@ -39,6 +39,13 @@ export default function ReplyBody({
     { show: true, key: "history", name: "Edit History", icon: LuHistory },
   ];
   const [showHistory, setShowHistory] = useState(false);
+  const isLowQuality =
+    (!!comment.is_muted || comment.author_role === "muted") &&
+    comment.is_muted !== 2;
+
+  const [showLowQuality, setShowLowQuality] = useState(
+    !!comment.is_muted || comment.author_role === "muted"
+  );
 
   const renderedItems = menuItems
     .filter((item) => item.show)
@@ -70,88 +77,105 @@ export default function ReplyBody({
   return (
     <div className="flex gap-2 w-full ">
       <div className="flex flex-col text-sm sm:text-medium-100 w-full">
-        <div className="flex justify-between">
-          <div className="flex-col items-start">
-            <div className="flex items-center">
+        <div className={twMerge("flex justify-between")}>
+          <div className="flex flex-wrap items-start  justify-between w-full">
+            <div className="flex flex-row">
               <SAvatar
                 size="xs"
                 username={comment.author}
                 className="block sm:hidden me-1"
               />
 
-              <div className="flex flex-col items-start">
+              <div className="flex flex-col gap-0 items-start">
                 <div className="flex gap-1 items-center">
-                  <div className="flex flex-col gap-0 items-start">
-                    <div className="flex gap-1 items-center">
-                      <SLink
-                        className=" hover:text-blue-500"
-                        href={`/@${comment.author}`}
+                  <SLink
+                    className=" hover:text-blue-500"
+                    href={`/@${comment.author}`}
+                  >
+                    {comment.author}
+                  </SLink>
+                  <Reputation reputation={comment.author_reputation} />
+                  <Dropdown>
+                    <DropdownTrigger>
+                      <Button
+                        size="sm"
+                        radius="full"
+                        isIconOnly
+                        variant="light"
                       >
-                        {comment.author}
-                      </SLink>
-                      <Reputation reputation={comment.author_reputation} />
-                      <Dropdown>
-                        <DropdownTrigger>
-                          <Button
-                            size="sm"
-                            radius="full"
-                            isIconOnly
-                            variant="light"
-                          >
-                            <FaEllipsis className="text-lg" />
-                          </Button>
-                        </DropdownTrigger>
-                        <DropdownMenu
-                          aria-labelledby="comment options"
-                          onAction={handleMenuActions}
-                          hideEmptyContent
-                        >
-                          {renderedItems}
-                        </DropdownMenu>
-                      </Dropdown>
-                      {comment.author === comment.root_author && (
-                        <GiFeather
-                          title="Post Author"
-                          className=" opacity-80"
-                          size={14}
-                        />
-                      )}
-                    </div>
+                        <FaEllipsis className="text-lg" />
+                      </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu
+                      aria-labelledby="comment options"
+                      onAction={handleMenuActions}
+                      hideEmptyContent
+                    >
+                      {renderedItems}
+                    </DropdownMenu>
+                  </Dropdown>
+                  {comment.author === comment.root_author && (
+                    <GiFeather
+                      title="Post Author"
+                      className=" opacity-80"
+                      size={14}
+                    />
+                  )}
+                </div>
 
-                    <div className="flex gap-1 items-center">
-                      <RoleTitleCard
-                        comment={comment}
-                        className="opacity-80 gap-1 text-tiny"
-                        titleClassName="max-sm:hidden"
-                      />
+                <div className="flex gap-1 items-center">
+                  <RoleTitleCard
+                    comment={comment}
+                    className="opacity-80 gap-1 text-tiny"
+                    titleClassName="max-sm:hidden"
+                  />
 
-                      <TimeAgoWrapper
-                        className="opacity-65"
-                        handleEditClick={() => {
-                          setShowHistory(!showHistory);
-                        }}
-                        created={comment.created * 1000}
-                        lastUpdate={comment.last_update * 1000}
-                      />
-                      <SLink
-                        className="hover:text-blue-500"
-                        href={`/${comment.category}/@${comment.author}/${comment.permlink}`}
-                      >
-                        <HiOutlineLink />
-                      </SLink>
-                    </div>
-                  </div>
+                  <TimeAgoWrapper
+                    className="opacity-65"
+                    handleEditClick={() => {
+                      setShowHistory(!showHistory);
+                    }}
+                    created={comment.created * 1000}
+                    lastUpdate={comment.last_update * 1000}
+                  />
+                  <SLink
+                    className="hover:text-blue-500"
+                    href={`/${comment.category}/@${comment.author}/${comment.permlink}`}
+                  >
+                    <HiOutlineLink />
+                  </SLink>
                 </div>
               </div>
             </div>
+
+            {isLowQuality && (
+              <div className="flex flex-col justify-end items-end gap-1 w-full sm:w-auto">
+                {isLowQuality && (
+                  <div className="flex flex-row gap-2 items-center">
+                    <PiWarning />
+                    <p className=" font-mono text-sm ">
+                      Hidden due to low rating
+                    </p>
+                  </div>
+                )}
+                <Button
+                  onPress={() => {
+                    setShowLowQuality(!showLowQuality);
+                  }}
+                  size="sm"
+                  variant="flat"
+                  color="warning"
+                >
+                  {showLowQuality ? "Reveal Comment" : "Hide Comment"}
+                </Button>
+              </div>
+            )}
           </div>
 
           <div>{rightContent}</div>
         </div>
-        {!hideBody && (
-          <div
-            className={twMerge(comment.is_muted === 1 && "opacity-60", "mt-4")}
-          >
+        {!hideBody && !showLowQuality && (
+          <div className={twMerge(isLowQuality && "opacity-45", "mt-4")}>
             <MarkdownViewer
               text={comment.body}
               className={`!prose-sm !w-full !max-w-none`}

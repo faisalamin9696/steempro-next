@@ -20,7 +20,6 @@ export default memo(function Reply(props: Props) {
   const commentInfo: Post = (useAppSelector(
     (state) => state.commentReducer.values
   )[`${comment.author}/${comment.permlink}`] ?? comment) as Post;
-  const [hidden, setHidden] = useState(!!commentInfo.is_muted);
   const [expanded, setExpanded] = useState(false);
   const { isMobile } = useDeviceInfo();
   const [showGotoButton, setShowGotoButton] = useState(false);
@@ -54,87 +53,70 @@ export default memo(function Reply(props: Props) {
 
   return (
     <div className="flex-col w-full relative">
-      {hidden ? (
-        <div className=" flex items-center gap justify-between mt-2">
-          <p>The comment was hidden due to low rating</p>
+      <div
+        ref={commentRef}
+        className="flex gap-2 relative"
+        id={commentInfo.link_id.toString()}
+      >
+        {!commentInfo.link_id ? null : (
+          <>
+            {/* Sticky avatar & line container */}
+            <div
+              ref={avatarRef}
+              className={twMerge(
+                "flex flex-col gap-2 items-center",
+                "sm:sticky sm:top-20 sm:h-min sm:self-start"
+              )}
+            >
+              <SAvatar
+                size="1xs"
+                username={commentInfo.author}
+                className="hidden sm:block"
+              />
+              {expanded &&
+                commentInfo?.depth >= 1 &&
+                !!commentInfo.children &&
+                (isMobile ? (
+                  <div className="w-[1px] border-default-200 h-full bg-foreground/10 " />
+                ) : (
+                  showGotoButton && (
+                    <Button
+                      className="transition-opacity duration-200"
+                      onPress={() => {
+                        const section = document.getElementById(
+                          commentInfo.link_id.toString()
+                        );
+                        if (section) {
+                          section.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start",
+                            inline: "center",
+                          });
+                        }
+                      }}
+                      color="default"
+                      variant="flat"
+                      isIconOnly
+                      size="sm"
+                      radius="full"
+                    >
+                      <BiVerticalTop size={20} />
+                    </Button>
+                  )
+                ))}
+            </div>
 
-          <Button
-            onPress={() => {
-              setHidden(false);
-            }}
-            size="sm"
-            variant="flat"
-            color="warning"
-          >
-            Show
-          </Button>
-        </div>
-      ) : (
-        <div
-          ref={commentRef}
-          className="flex gap-2 relative"
-          id={commentInfo.link_id.toString()}
-        >
-          {!commentInfo.link_id ? null : (
-            <>
-              {/* Sticky avatar & line container */}
-              <div
-                ref={avatarRef}
-                className={twMerge(
-                  "flex flex-col gap-2 items-center",
-                  "sm:sticky sm:top-20 sm:h-min sm:self-start"
-                )}
-              >
-                <SAvatar
-                  size="1xs"
-                  username={commentInfo.author}
-                  className="hidden sm:block"
-                />
-                {expanded &&
-                  commentInfo?.depth >= 1 &&
-                  !!commentInfo.children &&
-                  (isMobile ? (
-                    <div className="w-[1px] border-default-200 h-full bg-foreground/10 " />
-                  ) : (
-                    showGotoButton && (
-                      <Button
-                        className="transition-opacity duration-200"
-                        onPress={() => {
-                          const section = document.getElementById(
-                            commentInfo.link_id.toString()
-                          );
-                          if (section) {
-                            section.scrollIntoView({
-                              behavior: "smooth",
-                              block: "start",
-                              inline: "center",
-                            });
-                          }
-                        }}
-                        color="default"
-                        variant="flat"
-                        isIconOnly
-                        size="sm"
-                        radius="full"
-                      >
-                        <BiVerticalTop size={20} />
-                      </Button>
-                    )
-                  ))}
-              </div>
-
-              {/* Content area */}
-              <div className="flex-1 flex items-start gap-2 w-full">
-                <ReplyForm
-                  {...props}
-                  isExpanded={setExpanded}
-                  comment={commentInfo}
-                />
-              </div>
-            </>
-          )}
-        </div>
-      )}
+            {/* Content area */}
+            <div className="flex-1 flex items-start gap-2 w-full">
+              <ReplyForm
+                {...props}
+                isExpanded={setExpanded}
+                comment={commentInfo}
+              />
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 });

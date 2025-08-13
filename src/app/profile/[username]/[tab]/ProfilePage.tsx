@@ -31,9 +31,9 @@ import AccountHeader from "@/components/AccountHeader";
 import PostsTab from "./postsTab/PostsTab";
 import CommunitiesTab from "./communitiesTab/CommunitiesTab";
 import WalletTab from "./walletTab/WalletTab";
-import NotificationsTable from "@/components/NotificationsTable";
 import SettingsPage from "@/app/settings/SettingsPage";
 import SLink from "@/components/ui/SLink";
+import NotificationsTable from "@/components/NotificationsTable";
 
 export default function ProfilePage({ data }: { data: AccountExt }) {
   let { username, tab } = useParams() as { username: string; tab: string };

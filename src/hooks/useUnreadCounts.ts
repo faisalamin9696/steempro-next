@@ -1,43 +1,12 @@
 import useSWR from "swr";
 import { getUnreadChatCount } from "@/libs/steem/mysql";
 import { fetchSds } from "@/constants/AppFunctions";
-import { DefaultNotificationFilters } from "@/constants/AppConstants";
-
-const defFilter = DefaultNotificationFilters;
-
-const filter = {
-  mention: {
-    exclude: defFilter.mention.status,
-    minSP: defFilter.mention.minSp,
-    minReputation: defFilter.mention.minRep,
-  },
-  vote: {
-    exclude: defFilter.vote.status,
-    minVoteAmount: defFilter.vote.minVote,
-    minReputation: defFilter.vote.minRep,
-    minSP: defFilter.vote.minSp,
-  },
-  follow: {
-    exclude: defFilter.follow.status,
-    minSP: defFilter.follow.minSp,
-    minReputation: defFilter.follow.minRep,
-  },
-  resteem: {
-    exclude: defFilter.resteem.status,
-    minSP: defFilter.resteem.minSp,
-    minReputation: defFilter.resteem.minRep,
-  },
-  reply: {
-    exclude: defFilter.reply.status,
-    minSP: defFilter.reply.minSp,
-    minReputation: defFilter.reply.minRep,
-  },
-};
+import { NotificationFilter } from "@/constants/AppConstants";
 
 export function useUnreadCounts(username?: string | null) {
   const url = username
     ? `/notifications_api/getFilteredUnreadCount/${username}/${JSON.stringify(
-        filter
+        NotificationFilter
       )}`
     : null;
 

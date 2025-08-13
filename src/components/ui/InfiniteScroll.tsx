@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useRef,
+  useMemo,
+} from "react";
 import useSWRInfinite from "swr/infinite";
 import { Fetcher } from "swr";
 import CommentSkeleton from "../comment/components/CommentSkeleton";
@@ -26,6 +32,11 @@ type InfiniteScrollProps<T> = {
   pageSize?: number;
   totalItems?: number; // New prop for total items in dataset
   autoLoadThreshold?: number; // Items remaining before triggering auto-load
+  filterItems?: ((item: T) => boolean) | Array<(item: T) => boolean>;
+  loadedData?: (items: T[]) => void;
+  revalidateIfStale?: boolean;
+    cacheKey?: string;
+
 };
 
 const InfiniteScroll = <T,>({
@@ -52,6 +63,10 @@ const InfiniteScroll = <T,>({
   pageSize = FeedPerPage,
   totalItems, // Optional total items count
   autoLoadThreshold = 5, // Load more when 5 items away from end
+  filterItems, // Array of filter functions
+  loadedData,
+  revalidateIfStale,
+  
 }: InfiniteScrollProps<T>) => {
   const {
     data: pages,
@@ -63,7 +78,12 @@ const InfiniteScroll = <T,>({
   } = useSWRInfinite<T[]>(getKey, fetcher, {
     initialSize,
     revalidateFirstPage: false,
+    revalidateIfStale: revalidateIfStale, // Optional: revalidate if data is stale
   });
+
+  useEffect(() => {
+    loadedData?.(pages?.flat() || []);
+  }, [pages]);
 
   const settings =
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
@@ -73,7 +93,13 @@ const InfiniteScroll = <T,>({
   const observerRef = useRef<IntersectionObserver | null>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
-  const items = pages?.flat() || [];
+  const rawItems = pages?.flat() || [];
+  const items = filterItems
+    ? Array.isArray(filterItems)
+      ? rawItems.filter((item) => filterItems.every((filter) => filter(item)))
+      : rawItems.filter(filterItems)
+    : rawItems;
+
   const isLoadingMore =
     isLoading || (size > 0 && pages && typeof pages[size - 1] === "undefined");
   const isEmpty = items.length === 0;
@@ -89,7 +115,7 @@ const InfiniteScroll = <T,>({
 
     setIsFetching(true);
     try {
-      await AsyncUtils.sleep(1.5); // Optional delay for smoother UX
+      await AsyncUtils.sleep(2); // Optional delay for smoother UX
       await setSize(size + 1);
     } finally {
       setIsFetching(false);

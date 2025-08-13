@@ -51,9 +51,11 @@ interface Props {
   compact?: boolean;
   handleEdit?: () => void;
   isDetail?: boolean;
+  hidden?: boolean;
 }
 export default function CommentHeader(props: Props) {
-  const { comment, className, isReply, compact, handleEdit, isDetail } = props;
+  const { comment, className, isReply, compact, handleEdit, isDetail, hidden } =
+    props;
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const dispatch = useAppDispatch();
   const { data: session } = useSession();
@@ -282,7 +284,12 @@ export default function CommentHeader(props: Props) {
             )}
             <Reputation reputation={comment.author_reputation} />
             {!!comment.is_pinned && (
-              <Chip color="success" variant="flat" size="sm" className="ms-1 h-5 px-0">
+              <Chip
+                color="success"
+                variant="flat"
+                size="sm"
+                className="ms-1 h-5 px-0"
+              >
                 Pinned
               </Chip>
             )}
@@ -324,7 +331,7 @@ export default function CommentHeader(props: Props) {
           </div>
         }
         description={
-          <div className="flex flex-col">
+          <div className="flex flex-wrap items-center gap-x-2">
             <RoleTitleCard comment={comment} />
 
             <div className={twMerge(`flex items-center gap-1`)}>
@@ -337,7 +344,7 @@ export default function CommentHeader(props: Props) {
                 lastUpdate={comment.last_update * 1000}
               />
               {!isReply && (
-                <div className="flex gap-1  sm:items-center">
+                <div className="flex gap-2 sm:items-center">
                   <p className={""}>in</p>
 
                   <STag
@@ -365,7 +372,7 @@ export default function CommentHeader(props: Props) {
           } as any
         }
       />
-      {!isReply && !compact && comment.depth === 0 && (
+      {!hidden && !isReply && !compact && comment.depth === 0 && (
         <div className="absolute top-0 text-tiny right-0 items-center px-1">
           <Popover
             className="hidden max-sm:block"

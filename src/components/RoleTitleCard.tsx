@@ -11,7 +11,7 @@ export default function RoleTitleCard(props: Props) {
   const { comment, className, roleClassName, titleClassName } = props;
 
   if (!comment.author_role && !comment.author_title) return null;
-  
+
   return (
     <div
       className={twMerge(
@@ -22,7 +22,7 @@ export default function RoleTitleCard(props: Props) {
       {comment.author_role && (
         <p
           className={twMerge(
-            "flex-none break-words whitespace-normal",
+            "flex-none break-words whitespace-normal uppercase text-[0.8em] text-default-500",
             roleClassName
           )}
         >
@@ -32,7 +32,7 @@ export default function RoleTitleCard(props: Props) {
       {comment.author_title && (
         <p
           className={twMerge(
-            "flex-none bg-foreground/10 dark:bg-foreground/30 text-tiny font-light px-1 rounded-lg break-words whitespace-normal",
+            "flex-none bg-foreground/10 dark:bg-foreground/30 text-[0.8em] px-1 rounded-lg break-words whitespace-normal",
             titleClassName
           )}
         >
