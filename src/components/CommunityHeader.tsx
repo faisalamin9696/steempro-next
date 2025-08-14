@@ -11,6 +11,7 @@ import { twMerge } from "tailwind-merge";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import SLink from "./ui/SLink";
 import ChatButton from "./ui/ChatButton";
+import { useTranslation } from "@/utils/i18n";
 
 type Props = {
   community: Community;
@@ -22,6 +23,7 @@ type Props = {
 export default function CommunityHeader(props: Props) {
   const { community, account, onChatPress, onLeadershipPress } = props;
   const { isTablet } = useDeviceInfo();
+  const { t } = useTranslation();
 
   const communityInfo: Community =
     useAppSelector((state) => state.communityReducer.values)[
@@ -83,12 +85,12 @@ export default function CommunityHeader(props: Props) {
                         className="lowercase text-default-900/80 text-[12px] cursor-pointer hover:underline"
                         onClick={onLeadershipPress}
                       >
-                        {abbreviateNumber(communityInfo.count_subs)} members
+                        {abbreviateNumber(communityInfo.count_subs)} {t("community.members")}
                       </span>
                       <div className="flex flex-row items-center justify-center gap-[4px]">
                         <span className="inline-flex bg-green-500 rounded-full w-[0.5rem] h-[0.5rem]"></span>
                         <span className="lowercase text-default-900/80 text-[12px]">
-                          {abbreviateNumber(communityInfo.count_authors)} active
+                          {abbreviateNumber(communityInfo.count_authors)} {t("community.active")}
                         </span>
                       </div>
                     </div>
@@ -96,7 +98,7 @@ export default function CommunityHeader(props: Props) {
 
                   <div className=" flex flex-wrap gap-2">
                     <Button
-                      title="Create Post"
+                      title={t("community.create_post")}
                       radius="full"
                       size={!isTablet ? "sm" : "md"}
                       className=" bg-foreground/10"
@@ -114,7 +116,7 @@ export default function CommunityHeader(props: Props) {
                         } as any
                       }
                     >
-                      Create Post
+                      {t("community.create_post")}
                     </Button>
                     <SubscribeButton
                       username={account.name}

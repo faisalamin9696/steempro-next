@@ -7,6 +7,7 @@ import {
 import React from "react";
 import SAvatar from "./ui/SAvatar";
 import SLink from "./ui/SLink";
+import { useTranslation } from "@/utils/i18n";
 
 type Operation = [string, any];
 
@@ -17,6 +18,7 @@ function OperationBody({
   operation: Operation;
   steem_per_share: number;
 }) {
+  const { t } = useTranslation();
   const [opType, opData] = operation;
 
   try {
@@ -50,7 +52,7 @@ function OperationBody({
       case "transfer":
         return wrap(
           <>
-            {userLink(opData.from)} transferred {formatAmount(opData.amount)} to{" "}
+            {userLink(opData.from)} {t("wallet.transferred")} {formatAmount(opData.amount)} {t("wallet.to")}{" "}
             {userLink(opData.to)}
           </>
         );
@@ -59,7 +61,7 @@ function OperationBody({
         const recipient = opData.to || opData.from;
         return wrap(
           <>
-            {userLink(opData.from)} powered up {formatAmount(opData.amount)} to{" "}
+            {userLink(opData.from)} {t("wallet.powered_up")} {formatAmount(opData.amount)} {t("wallet.to")}{" "}
             {userLink(recipient)}
           </>
         );
@@ -70,11 +72,11 @@ function OperationBody({
         const powerdownSP = vestToSteem(powerdownVests, steem_per_share);
 
         if (isStop)
-          return wrap(<>{userLink(opData.account)} stopped power down</>);
+          return wrap(<>{userLink(opData.account)} {t("wallet.stopped_power_down")}</>);
         else
           return wrap(
             <>
-              {userLink(opData.account)} started power down of{" "}
+              {userLink(opData.account)} {t("wallet.started_power_down")} {t("wallet.of")}{" "}
               {formatAmount(powerdownSP)} {"SP"}
             </>
           );
@@ -84,13 +86,13 @@ function OperationBody({
         return opData.parent_author
           ? wrap(
               <>
-                {userLink(opData.author)} replied to{" "}
+                {userLink(opData.author)} {t("wallet.replied_to")}{" "}
                 {postLink(opData.parent_author, opData.parent_permlink)}
               </>
             )
           : wrap(
               <>
-                {userLink(opData.author)} created post{" "}
+                {userLink(opData.author)} {t("wallet.created_post")}{" "}
                 {postLink(
                   opData.author,
                   opData.permlink,
@@ -102,10 +104,10 @@ function OperationBody({
       case "vote":
         const voteType =
           opData.weight > 0
-            ? "upvoted"
+            ? t("wallet.upvoted")
             : opData.weight < 0
-            ? "downvoted"
-            : "removed vote on";
+            ? t("wallet.downvoted")
+            : t("wallet.removed_vote_on");
         return wrap(
           <>
             {userLink(opData.voter)} {voteType}{" "}
@@ -125,20 +127,20 @@ function OperationBody({
         if (rewardSP > 0) parts.push(`${rewardSP.toFixed(3)} SP`);
         const rewards =
           parts.length > 0
-            ? parts.join(", ").replace(/, ([^,]*)$/, " and $1")
-            : "rewards";
+            ? parts.join(", ").replace(/, ([^,]*)$/, ` ${t("wallet.and")} $1`)
+            : t("wallet.rewards");
 
         return wrap(
           <>
-            {userLink(opData.account)} claimed {rewards}
+            {userLink(opData.account)} {t("wallet.claimed")} {rewards}
           </>
         );
 
       case "comment_reward":
         return wrap(
           <>
-            {userLink(opData.author)} received {formatAmount(opData.payout)} as
-            comment reward for {postLink(opData.author, opData.permlink)}
+            {userLink(opData.author)} {t("wallet.received")} {formatAmount(opData.payout)} {t("wallet.as")}{" "}
+            {t("wallet.comment_reward")} {t("wallet.for")} {postLink(opData.author, opData.permlink)}
           </>
         );
 
@@ -151,9 +153,9 @@ function OperationBody({
         );
         return wrap(
           <>
-            {userLink(opData.author)} received {steem.toFixed(3)} STEEM,{" "}
-            {sbd.toFixed(3)} SBD, and {authorSP.toFixed(3)} SP as author reward
-            for {postLink(opData.author, opData.permlink)}
+            {userLink(opData.author)} {t("wallet.received")} {steem.toFixed(3)} STEEM,{" "}
+            {sbd.toFixed(3)} SBD, {t("wallet.and")} {authorSP.toFixed(3)} SP {t("wallet.as")}{" "}{t("wallet.author_reward_text")}{" "}
+            {t("wallet.for")} {postLink(opData.author, opData.permlink)}
           </>
         );
 
@@ -164,8 +166,8 @@ function OperationBody({
         );
         return wrap(
           <>
-            {userLink(opData.curator)} received {curatorSP.toFixed(3)} SP as
-            curation reward for voting on{" "}
+            {userLink(opData.curator)} {t("wallet.received")} {curatorSP.toFixed(3)} SP {t("wallet.as")}{" "}
+            {t("wallet.curation_reward_text")} {t("wallet.for")}{" "}
             {postLink(opData.comment_author, opData.comment_permlink)}
           </>
         );
@@ -173,13 +175,13 @@ function OperationBody({
       // Add other cases here similarly...
 
       default:
-        return <p>Unrecognized operation: {opType}</p>;
+        return <p>{t("wallet.unrecognized_operation")}: {opType}</p>;
     }
   } catch (error) {
     console.error("Error interpreting operation:", error);
     return (
       <p className="text-muted-foreground text-sm mb-3">
-        Raw operation data available below
+        {t("wallet.operation_error")}
       </p>
     );
   }

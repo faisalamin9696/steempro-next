@@ -91,7 +91,7 @@ export default function AuthModal(props: Props) {
               <p className="font-bold">
                 {addMemo ? (
                   <div className="flex items-center gap-2">
-                    <p>SteemPro Chat</p>
+                    <p>SteemCN Chat</p>
 
                     <SAvatar
                       onlyImage

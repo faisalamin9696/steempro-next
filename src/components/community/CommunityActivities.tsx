@@ -11,8 +11,10 @@ import { twMerge } from "tailwind-merge";
 import CommunityActivityItem from "./components/CommunityActivityItem";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { AsyncUtils } from "@/utils/async.utils";
+import { useTranslation } from "@/utils/i18n";
 
 export function CommunityActivities({ community }: { community: Community }) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [filteredData, setFilteredData] = useState<CommunityLog[]>();
   const URL = `/communities_api/getCommunityActivityLogs/${community.account}/1000`;
@@ -72,7 +74,7 @@ export function CommunityActivities({ community }: { community: Community }) {
             value={query}
             inputMode="search"
             onValueChange={setQuery}
-            placeholder={"Search..."}
+            placeholder={t("community.search")}
             autoCapitalize="off"
           />
         </div>
@@ -95,7 +97,7 @@ export function CommunityActivities({ community }: { community: Community }) {
             scrollableTarget="scrollDiv2"
             endMessage={
               !isLoading && (
-                <EmptyList text={data ? undefined : "Search anything"} />
+                <EmptyList text={data ? undefined : t("community.search_anything")} />
               )
             }
           >

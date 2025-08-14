@@ -13,6 +13,7 @@ import { useSession } from "next-auth/react";
 import useSWR, { useSWRConfig } from "swr";
 import ConfirmationPopup from "./ui/ConfirmationPopup";
 import { twMerge } from "tailwind-merge";
+import { useTranslation } from "@/utils/i18n";
 
 export default function ProposalVoteButton({
   proposal,
@@ -23,6 +24,7 @@ export default function ProposalVoteButton({
   className?: string;
   getVoteStatus?: (isVoted: boolean) => void;
 }) {
+  const { t } = useTranslation();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { authenticateUserActive, isAuthorizedActive } = useLogin();
   const { data: session } = useSession();
@@ -66,7 +68,7 @@ export default function ProposalVoteButton({
       if (isVoted) setIsVoted(false);
       else setIsVoted(true);
       mutate(`proposals-votes-${proposal.id}`);
-      toast.success(isVoted ? "Proposal Unapproved" : "Proposal Approved");
+      toast.success(isVoted ? t("proposals.unapproved") : t("proposals.approved"));
     },
   });
 
@@ -76,7 +78,7 @@ export default function ProposalVoteButton({
       return;
     }
     if (!credentials?.key) {
-      toast.error("Invalid credentials");
+      toast.error(t("proposals.invalid_credentials"));
       return;
     }
 
@@ -98,11 +100,11 @@ export default function ProposalVoteButton({
         isLoading: voteMutation.isPending,
         variant: "flat",
       }}
-      buttonTitle={isVoted ? "Unvote" : "Vote"}
+      buttonTitle={isVoted ? t("proposals.unvote") : t("proposals.vote")}
       subTitle={
         isVoted
-          ? `Unvote proposal #${proposal.id}?`
-          : `Vote proposal #${proposal.id}?`
+          ? t("proposals.unvote_confirmation").replace("{{id}}", proposal.id.toString())
+          : t("proposals.vote_confirmation").replace("{{id}}", proposal.id.toString())
       }
       onKeychainPress={() => handleVote(true)}
       onConfirm={handleVote}

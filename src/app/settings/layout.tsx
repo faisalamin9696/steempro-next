@@ -18,7 +18,7 @@ export default async function Layout({
 
 export async function generateMetadata() {
     return {
-        title: `Settings - Customize Your SteemPro Experience`,
-        description: `Explore the settings page on SteemPro to personalize and optimize your experience on the Steem blockchain. Customize your preferences, security settings, notifications, and more to tailor SteemPro to your needs and preferences.`,
+        title: `Settings - Customize Your SteemCN Experience`,
+        description: `Explore the settings page on SteemCN to personalize and optimize your experience on the Steem blockchain. Customize your preferences, security settings, notifications, and more to tailor SteemCN to your needs and preferences.`,
     }
 }

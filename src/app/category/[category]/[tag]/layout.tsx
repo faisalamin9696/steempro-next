@@ -22,15 +22,15 @@ export async function generateMetadata({ params }): Promise<Metadata> {
   const pageTitle = `Latest #${tag} ${category} topics on the Internet`;
   const pageDescription = `Explore the latest ${category} discussions and topics related to #${tag} on the internet. Stay updated with the most recent conversations and insights.`;
   const keywords = [
-    `SteemPro ${tag} ${category} content`,
-    `Latest ${category} discussions on SteemPro`,
-    `SteemPro #${tag} ${category} conversations`,
-    `Insightful ${category} posts on SteemPro`,
-    `Trending ${category} topics on SteemPro #${tag}`,
-    `Popular ${category} debates – SteemPro ${tag}`,
-    `SteemPro ${category} analysis & updates`,
-    `#${tag} ${category} news from SteemPro`,
-    `Engaging ${category} discussions – SteemPro ${tag}`,
+    `SteemCN ${tag} ${category} content`,
+    `Latest ${category} discussions on SteemCN`,
+    `SteemCN #${tag} ${category} conversations`,
+    `Insightful ${category} posts on SteemCN`,
+    `Trending ${category} topics on SteemCN #${tag}`,
+    `Popular ${category} debates – SteemCN ${tag}`,
+    `SteemCN ${category} analysis & updates`,
+    `#${tag} ${category} news from SteemCN`,
+    `Engaging ${category} discussions – SteemCN ${tag}`,
   ];
 
   return {

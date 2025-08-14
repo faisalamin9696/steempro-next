@@ -3,6 +3,7 @@ import { useOrderBook } from "@/hooks/useOrderBook";
 import { Card, CardBody } from "@heroui/card";
 import { useSession } from "next-auth/react";
 import React from "react";
+import { useTranslation } from "@/utils/i18n";
 
 interface MarketOrderBook {
   bids: Array<{
@@ -28,6 +29,7 @@ interface Props {
   onClick?: (price: string) => void;
 }
 function OrderBook(props: Props) {
+  const { t } = useTranslation();
   const { onClick } = props;
   const { orderBookData: orderBook } = useOrderBook();
   const openOrders = useAppSelector((state) => state.openOrdersReducer.value);
@@ -67,14 +69,14 @@ function OrderBook(props: Props) {
     <div className="flex flex-col gap-4">
       <Card>
         <CardBody className="text-red-600 text-base font-semibold">
-          Sell Orders
+          {t("market.sell_orders")}
         </CardBody>
         <CardBody>
           <div className="space-y-2">
             <div className="grid grid-cols-3 gap-2 text-xs font-medium text-gray-500 pb-2 border-b border-default-900/20">
-              <span>Price (SBD)</span>
-              <span className="text-right">STEEM</span>
-              <span className="text-right">SBD</span>
+              <span>{t("market.price_sbd")}</span>
+              <span className="text-right">{t("market.steem")}</span>
+              <span className="text-right">{t("market.sbd")}</span>
             </div>
             {sellOrders?.map((order, index) => {
               const isUserSellOrder = userSellPrices.has(
@@ -106,7 +108,7 @@ function OrderBook(props: Props) {
               );
             }) || (
               <div className="text-center text-gray-500 py-4">
-                Loading sell orders...
+                {t("market.loading_sell_orders")}
               </div>
             )}
           </div>
@@ -115,14 +117,14 @@ function OrderBook(props: Props) {
 
       <Card>
         <CardBody className=" text-green-600 text-base font-semibold">
-          Buy Orders
+          {t("market.buy_orders")}
         </CardBody>
         <CardBody>
           <div className="space-y-2">
             <div className="grid grid-cols-3 gap-2 text-xs font-medium text-gray-500 pb-2 border-b border-default-900/20">
-              <span>Price (SBD)</span>
-              <span className="text-right">STEEM</span>
-              <span className="text-right">SBD</span>
+              <span>{t("market.price_sbd")}</span>
+              <span className="text-right">{t("market.steem")}</span>
+              <span className="text-right">{t("market.sbd")}</span>
             </div>
             {buyOrders?.map((order, index) => {
               const isUserBuyOrder = userBuyPrices.has(
@@ -152,7 +154,7 @@ function OrderBook(props: Props) {
               );
             }) || (
               <div className="text-center text-gray-500 py-4">
-                Loading buy orders...
+                {t("market.loading_buy_orders")}
               </div>
             )}
           </div>

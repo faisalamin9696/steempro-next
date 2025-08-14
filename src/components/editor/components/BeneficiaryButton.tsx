@@ -2,6 +2,7 @@ import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
 import { Input } from "@heroui/input";
 import { memo, useRef, useState } from "react";
+import { useTranslation } from "@/utils/i18n";
 import { FaAt, FaBurn, FaMinus, FaPlus, FaUsersCog } from "react-icons/fa";
 import { MdAdd, MdDelete } from "react-icons/md";
 import { toast } from "sonner";
@@ -37,6 +38,7 @@ const steemFavourites = [
 ];
 
 export default memo(function BeneficiaryButton(props: Props) {
+  const { t } = useTranslation();
   const {
     onSelectBeneficiary,
     beneficiaries,
@@ -75,12 +77,12 @@ export default memo(function BeneficiaryButton(props: Props) {
     _username = _username.trim().toLowerCase()?.replace("@", "");
 
     if (beneficiaries?.length >= 8) {
-      toast.info("Can have at most 8 beneficiaries");
+      toast.info(t('submit.max_beneficiaries'));
       return;
     }
 
     if (beneficiaries.some((bene) => bene.account === _username)) {
-      toast.info("Beneficiary cannot be duplicate");
+      toast.info(t('submit.duplicate_beneficiary'));
       return;
     }
 
@@ -92,18 +94,18 @@ export default memo(function BeneficiaryButton(props: Props) {
       weightValue < 1 ||
       weightValue > 100
     ) {
-      toast.info("Beneficiary percentage must be from 1–100");
+      toast.info(t('submit.beneficiary_percentage_range'));
       return;
     }
 
     if (validate_account_name(_username)) {
-      toast.info("Invalid username");
+      toast.info(t('submit.invalid_username'));
       // Cannot specify self as beneficiary
       return;
     }
 
     if (availableBene <= 0 || parseFloat(_weight) > availableBene) {
-      toast.info("Beneficiary total percentage must be less than 100");
+      toast.info(t('submit.beneficiary_total_percentage'));
       return;
     }
 
@@ -183,7 +185,7 @@ export default memo(function BeneficiaryButton(props: Props) {
   return (
     <SModal
       triggerProps={{
-        title: "Beneficiaries",
+        title: t("submit.beneficiaries"),
         size: "sm",
         isDisabled: isDisabled,
         color: "warning",
@@ -207,7 +209,7 @@ export default memo(function BeneficiaryButton(props: Props) {
       }}
       title={() => (
         <div className="flex flex-row gap-4 items-center justify-between">
-          <p>{"Beneficiaries"}</p>
+          <p>{t("submit.beneficiaries")}</p>
           <Card
             shadow="sm"
             className="flex flex-row gap-1 rounded-full items-center text-sm  p-1 border border-default-500/20"
@@ -221,13 +223,11 @@ export default memo(function BeneficiaryButton(props: Props) {
         </div>
       )}
       subTitle={() =>
-        `Enter a user to auto-share rewards for this ${
-          isComment ? "comment" : "post"
-        }.`
+        t(isComment ? "submit.beneficiary_subtitle_comment" : "submit.beneficiary_subtitle_post")
       }
       body={() => (
         <form
-          title="Beneficiaries"
+          title={t("submit.beneficiaries")}
           onKeyDown={(e) => {
             if (
               e.key === "Enter" &&
@@ -246,8 +246,8 @@ export default memo(function BeneficiaryButton(props: Props) {
                   classNames={{ label: "text-default-900/80" }}
                   autoCapitalize="off"
                   labelPlacement="outside"
-                  label={"Username"}
-                  placeholder="Account"
+                  label={t("submit.username")}
+                  placeholder={t('submit.account_placeholder')}
                   onValueChange={setUsername}
                   startContent={<FaAt className="text-default-600" />}
                   variant="flat"
@@ -258,7 +258,7 @@ export default memo(function BeneficiaryButton(props: Props) {
                 />
 
                 <div className="flex flex-col gap-[6px]">
-                  <p className="text-xs">Reward (%)</p>
+                  <p className="text-xs">{t("submit.reward_percent")}</p>
                   <div className="flex flex-row gap-2 items-center">
                     <Button
                       size="sm"
@@ -302,7 +302,7 @@ export default memo(function BeneficiaryButton(props: Props) {
                 size="sm"
                 isDisabled={!!validate_account_name(username) || !weight}
               >
-                Add
+                {t("submit.add")}
                 <MdAdd size={28} />
               </Button>
             </div>
@@ -339,7 +339,7 @@ export default memo(function BeneficiaryButton(props: Props) {
 
             <Card className="flex flex-col gap-2 bg-default-100/10 p-2 mt-2">
               <p className="text-medium sm:text-lg font-semibold text-default-700">
-                Favourites
+                {t("submit.favourites")}
               </p>
               <div className="flex flex-row flex-wrap gap-2 p-1">
                 {uniqueFavourites.map((item) => {
@@ -382,7 +382,7 @@ export default memo(function BeneficiaryButton(props: Props) {
       )}
       footer={(onClose) => (
         <Button color="danger" variant="light" onPress={onClose}>
-          Cancel
+          {t("common.cancel")}
         </Button>
       )}
     />
@@ -406,6 +406,7 @@ export const BeneficiaryItem = ({
   handleRemoveFavourite?: (account: string) => void;
   isExist?: boolean;
 }) => {
+  const { t } = useTranslation();
   return (
     <div className="flex w-full" key={beneficiary.account}>
       <div className="flex flex-row gap-4 pe-2 w-full items-center rounded-full">
@@ -434,14 +435,14 @@ export const BeneficiaryItem = ({
                   className="cursor-pointer z-10 opacity-100 relative"
                 >
                   <div className="flex flex-row text-tiny font-mono items-center gap-1">
-                    <MdDelete /> Remove
+                    <MdDelete /> {t("submit.remove")}
                   </div>
                 </Chip>
               )}
             {isFavourite && beneficiary.account === "null" && (
               <Chip variant="flat" color="warning" size="sm" className="">
                 <div className="flex flex-row text-tiny font-mono items-center gap-1">
-                  <FaBurn /> Burn steem
+                  <FaBurn /> {t("submit.burn_steem")}
                 </div>
               </Chip>
             )}
@@ -450,7 +451,7 @@ export const BeneficiaryItem = ({
               beneficiary.account === AppStrings.official_account && (
                 <Chip variant="flat" color="success" size="sm" className="">
                   <div className="flex flex-row text-tiny font-mono items-center gap-1">
-                    <BsStarFill /> Official
+                    <BsStarFill /> {t("submit.official")}
                   </div>
                 </Chip>
               )}

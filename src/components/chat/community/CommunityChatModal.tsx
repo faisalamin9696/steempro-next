@@ -24,6 +24,7 @@ import { empty_comment } from "@/constants/Placeholders";
 import CommunityMessages from "./CommunityMessages";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import SModal from "@/components/ui/SModal";
+import { useTranslation } from "@/utils/i18n";
 
 interface Props {
   community: Community;
@@ -34,6 +35,7 @@ interface Props {
 const ITEMS_PER_BATCH = 30;
 
 export default function CommunityChatModal(props: Props) {
+  const { t } = useTranslation();
   const { community, isOpen, onOpenChange } = props;
   if (!community) return null;
 
@@ -94,12 +96,12 @@ export default function CommunityChatModal(props: Props) {
     );
 
     if (isMuted?.length) {
-      toast.warning("🚫 You're muted by community admins");
+      toast.warning(t("community.muted_by_admins"));
       return;
     }
 
     if (isNsfw) {
-      toast.warning("⚠️ NSFW content is not allowed");
+      toast.warning(t("community.nsfw_not_allowed"));
       return;
     }
 
@@ -126,7 +128,7 @@ export default function CommunityChatModal(props: Props) {
     const credentials = getCredentials(getSessionKey(session?.user?.name));
 
     if (!credentials) {
-      toast.error("Invalid credentials");
+      toast.error(t("reply.invalid_credentials"));
       return;
     }
 
@@ -188,7 +190,7 @@ export default function CommunityChatModal(props: Props) {
       title={() => (
         <div className="flex flex-col gap-1">
           <div className="flex flex-row gap-2 items-center text-center">
-            <p>Community Chat</p>
+            <p>{t("community.community_chat")}</p>
             <Chip
               avatar={<SAvatar username={community.account} />}
               variant="flat"
@@ -198,7 +200,7 @@ export default function CommunityChatModal(props: Props) {
           </div>
         </div>
       )}
-      subTitle={() => "This conversation is public and visible to others."}
+      subTitle={() => t("community.public_conversation")}
       body={() => (
         <div className="scrollbar-thin pb-10" id="scrollDiv">
           <div className="flex flex-col w-full">

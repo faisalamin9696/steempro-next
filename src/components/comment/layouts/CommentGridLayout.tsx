@@ -22,6 +22,7 @@ import { twMerge } from "tailwind-merge";
 import { MdDisabledVisible } from "react-icons/md";
 import { useSession } from "next-auth/react";
 import SLink from "@/components/ui/SLink";
+import { useTranslation } from "@/utils/i18n";
 
 export default function CommentGridLayout(props: CommentProps) {
   const { comment, isCommunity } = props;
@@ -32,6 +33,7 @@ export default function CommentGridLayout(props: CommentProps) {
   const settings =
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
   const { data: session } = useSession();
+  const { t } = useTranslation();
   const thumbnail = getThumbnail(comment.json_images);
   const isSelf = session?.user?.name === commentInfo.author;
   // const json_metadata = JSON.parse(comment?.json_metadata ?? '{}') as { tags?: string[], image?: string[], app?: string, format?: string }
@@ -182,7 +184,7 @@ export default function CommentGridLayout(props: CommentProps) {
               <RoleTitleCard comment={comment} />
 
               <TimeAgoWrapper
-                lang={"en"}
+                lang={settings.lang.code}
                 created={commentInfo.created * 1000}
                 lastUpdate={commentInfo.last_update * 1000}
               />
@@ -202,16 +204,16 @@ export default function CommentGridLayout(props: CommentProps) {
         <div>
           {!!commentInfo.resteem_count && (
             <span
-              title={commentInfo.resteem_count + " Resteems"}
+              title={commentInfo.resteem_count + " " + t('comment.resteems')}
               className="py-1 text-xs font-regular text-default-600 mr-1 flex flex-row items-center"
             >
-              {abbreviateNumber(commentInfo.resteem_count)} Resteems
+              {abbreviateNumber(commentInfo.resteem_count)} {t('comment.resteems')}
             </span>
           )}
         </div>
 
         <span
-          title={`${commentInfo.children} Comments`}
+          title={`${commentInfo.children} ${t('comment.comments')}`}
           className="py-1 text-xs font-regular text-default-600 mr-1 flex flex-row items-center"
         >
           <svg

@@ -12,6 +12,7 @@ import { MarketTicker } from "@/hooks/useMarketData";
 import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { AsyncUtils } from "@/utils/async.utils";
 import KeychainButton from "../KeychainButton";
+import { useTranslation } from "@/utils/i18n";
 
 interface Props {
   ticker?: MarketTicker;
@@ -19,6 +20,7 @@ interface Props {
   markPrice?: string;
 }
 function MarketTrade(props: Props) {
+  const { t } = useTranslation();
   const { ticker, markPrice } = props;
   const [tradeType, setTradeType] = useState<"buy" | "sell">("buy");
   const [price, setPrice] = useState("");
@@ -106,13 +108,13 @@ function MarketTrade(props: Props) {
       });
       queryClient.invalidateQueries({ queryKey: ["orderBook"] });
 
-      toast.success(`${tradeType === "buy" ? "Buy" : "Sell"} Order Placed`, {
-        description: `${action} ${amountSteem} STEEM ${fromTo} ${price} SBD each`,
+      toast.success(t(tradeType === "buy" ? "market.buy_order_placed" : "market.sell_order_placed"), {
+        description: t("market.order_description", { action, amount: amountSteem, fromTo, price }),
       });
     },
     onError(error) {
-      toast.error("Trade Error", {
-        description: error.message || "Unknown error occurred",
+      toast.error(t("market.trade_error"), {
+        description: error.message || t("market.unknown_error"),
       });
     },
   });
@@ -152,10 +154,10 @@ function MarketTrade(props: Props) {
     <Card className=" dark:bg-black/40 border border-gray-200/20">
       <CardHeader>
         <CardBody className="text-default-800 text-lg sm:text-xl">
-          Trade STEEM
+          {t("market.trade_steem")}
         </CardBody>
         <CardBody className="text-gray-500 text-sm sm:text-base text-end">
-          Buy or sell STEEM with SBD
+          {t("market.buy_sell_description")}
         </CardBody>
       </CardHeader>
       <CardBody className="space-y-4">
@@ -169,7 +171,7 @@ function MarketTrade(props: Props) {
                 : "hover:bg-gray-200 text-default-600"
             }`}
           >
-            Buy
+            {t("market.buy")}
           </Button>
           <Button
             variant={tradeType === "sell" ? undefined : "ghost"}
@@ -180,7 +182,7 @@ function MarketTrade(props: Props) {
                 : "hover:bg-gray-200 text-default-600"
             }`}
           >
-            Sell
+            {t("market.sell")}
           </Button>
         </div>
 
@@ -192,7 +194,7 @@ function MarketTrade(props: Props) {
           }}
           placeholder="0.000000"
           className="border-gray-300"
-          label={"Price"}
+          label={t("market.price")}
           inputMode="numeric"
           endContent={
             <Button
@@ -207,7 +209,7 @@ function MarketTrade(props: Props) {
               }}
               className="text-xs text-[#07d7a9] hover:text-[#06c49a]"
             >
-              Use Market Price
+              {t("market.use_market_price")}
             </Button>
           }
         />
@@ -220,7 +222,7 @@ function MarketTrade(props: Props) {
             }}
             placeholder="0.000"
             className="border-gray-300"
-            label={"Amount (STEEM)"}
+            label={t("market.amount_steem_input")}
             inputMode="numeric"
             description={
               tradeType === "sell" && (
@@ -233,7 +235,7 @@ function MarketTrade(props: Props) {
                         setLastEdited("steem");
                       }}
                     >
-                      Available:
+                      {t("market.available")}:
                     </span>
                     <p className="font-mono">
                       {loginInfo.balance_steem}
@@ -249,7 +251,7 @@ function MarketTrade(props: Props) {
                           setPrice(parseFloat(ticker.highest_bid).toFixed(6));
                         }}
                       >
-                        Highest bid:
+                        {t("market.highest_bid")}:
                       </span>
                       <p className="font-mono">
                         {parseFloat(ticker.highest_bid).toFixed(6)}
@@ -269,7 +271,7 @@ function MarketTrade(props: Props) {
             }}
             placeholder="0.000"
             className="border-gray-300"
-            label={"Amount (SBD)"}
+            label={t("market.amount_sbd_input")}
             inputMode="numeric"
             description={
               tradeType === "buy" && (
@@ -282,7 +284,7 @@ function MarketTrade(props: Props) {
                         setLastEdited("sbd");
                       }}
                     >
-                      Available:
+                      {t("market.available")}:
                     </span>
                     <p className="font-mono">
                       {loginInfo.balance_sbd}
@@ -298,7 +300,7 @@ function MarketTrade(props: Props) {
                           setPrice(parseFloat(ticker?.lowest_ask).toFixed(6));
                         }}
                       >
-                        Lowest ask:
+                        {t("market.lowest_ask")}:
                       </span>
                       <p className="font-mono">
                         {parseFloat(ticker?.lowest_ask).toFixed(6)}
@@ -325,7 +327,7 @@ function MarketTrade(props: Props) {
             isDisabled={!amountSteem || !price}
             isLoading={orderMutation.isPending}
           >
-            Place {tradeType === "buy" ? "Buy" : "Sell"} Order
+            {t(tradeType === "buy" ? "market.place_buy_order" : "market.place_sell_order")}
           </Button>
         </div>
       </CardBody>

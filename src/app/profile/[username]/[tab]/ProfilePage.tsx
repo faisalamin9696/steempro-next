@@ -4,6 +4,7 @@ import { Tab, Tabs } from "@heroui/tabs";
 import React, { useEffect } from "react";
 import FeedPatternSwitch from "@/components/FeedPatternSwitch";
 import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
+import { useTranslation } from "@/utils/i18n";
 import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { addProfileHandler } from "@/hooks/redux/reducers/ProfileReducer";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
@@ -147,17 +148,18 @@ const getProfileTabs = (
 ) => {
   const { data: session } = useSession();
   const isSelf = session?.user?.name === username;
+  const { t } = useTranslation();
 
   const profileTabs = [
     {
-      title: "Blog",
+      title: t('profile.blog'),
       key: "blog",
       children: <ProfileTabPage />,
       icon: <MdRssFeed size={22} />,
       priority: 0,
     },
     {
-      title: "Posts",
+      title: t('profile.posts'),
       key: "posts",
       children: <PostsTab username={username} tab={tab} />,
       icon: <MdFeed size={22} />,
@@ -165,7 +167,7 @@ const getProfileTabs = (
     },
 
     {
-      title: "Communities",
+      title: t('profile.communities'),
       key: "communities",
       children: <CommunitiesTab username={username} tab={tab} />,
       icon: <MdGroups size={22} />,
@@ -173,7 +175,7 @@ const getProfileTabs = (
       priority: 3,
     },
     {
-      title: "Wallet",
+      title: t('profile.wallet'),
       key: "wallet",
       children: <WalletTab data={walletProfile} />,
       icon: <MdWallet size={22} />,
@@ -184,7 +186,7 @@ const getProfileTabs = (
 
   if (isSelf)
     profileTabs.push({
-      title: "Settings",
+      title: t('common.settings'),
       key: "settings",
       children: <SettingsPage />,
       icon: <MdSettings size={22} />,
@@ -192,7 +194,7 @@ const getProfileTabs = (
     });
   else
     profileTabs.push({
-      title: "Notifications",
+      title: t('profile.notifications'),
       key: "notifications",
       icon: <MdNotifications size={22} />,
       children: <NotificationsTable username={username} isOpen={true} />,

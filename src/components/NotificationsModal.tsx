@@ -10,6 +10,7 @@ import { Badge } from "@heroui/badge";
 import ChatNotificationsTable from "./chat/user/ChatNotificationTable";
 import NotificationsTable from "./NotificationsTable";
 import SModal from "./ui/SModal";
+import { useTranslation } from "@/utils/i18n";
 
 interface Props {
   username: string;
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export default function NotificationsModal(props: Props) {
+  const { t } = useTranslation();
   const { username, isOpen, onOpenChange } = props;
   if (!username) return null;
   const commonData = useAppSelector((state) => state.commonReducer.values);
@@ -44,7 +46,7 @@ export default function NotificationsModal(props: Props) {
             key="general"
             title={
               <div className="flex flex-row gap-1 items-center">
-                <p>General</p>
+                <p>{t("notifications.general")}</p>
                 <Badge
                   color="primary"
                   variant="solid"
@@ -70,7 +72,7 @@ export default function NotificationsModal(props: Props) {
             
             title={
               <div className="flex flex-row gap-2 items-center">
-                <p>Chat</p>
+                <p>{t("notifications.chat")}</p>
                 <Badge
                   color="secondary"
                   variant="solid"
@@ -96,7 +98,7 @@ export default function NotificationsModal(props: Props) {
       )}
       footer={(onClose) => (
         <Button color="danger" variant="flat" onPress={onClose}>
-          Close
+          {t("common.close")}
         </Button>
       )}
     />

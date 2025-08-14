@@ -3,6 +3,7 @@
 import { Select, SelectItem } from "@heroui/select";
 import { Button } from "@heroui/button";
 import { memo, useEffect } from "react";
+import { useTranslation } from "@/utils/i18n";
 import {
   fetchSds,
   useAppDispatch,
@@ -25,6 +26,7 @@ interface Props {
   handleOnClear?: () => void;
 }
 export default memo(function CommunitySelectButton(props: Props) {
+  const { t } = useTranslation();
   let {
     community,
     onSelectCommunity,
@@ -75,7 +77,7 @@ export default memo(function CommunitySelectButton(props: Props) {
     <div className="flex flex-row gap-2 items-center">
       <div className="w-60">
         <Select
-          aria-label="Select community"
+          aria-label={t('submit.select_community_aria')}
           selectedKeys={
             community
               ? [
@@ -86,7 +88,7 @@ export default memo(function CommunitySelectButton(props: Props) {
               : []
           }
           listboxProps={{
-            emptyContent: "No community available",
+            emptyContent: t('submit.no_community'),
           }}
           size="md"
           isDisabled={onlyCommunity || isDisabled}
@@ -96,7 +98,7 @@ export default memo(function CommunitySelectButton(props: Props) {
               : (data || loginInfo?.communities) ?? []
           }
           isLoading={isLoading}
-          placeholder="Select Community"
+          placeholder={t('submit.select_community')}
           className="text-default-500 text-sm"
           classNames={{
             // trigger:'min-h-0 h-10',

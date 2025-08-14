@@ -10,8 +10,10 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { validateCommunity } from "@/utils/helper";
 import PieChart from "@/components/charts/PieChart";
+import { useTranslation } from "@/utils/i18n";
 
 export default function AuthorReportPage() {
+  const { t } = useTranslation();
   let loginInfo = useAppSelector((state) => state.loginReducer.value);
   let [username, setUsername] = useState(loginInfo.name);
   let [avatar, setAvatar] = useState(loginInfo.name);
@@ -45,12 +47,12 @@ export default function AuthorReportPage() {
     community = community.replace("@", "").toLowerCase();
 
     if (!username) {
-      toast.info("Invalid author");
+      toast.info(t("tools.invalid_author"));
       return;
     }
 
     if (!community || !validateCommunity(community)) {
-      toast.info("Invalid community");
+      toast.info(t("tools.invalid_community"));
       return;
     }
 
@@ -59,13 +61,13 @@ export default function AuthorReportPage() {
 
   return (
     <div className="flex flex-col items-center gap-8">
-      <p className=" text-xl font-bold">Author Report</p>
+      <p className=" text-xl font-bold">{t("tools.author_report")}</p>
 
       <div className="flex flex-col gap-4 w-full">
         <Input
           size="sm"
-          label="Username"
-          placeholder="Enter username"
+          label={t("common.username")}
+          placeholder={t("tools.enter_username")}
           isRequired
           className="flex-1"
           onValueChange={setUsername}
@@ -81,8 +83,8 @@ export default function AuthorReportPage() {
           value={community}
           onValueChange={setCommunity}
           isRequired
-          label="Community"
-          placeholder="Enter community account e.g. hive-144064"
+          label={t("community.title")}
+          placeholder={t("tools.enter_community_account")}
         />
 
         <Button
@@ -90,7 +92,7 @@ export default function AuthorReportPage() {
           onPress={getAuthorReport}
           isLoading={isPending}
         >
-          Get Report
+          {t("tools.get_report")}
         </Button>
       </div>
       {/* <div className="w-full h-[350px] p-4 rounded-md bg-foreground/5">
@@ -145,15 +147,15 @@ export default function AuthorReportPage() {
       {data && (
         <PieChart
           data={[
-            { id: "Posts", label: "Posts", value: data.total_post_count },
+            { id: "Posts", label: t("feed.posts"), value: data.total_post_count },
             {
               id: "Comments",
-              label: "Comments",
+              label: t("reply.comments"),
               value: data.total_comment_count,
             },
             {
               id: "Unique Comments",
-              label: "Unique Comments",
+              label: t("tools.unique_comments"),
               value: data.unique_comment_count,
             },
           ]}

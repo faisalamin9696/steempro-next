@@ -64,7 +64,7 @@ function KeychainLogin(props: Props) {
       if (account) {
         const isSigned = await requestKeychainSignBuffer(
           _username,
-          "SteemPro Authentication",
+          "SteemCN Authentication",
           "POSTING"
         );
 

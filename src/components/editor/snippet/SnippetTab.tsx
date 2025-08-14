@@ -2,6 +2,7 @@ import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "@/utils/i18n";
 import { MdSearch } from "react-icons/md";
 import useSWR from "swr";
 import AddSnippet from "./AddSnippet";
@@ -14,6 +15,7 @@ interface Props {
   handleOnSelect?: (snippet: Snippet) => void;
 }
 function SnippetTab(props: Props) {
+  const { t } = useTranslation();
   const { data: session } = useSession();
   const [filterValue, setFilterValue] = useState("");
   const [addNew, setAddNew] = useState<{ isOpen: boolean; snippet?: Snippet }>({
@@ -69,7 +71,7 @@ function SnippetTab(props: Props) {
                 inputWrapper:
                   "text-default-500 bg-default-400/20 dark:bg-default-500/20",
               }}
-              placeholder="Search..."
+              placeholder={t('submit.search_placeholder')}
               value={filterValue}
               onValueChange={setFilterValue}
               startContent={<MdSearch size={20} />}
@@ -83,7 +85,7 @@ function SnippetTab(props: Props) {
               variant="flat"
               color="success"
             >
-              Add
+              {t('submit.add')}
             </Button>
           </div>
 

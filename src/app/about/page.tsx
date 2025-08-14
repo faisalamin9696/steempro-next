@@ -13,7 +13,7 @@ export default function AboutPage() {
         <Card className="items-center p-6 sm:p-10 flex flex-col gap-2">
           <h1 className="text-xl font-bold">About Us</h1>
           <p className=" text-center text-default-500">
-            SteemPro is a decentralized mobile and web application designed for
+            SteemCN is a decentralized mobile and web application designed for
             the Steem blockchain, providing users with a secure platform for
             executing broadcast operations. Additionally, the application
             includes useful tools for evaluating author activities within the

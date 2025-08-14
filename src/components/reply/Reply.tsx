@@ -9,6 +9,7 @@ import { BiVerticalTop } from "react-icons/bi";
 import "./style.css";
 import { twMerge } from "tailwind-merge";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
+import { useTranslation } from "@/utils/i18n";
 
 interface Props {
   comment: Post;
@@ -17,6 +18,7 @@ interface Props {
 
 export default memo(function Reply(props: Props) {
   const { comment } = props;
+  const { t } = useTranslation();
   const commentInfo: Post = (useAppSelector(
     (state) => state.commentReducer.values
   )[`${comment.author}/${comment.permlink}`] ?? comment) as Post;
@@ -56,7 +58,7 @@ export default memo(function Reply(props: Props) {
     <div className="flex-col w-full relative">
       {hidden ? (
         <div className=" flex items-center gap justify-between mt-2">
-          <p>The comment was hidden due to low rating</p>
+          <p>{t('reply.hidden_comment')}</p>
 
           <Button
             onPress={() => {
@@ -66,7 +68,7 @@ export default memo(function Reply(props: Props) {
             variant="flat"
             color="warning"
           >
-            Show
+            {t('reply.show')}
           </Button>
         </div>
       ) : (

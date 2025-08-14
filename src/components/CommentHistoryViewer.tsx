@@ -14,6 +14,8 @@ import { PiHashFill } from "react-icons/pi";
 import useSWR from "swr";
 import ErrorCard from "./ErrorCard";
 import SModal from "./ui/SModal";
+import { useTranslation } from "@/utils/i18n";
+import { useAppSelector } from "@/constants/AppFunctions";
 
 interface Props {
   isOpen: boolean;
@@ -81,6 +83,7 @@ const CommentEditHistory: React.FC<Props> = ({
   author,
   permlink,
 }) => {
+  const { t } = useTranslation();
   const {
     data: historyData,
     isLoading,
@@ -92,6 +95,7 @@ const CommentEditHistory: React.FC<Props> = ({
   const [history, setHistory] = useState<CommentHistoryItem[]>([]);
   const [showDiff, setShowDiff] = useState<boolean[]>([]);
   const { isMobile } = useDeviceInfo();
+  const settings = useAppSelector((state) => state.settingsReducer.value) ?? { lang: { code: 'en' } };
 
   if (error) return <ErrorCard />;
 
@@ -115,7 +119,7 @@ const CommentEditHistory: React.FC<Props> = ({
       shouldDestroy
       onOpenChange={onOpenChange}
       modalProps={{ scrollBehavior: "inside", backdrop: "blur", size: "2xl" }}
-      title={() => "Edit History"}
+      title={() => t('comment.edit_history')}
       body={() => (
         <div className="flex flex-col pb-4 overflow-x-clip">
           {isLoading && <LoadingCard />}
@@ -128,20 +132,20 @@ const CommentEditHistory: React.FC<Props> = ({
               aria-label="Edit History Tabs"
             >
               {history.map((item: any, index) => (
-                <Tab key={index} title={`Version ${index + 1}`}>
+                <Tab key={index} title={`${t('comment.version')} ${index + 1}`}>
                   <div className="flex flex-col gap-2">
                     <Checkbox
                       isSelected={showDiff[index]}
                       checked={showDiff[index]}
                       onValueChange={(checked) => toggleDiff(index, checked)}
-                      title="Show difference"
+                      title={t('comment.show_difference')}
                     >
-                      Show difference
+                      {t('comment.show_difference')}
                     </Checkbox>
                     <div className="w-full p-4 bg-foreground/20 rounded-md flex flex-row gap-2 items-center">
                       <FaHistory className="text-sm" />
                       {moment(item.time * 1000)
-                        .locale("en")
+                        .locale(settings.lang.code)
                         .format("lll")}
                     </div>
                     <div className="flex flex-col text-gray-500 gap-2">
@@ -191,7 +195,7 @@ const CommentEditHistory: React.FC<Props> = ({
       )}
       footer={(onClose) => (
         <Button color="danger" variant="flat" onPress={onClose}>
-          Close
+          {t('common.close')}
         </Button>
       )}
     />

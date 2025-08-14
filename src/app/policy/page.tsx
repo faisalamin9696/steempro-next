@@ -8,7 +8,7 @@ import { twMerge } from "tailwind-merge";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  keywords: "privacy policy SteemPro, privacy and policy",
+  keywords: "privacy policy SteemCN, privacy and policy",
 };
 
 export default function page() {
@@ -23,7 +23,7 @@ export default function page() {
 
         <div className="container mt-10 shadow-lg rounded-lg p-2">
           <p className="mb-4">
-            Welcome to SteemPro. We value your privacy and are committed to
+            Welcome to SteemCN. We value your privacy and are committed to
             protecting your personal information. This privacy policy explains
             how we collect, use, and safeguard your data.
           </p>
@@ -67,7 +67,7 @@ export default function page() {
           </ul>
           <h3 className="text-xl font-semibold mb-2">European Regulations</h3>
           <p className="mb-4">
-            At SteemPro, we prioritize the privacy and security of our users'
+            At SteemCN, we prioritize the privacy and security of our users'
             data. To comply with the General Data Protection Regulation (GDPR)
             and other relevant European regulations, we ensure that your
             personal information is handled with care and transparency.
@@ -303,7 +303,7 @@ export default function page() {
         </div>
       </MainWrapper>
       <footer className="bg-gray-800 text-white py-4 mt-10 text-center">
-        <p>&copy; 2024 SteemPro. All rights reserved.</p>
+        <p>&copy; 2025 SteemCN. All rights reserved.</p>
       </footer>
     </div>
   );

@@ -13,8 +13,10 @@ import { Button } from "@heroui/button";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useTranslation } from "@/utils/i18n";
 
 export default function MassVotingPage() {
+  const { t } = useTranslation();
   const { authenticateUser, isAuthorized, isLogin } = useLogin();
   const { data: session } = useSession();
   const [advance, setAdvance] = useState(!isLogin());
@@ -65,26 +67,26 @@ export default function MassVotingPage() {
 
     if (advance)
       if (!key) {
-        toast.info("Invalid private posting key");
+        toast.info(t("tools.invalid_private_posting_key"));
         return;
       }
 
     const weightValue = Number(weight);
 
     if (!weight || isNaN(weightValue) || weightValue < 1 || weightValue > 100) {
-      toast.info("Weight percentage must be from 1–100");
+      toast.info(t("tools.weight_percentage_range"));
       return;
     }
 
     const links_array = links.match(/\bhttps?:\/\/\S+/gi);
 
     if (!links_array) {
-      toast.info("Failed to parse links data");
+      toast.info(t("tools.failed_to_parse_links"));
       return;
     }
 
     if (links_array?.length <= 0) {
-      toast.info("No links found");
+      toast.info(t("tools.no_links_found"));
       return;
     }
     if (advance) {
@@ -93,11 +95,11 @@ export default function MassVotingPage() {
         try {
           const keyType = getKeyType(account, key);
           if (!keyType || !PrivKey.atLeast(keyType.type, "POSTING")) {
-            toast.info("Invalid private posting key");
+            toast.info(t("tools.invalid_private_posting_key"));
             return;
           }
         } catch {
-          toast.info("Invalid private posting key");
+          toast.info(t("tools.invalid_private_posting_key"));
           return;
         }
 
@@ -113,7 +115,7 @@ export default function MassVotingPage() {
       const credentials = getCredentials(getSessionKey(session?.user?.name));
 
       if (!credentials) {
-        toast.error("Invalid credentials");
+        toast.error(t("tools.invalid_credentials"));
         return;
       }
       key = credentials.key;
@@ -135,15 +137,15 @@ export default function MassVotingPage() {
   return (
     <div>
       <div className="flex flex-col items-center gap-8">
-        <p className=" text-xl font-bold">Mass Voting</p>
+        <p className=" text-xl font-bold">{t("tools.mass_voting_title")}</p>
 
         <div className="flex flex-col gap-4 w-full">
           <div className=" flex flex-row gap-2 items-center">
             <Input
               size="sm"
               isDisabled={!advance}
-              label="Username"
-              placeholder="Enter voter username"
+              label={t("common.username")}
+              placeholder={t("tools.enter_voter_username")}
               isRequired
               className="flex-1"
               onValueChange={setUsername}
@@ -161,7 +163,7 @@ export default function MassVotingPage() {
                 variant={"flat"}
                 color={advance ? "success" : "primary"}
               >
-                {`Use ${advance ? "default" : "different"} account`}
+                {advance ? t("tools.use_default_account") : t("tools.use_different_account")}
               </Button>
             )}
           </div>
@@ -172,9 +174,9 @@ export default function MassVotingPage() {
               value={key}
               onValueChange={setKey}
               isRequired={advance}
-              label="Private key"
+              label={t("tools.private_key")}
               isClearable
-              placeholder="Enter your private posting key"
+              placeholder={t("tools.enter_private_posting_key")}
               type="password"
             />
           )}
@@ -184,8 +186,8 @@ export default function MassVotingPage() {
             value={weight}
             onValueChange={setWeight}
             isRequired
-            label="Vote weight"
-            placeholder="Enter vote weight 1-100 %"
+            label={t("tools.vote_weight")}
+            placeholder={t("tools.enter_vote_weight")}
             inputMode="decimal"
             type="number"
             step={0.1}
@@ -196,11 +198,11 @@ export default function MassVotingPage() {
           />
 
           <Textarea
-            label={"Links"}
+            label={t("tools.links")}
             isMultiline
             value={links}
             onValueChange={setLinks}
-            placeholder="Paste the links here (separate by space)"
+            placeholder={t("tools.paste_links_here")}
             disableAnimation
             classNames={{
               input: "resize-y",
@@ -208,7 +210,7 @@ export default function MassVotingPage() {
           />
 
           <Button onPress={handleVoting} isLoading={loading} color="primary">
-            Start Voting
+            {t("tools.start_voting")}
           </Button>
         </div>
       </div>

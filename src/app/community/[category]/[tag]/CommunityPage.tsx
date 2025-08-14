@@ -19,6 +19,7 @@ import { useParams, usePathname } from "next/navigation";
 import SModal from "@/components/ui/SModal";
 import { useEffect } from "react";
 import SLink from "@/components/ui/SLink";
+import { useTranslation } from "@/utils/i18n";
 
 export default function CommunityPage({
   account,
@@ -27,6 +28,7 @@ export default function CommunityPage({
   account: AccountExt;
   community: Community;
 }) {
+  const { t } = useTranslation();
   let { category, tag } = useParams() as { category: string; tag: string };
   category = category?.toLowerCase();
   tag = tag?.toLowerCase();
@@ -49,14 +51,14 @@ export default function CommunityPage({
 
   const communityTabs = [
     {
-      title: "Trending",
+      title: t("community.trending"),
       key: "trending",
       children: <CommunityTabPage />,
       icon: <FaFire size={22} />,
       priority: 1,
     },
     {
-      title: "New",
+      title: t("community.new"),
       key: "created",
       children: <CommunityTabPage />,
       icon: <MdNewLabel size={22} />,
@@ -65,7 +67,7 @@ export default function CommunityPage({
   ];
   if (isMobile) {
     communityTabs.push({
-      title: "Pinned",
+      title: t("community.pinned"),
       key: "pinned",
       children: <CommunityTabPage />,
       icon: <MdPin size={22} />,
@@ -75,7 +77,7 @@ export default function CommunityPage({
 
   if (isBetween920AndMobile) {
     communityTabs.push({
-      title: "About",
+      title: t("community.about"),
       key: "about",
       children: (
         <CommunityInfoCard
@@ -95,7 +97,7 @@ export default function CommunityPage({
   function handleChatPress() {
     if (communityInfo && communityInfo.observer_subscribed) {
       chatDisclosure.onOpen();
-    } else toast.info("Join to chat with the community!");
+    } else toast.info(t("community.join_to_chat_community"));
   }
   return (
     <div>
@@ -172,7 +174,7 @@ export default function CommunityPage({
         modalProps={{ scrollBehavior: "inside" }}
         isOpen={leadershipDisclosure.isOpen}
         onOpenChange={leadershipDisclosure.onOpenChange}
-        title={() => "Members"}
+        title={() => t("community.members")}
         onClose={() => {
           if (category === "roles")
             history.replaceState({}, "", `/${"trending"}/${"hive-" + tag}`);

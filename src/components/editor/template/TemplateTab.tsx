@@ -1,10 +1,17 @@
 import React, {  } from "react";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
 import { Card } from "@heroui/card";
+import { useTranslation } from "@/utils/i18n";
+
+interface Snippet {
+  id: number;
+  title: string;
+  body: string;
+}
 
 const templateList = [
   {
-    title: "Markdown Basic Template 01",
+    titleKey: "submit.template_markdown_basic_01",
     image: `![](https://cdn.steemitimages.com/DQmYdjFdAGVTHVF2kq5uh8RFYAPJdtY7vsJzVtn6ksYEtyw/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA%202023-05-18%20%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE%203.19.17.png)`,
     content: `# Main Title
 
@@ -25,7 +32,7 @@ to create a block of code
 `,
   },
   {
-    title: "Markdown Basic Template 02",
+    titleKey: "submit.template_markdown_basic_02",
     image: `![](https://cdn.steemitimages.com/DQmXy3EoyX2coFDF8mH5mAfwq43LhQz3anHhpa9JkArPjVU/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA%202023-05-18%20%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE%204.03.18.png)`,
     content: `<center>✅https://cdn.steemitimages.com/DQmdgm8o8njXdFpdDgF5kuTXjJuAhSg6uPfHgTZu3RkirBE/image%20preview.001.png✅</center>
 <center><sup>✅Description✅</sup></center>
@@ -44,7 +51,7 @@ to create a block of code
 `,
   },
   {
-    title: "Photo Blog Template 01",
+    titleKey: "submit.template_photo_blog_01",
     image: `![](https://cdn.steemitimages.com/DQmU67mv7vkEKZBevteyMYpQRgSFdA8YS7cExLaCFc9QK2z/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA%202023-05-18%20%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE%203.07.14.png)`,
     content: `<center><h2>✅Main Title✅</h2></center>
 
@@ -75,7 +82,7 @@ https://cdn.steemitimages.com/DQmY8UA7YC68Lhh6cLFzdAESxuG8eaonPdPwKcVyEBieXK5/bo
 `,
   },
   {
-    title: "Photo Blog Template 02",
+    titleKey: "submit.template_photo_blog_02",
     image: `![](https://cdn.steemitimages.com/DQmavWiNcRVVpmVFZv2KrrNGc212JnQyewgzzCYPnccUjAJ/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA%202023-05-18%20%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE%203.08.02.png)`,
     content: `<div class="pull-left">
 <div class="pull-left">
@@ -137,7 +144,7 @@ https://cdn.steemitimages.com/DQmY8UA7YC68Lhh6cLFzdAESxuG8eaonPdPwKcVyEBieXK5/bo
 <br>`,
   },
   {
-    title: "Photo Blog Template 03",
+    titleKey: "submit.template_photo_blog_03",
     image: `![](https://cdn.steemitimages.com/DQmUZ26QNmZGRWC1cVusKPEbwaUb68vN3165e1Wipxk3cXP/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA%202023-05-18%20%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE%203.12.57.png)
         `,
     content: `---
@@ -178,14 +185,14 @@ https://cdn.steemitimages.com/DQmY8UA7YC68Lhh6cLFzdAESxuG8eaonPdPwKcVyEBieXK5/bo
 <br>`,
   },
   {
-    title: "Table Template 01",
+    titleKey: "submit.template_table_01",
     image: `![image.png](https://cdn.steemitimages.com/DQmXnAKxeT42seqzYNqRLWwtZ78jbAcEQqBu3tyd2Avyo3i/image.png)`,
     content: `|	✅Header1✅	|	✅Header1✅	|	✅Header1✅	|
 |	------------	|	------------	|	------------	|
 |    ✅Text✅     	|     ✅Text✅     	|     ✅Text✅     	|`,
   },
   {
-    title: "Table Template 02",
+    titleKey: "submit.template_table_02",
     image: `![image.png](https://cdn.steemitimages.com/DQmP48Ytssq1XN1a9Ab6UbSY8nvWHDTEjxLNaAuPMy13VY9/image.png)`,
     content: `| ✅Header1✅ | ✅Header2✅ | ✅Header3✅ | ✅Header4✅ | ✅Header5✅ |
 |--|--:|--:|--:|--:|
@@ -196,7 +203,7 @@ https://cdn.steemitimages.com/DQmY8UA7YC68Lhh6cLFzdAESxuG8eaonPdPwKcVyEBieXK5/bo
 ✅Cell05✅ | ✅1152✅ | ✅1153✅ | ✅1154✅ | ✅1155✅ |`,
   },
   {
-    title: "Table Template 03",
+    titleKey: "submit.template_table_03",
     image: `![image.png](https://cdn.steemitimages.com/DQmdzz1iYUMZvp5m9qx51DEKmfim7VhbcYTzkk3Drc8atyb/image.png)`,
     content: `| ✅Header1✅ | ✅Header2✅| ✅Header3✅ |
 |-|-|-|
@@ -212,6 +219,7 @@ interface Props {
   handleOnSelect?: (snippet: Snippet) => void;
 }
 function TemplateTab(props: Props) {
+  const { t } = useTranslation();
   const { handleOnSelect } = props;
 
   return (
@@ -226,12 +234,12 @@ function TemplateTab(props: Props) {
               handleOnSelect &&
                 handleOnSelect({
                   id: index,
-                  title: template.title,
+                  title: t(template.titleKey),
                   body: template.content,
                 });
             }}
           >
-            <p className=" font-semibold">{template.title}</p>
+            <p className=" font-semibold">{t(template.titleKey)}</p>
             <MarkdownViewer text={`<center>${template.image}</center>`} className=" prose-img:max-fit" />
           </Card>
         );

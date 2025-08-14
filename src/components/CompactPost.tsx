@@ -11,6 +11,7 @@ import { getThumbnail } from "@/utils/parseImage";
 import { hasNsfwTag } from "@/utils/stateFunctions";
 import { getSettings } from "@/utils/user";
 import SLink from "./ui/SLink";
+import { useTranslation } from "@/utils/i18n";
 
 interface Props {
   comment: Feed;
@@ -19,6 +20,7 @@ interface Props {
 
 export default memo(function CompactPost(props: Props) {
   const { comment, onPress } = props;
+  const { t } = useTranslation();
   const commentInfo =
     useAppSelector((state) => state.commentReducer.values)[
       `${comment.author}/${comment.permlink}`
@@ -66,7 +68,7 @@ export default memo(function CompactPost(props: Props) {
           {
             <div className="flex items-center gap-2 ml-1 text-default-900/80">
               <MdAccessTime className="text-medium" />
-              <TimeAgoWrapper created={comment.created * 1000} />
+              <TimeAgoWrapper created={comment.created * 1000} lang={settings.lang.code} />
             </div>
           }
         </span>

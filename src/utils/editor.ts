@@ -9,7 +9,7 @@ export const getWordsCount = (text) =>
     ? text.replace(/^\s+|\s+$/g, "").split(/\s+/).length
     : 0;
 
-const app = `steempro/${0.1}`;
+const app = `steemcn/${0.1}`;
 
 export const generateRndStr = () =>
   (Math.random() + 1).toString(16).substring(2);

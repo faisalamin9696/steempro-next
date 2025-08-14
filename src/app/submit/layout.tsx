@@ -17,20 +17,20 @@ export default async function Layout({
 
 export async function generateMetadata() {
   const keywords = [
-    "submit posts to SteemPro",
+    "submit posts to SteemCN",
     "share ideas with global audience",
-    "SteemPro community",
-    "submit articles to SteemPro",
+    "SteemCN community",
+    "submit articles to SteemCN",
     "reach global audience",
-    "SteemPro contributions",
-    "SteemPro content submission",
-    "share stories on SteemPro",
-    "SteemPro ideas",
-    "SteemPro platform",
+    "SteemCN contributions",
+    "SteemCN content submission",
+    "share stories on SteemCN",
+    "SteemCN ideas",
+    "SteemCN platform",
   ];
   return {
     title: `Create and Submit - Share Your Ideas with the World!`,
-    description: `Submit your posts, articles, and content to SteemPro and reach a global audience. Join our community and share your ideas, stories, and insights with the world. Start contributing today!`,
+    description: `Submit your posts, articles, and content to SteemCN and reach a global audience. Join our community and share your ideas, stories, and insights with the world. Start contributing today!`,
     keywords: keywords.join(", "),
   };
 }

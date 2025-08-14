@@ -42,6 +42,7 @@ import { twMerge } from "tailwind-merge";
 import Image from "next/image";
 import { Card } from "@heroui/card";
 import { Chip } from "@heroui/chip";
+import { useTranslation } from "@/utils/i18n";
 
 interface Props {
   comment: Post | Feed;
@@ -57,6 +58,7 @@ export default function CommentHeader(props: Props) {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const dispatch = useAppDispatch();
   const { data: session } = useSession();
+  const { t } = useTranslation();
 
   const username = session?.user?.name ?? loginInfo.name;
   const isUsingSteempro = JSON.parse(
@@ -86,36 +88,36 @@ export default function CommentHeader(props: Props) {
   });
 
   const menuItems = [
-    { show: canEdit, key: "edit", name: "Edit", icon: RiEdit2Fill },
+    { show: canEdit, key: "edit", name: t('comment.edit'), icon: RiEdit2Fill },
     {
       show: canDelete,
       key: "delete",
-      name: "Delete",
+      name: t('comment.delete'),
       icon: MdDelete,
       color: "danger",
     },
     {
       show: Role.atLeast(comment?.observer_role, "mod"),
       key: "role",
-      name: "Edit Role/Title",
+      name: t('comment.edit_role_title'),
       icon: FaUserEdit,
     },
     {
       show: canMute,
       key: "mute",
-      name: comment.is_muted ? "Unmute" : "Mute",
+      name: comment.is_muted ? t('comment.unmute') : t('comment.mute'),
       icon: MdDoNotDisturb,
       color: "warning",
     },
     {
       show: canMute,
       key: "pin",
-      name: comment.is_pinned ? "Unpin" : "Pin",
+      name: comment.is_pinned ? t('comment.unpin') : t('comment.pin'),
       icon: BsPinAngleFill,
     },
-    { show: true, key: "copy", name: "Copy Link", icon: FaRegCopy },
-    { show: false, key: "promote", name: "Promote", icon: GrAnnounce },
-    { show: true, key: "history", name: "Edit History", icon: LuHistory },
+    { show: true, key: "copy", name: t('comment.copy_link'), icon: FaRegCopy },
+    { show: false, key: "promote", name: t('comment.promote'), icon: GrAnnounce },
+    { show: true, key: "history", name: t('comment.edit_history'), icon: LuHistory },
   ];
   const renderedItems = menuItems
     .filter((item) => item.show)
@@ -310,10 +312,10 @@ export default function CommentHeader(props: Props) {
               </Dropdown>
             ) : null}
             {isDetail && isUsingSteempro && (
-              <Card title="Posted using SteemPro" className=" rounded-full">
+              <Card title="Posted using SteemCN" className=" rounded-full">
                 <Image
                   quality={75}
-                  title="Posted using SteemPro"
+                  title="Posted using SteemCN"
                   alt=""
                   height={20}
                   width={20}
@@ -338,7 +340,7 @@ export default function CommentHeader(props: Props) {
               />
               {!isReply && (
                 <div className="flex gap-1  sm:items-center">
-                  <p className={""}>in</p>
+                  <p className={""}>{t('comment.in')}</p>
 
                   <STag
                     className="text-md font-semibold"

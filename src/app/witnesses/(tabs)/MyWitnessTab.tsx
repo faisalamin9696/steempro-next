@@ -15,6 +15,7 @@ import { useAppSelector } from "@/constants/AppFunctions";
 import SModal from "@/components/ui/SModal";
 import KeychainButton from "@/components/KeychainButton";
 import WitnessItemCard from "@/components/WitnessItemCard";
+import { useTranslation } from "@/utils/i18n";
 
 type Props = {
   witness: MergedWitness;
@@ -26,6 +27,7 @@ function MyWitnessTab(props: Props) {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { authenticateUserActive, isAuthorizedActive } = useLogin();
   const { isOpen, onOpenChange } = useDisclosure();
+  const { t } = useTranslation();
   const originalValues = useRef({
     signKey: witness.signing_key,
     url: witness.url,
@@ -72,8 +74,8 @@ function MyWitnessTab(props: Props) {
     onSuccess(data, variables, context) {
       toast.success(
         isDisabling
-          ? "Witness disabled successfully"
-          : "Witness configuration updated"
+          ? t("witnesses.witness_disabled_success")
+          : t("witnesses.witness_config_updated")
       );
       setWitness({
         ...witness,
@@ -105,7 +107,7 @@ function MyWitnessTab(props: Props) {
     }
 
     if (!credentials?.key) {
-      toast.error("Invalid credentials");
+      toast.error(t("common.invalid_credentials"));
       return;
     }
 
@@ -127,16 +129,16 @@ function MyWitnessTab(props: Props) {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <DetailItem
-                title="Created"
+                title={t("witnesses.created")}
                 subTitle={new Date(witness.created * 1000)?.toLocaleString()}
               />
               <DetailItem
-                title="Last sync"
+                title={t("witnesses.last_sync")}
                 subTitle={new Date(witness.last_sync * 1000)?.toLocaleString()}
               />
 
               <DetailItem
-                title="Last price"
+                title={t("witnesses.last_price")}
                 subTitle={
                   <div className="text-sm flex flex-row gap-1">
                     <p>
@@ -156,24 +158,24 @@ function MyWitnessTab(props: Props) {
               />
 
               <DetailItem
-                title="Produced blocks"
+                title={t("witnesses.produced_blocks")}
                 subTitle={witness.produced_blocks}
               />
 
               <DetailItem
-                title="Interest rate"
+                title={t("witnesses.interest_rate")}
                 subTitle={witness.props.sbd_interest_rate}
               />
 
               <DetailItem
-                title="Account creation fee"
+                title={t("witnesses.account_creation_fee")}
                 subTitle={witness.props.account_creation_fee}
               />
             </div>
 
-            <DetailItem title="Url" subTitle={witness.url} />
+            <DetailItem title={t("witnesses.url")} subTitle={witness.url} />
 
-            <DetailItem title="Signing Key" subTitle={witness.signing_key} />
+            <DetailItem title={t("witnesses.signing_key")} subTitle={witness.signing_key} />
           </div>
           <div className="flex gap-2">
             <ButtonGroup size="sm">
@@ -189,7 +191,7 @@ function MyWitnessTab(props: Props) {
                     onOpenChange();
                   }}
                 >
-                  Disable
+                  {t("witnesses.disable")}
                 </Button>
               )}
 
@@ -203,7 +205,7 @@ function MyWitnessTab(props: Props) {
                 }}
               >
                 <FaPencil size={14} />
-                Edit
+                {t("common.edit")}
               </Button>
             </ButtonGroup>
           </div>
@@ -220,7 +222,7 @@ function MyWitnessTab(props: Props) {
         title={() => (
           <div className="flex flex-row gap-2 items-center">
             <FiSettings size={18} />
-            Witness Configuration
+            {t("witnesses.witness_configuration")}
           </div>
         )}
         body={() => (
@@ -228,14 +230,14 @@ function MyWitnessTab(props: Props) {
             <div className="flex flex-col gap-2">
               <Input
                 color={isDisabling ? "danger" : "default"}
-                label={`Signing key ${isDisabling ? "(Disable key)" : ""}`}
+                label={`${t("witnesses.signing_key")} ${isDisabling ? `(${t("witnesses.disable_key")})` : ""}`}
                 value={signKey}
                 onValueChange={(value) => setSignKey(value.trim())}
                 isDisabled={isDisabling || mutation.isPending}
               />
 
               <Input
-                label="Url"
+                label={t("witnesses.url")}
                 value={url}
                 onValueChange={(value) => setUrl(value.trim())}
                 isDisabled={mutation.isPending}
@@ -245,7 +247,7 @@ function MyWitnessTab(props: Props) {
             <div className="flex flex-col gap-2 sm:flex-row">
               <Input
                 className="sm:flex-[1] sm:max-w-[150px]"
-                label="Interest rate"
+                label={t("witnesses.interest_rate")}
                 value={interestRate}
                 onValueChange={(value) => setInterestRate(value.trim())}
                 isDisabled={isDisabling || mutation.isPending}
@@ -253,7 +255,7 @@ function MyWitnessTab(props: Props) {
 
               <Input
                 className="sm:flex-[3]"
-                label="Account creation fee (STEEM)"
+                label={t("witnesses.account_creation_fee")}
                 value={creationFee}
                 onValueChange={(value) => setCreationFee(value.trim())}
                 isDisabled={isDisabling || mutation.isPending}
@@ -278,7 +280,7 @@ function MyWitnessTab(props: Props) {
                 }}
                 isDisabled={mutation.isPending}
               >
-                Cancel
+                {t("common.cancel")}
               </Button>
               <Button
                 color={isDisabling ? "danger" : "success"}
@@ -287,7 +289,7 @@ function MyWitnessTab(props: Props) {
                 isLoading={mutation.isPending}
                 isDisabled={!isDisabling && !hasChanged()}
               >
-                {isDisabling ? "Disable" : "Update"}
+                {isDisabling ? t("witnesses.disable") : t("common.update")}
               </Button>
             </div>
           </div>

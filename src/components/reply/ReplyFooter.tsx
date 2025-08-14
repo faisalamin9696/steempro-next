@@ -41,6 +41,7 @@ import {
   saveCommentDraft,
 } from "@/utils/draft";
 import ConfirmationPopup from "../ui/ConfirmationPopup";
+import { useTranslation } from "@/utils/i18n";
 
 export default function ReplyFooter({
   comment,
@@ -59,6 +60,7 @@ export default function ReplyFooter({
   rootComment: Post | Feed;
   isEditing?: (isEdit: boolean) => void;
 }) {
+  const { t } = useTranslation();
   const postReplies =
     useAppSelector((state) => state.repliesReducer.values)[
       `${rootComment?.author}/${rootComment?.permlink}`
@@ -480,7 +482,7 @@ export default function ReplyFooter({
                 isDisabled={unmuteMutation.isPending || showReply || showEdit}
                 className="text-tiny min-w-0 min-h-0"
               >
-                {comment.is_muted ? "Unmute" : "Mute"}
+                {comment.is_muted ? t('reply.unmute') : t('reply.mute')}
               </Button>
             )}
           </div>
@@ -500,7 +502,7 @@ export default function ReplyFooter({
                   radius="full"
                   size="sm"
                 >
-                  Open thread ({comment.children})
+                  {t('reply.open_thread')} ({comment.children})
                 </Button>
               ) : (
                 <Button
@@ -511,7 +513,7 @@ export default function ReplyFooter({
                   size="sm"
                   onPress={toggleExpand}
                 >
-                  Reveal {comment.children} replies
+                  {t('reply.reveal_replies').replace('{count}', comment.children.toString())}
                 </Button>
               )}
             </div>
@@ -556,7 +558,7 @@ export default function ReplyFooter({
                       else toggleEdit();
                     }}
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </Button>
                 }
 
@@ -565,7 +567,7 @@ export default function ReplyFooter({
                   onPress={handlePublish}
                   isLoading={isPosting}
                   tooltip=""
-                  buttonText={showEdit ? "Update" : "Reply"}
+                  buttonText={showEdit ? t('reply.update') : t('reply.reply')}
                 />
               </div>
             </div>
@@ -573,11 +575,11 @@ export default function ReplyFooter({
             <div className="space-y-1 w-full overflow-auto m-1 mt-4">
               <div className=" items-center flex justify-between">
                 <p className="float-left text-sm text-default-900/70 font-semibold">
-                  Preview
+                  {t('reply.preview')}
                 </p>
 
                 <p className="float-right text-sm font-light text-default-900/60">
-                  {rpm?.words} words, {rpm?.text}
+                  {rpm?.words} {t('reply.words')}, {rpm?.text}
                 </p>
               </div>
               {markdown ? (

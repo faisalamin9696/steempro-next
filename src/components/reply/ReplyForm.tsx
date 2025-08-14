@@ -7,6 +7,7 @@ import ReplyBody from "./ReplyBody";
 import ReplyFooter from "./ReplyFooter";
 import { twMerge } from "tailwind-merge";
 import { difference } from "lodash";
+import { useTranslation } from "@/utils/i18n";
 
 interface Props {
   comment: Post;
@@ -16,6 +17,7 @@ interface Props {
 
 export default memo(function ReplyForm(props: Props) {
   const { comment, rootComment } = props;
+  const { t } = useTranslation();
 
   const postReplies =
     useAppSelector((state) => state.repliesReducer.values)[
@@ -53,7 +55,7 @@ export default memo(function ReplyForm(props: Props) {
             comment.children >= 1 &&
             !isDeep && (
               <button
-                title={expanded ? "Collapse" : "Expand"}
+                title={expanded ? t('reply.collapse') : t('reply.expand')}
                 className=" hover:text-primary"
                 onClick={() => setExpanded(!expanded)}
               >

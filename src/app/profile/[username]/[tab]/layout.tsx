@@ -57,15 +57,15 @@ export async function generateMetadata({ params }): Promise<Metadata> {
   const pageDescription = about || "";
 
   const keywords = [
-    `SteemPro @${username}`,
+    `SteemCN @${username}`,
     `${tab} by @${username}`,
-    `${username}'s SteemPro profile`,
-    `SteemPro user ${username}`,
+    `${username}'s SteemCN profile`,
+    `SteemCN user ${username}`,
     `decentralized ${tab} content`,
     `Steem ${tab} by ${username}`,
     `blockchain blogging profile`,
     `crypto social posts by ${username}`,
-    `${username} ${tab} on SteemPro`,
+    `${username} ${tab} on SteemCN`,
     `Web3 creator ${username}`,
   ];
   return {

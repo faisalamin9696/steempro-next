@@ -56,17 +56,17 @@ export async function generateMetadata({ params }): Promise<Metadata> {
     extractBodySummary(result?.body, isReply) + " by " + result?.author;
 
   const keywords = [
-    `SteemPro @${result.author}`,
+    `SteemCN @${result.author}`,
     `${result.title} post`,
     `post by @${result.author}`,
-    `content from ${result.author} on SteemPro`,
+    `content from ${result.author} on SteemCN`,
     `${result.author}'s blockchain blog`,
-    `decentralized blogging on SteemPro`,
+    `decentralized blogging on SteemCN`,
     `Steem blockchain post`,
     `crypto social content`,
     `web3 blogging platform`,
-    `SteemPro content by ${result.author}`,
-    `@${result.author} SteemPro posts`,
+    `SteemCN content by ${result.author}`,
+    `@${result.author} SteemCN posts`,
   ];
 
   return {

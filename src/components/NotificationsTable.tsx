@@ -35,6 +35,7 @@ import {
 import { IoFilterOutline } from "react-icons/io5";
 import STable from "./ui/STable";
 import { Spinner } from "@heroui/spinner";
+import { useTranslation } from "@/utils/i18n";
 
 interface Props {
   username: string;
@@ -42,13 +43,13 @@ interface Props {
   onOpenChange?: (isOpen: boolean) => void;
 }
 
-const sortOptions = [
-  { name: "All", uid: "all" },
-  { name: "Vote", uid: "vote" },
-  { name: "Reply", uid: "reply" },
-  { name: "Mention", uid: "mention" },
-  { name: "Resteem", uid: "resteem" },
-  { name: "Follow", uid: "follow" },
+const getSortOptions = (t) => [
+  { name: t("notifications.filter.all"), uid: "all" },
+  { name: t("notifications.filter.vote"), uid: "vote" },
+  { name: t("notifications.filter.reply"), uid: "reply" },
+  { name: t("notifications.filter.mention"), uid: "mention" },
+  { name: t("notifications.filter.resteem"), uid: "resteem" },
+  { name: t("notifications.filter.follow"), uid: "follow" },
 ];
 
 const typeColorMap = {
@@ -106,8 +107,10 @@ const ITEMS_PER_BATCH = 50;
 let tempLastRead = 0;
 
 export default function NotificationsTable(props: Props) {
+  const { t } = useTranslation();
   const { username, isOpen, onOpenChange } = props;
   const commonData = useAppSelector((state) => state.commonReducer.values);
+  const sortOptions = getSortOptions(t);
 
   function getOffset(): number {
     return offset?.[username] || 0;
@@ -266,7 +269,7 @@ export default function NotificationsTable(props: Props) {
                 color="primary"
                 // endContent={<IoCheckmarkDone className="text-lg" />}
               >
-                Mark all as read
+                {t("notifications.mark_all_as_read")}
               </Button>
             )}
           </div>
@@ -308,7 +311,7 @@ export default function NotificationsTable(props: Props) {
       <STable
         isLoading={isLoading}
         skipCard={isSelf}
-        title={!isSelf ? null : "Notifications"}
+        title={!isSelf ? null : t("notifications.title")}
         titleWrapperClassName="flex-row"
         subTitle={() => topContent}
         filterByValue={["account", "type"]}
@@ -430,7 +433,7 @@ export default function NotificationsTable(props: Props) {
                   loadMoreMutation.mutate(getOffset());
                 }}
               >
-                {loadMoreMutation.isPending ? "Loading" : `Load more`}
+                {loadMoreMutation.isPending ? t("common.loading") : t("common.load_more")}
               </Button>
             </div>
           ) : null

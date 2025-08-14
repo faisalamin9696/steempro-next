@@ -1,6 +1,8 @@
 import moment from "moment";
 import { getTimeFromNow } from "@/utils/helper/time";
 import { twMerge } from "tailwind-merge";
+import { useTranslation } from "@/utils/i18n";
+import { LanguagesCode } from "@/types/language";
 
 interface Props {
   created?: number |string;
@@ -14,6 +16,7 @@ interface Props {
 export default function TimeAgoWrapper(props: Props) {
   const { lang, created, lastUpdate, withoutUtc, className, handleEditClick } =
     props;
+  const { t } = useTranslation();
   if (!created) return null;
 
   return (
@@ -42,7 +45,7 @@ export default function TimeAgoWrapper(props: Props) {
               }
               className={className}
             >
-              (edited)
+              {t('common.edited')}
             </button>
           ) : null}
         </div>

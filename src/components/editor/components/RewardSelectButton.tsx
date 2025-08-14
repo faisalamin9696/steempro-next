@@ -5,11 +5,12 @@ import { RadioGroup, Radio } from "@heroui/radio";
 import React, { memo, useState } from "react";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { SiSteem } from "react-icons/si";
+import { useTranslation } from "@/utils/i18n";
 
-export const rewardTypes: Payout[] = [
-  { title: "Decline Payout", shortTitle: "Declined", payout: 0 },
-  { title: "50% SBD / 50% SP", shortTitle: "50/50", payout: 50 },
-  { title: "Power Up 100%", shortTitle: "100%", payout: 100 },
+export const rewardTypes = (t: (key: string) => string): Payout[] => [
+  { title: t("submit.decline_payout"), shortTitle: t("submit.declined"), payout: 0 },
+  { title: t("submit.reward_50_50"), shortTitle: "50/50", payout: 50 },
+  { title: t("submit.power_up_100"), shortTitle: "100%", payout: 100 },
 ];
 
 interface Props {
@@ -19,13 +20,23 @@ interface Props {
 }
 
 export default memo(function RewardSelectButton(props: Props) {
-  const { onSelectReward, selectedValue, isDisabled } = props;
+  const { t } = useTranslation();
+  const { onSelectReward, selectedValue: propsSelectedValue, isDisabled } = props;
 
   const [rewardPopup, setRewardPopup] = useState(false);
   const { isMobile } = useDeviceInfo();
+  
+  const localRewardTypes = rewardTypes(t);
+  
+  // Find matching reward type or use default
+  const matchingRewardType = propsSelectedValue ? 
+    localRewardTypes.find(rt => rt.payout === propsSelectedValue.payout) : null;
+  
+  // Ensure selectedValue is properly initialized with translated values
+  const selectedValue = matchingRewardType || localRewardTypes[1];
 
   return (
-    <div title="Payout reward type">
+    <div title={t("submit.payout_reward_type")}>
       <Popover
         isOpen={rewardPopup}
         onOpenChange={(open) => setRewardPopup(open)}
@@ -53,22 +64,22 @@ export default memo(function RewardSelectButton(props: Props) {
         <PopoverContent>
           <div className="flex flex-col gap-2 px-1 py-2">
             <div className="flex flex-col gap-1">
-              <p className="flex text-medium font-semibold">{"Reward type"}</p>
+              <p className="flex text-medium font-semibold">{t("submit.reward_type")}</p>
               <p className="text-sm text-default-500">
-                {"What type of tokens do you want as rewards?"}
+                {t("submit.reward_type_description")}
               </p>
             </div>
             <RadioGroup
               color="danger"
               className="mt-2"
               size="sm"
-              defaultValue={JSON.stringify(selectedValue ?? rewardTypes[1])}
+              defaultValue={JSON.stringify(selectedValue ?? localRewardTypes[1])}
               onValueChange={(key) => {
                 setRewardPopup(false);
                 onSelectReward && onSelectReward(JSON.parse(key));
               }}
             >
-              {rewardTypes?.map((reward) => {
+              {localRewardTypes?.map((reward) => {
                 return (
                   <Radio
                     classNames={{ label: "" }}

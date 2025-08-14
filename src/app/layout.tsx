@@ -7,18 +7,21 @@ import { AppStrings } from "@/constants/AppStrings";
 import { SessionProvider } from "next-auth/react";
 import { Providers } from "./providers";
 import { auth } from "@/auth";
+import { cookies } from 'next/headers';
+import { getSettings } from "@/utils/user";
+import { languages, defaultLanguage } from "@/contexts/LanguageContext";
 // export const runtime = 'edge' // 'nodejs' (default) | 'edge'
 // const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.steempro.com"),
+  metadataBase: new URL("https://www.steemcn.blog"),
   title: {
-    default: "SteemPro",
-    template: "%s | SteemPro",
+    default: "SteemCN",
+    template: "%s | SteemCN",
     absolute: "",
   },
   keywords:
-    "SteemPro, steem, blockchain, steempro, web3, decentralized social media, social",
+    "SteemCN, steem, blockchain, steemcn, web3, decentralized social media, social",
   description:
     "Experience a social network empowered by the Steem blockchain. Explore trending discussions and share your unique perspective.",
   icons: {
@@ -28,8 +31,8 @@ export const metadata: Metadata = {
   },
   manifest: "/site.webmanifest",
   openGraph: {
-    siteName: "SteemPro",
-    url: "https://www.steempro.com",
+    siteName: "SteemCN",
+    url: "https://www.steemcn.blog",
     images: [
       {
         url: "/api/og",
@@ -40,7 +43,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    site: "@steemproblogs",
+    site: "@ericet369",
     images: [
       {
         url: "/api/og",
@@ -57,9 +60,15 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
-
+  
+  // Get language from cookies or use default
+  // In Next.js 15, cookies() is asynchronous and must be awaited
+  const cookieStore = await cookies();
+  const langCookie = cookieStore.get('lang');
+  const langCode = langCookie?.value || defaultLanguage.code;
+  
   return (
-    <html lang="en" suppressHydrationWarning={true}>
+    <html lang={langCode} suppressHydrationWarning={true}>
       <link
         rel="dns-prefetch"
         href="https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg"

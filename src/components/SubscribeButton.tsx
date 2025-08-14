@@ -8,6 +8,7 @@ import { useLogin } from "./auth/AuthProvider";
 import { getCredentials, getSessionKey } from "@/utils/user";
 import { addCommunityHandler } from "@/hooks/redux/reducers/CommunityReducer";
 import { useSession } from "next-auth/react";
+import { useTranslation } from "@/utils/i18n";
 
 type Props = {
   community: Community;
@@ -16,6 +17,7 @@ type Props = {
 };
 
 export default function SubscribeButton(props: Props) {
+  const { t } = useTranslation();
   const { community, size, username } = props;
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const communityInfo: Community =
@@ -55,8 +57,8 @@ export default function SubscribeButton(props: Props) {
         handleFailed(error);
         return;
       }
-      if (isSubscribed) toast.success("Left");
-      else toast.success("Joined");
+      if (isSubscribed) toast.success(t("community.left"));
+      else toast.success(t("community.joined"));
       dispatch(
         addCommunityHandler({
           ...communityInfo,
@@ -73,7 +75,7 @@ export default function SubscribeButton(props: Props) {
 
     const credentials = getCredentials(getSessionKey(session?.user?.name));
     if (!credentials?.key) {
-      toast.error("Invalid credentials");
+      toast.error(t("reply.invalid_credentials"));
       return;
     }
     if (communityInfo) {
@@ -103,12 +105,12 @@ export default function SubscribeButton(props: Props) {
         radius="full"
         size={size ?? "md"}
         isLoading={isPending}
-        title={isSubscribed ? "Leave community" : "Join community"}
+        title={isSubscribed ? t("community.leave_community") : t("community.join_community")}
         variant={"flat"}
         onPress={handleFollow}
         isIconOnly={isPending}
       >
-        {isPending ? "" : isSubscribed ? "Leave" : "Join"}
+        {isPending ? "" : isSubscribed ? t("community.leave") : t("community.join")}
       </Button>
     </div>
   );

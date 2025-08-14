@@ -1,4 +1,5 @@
 import { Button } from "@heroui/button";
+import { useTranslation } from "@/utils/i18n";
 
 interface Props {
   buttonText?: string;
@@ -8,12 +9,13 @@ interface Props {
   isDisabled?: boolean;
 }
 export default function PublishButton(props: Props) {
+  const { t } = useTranslation();
   const { buttonText, isLoading, tooltip, onPress, isDisabled } = props;
 
   return (
     <Button
       size="sm"
-      title={tooltip ?? "Publish post"}
+      title={tooltip ?? t("submit.publish_post")}
       isDisabled={isDisabled}
       color="success"
       onPress={onPress}
@@ -21,7 +23,7 @@ export default function PublishButton(props: Props) {
       radius="lg"
       variant="flat"
     >
-      {buttonText ?? "Publish"}
+      {buttonText ?? t("submit.publish")}
     </Button>
   );
 }

@@ -47,11 +47,11 @@ export async function generateMetadata(
   const keywords = [
     `${community} community discussions`,
     `${community} ${category} content`,
-    `${title} - ${community} on SteemPro`,
+    `${title} - ${community} on SteemCN`,
     `latest ${category} from ${community}`,
     `top ${category} topics in ${community}`,
     `#${community} news and updates`,
-    `#${category} posts on SteemPro`,
+    `#${category} posts on SteemCN`,
     `${category} conversations at ${community}`,
     `${community} ${category} insights`,
     `${community} trending ${category}`,

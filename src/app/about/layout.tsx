@@ -3,18 +3,18 @@ import { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: `About SteemPro - Empowering Your Steem Experience`,
-  description: `Learn more about SteemPro, the leading platform dedicated to providing valuable insights, resources, and community engagement opportunities for Steem enthusiasts. Discover our mission, vision, and commitment to empowering your journey on the Steem blockchain.`,
+  title: `About SteemCN - Empowering Your Steem Experience`,
+  description: `Learn more about SteemCN, the leading platform dedicated to providing valuable insights, resources, and community engagement opportunities for Steem enthusiasts. Discover our mission, vision, and commitment to empowering your journey on the Steem blockchain.`,
   keywords: [
-    "SteemPro platform",
+    "SteemCN platform",
     "Steem blockchain insights",
-    "SteemPro community",
+    "SteemCN community",
     "Steem resources",
-    "SteemPro mission",
-    "SteemPro vision",
+    "SteemCN mission",
+    "SteemCN vision",
     "empower Steem experience",
     "Steem blockchain platform",
-    "SteemPro engagement",
+    "SteemCN engagement",
     "Steem enthusiasts",
   ].join(", "),
 };

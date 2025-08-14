@@ -5,6 +5,7 @@ import { validate_account_name } from "@/utils/chainValidation";
 import { Button } from "@heroui/button";
 import { Switch } from "@heroui/switch";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "@/utils/i18n";
 import { FaChevronDown, FaCode } from "react-icons/fa";
 import { FiAlertCircle, FiExternalLink } from "react-icons/fi";
 import { twMerge } from "tailwind-merge";
@@ -20,6 +21,7 @@ interface Props {
 }
 
 function WitnessListTab(props: Props) {
+  const { t } = useTranslation();
   const {
     witnesses: witnessList,
     userData,
@@ -70,13 +72,13 @@ function WitnessListTab(props: Props) {
 
   const formatPreviewValue = (key: string, value: any): string => {
     if (value === null || value === undefined) {
-      return "N/A";
+      return t("common.not_available");
     }
 
     // Handle exchange_rate object specifically
     if (key === "reported_price" && typeof value === "object") {
-      const base = value.base || "N/A";
-      const quote = value.quote || "N/A";
+      const base = value.base || t("common.not_available");
+      const quote = value.quote || t("common.not_available");
       return `${base} / ${quote}`;
     }
 
@@ -94,10 +96,10 @@ function WitnessListTab(props: Props) {
         filterByValue={["name", "signing_key"]}
         data={filteredWitnesses ?? witnessList}
         itemsPerPage={25}
-        title={"Top Witnesses (100)"}
+        title={t("witnesses.top_witnesses")}
         titleIcon={RiUserStarFill}
         subTitle={() =>
-          "Vote for up to 30 witnesses to secure the Steem blockchain"
+          t("witnesses.vote_description")
         }
         titleExtra={
           <div className="flex flex-col gap-4 w-full">
@@ -109,13 +111,13 @@ function WitnessListTab(props: Props) {
                   isSelected={filterVotes}
                   onValueChange={setFilterVotes}
                 >
-                  <p className="text-sm">Show only my votes</p>
+                  <p className="text-sm">{t("witnesses.show_only_my_votes")}</p>
                 </Switch>
               </div>
               <div className="text-sm text-default-500">
                 {userData?.name
-                  ? `Voted: ${userVoteCount}/30`
-                  : "Login to see your votes"}
+                  ? t("witnesses.voted_count", { count: userVoteCount })
+                  : t("witnesses.login_to_see_votes")}
               </div>
             </div>
 
@@ -124,7 +126,7 @@ function WitnessListTab(props: Props) {
                 <div className="flex flex-row items-center gap-2 text-orange-700">
                   <FiAlertCircle className="w-4 h-4" />
                   <div className="flex flex-row gap-2 items-center text-sm font-medium">
-                    <p>Proxy Active:</p>
+                    <p>{t("witnesses.proxy_active")}:</p>
                     <SAvatar
                       size="xs"
                       username={currentProxy}
@@ -226,7 +228,7 @@ function WitnessListTab(props: Props) {
                     className="px-2 sm:px-3 rounded-s-none"
                   >
                     <FiExternalLink size={14} />
-                    Info
+                    {t("common.info")}
                   </Button>
                 </div>
               </div>

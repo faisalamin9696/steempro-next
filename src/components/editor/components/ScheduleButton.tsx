@@ -1,5 +1,6 @@
 import { Button } from "@heroui/button";
 import { FaCalendarAlt } from "react-icons/fa";
+import { useTranslation } from "@/utils/i18n";
 
 interface Props {
   buttonText?: string;
@@ -9,12 +10,13 @@ interface Props {
 }
 
 export default function ScheduleButton(props: Props) {
+  const { t } = useTranslation();
   const { buttonText, isLoading, onPress, isDisabled } = props;
 
   return (
     <Button
       size="sm"
-      title="Schedule post"
+      title={t("submit.schedule_post")}
       onPress={onPress}
       color="primary"
       isDisabled={isDisabled}
@@ -23,7 +25,7 @@ export default function ScheduleButton(props: Props) {
       variant="flat"
     >
       {buttonText ? (
-        buttonText ?? "Schedule"
+        buttonText ?? t("submit.schedule")
       ) : (
         <FaCalendarAlt className="text-xl" />
       )}

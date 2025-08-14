@@ -45,6 +45,9 @@ import { useSession } from "next-auth/react";
 import { useDropzone } from "react-dropzone";
 import { useDisclosure } from "@heroui/modal";
 import CustomUsersVotingCard from "@/components/CustomUsersVotingCard";
+import { languages } from "@/contexts/LanguageContext";
+import { MdLanguage } from "react-icons/md";
+import { useTranslation } from "@/utils/i18n";
 
 let isCover: boolean = false;
 
@@ -52,6 +55,7 @@ const iconSize = 24;
 export default function SettingsPage({ username }: { username?: string }) {
   username = username?.toLowerCase();
   const { data: session } = useSession();
+  const { currentLanguage, t, changeLanguage } = useTranslation();
 
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const [parsedData, setParsedData] = useState<any>();
@@ -324,7 +328,7 @@ export default function SettingsPage({ username }: { username?: string }) {
       <div className="flex flex-col gap-4 max-w-2xl">
         <div className="flex items-center gap-2 text-default-600">
           <IoIosSettings size={iconSize} />
-          <p className="text-sm">General</p>
+          <p className="text-sm">{t('settings.general')}</p>
 
           <Divider orientation="horizontal" className=" shrink" />
         </div>
@@ -332,9 +336,9 @@ export default function SettingsPage({ username }: { username?: string }) {
         <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
           <Select
             startContent={<TbServerBolt className={className} size={iconSize - 4} />}
-            aria-label="Select RPC Node"
+            aria-label={t('settings.rpc_server')}
             variant="flat"
-            label="Select RPC Node"
+            label={t('settings.rpc_server')}
             disallowEmptySelection
             onChange={(key) => {
               handleRpcChange(key.target.value as string);
@@ -356,12 +360,39 @@ export default function SettingsPage({ username }: { username?: string }) {
             })}
           </Select>
 
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-medium">{t('settings.choose_language')}</label>
+              <span className="text-xs bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded-full">
+                Current: {currentLanguage.title}
+              </span>
+            </div>
+            <select 
+              className="p-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800"
+              value={currentLanguage.code}
+              onChange={(e) => {
+                console.log('Language selection changed:', e.target.value);
+                const selectedLang = languages.find(lang => lang.code === e.target.value);
+                console.log('Selected language:', selectedLang);
+                if (selectedLang) {
+                  changeLanguage(selectedLang);
+                }
+              }}
+            >
+              {languages.map((lang) => (
+                <option key={lang.code} value={lang.code}>
+                  {lang.title}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <Select
             startContent={<MdDisabledVisible className={className} size={iconSize - 4} />}
-            aria-label="(NSFW) content"
+            aria-label={t('settings.nsfw_content')}
             disallowEmptySelection
             variant="flat"
-            label="NSFW content"
+            label={t('settings.nsfw_content')}
             onChange={(key) => {
               handleNsfwChange(key.target.value as NSFW);
             }}
@@ -378,20 +409,20 @@ export default function SettingsPage({ username }: { username?: string }) {
                         </SelectItem> */}
 
             <SelectItem className="text-sm" key={"Always warn"}>
-              {"Always warn"}
+              {t('settings.always_warn')}
             </SelectItem>
 
             <SelectItem className="text-sm" key={"Always show"}>
-              {"Always show"}
+              {t('settings.always_show')}
             </SelectItem>
           </Select>
 
           <Select
             startContent={<FaChevronCircleUp className={className} size={iconSize - 4} />}
-            aria-label="Vote value"
+            aria-label={t('settings.vote_percentage')}
             variant="flat"
             disallowEmptySelection
-            label="Vote Percentage"
+            label={t('settings.vote_percentage')}
             onChange={(key) => {
               handleRememberChange(key.target.value);
             }}
@@ -404,21 +435,21 @@ export default function SettingsPage({ username }: { username?: string }) {
             }}
           >
             <SelectItem className="text-sm" key={"true"}>
-              {"Remember my vote"}
+              {t('settings.remember_my_vote')}
             </SelectItem>
 
             <SelectItem className="text-sm" key={"false"}>
-              {"Default to 100%"}
+              {t('settings.default_to_100')}
             </SelectItem>
           </Select>
 
           <div className=" flex flex-row items-center gap-2">
             <Select
               startContent={<RiArrowUpDoubleFill className={className} size={iconSize - 4} />}
-              aria-label="Long press vote"
+              aria-label={t('settings.long_press')}
               variant="flat"
               disallowEmptySelection
-              label="LongPress Vote"
+              label={t('settings.long_press')}
               onChange={(key) => {
                 handleLongPressChange(key.target.value);
               }}
@@ -431,11 +462,11 @@ export default function SettingsPage({ username }: { username?: string }) {
               }}
             >
               <SelectItem className="text-sm" key={"true"}>
-                {"Enable"}
+                {t('settings.enable')}
               </SelectItem>
 
               <SelectItem className="text-sm" key={"false"}>
-                {"Disable"}
+                {t('settings.disable')}
               </SelectItem>
             </Select>
 
@@ -463,14 +494,14 @@ export default function SettingsPage({ username }: { username?: string }) {
         <div className="flex flex-col gap-4  max-w-2xl text-default-600">
           <div className="flex items-center gap-2">
             <RiUserSettingsFill size={iconSize} />
-            <p className="text-sm">Profile</p>
+            <p className="text-sm">{t('common.profile')}</p>
 
             <Divider orientation="horizontal" className=" shrink" />
           </div>
 
           <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1 max-w-2xl">
             <Input
-              label="Profile picture url"
+              label={t('profile.profile_picture')}
               value={profileImage}
               onValueChange={setProfileImage}
               maxLength={200}
@@ -494,7 +525,7 @@ export default function SettingsPage({ username }: { username?: string }) {
             />
 
             <Input
-              label="Cover image url"
+              label={t('profile.cover_image')}
               maxLength={200}
               value={coverImage}
               onValueChange={setCoverImage}
@@ -518,7 +549,7 @@ export default function SettingsPage({ username }: { username?: string }) {
             />
 
             <Input
-              label="Display Name"
+              label={t('profile.display_name')}
               maxLength={20}
               value={displayName}
               onValueChange={setDisplayName}
@@ -531,7 +562,7 @@ export default function SettingsPage({ username }: { username?: string }) {
             />
 
             <Input
-              label="About"
+              label={t('profile.about')}
               maxLength={160}
               value={about}
               onValueChange={setAbout}
@@ -541,7 +572,7 @@ export default function SettingsPage({ username }: { username?: string }) {
             />
 
             <Input
-              label="Location"
+              label={t('profile.location')}
               maxLength={30}
               value={location}
               onValueChange={setLocation}
@@ -551,10 +582,11 @@ export default function SettingsPage({ username }: { username?: string }) {
             />
 
             <Input
-              label="Website"
+              label={t('profile.website')}
               maxLength={100}
               value={website}
               onValueChange={setWebsite}
+              placeholder={t('profile.website_placeholder')}
               startContent={
                 <FaGlobe size={iconSize - 4} className={className} />
               }
@@ -567,7 +599,7 @@ export default function SettingsPage({ username }: { username?: string }) {
             onPress={handleUpdate}
             className="self-start"
           >
-            Save
+            {t('common.save')}
           </Button>
         </div>
       )}

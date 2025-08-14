@@ -2,6 +2,7 @@
 
 import React, { Key, useEffect, useState } from "react";
 import { Button } from "@heroui/button";
+import { useTranslation } from "@/utils/i18n";
 import { Chip } from "@heroui/chip";
 import { FaPlus } from "react-icons/fa";
 import useSWR from "swr";
@@ -30,9 +31,9 @@ import { MdDelete, MdEditSquare } from "react-icons/md";
 import { SlOptions } from "react-icons/sl";
 import { RiArrowLeftDownLine, RiArrowRightUpLine } from "react-icons/ri";
 
-const sortOptions = [
-  { name: "Low → High", uid: "asc" },
-  { name: "High → Low", uid: "desc" },
+const getSortOptions = (t: (key: string) => string) => [
+  { name: t("wallet.low_to_high"), uid: "asc" },
+  { name: t("wallet.high_to_low"), uid: "desc" },
 ];
 
 const statusColorMap = {
@@ -42,6 +43,8 @@ const statusColorMap = {
 };
 
 export default function DelegationTab({ data }: { data: AccountExt }) {
+  const { t } = useTranslation();
+  const sortOptions = getSortOptions(t);
   let { username } = useParams() as { username: string };
   username = username?.toLowerCase();
   const URL_OUTGOING = `/delegations_api/getOutgoingDelegations/${username}`;
@@ -151,9 +154,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
         itemsPerPage={30}
         bodyClassName="grid grid-cols-1 md:grid-cols-2 gap-8"
         data={filteredItems}
-        description={
-          "Incoming • Outgoing • Expiring – Adjust or Remove Delegations"
-        }
+        description={t("wallet.delegation_description")}
         titleClassName="w-full"
         filterByValue={["from", "to"]}
         searchEndContent={
@@ -188,7 +189,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
         }
         title={
           <div className="flex flex-row justify-between items-center w-full gap-2">
-            <p>Total Delegation</p>
+            <p>{t("wallet.total_delegation")}</p>
 
             <Button
               size="sm"
@@ -201,7 +202,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
               color="primary"
               endContent={<FaPlus />}
             >
-              New Delegation
+              {t("wallet.new_delegation")}
             </Button>
           </div>
         }
@@ -320,7 +321,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                       size="sm"
                       variant="flat"
                     >
-                      {delegation.status}
+                      {t(`wallet.${delegation.status}`)}
                     </Chip>
 
                     {canEdit && (
@@ -343,7 +344,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                         >
                           <DropdownItem key={`edit`}>
                             <div className="flex flex-row items-center gap-2">
-                              <MdEditSquare size={16} /> Edit
+                              <MdEditSquare size={16} /> {t("wallet.edit")}
                             </div>
                           </DropdownItem>
                           <DropdownItem
@@ -354,7 +355,7 @@ export default function DelegationTab({ data }: { data: AccountExt }) {
                           >
                             <div className="flex flex-row items-center gap-2">
                               <MdDelete size={16} />
-                              Remove
+                              {t("wallet.remove")}
                             </div>
                           </DropdownItem>
                         </DropdownMenu>

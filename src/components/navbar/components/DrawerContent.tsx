@@ -6,6 +6,7 @@ import { Divider } from "@heroui/divider";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import React from "react";
+import { useTranslation } from "@/utils/i18n";
 import { AiFillProject, AiOutlineProject } from "react-icons/ai";
 import { HiOutlineUserGroup, HiUserGroup } from "react-icons/hi2";
 import { IoHome, IoHomeOutline } from "react-icons/io5";
@@ -33,13 +34,14 @@ import { twMerge } from "tailwind-merge";
 const iconSize = 24;
 function DrawerContent() {
   const { data: session } = useSession();
+  const { t } = useTranslation();
   const pathname = usePathname()?.replaceAll(
     /\b(?:trending|payout|created|hot)\b/g,
     ""
   );
   const menuItems = [
     {
-      title: "Home",
+      title: t('sidebar.home'),
       href: "/",
       unFocusedIcon: <IoHomeOutline size={iconSize} />,
       focusedIcon: <IoHome size={iconSize} />,
@@ -47,14 +49,14 @@ function DrawerContent() {
     },
 
     {
-      title: "Explore",
+      title: t('sidebar.explore'),
       href: `/@${session?.user?.name}/friends`,
       unFocusedIcon: <RiGroup2Line size={iconSize} />,
       focusedIcon: <RiGroup2Fill size={iconSize} />,
       loginRequired: true,
     },
     {
-      title: "Schedules",
+      title: t('sidebar.schedules'),
       href: `/schedules`,
       unFocusedIcon: <RiCalendar2Line size={iconSize} />,
       focusedIcon: <RiCalendar2Fill size={iconSize} />,
@@ -62,40 +64,40 @@ function DrawerContent() {
       belowContent: <Divider className=" my-2" />,
     },
     {
-      title: "Communities",
+      title: t('sidebar.communities'),
       href: `/communities`,
       unFocusedIcon: <HiOutlineUserGroup size={iconSize} />,
       focusedIcon: <HiUserGroup size={iconSize} />,
     },
 
     {
-      title: "Witnesses",
+      title: t('sidebar.witnesses'),
       href: `/witnesses`,
       unFocusedIcon: <RiUserStarLine size={iconSize} />,
       focusedIcon: <RiUserStarFill size={iconSize} />,
     },
     {
-      title: "Proposals",
+      title: t('sidebar.proposals'),
       href: `/proposals`,
       unFocusedIcon: <AiOutlineProject size={iconSize} />,
       focusedIcon: <AiFillProject size={iconSize} />,
     },
     {
-      title: "Market",
+      title: t('sidebar.market'),
       href: `/market`,
       unFocusedIcon: <MdOutlineAreaChart  size={iconSize} />,
       focusedIcon: <MdAreaChart size={iconSize} />,
     },
 
     {
-      title: "Settings",
+      title: t('sidebar.settings'),
       href: `/settings`,
       unFocusedIcon: <RiSettings2Line size={iconSize} />,
       focusedIcon: <RiSettings2Fill size={iconSize} />,
     },
 
     {
-      title: "Tools",
+      title: t('sidebar.tools'),
       href: `/tools`,
       unFocusedIcon: <RiToolsLine size={iconSize} />,
       focusedIcon: <RiToolsFill size={iconSize} />,
@@ -103,27 +105,27 @@ function DrawerContent() {
     },
 
     {
-      title: "GitHub",
+      title: t('sidebar.github'),
       href: GitHubLink,
       unFocusedIcon: <RiGithubLine size={iconSize} />,
       focusedIcon: <RiGithubFill size={iconSize} />,
       externalLink: true,
     },
     {
-      title: "Discord",
+      title: t('sidebar.discord'),
       href: DiscordServerLink,
       unFocusedIcon: <RiDiscordLine size={iconSize} />,
       focusedIcon: <RiDiscordFill size={iconSize} />,
       externalLink: true,
     },
     {
-      title: "Privacy Policy",
+      title: t('sidebar.privacy_policy'),
       href: `/policy`,
       unFocusedIcon: <MdOutlinePolicy size={iconSize} />,
       focusedIcon: <MdPolicy size={iconSize} />,
     },
     {
-      title: "About",
+      title: t('sidebar.about'),
       href: `/about`,
       unFocusedIcon: <RiInformation2Line size={iconSize} />,
       focusedIcon: <RiInformation2Fill size={iconSize} />,

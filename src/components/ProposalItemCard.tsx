@@ -14,6 +14,7 @@ import { useState } from "react";
 import { BiDollar } from "react-icons/bi";
 import ProposalVotersModal from "./ProposalVotersModal";
 import SLink from "./ui/SLink";
+import { useTranslation } from "@/utils/i18n";
 
 export const getProposalStatus = (start_date: string, end_date: string) => {
   const now = new Date();
@@ -97,6 +98,7 @@ const ProposalItemCard = ({
   returnProposal?: Proposal;
   proposal: Proposal;
 }) => {
+  const { t } = useTranslation();
   const proposalDisclosure = useDisclosure();
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
   const [isVoted, setIsVoted] = useState(false);
@@ -119,7 +121,7 @@ const ProposalItemCard = ({
         <Chip variant="flat" color="warning" className="text-xs">
           <div className="flex flex-row items-center gap-1">
             <BiDollar size={16} />
-            Funding Threshold
+            {t("proposals.funding_threshold")}
           </div>
         </Chip>
       );
@@ -134,7 +136,7 @@ const ProposalItemCard = ({
       >
         <div className="flex flex-row items-center gap-1">
           <BiDollar size={16} />
-          {funded ? "Funded" : "Not Funded"}
+          {funded ? t("proposals.funded") : t("proposals.not_funded")}
         </div>
       </Chip>
     );
@@ -195,7 +197,7 @@ const ProposalItemCard = ({
             </div>
             <div className="flex flex-wrap items-center gap-2 text-sm text-default-500 mb-2">
               <span className="flex flex-row gap-2">
-                by
+                {t("proposals.by")}
                 <SAvatar
                   username={proposal.creator}
                   size="xxs"
@@ -205,7 +207,7 @@ const ProposalItemCard = ({
               <span className="inline">•</span>
 
               <span className="flex flex-row gap-2">
-                to
+                {t("proposals.to")}
                 <SAvatar
                   username={proposal.receiver}
                   size="xxs"
@@ -218,7 +220,7 @@ const ProposalItemCard = ({
                 className="hover:text-blue-500 font-semibold text-sm"
                 href={`/proposals/${proposal.id}`}
               >
-                <p className="text-default-500">ID #{proposal.id}</p>
+                <p className="text-default-500">{t("proposals.id").replace("{{id}}", proposal.id.toString())}</p>
               </SLink>
             </div>
 
@@ -228,7 +230,7 @@ const ProposalItemCard = ({
                 {moment(proposal.end_date).format("MMM DD, YYYY")}{" "}
               </p>
               <p className="text-xs ">
-                ({durationInDays} days){" "}
+                ({durationInDays} {t("proposals.days")}){" "}
                 <span className="text-blue-500 uppercase">
                   {abbreviateNumber(totalPayout)}
                 </span>{" "}
@@ -243,7 +245,7 @@ const ProposalItemCard = ({
               variant="bordered"
               className={`text-sm border-1 capitalize ${getStatusColor()}`}
             >
-              {proposalStatus}
+              {t(`proposals.status.${proposalStatus}`)}
             </Chip>
           </div>
         </div>
@@ -253,7 +255,7 @@ const ProposalItemCard = ({
             <Chip variant="flat" color="success" className="text-xs">
               <div className="flex flex-row items-center gap-1">
                 <FaVoteYea size={16} />
-                You Voted
+                {t("proposals.you_voted")}
               </div>
             </Chip>
           )}
@@ -283,7 +285,7 @@ const ProposalItemCard = ({
               href={`/@${proposal.creator}/${proposal.permlink}`}
             >
               <FaExternalLinkAlt size={14} className="sm:mr-1 " />
-              <span className="inline">View</span>
+              <span className="inline">{t("proposals.view")}</span>
             </Button>
           </div>
         </div>
