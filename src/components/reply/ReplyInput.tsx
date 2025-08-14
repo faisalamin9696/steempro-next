@@ -231,7 +231,7 @@ function ReplyInput(props: Props) {
   }
 
   return (
-    <Card isBlurred className="p-4 border-1 border-default-500/20 bg-transparent" shadow="none">
+    <Card isBlurred className="p-3 border-1 border-default-500/10 bg-transparent" shadow="none">
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">{t('reply.write_reply')}</h3>
 

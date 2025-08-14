@@ -82,9 +82,9 @@ function WitnessProxyTab(props: Props) {
 
   return (
     <Card className="space-y-4">
-      <CardHeader>
-        <CardBody className="flex flex-row text-default-800 items-center gap-2 text-lg sm:text-xl">
-          <SiTraefikproxy size={24} style={{ color: "#07d7a9" }} />
+      <CardHeader className="flex flex-col sm:flex-row justify-between w-full">
+        <CardBody className="flex flex-row text-default-800 items-center gap-2 text-lg sm:text-xl font-semibold">
+          <SiTraefikproxy size={24} />
           {t("witnesses.proxy_title")}
         </CardBody>
         <CardBody className="text-default-500 text-sm text-end">

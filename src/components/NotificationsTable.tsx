@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  capitalize,
-  DefaultNotificationFilters,
-} from "@/constants/AppConstants";
+import { NotificationFilter } from "@/constants/AppConstants";
 import {
   fetchSds,
   useAppDispatch,
@@ -11,8 +8,7 @@ import {
 } from "@/constants/AppFunctions";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
-import React, { useEffect, useState } from "react";
-import useSWR from "swr";
+import React, { useState } from "react";
 import SAvatar from "./ui/SAvatar";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import { useMutation } from "@tanstack/react-query";
@@ -24,17 +20,15 @@ import { getCredentials, getSessionKey } from "@/utils/user";
 import { useSession } from "next-auth/react";
 import { Badge } from "@heroui/badge";
 import SLink from "./ui/SLink";
-import { MdOutlineRefresh } from "react-icons/md";
 import { addCommonDataHandler } from "@/hooks/redux/reducers/CommonReducer";
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/dropdown";
-import { IoFilterOutline } from "react-icons/io5";
-import STable from "./ui/STable";
-import { Spinner } from "@heroui/spinner";
+import InfiniteScroll from "./ui/InfiniteScroll";
+import { Input } from "@heroui/input";
+import { FaSearch } from "react-icons/fa";
+import NotificationSortingControls from "./NotificationSortingControls";
+import moment from "moment";
+import { mutate, useSWRConfig } from "swr";
+import { MdOutlineRefresh } from "react-icons/md";
+import { unstable_serialize } from "swr/infinite";
 import { useTranslation } from "@/utils/i18n";
 
 interface Props {
@@ -42,16 +36,6 @@ interface Props {
   isOpen: boolean;
   onOpenChange?: (isOpen: boolean) => void;
 }
-
-const getSortOptions = (t) => [
-  { name: t("notifications.filter.all"), uid: "all" },
-  { name: t("notifications.filter.vote"), uid: "vote" },
-  { name: t("notifications.filter.reply"), uid: "reply" },
-  { name: t("notifications.filter.mention"), uid: "mention" },
-  { name: t("notifications.filter.resteem"), uid: "resteem" },
-  { name: t("notifications.filter.follow"), uid: "follow" },
-];
-
 const typeColorMap = {
   reply: "secondary",
   reblog: "default",
@@ -71,72 +55,26 @@ const typeColorMap = {
   mute_post: "default",
 };
 
-let offset = {};
-const defFilter = DefaultNotificationFilters;
-
-const filter = {
-  mention: {
-    exclude: defFilter.mention.status,
-    minSP: defFilter.mention.minSp,
-    minReputation: defFilter.mention.minRep,
-  },
-  vote: {
-    exclude: defFilter.vote.status,
-    minVoteAmount: defFilter.vote.minVote,
-    minReputation: defFilter.vote.minRep,
-    minSP: defFilter.vote.minSp,
-  },
-  follow: {
-    exclude: defFilter.follow.status,
-    minSP: defFilter.follow.minSp,
-    minReputation: defFilter.follow.minRep,
-  },
-  resteem: {
-    exclude: defFilter.resteem.status,
-    minSP: defFilter.resteem.minSp,
-    minReputation: defFilter.resteem.minRep,
-  },
-  reply: {
-    exclude: defFilter.reply.status,
-    minSP: defFilter.reply.minSp,
-    minReputation: defFilter.reply.minRep,
-  },
-};
-
 const ITEMS_PER_BATCH = 50;
 let tempLastRead = 0;
 
 export default function NotificationsTable(props: Props) {
-  const { t } = useTranslation();
+  const { mutate } = useSWRConfig();
+
   const { username, isOpen, onOpenChange } = props;
   const commonData = useAppSelector((state) => state.commonReducer.values);
-  const sortOptions = getSortOptions(t);
+  const getKey = (
+    pageIndex: number,
+    previousPageData: SDSNotification[] | null
+  ) => {
+    if (previousPageData && previousPageData.length === 0) return null;
 
-  function getOffset(): number {
-    return offset?.[username] || 0;
-  }
-  useEffect(() => {
-    return () => {
-      if (offset[username]) offset[username] = 0;
-    };
-  }, []);
-
-  function updateOffset() {
-    if (offset[username]) offset[username] += ITEMS_PER_BATCH;
-    else offset[username] = ITEMS_PER_BATCH;
-  }
-
-  if (!username) return null;
-
-  const URL = `/notifications_api/getFilteredNotificationsByStatus/${username}/all/${JSON.stringify(
-    filter
-  )}/${ITEMS_PER_BATCH}`;
-
-  function URL_OFFSET(_offset: number) {
     return `/notifications_api/getFilteredNotificationsByStatus/${username}/all/${JSON.stringify(
-      filter
-    )}/${ITEMS_PER_BATCH}/${_offset}`;
-  }
+      NotificationFilter
+    )}/${ITEMS_PER_BATCH}/${pageIndex * ITEMS_PER_BATCH}`;
+  };
+  if (!username) return null;
+  const [query, setQuery] = useState("");
 
   const { data: session } = useSession();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
@@ -144,69 +82,11 @@ export default function NotificationsTable(props: Props) {
   const isSelf = session?.user?.name === username;
   const { authenticateUser, isAuthorized } = useLogin();
   const dispatch = useAppDispatch();
-  const [allRows, setAllRows] = useState<SDSNotification[]>([]);
-  const { data, isLoading, mutate, isValidating } = useSWR(
-    URL,
-    fetchSds<SDSNotification[]>,
-    {
-      refreshInterval: 300000,
-    }
-  );
 
-  const [isEndReached, setIsEndReached] = useState(false);
-
-  const [sortBY, setSortBy] = React.useState<
+  const [sorting, setSorting] = React.useState<
     "vote" | "reply" | "mention" | "follow" | "all"
   >("all");
 
-  const filteredItems = React.useMemo(() => {
-    let sortedItems = [...allRows];
-
-    if (sortBY === "all") {
-      return sortedItems;
-    }
-    // Apply sorting
-    sortedItems = sortedItems?.filter((item) => item.type === sortBY);
-
-    return sortedItems;
-  }, [allRows, sortBY]);
-
-  useEffect(() => {
-    if (data) {
-      if (isSelf) {
-        const unreadCount = data.filter((obj) => obj.is_read === 0).length;
-        if (
-          (unreadCount >= 0 && unreadCount > commonData.unread_count) ||
-          unreadCount < ITEMS_PER_BATCH
-        ) {
-          dispatch(addCommonDataHandler({ unread_count: unreadCount }));
-        }
-      }
-
-      if (data.length < ITEMS_PER_BATCH) {
-        setIsEndReached(true);
-      }
-
-      setAllRows(data);
-    }
-  }, [data]);
-
-  const loadMoreMutation = useMutation({
-    mutationFn: (_offset: number) =>
-      fetchSds<SDSNotification[]>(URL_OFFSET(_offset)),
-    onSettled(data, error, variables, context) {
-      if (error) {
-        toast.error(error.message || JSON.stringify(error));
-        return;
-      }
-      if (data) {
-        if (data?.length < ITEMS_PER_BATCH) {
-          setIsEndReached(true);
-        }
-        setAllRows((prev) => [...prev, ...data]);
-      }
-    },
-  });
   const markMutation = useMutation({
     mutationFn: (data: { key: string; isKeychain?: boolean }) =>
       markasRead(loginInfo, data.key, data.isKeychain),
@@ -215,16 +95,19 @@ export default function NotificationsTable(props: Props) {
         toast.error(error.message || JSON.stringify(error));
         return;
       }
-      setAllRows((prev) =>
-        prev.map((notification) =>
-          !notification.is_read ? { ...notification, is_read: 1 } : notification
-        )
-      );
+
+      mutate(`unread-notification-count-${username}`, 0, {
+        revalidate: false,
+        rollbackOnError: true,
+        populateCache: true,
+      });
+
       dispatch(addCommonDataHandler({ unread_count: 0 }));
+      tempLastRead = moment().unix();
       toast.success("Marked as read");
-      tempLastRead = allRows?.[0]?.time;
     },
   });
+
   async function handleMarkRead() {
     authenticateUser();
     if (!isAuthorized()) {
@@ -243,40 +126,45 @@ export default function NotificationsTable(props: Props) {
     });
   }
 
-  const topContent = React.useMemo(() => {
-    return (
-      <div className="flex flex-col gap-4 p-1">
-        <div className="flex justify-between gap-3 items-end">
-          <div className="flex gap-3">
-            {isSelf && (
-              <Button
-                size="sm"
-                isIconOnly
-                variant="flat"
-                isLoading={isValidating}
-                onPress={() => mutate()}
-              >
-                <MdOutlineRefresh size={18} />
-              </Button>
-            )}
-            {isSelf && (
-              <Button
-                size="sm"
-                variant="solid"
-                onPress={handleMarkRead}
-                isLoading={markMutation.isPending}
-                isDisabled={markMutation.isPending || !commonData.unread_count}
-                color="primary"
-                // endContent={<IoCheckmarkDone className="text-lg" />}
-              >
-                {t("notifications.mark_all_as_read")}
-              </Button>
-            )}
-          </div>
-        </div>
+  const topContent = (
+    <div className="flex flex-row items-center justify-between gap-4">
+      <Input
+        startContent={<FaSearch className="text-default-500" />}
+        placeholder="Search..."
+        className="max-w-lg flex-1"
+        value={query}
+        onValueChange={setQuery}
+        isClearable
+      />
+      <div className="flex gap-3">
+        {/* {isSelf && (
+          <Button
+            size="sm"
+            isIconOnly
+            variant="flat"
+            onPress={() => {
+              toast.success("Refreshing");
+            }}
+          >
+            <MdOutlineRefresh size={18} />
+          </Button>
+        )} */}
+        {isSelf && (
+          <Button
+            size="sm"
+            variant="solid"
+            onPress={handleMarkRead}
+            isLoading={markMutation.isPending}
+            isDisabled={markMutation.isPending || !commonData.unread_count}
+            color="primary"
+            // endContent={<IoCheckmarkDone className="text-lg" />}
+          >
+            Mark all as read
+          </Button>
+        )}
       </div>
-    );
-  }, [allRows, markMutation.isPending, loginInfo, isValidating, isSelf]);
+    </div>
+  );
 
   const getTargetUrl = (item: SDSNotification): string => {
     let targetUrl = "";
@@ -307,51 +195,27 @@ export default function NotificationsTable(props: Props) {
   };
 
   return (
-    <div>
-      <STable
-        isLoading={isLoading}
-        skipCard={isSelf}
-        title={!isSelf ? null : t("notifications.title")}
-        titleWrapperClassName="flex-row"
-        subTitle={() => topContent}
-        filterByValue={["account", "type"]}
-        searchEndContent={
-          <Dropdown>
-            <DropdownTrigger>
-              <Button
-                size="sm"
-                variant="flat"
-                startContent={<IoFilterOutline size={18} />}
-                className="font-semibold text-small"
-              >
-                {sortOptions?.find((s) => s.uid === sortBY)?.name}
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu
-              disallowEmptySelection
-              aria-label="Table Columns"
-              closeOnSelect={true}
-              selectedKeys={[sortBY]}
-              selectionMode="single"
-              onSelectionChange={(item) =>
-                setSortBy(item.currentKey?.toString() as any)
-              }
-            >
-              {sortOptions.map((status) => (
-                <DropdownItem key={status.uid} className="capitalize">
-                  {capitalize(status.name)}
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          </Dropdown>
+    <div className="flex flex-col gap-4">
+      {topContent}
+
+      <div className="mb-4">
+        <NotificationSortingControls
+          currentSort={sorting}
+          onSortChange={setSorting}
+        />
+      </div>
+
+      <InfiniteScroll<SDSNotification>
+        revalidateIfStale
+        getKey={getKey}
+        itemsClassName={
+          isSelf
+            ? "flex flex-col gap-4"
+            : "grid grid-cols-1 gap-4 sm:grid-cols-2"
         }
-        data={filteredItems}
-        bodyClassName={
-          isSelf ? "flex flex-col gap-2" : "grid grid-cols-1 sm:grid-cols-2"
-        }
-        itemsPerPage={ITEMS_PER_BATCH}
-        titleClassName="pb-4 w-full"
-        tableRow={(notification: SDSNotification) => {
+        fetcher={fetchSds}
+        keyExtractor={(notification) => notification.id?.toString() || ""}
+        renderItem={(notification) => {
           const voteAmount = (
             (notification.voted_rshares / globalData.recent_reward_claims) *
             globalData.total_reward_fund *
@@ -359,11 +223,12 @@ export default function NotificationsTable(props: Props) {
           )?.toLocaleString();
 
           const isVote = notification.type === "vote";
+
           return (
             <SLink
               onClick={() => onOpenChange?.(!isOpen)}
               href={getTargetUrl(notification)}
-              className="flex gap-2 items-start"
+              className="flex gap-2 items-start border-b-1 border-default-900/20 pb-4"
             >
               <Badge
                 className="h-2 w-2"
@@ -382,7 +247,7 @@ export default function NotificationsTable(props: Props) {
               <div className=" flex flex-col gap-2">
                 <div className="flex flex-row gap-2 items-center">
                   <SLink
-                    className=" hover:text-blue-500"
+                    className=" hover:text-blue-500 text-sm"
                     href={`/@${notification.account}`}
                   >
                     {notification.account}
@@ -412,32 +277,11 @@ export default function NotificationsTable(props: Props) {
             </SLink>
           );
         }}
-        loader={
-          <div className="flex flex-row w-full justify-center">
-            <Spinner size="sm" />
-          </div>
-        }
-        endContent={(items) =>
-          allRows?.length > 0 &&
-          (items?.length || 0) <= allRows?.length &&
-          !isEndReached ? (
-            <div className="flex w-full justify-center">
-              <Button
-                size="sm"
-                isDisabled={isLoading || loadMoreMutation.isPending}
-                isLoading={loadMoreMutation.isPending}
-                radius="full"
-                variant="shadow"
-                onPress={() => {
-                  updateOffset();
-                  loadMoreMutation.mutate(getOffset());
-                }}
-              >
-                {loadMoreMutation.isPending ? t("common.loading") : t("common.load_more")}
-              </Button>
-            </div>
-          ) : null
-        }
+        pageSize={ITEMS_PER_BATCH} // Make sure this matches your API's page size
+        filterItems={[
+          (item) => item.account?.includes(query.toLowerCase().trim()),
+          (item) => item.type === sorting || sorting === "all",
+        ]}
       />
     </div>
   );

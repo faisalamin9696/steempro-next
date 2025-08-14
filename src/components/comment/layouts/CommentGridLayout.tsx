@@ -180,7 +180,7 @@ export default function CommentGridLayout(props: CommentProps) {
             </div>
           }
           description={
-            <div className="flex flex-col">
+            <div className="flex flex-wrap gap-x-2 items-center">
               <RoleTitleCard comment={comment} />
 
               <TimeAgoWrapper

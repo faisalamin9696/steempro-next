@@ -23,7 +23,7 @@ const getSearchApi = (
   offset = 0
 ) => {
   query = query.trim();
-  author = author?.trim();
+  author = author?.trim()?.toLowerCase();
   const searchParams = `${"any"}/${"null"}/${FeedBodyLength}/${"time"}/${"DESC"}/${limit}/${offset}`;
   switch (type) {
     case "posts":
@@ -108,6 +108,7 @@ export const SearchModal = (props: Props) => {
         size: "xl",
         backdrop: "blur",
         placement: "top",
+        hideCloseButton: true,
       }}
       body={(onClose) => (
         <>
@@ -162,6 +163,7 @@ export const SearchModal = (props: Props) => {
                   onValueChange={setAuthor}
                   onKeyDown={handleKeyDown}
                   isClearable
+                  autoCapitalize="off"
                 />
               )}
             </div>

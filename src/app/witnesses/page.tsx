@@ -1,7 +1,7 @@
 "use client";
 
 import { useAppSelector } from "@/constants/AppFunctions";
-import React from "react";
+import React, { useState } from "react";
 import { Tab, Tabs } from "@heroui/tabs";
 import { useTranslation } from "@/utils/i18n";
 import { useWitnessData } from "@/hooks/useWitnesses";
@@ -24,6 +24,9 @@ export default function WitnessPage() {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const data = useWitnessData(loginInfo);
   const { t } = useTranslation();
+  const [activeTab, setActiveTab] = useState<
+    "witnesses" | "proxy" | "mywitness"
+  >("witnesses");
 
   return (
     <div className="flex flex-col gap-4 p-2">
@@ -36,8 +39,13 @@ export default function WitnessPage() {
         </p>
       </div>
 
-      <Tabs destroyInactiveTabPanel={false}>
+      <Tabs
+        destroyInactiveTabPanel={false}
+        selectedKey={activeTab}
+        onSelectionChange={(key) => setActiveTab(key.toString() as any)}
+      >
         <Tab
+          key={"witnesses"}
           title={
             <div className="flex flex-row gap-2 items-center">
               <FaUsers size={18} />
@@ -45,10 +53,16 @@ export default function WitnessPage() {
             </div>
           }
         >
-          <WitnessListTab data={{ ...data }} />
+          <WitnessListTab
+            data={{ ...data }}
+            handleManageProxy={() => {
+              setActiveTab("proxy");
+            }}
+          />
         </Tab>
 
         <Tab
+          key={"proxy"}
           title={
             <div className="flex flex-row gap-2 items-center">
               <SiTraefikproxy size={18} />
@@ -61,6 +75,7 @@ export default function WitnessPage() {
 
         {data.ownWitness && (
           <Tab
+            key={"mywitness"}
             isDisabled={!data.ownWitness}
             title={
               <div className="flex flex-row gap-2 items-center">

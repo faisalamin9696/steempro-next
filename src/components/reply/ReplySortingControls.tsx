@@ -8,7 +8,7 @@ interface SortingControlsProps {
   totalReplies: number;
 }
 
-const SortingControls = ({
+const ReplySortingControls = ({
   currentSort,
   onSortChange,
   totalReplies,
@@ -44,4 +44,4 @@ const SortingControls = ({
   );
 };
 
-export default SortingControls;
+export default ReplySortingControls;

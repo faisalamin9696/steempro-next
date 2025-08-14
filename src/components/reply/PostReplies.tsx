@@ -5,7 +5,7 @@ import { memo, useState } from "react";
 import Reply from "./Reply";
 import InfiniteList from "../ui/InfiniteList";
 import ReplySkeleton from "./ReplySkeleton";
-import SortingControls from "./SortingControls";
+import ReplySortingControls from "./ReplySortingControls";
 import ReplyInput from "./ReplyInput";
 import { useTranslation } from "@/utils/i18n";
 
@@ -42,7 +42,7 @@ export default memo(function PostReplies(props: Props) {
       </div>
 
       <div className="mt-8">
-        <SortingControls
+        <ReplySortingControls
           currentSort={sorting}
           onSortChange={setSorting}
           totalReplies={postReplies?.length}

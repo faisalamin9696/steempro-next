@@ -81,6 +81,34 @@ export const DefaultNotificationFilters = {
     minSp: 15,
   },
 };
+export const NotificationFilter = {
+  mention: {
+    exclude: DefaultNotificationFilters.mention.status,
+    minSP: DefaultNotificationFilters.mention.minSp,
+    minReputation: DefaultNotificationFilters.mention.minRep,
+  },
+  vote: {
+    exclude: DefaultNotificationFilters.vote.status,
+    minVoteAmount: DefaultNotificationFilters.vote.minVote,
+    minReputation: DefaultNotificationFilters.vote.minRep,
+    minSP: DefaultNotificationFilters.vote.minSp,
+  },
+  follow: {
+    exclude: DefaultNotificationFilters.follow.status,
+    minSP: DefaultNotificationFilters.follow.minSp,
+    minReputation: DefaultNotificationFilters.follow.minRep,
+  },
+  resteem: {
+    exclude: DefaultNotificationFilters.resteem.status,
+    minSP: DefaultNotificationFilters.resteem.minSp,
+    minReputation: DefaultNotificationFilters.resteem.minRep,
+  },
+  reply: {
+    exclude: DefaultNotificationFilters.reply.status,
+    minSP: DefaultNotificationFilters.reply.minSp,
+    minReputation: DefaultNotificationFilters.reply.minRep,
+  },
+};
 
 export const validProfileTabs = [
   "blog",
