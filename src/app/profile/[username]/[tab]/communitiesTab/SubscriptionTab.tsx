@@ -14,13 +14,14 @@ import { useParams } from "next/navigation";
 import React from "react";
 import { LuPencilLine } from "react-icons/lu";
 import useSWR from "swr";
-
+import { useLanguage } from "@/contexts/LanguageContext";
 export default function SubscriptionTab() {
   let { username } = useParams() as { username: string };
   username = username?.toLowerCase();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { isTablet } = useDeviceInfo();
   const { data: session } = useSession();
+  const { t } = useLanguage();
 
   const URL = `/communities_api/getCommunitiesBySubscriber/${username}/${
     loginInfo.name || "null"
@@ -56,7 +57,7 @@ export default function SubscriptionTab() {
                     size={!isTablet ? "sm" : "md"}
                     isIconOnly
                     variant="flat"
-                    title="Create post"
+                    title={t("community.create_post")}
                     as={SLink}
                     href={
                       {

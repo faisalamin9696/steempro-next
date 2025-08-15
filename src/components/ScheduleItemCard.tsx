@@ -2,6 +2,7 @@
 
 import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
 import { extractMetadata } from "@/utils/editor";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
 import { Chip } from "@heroui/chip";
 import { Card } from "@heroui/card";
@@ -56,6 +57,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
   const { data: session } = useSession();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { authenticateUser, isAuthorized } = useLogin();
+  const { t } = useLanguage();
   const [dateTime, setDateTime] = useState<ZonedDateTime | null>();
   const [scheduleModal, setScheduleModal] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -100,8 +102,8 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
         }
       )
       .then((res) => {
-        if (isDraft) toast.success("Copied to draft and deleted successfully");
-        else toast.success("Deleted successfully");
+        if (isDraft) toast.success(t('schedules.copied_to_draft_deleted'));
+        else toast.success(t('schedules.deleted_successfully'));
         dispatch(
           addScheduleHandler({
             ...scheduleInfo,
@@ -110,7 +112,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
         );
       })
       .catch(function (error) {
-        toast.error(error.message || JSON.stringify(error));
+        toast.error(t('common.error_occurred', { error: error.message || JSON.stringify(error) }));
       })
       .finally(() => {
         setIsUpdating(false);
@@ -128,7 +130,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
       const credentials = getCredentials(getSessionKey(session?.user?.name));
 
       if (!credentials?.key) {
-        toast.error("Invalid credentials");
+        toast.error(t('schedules.invalid_credentials'));
         return;
       }
       if (isDraft) setIsDrafting(true);
@@ -147,7 +149,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
               deleteSchedule(hash, signature, isDraft);
             } else {
               clearPending();
-              toast.error(response.message);
+              toast.error(t('common.error_occurred', { error: response.message }));
               return;
             }
           }
@@ -157,7 +159,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
 
         if (!isValidKey) {
           clearPending();
-          toast.info("Private posting key or above required");
+          toast.info(t('schedules.posting_key_required'));
           return;
         }
 
@@ -169,7 +171,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
         deleteSchedule(hash, signature, isDraft);
       }
     } catch (error: any) {
-      toast.error(error?.message);
+      toast.error(t('common.error_occurred', { error: error?.message }));
       clearPending();
     }
   }
@@ -198,7 +200,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
         }
       )
       .then((res) => {
-        toast.success("Updated successfully");
+        toast.success(t('schedules.updated_successfully'));
         dispatch(
           addScheduleHandler({
             ...scheduleInfo,
@@ -210,7 +212,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
         setDateTime(undefined);
       })
       .catch(function (error) {
-        toast.error(error.message || JSON.stringify(error));
+        toast.error(t('common.error_occurred', { error: error.message || JSON.stringify(error) }));
       })
       .finally(() => {
         setIsUpdating(false);
@@ -218,7 +220,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
   }
   async function handleOnEdit() {
     if (moment(scheduleInfo.time).isSameOrBefore(moment())) {
-      toast.info("You can not edit time of the published post");
+      toast.info(t('schedules.cannot_edit_published'));
       return;
     }
 
@@ -228,12 +230,12 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
     }
 
     if (moment(dateTime.toDate()).isSameOrBefore(moment())) {
-      toast.info("Schedule time must be after the current time.");
+      toast.info(t('schedules.schedule_future_time'));
       return;
     }
 
     if (scheduleInfo.status === 1) {
-      toast.info("Post is already published.");
+      toast.info(t('schedules.post_already_published'));
       return;
     }
 
@@ -247,7 +249,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
       const credentials = getCredentials(getSessionKey(session?.user?.name));
 
       if (!credentials?.key) {
-        toast.error("Invalid credentials");
+        toast.error(t('schedules.invalid_credentials'));
         return;
       }
 
@@ -265,7 +267,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
               const signature = response.result;
               updateSchedule(hash, signature);
             } else {
-              toast.error(response.message);
+              toast.error(t('common.error_occurred', { error: response.message }));
             }
           }
         );
@@ -274,7 +276,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
 
         if (!isValidKey) {
           setIsUpdating(false);
-          toast.info("Private posting key or above required");
+          toast.info(t('schedules.posting_key_required'));
           return;
         }
 
@@ -286,7 +288,7 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
         updateSchedule(hash, signature);
       }
     } catch (error: any) {
-      toast.error(error?.message);
+      toast.error(t('common.error_occurred', { error: error?.message }));
       setIsUpdating(false);
     }
   }

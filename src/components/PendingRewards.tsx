@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 import { claimRewardBalance } from "@/libs/steem/condenser";
 import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PendingRewardsProps {
   account: AccountExt;
@@ -24,6 +25,7 @@ const PendingRewards = ({ account }: PendingRewardsProps) => {
   const dispatch = useAppDispatch();
   const { data: session } = useSession();
   const { authenticateUser, isAuthorized } = useLogin();
+  const { t } = useLanguage();
 
   if (!account) return null;
 
@@ -64,7 +66,7 @@ const PendingRewards = ({ account }: PendingRewardsProps) => {
           vests_own: account.vests_own + account.rewards_vests,
         })
       );
-      toast.success("Reward claimed");
+      toast.success(t("wallet.reward_claimed"));
     },
   });
 
@@ -73,7 +75,7 @@ const PendingRewards = ({ account }: PendingRewardsProps) => {
     if (!isAuthorized()) return;
     const credentials = getCredentials(getSessionKey(session?.user?.name));
     if (!credentials?.key) {
-      toast.error("Invalid credentials");
+      toast.error(t("reply.invalid_credentials"));
       return;
     }
 
@@ -118,7 +120,7 @@ const PendingRewards = ({ account }: PendingRewardsProps) => {
         >
           <div className="flex flex-row items-center gap-2">
             <FaGift size={16} />
-            Pending Rewards
+            {t("wallet.pending_rewards")}
           </div>
         </Chip>
 
@@ -172,7 +174,7 @@ const PendingRewards = ({ account }: PendingRewardsProps) => {
           ) : (
             <FaGift size={14} />
           )}
-          Redeem
+          {t("wallet.redeem")}
         </Button>
       )}
     </div>

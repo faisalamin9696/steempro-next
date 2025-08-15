@@ -117,7 +117,7 @@ export default function NotificationsTable(props: Props) {
     const credentials = getCredentials(getSessionKey(session?.user?.name));
 
     if (!credentials?.key) {
-      toast.error("Invalid credentials");
+      toast.error(t('common.invalid_credentials'));
       return;
     }
 

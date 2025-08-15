@@ -451,7 +451,7 @@ export default function SubmitPage(props: Props) {
             });
           } else {
             setPosting(false);
-            toast.error("Invalid credentials");
+            toast.error(t("submit.invalid_credentials"));
           }
         } catch (error: any) {
           toast.error(error.message || JSON.stringify(error));
@@ -490,7 +490,7 @@ export default function SubmitPage(props: Props) {
         }
       )
       .then((res) => {
-        toast.success("Schedule successfully");
+        toast.success(t("submit.schedule_success"));
         clearForm();
       })
       .catch(function (error) {
@@ -507,7 +507,7 @@ export default function SubmitPage(props: Props) {
     }
 
     if (moment(dateTime.toDate()).isSameOrBefore(moment())) {
-      toast.info("Schedule time must be after the current time.");
+      toast.info(t("submit.schedule_future_time"));
       return;
     }
 
@@ -531,7 +531,7 @@ export default function SubmitPage(props: Props) {
       }
 
       if (!credentials?.key) {
-        return toast.error("Invalid credentials");
+        return toast.error(t("submit.invalid_credentials"));
       }
 
       let parent_permlink = _tags[0] || "steempro";

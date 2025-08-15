@@ -12,6 +12,7 @@ import { useLogin } from "./auth/AuthProvider";
 import { getCredentials, getSessionKey } from "@/utils/user";
 import { useSession } from "next-auth/react";
 import SModal from "./ui/SModal";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Props {
   isOpen: boolean;
@@ -28,6 +29,7 @@ export default function MuteDeleteModal(props: Props) {
   const dispatch = useAppDispatch();
   const { authenticateUser, isAuthorized } = useLogin();
   const { data: session } = useSession();
+  const { t } = useLanguage();
 
   const muteMutation = useMutation({
     mutationFn: (data: {
@@ -56,7 +58,7 @@ export default function MuteDeleteModal(props: Props) {
       }
       dispatch(addCommentHandler({ ...comment, is_muted: 1 }));
       onOpenChange(false);
-      toast.success(`Muted`);
+      toast.success(t('moderation.muted'));
     },
   });
 
@@ -78,7 +80,7 @@ export default function MuteDeleteModal(props: Props) {
       }
       dispatch(addCommentHandler({ ...comment, link_id: undefined }));
       onOpenChange(false);
-      toast.success(`Deleted`);
+      toast.success(t('moderation.deleted'));
     },
   });
 
@@ -87,7 +89,7 @@ export default function MuteDeleteModal(props: Props) {
     if (!isAuthorized()) return;
     const credentials = getCredentials(getSessionKey(session?.user?.name));
     if (!credentials?.key) {
-      toast.error("Invalid credentials");
+      toast.error(t('moderation.invalid_credentials'));
       return;
     }
 
@@ -112,20 +114,14 @@ export default function MuteDeleteModal(props: Props) {
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       modalProps={{ hideCloseButton: true }}
-      title={() => `${mute ? "Mute" : "Delete"} post/comment}`}
-      subTitle={() =>
-        `${
-          mute
-            ? "Please provide a note regarding your decision to mute this content."
-            : "Do you really want to delete this post/comment?"
-        }`
-      }
+      title={() => mute ? t('moderation.mute_post') : t('moderation.delete_post')}
+      subTitle={() => mute ? t('moderation.mute_note_prompt') : t('moderation.delete_confirm')}
       body={() => (
         <>
           {mute && (
             <Input
               maxLength={120}
-              label="Note"
+              label={t('moderation.note')}
               isDisabled={isPending}
               value={muteNote}
               onValueChange={onNoteChange}
@@ -141,7 +137,7 @@ export default function MuteDeleteModal(props: Props) {
             onPress={onClose}
             isDisabled={isPending}
           >
-            Close
+            {t('moderation.close')}
           </Button>
           <Button
             color="primary"
@@ -149,7 +145,7 @@ export default function MuteDeleteModal(props: Props) {
             isLoading={isPending}
             isDisabled={(mute && !muteNote) || isPending}
           >
-            {mute ? "Mute" : " Delete"}
+            {mute ? t('moderation.mute') : t('moderation.delete')}
           </Button>
         </>
       )}

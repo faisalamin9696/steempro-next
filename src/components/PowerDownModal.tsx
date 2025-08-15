@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@heroui/button";
 import { Checkbox } from "@heroui/checkbox";
 import { Input } from "@heroui/input";
@@ -23,6 +24,7 @@ interface Props {
 }
 
 const PowerDownModal = (props: Props): React.ReactNode => {
+  const { t } = useLanguage();
   const { cancel, isOpen, onOpenChange } = props;
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
@@ -72,26 +74,26 @@ const PowerDownModal = (props: Props): React.ReactNode => {
       );
 
       onOpenChange(false);
-      if (cancel) toast.success(`Power down canceled`);
+      if (cancel) toast.success(t("wallet.power_down_canceled"));
       else
         toast.success(
-          `${variables.amount?.toLocaleString()} Steem power down started`
+          t("wallet.power_down_started", { amount: variables.amount?.toLocaleString() })
         );
     },
   });
 
   async function handleWithdraw(isKeychain?: boolean) {
     if (!isNumeric(amount)) {
-      toast.info("Invalid amount");
+      toast.info(t("wallet.invalid_amount"));
       return;
     }
     if (!cancel && Number(amount) < 0.001) {
-      toast.info("Use only 3 digits of precison");
+      toast.info(t("wallet.use_three_digits_precision"));
       return;
     }
 
     if (Number(amount) > availableBalance) {
-      toast.info("Insufficient funds");
+      toast.info(t("wallet.insufficient_funds"));
       return;
     }
 
@@ -101,7 +103,7 @@ const PowerDownModal = (props: Props): React.ReactNode => {
     }
 
     if (!credentials?.key) {
-      toast.error("Invalid credentials");
+      toast.error(t("common.invalid_credentials"));
       return;
     }
 

@@ -81,7 +81,7 @@ export default function CommunityChatModal(props: Props) {
 
   useEffect(() => {
     if (error) {
-      toast.error(error?.message || String(error));
+      toast.error(t('common.error_occurred', { error: error?.message || String(error) }));
     }
 
     if (data && !error) {
@@ -164,7 +164,7 @@ export default function CommunityChatModal(props: Props) {
         setIsPending(false);
       });
     } catch (error: any) {
-      toast.error(error?.message || JSON.stringify(error));
+      toast.error(t('common.error_occurred', { error: error?.message || JSON.stringify(error) }));
       setIsPending(false);
     }
   }
@@ -231,7 +231,7 @@ export default function CommunityChatModal(props: Props) {
             </div>
 
             {data && !messages.length && (
-              <EmptyChat username={"community members"} />
+              <EmptyChat username={t('community.community_members')} />
             )}
           </div>
         </div>

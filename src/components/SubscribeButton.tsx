@@ -33,7 +33,7 @@ export default function SubscribeButton(props: Props) {
   const { authenticateUser, isAuthorized } = useLogin();
 
   function handleFailed(error: any) {
-    toast.error(error.message || JSON.stringify(error));
+    toast.error(t('common.error_occurred', { error: error.message || JSON.stringify(error) }));
     dispatch(
       addCommunityHandler({
         ...communityInfo,

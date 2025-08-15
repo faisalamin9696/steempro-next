@@ -18,6 +18,7 @@ import { validate_account_name } from "@/utils/chainValidation";
 import { getResizedAvatar } from "@/utils/parseImage";
 import { Avatar } from "@heroui/avatar";
 import SModal from "./ui/SModal";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Props {
   community: Community;
@@ -27,6 +28,7 @@ interface Props {
 export default function AddRoleModal(props: Props) {
   let { community, isOpen, onOpenChange } = props;
   const { data: session } = useSession();
+  const { t } = useLanguage();
   let [username, setUsername] = useState("");
   let [avatar, setAvatar] = useState("");
 
@@ -69,7 +71,7 @@ export default function AddRoleModal(props: Props) {
   }, [username]);
 
   function handleSuccess() {
-    toast.success("Updated");
+    toast.success(t('community.role.updated'));
     onOpenChange(false);
   }
   function handleFailed(error: any) {
@@ -157,7 +159,7 @@ export default function AddRoleModal(props: Props) {
     username = username?.replaceAll("@", "").toLowerCase().trim();
 
     if (validate_account_name(username)) {
-      toast.info("Invalid username");
+      toast.info(t('community.role.invalid_username'));
       return;
     }
 
@@ -173,7 +175,7 @@ export default function AddRoleModal(props: Props) {
       const credentials = getCredentials(getSessionKey(session?.user?.name));
 
       if (!credentials?.key) {
-        toast.error("Invalid credentials");
+        toast.error(t('community.role.invalid_credentials'));
         return;
       }
 
@@ -204,7 +206,7 @@ export default function AddRoleModal(props: Props) {
         return;
       }
     } else {
-      toast.info("Nothing to update!");
+      toast.info(t('community.role.nothing_to_update'));
     }
   }
 
@@ -223,7 +225,7 @@ export default function AddRoleModal(props: Props) {
     <SModal
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      title={() => "Set role, title"}
+      title={() => t('community.role.set_role_title')}
       modalProps={{ hideCloseButton: true, isDismissable: !isPending }}
       body={() => (
         <div className="flex flex-col gap-4">
@@ -270,7 +272,7 @@ export default function AddRoleModal(props: Props) {
             variant="light"
             onPress={onClose}
           >
-            Close
+            {t('community.role.close')}
           </Button>
           <Button
             color="primary"
@@ -278,7 +280,7 @@ export default function AddRoleModal(props: Props) {
             isLoading={isPending}
             onPress={handleUpdate}
           >
-            Update
+            {t('community.role.update')}
           </Button>
         </>
       )}

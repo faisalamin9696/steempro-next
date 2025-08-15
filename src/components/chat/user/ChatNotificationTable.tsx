@@ -91,7 +91,7 @@ export default function ChatNotificationsTable(props: Props) {
     },
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(error.message || JSON.stringify(error));
+        toast.error(t('common.error_occurred', { error: error.message || JSON.stringify(error) }));
         return;
       }
       if (data) {
@@ -109,7 +109,7 @@ export default function ChatNotificationsTable(props: Props) {
       markasReadChat(loginInfo, data.key, data.isKeychain),
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(error.message || JSON.stringify(error));
+        toast.error(t('common.error_occurred', { error: error.message || JSON.stringify(error) }));
         return;
       }
       const parserData = allRows.map((item) => {

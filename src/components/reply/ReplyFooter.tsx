@@ -157,7 +157,7 @@ export default function ReplyFooter({
         })
       );
 
-      toast.success(`Deleted`);
+      toast.success(t('reply.deleted'));
     },
   });
 
@@ -180,7 +180,7 @@ export default function ReplyFooter({
         return;
       }
       dispatch(addCommentHandler({ ...comment, is_muted: 0 }));
-      toast.success(`Unmuted`);
+      toast.success(t('reply.unmuted'));
     },
   });
 
@@ -190,7 +190,7 @@ export default function ReplyFooter({
 
     const credentials = getCredentials(getSessionKey(session?.user?.name));
     if (!credentials?.key) {
-      toast.error("Invalid credentials");
+      toast.error(t('reply.invalid_credentials'));
       return;
     }
     deleteMutation.mutate({
@@ -204,7 +204,7 @@ export default function ReplyFooter({
     if (!isAuthorized()) return;
     const credentials = getCredentials(getSessionKey(session?.user?.name));
     if (!credentials?.key) {
-      toast.error("Invalid credentials");
+      toast.error(t('reply.invalid_credentials'));
       return;
     }
     if (comment.is_muted !== 0) {
@@ -310,7 +310,7 @@ export default function ReplyFooter({
     setPosting(false);
     handleClear();
     if (showEdit) isEditing && isEditing(!showEdit);
-    toast.success(showEdit ? "Updated" : "Sent");
+    toast.success(showEdit ? t('reply.updated') : t('reply.sent'));
     CustomEvent.trackEvent("comment_submit_form", newComment.author, "Sent");
   }
 
@@ -341,7 +341,7 @@ export default function ReplyFooter({
 
   async function handlePublish() {
     if (!markdown) {
-      toast.info("Comment can not be empty");
+      toast.info(t('reply.empty_comment'));
       return;
     }
 
@@ -411,7 +411,7 @@ export default function ReplyFooter({
           });
         } else {
           setPosting(false);
-          toast.error("Invalid credentials");
+          toast.error(t('reply.invalid_credentials'));
         }
       } catch (error: any) {
         toast.error(error.message || JSON.stringify(error));

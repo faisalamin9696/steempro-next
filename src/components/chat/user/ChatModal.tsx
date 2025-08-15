@@ -23,6 +23,7 @@ import Messages from "./Messages";
 import { useSession } from "next-auth/react";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import SModal from "@/components/ui/SModal";
+import { useTranslation } from "@/utils/i18n";
 
 interface Props {
   account: AccountExt;
@@ -58,6 +59,7 @@ export function getDecryptedData(key: string, item: Message): Message {
 
 export default function ChatModal(props: Props) {
   const { account, isOpen, onOpenChange } = props;
+  const { t } = useTranslation();
   if (!account) return null;
 
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
@@ -102,7 +104,7 @@ export default function ChatModal(props: Props) {
 
   useEffect(() => {
     if (error) {
-      toast.error(error?.message || String(error));
+      toast.error(t('common.error_occurred', { error: error?.message || String(error) }));
     }
 
     if (data && !error) {
@@ -135,7 +137,7 @@ export default function ChatModal(props: Props) {
     const credentials = getCredentials(getSessionKey(session?.user?.name));
 
     if (!credentials?.memo) {
-      toast.error("Memo key not found");
+      toast.error(t('chat.memo_key_not_found'));
       setIsPending(false);
       return;
     }
@@ -177,7 +179,7 @@ export default function ChatModal(props: Props) {
         setIsPending(false);
       });
     } catch (error: any) {
-      toast.error(error?.message || JSON.stringify(error));
+      toast.error(t('common.error_occurred', { error: error?.message || JSON.stringify(error) }));
       setIsPending(false);
     }
   }

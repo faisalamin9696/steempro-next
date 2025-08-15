@@ -70,7 +70,7 @@ function AddSnippet(props: Props) {
         toast.success(t('submit.added_successfully'));
       })
       .catch(function (error) {
-        toast.error(error.message || JSON.stringify(error));
+        toast.error(t('common.error_occurred', { error: error.message || JSON.stringify(error) }));
       })
       .finally(() => {
         setIsPending(false);
@@ -110,7 +110,7 @@ function AddSnippet(props: Props) {
             const signature = response.result;
             addSnippet(hash, signature, credentials.username, title, cbody);
           } else {
-            toast.error(response.message);
+            toast.error(t('common.error_occurred', { error: response.message }));
             setIsPending(false);
           }
         }

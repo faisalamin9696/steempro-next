@@ -62,7 +62,7 @@ export default function ProposalVoteButton({
       ),
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(error.message || JSON.stringify(error));
+        toast.error(t('common.error_occurred', { error: error.message || JSON.stringify(error) }));
         return;
       }
       if (isVoted) setIsVoted(false);

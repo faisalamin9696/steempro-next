@@ -1,6 +1,7 @@
 "use client";
 
 import React, { memo, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
 import { twMerge } from "tailwind-merge";
 import moment from "moment";
@@ -35,6 +36,7 @@ type Props = {
 
 export default memo(function ProfileInfoCard(props: Props) {
   const { account, compact } = props;
+  const { t } = useLanguage();
 
   const profileInfo: AccountExt =
     useAppSelector((state) => state.profileReducer.value)[account.name] ??
@@ -137,7 +139,7 @@ export default memo(function ProfileInfoCard(props: Props) {
                     });
                   }}
                 >
-                  Share
+                  {t("common.share")}
                 </Button>
               ) : (
                 <ChatButton onPress={chatDisclosure.onOpen} />
@@ -154,7 +156,7 @@ export default memo(function ProfileInfoCard(props: Props) {
 
           {website && (
             <div
-              title="Website"
+              title={t("profile.website")}
               className="flex flex-row gap-1 items-start text-tiny w-full"
             >
               <FaGlobe size={16} className="me-1 mt-0.5 shrink-0" />
@@ -171,7 +173,7 @@ export default memo(function ProfileInfoCard(props: Props) {
 
           {location && (
             <div
-              title="Location"
+              title={t("profile.location")}
               className=" flex flex-row gap-1 items-center text-tiny w-max"
             >
               <FaLocationDot size={16} className=" me-1" />
@@ -190,7 +192,7 @@ export default memo(function ProfileInfoCard(props: Props) {
                   setFollowerModal({ isOpen: true, isFollowing: false });
                 }}
               >
-                <p>Followers</p>
+                <p>{t("community.followers")}</p>
                 <p>{abbreviateNumber(profileInfo.count_followers)}</p>
               </div>
             </div>
@@ -203,7 +205,7 @@ export default memo(function ProfileInfoCard(props: Props) {
                   setFollowerModal({ isOpen: true, isFollowing: true });
                 }}
               >
-                <p>Following</p>
+                <p>{t("community.following")}</p>
                 <p>{abbreviateNumber(profileInfo.count_following)}</p>
               </div>
             </div>
@@ -214,7 +216,7 @@ export default memo(function ProfileInfoCard(props: Props) {
               <p className=" font-bold text-sm">
                 {abbreviateNumber(profileInfo.count_root_posts)}
               </p>
-              <p className="text-default-900/80 text-[12px]">Posts</p>
+              <p className="text-default-900/80 text-[12px]">{t("profile.posts")}</p>
             </div>
 
             <div className="flex flex-col items-start flex-1">
@@ -223,7 +225,7 @@ export default memo(function ProfileInfoCard(props: Props) {
               </p>
               <div className="flex flex-row items-center gap-1">
                 <span className="text-default-900/80 text-[12px]">
-                  Comments
+                  {t("comment.comments")}
                 </span>
               </div>
             </div>
@@ -232,7 +234,7 @@ export default memo(function ProfileInfoCard(props: Props) {
               <p className=" font-bold text-sm">
                 {moment(profileInfo.created * 1000).format("MMM DD, YYYY")}
               </p>
-              <p className="text-default-900/80 text-[12px]">Joined</p>
+              <p className="text-default-900/80 text-[12px]">{t("profile.joined") || "Joined"}</p>
             </div>
           </div>
 
@@ -241,7 +243,7 @@ export default memo(function ProfileInfoCard(props: Props) {
               <p className=" font-bold text-sm">
                 {profileInfo.upvote_mana_percent}%
               </p>
-              <p className="text-default-900/80 text-[12px]">VP</p>
+              <p className="text-default-900/80 text-[12px]">{t("common.vp") || "VP"}</p>
             </div>
 
             <div className="flex flex-col items-start flex-1">
@@ -249,7 +251,7 @@ export default memo(function ProfileInfoCard(props: Props) {
                 {profileInfo.rc_mana_percent}%
               </p>
               <div className="flex flex-row items-center gap-1">
-                <span className="text-default-900/80 text-[12px]">RC</span>
+                <span className="text-default-900/80 text-[12px]">{t("common.rc") || "RC"}</span>
               </div>
             </div>
 
@@ -257,14 +259,14 @@ export default memo(function ProfileInfoCard(props: Props) {
               <p className=" font-bold text-sm">
                 ~{voteData.full_vote?.toFixed(3)}$
               </p>
-              <p className="text-default-900/80 text-[12px]">Value</p>
+              <p className="text-default-900/80 text-[12px]">{t("common.value") || "Value"}</p>
             </div>
           </div>
         </div>
 
         {!!knownPeople?.length && (
           <div className=" flex flex-col items-start gap-2">
-            <p className=" font-bold text-left">Followers you know</p>
+            <p className=" font-bold text-left">{t("community.followers_you_know")}</p>
             <div className=" flex flex-row items-center gap-4 px-3">
               <AvatarGroup isBordered size="md" max={5}>
                 {knownPeople?.map((people) => (
@@ -286,7 +288,7 @@ export default memo(function ProfileInfoCard(props: Props) {
         {account.proxy && (
           <div className=" flex flex-col items-start gap-2">
             <div className="flex flex-row font-bold text-left items-center gap-1">
-              <p>Witness proxy</p>
+              <p>{t("witnesses.proxy_title")}</p>
             </div>
             <div className=" flex flex-row items-center gap-4 px-3">
               <AvatarGroup isBordered size="md" max={5}>
@@ -303,7 +305,7 @@ export default memo(function ProfileInfoCard(props: Props) {
         {!!account.witness_votes?.length && (
           <div className=" flex flex-col items-start gap-2">
             <div className="flex flex-row font-bold text-left items-center gap-1">
-              <p>Witness votes</p>
+              <p>{t("witnesses.witness_votes")}</p>
             </div>
             <div className=" flex flex-row items-center gap-4 px-3">
               <AvatarGroup isBordered size="md" max={5}>
@@ -321,7 +323,7 @@ export default memo(function ProfileInfoCard(props: Props) {
                   onClick={() => setWitnessModal(!witnessModal)}
                   className=" text-tiny hover:underline cursor-pointer"
                 >
-                  Show all
+                  {t("community.show_all")}
                 </p>
               )}
             </div>
@@ -357,7 +359,7 @@ export default memo(function ProfileInfoCard(props: Props) {
         )}
         footer={(onClose) => (
           <Button color="danger" variant="flat" onPress={onClose}>
-            Close
+            {t("common.close")}
           </Button>
         )}
       />
@@ -370,7 +372,7 @@ export default memo(function ProfileInfoCard(props: Props) {
         body={() => <WitnessVotesCard account={account} />}
         footer={(onClose) => (
           <Button color="danger" variant="flat" onPress={onClose}>
-            Close
+            {t("common.close")}
           </Button>
         )}
       />

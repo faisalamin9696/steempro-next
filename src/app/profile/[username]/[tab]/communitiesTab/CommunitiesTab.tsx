@@ -6,6 +6,7 @@ import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { twMerge } from "tailwind-merge";
 import SubscriptionTab from "./SubscriptionTab";
 import ProfileTabPage from "../ProfileTabPage";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Props {
   username: string;
@@ -14,14 +15,16 @@ interface Props {
 
 export default function CommunitiesTab(props: Props) {
   const { username, tab } = props;
+  const { t } = useLanguage();
+  
   const profileTabs = [
     {
-      title: "Feed",
+      title: t("profile.feed"),
       key: "feed",
       children: <ProfileTabPage />,
     },
     {
-      title: "Subscriptions",
+      title: t("profile.subscriptions"),
       key: "subscriptions",
       children: <SubscriptionTab />,
     },

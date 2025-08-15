@@ -17,6 +17,7 @@ import { useLogin } from "./auth/AuthProvider";
 import { getCredentials, getSessionKey } from "@/utils/user";
 import { useSession } from "next-auth/react";
 import SModal from "./ui/SModal";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Props {
   comment: Post | Feed;
@@ -27,6 +28,7 @@ interface Props {
 export default function EditRoleModal(props: Props) {
   const { comment, handleOnUpdate, onOpenChange, isOpen } = props;
   const { data: session } = useSession();
+  const { t } = useLanguage();
   let [title, setTitle] = useState(comment.author_title);
   let [role, setRole] = useState<RoleTypes>(comment.author_role || "guest");
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
@@ -66,7 +68,7 @@ export default function EditRoleModal(props: Props) {
       })
     );
     handleOnUpdate && handleOnUpdate(role, title);
-    toast.success("Updated");
+    toast.success(t('community.role.updated'));
     onOpenChange(false);
   }
   function handleFailed(error: any) {
@@ -143,7 +145,7 @@ export default function EditRoleModal(props: Props) {
       const credentials = getCredentials(getSessionKey(session?.user?.name));
 
       if (!credentials?.key) {
-        toast.error("Invalid credentials");
+        toast.error(t('community.role.invalid_credentials'));
         return;
       }
 
@@ -174,7 +176,7 @@ export default function EditRoleModal(props: Props) {
         return;
       }
     } else {
-      toast.info("Nothing to update!");
+      toast.info(t('community.role.nothing_to_update'));
     }
   }
 
@@ -194,7 +196,7 @@ export default function EditRoleModal(props: Props) {
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       modalProps={{ hideCloseButton: true, isDismissable: !isPending }}
-      title={() => "Update title, role"}
+      title={() => t('community.role.update_role_title')}
       body={() => (
         <div className="flex flex-col gap-4">
           <Input
@@ -237,7 +239,7 @@ export default function EditRoleModal(props: Props) {
             variant="light"
             onPress={onClose}
           >
-            Close
+            {t('community.role.close')}
           </Button>
           <Button
             color="primary"
@@ -245,7 +247,7 @@ export default function EditRoleModal(props: Props) {
             isLoading={isPending}
             onPress={handleUpdate}
           >
-            Update
+            {t('community.role.update')}
           </Button>
         </>
       )}
