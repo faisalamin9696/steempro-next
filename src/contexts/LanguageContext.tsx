@@ -34,10 +34,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   // Load translations for a specific language
   const loadTranslations = async (langCode: LanguagesCode) => {
     try {
-      console.log(`Loading translations for ${langCode}...`);
       // Dynamic import of translation files
       const translationModule = await import(`../translations/${langCode}.json`);
-      console.log('Translation module loaded:', translationModule.default);
       setTranslations(translationModule.default);
     } catch (error) {
       console.error(`Failed to load translations for ${langCode}:`, error);
@@ -52,7 +50,6 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     
     // Get browser language and normalize it
     const browserLang = navigator.language.toLowerCase().split('-')[0];
-    console.log('Detected browser language:', browserLang);
     
     // Map browser language to supported language
     switch (browserLang) {
@@ -92,35 +89,27 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   
   // Set language and update settings
   const setLanguage = async (lang: Language) => {
-    console.log('Setting language to:', lang);
     setCurrentLanguage(lang);
     
     // Update settings
     const settings = getSettings();
-    console.log('Current settings:', settings);
     settings.lang = lang;
     updateSettings(settings);
-    console.log('Updated settings:', getSettings());
     
     // Load translations
     await loadTranslations(lang.code);
-    console.log('Translations loaded for:', lang.code);
   };
   
   // Translation function that supports nested keys like "common.settings"
   // Falls back to English if translation not found in current language
   // Also supports parameter substitution like {{param}}
   const t = (key: string, params?: Record<string, any>): string => {
-    console.log(`Translating key: ${key}`, translations);
     const keys = key.split('.');
     let result: any = translations;
     
     // Try to get translation from current language
     for (const k of keys) {
-      if (!result || !result[k]) {
-        // Translation not found in current language
-        console.log(`Translation not found for key: ${key} in current language, trying English fallback`);
-        
+      if (!result || !result[k]) {        
         // If current language is already English, just return the key
         if (currentLanguage.code === 'en') {
           return key;
@@ -132,7 +121,6 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       result = result[k];
     }
     
-    console.log(`Translation found for key: ${key}`, result);
     let translatedText = typeof result === 'string' ? result : key;
     
     // Replace parameters if provided
@@ -158,13 +146,11 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       
       for (const k of keys) {
         if (!result || !result[k]) {
-          console.log(`English fallback translation not found for key: ${key}, returning original key`);
           return key; // Return original key if English translation not found
         }
         result = result[k];
       }
       
-      console.log(`English fallback translation found for key: ${key}`, result);
       let translatedText = typeof result === 'string' ? result : key;
       
       // Replace parameters if provided

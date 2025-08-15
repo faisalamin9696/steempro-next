@@ -371,9 +371,7 @@ export default function SettingsPage({ username }: { username?: string }) {
               className="p-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800"
               value={currentLanguage.code}
               onChange={(e) => {
-                console.log('Language selection changed:', e.target.value);
                 const selectedLang = languages.find(lang => lang.code === e.target.value);
-                console.log('Selected language:', selectedLang);
                 if (selectedLang) {
                   changeLanguage(selectedLang);
                 }
