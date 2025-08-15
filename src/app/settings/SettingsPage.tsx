@@ -363,9 +363,6 @@ export default function SettingsPage({ username }: { username?: string }) {
           <div className="flex flex-col gap-2">
             <div className="flex justify-between items-center">
               <label className="text-sm font-medium">{t('settings.choose_language')}</label>
-              <span className="text-xs bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded-full">
-                Current: {currentLanguage.title}
-              </span>
             </div>
             <select 
               className="p-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800"

@@ -12,6 +12,7 @@ import SAvatar from "./ui/SAvatar";
 import Reputation from "./Reputation";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import { twMerge } from "tailwind-merge";
+import { useTranslation } from "@/utils/i18n";
 
 type SearchTypes = "posts" | "comments" | "tags" | "people";
 
@@ -53,6 +54,7 @@ interface Props {
 
 export const SearchModal = (props: Props) => {
   const { isOpen, onOpenChange } = props;
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [author, setAuthor] = useState("");
   const [activeTab, setActiveTab] = useState<SearchTypes>("posts");
@@ -120,10 +122,10 @@ export const SearchModal = (props: Props) => {
               <div className="flex flex-col">
                 <div>
                   <h2 className="text-xl font-bold text-card-foreground">
-                    Search
+                    {t('search_modal.title')}
                   </h2>
                   <p className="text-sm text-muted-foreground">
-                    Discover posts, comments, tags, and people
+                    {t('search_modal.description')}
                   </p>
                 </div>
               </div>
@@ -134,7 +136,7 @@ export const SearchModal = (props: Props) => {
                 <Input
                   className="flex-1"
                   size="md"
-                  placeholder={`Search for ${activeTab}...`}
+                  placeholder={t('search_modal.search_for', { type: activeTab })}
                   value={query}
                   onValueChange={setQuery}
                   onKeyDown={handleKeyDown}
@@ -150,14 +152,14 @@ export const SearchModal = (props: Props) => {
                   isLoading={isSearching}
                   endContent={<FiSearch size={16} />}
                 >
-                  Search
+                  {t('search_modal.search_button')}
                 </Button>
               </div>
 
               {activeTab !== "people" && (
                 <Input
                   size="md"
-                  placeholder={`Filter by author...`}
+                  placeholder={t('search_modal.filter_by_author')}
                   startContent={<FiUser />}
                   value={author}
                   onValueChange={setAuthor}
@@ -192,10 +194,10 @@ export const SearchModal = (props: Props) => {
                         <FiTrendingUp className="w-8 h-8 text-primary" />
                       </div>
                       <h3 className="font-semibold text-card-foreground mb-2">
-                        Type and click search
+                        {t('search_modal.type_and_search')}
                       </h3>
                       <p className="text-default-500 text-sm">
-                        Click the search button to find {tab} on the blockchain
+                        {t('search_modal.find_on_blockchain', { type: tab })}
                       </p>
                     </div>
                   ) : (
@@ -250,7 +252,7 @@ export const SearchModal = (props: Props) => {
                                 </div>
                                 <div className="flex text-sm gap-1 text-default-600 items-center">
                                   <p className="text-default-500 text-tiny">
-                                    Joined
+                                    {t('search_modal.joined')}
                                   </p>
                                   <TimeAgoWrapper
                                     className="text-tiny"
@@ -273,7 +275,7 @@ export const SearchModal = (props: Props) => {
       )}
       footer={(onClose) => (
         <Button color="danger" variant="flat" onPress={onClose} size="sm">
-          Cancel
+          {t('common.cancel')}
         </Button>
       )}
     />

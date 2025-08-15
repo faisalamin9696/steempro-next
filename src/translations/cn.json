@@ -126,7 +126,7 @@
     "upload": "上传",
     "blog": "博客",
     "posts": "帖子",
-    "friends": "好友",
+    "friends": "朋友圈",
     "communities": "社区",
     "wallet": "钱包",
     "notifications": "通知",
@@ -719,5 +719,15 @@
     "failed_to_parse_links": "解析链接数据失败",
     "no_links_found": "未找到链接",
     "invalid_credentials": "无效的凭证"
+  },
+  "search_modal": {
+    "title": "搜索",
+    "description": "发现帖子、评论、标签和用户",
+    "search_button": "搜索",
+    "filter_by_author": "按作者筛选...",
+    "search_for": "搜索{{type}}...",
+    "type_and_search": "输入并点击搜索",
+    "find_on_blockchain": "点击搜索按钮在区块链上查找{{type}}",
+    "joined": "加入时间"
   }
 }

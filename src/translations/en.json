@@ -710,5 +710,15 @@
     "failed_to_parse_links": "Failed to parse links data",
     "no_links_found": "No links found",
     "invalid_credentials": "Invalid credentials"
+  },
+  "search_modal": {
+    "title": "Search",
+    "description": "Discover posts, comments, tags, and people",
+    "search_button": "Search",
+    "filter_by_author": "Filter by author...",
+    "search_for": "Search for {{type}}...",
+    "type_and_search": "Type and click search",
+    "find_on_blockchain": "Click the search button to find {{type}} on the blockchain",
+    "joined": "Joined"
   }
 }
