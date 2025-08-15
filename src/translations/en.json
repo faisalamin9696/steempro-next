@@ -15,6 +15,7 @@
     "theme": "Theme",
     "light": "Light",
     "dark": "Dark",
+    "dark_mode": "Dark Mode",
     "system": "System",
     "wallet": "Wallet",
     "search": "Search",
@@ -281,7 +282,7 @@
     "reply": "Reply"
   },
   "schedules": {
-    "title": "Schedules",
+    "schedule_posts": "Schedule Posts",
     "copied_to_draft_deleted": "Copied to draft and deleted successfully",
     "deleted_successfully": "Deleted successfully",
     "updated_successfully": "Updated successfully",

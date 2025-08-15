@@ -15,6 +15,7 @@
     "theme": "主题",
     "light": "明亮",
     "dark": "暗黑",
+    "dark_mode":"夜间模式",
     "system": "系统",
     "wallet": "钱包",
     "search": "搜索",
@@ -281,7 +282,7 @@
     "reply": "回复"
   },
   "schedules": {
-    "title": "定时发帖",
+    "schedule_posts": "定时发帖",
     "copied_to_draft_deleted": "已复制到草稿并成功删除",
     "deleted_successfully": "删除成功",
     "updated_successfully": "更新成功",

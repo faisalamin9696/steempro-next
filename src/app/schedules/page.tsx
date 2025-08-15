@@ -8,9 +8,11 @@ import { useSession } from "next-auth/react";
 import notFound from "@/app/not-found";
 import EmptyList from "@/components/EmptyList";
 import CommentSkeleton from "@/components/comment/components/CommentSkeleton";
+import { useTranslation } from "@/utils/i18n";
 
 export default function SchedulesPage() {
   const { data: session } = useSession();
+  const { t } = useTranslation();
 
   const { data, isLoading, error } = useSWR<Schedule[]>(
     session?.user?.name && `/api/schedules/posts?user=${session.user.name}`,
@@ -29,7 +31,7 @@ export default function SchedulesPage() {
   return (
     <MainWrapper>
       <div className=" flex w-full flex-col gap-4">
-        <p className=" text-xl font-bold opacity-80">Schedule Posts</p>
+        <p className=" text-xl font-bold opacity-80">{t('schedules.schedule_posts')}</p>
 
         {isLoading ? (
           <div className="flex flex-col space-y-2">

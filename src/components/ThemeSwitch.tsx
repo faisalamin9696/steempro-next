@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
 import { updateSettingsHandler } from "@/hooks/redux/reducers/SettingsReducer";
 import { getSettings, updateSettings } from "@/utils/user";
 import { twMerge } from "tailwind-merge";
+import { useTranslation } from "@/utils/i18n";
 
 interface ThemeSwitchProps {
   className?: string;
@@ -15,6 +16,7 @@ interface ThemeSwitchProps {
 }
 
 export default memo(function ThemeSwitch({ className, sm }: ThemeSwitchProps) {
+  const { t } = useTranslation();
   const settings =
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
   const { theme, setTheme, systemTheme } = useTheme();
@@ -83,7 +85,7 @@ export default memo(function ThemeSwitch({ className, sm }: ThemeSwitchProps) {
       }}
     >
       <div className="flex flex-col gap-1">
-        <p className="text-medium">Dark Mode</p>
+        <p className="text-medium">{t('common.dark_mode')}</p>
       </div>
     </Switch>
   );
