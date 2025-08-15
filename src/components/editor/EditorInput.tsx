@@ -10,6 +10,7 @@ import {
   useEffect,
   CSSProperties,
 } from "react";
+import { useTranslation } from "@/utils/i18n";
 import { useDropzone } from "react-dropzone";
 import { MAXIMUM_UPLOAD_SIZE, isValidImage } from "@/utils/parseImage";
 import { toast } from "sonner";
@@ -73,6 +74,7 @@ const getFileExtension = (file: File): string => {
 };
 
 export default memo(function EditorInput(props: EditorProps) {
+  const { t } = useTranslation();
   let {
     value,
     onChange,
@@ -102,7 +104,7 @@ export default memo(function EditorInput(props: EditorProps) {
     }
 
     if (acceptedFiles.length > MAX_FILE_TO_UPLOAD) {
-      toast.info(`Please upload up to maximum ${MAX_FILE_TO_UPLOAD} images.`);
+      toast.info(`${t('submit.max_file_upload').replace('{0}', MAX_FILE_TO_UPLOAD.toString())}`);
       // console.log('onPick too many files to upload');
       return;
     }
@@ -118,7 +120,7 @@ export default memo(function EditorInput(props: EditorProps) {
         };
 
         if (!imageToUpload.file.type.includes("image")) {
-          toast.info("Please insert only image files.");
+          toast.info(t('submit.image_files_only'));
           return;
         }
 
@@ -440,7 +442,7 @@ export default memo(function EditorInput(props: EditorProps) {
     const credentials = getCredentials(getSessionKey(session?.user?.name));
 
     if (!credentials?.key || !credentials?.username) {
-      toast.error("Invalid credentials");
+      toast.error(t('submit.invalid_credentials'));
       return;
     }
 
@@ -590,7 +592,7 @@ export default memo(function EditorInput(props: EditorProps) {
             containerStyle={containerStyle}
             movePopupAsYouType
             disabled={isDisabled}
-            placeholder="Write something..."
+            placeholder={t('submit.write_placeholder')}
             rows={rows ?? 10}
             className="min-h-10 w-full focus-visible:outline-none p-2 rounded-lg bg-default-100  enabled:hover:bg-default-200 enabled:focus:bg-default-100 disabled:opacity-disabled"
             onChange={(e) => handleChange(e.target.value)}

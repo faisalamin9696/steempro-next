@@ -3,8 +3,10 @@
 import { getActiveFeed } from "@/libs/steem/sds";
 import { AsyncUtils } from "@/utils/async.utils";
 import React, { useEffect } from "react";
+import { useTranslation } from "@/utils/i18n";
 
 function page() {
+  const { t } = useTranslation();
   let allPosts: Feed[] = [];
   let apps: { name: string; count?: number }[] = [];
   let appCounts = {};
@@ -58,7 +60,7 @@ function page() {
 
     apps = Object.values(appCounts);
   }
-  return <div>App Usage</div>;
+  return <div>{t("tools.app_usage")}</div>;
 }
 
 export default page;

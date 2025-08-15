@@ -13,8 +13,10 @@ import { Button } from "@heroui/button";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import TimeAgoWrapper from "../wrappers/TimeAgoWrapper";
 import moment from "moment";
+import { useTranslation } from "@/utils/i18n";
 
 const RecentTrades = memo(() => {
+  const { t } = useTranslation();
   const { trades, isLoading, error } = useRecentTrades();
   const [currentPage, setCurrentPage] = useState(1);
   const tradesPerPage = 10;
@@ -61,13 +63,13 @@ const RecentTrades = memo(() => {
     return (
       <Card>
         <CardHeader>
-          <CardBody>Recent Trades</CardBody>
+          <CardBody>{t("market.recent_trades")}</CardBody>
         </CardHeader>
         <CardBody className="p-4">
           <div className="flex items-center justify-center h-32">
             <div className="text-center">
               <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-              <p className="text-muted-foreground text-sm">Loading trades...</p>
+              <p className="text-muted-foreground text-sm">{t("market.loading_trades")}</p>
             </div>
           </div>
         </CardBody>
@@ -79,7 +81,7 @@ const RecentTrades = memo(() => {
     return (
       <Card>
         <CardHeader>
-          <CardBody>Recent Trades</CardBody>
+          <CardBody>{t("market.recent_trades")}</CardBody>
         </CardHeader>
         <CardBody className="p-4">
           <div className="flex items-center justify-center h-32">
@@ -88,7 +90,7 @@ const RecentTrades = memo(() => {
                 <span className="text-lg">⚠️</span>
               </div>
               <p className="text-destructive text-sm font-medium">
-                Failed to load trades
+                {t("market.failed_to_load_trades")}
               </p>
               <p className="text-muted-foreground text-xs mt-1">{error}</p>
             </div>
@@ -105,7 +107,7 @@ const RecentTrades = memo(() => {
     return (
       <Card>
         <CardHeader>
-          <CardBody>Recent Trades</CardBody>
+          <CardBody>{t("market.recent_trades")}</CardBody>
         </CardHeader>
         <CardBody className="p-4">
           <div className="flex items-center justify-center h-32">
@@ -113,9 +115,9 @@ const RecentTrades = memo(() => {
               <div className="w-12 h-12 bg-muted/20 rounded-full flex items-center justify-center mx-auto mb-2">
                 <span className="text-lg">📊</span>
               </div>
-              <p className="text-muted-foreground text-sm">No recent trades</p>
+              <p className="text-muted-foreground text-sm">{t("market.no_recent_trades")}</p>
               <p className="text-muted-foreground/70 text-xs mt-1">
-                Check back later for trading activity
+                {t("market.check_back_later")}
               </p>
             </div>
           </div>
@@ -128,21 +130,21 @@ const RecentTrades = memo(() => {
     <Card>
       <CardHeader>
         <CardBody className="text-default-700 flex flex-row text-lg sm:text-xl items-center gap-2">
-          Recent Trades
+          {t("market.recent_trades")}
         </CardBody>
         <CardBody className="text-gray-400 text-sm sm:text-base text-end">
-          Latest STEEM/SBD market trades
+          {t("market.latest_market_trades")}
         </CardBody>
       </CardHeader>
       <CardBody className="p-0">
         <Table className="mb-4">
           <TableHeader>
             <TableRow className="text-xs">
-              <TableHead className="text-xs p-2">Time</TableHead>
-              <TableHead className="text-xs p-2">Type</TableHead>
-              <TableHead className="text-xs p-2">Price (SBD)</TableHead>
-              <TableHead className="text-xs p-2">Amount (STEEM)</TableHead>
-              <TableHead className="text-xs p-2">Total (SBD)</TableHead>
+              <TableHead className="text-xs p-2">{t("market.time")}</TableHead>
+              <TableHead className="text-xs p-2">{t("market.type")}</TableHead>
+              <TableHead className="text-xs p-2">{t("market.price_sbd")}</TableHead>
+              <TableHead className="text-xs p-2">{t("market.amount_steem")}</TableHead>
+              <TableHead className="text-xs p-2">{t("market.total_sbd")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -193,11 +195,11 @@ const RecentTrades = memo(() => {
               className="flex items-center space-x-2"
               startContent={<BiChevronLeft size={18} />}
             >
-              Previous
+              {t("market.previous")}
             </Button>
 
             <div className="text-sm text-muted-foreground">
-              Page {currentPage} of {paginatedData.totalPages}
+              {t("market.page_of", { current: currentPage, total: paginatedData.totalPages })}
             </div>
 
             <Button
@@ -208,7 +210,7 @@ const RecentTrades = memo(() => {
               className="flex items-center space-x-2"
               endContent={<BiChevronRight size={18} />}
             >
-              Next
+              {t("market.next")}
             </Button>
           </div>
         )}

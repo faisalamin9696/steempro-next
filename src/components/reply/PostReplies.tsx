@@ -7,6 +7,7 @@ import InfiniteList from "../ui/InfiniteList";
 import ReplySkeleton from "./ReplySkeleton";
 import ReplySortingControls from "./ReplySortingControls";
 import ReplyInput from "./ReplyInput";
+import { useTranslation } from "@/utils/i18n";
 
 interface Props {
   comment: Post | Feed;
@@ -15,6 +16,7 @@ interface Props {
 
 export default memo(function PostReplies(props: Props) {
   const { comment } = props;
+  const { t } = useTranslation();
 
   const commentInfo: Post =
     useAppSelector((state) => state.commentReducer.values)[
@@ -65,7 +67,7 @@ export default memo(function PostReplies(props: Props) {
             <ReplySkeleton />
           </div>
         }
-        endText="No more replies"
+        endText={t('reply.no_more_replies')}
       />
     </div>
   );

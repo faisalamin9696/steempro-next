@@ -2,9 +2,11 @@ import { Button } from "@heroui/button";
 import { useEffect, useState } from "react";
 import { FaArrowUp } from "react-icons/fa"; // Import an icon for the button
 import { twMerge } from "tailwind-merge";
+import { useTranslation } from "@/utils/i18n";
 
 export const ScrollToTopButton = ({ className }: { className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const { t } = useTranslation();
 
   // Show/hide the button based on scroll position
   useEffect(() => {
@@ -40,7 +42,7 @@ export const ScrollToTopButton = ({ className }: { className?: string }) => {
         isIconOnly
         color="primary"
         className="shadow-lg opacity-80"
-        aria-label="Scroll to top"
+        aria-label={t('common.scroll_to_top')}
         onPress={scrollToTop}
       >
         <FaArrowUp />

@@ -1,5 +1,6 @@
 import { useAppDispatch } from "@/constants/AppFunctions";
 import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   requestKeychainSignBuffer,
   validateKeychain,
@@ -28,6 +29,7 @@ interface Props {
 }
 function KeychainLogin(props: Props) {
   const { onClose, addNew, onSuccess, onLoginSuccess } = props;
+  const { t } = useLanguage();
   const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState("");
   const [isPending, setIsPending] = useState(false);
@@ -52,7 +54,7 @@ function KeychainLogin(props: Props) {
 
     const usernameError = validate_account_name(_username);
     if (usernameError) {
-      toast.info(usernameError ?? "Invalid username");
+      toast.info(usernameError ?? t("auth.invalid_username"));
       return;
     }
 
@@ -64,7 +66,7 @@ function KeychainLogin(props: Props) {
       if (account) {
         const isSigned = await requestKeychainSignBuffer(
           _username,
-          "SteemPro Authentication",
+          "SteemCN Authentication",
           "POSTING"
         );
 
@@ -72,7 +74,7 @@ function KeychainLogin(props: Props) {
           await getAuthenticate(account);
         }
       } else {
-        throw new Error(`Failed to fetch account`);
+        throw new Error(t("auth.fetch_account_failed"));
       }
     } catch (e: any) {
       toast.error(e?.message || String(e));
@@ -103,7 +105,7 @@ function KeychainLogin(props: Props) {
 
       const auth = _saveCredentials(account.name, isCurrent);
       if (!auth) {
-        throw new Error("Something went wrong!");
+        throw new Error(t("auth.something_wrong"));
       }
 
       const loginSession = await signIn("credentials", {
@@ -138,11 +140,11 @@ function KeychainLogin(props: Props) {
       const auth = _saveCredentials(account.name, isCurrent);
 
       if (!auth) {
-        throw new Error("Something went wrong!");
+        throw new Error(t("auth.something_wrong"));
       }
       if (isCurrent) await currentLogin();
 
-      toast.success(`${account.name} added successfully`);
+      toast.success(t("auth.account_added", { username: account.name }));
       onSuccess();
       onClose();
       setIsPending(false);
@@ -150,7 +152,7 @@ function KeychainLogin(props: Props) {
     }
 
     await currentLogin();
-    toast.success(`Login successsful with keychain`);
+    toast.success(t("auth.login_successful", { type: "keychain" }));
     onSuccess();
     onClose();
     setIsPending(false);
@@ -161,13 +163,13 @@ function KeychainLogin(props: Props) {
       <Input
         isRequired
         size="sm"
-        label="Username"
+        label={t("auth.username")}
         autoFocus
         value={username}
         endContent={<Avatar src={getResizedAvatar(avatar)} size="sm" />}
         onValueChange={setUsername}
         isDisabled={isPending}
-        placeholder="Enter your username"
+        placeholder={t("auth.enter_username")}
         type="text"
         onKeyDown={(e) => {
           if (e.key === "Enter") {
@@ -183,13 +185,13 @@ function KeychainLogin(props: Props) {
         >
           <FaInfoCircle size={20} />
           <div className="flex flex-row gap-2">
-            <span className="font-medium">Keychain is not installed!</span>
+            <span className="font-medium">{t("auth.keychain_not_installed")}</span>
             <a
               href="https://chromewebstore.google.com/detail/jhgnbkkipaallpehbohjmkbjofjdmeid?utm_source=item-share-cb"
               target="_blank"
               className="underline"
             >
-              install keychain
+              {t("auth.install_keychain")}
             </a>
           </div>
         </div>
@@ -202,7 +204,7 @@ function KeychainLogin(props: Props) {
           isDisabled={isPending}
           onValueChange={setIsCurrent}
         >
-          Make Default
+          {t("auth.make_default")}
         </Checkbox>
       )}
 
@@ -215,7 +217,7 @@ function KeychainLogin(props: Props) {
           onPress={onClose}
           isDisabled={isPending}
         >
-          Cancel
+          {t("auth.cancel")}
         </Button>
 
         <Button
@@ -226,7 +228,7 @@ function KeychainLogin(props: Props) {
             handleLogin();
           }}
         >
-          {addNew ? "Add account" : "Login"}
+          {addNew ? t("auth.add_account") : t("auth.login")}
         </Button>
       </div>
     </div>

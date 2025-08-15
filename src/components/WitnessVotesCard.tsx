@@ -5,6 +5,7 @@ import useSWR from "swr";
 import { fetchSds } from "@/constants/AppFunctions";
 import SAvatar from "@/components/ui/SAvatar";
 import SLink from "./ui/SLink";
+import { useTranslation } from "@/utils/i18n";
 import STable from "./ui/STable";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { capitalize } from "@/constants/AppConstants";
@@ -18,16 +19,18 @@ import {
 import { IoFilterOutline } from "react-icons/io5";
 import { sortByKey } from "@/utils/helper";
 
-const sortOptions = [
-  { name: "A → Z", uid: "asc" },
-  { name: "Z → A", uid: "desc" },
+const getSortOptions = (t: any) => [
+  { name: t("common.a_to_z"), uid: "asc" },
+  { name: t("common.z_to_a"), uid: "desc" },
 ];
 
 export default function WitnessVotesCard({ account }: { account: AccountExt }) {
   const witnesses = account.witness_votes || [];
   const [allRows, setAllRows] = useState<{ username: string }[]>([]);
   const { isMobile } = useDeviceInfo();
+  const { t } = useTranslation();
   const [sortBY, setSortBy] = React.useState<"asc" | "desc">("asc");
+  const sortOptions = getSortOptions(t);
 
   const filteredItems = React.useMemo(() => {
     let sortedItems = [...allRows];
@@ -57,7 +60,7 @@ export default function WitnessVotesCard({ account }: { account: AccountExt }) {
         titleClassName="w-full"
         title={
           <div className="flex flex-row items-center justify-between w-full">
-            <p>Witness votes</p>
+            <p>{t("witnesses.witness_votes")}</p>
 
             <Dropdown>
               <DropdownTrigger>
@@ -89,9 +92,10 @@ export default function WitnessVotesCard({ account }: { account: AccountExt }) {
             </Dropdown>
           </div>
         }
-        description={`@${account.name} have ${
-          30 - (account?.witness_votes?.length || 0)
-        } votes remaining. Can vote for a maximum of 30 witnesses.`}
+        description={t("witnesses.votes_remaining_description", {
+          account: account.name,
+          remaining: 30 - (account?.witness_votes?.length || 0)
+        })}
         filterByValue={["username"]}
         tableRow={(item) => (
           <div className="flex gap-2 items-center" key={item.username}>

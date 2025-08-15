@@ -32,6 +32,7 @@ import { getCredentials, getSessionKey } from "@/utils/user";
 import { AsyncUtils } from "@/utils/async.utils";
 import ClearFormButton from "../editor/components/ClearFormButton";
 import EditorInput from "../editor/EditorInput";
+import { useTranslation } from "@/utils/i18n";
 
 interface Props {
   comment: Post;
@@ -39,6 +40,7 @@ interface Props {
 }
 function ReplyInput(props: Props) {
   const { comment, replies } = props;
+  const { t } = useTranslation();
   const { authenticateUser, isAuthorized } = useLogin();
   const { data: session } = useSession();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
@@ -160,13 +162,13 @@ function ReplyInput(props: Props) {
     // setAllReplies((oldReplies) => [newComment].concat(oldReplies));
     handleClear();
     clearForm();
-    toast.success("Sent");
+    toast.success(t("reply.sent"));
     setPosting(false);
   }
 
   async function handlePublish() {
     if (!markdown) {
-      toast.info("Comment can not be empty");
+      toast.info(t("reply.comment_cannot_be_empty"));
       return;
     }
 
@@ -180,7 +182,7 @@ function ReplyInput(props: Props) {
     if (!isAuthorized()) return;
     const credentials = getCredentials(getSessionKey(session?.user?.name));
     if (!credentials?.key) {
-      toast.error("Invalid credentials");
+      toast.error(t('reply.invalid_credentials'));
       return;
     }
 
@@ -231,7 +233,7 @@ function ReplyInput(props: Props) {
   return (
     <Card isBlurred className="p-3 border-1 border-default-500/10 bg-transparent" shadow="none">
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Write a Reply</h3>
+        <h3 className="text-lg font-semibold">{t('reply.write_reply')}</h3>
 
         <div className="flex flex-col mt-2 gap-2 animate-appearance-in ">
           <EditorInput
@@ -285,7 +287,7 @@ function ReplyInput(props: Props) {
                 onPress={handlePublish}
                 isLoading={isPosting}
                 tooltip=""
-                buttonText={"Send"}
+                buttonText={t('reply.send')}
               />
             </div>
           </div>
@@ -293,11 +295,11 @@ function ReplyInput(props: Props) {
           <div className="space-y-1 w-full overflow-auto p-1 m-1 mt-4">
             <div className=" items-center flex justify-between">
               <p className="float-left text-sm text-default-900/70 font-semibold">
-                Preview
+                {t('reply.preview')}
               </p>
 
               <p className="float-right text-sm font-light text-default-900/60">
-                {rpm?.words} words, {rpm?.text}
+                {rpm?.words} {t('reply.words')}, {rpm?.text}
               </p>
             </div>
             {markdown ? (

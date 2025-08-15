@@ -29,6 +29,7 @@ import moment from "moment";
 import { mutate, useSWRConfig } from "swr";
 import { MdOutlineRefresh } from "react-icons/md";
 import { unstable_serialize } from "swr/infinite";
+import { useTranslation } from "@/utils/i18n";
 
 interface Props {
   username: string;
@@ -81,7 +82,8 @@ export default function NotificationsTable(props: Props) {
   const isSelf = session?.user?.name === username;
   const { authenticateUser, isAuthorized } = useLogin();
   const dispatch = useAppDispatch();
-
+  const { t } = useTranslation();
+  
   const [sorting, setSorting] = React.useState<
     "vote" | "reply" | "mention" | "follow" | "all"
   >("all");
@@ -103,7 +105,7 @@ export default function NotificationsTable(props: Props) {
 
       dispatch(addCommonDataHandler({ unread_count: 0 }));
       tempLastRead = moment().unix();
-      toast.success("Marked as read");
+      toast.success(t("notifications.mark_all_as_read"));
     },
   });
 
@@ -115,7 +117,7 @@ export default function NotificationsTable(props: Props) {
     const credentials = getCredentials(getSessionKey(session?.user?.name));
 
     if (!credentials?.key) {
-      toast.error("Invalid credentials");
+      toast.error(t('common.invalid_credentials'));
       return;
     }
 
@@ -158,7 +160,7 @@ export default function NotificationsTable(props: Props) {
             color="primary"
             // endContent={<IoCheckmarkDone className="text-lg" />}
           >
-            Mark all as read
+            {t("notifications.mark_all_as_read")}
           </Button>
         )}
       </div>

@@ -6,7 +6,7 @@ export const RewardTypes: Payout[] = [
 
 export const Minute = 1000 * 60;
 
-export const AppLink = "https://www.steempro.com";
+export const AppLink = "https://www.steemcn.blog";
 
 export const SignupLink = "https://signup.steemit.com/";
 export const MObileAppLink =

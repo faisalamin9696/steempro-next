@@ -13,50 +13,41 @@ import SLink from "@/components/ui/SLink";
 import { useParams, useRouter } from "next/navigation";
 import SModal from "@/components/ui/SModal";
 import Image from "next/image";
+import { useTranslation } from "@/utils/i18n";
 
-const tokens = {
+const getTokens = (t: (key: string) => string) => ({
   steem: {
     symbol: "STEEM",
     title: "STEEM",
-    description: `Tradeable tokens that may be transferred anywhere at anytime.
-        Steem can be converted to STEEM POWER in a process called powering up.`,
-    shortDesc:
-      "Tradeable tokens that can be transferred anytime or powered up into STEEM POWER.",
+    description: t("wallet.steem_description"),
+    shortDesc: t("wallet.steem_short_description"),
     iconSrc: "/steem-logo.svg",
   },
   steem_power: {
     symbol: undefined,
     title: "STEEM POWER",
-    description: `Influence tokens which give you more control over post payouts and allow you to earn on curation rewards.
-        Part of users's STEEM POWER is currently delegated. Delegation is donated for influence or to help new users perform actions on Steemit. Your delegation amount can fluctuate.
-        STEEM POWER increases at an APR of approximately 2.77%, subject to blockchain variance. See FAQ for details.`,
-    shortDesc:
-      "Influence tokens that boost curation rewards, post payouts, and may be delegated or grow via 2.77% APR.",
+    description: t("wallet.steem_power_description"),
+    shortDesc: t("wallet.steem_power_short_description"),
     iconSrc: "/sp-logo.svg",
   },
   steem_dollar: {
     symbol: undefined,
     title: "STEEM DOLLARS",
-    description: "Tradeable tokens transferable anytime, anywhere.",
+    description: t("wallet.steem_dollars_description"),
     iconSrc: "/sbd-logo.svg",
   },
   saving: {
     symbol: undefined,
-    title: "SAVINGS",
-    description: "Balances have a 3-day withdrawal waiting period.",
+    title: t("wallet.savings"),
+    description: t("wallet.savings_description"),
     iconSrc: "/savings-logo.svg",
   },
-};
+});
 
-const steem_power_desc = (username: string) => (
+const steem_power_desc = (username: string, t: (key: string) => string) => (
   <div className=" flex items-center gap-1 line">
     <p>
-      Influence tokens which give you more control over post payouts and allow
-      you to earn on curation rewards. Part of {username}'s STEEM POWER is
-      currently delegated. Delegation is donated for influence or to help new
-      users perform actions on Steemit. Your delegation amount can fluctuate.
-      STEEM POWER increases at an APR of approximately 2.77%, subject to
-      blockchain variance. See{" "}
+      {t("wallet.steem_power_full_description").replace("{username}", username)}{" "}
       {
         <SLink
           className=" hover:text-blue-500 hover:underline"
@@ -65,10 +56,10 @@ const steem_power_desc = (username: string) => (
             "https://steemitwallet.com/faq.html#How_many_new_tokens_are_generated_by_the_blockchain"
           }
         >
-          FAQ
+          {t("wallet.faq")}
         </SLink>
       }{" "}
-      for details.
+      {t("wallet.for_details")}
     </p>
   </div>
 );
@@ -80,6 +71,8 @@ export default function BalanceTab({
   data: AccountExt;
   onDelegationClick?: () => void;
 }) {
+  const { t } = useTranslation();
+  const tokens = getTokens(t);
   const balanceDisclosure = useDisclosure();
 
   let { username } = useParams() as { username: string };
@@ -196,7 +189,7 @@ export default function BalanceTab({
             tokenKey="steem_power"
             iconSrc={tokens.steem_power.iconSrc}
             symbol={tokens.steem_power.symbol}
-            description={steem_power_desc(username)}
+            description={steem_power_desc(username, t)}
             title={tokens.steem_power.title}
             shortDesc={tokens.steem_power.shortDesc}
             endContent={
@@ -262,13 +255,13 @@ export default function BalanceTab({
                   aria-labelledby={`steem-power`}
                   onAction={handleAction}
                 >
-                  <DropdownItem key="delegation">Delegate</DropdownItem>
-                  <DropdownItem key="power-down">Power Down</DropdownItem>
+                  <DropdownItem key="delegation">{t("wallet.delegate")}</DropdownItem>
+                  <DropdownItem key="power-down">{t("wallet.power_down")}</DropdownItem>
                   <DropdownItem
                     className={!!loginInfo.powerdown ? "block" : "hidden"}
                     key="cancel-power-down"
                   >
-                    Cancel Power Down
+                    {t("wallet.cancel_power_down")}
                   </DropdownItem>
                 </DropdownMenu>
               )
@@ -293,11 +286,11 @@ export default function BalanceTab({
                   aria-labelledby={`steem-dollar`}
                   onAction={handleAction}
                 >
-                  <DropdownItem key="transfer-sbd">Transfer</DropdownItem>
+                  <DropdownItem key="transfer-sbd">{t("wallet.transfer")}</DropdownItem>
                   <DropdownItem key="savings-sbd">
-                    Transfer to Savings
+                    {t("wallet.transfer_to_savings")}
                   </DropdownItem>
-                  <DropdownItem key="trade">Trade</DropdownItem>
+                  <DropdownItem key="trade">{t("wallet.trade")}</DropdownItem>
                 </DropdownMenu>
               )
             }
@@ -365,7 +358,7 @@ export default function BalanceTab({
           key && (
             <div className=" text-sm text-default-600">
               {tokens[key].title === "STEEM POWER"
-                ? steem_power_desc(username)
+                ? steem_power_desc(username, t)
                 : tokens[key]["description"]}
             </div>
           )

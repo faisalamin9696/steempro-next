@@ -6,7 +6,7 @@
 // const authOptions: NextAuthConfig = {
 //   providers: [
 //     Credentials({
-//       name: "SteemPro Authenticator",
+//       name: "SteemCN Authenticator",
 //       credentials: {
 //         username: {},
 //       },
@@ -37,7 +37,7 @@ import Credentials from "next-auth/providers/credentials";
 export const { handlers, auth } = NextAuth({
   providers: [
     Credentials({
-      name: "SteemPro Authenticator",
+      name: "SteemCN Authenticator",
       credentials: {
         username: {},
       },

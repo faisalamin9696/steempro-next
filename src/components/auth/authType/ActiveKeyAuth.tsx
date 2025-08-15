@@ -8,6 +8,7 @@ import React, { useState } from "react";
 import { FaLock } from "react-icons/fa6";
 import { toast } from "sonner";
 import AvailableAccountList from "../AvailableAccountList";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Props {
   onClose: () => void;
@@ -18,15 +19,16 @@ function ActiveKeyAuth(props: Props) {
   const [activeKey, setActiveKey] = useState("");
   const [isPending, setIsPending] = useState(false);
   const { data: session } = useSession();
+  const { t } = useLanguage();
 
   async function handleLogin() {
     const _activeKey = activeKey.trim();
     if (!_activeKey) {
-      toast.info("Invalid private active key");
+      toast.info(t('auth.invalid_active_key'));
       return;
     }
     if (!session?.user?.name) {
-      toast.error("Something went wrong!");
+      toast.error(t('auth.something_wrong'));
       return;
     }
 
@@ -39,21 +41,21 @@ function ActiveKeyAuth(props: Props) {
         const keyType = getKeyType(account, _activeKey);
         if (keyType) {
           if (keyType.type !== "ACTIVE") {
-            toast.info("Private active required");
+            toast.info(t('auth.active_key_required'));
             setIsPending(false);
             return;
           }
-          toast.success("Signed");
+          toast.success(t('auth.signed_successfully'));
           onActiveSuccess?.(keyType.key);
           onClose();
           setIsPending(false);
         } else {
-          toast.error(`Invalid private active key`);
+          toast.error(t('auth.invalid_active_key'));
           setIsPending(false);
         }
       }
     } catch (e) {
-      toast.error(String(e));
+      toast.error(t('auth.error_message', { error: String(e) }));
       setIsPending(false);
     }
   }
@@ -67,8 +69,8 @@ function ActiveKeyAuth(props: Props) {
         isRequired
         onValueChange={setActiveKey}
         isDisabled={isPending}
-        label="Private active key"
-        placeholder="Enter private active key"
+        label={t('auth.private_active_key')}
+        placeholder={t('auth.enter_private_active_key')}
         type="password"
         onKeyDown={(e) => {
           if (e.key === "Enter") {
@@ -85,24 +87,24 @@ function ActiveKeyAuth(props: Props) {
 
         <div className="flex flex-col gap-1">
           <p className="text-sm text-default-500">
-            To proceed, please provide your{" "}
+            {t('auth.active_key_notice_1')}{" "}
             <span className="font-medium text-green-600">
-              Private Active Key
+              {t('auth.private_active_key')}
             </span>{" "}
-            to sign the transaction.
+            {t('auth.active_key_notice_2')}
           </p>
 
           <p className="text-xs text-default-400 leading-4">
-            Your private key is used only for temporary, local signing. It is{" "}
-            <span className="font-semibold text-default-500">never stored</span>{" "}
-            or sent anywhere.
+            {t('auth.key_security_notice_1')}{" "}
+            <span className="font-semibold text-default-500">{t('auth.never_stored')}</span>{" "}
+            {t('auth.key_security_notice_2')}
           </p>
         </div>
       </div>
 
       {session?.user?.name && (
         <AvailableAccountList
-          switchText="Switch"
+          switchText={t('auth.switch')}
           handleSwitchSuccess={onClose}
           filter={{ username: session?.user?.name, type: "ACTIVE" }}
         />
@@ -115,7 +117,7 @@ function ActiveKeyAuth(props: Props) {
           onPress={onClose}
           isDisabled={isPending}
         >
-          Cancel
+          {t('auth.cancel')}
         </Button>
 
         <Button
@@ -126,7 +128,7 @@ function ActiveKeyAuth(props: Props) {
             handleLogin();
           }}
         >
-          {"Sign"}
+          {t('auth.sign')}
         </Button>
       </div>
     </div>

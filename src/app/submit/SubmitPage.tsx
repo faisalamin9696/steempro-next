@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "@/utils/i18n";
 import RewardSelectButton, {
   rewardTypes,
 } from "../../components/editor/components/RewardSelectButton";
@@ -77,6 +78,7 @@ interface Props {
 }
 
 export default function SubmitPage(props: Props) {
+  const { t } = useTranslation();
   const { oldPost, handleUpdateSuccess, handleUpdateCancel } =
     props?.params || {};
   const isEdit = !!oldPost?.permlink;
@@ -449,7 +451,7 @@ export default function SubmitPage(props: Props) {
             });
           } else {
             setPosting(false);
-            toast.error("Invalid credentials");
+            toast.error(t("submit.invalid_credentials"));
           }
         } catch (error: any) {
           toast.error(error.message || JSON.stringify(error));
@@ -488,7 +490,7 @@ export default function SubmitPage(props: Props) {
         }
       )
       .then((res) => {
-        toast.success("Schedule successfully");
+        toast.success(t("submit.schedule_success"));
         clearForm();
       })
       .catch(function (error) {
@@ -505,7 +507,7 @@ export default function SubmitPage(props: Props) {
     }
 
     if (moment(dateTime.toDate()).isSameOrBefore(moment())) {
-      toast.info("Schedule time must be after the current time.");
+      toast.info(t("submit.schedule_future_time"));
       return;
     }
 
@@ -529,7 +531,7 @@ export default function SubmitPage(props: Props) {
       }
 
       if (!credentials?.key) {
-        return toast.error("Invalid credentials");
+        return toast.error(t("submit.invalid_credentials"));
       }
 
       let parent_permlink = _tags[0] || "steempro";
@@ -660,7 +662,7 @@ export default function SubmitPage(props: Props) {
                 inputWrapper: "h-8",
               }}
               isDisabled={isLoading}
-              placeholder={"Title"}
+              placeholder={t('submit.title_placeholder')}
               maxLength={255}
             />
 
@@ -673,7 +675,7 @@ export default function SubmitPage(props: Props) {
                 inputWrapper: "h-8",
               }}
               autoCapitalize="off"
-              placeholder={"Tags here..."}
+              placeholder={t('submit.tags_placeholder')}
               isDisabled={isLoading}
               maxLength={255}
             />
@@ -727,7 +729,7 @@ export default function SubmitPage(props: Props) {
                 <ScheduleButton
                   isDisabled={isEdit || isLoading}
                   isLoading={isScheduling}
-                  buttonText={dateTime ? "Schedule" : undefined}
+                  buttonText={dateTime ? t('submit.schedule') : undefined}
                   onPress={() => handlePostPublish(true)}
                 />
               )}
@@ -742,7 +744,7 @@ export default function SubmitPage(props: Props) {
                     handleUpdateCancel && handleUpdateCancel();
                   }}
                 >
-                  Cancel
+                  {t('submit.cancel')}
                 </Button>
               )}
 
@@ -766,7 +768,7 @@ export default function SubmitPage(props: Props) {
                     toast.success("Draft saved");
                   }}
                 >
-                  Save Draft
+                  {t('submit.save_draft')}
                 </Button>
               )}
 
@@ -774,7 +776,7 @@ export default function SubmitPage(props: Props) {
                 <PublishButton
                   isDisabled={isLoading}
                   isLoading={isPosting}
-                  buttonText={isEdit ? "Update" : undefined}
+                  buttonText={isEdit ? t('submit.update') : t('submit.publish')}
                   onPress={() => handlePostPublish(false)}
                 />
               )}
@@ -807,11 +809,11 @@ export default function SubmitPage(props: Props) {
       >
         <div className=" items-center flex justify-between">
           <p className="float-left text-default-800 font-bold">
-            {"Preview"}
+            {t('submit.preview')}
           </p>
 
           <p className="float-right text-sm font-light text-default-500">
-            {rpm?.words} words, {rpm?.text}
+            {rpm?.words} {t('submit.words')}, {rpm?.text}
           </p>
         </div>
         {markdown ? (

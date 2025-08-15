@@ -4,6 +4,7 @@ import { BiUserCheck } from "react-icons/bi";
 import SAvatar from "./ui/SAvatar";
 import WitnessVotersModal from "./WitnessVotersModal";
 import { useSession } from "next-auth/react";
+import { useTranslation } from "@/utils/i18n";
 
 interface Props {
   witness: MergedWitness;
@@ -13,6 +14,7 @@ function WitnessItemCard(props: Props) {
   const { witness, endContent } = props;
   const [witnessVoteModal, setWitnessVoteModal] = useState(false);
   const { data: session } = useSession();
+  const { t } = useTranslation();
   const isOwn = witness.name === session?.user?.name;
   return (
     <div className="flex flex-col gap-2">
@@ -51,7 +53,7 @@ function WitnessItemCard(props: Props) {
               >
                 <div className="flex flex-row gap-1 items-center">
                   <BiUserCheck size={18} />
-                  {isOwn ? "Active" : "Voted"}
+                  {isOwn ? t("witnesses.active") : t("witnesses.voted")}
                 </div>
               </Chip>
             )}
@@ -62,7 +64,7 @@ function WitnessItemCard(props: Props) {
                 variant="flat"
                 className="text-red-500 bg-red-500/30 text-xs"
               >
-                Disabled
+                {t("witnesses.disabled")}
               </Chip>
             )}
 
@@ -73,7 +75,7 @@ function WitnessItemCard(props: Props) {
                   variant="flat"
                   className="text-orange-500 border-orange-500/30 text-xs"
                 >
-                  Invalid Version
+                  {t("witnesses.invalid_version")}
                 </Chip>
               </>
             )}
@@ -92,13 +94,13 @@ function WitnessItemCard(props: Props) {
           }}
         >
           <span>
-            <span className="text-default-400">Votes:</span> {witness.votes}
+            <span className="text-default-400">{t("witnesses.votes")}:</span> {witness.votes}
           </span>
         </div>
         <span className="hidden sm:inline">•</span>
         <span>
           {" "}
-          <span className="text-default-400">Missed:</span>{" "}
+          <span className="text-default-400">{t("witnesses.missed")}:</span>{" "}
           {witness.missedBlocks}
         </span>
         <span
@@ -106,7 +108,7 @@ function WitnessItemCard(props: Props) {
             witness.last_price_report * 1000
           ).toLocaleString()}`}
         >
-          <span className="text-default-400">Price:</span>{" "}
+          <span className="text-default-400">{t("witnesses.price")}:</span>{" "}
           {witness.reported_price.base}
         </span>
 

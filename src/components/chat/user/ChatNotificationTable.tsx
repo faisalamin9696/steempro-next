@@ -21,6 +21,7 @@ import { Chip } from "@heroui/chip";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import moment from "moment";
 import { Spinner } from "@heroui/spinner";
+import { useTranslation } from "@/utils/i18n";
 
 interface Props {
   onOpenChange: (isOpen: boolean) => void;
@@ -30,6 +31,7 @@ interface Props {
 const ITEMS_PER_BATCH = 30;
 
 export default function ChatNotificationsTable(props: Props) {
+  const { t } = useTranslation();
   const { isOpen, onOpenChange } = props;
 
   const { data: session } = useSession();
@@ -89,7 +91,7 @@ export default function ChatNotificationsTable(props: Props) {
     },
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(error.message || JSON.stringify(error));
+        toast.error(t('common.error_occurred', { error: error.message || JSON.stringify(error) }));
         return;
       }
       if (data) {
@@ -107,7 +109,7 @@ export default function ChatNotificationsTable(props: Props) {
       markasReadChat(loginInfo, data.key, data.isKeychain),
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(error.message || JSON.stringify(error));
+        toast.error(t('common.error_occurred', { error: error.message || JSON.stringify(error) }));
         return;
       }
       const parserData = allRows.map((item) => {
@@ -121,7 +123,7 @@ export default function ChatNotificationsTable(props: Props) {
 
       setAllRows(parserData);
       dispatch(addCommonDataHandler({ unread_count_chat: 0 }));
-      toast.success("Chat marked as seen");
+      toast.success(t("chat.marked_as_seen"));
     },
   });
 
@@ -134,7 +136,7 @@ export default function ChatNotificationsTable(props: Props) {
     credentials = getCredentials(getSessionKey(session?.user?.name));
 
     if (!credentials?.key) {
-      toast.error("Invalid credentials");
+      toast.error(t("common.invalid_credentials"));
       return;
     }
 
@@ -177,7 +179,7 @@ export default function ChatNotificationsTable(props: Props) {
             color="secondary"
             // endContent={<IoCheckmarkDone className="text-lg" />}
           >
-            Mark as seen
+            {t("chat.mark_as_seen")}
           </Button>
         )}
       </div>
@@ -189,7 +191,7 @@ export default function ChatNotificationsTable(props: Props) {
       <STable
         isLoading={isLoading}
         skipCard={isSelf}
-        title={!isSelf ? null : "Chats"}
+        title={!isSelf ? null : t("chat.title")}
         subTitle={() => topContent}
         filterByValue={["sender_usr"]}
         titleWrapperClassName="flex-row"
@@ -233,7 +235,7 @@ export default function ChatNotificationsTable(props: Props) {
                 <div className=" flex flex-row items-center gap-1">
                   {chat.is_self && (
                     <p className="text-sm opacity-70 font-bold text-blue-500">
-                      {chat.is_self ? "You:" : ""}
+                      {chat.is_self ? t("chat.you") : ""}
                     </p>
                   )}
                   {credentials?.memo ? (
@@ -250,7 +252,7 @@ export default function ChatNotificationsTable(props: Props) {
                       className="text-sm opacity-70 cursor-pointer"
                       onClick={handleAddMemo}
                     >
-                      Encrypted message
+                      {t("chat.encrypted_message")}
                     </p>
                   )}
                 </div>
@@ -283,7 +285,7 @@ export default function ChatNotificationsTable(props: Props) {
                   loadMoreMutation.mutate();
                 }}
               >
-                Load More
+                {t("common.load_more")}
               </Button>
             </div>
           ) : null

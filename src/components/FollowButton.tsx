@@ -13,6 +13,7 @@ import { useSession } from "next-auth/react";
 import { BsPlusCircle } from "react-icons/bs";
 import { SlMinus } from "react-icons/sl";
 import { Spinner } from "@heroui/spinner";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type Props = {
   account: AccountExt;
@@ -41,8 +42,8 @@ export default function FollowButton(props: Props) {
         })
       );
 
-    if (isFollowing) toast.success("Unfollowed");
-    else toast.success("Followed");
+    if (isFollowing) toast.success(t("profile.unfollowed_success"));
+    else toast.success(t("profile.followed_success"));
   }
   function handleFailed(error: any) {
     toast.error(error.message || JSON.stringify(error));
@@ -90,7 +91,7 @@ export default function FollowButton(props: Props) {
 
     const credentials = getCredentials(getSessionKey(session?.user?.name));
     if (!credentials?.key) {
-      toast.error("Invalid credentials");
+      toast.error(t("common.invalid_credentials"));
       return;
     }
     dispatch(
@@ -113,6 +114,8 @@ export default function FollowButton(props: Props) {
     followMutation.isPending ||
     account?.status === "following" ||
     account?.status === "unfollowing";
+    
+  const { t } = useLanguage();
 
   return (
     <div className="flex flex-row items-start gap-1 justify-center">
@@ -120,13 +123,11 @@ export default function FollowButton(props: Props) {
         <Button
           size={size ?? "md"}
           variant="flat"
-          title="Edit profile"
+          title={t("profile.edit")}
           className={"bg-foreground/10"}
           onPress={handleAccountEdit}
-          startContent={<FaPencil />}
-          radius="full"
         >
-          Edit
+          <FaPencil className="mr-1" /> {t("profile.edit")}
         </Button>
       )}
 
@@ -137,7 +138,7 @@ export default function FollowButton(props: Props) {
           size={size ?? "md"}
           color={isFollowing ? "default" : "primary"}
           // isLoading={isPending}
-          title={isFollowing ? "Unfollow" : "Follow"}
+          title={isFollowing ? t("profile.unfollow") : t("profile.follow")}
           variant={"solid"}
           onPress={handleFollow}
           // isIconOnly={isPending}
@@ -155,7 +156,7 @@ export default function FollowButton(props: Props) {
             )
           }
         >
-          {isFollowing ? "Unfollow" : "Follow"}
+          {isFollowing ? t("profile.unfollow") : t("profile.follow")}
         </Button>
       )}
     </div>

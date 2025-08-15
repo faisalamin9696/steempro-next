@@ -6,8 +6,8 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Scheduled posts",
   description:
-    "Manage your scheduled posts easily with SteemPro. View, edit, and delete scheduled posts in one place. Stay organized and keep your content strategy on track.",
-  keywords: "SteemPro, schedule posts, scheduling",
+    "Manage your scheduled posts easily with SteemCN. View, edit, and delete scheduled posts in one place. Stay organized and keep your content strategy on track.",
+  keywords: "SteemCN, schedule posts, scheduling",
 };
 
 export default async function Layout({

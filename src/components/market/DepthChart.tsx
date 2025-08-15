@@ -7,15 +7,17 @@ import {
   CartesianGrid,
 } from "recharts";
 import { ChartContainer, ChartTooltip } from "../ui/chart";
+import { useTranslation } from "@/utils/i18n";
 
 const DepthChart = () => {
+  const { t } = useTranslation();
   const { orderBookData, isLoading, error } = useOrderBook();
 
   if (isLoading) {
     return (
       <div className="h-full flex items-center justify-center">
         <div className="animate-pulse text-muted-foreground">
-          Loading depth chart...
+          {t("market.loading_depth_chart")}
         </div>
       </div>
     );
@@ -24,7 +26,7 @@ const DepthChart = () => {
   if (error || !orderBookData) {
     return (
       <div className="h-full flex items-center justify-center">
-        <div className="text-red-500">Failed to load depth chart</div>
+        <div className="text-red-500">{t("market.failed_to_load_depth_chart")}</div>
       </div>
     );
   }
@@ -75,11 +77,11 @@ const DepthChart = () => {
 
   const chartConfig = {
     buyVolume: {
-      label: "Buy Volume",
+      label: t("market.buy_volume"),
       color: "hsl(142, 76%, 36%)", // Green
     },
     sellVolume: {
-      label: "Sell Volume",
+      label: t("market.sell_volume"),
       color: "hsl(0, 84%, 60%)", // Red
     },
   };
@@ -91,7 +93,7 @@ const DepthChart = () => {
         <div className="bg-background border border-border rounded-lg p-3 shadow-lg">
           <div className="text-sm space-y-1">
             <div className="font-medium">
-              Price:{" "}
+              {t("market.price")}:{" "}
               <span className="font-mono">{Number(label).toFixed(6)} SBD</span>
             </div>
             <div
@@ -99,16 +101,16 @@ const DepthChart = () => {
                 data.side === "buy" ? "text-green-400" : "text-red-400"
               }`}
             >
-              Side: {data.side === "buy" ? "Buy" : "Sell"}
+              {t("market.side")}: {data.side === "buy" ? t("market.buy") : t("market.sell")}
             </div>
             <div>
-              Amount:{" "}
+              {t("market.amount")}:{" "}
               <span className="font-mono">
                 {data.amount.toLocaleString()} STEEM
               </span>
             </div>
             <div>
-              Cumulative:{" "}
+              {t("market.cumulative")}:{" "}
               <span className="font-mono">
                 {(data.buyVolume || data.sellVolume).toLocaleString()} STEEM
               </span>
@@ -158,7 +160,7 @@ const DepthChart = () => {
             fillOpacity={0.3}
             strokeWidth={2}
             connectNulls={false}
-            name="Buy Orders"
+            name={t("market.buy_orders")}
           />
           {/* Sell orders (red area) */}
           <Area
@@ -169,7 +171,7 @@ const DepthChart = () => {
             fillOpacity={0.3}
             strokeWidth={2}
             connectNulls={false}
-            name="Sell Orders"
+            name={t("market.sell_orders")}
           />
         </AreaChart>
       </ChartContainer>

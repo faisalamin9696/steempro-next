@@ -17,6 +17,7 @@ import { CommunityActivities } from "./community/CommunityActivities";
 import SLink from "./ui/SLink";
 import CommunityChatModal from "./chat/community/CommunityChatModal";
 import ChatButton from "./ui/ChatButton";
+import { useTranslation } from "@/utils/i18n";
 
 type Props = {
   community: Community;
@@ -27,6 +28,7 @@ type Props = {
 
 export default memo(function CommunityInfoCard(props: Props) {
   const { community, onChatPress, onLeadershipPress } = props;
+  const { t } = useTranslation();
 
   const communityInfo: Community =
     useAppSelector((state) => state.communityReducer.values)[
@@ -72,13 +74,13 @@ export default memo(function CommunityInfoCard(props: Props) {
       <div className="flex flex-col gap-4 w-full max-w-[65ch]">
         <div className=" flex flex-row gap-1 items-center text-tiny">
           <SlCalender size={16} className=" me-1" />
-          <p>Created</p>
+          <p>{t("community.created")}</p>
           <p>{moment(communityInfo.created * 1000).format("MMM DD, YYYY")}</p>
         </div>
 
         <div className=" flex flex-row gap-1 items-center text-tiny">
           <TbHeartDollar size={16} className=" me-1" />
-          <p>Pending Reward</p>
+          <p>{t("community.pending_reward")}</p>
           <p>{abbreviateNumber(communityInfo.sum_pending)}</p>
         </div>
 
@@ -92,7 +94,7 @@ export default memo(function CommunityInfoCard(props: Props) {
             <p className=" font-bold text-sm">
               {abbreviateNumber(communityInfo.count_subs)}
             </p>
-            <p className="text-default-900/80 text-[12px]">Members</p>
+            <p className="text-default-900/80 text-[12px]">{t("community.members")}</p>
           </div>
 
           <div className="flex flex-col items-start flex-1">
@@ -101,7 +103,7 @@ export default memo(function CommunityInfoCard(props: Props) {
             </p>
             <div className="flex flex-row items-center gap-1">
               <span className="inline-flex bg-green-500 rounded-full w-[0.5rem] h-[0.5rem]"></span>
-              <span className="text-default-900/80 text-[12px]">Active</span>
+              <span className="text-default-900/80 text-[12px]">{t("community.active")}</span>
             </div>
           </div>
 
@@ -114,7 +116,7 @@ export default memo(function CommunityInfoCard(props: Props) {
 
           <div className="flex flex-col items-start flex-1">
             <p className=" font-bold text-sm">{communityInfo.rank}</p>
-            <p className="text-default-900/80 text-[12px]">Rank by reward</p>
+            <p className="text-default-900/80 text-[12px]">{t("community.rank_by_reward")}</p>
           </div>
         </div>
 
@@ -123,14 +125,14 @@ export default memo(function CommunityInfoCard(props: Props) {
             classNames={{ base: "rounded-md", title: "font-bold text-left" }}
             key="activities"
             aria-label="Activities"
-            title="Activities"
+            title={t("community.activities")}
           >
             <CommunityActivities community={communityInfo} />
           </AccordionItem>
         </Accordion>
 
         <div className=" flex flex-col items-start gap-2">
-          <p className=" font-bold text-left">Leadership</p>
+          <p className=" font-bold text-left">{t("community.leadership")}</p>
           <div className=" flex flex-row items-center gap-4 px-3">
             <AvatarGroup isBordered size="md" max={5}>
               {leaderShip?.map((leader) => (
@@ -147,7 +149,7 @@ export default memo(function CommunityInfoCard(props: Props) {
                 onClick={onLeadershipPress}
                 className=" text-tiny hover:underline cursor-pointer"
               >
-                Show all
+                {t("community.show_all")}
               </p>
             )}
           </div>
@@ -156,7 +158,7 @@ export default memo(function CommunityInfoCard(props: Props) {
 
       {communityInfo.flag_text && (
         <div className=" flex flex-col items-start gap-2">
-          <p className=" font-bold text-left">Rules</p>
+          <p className=" font-bold text-left">{t("community.rules")}</p>
 
           <MarkdownViewer
             className="!max-w-[65ch] !text-sm text-left !text-default-900/70"

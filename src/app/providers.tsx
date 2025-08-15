@@ -5,6 +5,7 @@ import { HeroUIProvider } from "@heroui/system";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Provider as ReduxProvider } from "react-redux";
 import React, { useEffect, useState } from "react";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import { persistQueryClient } from "@tanstack/react-query-persist-client";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import { compress, decompress } from "lz-string";
@@ -103,8 +104,9 @@ export function Providers(props: Props) {
                     // revalidateOnMount: false
                   }}
                 >
-                  <AuthProvider>
-                    <AppWrapper>
+                  <LanguageProvider>
+                    <AuthProvider>
+                      <AppWrapper>
                       <div className="w-full">
                         <AppNavbar />
                         <div className="w-full flex flex-row ">
@@ -116,6 +118,7 @@ export function Providers(props: Props) {
                       </div>
                     </AppWrapper>
                   </AuthProvider>
+                  </LanguageProvider>
                 </SWRConfig>
               ) : (
                 <LoadingCard />

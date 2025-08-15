@@ -10,6 +10,7 @@ import React, { useState } from "react";
 import { FaLock } from "react-icons/fa6";
 import { toast } from "sonner";
 import { mutate } from "swr";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Props {
   onClose: () => void;
@@ -21,15 +22,16 @@ function MemoLogin(props: Props) {
   const [memoKey, setMemoKey] = useState("");
   const [isPending, setIsPending] = useState(false);
   const { data: session } = useSession();
+  const { t } = useLanguage();
 
   async function handleLogin() {
     const _memoKey = memoKey.trim();
     if (!_memoKey) {
-      toast.info("Invalid memo key");
+      toast.info(t('auth.invalid_memo_key'));
       return;
     }
     if (!session?.user?.name) {
-      toast.error("Something went wrong!");
+      toast.error(t('auth.something_wrong'));
       return;
     }
 
@@ -44,13 +46,13 @@ function MemoLogin(props: Props) {
           const credentials = getCredentials();
 
           if (keyType.type !== "MEMO") {
-            toast.info("Use only private memo key");
+            toast.info(t('auth.use_only_memo_key'));
             setIsPending(false);
             return;
           }
           updateMemoKey(_memoKey);
           toast.success(
-            `Memo key is added successfully for ${session.user.name}`
+            t('auth.memo_key_added_successfully', { username: session.user.name })
           );
           onLoginSuccess &&
             onLoginSuccess({
@@ -63,12 +65,12 @@ function MemoLogin(props: Props) {
           onClose();
           setIsPending(false);
         } else {
-          toast.error(`Invalid private memo key`);
+          toast.error(t('auth.invalid_private_memo_key'));
           setIsPending(false);
         }
       }
     } catch (e) {
-      toast.error(String(e));
+      toast.error(t('auth.error_message', { error: String(e) }));
       setIsPending(false);
     }
   }
@@ -82,8 +84,8 @@ function MemoLogin(props: Props) {
         isRequired
         onValueChange={setMemoKey}
         isDisabled={isPending}
-        label="Private memo key"
-        placeholder="Enter memo key for private chat"
+        label={t('auth.private_memo_key')}
+        placeholder={t('auth.enter_memo_key_for_chat')}
         type="password"
         onKeyDown={(e) => {
           if (e.key === "Enter") {
@@ -100,12 +102,12 @@ function MemoLogin(props: Props) {
           <FaLock size={20} />
           <div className="flex flex-row gap-2">
             <p className="mt-2 text-sm text-default-500">
-              To enable{" "}
+              {t('auth.memo_notice_1')}{" "}
               <span className="font-medium text-default-700">
-                end-to-end encrypted messaging
+                {t('auth.end_to_end_encrypted')}
               </span>
-              , please provide your{" "}
-              <span className="font-medium text-green-600">Memo Key</span>.{" "}
+              {t('auth.memo_notice_2')}{" "}
+              <span className="font-medium text-green-600">{t('auth.memo_key')}</span>.{" "}
               <br />
             </p>
           </div>
@@ -119,7 +121,7 @@ function MemoLogin(props: Props) {
           onPress={onClose}
           isDisabled={isPending}
         >
-          Cancel
+          {t('auth.cancel')}
         </Button>
 
         <Button
@@ -130,7 +132,7 @@ function MemoLogin(props: Props) {
             handleLogin();
           }}
         >
-          {"Submit"}
+          {t('auth.submit')}
         </Button>
       </div>
     </div>

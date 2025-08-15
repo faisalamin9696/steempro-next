@@ -45,6 +45,7 @@ import SModal from "@/components/ui/SModal";
 import { AiOutlineRetweet } from "react-icons/ai";
 import ConfirmationPopup from "@/components/ui/ConfirmationPopup";
 import { updateSettingsHandler } from "@/hooks/redux/reducers/SettingsReducer";
+import { useTranslation } from "@/utils/i18n";
 
 interface WrapperProps {
   children: React.ReactNode;
@@ -60,6 +61,7 @@ interface WrapperProps {
 
 export default memo(function CommentFooter(props: CommentProps) {
   const { comment, className, isReply, compact, isDetails } = props;
+  const { t } = useTranslation();
 
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
   const voterDisclosure = useDisclosure();
@@ -366,7 +368,7 @@ export default memo(function CommentFooter(props: CommentProps) {
             <ButtonGroup className="gap-0" size="sm" radius="full" isIconOnly>
               <Button
                 radius="full"
-                title="Upvote"
+                title={t('comment.upvote')}
                 variant="solid"
                 onPress={() => {
                   authenticateUser();
@@ -395,7 +397,7 @@ export default memo(function CommentFooter(props: CommentProps) {
 
               {!!comment.upvote_count && (
                 <button
-                  title={`${comment.upvote_count} Votes`}
+                  title={`${comment.upvote_count} ${t('comment.votes')}`}
                   onClick={voterDisclosure.onOpen}
                   disabled={isVoting}
                   className={twMerge(
@@ -411,7 +413,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                 isIconOnly
                 size="sm"
                 variant="solid"
-                title="Downvote"
+                title={t('comment.downvote')}
                 isDisabled={isVoting}
                 onPressStart={setLongPressDownvote}
                 onPressEnd={() => setLongPressDownvote(undefined)}
@@ -445,7 +447,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                     .getElementById(`comments`)
                     ?.scrollIntoView({ behavior: "smooth", block: "center" })
                 }
-                title={`${comment.children} Comments`}
+                title={`${comment.children} ${t('comment.comments')}`}
                 radius="full"
                 size="sm"
                 variant="solid"
@@ -477,7 +479,7 @@ export default memo(function CommentFooter(props: CommentProps) {
             {!isReply && (
               <ConfirmationPopup
                 triggerProps={{
-                  title: `${comment.resteem_count} Resteems`,
+                  title: `${comment.resteem_count} ${t('comment.resteems')}`,
                   isDisabled: reblogMutation.isPending,
                   variant: isResteemd ? "flat" : "solid",
                   radius: "full",
@@ -490,7 +492,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                     !comment.resteem_count ? "w-12" : ""
                   ),
                 }}
-                subTitle="Resteem this post?"
+                subTitle={t('comment.resteem_confirmation')}
                 buttonTitle={
                   <div className="flex flex-row items-center gap-2 text-default-700">
                     {!reblogMutation.isPending && (
@@ -505,7 +507,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                 }
                 onConfirm={() => {
                   if (isResteemd) {
-                    toast.success("Already resteem");
+                    toast.success(t('comment.already_resteem'));
                     return;
                   }
                   handleResteem();
@@ -523,9 +525,9 @@ export default memo(function CommentFooter(props: CommentProps) {
               className="px-1 pr-2 bg-foreground/10"
               title={`${
                 !comment.max_accepted_payout
-                  ? "Declined"
+                  ? t('comment.declined')
                   : "$" + comment.payout?.toLocaleString()
-              }  Payout`}
+              } ${t('comment.payout')}`}
             >
               <div className="flex flex-row items-center gap-3 text-default-700">
                 {(comment.payout && !comment.percent_steem_dollars) ||
@@ -567,7 +569,7 @@ export default memo(function CommentFooter(props: CommentProps) {
         )}
         footer={(onClose) => (
           <Button color="danger" variant="flat" onPress={onClose}>
-            Close
+            {t('common.close')}
           </Button>
         )}
       />

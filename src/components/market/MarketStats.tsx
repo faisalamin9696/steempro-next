@@ -7,8 +7,10 @@ import {
   BiDollar,
   BiBarChart,
 } from "react-icons/bi";
+import { useTranslation } from "@/utils/i18n";
 
 function MarketStats() {
+  const { t } = useTranslation();
   const { ticker, volume, isLoading, error } = useMarketData();
   const percentChange = ticker?.percent_change
     ? parseFloat(ticker.percent_change)
@@ -42,9 +44,9 @@ function MarketStats() {
         <Card className="border border-red-200 shadow-sm">
           <CardBody className="p-4">
             <div className="text-center text-red-600">
-              <p>Error loading market data</p>
+              <p>{t("market.error_loading")}</p>
               <p className="text-sm text-gray-500 mt-2">
-                Please check console for details
+                {t("market.check_console")}
               </p>
             </div>
           </CardBody>
@@ -60,7 +62,7 @@ function MarketStats() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs sm:text-sm font-medium text-gray-500">
-                STEEM Price
+                {t("market.steem_price")}
               </p>
               <p
                 className="text-lg sm:text-2xl font-bold"
@@ -81,7 +83,7 @@ function MarketStats() {
             }`}
           >
             {percentChange >= 0 ? "+" : ""}
-            {percentChange.toFixed(2)}% (24h)
+            {percentChange.toFixed(2)}% {t("market.hours_24")}
           </p>
         </CardBody>
       </Card>
@@ -91,7 +93,7 @@ function MarketStats() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs sm:text-sm font-medium text-gray-500">
-                Spread
+                {t("market.spread")}
               </p>
               <p className="text-lg sm:text-2xl font-bold text-default-700">
                 {ticker
@@ -111,7 +113,7 @@ function MarketStats() {
             />
           </div>
           <p className="text-xs text-default-500 mt-1">
-            Bid: {parseFloat(ticker?.highest_bid || "0")?.toFixed(6)} SBD
+            {t("market.bid")}: {parseFloat(ticker?.highest_bid || "0")?.toFixed(6)} SBD
           </p>
         </CardBody>
       </Card>
@@ -121,7 +123,7 @@ function MarketStats() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs sm:text-sm font-medium text-gray-500">
-                24h Volume
+                {t("market.volume_24h")}
               </p>
               <p className="text-lg sm:text-2xl font-bold text-default-700">
                 {steemVolume} STEEM
@@ -138,7 +140,7 @@ function MarketStats() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs sm:text-sm font-medium text-gray-500">
-                Ask Price
+                {t("market.ask_price")}
               </p>
               <p className="text-lg sm:text-2xl font-bold text-red-600">
                 {parseFloat(ticker?.lowest_ask || "0")?.toFixed(6)} SBD
@@ -146,7 +148,7 @@ function MarketStats() {
             </div>
             <CardBody className="w-6 h-6 sm:w-8 sm:h-8 text-red-500" />
           </div>
-          <p className="text-xs text-default-500 mt-1">Lowest sell order</p>
+          <p className="text-xs text-default-500 mt-1">{t("market.lowest_sell_order")}</p>
         </CardBody>
       </Card>
     </div>

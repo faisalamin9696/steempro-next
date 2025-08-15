@@ -9,8 +9,10 @@ import useSWR from "swr";
 import ProposalItemCard from "@/components/ProposalItemCard";
 import { DaoStats } from "@/components/DaoStats";
 import STable from "@/components/ui/STable";
+import { useTranslation } from "@/utils/i18n";
 
 function Proposals() {
+  const { t } = useTranslation();
   const { data, error, isLoading } = useSWR<Proposal[]>(
     "proposals-list",
     getProposals
@@ -25,11 +27,9 @@ function Proposals() {
   return (
     <div className="flex flex-col gap-4 pb-10">
       <div className="flex flex-col items-center sm:items-start gap-2 text-center">
-        <p className="text-xl font-bold sm:text-3xl">Steem Proposals</p>
+        <p className="text-xl font-bold sm:text-3xl">{t("proposals.title")}</p>
         <p className="text-sm text-default-500 text-center sm:text-start">
-          Fund community-driven ideas through the Steem Proposal System (SPS).
-          Vote on initiatives that improve the ecosystem and benefit the
-          network.
+          {t("proposals.description")}
         </p>
       </div>
 
@@ -38,10 +38,10 @@ function Proposals() {
       <STable
         filterByValue={["subject", "creator", "receiver"]}
         data={data || []}
-        title="DAO Proposals"
+        title={t("proposals.dao_proposals")}
         bodyClassName="flex flex-col gap-6 mt-6"
         titleIcon={FaFileInvoiceDollar}
-        subTitle={(filteredItems)=>`Showing ${filteredItems?.length} of ${data?.length} proposals`}
+        subTitle={(filteredItems)=>t("proposals.showing", { filtered: filteredItems?.length, total: data?.length })}
         tableRow={(proposal) => (
           <ProposalItemCard
             returnProposal={data?.find((p) => p.proposal_id === 0)}

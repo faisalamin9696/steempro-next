@@ -1,5 +1,6 @@
 import { Button } from "@heroui/button";
 import { FiClock, FiThumbsUp, FiTrendingUp } from "react-icons/fi";
+import { useTranslation } from "@/utils/i18n";
 
 interface SortingControlsProps {
   currentSort: "payout" | "upvote_count" | "created";
@@ -12,16 +13,17 @@ const ReplySortingControls = ({
   onSortChange,
   totalReplies,
 }: SortingControlsProps) => {
+  const { t } = useTranslation();
   const sortOptions = [
-    { key: "payout" as const, label: "Trending", icon: FiTrendingUp },
-    { key: "upvote_count" as const, label: "Top Voted", icon: FiThumbsUp },
-    { key: "created" as const, label: "Newest", icon: FiClock },
+    { key: "payout" as const, label: t('reply.trending'), icon: FiTrendingUp },
+    { key: "upvote_count" as const, label: t('reply.top_voted'), icon: FiThumbsUp },
+    { key: "created" as const, label: t('reply.newest'), icon: FiClock },
   ];
 
   return (
     <div className="flex items-center justify-between mb-6">
       <div className="flex flex-wrap items-center gap-4">
-        <h3 className="text-lg font-semibold">Replies ({totalReplies})</h3>
+        <h3 className="text-lg font-semibold">{t('reply.replies')} ({totalReplies})</h3>
         <div className="flex items-center gap-2">
           {sortOptions.map(({ key, label, icon: Icon }) => (
             <Button

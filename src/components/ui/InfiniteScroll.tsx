@@ -16,6 +16,7 @@ import { useAppSelector } from "@/constants/AppFunctions";
 import { getSettings } from "@/utils/user";
 import { twMerge } from "tailwind-merge";
 import { FeedPerPage } from "@/constants/AppConstants";
+import { useTranslation } from "@/utils/i18n";
 
 type InfiniteScrollProps<T> = {
   getKey: (pageIndex: number, previousPageData: T[] | null) => string | null;
@@ -50,7 +51,7 @@ const InfiniteScroll = <T,>({
       <CommentSkeleton />
     </div>
   ),
-  errorComponent = <EmptyList text="Error loading data" />,
+  errorComponent,
   className = "",
   itemsClassName = "",
   loader = (
@@ -68,6 +69,11 @@ const InfiniteScroll = <T,>({
   revalidateIfStale,
   
 }: InfiniteScrollProps<T>) => {
+  const { t } = useTranslation();
+  
+  // Set default error component with translation
+  errorComponent = errorComponent || <EmptyList text={t('feed.error_loading')} />;
+  
   const {
     data: pages,
     error,
@@ -194,13 +200,13 @@ const InfiniteScroll = <T,>({
 
       {isReachingEnd && !isEmpty && (
         <div style={{ textAlign: "center", padding: "10px" }}>
-          <EmptyList text="No more results" />
+          <EmptyList text={t('feed.no_more_results')} />
         </div>
       )}
 
       {isEmpty && !isLoading && (
         <div style={{ textAlign: "center", padding: "10px" }}>
-          <EmptyList />
+          <EmptyList text={t('feed.empty')} />
         </div>
       )}
     </div>

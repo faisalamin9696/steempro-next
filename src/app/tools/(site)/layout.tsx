@@ -14,7 +14,7 @@ export default async function Layout({
 
 export async function generateMetadata() {
   const keywords = [
-    "SteemPro tools",
+    "SteemCN tools",
     "Steem tools",
     "enhancing Steem experience",
     "Steem user tools",
@@ -23,11 +23,11 @@ export async function generateMetadata() {
     "powerful Steem tools",
     "Steem productivity",
     "Steem utilities",
-    "SteemPro platform",
+    "SteemCN platform",
   ];
 
   return {
-    title: `SteemPro Tools - Enhancing Your Steem Experience`,
+    title: `SteemCN Tools - Enhancing Your Steem Experience`,
     description: `Discover a suite of powerful tools tailored for Steem users, designed to streamline your interactions, boost efficiency, and elevate your Steem experience to new heights.`,
     keywords: keywords.join(", "),
   };

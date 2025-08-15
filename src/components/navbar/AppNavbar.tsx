@@ -48,6 +48,7 @@ import { Spinner } from "@heroui/spinner";
 import { mutate } from "swr";
 import SModal from "../ui/SModal";
 import { SearchModal } from "../SearchModal";
+import { useTranslation } from "@/utils/i18n";
 // import Lottie from "lottie-react";
 
 export async function refreshData(username?: string | null) {
@@ -65,6 +66,7 @@ function AppNavbar() {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { data: session, status } = useSession();
   const isAuthenticated = status === "authenticated";
+  const { t } = useTranslation();
   const [isPopOpen, setIsPopOpen] = React.useState(false);
   const accountDisclosure = useDisclosure();
   const notiDisclosure = useDisclosure();
@@ -186,7 +188,7 @@ function AppNavbar() {
                 inputWrapper:
                   "text-default-500 bg-default-400/20 dark:bg-default-500/20",
               }}
-              placeholder="Search"
+              placeholder={t('common.search')}
               size="md"
               isReadOnly
               endContent={
@@ -262,8 +264,9 @@ function AppNavbar() {
                 size="md"
                 isDisabled={status === "loading"}
                 isLoading={status === "loading"}
+                aria-label={t('auth.login')}
               >
-                Login
+                {t('auth.login')}
               </Button>
             )}
             {isAuthenticated && (
@@ -342,7 +345,7 @@ function AppNavbar() {
                       onPress={handleItemClick}
                       startContent={<FaUserCircle className="text-xl" />}
                     >
-                      Profile{" "}
+                      {t('common.profile')}{" "}
                       <span className=" text-default-500">
                         ({session?.user?.name})
                       </span>
@@ -357,7 +360,7 @@ function AppNavbar() {
                       onPress={handleItemClick}
                       startContent={<FaWallet className="text-xl" />}
                     >
-                      Wallet
+                      {t('common.wallet')}
                     </Button>
 
                     {!credentials?.passwordless &&
@@ -378,7 +381,7 @@ function AppNavbar() {
                             )
                           }
                         >
-                          {isLocked ? "Unlock" : "Lock"} Account
+                          {isLocked ? t('auth.unlock') : t('auth.lock')} {t('auth.account')}
                         </Button>
                       )}
                     <Button
@@ -391,7 +394,7 @@ function AppNavbar() {
                       }}
                       startContent={<PiUserSwitchFill className="text-xl" />}
                     >
-                      Switch/Add Account
+                      {t('auth.switch_account')}
                     </Button>
 
                     <Button
@@ -405,7 +408,7 @@ function AppNavbar() {
                       }}
                       startContent={<IoLogOut className="text-xl" />}
                     >
-                      Logout
+                      {t('auth.logout')}
                     </Button>
                   </div>
                 </PopoverContent>
@@ -440,9 +443,9 @@ function AppNavbar() {
         isOpen={logoutDisclosure.isOpen}
         onOpenChange={logoutDisclosure.onOpenChange}
         modalProps={{ hideCloseButton: true, isDismissable: !logoutLoading }}
-        title={() => "Confirmation"}
+        title={() => t('auth.confirmation')}
         subTitle={() => (
-          <p>Do you really want to logout {session?.user?.name}?</p>
+          <p>{t('auth.logout_confirmation')} {session?.user?.name}?</p>
         )}
         footer={(onClose) => (
           <>
@@ -452,7 +455,7 @@ function AppNavbar() {
               variant="light"
               onPress={onClose}
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               color="danger"
@@ -462,7 +465,7 @@ function AppNavbar() {
                 handleLogout();
               }}
             >
-              Logout
+              {t('auth.logout')}
             </Button>
           </>
         )}

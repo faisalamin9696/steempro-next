@@ -2,6 +2,7 @@ import MarkdownViewer from "@/components/body/MarkdownViewer";
 import { Card } from "@heroui/card";
 import { Button } from "@heroui/button";
 import React, { Key, useState } from "react";
+import { useTranslation } from "@/utils/i18n";
 import { FaEllipsis, FaRegCopy } from "react-icons/fa6";
 import axios from "axios";
 import { getCredentials, getSessionKey } from "@/utils/user";
@@ -25,6 +26,7 @@ interface Props {
   onDelete?: (snippet: Snippet) => void;
 }
 function SnippetItem(props: Props) {
+  const { t } = useTranslation();
   const { snippet, handleEdit, handleOnSelect, onDelete } = props;
   const { data: session } = useSession();
   const [isPending, setIsPending] = useState(false);
@@ -52,7 +54,7 @@ function SnippetItem(props: Props) {
       )
       .then((res) => {
         onDelete && onDelete(snippet);
-        toast.success("Deleted successfully");
+        toast.success(t('submit.deleted_successfully'));
       })
       .catch(function (error) {
         toast.error(error.message || JSON.stringify(error));
@@ -104,7 +106,7 @@ function SnippetItem(props: Props) {
 
       case "copy":
         navigator.clipboard.writeText(snippet.body).then(() => {
-          toast.success("Copied");
+          toast.success(t('submit.copied'));
         });
 
       case "delete":
@@ -148,7 +150,7 @@ function SnippetItem(props: Props) {
             </Button>
           </DropdownTrigger>
           <DropdownMenu
-            aria-labelledby="comment options"
+            aria-labelledby={t('submit.snippet_options')}
             onAction={handleMenuActions}
             hideEmptyContent
           >
@@ -157,7 +159,7 @@ function SnippetItem(props: Props) {
               color={"default"}
               startContent={<FaRegCopy size={18} />}
             >
-              Copy
+              {t('submit.copy')}
             </DropdownItem>
 
             <DropdownItem
@@ -165,7 +167,7 @@ function SnippetItem(props: Props) {
               color={"default"}
               startContent={<RiEdit2Fill size={18} />}
             >
-              Edit
+              {t('submit.edit')}
             </DropdownItem>
 
             <DropdownItem
@@ -174,7 +176,7 @@ function SnippetItem(props: Props) {
               className="text-danger"
               startContent={<MdDelete size={18} />}
             >
-              Delete
+              {t('submit.delete')}
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>

@@ -11,33 +11,35 @@ import { twMerge } from "tailwind-merge";
 import { useParams } from "next/navigation";
 import HomeTabPage from "./HomeTabPage";
 import SLink from "@/components/ui/SLink";
+import { useTranslation } from "@/utils/i18n";
 
 export default function HomePage() {
   let { category } = useParams() as { category: string };
   category = category?.toLowerCase();
   const { isMobile } = useDeviceInfo();
+  const { t } = useTranslation();
 
   let categoryTabs = [
     {
-      title: "Trending",
+      title: t('feed.trending'),
       key: "trending",
       children: <HomeTabPage />,
       icon: <FaFire size={22} />,
     },
     {
-      title: "Hot",
+      title: t('feed.hot'),
       key: "hot",
       children: <HomeTabPage />,
       icon: <MdWhatshot size={22} />,
     },
     {
-      title: "New",
+      title: t('feed.new'),
       key: "created",
       children: <HomeTabPage />,
       icon: <MdNewLabel size={22} />,
     },
     {
-      title: "Payout",
+      title: t('feed.payout'),
       key: "payout",
       children: <HomeTabPage />,
       icon: <FaCircleDollarToSlot size={22} />,

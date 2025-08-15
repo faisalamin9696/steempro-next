@@ -9,6 +9,7 @@ import { BiVerticalTop } from "react-icons/bi";
 import "./style.css";
 import { twMerge } from "tailwind-merge";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
+import { useTranslation } from "@/utils/i18n";
 
 interface Props {
   comment: Post;
@@ -17,6 +18,7 @@ interface Props {
 
 export default memo(function Reply(props: Props) {
   const { comment } = props;
+  const { t } = useTranslation();
   const commentInfo: Post = (useAppSelector(
     (state) => state.commentReducer.values
   )[`${comment.author}/${comment.permlink}`] ?? comment) as Post;

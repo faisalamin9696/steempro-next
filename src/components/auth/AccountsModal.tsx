@@ -3,6 +3,7 @@ import React from "react";
 import { useLogin } from "./AuthProvider";
 import AvailableAccountList from "./AvailableAccountList";
 import SModal from "../ui/SModal";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Props {
   isOpen: boolean;
@@ -13,6 +14,7 @@ interface Props {
 export default function AccountsModal(props: Props) {
   const { handleSwitchSuccess, isOpen, onOpenChange } = props;
   const { authenticateUser } = useLogin();
+  const { t } = useLanguage();
 
   return (
     <SModal
@@ -24,10 +26,10 @@ export default function AccountsModal(props: Props) {
         placement: "top-center",
         size:'xl'
       }}
-      title={() => "Accounts"}
+      title={() => t("auth.accounts")}
       body={() => (
         <AvailableAccountList
-          switchText="Switch"
+          switchText={t("auth.switch")}
           className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center"
           handleSwitchSuccess={(user) => {
             onOpenChange(false);
@@ -38,17 +40,10 @@ export default function AccountsModal(props: Props) {
       footer={(onClose) => (
         <>
           <Button color="danger" variant="light" onPress={onClose}>
-            Cancel
+            {t("common.cancel")}
           </Button>
-
-          <Button
-            color="primary"
-            onPress={() => {
-              onClose();
-              authenticateUser(true);
-            }}
-          >
-            Add Account
+          <Button color="primary" onPress={() => { onClose(); authenticateUser(true); }}>
+            {t("auth.add_account")}
           </Button>
         </>
       )}

@@ -8,6 +8,7 @@ import SAvatar from "./ui/SAvatar";
 import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
 import { toast } from "sonner";
 import { useLogin } from "./auth/AuthProvider";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useMutation } from "@tanstack/react-query";
 import {
   delegateVestingShares,
@@ -143,7 +144,7 @@ const TransferModal = (props: Props): React.ReactNode => {
         }
 
       props.onOpenChange(false);
-      toast.success(`${amount} ${asset} transfered to ${to}`);
+      toast.success(t("wallet.transfer_success", { amount, asset, to }));
     },
   });
 
@@ -181,7 +182,7 @@ const TransferModal = (props: Props): React.ReactNode => {
         );
       }
       props.onOpenChange(false);
-      toast.success(`${amount} ${asset} transfered to ${to}'s savings`);
+      toast.success(t("wallet.transfer_to_savings_success", { amount, asset, to }));
     },
   });
 
@@ -212,7 +213,7 @@ const TransferModal = (props: Props): React.ReactNode => {
       );
 
       props.onOpenChange(false);
-      toast.success(`${amount} ${asset} powered up to ${to}`);
+      toast.success(t("wallet.power_up_success", { amount, asset, to }));
     },
   });
 
@@ -252,7 +253,7 @@ const TransferModal = (props: Props): React.ReactNode => {
       );
       props.onOpenChange(false);
       toast.success(
-        isRemove ? "Delegation removed" : `${amount} SP delegated to ${to}`
+        isRemove ? t("wallet.delegation_removed") : t("wallet.delegation_success", { amount, to })
       );
     },
   });
@@ -303,7 +304,7 @@ const TransferModal = (props: Props): React.ReactNode => {
     }
 
     if (!credentials?.key) {
-      toast.error("Invalid credentials");
+      toast.error(t("common.invalid_credentials"));
       return;
     }
 
@@ -365,6 +366,8 @@ const TransferModal = (props: Props): React.ReactNode => {
         isKeychain: isKeychain || credentials.keychainLogin,
       });
   }
+
+  const { t } = useLanguage();
 
   const isPending =
     transferMutation.isPending ||

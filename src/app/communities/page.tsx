@@ -19,14 +19,16 @@ import { IoFilterOutline } from "react-icons/io5";
 import { sortByKey } from "@/utils/helper";
 import { capitalize } from "@/constants/AppConstants";
 import { HiUserGroup } from "react-icons/hi2";
+import { useTranslation } from "@/utils/i18n";
 
-const statusOptions = [
-  { name: "Rank", uid: "rank" },
-  { name: "Subscribers", uid: "count_subs" },
-  { name: "New", uid: "created" },
+const statusOptions = (t: (key: string) => string) => [
+  { name: t("community.rank"), uid: "rank" },
+  { name: t("community.subscribers"), uid: "count_subs" },
+  { name: t("community.new"), uid: "created" },
 ];
 
 export default function CommunitiesPage() {
+  const { t } = useTranslation();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
 
   const URL = `/communities_api/getCommunitiesByRank/${
@@ -43,6 +45,7 @@ export default function CommunitiesPage() {
   const [sortBY, setSortBy] = React.useState<"rank" | "count_subs" | "created">(
     "rank"
   );
+  const statusOpts = statusOptions(t);
 
   const filteredItems = React.useMemo(() => {
     let sortedItems = [...filteredCommunities];
@@ -68,11 +71,9 @@ export default function CommunitiesPage() {
   return (
     <div className="flex flex-col gap-4 pb-10">
       <div className="flex flex-col items-center sm:items-start gap-2 text-center">
-        <p className="text-xl font-bold sm:text-3xl">Communities</p>
+        <p className="text-xl font-bold sm:text-3xl">{t("community.communities")}</p>
         <p className="text-sm text-default-500 text-center sm:text-start">
-          Connect, discuss, and collaborate on SteemPro! Explore communities
-          from tech, lifestyle, crypto to gaming, share ideas, and grow with
-          like-minded people. Join the conversation today!
+          {t("community.communities_description")}
         </p>
       </div>
       <STable
@@ -84,7 +85,7 @@ export default function CommunitiesPage() {
         bodyClassName="grid grid-cols-1 1md:grid-cols-2 gap-6"
         title={
           <div className="flex flex-row items-center justify-between w-full">
-            <p>Explore & Engage</p>
+            <p>{t("community.explore_engage")}</p>
             <Dropdown>
               <DropdownTrigger>
                 <Button
@@ -93,7 +94,7 @@ export default function CommunitiesPage() {
                   startContent={<IoFilterOutline size={18} />}
                   className="font-semibold text-small"
                 >
-                  {statusOptions?.find((s) => s.uid === sortBY)?.name}
+                  {statusOpts.find((s) => s.uid === sortBY)?.name}
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -106,7 +107,7 @@ export default function CommunitiesPage() {
                   setSortBy(item.currentKey?.toString() as any)
                 }
               >
-                {statusOptions.map((status) => (
+                {statusOpts.map((status) => (
                   <DropdownItem key={status.uid} className="capitalize">
                     {capitalize(status.name)}
                   </DropdownItem>
@@ -125,14 +126,14 @@ export default function CommunitiesPage() {
                   isSelected={filterCommunities}
                   onValueChange={setFilterCommunities}
                 >
-                  <p className="text-sm">Show only my subscriptions</p>
+                  <p className="text-sm">{t("community.show_only_subscriptions")}</p>
                 </Switch>
               </div>
               {
                 <div className="text-sm text-default-500">
                   {loginInfo?.name
-                    ? `Subscribed: ${totalSubs}`
-                    : "Login to see your subscriptions"}
+                    ? `${t("community.subscribed")}: ${totalSubs}`
+                    : t("community.login_to_see_subscriptions")}
                 </div>
               }
             </div>

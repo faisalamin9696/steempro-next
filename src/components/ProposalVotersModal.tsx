@@ -23,6 +23,7 @@ import {
 } from "@heroui/dropdown";
 import { IoFilterOutline } from "react-icons/io5";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
+import { useTranslation } from "@/utils/i18n";
 
 interface Props {
   proposal: Proposal;
@@ -31,13 +32,14 @@ interface Props {
 }
 
 const sortOptions = [
-  { name: "Share", uid: "share" },
-  { name: "Username", uid: "username" },
-  { name: "Proxied", uid: "proxied_votes" },
+  { name: "share", uid: "share" },
+  { name: "username", uid: "username" },
+  { name: "proxied", uid: "proxied_votes" },
 ];
 
 export default function ProposalVotersModal(props: Props) {
   let { proposal, isOpen, onOpenChange } = props;
+  const { t } = useTranslation();
   const shouldFetch = isOpen;
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
   const { isMobile } = useDeviceInfo();
@@ -198,9 +200,9 @@ export default function ProposalVotersModal(props: Props) {
                   title={
                     <div className="flex flex-row items-center justify-between w-full">
                       <div className=" flex flex-row gap-2 items-center">
-                        <p>Voters</p>
+                        <p>{t("proposals.voters")}</p>
                         <div className="text-sm text-default-500 flex flex-row items-center gap-1">
-                          <p>Proposal</p>
+                          <p>{t("proposals.proposal")}</p>
                           <SLink
                             className=" hover:text-blue-500"
                             href={`/proposals/${proposal.id}`}
@@ -217,7 +219,7 @@ export default function ProposalVotersModal(props: Props) {
                             startContent={<IoFilterOutline size={18} />}
                             className="font-semibold text-small"
                           >
-                            {sortOptions?.find((s) => s.uid === sortBY)?.name}
+                            {t(`proposals.sort_options.${sortOptions?.find((s) => s.uid === sortBY)?.name}`)}
                           </Button>
                         </DropdownTrigger>
                         <DropdownMenu
@@ -235,7 +237,7 @@ export default function ProposalVotersModal(props: Props) {
                               key={status.uid}
                               className="capitalize"
                             >
-                              {capitalize(status.name)}
+                              {capitalize(t(`proposals.sort_options.${status.name}`))}
                             </DropdownItem>
                           ))}
                         </DropdownMenu>
@@ -261,9 +263,9 @@ export default function ProposalVotersModal(props: Props) {
                       allRows.some((row) => row.name === account.proxy);
 
                     const title = isInvalidProxy
-                      ? `proxy to @${account.proxy}\n who didn't vote`
+                      ? t("proposals.proxy_no_vote").replace("{{proxy}}", account.proxy)
                       : isValidProxy
-                      ? `Proxy to @${account.proxy}`
+                      ? t("proposals.proxy_to").replace("{{proxy}}", account.proxy)
                       : undefined;
                     return (
                       <div className="flex gap-2 items-start">
@@ -288,9 +290,9 @@ export default function ProposalVotersModal(props: Props) {
                             </Chip>
                           </div>
 
-                          <p>own: {ownSp} SP</p>
+                          <p>{t("proposals.own")}: {ownSp} SP</p>
                           {!!parseFloat(ownProxied || "0") && (
-                            <p>proxied: {ownProxied} SP</p>
+                            <p>{t("proposals.proxied")}: {ownProxied} SP</p>
                           )}
 
                           <p
@@ -308,16 +310,16 @@ export default function ProposalVotersModal(props: Props) {
                   description={
                     <div className="flex flex-row text-start justify-between">
                       <div className="flex flex-wrap gap-2">
-                        <Chip variant="flat" color="success" title="Direct votes from voters">
-                          Effective SP:{" "}
+                        <Chip variant="flat" color="success" title={t("proposals.direct_votes_tooltip")}>
+                          {t("proposals.effective_sp")}:{" "}
                           {totalEffVotes.votes.toLocaleString() + " SP"} (
                           {totalEffVotes.voters})
                         </Chip>
                         <Chip variant="flat"
                           color="warning"
-                          title="Voters witness proxy didn't vote"
+                          title={t("proposals.proxy_no_vote_tooltip")}
                         >
-                          Non-effective SP:{" "}
+                          {t("proposals.non_effective_sp")}:{" "}
                           {totalNonEffVotes.votes.toLocaleString() + " SP"} (
                           {totalNonEffVotes.voters})
                         </Chip>
@@ -332,7 +334,7 @@ export default function ProposalVotersModal(props: Props) {
       )}
       footer={(onClose) => (
         <Button color="danger" variant="flat" onPress={onClose}>
-          Close
+          {t("common.close")}
         </Button>
       )}
     />

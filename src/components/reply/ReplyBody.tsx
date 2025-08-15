@@ -3,6 +3,7 @@ import SAvatar from "@/components/ui/SAvatar";
 import TimeAgoWrapper from "@/components/wrappers/TimeAgoWrapper";
 import React, { Key, useState } from "react";
 import RoleTitleCard from "../RoleTitleCard";
+import { useTranslation } from "@/utils/i18n";
 import {
   Dropdown,
   DropdownItem,
@@ -34,9 +35,11 @@ export default function ReplyBody({
   isDeep: boolean;
   hideBody?: boolean;
 }) {
+  const { t } = useTranslation();
+  
   const menuItems = [
-    { show: true, key: "copy", name: "Copy Link", icon: BsClipboard2Minus },
-    { show: true, key: "history", name: "Edit History", icon: LuHistory },
+    { show: true, key: "copy", name: t('comment.copy_link'), icon: BsClipboard2Minus },
+    { show: true, key: "history", name: t('comment.edit_history'), icon: LuHistory },
   ];
   const [showHistory, setShowHistory] = useState(false);
   const isLowQuality =
@@ -69,7 +72,7 @@ export default function ReplyBody({
         navigator.clipboard.writeText(
           `${AppStrings.steempro_base_url}/@${comment.author}/${comment.permlink}`
         );
-        toast.success("Copied");
+        toast.success(t('common.copied'));
         break;
     }
   }

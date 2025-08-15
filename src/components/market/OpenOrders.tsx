@@ -23,6 +23,7 @@ import SModal from "../ui/SModal";
 import KeychainButton from "../KeychainButton";
 import { Spinner } from "@heroui/spinner";
 import { MdOutlineRefresh } from "react-icons/md";
+import { useTranslation } from "@/utils/i18n";
 
 interface OpenOrder {
   id: number;
@@ -42,6 +43,7 @@ interface OpenOrder {
 }
 
 function OpenOrders() {
+  const { t } = useTranslation();
   const { data: session } = useSession();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { data, isLoading, refetch, error, isRefetching } = getOpenOrders(
@@ -87,7 +89,7 @@ function OpenOrders() {
   function Header() {
     return (
       <CardBody className="text-default-700 flex flex-row text-lg sm:text-xl items-center gap-4">
-        <p>Open Orders</p>
+        <p>{t("market.open_orders")}</p>
         <Button
           className=" min-h-0 min-w-0 w-6 h-6"
           onPress={() => refetch()}
@@ -112,7 +114,7 @@ function OpenOrders() {
           <div className="flex items-center justify-center h-32">
             <div className="text-center">
               <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-              <p className="text-muted-foreground text-sm">Loading orders...</p>
+              <p className="text-muted-foreground text-sm">{t("market.loading_orders")}</p>
             </div>
           </div>
         </CardBody>
@@ -131,7 +133,7 @@ function OpenOrders() {
                 <span className="text-lg">⚠️</span>
               </div>
               <p className="text-destructive text-sm font-medium">
-                Failed to load orders
+                {t("market.error_loading")}
               </p>
               <p className="text-muted-foreground text-xs mt-1">
                 {error?.message}
@@ -153,7 +155,7 @@ function OpenOrders() {
               <div className="w-12 h-12 bg-muted/20 rounded-full flex items-center justify-center mx-auto mb-2">
                 <span className="text-lg">📊</span>
               </div>
-              <p className="text-muted-foreground text-sm">No open orders</p>
+              <p className="text-muted-foreground text-sm">{t("market.no_open_orders")}</p>
             </div>
           </div>
         </CardBody>
@@ -168,12 +170,12 @@ function OpenOrders() {
         <Table className="mb-4">
           <TableHeader>
             <TableRow className="text-xs">
-              <TableHead className="text-xs p-2">Time</TableHead>
-              <TableHead className="text-xs p-2">Type</TableHead>
-              <TableHead className="text-xs p-2">Price</TableHead>
-              <TableHead className="text-xs p-2">Amount (STEEM)</TableHead>
-              <TableHead className="text-xs p-2">Total (SBD)</TableHead>
-              <TableHead className="text-xs p-2">Action</TableHead>
+              <TableHead className="text-xs p-2">{t("market.time")}</TableHead>
+              <TableHead className="text-xs p-2">{t("market.type")}</TableHead>
+              <TableHead className="text-xs p-2">{t("market.price")}</TableHead>
+              <TableHead className="text-xs p-2">{t("market.amount_steem")}</TableHead>
+              <TableHead className="text-xs p-2">{t("market.total_sbd")}</TableHead>
+              <TableHead className="text-xs p-2">{t("market.action")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -243,7 +245,7 @@ function OpenOrders() {
                         queryKey: ["orderBook"],
                       });
                       refetch();
-                      toast.success(`Order canceled successfully`);
+                      toast.success(t("market.order_canceled_successfully"));
                     }}
                   />
                 </TableCell>
@@ -263,11 +265,11 @@ function OpenOrders() {
               className="flex items-center space-x-2"
               startContent={<BiChevronLeft size={18} />}
             >
-              Previous
+              {t("market.previous")}
             </Button>
 
             <div className="text-sm text-muted-foreground">
-              Page {currentPage} of {paginatedData.totalPages}
+              {t("market.page_of", { current: currentPage, total: paginatedData.totalPages })}
             </div>
 
             <Button
@@ -278,7 +280,7 @@ function OpenOrders() {
               className="flex items-center space-x-2"
               endContent={<BiChevronRight size={18} />}
             >
-              Next
+              {t("market.next")}
             </Button>
           </div>
         )}
@@ -350,6 +352,7 @@ function OpenOrderAction({
     isKeychain?: boolean;
   }) => void;
 }) {
+  const { t } = useTranslation();
   const [confirmation, setConfirmation] = useState(false);
   const { authenticateUserActive, isAuthorizedActive } = useLogin();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
@@ -403,13 +406,13 @@ function OpenOrderAction({
         radius: "sm",
         size: "sm",
       }}
-      buttonTitle="Cancel"
+      buttonTitle={t("market.cancel")}
       isOpen={confirmation}
       onOpenChange={setConfirmation}
-      title={() => "Confirmation"}
+      title={() => t("market.confirm")}
       body={() => (
         <div className="text-tiny flex">
-          Cancel order #{order.orderid} from {loginInfo.name}?
+          {t("market.cancel_order_confirmation", { id: order.orderid, name: loginInfo.name })}
         </div>
       )}
       footer={(onClose) => (
@@ -422,7 +425,7 @@ function OpenOrderAction({
           />
           <div className="flex flex-row items-center gap-2">
             <Button color="danger" variant="light" onPress={onClose}>
-              Cancel
+              {t("market.cancel")}
             </Button>
 
             <Button
@@ -432,7 +435,7 @@ function OpenOrderAction({
                 cancelLimitOrder(order);
               }}
             >
-              Confirm
+              {t("market.confirm")}
             </Button>
           </div>
         </div>

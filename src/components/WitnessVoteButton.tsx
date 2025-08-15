@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { useLogin } from "./auth/AuthProvider";
 import { twMerge } from "tailwind-merge";
 import ConfirmationPopup from "./ui/ConfirmationPopup";
+import { useTranslation } from "@/utils/i18n";
 
 export default function WitnessVoteButton({
   isVoted,
@@ -21,6 +22,7 @@ export default function WitnessVoteButton({
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const dispatch = useAppDispatch();
   const { authenticateUserActive, isAuthorizedActive } = useLogin();
+  const { t } = useTranslation();
 
   const voteMutation = useMutation({
     mutationFn: (data: { key: string; isKeychain?: boolean }) =>
@@ -35,7 +37,7 @@ export default function WitnessVoteButton({
       ),
     onSettled(data, error, variables, context) {
       if (error) {
-        toast.error(error.message || JSON.stringify(error));
+        toast.error(t('common.error_occurred', { error: error.message || JSON.stringify(error) }));
         return;
       }
       if (isVoted)
@@ -54,7 +56,7 @@ export default function WitnessVoteButton({
             witness_votes: [...loginInfo.witness_votes, witness],
           })
         );
-      toast.success(isVoted ? "Witness Removed" : "Witness Approved");
+      toast.success(isVoted ? t("witnesses.witness_removed") : t("witnesses.witness_approved"));
     },
   });
 
@@ -65,7 +67,7 @@ export default function WitnessVoteButton({
     }
 
     if (!credentials?.key) {
-      toast.error("Invalid credentials");
+      toast.error(t("common.invalid_credentials"));
       return;
     }
 
@@ -90,9 +92,11 @@ export default function WitnessVoteButton({
         isLoading: voteMutation.isPending,
         variant: "flat",
       }}
-      buttonTitle={isVoted ? "Unvote" : "Vote"}
+      buttonTitle={isVoted ? t("witnesses.unvote") : t("witnesses.vote")}
       subTitle={
-        isVoted ? `Unvote withness ${witness}?` : `Vote witness ${witness}?`
+        isVoted 
+          ? t("witnesses.unvote_confirmation", { witness: witness }) 
+          : t("witnesses.vote_confirmation", { witness: witness })
       }
       onKeychainPress={() => handleVote(true)}
       onConfirm={handleVote}

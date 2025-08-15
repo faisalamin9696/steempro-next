@@ -2,6 +2,7 @@ import React, { memo } from "react";
 import { getSettings, updateSettings } from "@/utils/user";
 import { updateSettingsHandler } from "@/hooks/redux/reducers/SettingsReducer";
 import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
+import { useTranslation } from "@/utils/i18n";
 import { LuLayoutList } from "react-icons/lu";
 import {
   Dropdown,
@@ -14,14 +15,14 @@ import { Button } from "@heroui/button";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { FiGrid } from "react-icons/fi";
 
-const FEED_STYLES = [
+const getFeedStyles = (t: (key: string) => string) => [
   {
-    title: "List",
+    title: t('feed.list'),
     icon: (size: number) => <LuLayoutList size={size} />,
     key: "list",
   },
   {
-    title: "Grid",
+    title: t('feed.grid'),
     icon: (size: number) => <FiGrid size={size} />,
     key: "grid",
   },
@@ -30,6 +31,10 @@ export default memo(function FeedPatternSwitch() {
   const settings =
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
+  
+  // Get feed styles with translations
+  const FEED_STYLES = getFeedStyles(t);
 
   const updateStyle = (style: FeedStyle) => {
     updateSettings({ ...settings, feedStyle: style });
@@ -51,7 +56,7 @@ export default memo(function FeedPatternSwitch() {
 
   return (
     <div className="flex space-x-1">
-      <Dropdown size="sm" title="View" showArrow>
+      <Dropdown size="sm" title={t('feed.view')} showArrow>
         <DropdownTrigger>
           <Button radius="sm" size="sm" className="min-w-0 w-[48px] px-1" variant="light">
             <div className=" flex flex-row items-center text-default-500 ">
@@ -63,7 +68,7 @@ export default memo(function FeedPatternSwitch() {
 
         <DropdownMenu
           disallowEmptySelection
-          aria-label="Single selection example"
+          aria-label={t('feed.view')}
           selectedKeys={selectedKey}
           selectionMode="single"
           variant="flat"
@@ -74,7 +79,7 @@ export default memo(function FeedPatternSwitch() {
         >
           <DropdownSection className=" pointer-events-none">
             <DropdownItem isReadOnly key={"view"}>
-              <p className="font-bold">View</p>
+              <p className="font-bold">{t('feed.view')}</p>
             </DropdownItem>
           </DropdownSection>
 

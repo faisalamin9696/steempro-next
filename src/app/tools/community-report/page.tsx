@@ -22,6 +22,7 @@ import LoadingCard from "@/components/LoadingCard";
 import { capitalize } from "@/constants/AppConstants";
 import SLink from "@/components/ui/SLink";
 import TableWrapper from "@/components/wrappers/TableWrapper";
+import { useTranslation } from "@/utils/i18n";
 
 type CommunityReportType = {
   author: string;
@@ -37,15 +38,16 @@ const INITIAL_VISIBLE_COLUMNS = [
   "unique_comment_count",
 ];
 
-const columns = [
-  { name: "AUTHOR", uid: "author", sortable: true },
-  { name: "POSTS", uid: "total_post_count", sortable: true },
-  { name: "COMMENTS", uid: "total_comment_count", sortable: true },
-  { name: "UNIQUE COMMENTS", uid: "unique_comment_count", sortable: true },
-  { name: "DIFFERENCE", uid: "difference", sortable: false },
+const getColumns = (t) => [
+  { name: t("common.author").toUpperCase(), uid: "author", sortable: true },
+  { name: t("feed.posts").toUpperCase(), uid: "total_post_count", sortable: true },
+  { name: t("reply.comments").toUpperCase(), uid: "total_comment_count", sortable: true },
+  { name: t("tools.unique_comments").toUpperCase(), uid: "unique_comment_count", sortable: true },
+  { name: t("tools.difference").toUpperCase(), uid: "difference", sortable: false },
 ];
 
 export default function CommunityReportPage() {
+  const { t } = useTranslation();
   let [community, setCommunity] = useState("");
   const [allRows, setAllRows] = useState<CommunityReportType[]>([]);
 
@@ -65,7 +67,7 @@ export default function CommunityReportPage() {
     community = community.replace("@", "").toLowerCase();
 
     if (!community || !validateCommunity(community)) {
-      toast.info("Invalid community");
+      toast.info(t("tools.invalid_community"));
       return;
     }
 
@@ -86,6 +88,8 @@ export default function CommunityReportPage() {
   const [page, setPage] = React.useState(1);
 
   const hasSearchFilter = Boolean(filterValue);
+
+  const columns = React.useMemo(() => getColumns(t), [t]);
 
   const headerColumns = React.useMemo(() => {
     if (visibleColumns === "all") return columns;
@@ -243,11 +247,11 @@ export default function CommunityReportPage() {
         <div className="flex items-center justify-between">
           {/* <div></div> */}
           <span className="text-default-400 text-small">
-            Total {totalPosts} posts and {totalComments} comments
+            {t("tools.total_stats", { totalPosts, totalComments })}
           </span>
 
           <label className="flex items-center text-default-400 text-small">
-            Rows per page:
+            {t("common.rows_per_page")}:
             <select
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
@@ -292,7 +296,7 @@ export default function CommunityReportPage() {
               variant="flat"
               onPress={onPreviousPage}
             >
-              Previous
+              {t("common.previous")}
             </Button>
             <Button
               isDisabled={pages === 1}
@@ -300,7 +304,7 @@ export default function CommunityReportPage() {
               variant="flat"
               onPress={onNextPage}
             >
-              Next
+              {t("common.next")}
             </Button>
           </div>
         </div>
@@ -330,7 +334,7 @@ export default function CommunityReportPage() {
 
   return (
     <div className="flex flex-col items-center gap-8">
-      <p className=" text-xl font-bold">Community Report</p>
+      <p className=" text-xl font-bold">{t("tools.community_report")}</p>
 
       <div className="flex flex-col gap-4 w-full">
         <Input
@@ -339,8 +343,8 @@ export default function CommunityReportPage() {
           value={community}
           onValueChange={setCommunity}
           isRequired
-          label="Community"
-          placeholder="Enter community account e.g. hive-144064"
+          label={t("community.title")}
+          placeholder={t("tools.enter_community_account")}
         />
 
         <Button
@@ -348,7 +352,7 @@ export default function CommunityReportPage() {
           onPress={getCommunityReport}
           isLoading={isPending}
         >
-          Get Report
+          {t("tools.get_report")}
         </Button>
       </div>
 

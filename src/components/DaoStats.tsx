@@ -4,6 +4,7 @@ import { Card, CardBody } from "@heroui/card";
 import useSWR from "swr";
 import { twMerge } from "tailwind-merge";
 import { getProposalStatus, isProposalFunded } from "./ProposalItemCard";
+import { useTranslation } from "@/utils/i18n";
 
 const FundindCard = ({
   title,
@@ -41,6 +42,7 @@ const FundindCard = ({
 };
 
 export const DaoStats = ({ proposals }: { proposals?: Proposal[] }) => {
+  const { t } = useTranslation();
   const { data: accountData } = useSWR<AccountExt>("proposal-fund", () =>
     getAccountExt("steem.dao")
   );
@@ -74,31 +76,31 @@ export const DaoStats = ({ proposals }: { proposals?: Proposal[] }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <FundindCard
-        title={"Total Proposals"}
+        title={t("proposals.stats.total_proposals")}
         value={proposals?.length?.toLocaleString()}
         description={`${
-          fundedProposals?.length > 0 && `Funded (${fundedProposals?.length}) •`
+          fundedProposals?.length > 0 && `${t("proposals.stats.funded")} (${fundedProposals?.length}) •`
         } ${
           activeProposals?.length > 0 &&
-          `Active (${activeProposals?.length})`
+          `${t("proposals.stats.active")} (${activeProposals?.length})`
         }`}
         valueClassName=" text-steem"
       />
 
       <FundindCard
         value={dailyFunded?.toLocaleString() + " SBD"}
-        title="Daily Funded"
+        title={t("proposals.stats.daily_funded")}
         description=""
         valueClassName="text-success"
       />
       <FundindCard
         value={dailyBudget?.toLocaleString() + " SBD"}
-        title="Daily Budget"
+        title={t("proposals.stats.daily_budget")}
         description=""
       />
       <FundindCard
         value={totalBudget?.toLocaleString() + " SBD"}
-        title="Total Budget"
+        title={t("proposals.stats.total_budget")}
         description=""
       />
     </div>

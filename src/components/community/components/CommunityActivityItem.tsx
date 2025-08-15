@@ -5,12 +5,14 @@ import { twMerge } from "tailwind-merge";
 import TimeAgoWrapper from "../../wrappers/TimeAgoWrapper";
 import SAvatar from "@/components/ui/SAvatar";
 import SLink from "@/components/ui/SLink";
+import { useTranslation } from "@/utils/i18n";
 
 function CommunityActivityItem({
   communityLog,
 }: {
   communityLog: CommunityLog;
 }) {
+  const { t } = useTranslation();
   const targetUrl = `/@${communityLog.account}/posts`;
   const data = JSON.parse(communityLog.data);
 
@@ -32,7 +34,7 @@ function CommunityActivityItem({
               <p className=" line-clamp-2">{`/@${data.author}/${data.permlink}`}</p>
             </SLink>
 
-            {data?.notes && <p className="text-tiny">Reason: {data.notes}</p>}
+            {data?.notes && <p className="text-tiny">{t("community.reason")}: {data.notes}</p>}
           </div>
         );
 
@@ -71,37 +73,7 @@ function CommunityActivityItem({
     return description;
   }
 
-  return (
-    <div className=" flex flex-row gap-2 items-center">
-      <SAvatar size="sm" username={communityLog.account} />
-
-      <div className=" flex flex-col gap-1">
-        <p
-          className={twMerge(
-            communityLog.type === "subscribe" || communityLog.type === "pinPost"
-              ? "text-green-500"
-              : communityLog.type === "mutePost" ||
-                communityLog.type === "flagPost" ||
-                communityLog.type === "unpinPost" ||
-                communityLog.type === "unsubscribe"
-              ? "text-red-400"
-              : "text-blue-400"
-          )}
-        >
-          {communityLog.type}
-        </p>
-
-        <div className=" flew flex-col gap-1">
-          <p>{getDescription()}</p>
-
-          <TimeAgoWrapper
-            className=" text-tiny"
-            created={communityLog.created * 1000}
-          />
-        </div>
-      </div>
-    </div>
-  );
+  // Using the User component for consistent styling
 
   return (
     <User
@@ -129,7 +101,7 @@ function CommunityActivityItem({
                   : "text-blue-400"
               )}
             >
-              {communityLog.type}
+              {t(`community.activity_types.${communityLog.type}`)}
             </p>
           </div>
         </div>

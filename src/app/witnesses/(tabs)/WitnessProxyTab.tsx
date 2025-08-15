@@ -12,6 +12,7 @@ import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { SiTraefikproxy } from "react-icons/si";
 import { BsFillInfoCircleFill } from "react-icons/bs";
 import ConfirmationPopup from "@/components/ui/ConfirmationPopup";
+import { useTranslation } from "@/utils/i18n";
 
 interface Props {
   data: WitnessDataProps;
@@ -22,6 +23,7 @@ function WitnessProxyTab(props: Props) {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { authenticateUserActive, isAuthorizedActive } = useLogin();
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
   const [proxyAccount, setProxyAccount] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
@@ -44,8 +46,8 @@ function WitnessProxyTab(props: Props) {
     onSuccess(data, variables, context) {
       toast.success(
         proxyAccount
-          ? `Witness proxt set to ${proxyAccount}`
-          : "Witness proxy removed"
+          ? t("witnesses.proxy_set_success", { account: proxyAccount })
+          : t("witnesses.proxy_removed_success")
       );
 
       setProxyAccount("");
@@ -67,7 +69,7 @@ function WitnessProxyTab(props: Props) {
     if (!isAuthorizedActive(credentials?.key)) return;
 
     if (!credentials?.key) {
-      toast.error("Invalid credentials");
+      toast.error(t("common.invalid_credentials"));
       return;
     }
 
@@ -83,48 +85,46 @@ function WitnessProxyTab(props: Props) {
       <CardHeader className="flex flex-col sm:flex-row justify-between w-full">
         <CardBody className="flex flex-row text-default-800 items-center gap-2 text-lg sm:text-xl font-semibold">
           <SiTraefikproxy size={24} />
-          Witness Voting Proxy
+          {t("witnesses.proxy_title")}
         </CardBody>
         <CardBody className="text-default-500 text-sm text-end">
-          Delegate your witness voting power to a trusted account
+          {t("witnesses.proxy_description")}
         </CardBody>
       </CardHeader>
       <CardBody className="space-y-4">
         <Input
-          label="Proxy account"
+          label={t("witnesses.proxy_account")}
           value={proxyAccount}
           onChange={(e) => setProxyAccount(e.target.value)}
-          placeholder="username"
+          placeholder={t("common.username")}
           isDisabled={mutation.isPending || isOpen}
         />
 
         <div className="bg-blue-900/20 p-3 sm:p-4">
           <p className="flex flex-row items-center gap-2 text-blue-500 mb-2 text-sm sm:text-base font-semibold">
-            <BsFillInfoCircleFill /> About Proxy Voting:
+            <BsFillInfoCircleFill /> {t("witnesses.about_proxy_voting")}:
           </p>
           <ul className="text-xs sm:text-sm text-blue-500 space-y-1">
-            <li>• A proxy can vote for witnesses on your behalf.</li>
-            <li>• You can change or remove your proxy anytime.</li>
+            <li>• {t("witnesses.proxy_info_1")}</li>
+            <li>• {t("witnesses.proxy_info_2")}</li>
             <li>
-              • Setting a proxy will remove all your personal witness votes.
+              • {t("witnesses.proxy_info_3")}
             </li>
             <li>
-              • Only assign proxy to someone you fully trust with your voting
-              power.
+              • {t("witnesses.proxy_info_4")}
             </li>
             <li>
-              • This action requires your active key or Steem Keychain
-              authorization.
+              • {t("witnesses.proxy_info_5")}
             </li>
           </ul>
         </div>
 
         <div className="p-3 sm:p-4 flex flex-col gap-2">
           <h4 className="font-semibold text-default-800 mb-2 text-sm sm:text-base">
-            Current Proxy:
+            {t("witnesses.current_proxy")}:
           </h4>
           <div className="flex items-center gap-10">
-            <span className="text-default-600 text-sm">Set to:</span>
+            <span className="text-default-600 text-sm">{t("witnesses.set_to")}:</span>
             <Chip
               variant={currentProxy ? "flat" : "bordered"}
               className={
@@ -133,7 +133,7 @@ function WitnessProxyTab(props: Props) {
                   : "text-default-500 border-gray-400"
               }
             >
-              {currentProxy || "None"}
+              {currentProxy || t("common.none")}
             </Chip>
           </div>
         </div>
@@ -142,13 +142,11 @@ function WitnessProxyTab(props: Props) {
           <div className="w-full">
             <ConfirmationPopup
               onOpenChangeExternal={setIsOpen}
-              buttonTitle={currentProxy ? "Change proxy" : "Set proxy"}
+              buttonTitle={currentProxy? t("witnesses.change_proxy"): t("witnesses.set_proxy")}
               onConfirm={() => handleSetProxy(false)}
               onKeychainPress={() => handleSetProxy(false, true)}
-              title={currentProxy ? "Change proxy" : "Set proxy"}
-              subTitle={`Do you really want to ${
-                currentProxy ? "change" : "set"
-              } vote proxy to ${proxyAccount}?`}
+              title={currentProxy? t("witnesses.change_proxy"): t("witnesses.set_proxy")}
+              subTitle={t(currentProxy ? "witnesses.change_proxy_confirmation" : "witnesses.set_proxy_confirmation", { account: proxyAccount })}
               triggerProps={{
                 color: currentProxy ? "success" : "default",
                 isDisabled: !proxyAccount || !userData?.name,
@@ -163,8 +161,8 @@ function WitnessProxyTab(props: Props) {
             <div className="w-full">
               <ConfirmationPopup
                 onOpenChangeExternal={setIsOpen}
-                buttonTitle="Remove proxy"
-                subTitle={`Do you really want to remove vote proxy from ${currentProxy}?`}
+                buttonTitle={t("witnesses.remove_proxy")}
+                subTitle={t("witnesses.remove_proxy_confirmation", { account: currentProxy })}
                 triggerProps={{
                   variant: "bordered",
                   isDisabled: !userData?.name,
@@ -173,7 +171,7 @@ function WitnessProxyTab(props: Props) {
                   className: "w-full flex-1",
                 }}
                 onConfirm={() => handleSetProxy(true)}
-                title="Remove proxy"
+                title={t("witnesses.remove_proxy")}
                 onKeychainPress={() => handleSetProxy(true, true)}
               />
             </div>

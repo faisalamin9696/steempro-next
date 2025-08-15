@@ -22,6 +22,7 @@ import {
   DropdownItem,
 } from "@heroui/dropdown";
 import { IoFilterOutline } from "react-icons/io5";
+import { useTranslation } from "@/utils/i18n";
 
 interface Props {
   witness: { name: string; received_votes: number; votes: string };
@@ -30,9 +31,9 @@ interface Props {
 }
 
 const sortOptions = [
-  { name: "Share", uid: "share" },
-  { name: "Username", uid: "account" },
-  { name: "Proxied", uid: "proxied_sp" },
+  { name: "share", uid: "share" },
+  { name: "username", uid: "account" },
+  { name: "proxied", uid: "proxied_sp" },
 ];
 
 interface WitnessVoteProps {
@@ -45,6 +46,7 @@ export default function WitnessVotersModal(props: Props) {
   let { witness, isOpen, onOpenChange } = props;
   const shouldFetch = isOpen;
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
+  const { t } = useTranslation();
 
   const { data, isLoading } = useSWR<WitnessVoteProps[]>(
     shouldFetch ? `witness-votes-${witness.name}` : null,
@@ -129,7 +131,7 @@ export default function WitnessVotersModal(props: Props) {
                   title={
                     <div className="flex flex-row items-center justify-between w-full">
                       <div className=" flex flex-row gap-2 items-center">
-                        <p>Voters of</p>
+                        <p>{t("witnesses.voters_of")}</p>
                         <SAvatar
                           size="xs"
                           linkClassName="flex-row-reverse"
@@ -150,7 +152,7 @@ export default function WitnessVotersModal(props: Props) {
                             startContent={<IoFilterOutline size={18} />}
                             className="font-semibold text-small"
                           >
-                            {sortOptions?.find((s) => s.uid === sortBY)?.name}
+                            {t(`witnesses.${sortOptions?.find((s) => s.uid === sortBY)?.name}`)}
                           </Button>
                         </DropdownTrigger>
                         <DropdownMenu
@@ -168,7 +170,7 @@ export default function WitnessVotersModal(props: Props) {
                               key={status.uid}
                               className="capitalize"
                             >
-                              {capitalize(status.name)}
+                              {t(`witnesses.${status.name}`)}
                             </DropdownItem>
                           ))}
                         </DropdownMenu>
@@ -202,9 +204,9 @@ export default function WitnessVotersModal(props: Props) {
                             </Chip>
                           </div>
 
-                          <p>own: {ownSp} SP</p>
+                          <p>{t("witnesses.own")}: {ownSp} SP</p>
                           {!!parseFloat(ownProxied || "0") && (
-                            <p>proxied: {ownProxied} SP</p>
+                            <p>{t("witnesses.proxied")}: {ownProxied} SP</p>
                           )}
                         </div>
                       </div>
@@ -218,7 +220,7 @@ export default function WitnessVotersModal(props: Props) {
       )}
       footer={(onClose) => (
         <Button color="danger" variant="flat" onPress={onClose}>
-          Close
+          {t("common.close")}
         </Button>
       )}
     />

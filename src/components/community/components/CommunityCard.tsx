@@ -12,6 +12,7 @@ import { PiShootingStar } from "react-icons/pi";
 import { GiStarMedal } from "react-icons/gi";
 import { IoMedalSharp } from "react-icons/io5";
 import { FaMedal } from "react-icons/fa";
+import { useTranslation } from "@/utils/i18n";
 
 interface Props {
   community: Community;
@@ -22,6 +23,7 @@ interface Props {
 
 export const CommunityCard = memo((props: Props) => {
   const { community, compact, endContent } = props;
+  const { t } = useTranslation();
 
   return (
     <Card
@@ -107,7 +109,7 @@ export const CommunityCard = memo((props: Props) => {
             {abbreviateNumber(community.count_subs)}
           </p>
           <p className=" text-default-500 text-sm">
-            {compact ? "Subs" : "Subscribers"}
+            {t("community.subscribers")}
           </p>
         </div>
         <div className="flex gap-1 items-center">
@@ -115,7 +117,7 @@ export const CommunityCard = memo((props: Props) => {
             ${abbreviateNumber(community.count_pending)}
           </p>
           <p className="text-default-500 text-sm">
-            {compact ? "Reward" : "Pending Reward"}
+            {t("community.pending_reward")}
           </p>
         </div>
       </div>

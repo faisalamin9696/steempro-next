@@ -3,10 +3,10 @@ import { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: `SteemPro Market – Buy, Sell, and Discover Digital Assets on the Steem Blockchain`,
-  description: `Explore the SteemPro Market – a decentralized marketplace to trade digital assets, tokens, NFTs, and services on the Steem blockchain. Fast, secure, and user-driven.`,
+  title: `SteemCN Market – Buy, Sell, and Discover Digital Assets on the Steem Blockchain`,
+  description: `Explore the SteemCN Market – a decentralized marketplace to trade digital assets, tokens, NFTs, and services on the Steem blockchain. Fast, secure, and user-driven.`,
   keywords: [
-    "steempro market",
+    "steemcn market",
     "steem marketplace",
     "steem blockchain trading",
     "steem nft",
@@ -14,8 +14,8 @@ export const metadata: Metadata = {
     "digital assets steem",
     "steem commerce",
     "decentralized marketplace",
-    "steem market app",
-    "steempro buy sell",
+    "steemcn market app",
+    "steemcn buy sell",
   ].join(", "),
 };
 

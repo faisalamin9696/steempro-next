@@ -7,6 +7,7 @@ import { twMerge } from "tailwind-merge";
 import { usePathname } from "next/navigation";
 import ProfileTabPage from "../ProfileTabPage";
 import SLink from "@/components/ui/SLink";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Props {
   username: string;
@@ -16,25 +17,26 @@ interface Props {
 export default function PostsTab(props: Props) {
   let { username, tab } = props;
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   const profileTabs = [
     {
-      title: "Posts",
+      title: t("profile.posts"),
       key: "posts",
       children: <ProfileTabPage />,
     },
     {
-      title: "Friends",
+      title: t("profile.friends"),
       key: "friends",
       children: <ProfileTabPage />,
     },
     {
-      title: "Comments",
+      title: t("comment.comments"),
       key: "comments",
       children: <ProfileTabPage />,
     },
     {
-      title: "Replies",
+      title: t("reply.replies"),
       key: "replies",
       children: <ProfileTabPage />,
     },

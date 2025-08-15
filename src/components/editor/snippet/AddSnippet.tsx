@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import EditorInput from "../EditorInput";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
+import { useTranslation } from "@/utils/i18n";
 import { toast } from "sonner";
 import axios from "axios";
 import { useSession } from "next-auth/react";
@@ -18,6 +19,7 @@ interface Props {
   onUpdateSnippet?: (snippet: Snippet) => void;
 }
 function AddSnippet(props: Props) {
+  const { t } = useTranslation();
   const { onClose, oldSnippet, onNewSnippet, onUpdateSnippet } = props;
   const { data: session } = useSession();
   let [title, setTitle] = useState(oldSnippet?.title ?? "");
@@ -60,15 +62,15 @@ function AddSnippet(props: Props) {
         if (oldSnippet) {
           onUpdateSnippet &&
             onUpdateSnippet({ title, body, id: oldSnippet.id });
-          toast.success("Updated successfully");
+          toast.success(t('submit.updated_successfully'));
           return;
         }
         onNewSnippet &&
           onNewSnippet({ title, body, id: res?.data?.["insertId"] });
-        toast.success("Added successfully");
+        toast.success(t('submit.added_successfully'));
       })
       .catch(function (error) {
-        toast.error(error.message || JSON.stringify(error));
+        toast.error(t('common.error_occurred', { error: error.message || JSON.stringify(error) }));
       })
       .finally(() => {
         setIsPending(false);
@@ -77,7 +79,7 @@ function AddSnippet(props: Props) {
 
   async function handleSnippet() {
     if (!title || !body) {
-      toast.info("Some fields are empty");
+      toast.info(t('submit.empty_fields'));
       return;
     }
 
@@ -88,7 +90,7 @@ function AddSnippet(props: Props) {
 
     const credentials = getCredentials(getSessionKey(session?.user?.name));
     if (!credentials?.key) {
-      toast.error("Invalid credentials");
+      toast.error(t('submit.invalid_credentials'));
       return;
     }
 
@@ -108,7 +110,7 @@ function AddSnippet(props: Props) {
             const signature = response.result;
             addSnippet(hash, signature, credentials.username, title, cbody);
           } else {
-            toast.error(response.message);
+            toast.error(t('common.error_occurred', { error: response.message }));
             setIsPending(false);
           }
         }
@@ -125,7 +127,7 @@ function AddSnippet(props: Props) {
   return (
     <div className=" flex flex-col gap-4">
       <Input
-        placeholder="Title"
+        placeholder={t('submit.snippet_title_placeholder')}
         size="md"
         value={title}
         onValueChange={setTitle}
@@ -144,7 +146,7 @@ function AddSnippet(props: Props) {
 
       <div className=" flex flex-row items-center gap-4 justify-between">
         <Button onPress={() => onClose()} isDisabled={isPending}>
-          Back
+          {t('submit.back')}
         </Button>
 
         <Button
@@ -154,7 +156,7 @@ function AddSnippet(props: Props) {
           isDisabled={isPending}
           isLoading={isPending}
         >
-          {oldSnippet ? "Update" : "Add"}
+          {oldSnippet ? t('submit.update') : t('submit.add')}
         </Button>
       </div>
     </div>

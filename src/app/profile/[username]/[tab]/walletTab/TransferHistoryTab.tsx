@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 
 import { Button } from "@heroui/button";
+import { useTranslation } from "@/utils/i18n";
 import {
   DropdownTrigger,
   Dropdown,
@@ -19,20 +20,22 @@ import OperationItem from "@/components/OperationItem";
 import { IoFilterOutline } from "react-icons/io5";
 import STable from "@/components/ui/STable";
 
-const statusOptions = [
-  { name: "Normal Transfer", uid: "transfer" },
-  { name: "Transfer to Vestings", uid: "transfer_to_vesting" },
-  { name: "Author Reward", uid: "author_reward" },
-  { name: "curation Reward", uid: "curation_reward" },
-  { name: "Claim Reward", uid: "claim_reward_balance" },
-  // { name: "Producer Reward", uid: "producer_reward" },
-  // { name: "Price Feed", uid: "feed_publish" },
+const getStatusOptions = (t: (key: string) => string) => [
+  { name: t("wallet.normal_transfer"), uid: "transfer" },
+  { name: t("wallet.transfer_to_vestings"), uid: "transfer_to_vesting" },
+  { name: t("wallet.author_reward_type"), uid: "author_reward" },
+  { name: t("wallet.curation_reward_type"), uid: "curation_reward" },
+  { name: t("wallet.claim_reward"), uid: "claim_reward_balance" },
+  // { name: t("wallet.producer_reward"), uid: "producer_reward" },
+  // { name: t("wallet.price_feed"), uid: "feed_publish" },
 ];
 
 const start_date = moment().subtract(30, "days").unix();
 const end_date = moment().unix();
 
 export default function TransferHistoryTab({ data }: { data: AccountExt }) {
+  const { t } = useTranslation();
+  const statusOptions = getStatusOptions(t);
   let { username } = useParams() as { username: string };
   username = username?.toLowerCase();
 
@@ -81,7 +84,7 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
       titleClassName="w-full"
       title={
         <div className="flex flex-row items-center justify-between w-full">
-          <p>Transaction History</p>
+          <p>{t("wallet.transaction_history")}</p>
 
           <Dropdown>
             <DropdownTrigger>
@@ -91,7 +94,7 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
                 startContent={<IoFilterOutline size={18} />}
                 className="font-semibold text-small"
               >
-                Filter
+                {t("wallet.filter")}
               </Button>
             </DropdownTrigger>
             <DropdownMenu
@@ -111,7 +114,7 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
           </Dropdown>
         </div>
       }
-      description="View your transaction history, including transfers, rewards, and more."
+      description={t("wallet.transaction_history_description")}
       bodyClassName="flex flex-col gap-6"
       data={filteredItems}
       tableRow={(operation: AccountHistory) => {

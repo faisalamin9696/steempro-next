@@ -8,6 +8,7 @@ import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import SLink from "./ui/SLink";
 import { vestToSteem } from "@/utils/helper/vesting";
 import { useAppSelector } from "@/constants/AppFunctions";
+import { useTranslation } from "@/utils/i18n";
 
 interface OperationItemProps {
   operation: AccountHistory;
@@ -48,6 +49,7 @@ const formatPreviewValue = (
 
 const OperationItem = ({ operation, steem_per_share }: OperationItemProps) => {
   const { id: transactionId, time } = operation;
+  const { t } = useTranslation();
 
   const [opType, opData] = operation.op;
   const [isExpanded, setIsExpanded] = useState(false);
@@ -167,7 +169,7 @@ const OperationItem = ({ operation, steem_per_share }: OperationItemProps) => {
           <div className="space-y-4 pt-4">
             <div className="flex items-center space-x-2 text-sm font-medium text-foreground">
               <FaCode size={16} />
-              <span>Raw Operation Data</span>
+              <span>{t("wallet.raw_operation_data")}</span>
             </div>
 
             <pre className="bg-background/80 p-4 rounded-lg text-xs font-mono break-words whitespace-pre-wrap border border-default-900/30 max-h-64 overflow-y-auto">

@@ -1,4 +1,5 @@
 import { useAppDispatch } from "@/constants/AppFunctions";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { getKeyType } from "@/libs/steem/condenser";
 import { getAccountExt } from "@/libs/steem/sds";
 import { AsyncUtils } from "@/utils/async.utils";
@@ -30,6 +31,7 @@ interface Props {
 }
 function KeyLogin(props: Props) {
   const { addNew, onClose, onSuccess, onLoginSuccess } = props;
+  const { t } = useLanguage();
   const [username, setUsername] = useState("");
   const [key, setKey] = useState("");
   const [pin, setPin] = useState("");
@@ -64,31 +66,29 @@ function KeyLogin(props: Props) {
     }
 
     if (!_key) {
-      toast.info("Invalid private key");
+      toast.info(t('auth.invalid_key'));
       return;
     }
 
     if (enablePin) {
       if (!pin) {
-        toast.info("Enter the pin");
+        toast.info(t('auth.enter_pin'));
         return;
       }
 
       if (!pin || pin !== confirmPin) {
-        toast.info("Pin does not matched");
+        toast.info(t('auth.pin_mismatch'));
         return;
       }
 
       // special key can not use for pin
       if (pin === "steempro") {
-        toast.info("Try different pin");
+        toast.info(t('auth.try_different_pin'));
         return;
       }
 
       if (!validatePassword(pin)) {
-        toast.info(
-          "Weak pin. Please use a combination of uppercase and lowercase letters, numbers, and special characters"
-        );
+        toast.info(t('auth.weak_pin'));
         return;
       }
     }
@@ -102,22 +102,18 @@ function KeyLogin(props: Props) {
         const keyType = getKeyType(account, _key);
         if (keyType) {
           if (["MASTER", "OWNER"].includes(keyType.type)) {
-            toast.info(
-              "Higher-level keys are prohibited to protect your account"
-            );
+            toast.info(t('auth.higher_key_prohibited'));
             setIsPending(false);
             return;
           }
           if (keyType.type === "MEMO") {
-            toast.warning(
-              "For security reasons, the memo key is only supported in private chat sessions"
-            );
+            toast.warning(t('auth.memo_key_warning'));
             setIsPending(false);
             return;
           }
 
           if (["ACTIVE"].includes(keyType.type) && !enablePin) {
-            toast.info("Pin code is required for active key or above");
+            toast.info(t('auth.pin_required'));
             setIsPending(false);
             setEnablePin(true);
             return;
@@ -131,13 +127,13 @@ function KeyLogin(props: Props) {
             keyType.memo
           );
         } else {
-          throw new Error(`Invalid private key`);
+          throw new Error(t('auth.invalid_private_key'));
         }
       } else {
-        throw new Error(`Failed to fetch account`);
+        throw new Error(t('auth.fetch_account_failed'));
       }
     } catch (e: any) {
-      toast.error(e?.message || String(e));
+      toast.error(t('common.error_occurred', { error: e?.message || String(e) }));
       setIsPending(false);
     }
   }
@@ -187,7 +183,7 @@ function KeyLogin(props: Props) {
         memoKey
       );
       if (!auth) {
-        throw new Error("Something went wrong!");
+        throw new Error(t('auth.something_wrong'));
       }
 
       const loginSession = await signIn("credentials", {
@@ -228,10 +224,10 @@ function KeyLogin(props: Props) {
       );
 
       if (!auth) {
-        throw new Error("Something went wrong!");
+        throw new Error(t('auth.something_wrong'));
       }
       if (isCurrent) await currentLogin();
-      toast.success(`${account.name} added successfully`);
+      toast.success(t('auth.account_added', { username: account.name }));
       onSuccess();
       onClose();
       setIsPending(false);
@@ -239,7 +235,7 @@ function KeyLogin(props: Props) {
     }
 
     await currentLogin();
-    toast.success(`Login successsful with private ${type} key`);
+    toast.success(t('auth.login_successful', { type }));
     onSuccess();
     onClose();
     setIsPending(false);
@@ -261,13 +257,13 @@ function KeyLogin(props: Props) {
       <Input
         isRequired
         size="sm"
-        label="Username"
+        label={t('auth.username')}
         autoFocus
         value={username}
         endContent={<Avatar src={getResizedAvatar(avatar)} size="sm" />}
         onValueChange={setUsername}
         isDisabled={isPending}
-        placeholder="Enter your username"
+        placeholder={t('auth.enter_username')}
         type="text"
       />
 
@@ -277,8 +273,8 @@ function KeyLogin(props: Props) {
         onValueChange={setKey}
         isDisabled={isPending}
         isRequired
-        label="Private key"
-        placeholder="Enter your private posting key"
+        label={t('auth.private_key')}
+        placeholder={t('auth.enter_private_key')}
         type="password"
       />
 
@@ -289,7 +285,7 @@ function KeyLogin(props: Props) {
           isDisabled={isPending}
           onValueChange={setEnablePin}
         >
-          Set Pin Code
+          {t('auth.set_pin_code')}
         </Checkbox>
         {addNew && (
           <Checkbox
@@ -298,7 +294,7 @@ function KeyLogin(props: Props) {
             isDisabled={isPending}
             onValueChange={setIsCurrent}
           >
-            Make Default
+            {t('auth.make_default')}
           </Checkbox>
         )}
       </div>
@@ -312,8 +308,8 @@ function KeyLogin(props: Props) {
               isRequired
               isDisabled={isPending}
               onValueChange={setPin}
-              label="Pin Code"
-              placeholder="Enter pin code"
+              label={t('auth.pin_code')}
+              placeholder={t('auth.enter_pin_code')}
               type="password"
             />
 
@@ -323,8 +319,8 @@ function KeyLogin(props: Props) {
               onValueChange={setConfirmPin}
               isRequired
               isDisabled={isPending}
-              label="Confirm Pin"
-              placeholder="Re-enter pin code"
+              label={t('auth.confirm_pin')}
+              placeholder={t('auth.reenter_pin_code')}
               type="password"
             />
           </div>
@@ -337,12 +333,12 @@ function KeyLogin(props: Props) {
             <div className="flex flex-row gap-2">
               <p className="mt-2 text-sm text-gray-500">
                 <span className="font-medium text-default-700">
-                  Pin Code Encryption
+                  {t('auth.pin_code_encryption')}
                 </span>
                 <br />
-                Encrypt your private key with a personal pin for added{" "}
-                <span className="text-green-600 font-semibold">security</span>.
-                Optional for the private posting key.
+                {t('auth.pin_code_description')}{" "}
+                <span className="text-green-600 font-semibold">{t('auth.security')}</span>.
+                {t('auth.pin_code_optional')}
               </p>
             </div>
           </div>
@@ -360,7 +356,7 @@ function KeyLogin(props: Props) {
           onPress={onClose}
           isDisabled={isPending}
         >
-          Cancel
+          {t('auth.cancel')}
         </Button>
 
         <Button
@@ -369,7 +365,7 @@ function KeyLogin(props: Props) {
           isLoading={isPending}
           onPress={handleLogin}
         >
-          {addNew ? "Add account" : "Login"}
+          {addNew ? t('auth.add_account') : t('auth.login')}
         </Button>
       </div>
     </form>

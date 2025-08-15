@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "@/utils/i18n";
 import { useAppSelector } from "@/constants/AppFunctions";
 import { getCredentials, sessionKey, getSessionToken } from "@/utils/user";
 import { useSession } from "next-auth/react";
@@ -25,6 +26,7 @@ interface Props {
 }
 
 export default function AuthModal(props: Props) {
+  const { t } = useTranslation();
   let {
     isOpen,
     onLoginSuccess,
@@ -67,9 +69,9 @@ export default function AuthModal(props: Props) {
       title={() =>
         (isLocked && !addNew && !addMemo) || (requestActive && isLocked) ? (
           <div className=" flex flex-col gap-2">
-            <p>Unlock your account</p>
+            <p>{t('auth.unlock_account')}</p>
             <div className="text-sm text-default-500 items-center flex flex-row gap-1">
-              <p>to continue to</p>
+              <p>{t('auth.to_continue_to')}</p>
               <div className="flex items-center gap-2">
                 <SLink
                   className=" underline hover:text-blue-500"
@@ -91,7 +93,7 @@ export default function AuthModal(props: Props) {
               <p className="font-bold">
                 {addMemo ? (
                   <div className="flex items-center gap-2">
-                    <p>SteemPro Chat</p>
+                    <p>{t('auth.steemcn_chat')}</p>
 
                     <SAvatar
                       onlyImage
@@ -101,9 +103,9 @@ export default function AuthModal(props: Props) {
                     />
                   </div>
                 ) : requestActive ? (
-                  "Sign Transaction"
+                  t('auth.sign_transaction')
                 ) : (
-                  "Log in"
+                  t('auth.log_in')
                 )}
               </p>
             </div>
@@ -132,7 +134,7 @@ export default function AuthModal(props: Props) {
                         width={38}
                       />
 
-                      <span>Keychain</span>
+                      <span>{t('auth.keychain')}</span>
                     </div>
                   }
                 />
@@ -142,7 +144,7 @@ export default function AuthModal(props: Props) {
                   title={
                     <div className="flex items-center space-x-2">
                       <MdVpnKey size={24} />
-                      <span>Private Key</span>
+                      <span>{t('auth.private_key')}</span>
                     </div>
                   }
                 />

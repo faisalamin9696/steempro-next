@@ -6,6 +6,7 @@ import {
   PopoverTrigger,
 } from "@heroui/popover";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "@/utils/i18n";
 import KeychainButton from "../KeychainButton";
 import { twMerge } from "tailwind-merge";
 
@@ -34,6 +35,7 @@ function ConfirmationPopup(props: Props) {
     onKeychainPress,
     onOpenChangeExternal,
   } = props;
+  const { t } = useTranslation();
   const [popup, setPopup] = useState(false);
 
   useEffect(() => {
@@ -50,7 +52,7 @@ function ConfirmationPopup(props: Props) {
           <div className="flex flex-col p-2 gap-4">
             <div className="flex flex-col gap-1">
               <div className="text-sm font-semibold">
-                {title ?? "Confirmation"}
+                {title ?? t("common.confirmation")}
               </div>
               {subTitle && (
                 <div className="text-sm flex text-default-500">{subTitle}</div>
@@ -82,7 +84,7 @@ function ConfirmationPopup(props: Props) {
                   color="danger"
                   variant="light"
                 >
-                  {cancelTitle ?? "Cancel"}
+                  {cancelTitle ?? t("common.cancel")}
                 </Button>
                 <Button
                   size="sm"
@@ -93,7 +95,7 @@ function ConfirmationPopup(props: Props) {
                     onConfirm();
                   }}
                 >
-                  {successTitle ?? "Yes"}
+                  {successTitle ?? t("common.yes")}
                 </Button>
               </div>
             </div>
