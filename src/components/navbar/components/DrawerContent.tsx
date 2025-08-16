@@ -1,6 +1,6 @@
 import SLink from "@/components/ui/SLink";
 import ThemeSwitch from "@/components/ThemeSwitch";
-import { DiscordServerLink, GitHubLink } from "@/constants/AppConstants";
+import { GitHubLink } from "@/constants/AppConstants";
 import { Button } from "@heroui/button";
 import { Divider } from "@heroui/divider";
 import { useSession } from "next-auth/react";
