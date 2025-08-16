@@ -269,7 +269,7 @@ export default function page() {
                 target="_blank"
                 href={"/about"}
               >
-                www.steempro.com/about
+                www.steemcn.blog/about
               </SLink>
             </li>
           </ul>

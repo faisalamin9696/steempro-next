@@ -24,16 +24,16 @@ export default function AboutPage() {
         <h2 className="text-xl font-bold text-center mt-4">Our Team</h2>
         <div className="flex flex-row max-sm:flex-col gap-6 justify-center p-4">
           <AboutItem
-            username={"faisalamin"}
+            username={"ericet"}
             firstHeading={"Founder & Developer"}
-            secondHeading={"steempro.official@gmail.com"}
+            secondHeading={"ericetchen@gmail.com"}
           />
 
           <AboutItem
-            username={"steempro.com"}
+            username={"team-cn"}
             firstHeading={"Official Account"}
-            href="mailto:steempro.official@gmail.com"
-            secondHeading={"steempro.official@gmail.com"}
+            href="mailto:steemit.teamcn@gmail.com"
+            secondHeading={"steemit.teamcn@gmail.com"}
           />
         </div>
       </div>

@@ -10,13 +10,14 @@ export function initFirebase() {
   }
 
   app = initializeApp({
-    apiKey: "AIzaSyC0ew706rM7IFyF5yvvT4VigBX0FvqIAT0",
-    authDomain: "steempro-next.firebaseapp.com",
-    projectId: "steempro-next",
-    storageBucket: "steempro-next.firebasestorage.app",
-    messagingSenderId: "691442331419",
-    appId: "1:691442331419:web:8e4e8d47f0fe08a5486dbe",
-    measurementId: "G-4TNHNTQ4YD",
+    apiKey: "AIzaSyCjxJmBY_aeejCaF7N8AF5zrGq7dwrLQ0g",
+    authDomain: "steemcn.firebaseapp.com",
+    databaseURL: "https://steemcn-default-rtdb.firebaseio.com",
+    projectId: "steemcn",
+    storageBucket: "steemcn.firebasestorage.app",
+    messagingSenderId: "570660684965",
+    appId: "1:570660684965:web:065cfb434510e2d8b4794c",
+    measurementId: "G-WNFSHQ2XVV"
   });
 
   analytics = getAnalytics(app);

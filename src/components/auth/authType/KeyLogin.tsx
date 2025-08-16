@@ -82,7 +82,7 @@ function KeyLogin(props: Props) {
       }
 
       // special key can not use for pin
-      if (pin === "steempro") {
+      if (pin === "steemcn") {
         toast.info(t('auth.try_different_pin'));
         return;
       }
@@ -149,7 +149,7 @@ function KeyLogin(props: Props) {
     const auth = saveCredentials(
       _username,
       _key,
-      !enablePin ? "steempro" : _pin,
+      !enablePin ? "steemcn" : _pin,
       type,
       !enablePin,
       isCurrent,

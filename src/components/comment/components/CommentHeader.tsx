@@ -65,7 +65,7 @@ export default function CommentHeader(props: Props) {
   const username = session?.user?.name ?? loginInfo.name;
   const isUsingSteempro = JSON.parse(
     comment?.json_metadata ?? "{}"
-  )?.app?.includes("steempro");
+  )?.app?.includes("steemcn");
 
   const isSelf = session?.user?.name === comment.author;
   const canMute = username && Role.atLeast(comment.observer_role, "mod");

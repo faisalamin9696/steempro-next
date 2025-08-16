@@ -31,7 +31,7 @@ interface Props {
 const steemFavourites = [
   { account: "null", weight: 500 },
   {
-    account: "steempro.com",
+    account: "steem-drivers",
     weight: 500,
     color: "success",
   },

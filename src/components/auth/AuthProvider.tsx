@@ -125,7 +125,7 @@ export const AuthProvider = (props: Props) => {
     }
 
     if (credentials?.passwordless) {
-      saveSessionKey("steempro");
+      saveSessionKey("steemcn");
       return true;
     }
 

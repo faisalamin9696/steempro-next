@@ -86,7 +86,7 @@ function KeychainLogin(props: Props) {
     const auth = saveCredentials(
       _username,
       "keychain",
-      "steempro",
+      "steemcn",
       "POSTING",
       true,
       current,

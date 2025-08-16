@@ -22,10 +22,10 @@ const urlSet = ({ domain = domainPath, path = "" } = {}) => {
 */
 export const any = (flags = "i") => new RegExp(urlSet(), flags);
 export const local = (flags = "i") =>
-  new RegExp(urlSet({ domain: "(?:localhost|(?:.*\\.)?steempro.com)" }), flags);
+  new RegExp(urlSet({ domain: "(?:localhost|(?:.*\\.)?steemcn.blog)" }), flags);
 export const remote = (flags = "i") =>
   new RegExp(
-    urlSet({ domain: `(?!localhost|(?:.*\\.)?steempro.com)${domainPath}` }),
+    urlSet({ domain: `(?!localhost|(?:.*\\.)?steemcn.blog)${domainPath}` }),
     flags
   );
 export const youTube = (flags = "i") =>
@@ -80,6 +80,7 @@ export const WHITE_LIST = [
   "hede.io",
   "naturalmedicine.io",
   "steempro.com",
+  "steemcn.blog",
   "steemit.com",
 ];
 
@@ -96,6 +97,8 @@ export const OLD_DOMAINS = [
   "ulogs.org",
   "hede.io",
   "naturalmedicine.io",
+  "steem.buzz",
+  "steemcn.xyz",
   "steemit.com",
 ];
 
@@ -114,6 +117,6 @@ export function replaceOldDomains(link?: string) {
   if (!link) return "/";
   const regex = new RegExp(OLD_DOMAINS.join("|"), "g");
   return `${link
-    .replace(regex, "steempro.com")
+    .replace(regex, "steemcn.blog")
     .replace("~witnesses", "witnesses")}`;
 }

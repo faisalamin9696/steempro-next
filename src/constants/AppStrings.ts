@@ -1,7 +1,7 @@
 import { AppLink } from "./AppConstants";
 
 export const AppStrings = {
-  official_account: "steemcn.blog",
+  official_account: "team-cn",
   steempro_base_url: "https://steemcn.blog",
   steempro_site_url: "https://steemcn.blog",
   steemit_base_url: "https://steemit.com",
@@ -9,8 +9,8 @@ export const AppStrings = {
   image_hostings: ["https://steemitimages.com"],
   chain_id: "0000000000000000000000000000000000000000000000000000000000000000",
   rpc_servers: [
-    "https://api.steemit.com",
     "https://api.steemyy.com",
+    "https://api.steemit.com",
     "https://rpc.amarbangla.net",
     "https://steemapi.boylikegirl.club",
     "https://api.steem-fanbase.com",
@@ -18,7 +18,7 @@ export const AppStrings = {
     "https://api.steem.fans",
   ],
   chain_timeout: 5000,
-  official_email: "steemcn.official@gmail.com",
+  official_email: "steemit.teamcn@gmail.com",
   key_types: {
     posting: "POSTING",
     active: "ACTIVE",
