@@ -276,7 +276,7 @@ export class PrivKey {
 
 export const checkPromotionText = (body: string): boolean => {
   if (!body) return false;
-  const regex = /posted using \[steempro/;
+  const regex = /posted using \[steemcn/;
   if (regex.test(body?.toLowerCase())) {
     return true;
   } else {

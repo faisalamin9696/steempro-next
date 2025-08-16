@@ -297,7 +297,7 @@ export default function SubmitPage(props: Props) {
 
       // if community is selected
 
-      let parent_permlink = _tags[0] || "steempro";
+      let parent_permlink = _tags[0] || "cn";
       if (community && community.account !== loginInfo.name) {
         parent_permlink = community.account;
       }
@@ -330,7 +330,7 @@ export default function SubmitPage(props: Props) {
 
         postData.parent_permlink = isEdit
           ? oldPost?.category
-          : parent_permlink || "steempro";
+          : parent_permlink || "cn";
 
         if (!checkPromotionText(markdown))
           newBody = newBody + "\n\n" + AppStrings.promotion_text;
@@ -534,7 +534,7 @@ export default function SubmitPage(props: Props) {
         return toast.error(t("submit.invalid_credentials"));
       }
 
-      let parent_permlink = _tags[0] || "steempro";
+      let parent_permlink = _tags[0] || "cn";
       if (community && community.account !== loginInfo.name) {
         parent_permlink = community.account;
       }

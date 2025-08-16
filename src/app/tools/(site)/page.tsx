@@ -2,7 +2,7 @@
 
 import ToolsItemCard from "@/components/ToolsItemCard";
 import React from "react";
-import { FaCheckCircle, FaChevronCircleUp, FaUsers } from "react-icons/fa";
+import { FaCheckCircle, FaChevronCircleUp, FaTrailer, FaUsers } from "react-icons/fa";
 import { FaEllipsisVertical } from "react-icons/fa6";
 import { useTranslation } from "@/utils/i18n";
 
@@ -34,7 +34,14 @@ export default function page() {
           href="/tools/community-report"
           buttonText={t("common.open")}
         />
-
+        <ToolsItemCard
+          title={t("tools.trail")}
+          description={t("tools.trail_description")}
+          Icon={FaTrailer}
+          target="_blank"
+          href="https://trail.steemcn.blog"
+          buttonText={t("common.open")}
+        />
         <ToolsItemCard
           title={t("tools.more")}
           description={t("tools.more_description")}

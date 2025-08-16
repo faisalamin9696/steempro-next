@@ -678,7 +678,7 @@
     "cumulative": "Cumulative"
   },
   "tools": {
-    "mass_voting_title": "Mass Voting",
+    "mass_voting": "Mass Voting",
     "mass_voting_description": "Cast vote on multiple posts",
     "author_report": "Author Report",
     "author_report_description": "Explore author progress",
@@ -686,6 +686,8 @@
     "community_report_description": "Explore community progress",
     "more": "More",
     "more_description": "Explore more tools",
+    "trail": "CN Trail",
+    "trail_description": "Explore CN Trail",
     "app_usage": "App Usage",
     "invalid_author": "Invalid author",
     "invalid_community": "Invalid community",
@@ -695,7 +697,6 @@
     "unique_comments": "Unique Comments",
     "difference": "Difference",
     "total_stats": "Total {{totalPosts}} posts and {{totalComments}} comments",
-    "mass_voting": "Mass Voting",
     "enter_voter_username": "Enter voter username",
     "use_default_account": "Use default account",
     "use_different_account": "Use different account",

@@ -111,13 +111,13 @@ function DrawerContent() {
       focusedIcon: <RiGithubFill size={iconSize} />,
       externalLink: true,
     },
-    {
-      title: t('sidebar.discord'),
-      href: DiscordServerLink,
-      unFocusedIcon: <RiDiscordLine size={iconSize} />,
-      focusedIcon: <RiDiscordFill size={iconSize} />,
-      externalLink: true,
-    },
+    // {
+    //   title: t('sidebar.discord'),
+    //   href: DiscordServerLink,
+    //   unFocusedIcon: <RiDiscordLine size={iconSize} />,
+    //   focusedIcon: <RiDiscordFill size={iconSize} />,
+    //   externalLink: true,
+    // },
     {
       title: t('sidebar.privacy_policy'),
       href: `/policy`,

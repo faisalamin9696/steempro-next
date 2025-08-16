@@ -688,7 +688,7 @@
     "cumulative": "累计"
   },
   "tools": {
-    "mass_voting_title": "批量投票",
+    "mass_voting": "批量投票",
     "mass_voting_description": "对多个帖子进行投票",
     "author_report": "作者报告",
     "author_report_description": "探索作者进展",
@@ -696,6 +696,8 @@
     "community_report_description": "探索社区进展",
     "more": "更多",
     "more_description": "探索更多工具",
+    "trail": "跟赞团",
+    "trail_description": "探索跟赞团",
     "app_usage": "应用使用情况",
     "invalid_author": "无效的作者",
     "invalid_community": "无效的社区",
