@@ -10,6 +10,7 @@ import {
   saveSessionKey,
   validatePassword,
 } from "@/utils/user";
+import { useRouter } from "next/navigation";
 import { Avatar } from "@heroui/avatar";
 import { Button } from "@heroui/button";
 import { Checkbox } from "@heroui/checkbox";
@@ -41,6 +42,7 @@ function KeyLogin(props: Props) {
   const [isPending, setIsPending] = useState(false);
   const dispatch = useAppDispatch();
   const [isCurrent, setIsCurrent] = React.useState(!addNew);
+  const router = useRouter();
 
   useEffect(() => {
     const timeOut = setTimeout(() => {
@@ -226,7 +228,12 @@ function KeyLogin(props: Props) {
       if (!auth) {
         throw new Error(t('auth.something_wrong'));
       }
-      if (isCurrent) await currentLogin();
+      if (isCurrent) {
+        await currentLogin();
+        // Redirect to the user's friends page after adding a new account and making it current
+        window.location.replace(`/@${account.name}/friends`);
+        return;
+      }
       toast.success(t('auth.account_added', { username: account.name }));
       onSuccess();
       onClose();
@@ -239,6 +246,8 @@ function KeyLogin(props: Props) {
     onSuccess();
     onClose();
     setIsPending(false);
+    // Redirect to the user's friends page after successful login
+    window.location.replace(`/@${account.name}/friends`);
   }
 
   return (

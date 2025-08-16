@@ -16,6 +16,7 @@ import { Checkbox } from "@heroui/checkbox";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 import { toast } from "sonner";
@@ -35,6 +36,7 @@ function KeychainLogin(props: Props) {
   const [isPending, setIsPending] = useState(false);
   const dispatch = useAppDispatch();
   const [isCurrent, setIsCurrent] = React.useState(!addNew);
+  const router = useRouter();
 
   useEffect(() => {
     const timeOut = setTimeout(() => {
@@ -142,7 +144,12 @@ function KeychainLogin(props: Props) {
       if (!auth) {
         throw new Error(t("auth.something_wrong"));
       }
-      if (isCurrent) await currentLogin();
+      if (isCurrent) {
+        await currentLogin();
+        // Redirect to the user's friends page after successful login when adding as current
+        window.location.replace(`/@${account.name}/friends`);
+        return;
+      }
 
       toast.success(t("auth.account_added", { username: account.name }));
       onSuccess();
@@ -156,6 +163,8 @@ function KeychainLogin(props: Props) {
     onSuccess();
     onClose();
     setIsPending(false);
+    // Redirect to the user's friends page after successful login
+    window.location.replace(`/@${account.name}/friends`);
   }
 
   return (
