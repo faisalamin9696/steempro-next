@@ -2,14 +2,12 @@ import React, { useState } from "react";
 import SModal from "./ui/SModal";
 import { Input } from "@heroui/input";
 import { Checkbox } from "@heroui/checkbox";
-
-import { useSession } from "next-auth/react";
 import { Button } from "@heroui/button";
 import { useLogin } from "./auth/AuthProvider";
 import { toast } from "sonner";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { updateAccountRecovery } from "@/libs/steem/condenser";
-import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
+import { useAppSelector } from "@/constants/AppFunctions";
 import { AsyncUtils } from "@/utils/async.utils";
 import { mutate } from "swr";
 
@@ -24,12 +22,9 @@ function AccountRecoveryModal(props: Props) {
   const { isOpen, onOpenChange, account, pendingAccount } = props;
   const { isAuthorizedActive, authenticateUserActive } = useLogin();
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
-
   const [newRecovery, setNewRecovery] = useState("");
   const [isConfirm, setIsConfirm] = useState(false);
-  const dispatch = useAppDispatch();
   const isSelf = loginInfo.name === account.name;
-  const queryClient = useQueryClient();
 
   const mutateRecovery = useMutation({
     mutationFn: (data: {

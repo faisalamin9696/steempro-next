@@ -4,7 +4,7 @@ import { Input } from "@heroui/input";
 import React, { useState } from "react";
 import { WitnessDataProps } from "../page";
 import { useMutation } from "@tanstack/react-query";
-import { updateAccountRecovery } from "@/libs/steem/condenser";
+import { updateWitnessProxy } from "@/libs/steem/condenser";
 import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
 import { useLogin } from "@/components/auth/AuthProvider";
 import { toast } from "sonner";
@@ -34,7 +34,7 @@ function WitnessProxyTab(props: Props) {
       isKeychain?: boolean;
     }) =>
       Promise.all([
-        updateAccountRecovery(
+        updateWitnessProxy(
           loginInfo,
           data.removeProxy ? "" : proxyAccount,
           data.key,
