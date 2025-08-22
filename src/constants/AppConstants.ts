@@ -46,7 +46,7 @@ export function updateCurrentSetting(setting: Setting) {
 }
 
 export function capitalize(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
 // in ms

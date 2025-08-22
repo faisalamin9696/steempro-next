@@ -301,7 +301,7 @@ function STable(props: STableProps) {
                 {visibleCount < filteredItems.length && (
                   <div
                     ref={loadMoreRef}
-                    className="text-center text-sm text-muted-foreground py-4"
+                    className="text-center text-sm text-muted-foreground"
                   >
                     {loader}
                   </div>

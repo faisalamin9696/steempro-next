@@ -688,3 +688,10 @@ type MergedWitness = Witness & {
   hasInvalidVersion: boolean;
   isDisabled: boolean;
 };
+
+type AccountRecoveryType = {
+  id: number;
+  account_to_recover: string;
+  recovery_account: string;
+  effective_on: string;
+};

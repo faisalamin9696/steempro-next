@@ -1,0 +1,42 @@
+const list = `
+bittrex
+blocktrades
+changelly
+gopax-deposit
+hitbtc-exchange
+poloniex
+upbit-exchange
+onepagex
+polo-wallet-01
+bdhivesteem
+htx-9tuqx5jg
+mxcsteem
+whitebit
+gateiodeposit
+bingxsteem
+probitsteem
+coinexofficial
+whitebit
+rudex
+cold.dunamu
+binance-hot2
+qltsteemthumb
+htx-tp4xztst
+bithumbsend1
+hot2.dunamu
+hot4.dunamu
+hot3.dunamu
+hot5.dunamu
+hot1.dunamu
+polopw-01
+htx-s8vznt82
+bittrex
+user.dunamu
+bithumbrecv1
+p4sp4sp4sp4s
+deepcrypto8
+`
+  .trim()
+  .split("\n");
+
+export default list;

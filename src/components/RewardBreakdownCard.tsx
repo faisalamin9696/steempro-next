@@ -131,9 +131,7 @@ class PayoutDetail extends Component<DetailProps> {
         )}
         {curatorPayout > 0 && (
           <div className="flex justify-between">
-            <span className="font-medium text-white">
-              Curators Payout
-            </span>
+            <span className="font-medium text-white">Curators Payout</span>
             <span className="font-semibold">${curatorPayout.toFixed(3)}</span>
           </div>
         )}
@@ -141,18 +139,11 @@ class PayoutDetail extends Component<DetailProps> {
         {/* Beneficiaries Section */}
         {beneficiary.length > 0 && (
           <div className="bg-background p-3 rounded-lg text-default-900">
-            <p className="text-sm font-semibold mb-2">
-              Beneficiaries
-            </p>
+            <p className="text-sm font-semibold mb-2">Beneficiaries</p>
             <div className="flex flex-col gap-1 text-default-900">
               {beneficiary.map((x: any, i: number) => (
                 <div key={i} className="flex justify-between items-center">
-                  <SLink
-                    className="text-blue-600 hover:underline"
-                    href={`/@${x[0]}`}
-                  >
-                    @{x[0]}
-                  </SLink>
+                  <SLink href={`/@${x[0]}`}>@{x[0]}</SLink>
                   <span className="text-default-900 font-medium">
                     {(x[1] / 100).toFixed(0)}%
                   </span>
@@ -165,9 +156,7 @@ class PayoutDetail extends Component<DetailProps> {
         {/* Breakdown Section */}
         {breakdownPayout.length > 0 && (
           <div className="bg-background p-3 rounded-lg text-default-900">
-            <p className=" text-sm font-semibold mb-2">
-              Breakdown
-            </p>
+            <p className=" text-sm font-semibold mb-2">Breakdown</p>
             <div className="space-y-1 text-default-900">
               {breakdownPayout.map((x, i) => (
                 <div key={i}>{x}</div>
@@ -191,9 +180,7 @@ class PayoutDetail extends Component<DetailProps> {
         {!payoutDate && !authorPayout && !curatorPayout && (
           <div className="flex justify-between">
             <span className="font-medium text-white">Payout</span>
-            <span className="text-white font-semibold">
-              Reward Distributed
-            </span>
+            <span className="text-white font-semibold">Reward Distributed</span>
           </div>
         )}
 

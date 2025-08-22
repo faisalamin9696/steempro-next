@@ -237,11 +237,11 @@ export function getKeyType(account: AccountExt, key: string) {
 
     return keyType
       ? {
-        account: account.name,
-        type: keyType as Keys,
-        key: privKey,
-        memo: keyType === "MEMO" ? key : privMemoKey,
-      }
+          account: account.name,
+          type: keyType as Keys,
+          key: privKey,
+          memo: keyType === "MEMO" ? key : privMemoKey,
+        }
       : "";
   } catch (e: any) {
     throw new Error(String(e));
@@ -2485,4 +2485,63 @@ export const broadcastCrateData = async (
       "Check private key permission! Required private posting key or above."
     )
   );
+};
+
+export const updateAccountRecovery = async (
+  username: string,
+  newRecoveryAccount: string,
+  ownerKey: string
+) => {
+  try {
+    // Validate the new recovery account exists
+    const accounts = await client.database.getAccounts([newRecoveryAccount]);
+    if (accounts.length === 0) {
+      throw new Error(`Recovery account ${newRecoveryAccount} does not exist`);
+    }
+
+    // Get current account info to get the sequence number
+    const accountInfo = await client.database.getAccounts([username]);
+    if (accountInfo.length === 0) {
+      throw new Error(`Account ${username} not found`);
+    }
+
+    // Prepare the operation
+    const operation: Operation = [
+      "change_recovery_account",
+      {
+        account_to_recover: username,
+        new_recovery_account: newRecoveryAccount,
+        extensions: [],
+      },
+    ];
+
+    // Create the transaction
+    const props = await client.database.getDynamicGlobalProperties();
+    const refBlockNum = props.head_block_number & 0xffff;
+    const refBlockPrefix = Buffer.from(props.head_block_id, "hex").readUInt32LE(
+      4
+    );
+
+    const transaction = {
+      ref_block_num: refBlockNum,
+      ref_block_prefix: refBlockPrefix,
+      expiration: new Date(Date.now() + 60000).toISOString().slice(0, -5),
+      operations: [operation],
+      extensions: [],
+    };
+
+    // Sign the transaction
+    const privateKeyInstance = PrivateKey.fromString(ownerKey);
+    const signedTransaction = client.broadcast.sign(
+      transaction,
+      privateKeyInstance
+    );
+
+    // Broadcast the transaction
+    const result = await client.broadcast.send(signedTransaction);
+    return result;
+  } catch (error) {
+    console.error("Error changing recovery account:", error);
+    throw error;
+  }
 };

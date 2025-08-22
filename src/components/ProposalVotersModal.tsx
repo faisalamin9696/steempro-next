@@ -202,7 +202,6 @@ export default function ProposalVotersModal(props: Props) {
                         <div className="text-sm text-default-500 flex flex-row items-center gap-1">
                           <p>Proposal</p>
                           <SLink
-                            className=" hover:text-blue-500"
                             href={`/proposals/${proposal.id}`}
                           >
                             #{proposal.id}

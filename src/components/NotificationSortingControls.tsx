@@ -15,21 +15,36 @@ const NotificationSortingControls = ({
   onSortChange,
 }: SortingControlsProps) => {
   const sortOptions = [
-    { key: "all" as const, label: "All", icon: PiList },
-    { key: "vote" as const, label: "Vote", icon: BiUpvote },
-    { key: "reply" as const, label: "Reply", icon: LuReply },
-    { key: "mention" as const, label: "Mention", icon: GoMention },
-    { key: "follow" as const, label: "Follow", icon: RiUserFollowLine },
+    { key: "all" as const, label: "All", icon: PiList, color: "default" },
+    { key: "vote" as const, label: "Vote", icon: BiUpvote, color: "success" },
+    {
+      key: "reply" as const,
+      label: "Reply",
+      icon: LuReply,
+      color: "secondary",
+    },
+    {
+      key: "mention" as const,
+      label: "Mention",
+      icon: GoMention,
+      color: "warning",
+    },
+    {
+      key: "follow" as const,
+      label: "Follow",
+      icon: RiUserFollowLine,
+      color: "primary",
+    },
   ];
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      {sortOptions.map(({ key, label, icon: Icon }) => (
+      {sortOptions.map(({ key, label, icon: Icon, color }) => (
         <Button
           key={key}
           variant={currentSort === key ? "solid" : "light"}
           size="sm"
-          color={currentSort === key ? "primary" : "default"}
+          color={currentSort === key ? (color as any) : "default"}
           onPress={() => onSortChange(key)}
           className="gap-2"
         >

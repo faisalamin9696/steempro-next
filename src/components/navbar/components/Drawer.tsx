@@ -70,31 +70,29 @@ export default memo(function Drawer(props: Props) {
             ${isOpen ? "translate-x-0" : "-translate-x-full"}`)}
       >
         <div className=" flex flewx-row items-center justify-between p-2 pl-4 h-16 ">
-          <div className=" flex items-center gap-2 w-full justify-between">
-            <div className="flex flex-row items-center  ">
-              <SLink href={"/"} className="hidden 2lg:block">
+          <div className="flex flex-row items-center  ">
+            <SLink href={"/"} className="hidden 2lg:block">
+              <Image
+                src={"/logo-default.png"}
+                alt="logo"
+                priority
+                height={40}
+                width={160}
+                style={{ height: "auto" }}
+              />
+            </SLink>
+
+            <div className="flex flex-row items-center gap-2 2lg:hidden px-2">
+              <SLink href={"/"}>
                 <Image
-                  src={"/logo-default.png"}
-                  alt="logo"
                   priority
+                  src={"/logo192.png"}
+                  alt="logo"
                   height={40}
-                  width={160}
-                  style={{ height: "auto" }}
+                  width={40}
                 />
               </SLink>
-
-              <div className="flex flex-row items-center gap-2 2lg:hidden">
-                <SLink href={"/"}>
-                  <Image
-                    priority
-                    src={"/logo192.png"}
-                    alt="logo"
-                    height={40}
-                    width={40}
-                  />
-                </SLink>
-                <ThemeSwitch sm className="" />
-              </div>
+              <ThemeSwitch sm className="" />
             </div>
           </div>
 

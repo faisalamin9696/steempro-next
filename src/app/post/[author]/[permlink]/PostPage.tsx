@@ -217,23 +217,16 @@ export default function PostPage(props: Props) {
                   {!showLowQuality && (
                     <div
                       className={twMerge(
-                        "flex flex-col gap-4 self-center ",
+                        "flex flex-col gap-4 self-center w-full",
                         isLowQuality && "opacity-45"
                       )}
                     >
-                      <div
-                        className={twMerge(
-                          "flex flex-col items-center lg:ml-4"
-                        )}
-                      >
-                        <MarkdownViewer
-                          isNsfw={isNsfw}
-                          noImage={!!commentInfo.is_muted}
-                          text={commentInfo.body}
-                        />
-                      </div>
-
-                      <div className="w-full  self-center">
+                      <MarkdownViewer
+                        isNsfw={isNsfw}
+                        noImage={!!commentInfo.is_muted}
+                        text={commentInfo.body}
+                      />
+                      <div className="w-full self-center">
                         <TagsListCard
                           tags={
                             commentInfo.depth === 0

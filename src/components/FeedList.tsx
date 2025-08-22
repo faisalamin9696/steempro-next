@@ -20,6 +20,7 @@ function FeedList(props: Props) {
         getKey={dataKey}
         fetcher={fetchSds}
         keyExtractor={(comment) => comment.link_id?.toString() || ""}
+        itemsClassName="gap-6"
         renderItem={(comment) => (
           <CommentCard
             isCommunity={isCommunity}

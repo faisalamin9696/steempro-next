@@ -92,7 +92,7 @@ export default function WitnessVoteButton({
       }}
       buttonTitle={isVoted ? "Unvote" : "Vote"}
       subTitle={
-        isVoted ? `Unvote withness ${witness}?` : `Vote witness ${witness}?`
+        isVoted ? `Unvote witness ${witness}?` : `Vote witness ${witness}?`
       }
       onKeychainPress={() => handleVote(true)}
       onConfirm={handleVote}

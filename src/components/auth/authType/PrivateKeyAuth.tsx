@@ -8,13 +8,15 @@ import React, { useState } from "react";
 import { FaLock } from "react-icons/fa6";
 import { toast } from "sonner";
 import AvailableAccountList from "../AvailableAccountList";
+import { capitalize } from "@/constants/AppConstants";
 
 interface Props {
   onClose: () => void;
   onActiveSuccess?: (key: string) => void;
+  type: Keys;
 }
-function ActiveKeyAuth(props: Props) {
-  const { onClose, onActiveSuccess } = props;
+function PrivateKeyAuth(props: Props) {
+  const { onClose, onActiveSuccess, type = "ACTIVE" } = props;
   const [activeKey, setActiveKey] = useState("");
   const [isPending, setIsPending] = useState(false);
   const { data: session } = useSession();
@@ -38,8 +40,8 @@ function ActiveKeyAuth(props: Props) {
       if (account) {
         const keyType = getKeyType(account, _activeKey);
         if (keyType) {
-          if (keyType.type !== "ACTIVE") {
-            toast.info("Private active required");
+          if (keyType.type !== type) {
+            toast.info(`Private ${type.toLowerCase()} required`);
             setIsPending(false);
             return;
           }
@@ -67,8 +69,8 @@ function ActiveKeyAuth(props: Props) {
         isRequired
         onValueChange={setActiveKey}
         isDisabled={isPending}
-        label="Private active key"
-        placeholder="Enter private active key"
+        label={`Private ${type?.toLowerCase()} key`}
+        placeholder={`Enter private ${type?.toLowerCase()} key`}
         type="password"
         onKeyDown={(e) => {
           if (e.key === "Enter") {
@@ -87,7 +89,7 @@ function ActiveKeyAuth(props: Props) {
           <p className="text-sm text-default-500">
             To proceed, please provide your{" "}
             <span className="font-medium text-green-600">
-              Private Active Key
+              Private {capitalize(type)} Key
             </span>{" "}
             to sign the transaction.
           </p>
@@ -133,4 +135,4 @@ function ActiveKeyAuth(props: Props) {
   );
 }
 
-export default ActiveKeyAuth;
+export default PrivateKeyAuth;

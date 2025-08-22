@@ -17,7 +17,7 @@ const FundindCard = ({
   value: string;
 }) => {
   return (
-    <Card className="border border-gray-200/20 shadow-sm">
+    <Card className="border border-default-900/10 shadow-sm">
       <CardBody className="p-4">
         <div className="flex items-center justify-between">
           <div>

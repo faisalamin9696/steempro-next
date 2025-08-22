@@ -4,7 +4,7 @@ import { Input } from "@heroui/input";
 import React, { useState } from "react";
 import { WitnessDataProps } from "../page";
 import { useMutation } from "@tanstack/react-query";
-import { updateWitnessProxy } from "@/libs/steem/condenser";
+import { updateAccountRecovery } from "@/libs/steem/condenser";
 import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
 import { useLogin } from "@/components/auth/AuthProvider";
 import { toast } from "sonner";
@@ -34,7 +34,7 @@ function WitnessProxyTab(props: Props) {
       isKeychain?: boolean;
     }) =>
       Promise.all([
-        updateWitnessProxy(
+        updateAccountRecovery(
           loginInfo,
           data.removeProxy ? "" : proxyAccount,
           data.key,
@@ -98,22 +98,22 @@ function WitnessProxyTab(props: Props) {
           isDisabled={mutation.isPending || isOpen}
         />
 
-        <div className="bg-blue-900/20 p-3 sm:p-4">
-          <p className="flex flex-row items-center gap-2 text-blue-500 mb-2 text-sm sm:text-base font-semibold">
+        <div className="warning p-3 sm:p-4">
+          <p className="flex flex-row items-center gap-2 mb-2 text-sm sm:text-base font-semibold">
             <BsFillInfoCircleFill /> About Proxy Voting:
           </p>
-          <ul className="text-xs sm:text-sm text-blue-500 space-y-1">
-            <li>• A proxy can vote for witnesses on your behalf.</li>
-            <li>• You can change or remove your proxy anytime.</li>
+          <ul className="prose-sm" style={{ listStyleType: "disc", paddingLeft: "20px" }}>
+            <li>A proxy can vote for witnesses on your behalf.</li>
+            <li>You can change or remove your proxy anytime.</li>
             <li>
-              • Setting a proxy will remove all your personal witness votes.
+              Setting a proxy will remove all your personal witness votes.
             </li>
             <li>
-              • Only assign proxy to someone you fully trust with your voting
+              Only assign proxy to someone you fully trust with your voting
               power.
             </li>
             <li>
-              • This action requires your active key or Steem Keychain
+              This action requires your active key or Steem Keychain
               authorization.
             </li>
           </ul>
@@ -129,7 +129,7 @@ function WitnessProxyTab(props: Props) {
               variant={currentProxy ? "flat" : "bordered"}
               className={
                 currentProxy
-                  ? "bg-steem text-white"
+                  ? "bg-primary-500 text-white"
                   : "text-default-500 border-gray-400"
               }
             >

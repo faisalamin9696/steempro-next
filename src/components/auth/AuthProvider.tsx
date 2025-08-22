@@ -17,10 +17,13 @@ interface AuthContextType {
   credentials?: User;
   authenticateUser: (addNew?: boolean, onlyMemo?: boolean) => void;
   isAuthorized: (memo?: boolean, key?: string) => boolean;
-  isAuthorizedActive: (key?: string) => boolean;
+  isAuthorizedActive: (key?: string, type?: Keys) => boolean;
   isLogin: () => boolean;
   setCredentials: React.Dispatch<React.SetStateAction<User | undefined>>;
-  authenticateUserActive: (isKeychain?: boolean) => User | undefined;
+  authenticateUserActive: (
+    isKeychain?: boolean,
+    type?: Keys
+  ) => User | undefined;
 }
 
 // Create the context with an initial value
@@ -48,7 +51,10 @@ export const AuthProvider = (props: Props) => {
   );
   const [addNew, setAddNew] = useState(false);
   const [addMemo, setAddMemo] = useState(false);
-  const [requestActive, setRequestActive] = useState(false);
+  const [requestActive, setRequestActive] = useState<{
+    isOpen: boolean;
+    keyType?: Keys;
+  }>({ isOpen: false, keyType: "ACTIVE" });
   const [activeKey, setActiveKey] = useState("");
 
   // useEffect(() => {
@@ -84,14 +90,14 @@ export const AuthProvider = (props: Props) => {
     return isLogin() && (!!sessionKey || !!token);
   }
 
-  function isAuthorizedActive(key?: string) {
+  function isAuthorizedActive(key?: string, type: Keys = "ACTIVE") {
     credentials = getCredentials();
 
     if (key) {
       if (activeKey) setActiveKey("");
       return true;
     }
-    if (credentials?.keychainLogin) return true;
+    if (credentials?.keychainLogin && type !== "ACTIVE") return true;
 
     if (isLogin() && key) {
       return true;
@@ -108,7 +114,7 @@ export const AuthProvider = (props: Props) => {
   }
 
   function authenticateUser(addNew?: boolean, onlyMemo?: boolean) {
-    if (requestActive) setRequestActive(false);
+    if (requestActive) setRequestActive({ isOpen: false });
     if (addNew) {
       setAddNew(true);
       authDisclosure.onOpen();
@@ -145,21 +151,21 @@ export const AuthProvider = (props: Props) => {
     }
   }
 
-  function authenticateUserActive(isKeychain?: boolean) {
+  function authenticateUserActive(isKeychain?: boolean, type: Keys = "ACTIVE") {
     if (!isLogin()) {
-      setRequestActive(false);
+      setRequestActive({ isOpen: false });
       authDisclosure.onOpen();
       return;
     }
 
     if (isKeychain) return { ...credentials, keychainLogin: true } as User;
 
-    if (credentials?.keychainLogin) {
+    if (credentials?.keychainLogin && type === "ACTIVE") {
       return { ...credentials, key: "keychain", type: "POSTING" } as User;
     }
     // if active key and not session login as for password
     if (credentials?.type !== "ACTIVE" && !activeKey) {
-      setRequestActive(true);
+      setRequestActive({ isOpen: true, keyType: type });
       authDisclosure.onOpen();
       return;
     }
@@ -205,10 +211,11 @@ export const AuthProvider = (props: Props) => {
       {authDisclosure.isOpen && (
         <AuthModal
           onActiveSuccess={(key) => {
-            if (requestActive) setRequestActive(false);
+            if (requestActive) setRequestActive({ isOpen: false });
             setActiveKey(key);
           }}
-          requestActive={requestActive}
+          requestActive={requestActive.isOpen}
+          keyType={requestActive.keyType || "ACTIVE"}
           addMemo={addMemo}
           addNew={addNew}
           isOpen={authDisclosure.isOpen}

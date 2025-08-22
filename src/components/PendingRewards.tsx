@@ -109,7 +109,7 @@ const PendingRewards = ({ account }: PendingRewardsProps) => {
   }
 
   return (
-    <div className="flex gap-2 bg-success-50 border border-success-200 max-sm:items-start items-center justify-between rounded-lg px-2 py-3">
+    <div className="flex flex-wrap gap-y-4 gap-2 bg-success-50 border border-success-200 max-sm:items-start items-center justify-between rounded-lg px-2 py-3">
       <div className="flex max-sm:flex-col max-sm:items-start items-center gap-2">
         <Chip
           color="secondary"

@@ -10,7 +10,12 @@ type SLinkProps = LinkProps &
 
 const SLink = ({ href, children, ...props }: SLinkProps) => {
   return (
-    <Link prefetch={false} href={href as string} {...props}>
+    <Link
+      className="transition-colors hover:text-blue-500"
+      prefetch={false}
+      href={href as string}
+      {...props}
+    >
       {children}
     </Link>
   );

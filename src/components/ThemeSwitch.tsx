@@ -50,11 +50,11 @@ export default memo(function ThemeSwitch({ className, sm }: ThemeSwitchProps) {
         <button
           onClick={toggleTheme}
           className={twMerge(
-            "w-6 h-6 flex items-center justify-center rounded-full hover:bg-default-200",
+            "w-6 h-6 flex items-center justify-center rounded-full hover:bg-default-200 shadow-sm border border-default-900/10 ",
             className
           )}
         >
-          {isLightMode ? <BsFillMoonStarsFill /> : <FaSun />}
+          {isLightMode ? <BsFillMoonStarsFill /> : <FaSun  />}
         </button>
       </div>
     );
@@ -72,9 +72,9 @@ export default memo(function ThemeSwitch({ className, sm }: ThemeSwitchProps) {
           "inline-flex flex-row-reverse w-full max-w-md bg-default-400/20 dark:bg-default-500/20 hover:bg-content2 items-center",
           "justify-between cursor-pointer rounded-lg gap-2 p-2 border-2 border-transparent "
         ),
-        wrapper: "p-0 overflow-visible group-data-[selected]:bg-primary/50",
+        wrapper: "ps-[2px] overflow-visible group-data-[selected]:bg-primary/50 bg-white/80",
         thumb: twMerge(
-          "border-2 shadow-lg ",
+          "border-2 shadow-lg border-default-900/20",
           "group-data-[hover=true]:border-primary",
           "group-data-[selected=true]:ms-6",
           "group-data-[pressed=true]:w-7",

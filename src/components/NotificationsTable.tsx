@@ -26,9 +26,8 @@ import { Input } from "@heroui/input";
 import { FaSearch } from "react-icons/fa";
 import NotificationSortingControls from "./NotificationSortingControls";
 import moment from "moment";
-import { mutate, useSWRConfig } from "swr";
-import { MdOutlineRefresh } from "react-icons/md";
-import { unstable_serialize } from "swr/infinite";
+import { useSWRConfig } from "swr";
+import NotificationSkeleton from "./NotificationSkeleton";
 
 interface Props {
   username: string;
@@ -54,7 +53,7 @@ const typeColorMap = {
   mute_post: "default",
 };
 
-const ITEMS_PER_BATCH = 50;
+const ITEMS_PER_BATCH = 10;
 let tempLastRead = 0;
 
 export default function NotificationsTable(props: Props) {
@@ -207,6 +206,20 @@ export default function NotificationsTable(props: Props) {
       <InfiniteScroll<SDSNotification>
         revalidateIfStale
         getKey={getKey}
+        loadingComponent={
+          <div
+            className={
+              isSelf
+                ? "flex flex-col gap-4"
+                : "grid grid-cols-1 gap-4 sm:grid-cols-2"
+            }
+          >
+            <NotificationSkeleton />
+            <NotificationSkeleton />
+            <NotificationSkeleton />
+            <NotificationSkeleton />
+          </div>
+        }
         itemsClassName={
           isSelf
             ? "flex flex-col gap-4"
@@ -251,18 +264,28 @@ export default function NotificationsTable(props: Props) {
                   >
                     {notification.account}
                   </SLink>
-
-                  <Chip
-                    className="capitalize border-none gap-1 text-default-600"
-                    color={typeColorMap[notification.type] as any}
-                    size="sm"
-                    variant={isVote ? "flat" : "dot"}
-                  >
-                    {isVote ? `$${voteAmount}` : `${notification.type}`}
-                  </Chip>
+                  {isVote && (
+                    <Chip
+                      className="capitalize border-1 gap-1"
+                      color={typeColorMap[notification.type] as any}
+                      size="sm"
+                      variant={"faded"}
+                    >
+                      {`$${voteAmount}`}
+                    </Chip>
+                  )}
                 </div>
 
-                <div className="flex flex-row gap-2">
+                <div className="flex flex-row gap-2 items-center">
+                  <Chip
+                    className="capitalize border-none gap-1"
+                    color={typeColorMap[notification.type] as any}
+                    size="sm"
+                    variant={"flat"}
+                  >
+                    {`${notification.type}`}
+                  </Chip>
+
                   <TimeAgoWrapper
                     className="text-bold text-default-600"
                     created={notification.time * 1000}

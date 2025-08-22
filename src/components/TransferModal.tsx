@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Textarea } from "@heroui/input";
 import { Button } from "@heroui/button";
 import { Checkbox } from "@heroui/checkbox";
@@ -19,10 +19,15 @@ import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import moment from "moment";
 import { steemToVest, vestToSteem } from "@/utils/helper/vesting";
 import { isNumeric } from "@/utils/helper";
-import { validate_account_name } from "@/utils/chainValidation";
+import {
+  validate_account_name,
+  validate_exchange_account_with_memo,
+} from "@/utils/chainValidation";
 import KeychainButton from "./KeychainButton";
 import { twMerge } from "tailwind-merge";
 import SModal from "./ui/SModal";
+import Fuse from "fuse.js";
+import VerifiedExchangeList from "@/utils/VerifiedExchangeList";
 
 type AssetTypes = "STEEM" | "SBD" | "VESTS";
 
@@ -31,29 +36,18 @@ interface BasicProps {
   onOpenChange: (isOpen: boolean) => void;
   onDelegationSuccess?: (vests: number) => void;
   asset: AssetTypes;
+}
+
+type TransferModalProps = BasicProps & {
   powewrup?: boolean;
   savings?: boolean;
-  delegation?: any;
+  delegation?: boolean;
   delegatee?: string;
   oldDelegation?: number;
   isRemove?: boolean;
-}
+};
 
-type DelegationProps = BasicProps & {
-  delegation: boolean;
-  delegatee: string;
-  oldDelegation?: number;
-  isRemove?: boolean;
-};
-type PowerupProps = BasicProps & {
-  powewrup: boolean;
-};
-type SavingProps = BasicProps & {
-  savings: boolean;
-};
-type Props = DelegationProps | PowerupProps | SavingProps;
-
-const TransferModal = (props: Props): React.ReactNode => {
+const TransferModal = (props: TransferModalProps) => {
   const {
     savings,
     powewrup,
@@ -64,165 +58,211 @@ const TransferModal = (props: Props): React.ReactNode => {
     onDelegationSuccess,
     isOpen,
     onOpenChange,
+    asset: initialAsset,
   } = props;
-  const [asset, setAsset] = useState(props.asset);
+
+  // State management
+  const [asset, setAsset] = useState(initialAsset);
   const [basic, setBasic] = useState(savings || powewrup);
+  const [confirmCheck, setConfirmCheck] = useState(false);
+  const [warnCheck, setWarnCheck] = useState(false);
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [amount, setAmount] = useState("");
+  const [memo, setMemo] = useState("");
+  const [toImage, setToImage] = useState("");
+  const [similarityPercentage, setSimilarityPercentage] = useState(0);
+  const [similarAccountName, setSimilarAccountName] = useState<string | null>(
+    ""
+  );
+
+  // Redux and hooks
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
-  const oldSpDelegation = !!oldDelegation
-    ? vestToSteem(oldDelegation, globalData.steem_per_share)
-    : undefined;
-
   const dispatch = useAppDispatch();
-  const [confirmCheck, setConfirmCheck] = useState(false);
   const { isAuthorizedActive, authenticateUserActive } = useLogin();
 
-  let [from, setFrom] = useState(loginInfo.name);
-  let [to, setTo] = useState(
-    delegation ? delegatee || "" : savings || powewrup ? loginInfo.name : ""
+  // Derived values
+  const isTransferToAccount = !savings && !powewrup && !delegation;
+  const oldSpDelegation = useMemo(
+    () =>
+      oldDelegation
+        ? vestToSteem(oldDelegation, globalData.steem_per_share)
+        : undefined,
+    [oldDelegation, globalData.steem_per_share]
   );
-  let [amount, setAmount] = useState(
-    isRemove ? "0" : oldSpDelegation?.toFixed(3) || ""
-  );
-  let [memo, setMemo] = useState("");
 
-  const [toImage, setToImage] = useState("");
-
-  const availableBalance =
-    asset === "VESTS"
-      ? vestToSteem(
+  const availableBalance = useMemo(() => {
+    if (asset === "VESTS") {
+      return (
+        vestToSteem(
           loginInfo.vests_own -
             loginInfo.vests_out -
             loginInfo.powerdown +
             loginInfo.powerdown_done,
           globalData.steem_per_share
         ) + (oldSpDelegation ?? 0)
-      : asset === "STEEM"
-      ? loginInfo.balance_steem
-      : loginInfo.balance_sbd;
+      );
+    }
+    return asset === "STEEM" ? loginInfo.balance_steem : loginInfo.balance_sbd;
+  }, [asset, loginInfo, globalData.steem_per_share, oldSpDelegation]);
 
+  // Initialize form values
+  useEffect(() => {
+    setFrom(loginInfo.name);
+    setTo(
+      delegation ? delegatee || "" : savings || powewrup ? loginInfo.name : ""
+    );
+    setAmount(isRemove ? "0" : oldSpDelegation?.toFixed(3) || "");
+  }, [
+    loginInfo.name,
+    delegation,
+    delegatee,
+    savings,
+    powewrup,
+    isRemove,
+    oldSpDelegation,
+  ]);
+
+  // Account verification
+  const fuse = useMemo(
+    () =>
+      new Fuse(VerifiedExchangeList, {
+        includeScore: true,
+        threshold: 0.4,
+      }),
+    []
+  );
+
+  const [transferChecks, setTransferChecks] = useState({
+    isVerifiedAccount: false,
+    isSuspiciousAccount: false,
+    exchangeValidation: false,
+  });
+
+  const renderWarn = useMemo(
+    () =>
+      (transferChecks.isVerifiedAccount ||
+        transferChecks.exchangeValidation ||
+        transferChecks.isSuspiciousAccount) &&
+      isTransferToAccount,
+    [transferChecks, isTransferToAccount]
+  );
+
+  const getCharMatchInfo = (input: string, target: string) => {
+    const result = {
+      percentage: 0,
+      exactMatch: false,
+      isSubstring: false,
+      containsOriginal: false,
+      noMatch: true,
+    };
+
+    if (!input || !target) return result;
+
+    input = input.toLowerCase();
+    target = target.toLowerCase();
+
+    if (input === target) {
+      result.percentage = 100;
+      result.exactMatch = true;
+      result.noMatch = false;
+    } else if (target.includes(input)) {
+      result.percentage = Math.round((input.length / target.length) * 100);
+      result.isSubstring = true;
+      result.noMatch = false;
+    } else if (input.includes(target)) {
+      result.percentage = Math.round((target.length / input.length) * 100);
+      result.containsOriginal = true;
+      result.noMatch = false;
+    }
+
+    return result;
+  };
+
+  const checkExchangeStatus = (accountName: string) => {
+    const lowerName = accountName.trim().toLowerCase();
+    const isVerified = VerifiedExchangeList.includes(lowerName);
+    let similarityPercentage = 0;
+    let similarAccountName: string | null = null;
+    let isSuspicious = false;
+
+    const fuzzyResults = fuse.search(lowerName);
+    const exchangeValidation = validate_exchange_account_with_memo(accountName);
+
+    if ((!isVerified && fuzzyResults.length > 0) || exchangeValidation) {
+      const topResult = fuzzyResults[0];
+      similarAccountName = topResult.item;
+      const score = Math.round((1 - (topResult?.score || 0)) * 100);
+      const matchInfo = getCharMatchInfo(accountName, similarAccountName);
+      const finalScore = Math.round((matchInfo.percentage + score) / 2);
+
+      similarityPercentage = finalScore;
+      isSuspicious = finalScore >= 70;
+    }
+
+    setTransferChecks({
+      isVerifiedAccount: isVerified,
+      isSuspiciousAccount: isSuspicious,
+      exchangeValidation: exchangeValidation || false,
+    });
+    setSimilarityPercentage(similarityPercentage);
+    setSimilarAccountName(similarAccountName);
+  };
+
+  // Avatar image update
   useEffect(() => {
     const timeout = setTimeout(() => {
-      to = to.trim().toLowerCase();
-      if (!validate_account_name(to)) setToImage(to);
+      const trimmedTo = to.trim().toLowerCase();
+      if (!validate_account_name(trimmedTo)) setToImage(trimmedTo);
     }, 500);
 
     return () => clearTimeout(timeout);
   }, [to]);
 
-  const transferMutation = useMutation({
-    mutationFn: (data: {
-      key: string;
-      options: Transfer;
-      isKeychain?: boolean;
-    }) => transferAsset(loginInfo, data.key, data.options, data.isKeychain),
-    onSettled(data, error, variables, context) {
+  // Mutation handlers
+  const createMutationHandler = (mutationFn: any, successMessage: string) => ({
+    mutationFn,
+    onSettled: (data: any, error: any, variables: any) => {
       if (error) {
         toast.error(error.message || JSON.stringify(error));
         return;
       }
 
-      // check if self transfer
-      if (variables.options.from !== variables.options.to)
-        if (variables.options.unit === "SBD") {
-          dispatch(
-            saveLoginHandler({
-              ...loginInfo,
-              balance_sbd:
-                loginInfo.balance_sbd - Number(variables.options.amount),
-            })
-          );
-        } else {
-          dispatch(
-            saveLoginHandler({
-              ...loginInfo,
-              balance_steem:
-                loginInfo.balance_steem - Number(variables.options.amount),
-            })
-          );
-        }
-
+      // Handle success
       props.onOpenChange(false);
-      toast.success(`${amount} ${asset} transfered to ${to}`);
+      toast.success(successMessage);
     },
   });
 
-  const savingsMutation = useMutation({
-    mutationFn: (data: {
-      key: string;
-      options: Transfer;
-      isKeychain?: boolean;
-    }) => transferToSavings(loginInfo, data.key, data.options, data.isKeychain),
-    onSettled(data, error, variables, context) {
-      if (error) {
-        toast.error(error.message || JSON.stringify(error));
-        return;
-      }
+  const transferMutation = useMutation(
+    createMutationHandler(
+      (data: { key: string; options: any; isKeychain?: boolean }) =>
+        transferAsset(loginInfo, data.key, data.options, data.isKeychain),
+      `${amount} ${asset} transferred to ${to}`
+    )
+  );
 
-      // substraction in balance and addition in savings
-      if (variables.options.unit === "SBD") {
-        dispatch(
-          saveLoginHandler({
-            ...loginInfo,
-            savings_sbd:
-              from === to
-                ? loginInfo.savings_sbd + variables.options.amount
-                : loginInfo.balance_sbd - variables.options.amount,
-            balance_sbd: loginInfo.balance_sbd - variables.options.amount,
-          })
-        );
-      } else {
-        dispatch(
-          saveLoginHandler({
-            ...loginInfo,
-            savings_steem: loginInfo.savings_steem + variables.options.amount,
-            balance_steem: loginInfo.balance_steem - variables.options.amount,
-          })
-        );
-      }
-      props.onOpenChange(false);
-      toast.success(`${amount} ${asset} transfered to ${to}'s savings`);
-    },
-  });
+  const savingsMutation = useMutation(
+    createMutationHandler(
+      (data: { key: string; options: any; isKeychain?: boolean }) =>
+        transferToSavings(loginInfo, data.key, data.options, data.isKeychain),
+      `${amount} ${asset} transferred to ${to}'s savings`
+    )
+  );
 
-  const vestingMutation = useMutation({
-    mutationFn: (data: {
-      key: string;
-      options: Transfer;
-      isKeychain?: boolean;
-    }) => transferToVesting(loginInfo, data.key, data.options, data.isKeychain),
-    onSettled(data, error, variables, context) {
-      if (error) {
-        toast.error(error.message || JSON.stringify(error));
-        return;
-      }
-      dispatch(
-        saveLoginHandler({
-          ...loginInfo,
-          balance_steem: loginInfo.balance_steem - variables.options.amount,
-          vests_own:
-            from === to
-              ? loginInfo.vests_own +
-                steemToVest(
-                  variables.options.amount,
-                  globalData.steem_per_share
-                )
-              : loginInfo.vests_own,
-        })
-      );
-
-      props.onOpenChange(false);
-      toast.success(`${amount} ${asset} powered up to ${to}`);
-    },
-  });
+  const vestingMutation = useMutation(
+    createMutationHandler(
+      (data: { key: string; options: any; isKeychain?: boolean }) =>
+        transferToVesting(loginInfo, data.key, data.options, data.isKeychain),
+      `${amount} ${asset} powered up to ${to}`
+    )
+  );
 
   const delegateMutation = useMutation({
     mutationFn: (data: {
       key: string;
-      options: {
-        delegatee: string;
-        amount: number;
-      };
+      options: { delegatee: string; amount: number };
       isKeychain?: boolean;
     }) =>
       delegateVestingShares(
@@ -232,17 +272,17 @@ const TransferModal = (props: Props): React.ReactNode => {
         data.isKeychain,
         globalData
       ),
-    onSettled(data, error, variables, context) {
+    onSettled: (data, error, variables) => {
       if (error) {
         toast.error(error.message || JSON.stringify(error));
         return;
       }
+
       const outVests = steemToVest(
         variables.options.amount,
         globalData.steem_per_share
       );
-
-      onDelegationSuccess && onDelegationSuccess(outVests);
+      onDelegationSuccess?.(outVests);
 
       dispatch(
         saveLoginHandler({
@@ -250,6 +290,7 @@ const TransferModal = (props: Props): React.ReactNode => {
           vests_out: loginInfo.vests_out + outVests,
         })
       );
+
       props.onOpenChange(false);
       toast.success(
         isRemove ? "Delegation removed" : `${amount} SP delegated to ${to}`
@@ -257,114 +298,92 @@ const TransferModal = (props: Props): React.ReactNode => {
     },
   });
 
-  async function handleTransfer(isKeychain?: boolean) {
-    from = from.trim().toLowerCase();
-    to = to.trim().toLowerCase();
-    amount = amount.trim();
-    memo = memo.trim();
+  const handleTransfer = async (isKeychain?: boolean) => {
+    const trimmedFrom = from.trim().toLowerCase();
+    const trimmedTo = to.trim().toLowerCase();
+    const trimmedAmount = amount.trim();
+    const trimmedMemo = memo.trim();
 
-    if (!to || !amount || !from) {
+    // Validation checks
+    if (!trimmedTo || !trimmedAmount || !trimmedFrom) {
       toast.info("Some fields are empty");
       return;
     }
 
-    if (validate_account_name(to)) {
+    if (validate_account_name(trimmedTo)) {
       toast.info("Invalid username");
       return;
     }
-    if (!isNumeric(amount)) {
+
+    if (!isNumeric(trimmedAmount)) {
       toast.info("Invalid amount");
       return;
     }
 
-    if (delegation && from === to) {
-      toast.info(" You cannot delegate SP to yourself");
+    if (delegation && trimmedFrom === trimmedTo) {
+      toast.info("You cannot delegate SP to yourself");
       return;
     }
 
-    if (Number(amount) > availableBalance) {
+    if (Number(trimmedAmount) > availableBalance) {
       toast.info("Insufficient funds");
       return;
     }
 
-    if (!isRemove && delegation && Number(amount) < 1) {
-      toast.info(" The minimum required delegation amount is 1.000 SP");
+    if (!isRemove && delegation && Number(trimmedAmount) < 1) {
+      toast.info("The minimum required delegation amount is 1.000 SP");
       return;
     }
 
-    if (!isRemove && Number(amount) < 0.001) {
-      toast.info("Use only 3 digits of precison");
+    if (!isRemove && Number(trimmedAmount) < 0.001) {
+      toast.info("Use only 3 digits of precision");
       return;
     }
 
     const credentials = authenticateUserActive(isKeychain);
-    if (!isAuthorizedActive(credentials?.key)) {
-      return;
-    }
-
-    if (!credentials?.key) {
+    if (!isAuthorizedActive(credentials?.key) || !credentials?.key) {
       toast.error("Invalid credentials");
       return;
     }
 
+    const commonOptions = {
+      from: trimmedFrom,
+      to: trimmedTo,
+      amount: Number(trimmedAmount),
+      memo: trimmedMemo,
+      unit: asset,
+      time: moment.now(),
+    };
+
     if (savings) {
       savingsMutation.mutate({
-        key: credentials?.key ?? "",
-        options: {
-          from,
-          to,
-          amount: Number(amount),
-          memo,
-          unit: asset,
-          time: moment.now(),
-        },
+        key: credentials.key,
+        options: commonOptions,
         isKeychain: isKeychain || credentials.keychainLogin,
       });
-      return;
-    }
-
-    if (powewrup) {
+    } else if (powewrup) {
       vestingMutation.mutate({
-        key: credentials?.key ?? "",
-        options: {
-          from,
-          to,
-          amount: Number(amount),
-          memo,
-          unit: asset,
-          time: moment.now(),
-        },
+        key: credentials.key,
+        options: commonOptions,
         isKeychain: isKeychain || credentials.keychainLogin,
       });
-      return;
-    }
-
-    if (delegation) {
+    } else if (delegation) {
       delegateMutation.mutate({
-        key: credentials?.key ?? "",
+        key: credentials.key,
         options: {
-          delegatee: to,
-          amount: isRemove ? 0 : Number(amount),
+          delegatee: trimmedTo,
+          amount: isRemove ? 0 : Number(trimmedAmount),
         },
         isKeychain: isKeychain || credentials.keychainLogin,
       });
-      return;
-    }
-
-    if (!savings && !powewrup && !delegation)
+    } else {
       transferMutation.mutate({
-        key: credentials?.key ?? "",
-        options: {
-          from,
-          to,
-          amount: Number(amount),
-          memo,
-          unit: asset,
-          time: moment.now(),
-        },
+        key: credentials.key,
+        options: commonOptions,
         isKeychain: isKeychain || credentials.keychainLogin,
       });
-  }
+    }
+  };
 
   const isPending =
     transferMutation.isPending ||
@@ -372,24 +391,89 @@ const TransferModal = (props: Props): React.ReactNode => {
     vestingMutation.isPending ||
     delegateMutation.isPending;
 
-  const title = delegation
-    ? isRemove
-      ? "Remove Delegation"
-      : oldDelegation
-      ? "Update Delegation"
-      : "Delegate to Account"
-    : powewrup
-    ? "Convert to STEEM POWER"
-    : `Transfer to ${savings ? "Savings" : "Account"}`;
+  const title = useMemo(() => {
+    if (delegation) {
+      return isRemove
+        ? "Remove Delegation"
+        : oldDelegation
+        ? "Update Delegation"
+        : "Delegate to Account";
+    }
+    return powewrup
+      ? "Convert to STEEM POWER"
+      : `Transfer to ${savings ? "Savings" : "Account"}`;
+  }, [delegation, isRemove, oldDelegation, powewrup, savings]);
+
+  const actionButtonText = useMemo(() => {
+    if (delegation)
+      return isRemove ? "Remove" : oldDelegation ? "Update" : "Delegate";
+    return powewrup ? "Power Up" : "Transfer";
+  }, [delegation, isRemove, oldDelegation, powewrup]);
+
+  const WarningMessages = {
+    verified: (
+      <div className="prose-sm alert callout">
+        <div className="row">
+          <div className="column">
+            <strong>Exchange Account Detected</strong>
+            <br />
+            <p>
+              To prevent irreversible loss of funds, please ensure the
+              following:
+            </p>
+            <ul style={{ listStyleType: "disc", paddingLeft: "20px" }}>
+              <li style={{ marginBottom: "8px" }}>
+                Use the correct memo and deposit address provided by the
+                exchange.
+              </li>
+              <li style={{ marginBottom: "8px" }}>
+                Verify that the exchange has not suspended deposits.
+              </li>
+              <li>Verify that the exchange still supports {asset} deposits.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    ),
+    suspicious: (
+      <div className="prose-sm warning callout">
+        <div className="row">
+          <div className="column">
+            <strong>Exchange Account Similarity Detected</strong>
+            <ul style={{ listStyleType: "disc", paddingLeft: "20px" }}>
+              <li style={{ marginBottom: "8px" }}>
+                The recipient address shares {similarityPercentage}% similarity
+                with a known exchange account (
+                <strong>@{similarAccountName}</strong>). Verify the address
+                carefully, as incorrect transfers may result in permanent loss
+                of funds.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    ),
+    validation: (
+      <div className="prose-sm warning callout">
+        <div className="row">
+          <div className="column">
+            The recipient address appears to be an intentional misspelling of a
+            known exchange account. It is strongly recommended not to send any
+            funds.
+          </div>
+        </div>
+      </div>
+    ),
+  };
 
   return (
     <SModal
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       modalProps={{
-        placement: "center",
         isDismissable: false,
         hideCloseButton: true,
+        size: "2xl",
       }}
       title={() => title}
       body={() => (
@@ -412,7 +496,11 @@ const TransferModal = (props: Props): React.ReactNode => {
                 size="sm"
                 autoCapitalize="off"
                 value={to}
-                onValueChange={setTo}
+                inputMode="text"
+                onValueChange={(value) => {
+                  setTo(value);
+                  checkExchangeStatus(value);
+                }}
                 isDisabled={!!oldDelegation || !!isRemove || isPending}
                 endContent={<SAvatar size="xs" username={toImage} />}
               />
@@ -432,31 +520,27 @@ const TransferModal = (props: Props): React.ReactNode => {
             endContent={
               <Select
                 aria-label="Select asset"
-                variant="flat"
-                onChange={(key) => {
-                  setAsset(key.target.value as AssetTypes);
-                }}
+                variant="faded"
+                onChange={(key) => setAsset(key.target.value as AssetTypes)}
                 disallowEmptySelection
                 selectedKeys={[asset]}
                 isDisabled={powewrup || delegation || isPending}
                 size="sm"
                 placeholder="Asset"
-                className=" max-w-[100px]"
+                className="max-w-[100px]"
                 selectorIcon={delegation && <></>}
                 classNames={{
                   value: "text-tiny",
-                  innerWrapper: delegation ? "w-15" : " w-10",
+                  innerWrapper: delegation ? "w-15" : "w-10",
                 }}
               >
-                <SelectItem className="text-xs" key={"STEEM"}>
-                  {"STEEM"}
-                </SelectItem>
-                <SelectItem key={"SBD"}>{"SBD"}</SelectItem>
+                <SelectItem key="STEEM">STEEM</SelectItem>
+                <SelectItem key="SBD">SBD</SelectItem>
                 <SelectItem
-                  key={"VESTS"}
+                  key="VESTS"
                   className={twMerge(delegation ? "block" : "hidden")}
                 >
-                  {"STEEM POWER"}
+                  STEEM POWER
                 </SelectItem>
               </Select>
             }
@@ -464,10 +548,10 @@ const TransferModal = (props: Props): React.ReactNode => {
               <div className="ps-1 flex flex-row gap-4 items-center">
                 <p>Available balance: </p>
                 <button
-                  className=" font-mono"
-                  onClick={() => {
-                    setAmount(availableBalance?.toFixed(3)?.toString());
-                  }}
+                  className="font-mono"
+                  onClick={() =>
+                    setAmount(availableBalance?.toFixed(3)?.toString())
+                  }
                 >
                   {availableBalance?.toLocaleString()}{" "}
                   {delegation ? "SP" : asset}
@@ -476,17 +560,46 @@ const TransferModal = (props: Props): React.ReactNode => {
             }
           />
 
-          {!savings && !powewrup && !delegation && (
+          {isTransferToAccount && (
             <Textarea
               spellCheck={"false"}
               value={memo}
               onValueChange={setMemo}
               label="Memo"
+              autoCapitalize="off"
+              isDisabled={isPending}
+              inputMode="text"
+              isRequired={
+                isTransferToAccount && transferChecks.isVerifiedAccount
+              }
             />
           )}
+
+          {transferChecks.isVerifiedAccount &&
+            isTransferToAccount &&
+            WarningMessages.verified}
+          {!transferChecks.isVerifiedAccount &&
+            transferChecks.isSuspiciousAccount &&
+            isTransferToAccount &&
+            WarningMessages.suspicious}
+          {transferChecks.exchangeValidation &&
+            isTransferToAccount &&
+            WarningMessages.validation}
+
+          {renderWarn && (
+            <Checkbox
+              size="md"
+              isSelected={warnCheck}
+              isDisabled={isPending}
+              onValueChange={setWarnCheck}
+            >
+              I have read and understood the above warnings
+            </Checkbox>
+          )}
+
           <div className="flex flex-row justify-between">
             <Checkbox
-              size="sm"
+              size="md"
               isSelected={confirmCheck}
               isDisabled={isPending}
               onValueChange={setConfirmCheck}
@@ -498,24 +611,24 @@ const TransferModal = (props: Props): React.ReactNode => {
                 ? "Remove"
                 : delegation
                 ? "Delegation"
-                : `Transfer`}
+                : "Transfer"}
             </Checkbox>
           </div>
         </div>
       )}
-      footer={(onClose) => (
+      footer={() => (
         <div className="flex flex-row w-full justify-between items-center">
           <KeychainButton
             isDisabled={!confirmCheck || isPending}
             onPress={() => handleTransfer(true)}
           />
 
-          <div className=" flex flex-row items-center gap-2">
+          <div className="flex flex-row items-center gap-2">
             <Button
-              size="sm"
+              size="md"
               color="danger"
               variant="light"
-              onPress={onClose}
+              onPress={() => onOpenChange(false)}
               isDisabled={isPending}
             >
               Cancel
@@ -523,8 +636,11 @@ const TransferModal = (props: Props): React.ReactNode => {
 
             {(savings || powewrup) && (
               <Button
-                size="sm"
-                onPress={() => setBasic(!basic)}
+                size="md"
+                onPress={() => {
+                  setTo(from);
+                  setBasic(!basic);
+                }}
                 variant="flat"
                 isDisabled={isPending}
               >
@@ -533,21 +649,22 @@ const TransferModal = (props: Props): React.ReactNode => {
             )}
 
             <Button
-              size="sm"
+              size="md"
               color="primary"
               onPress={() => handleTransfer()}
               isLoading={isPending}
-              isDisabled={!confirmCheck || isPending}
+              isDisabled={
+                !confirmCheck ||
+                isPending ||
+                (!!renderWarn && !warnCheck) ||
+                !amount ||
+                !to ||
+                (isTransferToAccount &&
+                  transferChecks.isVerifiedAccount &&
+                  !memo)
+              }
             >
-              {delegation
-                ? isRemove
-                  ? "Remove"
-                  : !!oldDelegation
-                  ? "Update"
-                  : "Delegate"
-                : powewrup
-                ? "Power Up"
-                : "Transfer"}
+              {actionButtonText}
             </Button>
           </div>
         </div>

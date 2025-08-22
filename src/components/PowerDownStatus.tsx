@@ -1,12 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Chip } from "@heroui/chip";
 import { BsArrowDown } from "react-icons/bs";
 import { Button } from "@heroui/button";
 import { FaX } from "react-icons/fa6";
 import { Spinner } from "@heroui/spinner";
-import { getDaysUntilNextWithdrawal } from "@/utils/utility";
-import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
-import { useLogin } from "./auth/AuthProvider";
+import { useAppSelector } from "@/constants/AppFunctions";
 import { useSession } from "next-auth/react";
 import { vestToSteem } from "@/utils/helper/vesting";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
@@ -18,11 +16,8 @@ interface PowerDownStatusProps {
 }
 
 const PowerDownStatus = ({ account, onUpdate }: PowerDownStatusProps) => {
-  const [weeklySteem, setWeeklySteem] = useState(0);
   const globalData = useAppSelector((state) => state.steemGlobalsReducer.value);
-  const dispatch = useAppDispatch();
   const { data: session } = useSession();
-  const { authenticateUser, isAuthorized } = useLogin();
   const [powerDownModal, setPowerDownModal] = useState<{
     isOpen: boolean;
     cancel?: boolean;
@@ -40,33 +35,8 @@ const PowerDownStatus = ({ account, onUpdate }: PowerDownStatusProps) => {
   const isPowerDownActive =
     vestingWithdrawRate > 0 && nextWithdrawal > new Date("1970-01-01");
 
-  // Calculate days until next withdrawal
-  const daysUntilNext = getDaysUntilNextWithdrawal(
-    nextWithdrawal?.toISOString()
-  );
-
   // Check if current user is viewing their own account
   const isOwnAccount = username && account.name === username;
-
-  useEffect(() => {
-    const convertVestsToSteem = async () => {
-      if (isPowerDownActive && vestingWithdrawRate > 0) {
-        try {
-          const weeklyAmount = vestToSteem(
-            vestingWithdrawRate,
-            globalData.steem_per_share
-          );
-          setWeeklySteem(weeklyAmount);
-        } catch (error) {
-          console.error("Error converting VESTS to STEEM:", error);
-          // Fallback calculation
-          setWeeklySteem(vestingWithdrawRate / 1000000);
-        }
-      }
-    };
-
-    convertVestsToSteem();
-  }, [isPowerDownActive, vestingWithdrawRate]);
 
   const handleCancelPowerDown = async () => {
     if (!username || !isPowerDownActive) return;
@@ -79,7 +49,7 @@ const PowerDownStatus = ({ account, onUpdate }: PowerDownStatusProps) => {
 
   return (
     <>
-      <div className="flex max-sm:items-start items-center justify-between bg-orange-100 border border-orange-200 rounded-lg p-3">
+      <div className="flex flex-wrap gap-y-4 max-sm:items-start items-center justify-between bg-orange-100 border border-orange-200 rounded-lg p-3">
         <div className="flex flex-col items-start gap-2">
           <div className="flex flex-row max-sm:flex-col max-sm:items-start gap-2 items-center">
             <Chip

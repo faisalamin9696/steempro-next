@@ -22,6 +22,8 @@ import { twMerge } from "tailwind-merge";
 import { MdDisabledVisible } from "react-icons/md";
 import { useSession } from "next-auth/react";
 import SLink from "@/components/ui/SLink";
+import SAvatar from "@/components/ui/SAvatar";
+import { FaRegComment } from "react-icons/fa";
 
 export default function CommentGridLayout(props: CommentProps) {
   const { comment, isCommunity } = props;
@@ -148,87 +150,57 @@ export default function CommentGridLayout(props: CommentProps) {
           </div>
         </>
       </CardBody>
-      <div className="px-4 mt-4 gap-6 flex flex-row items-center justify-between">
-        <User
-          classNames={{
-            description: "text-default-900/60 dark:text-gray-200 text-sm",
-            name: "text-default-800",
-          }}
-          name={
-            <div className="flex items-center space-x-2">
-              {isSelf ? (
-                <SLink
-                  className=" hover:text-blue-500"
-                  href={`/@${commentInfo.author}`}
-                >
-                  {comment.author}
-                </SLink>
-              ) : (
-                <SLink
-                  className=" hover:text-blue-500"
-                  href={`/@${commentInfo.author}`}
-                >
-                  {comment.author}
-                </SLink>
-              )}
-              <Reputation
-                {...props}
-                reputation={commentInfo.author_reputation}
-              />
-            </div>
-          }
-          description={
-            <div className="flex flex-wrap gap-x-2 items-center">
-              <RoleTitleCard comment={comment} />
 
-              <TimeAgoWrapper
-                lang={"en"}
-                created={commentInfo.created * 1000}
-                lastUpdate={commentInfo.last_update * 1000}
-              />
+      <div className="flex flex-col gap-2 px-4">
+        <div className="mt-2 flex flex-row items-center justify-between">
+          <div className="flex flex-row items-center gap-1">
+            <SAvatar size="sm" username={comment.author} />
+
+            <div className="flex flex-col gap-1 text-sm">
+              <div className="flex items-center space-x-2">
+                <SLink href={`/@${commentInfo.author}`}>{comment.author}</SLink>
+
+                <Reputation
+                  {...props}
+                  reputation={commentInfo.author_reputation}
+                />
+              </div>
+
+              <div className="flex flex-wrap gap-x-2 items-center">
+                <RoleTitleCard comment={comment} />
+
+                <TimeAgoWrapper
+                  lang={"en"}
+                  created={commentInfo.created * 1000}
+                  lastUpdate={commentInfo.last_update * 1000}
+                />
+              </div>
             </div>
-          }
-          avatarProps={
-            {
-              className: "cursor-pointer",
-              src: getResizedAvatar(commentInfo.author),
-              as: SLink,
-              href: `/@${commentInfo.author}`,
-            } as any
-          }
-        />
-      </div>
-      <div className="px-4 flex flex-row items-center justify-between ">
-        <div>
-          {!!commentInfo.resteem_count && (
-            <span
-              title={commentInfo.resteem_count + " Resteems"}
-              className="py-1 text-xs font-regular text-default-600 mr-1 flex flex-row items-center"
+          </div>
+        </div>
+        <div className="flex flex-row items-center justify-end">
+          {/* <div>
+            {!!commentInfo.resteem_count && (
+              <span
+                title={commentInfo.resteem_count + " Resteems"}
+                className="py-1 text-xs font-regular text-default-600 mr-1 flex flex-row items-center"
+              >
+                {abbreviateNumber(commentInfo.resteem_count)} Resteems
+              </span>
+            )}
+          </div> */}
+
+          {!!commentInfo.children && (
+            <SLink
+              href={`/${commentInfo.category}/@${commentInfo.author}/${commentInfo.permlink}#comments`}
+              title={`${commentInfo.children} Comments`}
+              className="flex flex-row items-center gap-2"
             >
-              {abbreviateNumber(commentInfo.resteem_count)} Resteems
-            </span>
+              <FaRegComment />
+              <p className="text-sm">{commentInfo.children}</p>
+            </SLink>
           )}
         </div>
-
-        <span
-          title={`${commentInfo.children} Comments`}
-          className="py-1 text-xs font-regular text-default-600 mr-1 flex flex-row items-center"
-        >
-          <svg
-            className="h-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
-            ></path>
-          </svg>
-          <span className="ml-1">{commentInfo.children}</span>
-        </span>
       </div>
       <CommentFooter
         compact

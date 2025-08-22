@@ -15,6 +15,8 @@ import STable from "@/components/ui/STable";
 import { RiUserStarFill } from "react-icons/ri";
 import WitnessItemCard from "@/components/WitnessItemCard";
 import { SiTraefikproxy } from "react-icons/si";
+import { getTimeFromNow } from "@/utils/helper/time";
+import moment from "moment";
 
 interface Props {
   data: WitnessDataProps;
@@ -34,7 +36,6 @@ function WitnessListTab(props: Props) {
   const [witnesses, setWitnesses] = useState(witnessList);
 
   let [witnessRef, setWitnessRef] = useState("");
-  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     if (witnesses) {
@@ -70,26 +71,6 @@ function WitnessListTab(props: Props) {
   if (error) {
     return <ErrorCard message={error?.message} />;
   }
-
-  const formatPreviewValue = (key: string, value: any): string => {
-    if (value === null || value === undefined) {
-      return "N/A";
-    }
-
-    // Handle exchange_rate object specifically
-    if (key === "reported_price" && typeof value === "object") {
-      const base = value.base || "N/A";
-      const quote = value.quote || "N/A";
-      return `${base} / ${quote}`;
-    }
-
-    // Handle other objects
-    if (typeof value === "object") {
-      return JSON.stringify(value);
-    }
-
-    return String(value);
-  };
 
   return (
     <>
@@ -158,7 +139,7 @@ function WitnessListTab(props: Props) {
             {[...Array(10)].map((_, i) => (
               <div
                 key={i}
-                className="border border-gray-200/20 rounded-lg p-3 sm:p-4 animate-pulse"
+                className="border border-default-900/10 rounded-lg p-3 sm:p-4 animate-pulse"
               >
                 <div className="flex justify-between items-center">
                   <div className="flex-1">
@@ -176,96 +157,12 @@ function WitnessListTab(props: Props) {
         }
         bodyClassName="flex flex-col gap-8 mt-6"
         tableRow={(witness: MergedWitness) => {
-          const imporantFields = {
-            rank: witness.rank,
-            created: new Date(witness.created * 1000).toLocaleString(),
-            produced_blocks: witness.produced_blocks,
-            last_confirmed_block: witness.last_confirmed_block,
-            last_sync: new Date(witness.last_sync * 1000).toLocaleString(),
-            account_creation_fee: witness.props.account_creation_fee,
-            maximum_block_size: witness.props.maximum_block_size,
-            sbd_interest_rate: witness.props.sbd_interest_rate,
-            signing_key: witness.signing_key,
-            version: witness.version,
-            url: witness.url,
-            reported_price: witness.reported_price,
-          };
-
           return (
-            <div
-              key={witness.name}
-              className={twMerge(
-                witness.isDisabled ? "opacity-60" : "",
-                witness.name === witnessRef
-                  ? "bg-green-600/20  animate-appearance-in"
-                  : ""
-              )}
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex flex-col gap-2">
-                  <WitnessItemCard
-                    witness={witness}
-                    endContent={
-                      <span>
-                        <Button
-                          variant="flat"
-                          size="sm"
-                          onPress={() => setIsExpanded(!isExpanded)}
-                          className="flex items-center space-x-1 text-default-500"
-                          isIconOnly
-                        >
-                          {isExpanded ? (
-                            <FaChevronDown />
-                          ) : (
-                            <FaCode size={16} />
-                          )}
-                        </Button>
-                      </span>
-                    }
-                  />
-                </div>
-                <div className="flex gap-0 w-full sm:w-auto sm:justify-normal justify-end">
-                  <WitnessVoteButton
-                    className="rounded-s-md"
-                    isVoted={witness.voted}
-                    witness={witness.name}
-                    isDisabled={!!currentProxy}
-                  />
-
-                  <Button
-                    as={SLink}
-                    size="sm"
-                    target="_blank"
-                    href={witness.url ?? `/@${witness.name}`}
-                    variant="flat"
-                    className="px-2 sm:px-3 rounded-s-none"
-                  >
-                    <FiExternalLink size={14} />
-                    Info
-                  </Button>
-                </div>
-              </div>
-
-              {isExpanded &&
-                imporantFields &&
-                typeof imporantFields === "object" &&
-                Object.keys(imporantFields).length > 2 && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-3 border-default-900/30">
-                    {Object.entries(imporantFields).map(([key, value]) => (
-                      <div key={key} className="space-y-1">
-                        <div className="text-xs text-muted-foreground capitalize font-medium text-default-500">
-                          {key.replace(/_/g, " ")}
-                        </div>
-                        <div className="text-sm bg-background/60 p-2 rounded border border-default-900/30">
-                          <span className="break-all">
-                            {formatPreviewValue(key, value)}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-            </div>
+            <WitnessItem
+              witness={witness}
+              currentProxy={currentProxy}
+              witnessRef={witnessRef}
+            />
           );
         }}
       />
@@ -285,4 +182,129 @@ function WitnessListTab(props: Props) {
   );
 }
 
+const formatPreviewValue = (key: string, value: any): string => {
+  if (value === null || value === undefined) {
+    return "N/A";
+  }
+
+  // Handle exchange_rate object specifically
+  if (key === "reported_price" && typeof value === "object") {
+    const base = value.base || "N/A";
+    const quote = value.quote || "N/A";
+    return `${base} / ${quote}`;
+  }
+
+  // Handle other objects
+  if (typeof value === "object") {
+    return JSON.stringify(value);
+  }
+
+  return String(value);
+};
+
 export default WitnessListTab;
+
+const WitnessItem = ({
+  witness,
+  witnessRef,
+  currentProxy,
+}: {
+  witness: MergedWitness;
+  witnessRef?: string;
+  currentProxy?: string;
+}) => {
+  const imporantFields = {
+    rank: witness.rank,
+    created: `${new Date(
+      witness.created * 1000
+    ).toLocaleString()} (${getTimeFromNow(witness.created * 1000)})`,
+    produced_blocks: witness.produced_blocks,
+    last_confirmed_block: witness.last_confirmed_block,
+    last_sync: new Date(witness.last_sync * 1000).toLocaleString(),
+    account_creation_fee: witness.props.account_creation_fee,
+    maximum_block_size: witness.props.maximum_block_size,
+    sbd_interest_rate: witness.props.sbd_interest_rate,
+    signing_key: witness.signing_key,
+    version: witness.version,
+    url: witness.url,
+    reported_price: witness.reported_price,
+    last_price_report: `${new Date(
+      witness.last_price_report * 1000
+    ).toLocaleString()} (${getTimeFromNow(witness.last_price_report * 1000)})`,
+  };
+
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <div
+      key={witness.name}
+      className={twMerge(
+        witness.isDisabled ? "opacity-60" : "",
+        witness.name === witnessRef
+          ? "bg-green-600/20  animate-appearance-in"
+          : ""
+      )}
+    >
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col gap-2">
+          <WitnessItemCard
+            witness={witness}
+            endContent={
+              <span>
+                <Button
+                  variant="flat"
+                  size="sm"
+                  onPress={() => setIsExpanded(!isExpanded)}
+                  className="flex items-center space-x-1 text-default-500"
+                  isIconOnly
+                >
+                  {isExpanded ? <FaChevronDown /> : <FaCode size={16} />}
+                </Button>
+              </span>
+            }
+          />
+        </div>
+        <div className="flex gap-0 w-full sm:w-auto sm:justify-normal justify-end">
+          <WitnessVoteButton
+            className="rounded-s-md"
+            isVoted={witness.voted}
+            witness={witness.name}
+            isDisabled={!!currentProxy}
+          />
+
+          <Button
+            as={SLink}
+            size="sm"
+            target="_blank"
+            href={witness.url ?? `/@${witness.name}`}
+            variant="flat"
+            className="px-2 sm:px-3 rounded-s-none"
+          >
+            <FiExternalLink size={14} />
+            Info
+          </Button>
+        </div>
+      </div>
+
+      {isExpanded &&
+        imporantFields &&
+        typeof imporantFields === "object" &&
+        Object.keys(imporantFields).length > 2 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-3 border-default-900/30">
+            {Object.entries(imporantFields).map(([key, value]) => (
+              <div key={key} className="space-y-1">
+                <div className="text-xs text-muted-foreground capitalize font-medium text-default-500">
+                  {key.replace(/_/g, " ")}
+                </div>
+                <div className="text-sm bg-background/60 p-2 rounded border border-default-900/30">
+                  <span className="break-all">
+                    {formatPreviewValue(key, value)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+    </div>
+  );
+};

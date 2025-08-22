@@ -8,6 +8,7 @@ import DelegationTab from "./DelegationTab";
 import TransferHistoryTab from "./TransferHistoryTab";
 import PendingRewards from "@/components/PendingRewards";
 import PowerDownStatus from "@/components/PowerDownStatus";
+import AccountRecoveryStatus from "@/components/AccountRecoveryStatus";
 
 export default function WalletTab({ data }: { data: AccountExt }) {
   const [selectedTab, setSelectedTab] = useState("balance");
@@ -15,6 +16,7 @@ export default function WalletTab({ data }: { data: AccountExt }) {
 
   return (
     <div className=" flex flex-col gap-2">
+      <AccountRecoveryStatus account={data} />
       <PendingRewards account={data} />
       <PowerDownStatus account={data} />
 

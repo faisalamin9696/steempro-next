@@ -115,7 +115,7 @@ export default function AccountItemCard(props: Props) {
     <Card
       shadow="sm"
       className={twMerge(
-        "flex flex-col gap-2 w-full p-2 comment-card",
+        "flex flex-col gap-2 w-full p-2 comment-card border-1 border-default-900/10",
         props.className
       )}
     >
