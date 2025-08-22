@@ -53,7 +53,7 @@ const typeColorMap = {
   mute_post: "default",
 };
 
-const ITEMS_PER_BATCH = 10;
+const ITEMS_PER_BATCH = 50;
 let tempLastRead = 0;
 
 export default function NotificationsTable(props: Props) {
