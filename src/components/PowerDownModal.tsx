@@ -116,7 +116,12 @@ const PowerDownModal = (props: Props): React.ReactNode => {
     <SModal
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      modalProps={{ isDismissable: false, hideCloseButton: true, size: "2xl" }}
+      modalProps={{
+        isDismissable: false,
+        hideCloseButton: true,
+        size: "2xl",
+        scrollBehavior: "inside",
+      }}
       title={() => (cancel ? "Cancel Power Down" : "" + "Power Down")}
       body={() => (
         <>

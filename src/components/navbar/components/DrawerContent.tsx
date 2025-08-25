@@ -118,7 +118,7 @@ function DrawerContent() {
     },
     {
       title: "Privacy Policy",
-      href: `/policy`,
+      href: `/privacy-policy`,
       unFocusedIcon: <MdOutlinePolicy size={iconSize} />,
       focusedIcon: <MdPolicy size={iconSize} />,
     },

@@ -201,6 +201,36 @@ export default function page() {
           </p>
 
           <h3 className="text-xl font-semibold mb-2">
+            Child Safety Standards Policy
+          </h3>
+          <p className="mb-4">
+            We strictly comply with the Children's Online Privacy Protection Act
+            (COPPA) to ensure the privacy and safety of children under 13 years
+            of age. Our practices include:
+          </p>
+          <ul className="list-disc list-inside mb-4 text-default-500">
+            <li>
+              Verifiable parental consent before collecting any personal
+              information from children.
+            </li>
+            <li>
+              Clear notice to parents about our data collection practices.
+            </li>
+            <li>
+              Limited collection of personal information to only what is
+              necessary for participation.
+            </li>
+            <li>
+              Giving parents the right to review, delete, and refuse further
+              collection of their child's information.
+            </li>
+            <li>
+              Maintaining reasonable procedures to protect the confidentiality
+              and security of children's information.
+            </li>
+          </ul>
+
+          <h3 className="text-xl font-semibold mb-2">
             Other US State Regulations
           </h3>
 
@@ -221,7 +251,7 @@ export default function page() {
               <SLink
                 className=" hover:underline"
                 target="_blank"
-                href={"/policy"}
+                href={"/privacy-policy"}
               >
                 policy
               </SLink>{" "}
@@ -302,9 +332,6 @@ export default function page() {
           </div>
         </div>
       </MainWrapper>
-      <footer className="bg-gray-800 text-white py-4 mt-10 text-center">
-        <p>&copy; 2024 SteemPro. All rights reserved.</p>
-      </footer>
     </div>
   );
 }

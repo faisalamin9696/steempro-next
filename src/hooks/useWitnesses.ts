@@ -11,7 +11,7 @@ export const useWitnesses = (observer?: string | null) => {
 };
 
 // Helper function to format votes in millions
-const formatVotesInMillions = (rawVests: string): string => {
+export const formatVotesInMillions = (rawVests: string): string => {
   const vests = parseFloat(rawVests);
   const millions = vests / 1000000000000000; // Convert to millions (15 zeros)
   return `${millions.toFixed(3)}M`;

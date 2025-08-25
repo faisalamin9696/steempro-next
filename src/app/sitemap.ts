@@ -1,24 +1,24 @@
-import { MetadataRoute } from 'next'
- 
+import { MetadataRoute } from "next";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: 'https://steempro.com',
+      url: "https://steempro.com",
       lastModified: new Date(),
-      changeFrequency: 'always',
+      changeFrequency: "always",
       priority: 1,
     },
     {
-      url: 'https://steempro.com/about',
+      url: "https://steempro.com/about",
       lastModified: new Date(),
-      changeFrequency: 'yearly',
+      changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: 'https://steempro.com/policy',
+      url: "https://steempro.com/privacy-policy",
       lastModified: new Date(),
-      changeFrequency: 'monthly',
+      changeFrequency: "monthly",
       priority: 0.5,
     },
-  ]
+  ];
 }

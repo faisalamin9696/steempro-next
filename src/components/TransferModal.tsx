@@ -341,7 +341,9 @@ const TransferModal = (props: TransferModalProps) => {
     }
 
     const credentials = authenticateUserActive(isKeychain);
-    if (!isAuthorizedActive(credentials?.key) || !credentials?.key) {
+
+    if (!isAuthorizedActive(credentials?.key)) return;
+    if (!credentials?.key) {
       toast.error("Invalid credentials");
       return;
     }
@@ -474,6 +476,7 @@ const TransferModal = (props: TransferModalProps) => {
         isDismissable: false,
         hideCloseButton: true,
         size: "2xl",
+        scrollBehavior: "inside",
       }}
       title={() => title}
       body={() => (

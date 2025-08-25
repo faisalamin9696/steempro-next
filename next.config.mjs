@@ -119,8 +119,8 @@ const nextConfig = {
 
       // policy page uppercase handle
       {
-        source: "/POLICY",
-        destination: "/policy",
+        source: "/PRIVACY-POLICY",
+        destination: "/privacy-policy",
       },
 
       // communities page uppercase handle

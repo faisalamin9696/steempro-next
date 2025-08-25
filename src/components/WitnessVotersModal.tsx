@@ -22,6 +22,7 @@ import {
   DropdownItem,
 } from "@heroui/dropdown";
 import { IoFilterOutline } from "react-icons/io5";
+import { formatVotesInMillions } from "@/hooks/useWitnesses";
 
 interface Props {
   witness: { name: string; received_votes: number; votes: string };
@@ -126,6 +127,7 @@ export default function WitnessVotersModal(props: Props) {
                   stickyHeader
                   titleClassName="w-full"
                   itemsPerPage={30}
+                  filterByValue={"account"}
                   title={
                     <div className="flex flex-row items-center justify-between w-full">
                       <div className=" flex flex-row gap-2 items-center">
@@ -178,28 +180,44 @@ export default function WitnessVotersModal(props: Props) {
                   tableRow={(item: WitnessVoteProps) => {
                     const ownSp = item.sp_own?.toLocaleString();
                     const ownProxied = item.proxied_sp?.toLocaleString();
+                    const voteShare =
+                      (parseFloat(
+                        formatVotesInMillions(witness.received_votes.toString())
+                      ) *
+                        item.share) /
+                        100 || 0;
 
                     return (
                       <div className="flex gap-2 items-start">
                         <SAvatar size="1xs" username={item.account} />
 
                         <div className=" flex flex-col gap-2">
-                          <div className="flex flex-row gap-2">
-                            <SLink
-                              className=" hover:text-blue-500"
-                              href={`/@${item.account}`}
-                            >
+                          <div className="flex flex-row gap-2 items-center">
+                            <SLink href={`/@${item.account}`}>
                               {item.account}
                             </SLink>
 
-                            <Chip
-                              className="capitalize border-none gap-1 text-default-600"
-                              color={"success"}
-                              size="sm"
-                              variant="flat"
-                            >
-                              {item.share?.toLocaleString()}%
-                            </Chip>
+                            {item.share >= 0.001 && (
+                              <Chip
+                                className="capitalize border-none gap-1 text-default-600"
+                                color={"success"}
+                                size="sm"
+                                variant="flat"
+                              >
+                                {item.share?.toLocaleString()}%
+                              </Chip>
+                            )}
+
+                            {voteShare >= 0.001 && (
+                              <Chip
+                                className="capitalize gap-1 text-default-600"
+                                color={"default"}
+                                size="sm"
+                                variant="faded"
+                              >
+                                {voteShare.toLocaleString() + "M"}
+                              </Chip>
+                            )}
                           </div>
 
                           <p>own: {ownSp} SP</p>
