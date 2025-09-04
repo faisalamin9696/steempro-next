@@ -80,7 +80,7 @@ const AccountRecoveryStatus = ({ account }: AccountRecoveryStatusProps) => {
   };
 
   const handleTakeAction = () => {
-    recoveryDisclosure.onOpen;
+    recoveryDisclosure.onOpen();
   };
 
   return (

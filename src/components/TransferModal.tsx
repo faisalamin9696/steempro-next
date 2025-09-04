@@ -622,7 +622,14 @@ const TransferModal = (props: TransferModalProps) => {
       footer={() => (
         <div className="flex flex-row w-full justify-between items-center">
           <KeychainButton
-            isDisabled={!confirmCheck || isPending}
+            isDisabled={
+              !confirmCheck ||
+              isPending ||
+              (!!renderWarn && !warnCheck) ||
+              !amount ||
+              !to ||
+              (isTransferToAccount && transferChecks.isVerifiedAccount && !memo)
+            }
             onPress={() => handleTransfer(true)}
           />
 

@@ -24,7 +24,6 @@ import {
   useSearchParams,
 } from "next/navigation";
 import ProfileTabPage from "./ProfileTabPage";
-import ChatModal from "@/components/chat/user/ChatModal";
 import { useDisclosure } from "@heroui/modal";
 import { useLogin } from "@/components/auth/AuthProvider";
 import AccountHeader from "@/components/AccountHeader";
@@ -34,6 +33,7 @@ import WalletTab from "./walletTab/WalletTab";
 import SettingsPage from "@/app/settings/SettingsPage";
 import SLink from "@/components/ui/SLink";
 import NotificationsTable from "@/components/NotificationsTable";
+import ChatModal from "@/components/chat/user/ChatModal";
 
 export default function ProfilePage({ data }: { data: AccountExt }) {
   let { username, tab } = useParams() as { username: string; tab: string };
@@ -83,7 +83,10 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
 
   return (
     <div>
-      <AccountHeader account={profileInfo} onChatPress={openChat} />
+      <AccountHeader
+        account={profileInfo}
+        onChatPress={chatDisclosure.onOpen}
+      />
       <div className={twMerge("relative items-center flex-row w-full")}>
         <Tabs
           size={"sm"}
@@ -129,7 +132,7 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
           </div>
         )}
       </div>
-      {chatDisclosure.isOpen && profileInfo && (
+      {chatDisclosure.isOpen && (
         <ChatModal
           isOpen={chatDisclosure.isOpen}
           onOpenChange={chatDisclosure.onOpenChange}

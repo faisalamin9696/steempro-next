@@ -1,34 +1,26 @@
-"use client";
-
-import { Button } from "@heroui/button";
 import React, { useEffect, useRef, useState } from "react";
+import SModal from "../../ui/SModal";
 import { useAppSelector } from "@/constants/AppFunctions";
-import useSWR from "swr";
-import { supabase } from "@/libs/supabase";
-import LoadingCard from "../../LoadingCard";
-import EmptyChat from "../components/EmptyChat";
-import { toast } from "sonner";
+import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { getCredentials, getSessionKey } from "@/utils/user";
-import { sendMessage } from "@/libs/steem/condenser";
+import { useSession } from "next-auth/react";
 import { Memo } from "@steempro/dsteem";
+import { supabase } from "@/libs/supabase";
+import useSWR from "swr";
+import { toast } from "sonner";
+import { sendMessage } from "@/libs/steem/condenser";
+import sanitize from "sanitize-html";
 import moment from "moment";
-import { twMerge } from "tailwind-merge";
-import { BsArrowDown } from "react-icons/bs";
 import { Chip } from "@heroui/chip";
 import SAvatar from "../../ui/SAvatar";
-import MessageReplyRef from "../components/MessageReplyRef";
-import ChatInput from "../components/ChatInput";
-import sanitize from "sanitize-html";
+import EmptyChat from "../components/EmptyChat";
+import LoadingCard from "../../LoadingCard";
 import Messages from "./Messages";
-import { useSession } from "next-auth/react";
-import { useDeviceInfo } from "@/hooks/useDeviceInfo";
-import SModal from "@/components/ui/SModal";
-
-interface Props {
-  account: AccountExt;
-  isOpen: boolean;
-  onOpenChange: (isOpen: boolean) => void;
-}
+import { Button } from "@heroui/button";
+import { BsArrowDown } from "react-icons/bs";
+import { twMerge } from "tailwind-merge";
+import ChatInput from "../components/ChatInput";
+import MessageReplyRef from "../components/MessageReplyRef";
 
 const ITEMS_PER_BATCH = 30;
 
@@ -56,8 +48,15 @@ export function getDecryptedData(key: string, item: Message): Message {
   }
 }
 
-export default function ChatModal(props: Props) {
-  const { account, isOpen, onOpenChange } = props;
+function ChatModal({
+  isOpen,
+  onOpenChange,
+  account,
+}: {
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  account: AccountExt;
+}) {
   if (!account) return null;
 
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
@@ -188,95 +187,102 @@ export default function ChatModal(props: Props) {
       setMessageAlert(false);
     }
   }
-  <SModal
-    isOpen={isOpen}
-    onOpenChange={onOpenChange}
-    modalProps={{
-      scrollBehavior: "inside",
-      isDismissable: false,
-      backdrop: "blur",
-      classNames: { base: "h-full" },
-    }}
-    title={() => (
-      <div className="flex flex-col gap-1">
-        <div className="flex flex-row gap-2 items-center text-center">
-          <p>Private Chat Room</p>
-          <Chip avatar={<SAvatar username={account.name} />} variant="flat">
-            {account.name}
-          </Chip>
-        </div>
-      </div>
-    )}
-    subTitle={() => "This conversation is secured with end-to-end encryption."}
-    body={() => (
-      <div className="scrollbar-thin pb-10" id="scrollDiv">
-        <div className="flex flex-col w-full">
-          <div className="flex flex-col gap-4 py-1">
-            {isLoading ? (
-              <LoadingCard />
-            ) : !messages.length ? null : (
-              <Messages
-                account={account}
-                messages={messages}
-                setRefMessage={(message) => {
-                  setRefMessage(message);
-                  setTimeout(() => {
-                    inputRef.current?.focus();
-                  }, 200);
-                }}
-                messageAlert={messageAlert}
-                setMessageAlert={setMessageAlert}
-                handleNewMessage={(newMsg) => {
-                  // setMessages((prev) => [
-                  //   ...prev,
-                  //   getDecryptedData(credentials?.memo!, newMsg),
-                  // ]);
-                }}
-              />
-            )}
-            <div ref={bottomRef} />
+
+  return (
+    <SModal
+      modalProps={{
+        scrollBehavior: "inside",
+        isDismissable: false,
+        backdrop: "blur",
+        classNames: { base: "h-full" },
+      }}
+      title={() => (
+        <div className="flex flex-col gap-1">
+          <div className="flex flex-row gap-2 items-center text-center">
+            <p>Private Chat Room</p>
+            <Chip avatar={<SAvatar username={account.name} />} variant="flat">
+              {account.name}
+            </Chip>
           </div>
-
-          {data && !messages.length && <EmptyChat username={account.name} />}
         </div>
-      </div>
-    )}
-    footer={() => (
-      <div className="sticky bottom-4 rounded-md flex flex-row items-center w-full gap-4">
-        {refMessage && (
-          <MessageReplyRef
-            fullWidth
-            className="absolute left-0 bottom-14 transition-opacity duration-300"
-            text={refMessage.message}
-            handleClose={() => setRefMessage(undefined)}
+      )}
+      subTitle={() =>
+        "This conversation is secured with end-to-end encryption."
+      }
+      body={() => (
+        <div className="scrollbar-thin pb-10" id="scrollDiv">
+          <div className="flex flex-col w-full">
+            <div className="flex flex-col gap-4 py-1">
+              {isLoading ? (
+                <LoadingCard />
+              ) : !messages.length ? null : (
+                <Messages
+                  account={account}
+                  messages={messages}
+                  setRefMessage={(message) => {
+                    setRefMessage(message);
+                    setTimeout(() => {
+                      inputRef.current?.focus();
+                    }, 200);
+                  }}
+                  messageAlert={messageAlert}
+                  setMessageAlert={setMessageAlert}
+                  handleNewMessage={(newMsg) => {
+                    // setMessages((prev) => [
+                    //   ...prev,
+                    //   getDecryptedData(credentials?.memo!, newMsg),
+                    // ]);
+                  }}
+                />
+              )}
+              <div ref={bottomRef} />
+            </div>
+
+            {data && !messages.length && <EmptyChat username={account.name} />}
+          </div>
+        </div>
+      )}
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      footer={() => (
+        <div className="sticky bottom-4 rounded-md flex flex-row items-center w-full gap-4">
+          {refMessage && (
+            <MessageReplyRef
+              fullWidth
+              className="absolute left-0 bottom-14 transition-opacity duration-300"
+              text={refMessage.message}
+              handleClose={() => setRefMessage(undefined)}
+            />
+          )}
+
+          <ChatInput
+            ref={inputRef}
+            value={message}
+            onValueChange={setMessage}
+            onSubmit={handleSend}
+            isPending={isPending}
           />
-        )}
 
-        <ChatInput
-          ref={inputRef}
-          value={message}
-          onValueChange={setMessage}
-          onSubmit={handleSend}
-          isPending={isPending}
-        />
-
-        {messageAlert && (
-          <Button
-            onPress={scrollToBottom}
-            color="default"
-            variant="solid"
-            size="sm"
-            isIconOnly
-            radius="full"
-            className={twMerge(
-              `absolute right-1 bottom-20 transition-opacity duration-300`,
-              messageAlert ? " opacity-100" : " opacity-0"
-            )}
-          >
-            <BsArrowDown size={18} />
-          </Button>
-        )}
-      </div>
-    )}
-  />;
+          {messageAlert && (
+            <Button
+              onPress={scrollToBottom}
+              color="default"
+              variant="solid"
+              size="sm"
+              isIconOnly
+              radius="full"
+              className={twMerge(
+                `absolute right-1 bottom-20 transition-opacity duration-300`,
+                messageAlert ? " opacity-100" : " opacity-0"
+              )}
+            >
+              <BsArrowDown size={18} />
+            </Button>
+          )}
+        </div>
+      )}
+    />
+  );
 }
+
+export default ChatModal;

@@ -3,13 +3,13 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import useRealtimeMessages from "@/hooks/useRealtimeMessages";
 import { useAppSelector } from "@/constants/AppFunctions";
-import { getDecryptedData } from "./ChatModal";
 import { getCredentials } from "@/utils/user";
 import { useMutation } from "@tanstack/react-query";
 import { supabase } from "@/libs/supabase";
 import { toast } from "sonner";
 import { Button } from "@heroui/button";
 import MessageItem from "../components/MessageItem";
+import { getDecryptedData } from "./ChatModal";
 
 interface MessagesProps {
   account: AccountExt;

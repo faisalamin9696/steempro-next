@@ -510,7 +510,7 @@ export default memo(function EditorInput(props: EditorProps) {
     if (errStr.includes("code 429")) return "Upload limit exceeded";
     if (errStr.includes("code 400")) return "Invalid image file";
 
-    return error?.message || "Unknown upload error occurred";
+    return JSON.stringify(error?.message) || "Unknown upload error occurred";
   };
 
   const SuggestionItem = ({ name }: { name: string }) => {

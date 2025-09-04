@@ -13,11 +13,7 @@ import { Card } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { useMutation } from "@tanstack/react-query";
-import {
-  checkPromotionText,
-  getCredentials,
-  getSessionKey,
-} from "@/utils/user";
+import { getCredentials, getSessionKey } from "@/utils/user";
 import { readingTime } from "@/utils/readingTime/reading-time-estimator";
 import {
   grantPostingPermission,
@@ -180,8 +176,9 @@ export default function SubmitPage(props: Props) {
       if (isEdit) {
         let body = markdown;
 
-        if (!checkPromotionText(body) && !isEditComment)
-          body = body + "\n\n" + AppStrings.promotion_text;
+        // skip promotion text
+        // if (!checkPromotionText(body) && !isEditComment)
+        //   body = body + "\n\n" + AppStrings.promotion_text;
         handleUpdateSuccess &&
           handleUpdateSuccess({
             ...variables.postData,
@@ -315,8 +312,9 @@ export default function SubmitPage(props: Props) {
         permlink: permlink,
       };
 
-      if (!checkPromotionText(markdown))
-        postData.body = postData.body + "\n\n" + AppStrings.promotion_text;
+      // skip promotion text
+      // if (!checkPromotionText(markdown))
+      //   postData.body = postData.body + "\n\n" + AppStrings.promotion_text;
 
       const meta = extractMetadata(postData.body);
 
@@ -330,8 +328,9 @@ export default function SubmitPage(props: Props) {
           ? oldPost?.category
           : parent_permlink || "steempro";
 
-        if (!checkPromotionText(markdown))
-          newBody = newBody + "\n\n" + AppStrings.promotion_text;
+        // skip promotion text
+        // if (!checkPromotionText(markdown))
+        //   newBody = newBody + "\n\n" + AppStrings.promotion_text;
 
         const patch = createPatch(oldPost?.body, newBody?.trim());
         if (patch && patch.length < Buffer.from(oldPost.body, "utf-8").length) {
@@ -549,8 +548,9 @@ export default function SubmitPage(props: Props) {
         ""
       );
 
-      if (!checkPromotionText(markdown))
-        cbody = cbody + "\n\n" + AppStrings.promotion_text;
+      // skip promotion text
+      // if (!checkPromotionText(markdown))
+      //   cbody = cbody + "\n\n" + AppStrings.promotion_text;
 
       setScheduling(true);
 
@@ -631,7 +631,7 @@ export default function SubmitPage(props: Props) {
         className={twMerge(
           `flex flex-col w-full gap-2`,
           !oldPost &&
-          "1md:w-[50%] 1md:float-start 1md:sticky 1md:z-[1] 1md:self-start 1md:top-[80px] pb-5"
+            "1md:w-[50%] 1md:float-start 1md:sticky 1md:z-[1] 1md:self-start 1md:top-[80px] pb-5"
         )}
       >
         {!isEditComment && (
@@ -680,13 +680,10 @@ export default function SubmitPage(props: Props) {
           </>
         )}
 
-
-
         <EditorInput
           value={markdown}
           isDisabled={isLoading}
           onChange={setMarkdown}
-
         />
 
         <div className="flex gap-2 relativeitems-center flex-row">
@@ -806,9 +803,7 @@ export default function SubmitPage(props: Props) {
         )}
       >
         <div className=" items-center flex justify-between">
-          <p className="float-left text-default-800 font-bold">
-            {"Preview"}
-          </p>
+          <p className="float-left text-default-800 font-bold">{"Preview"}</p>
 
           <p className="float-right text-sm font-light text-default-500">
             {rpm?.words} words, {rpm?.text}

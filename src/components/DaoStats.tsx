@@ -77,11 +77,14 @@ export const DaoStats = ({ proposals }: { proposals?: Proposal[] }) => {
         title={"Total Proposals"}
         value={proposals?.length?.toLocaleString()}
         description={`${
-          fundedProposals?.length > 0 && `Funded (${fundedProposals?.length}) •`
-        } ${
-          activeProposals?.length > 0 &&
-          `Active (${activeProposals?.length})`
-        }`}
+          fundedProposals?.length > 0
+            ? `Funded (${fundedProposals.length}) • `
+            : ""
+        }${
+          activeProposals?.length > 0
+            ? `Active (${activeProposals.length})`
+            : ""
+        }`.trim()}
         valueClassName=" text-steem"
       />
 
