@@ -69,10 +69,10 @@ const MessageItem = (props: MessageItemProps) => {
         >
           <div
             className={clsx(
-              " flex flex-col max-w-[60%] px-4 py-2 rounded-lg shadow-md break-words",
+              " flex flex-col max-w-[80%] px-4 py-2 rounded-lg shadow-md break-words",
               isOwnMessage
                 ? "bg-blue-600 text-white items-end rounded-se-none"
-                : "comment-card items-start rounded-ss-none"
+                : "bg-default-100 items-start rounded-ss-none"
             )}
           >
             <div className=" flex flex-col gap-2">
@@ -119,7 +119,7 @@ const MessageItem = (props: MessageItemProps) => {
               <p className="text-sm mt-1">
                 <MarkdownViewer
                   text={message}
-                  className=" !text-sm prose-p:!m-0 break-words break-all whitespace-normal grow"
+                  className=" !text-sm prose-p:!m-0 break-words break-all whitespace-normal grow !text-inherit"
                 />
               </p>
             </div>

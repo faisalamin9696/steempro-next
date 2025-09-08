@@ -41,6 +41,8 @@ function MyWitnessTab(props: Props) {
     originalValues.current.creationFee
   );
   const isDisabling = signKey === DISABLE_EY;
+  const isDisabled = witness.signing_key === DISABLE_EY;
+
   const hasChanged = () => {
     return (
       signKey !== originalValues.current.signKey ||
@@ -117,10 +119,7 @@ function MyWitnessTab(props: Props) {
 
   return (
     <Card>
-      <div
-        key={witness.name}
-        className={twMerge(`p-4`, witness.isDisabled ? "opacity-60" : "")}
-      >
+      <div key={witness.name} className={twMerge(`p-4`)}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex flex-col gap-2">
             <WitnessItemCard witness={witness} />
@@ -231,7 +230,7 @@ function MyWitnessTab(props: Props) {
                 label={`Signing key ${isDisabling ? "(Disable key)" : ""}`}
                 value={signKey}
                 onValueChange={(value) => setSignKey(value.trim())}
-                isDisabled={isDisabling || mutation.isPending}
+                isDisabled={isDisabling && !isDisabled || mutation.isPending}
               />
 
               <Input
@@ -281,13 +280,13 @@ function MyWitnessTab(props: Props) {
                 Cancel
               </Button>
               <Button
-                color={isDisabling ? "danger" : "success"}
+                color={isDisabling && !isDisabled ? "danger" : "success"}
                 onPress={() => handleUpdateWitness()}
                 className={`${isDisabling ? "text-white" : ""}`}
                 isLoading={mutation.isPending}
                 isDisabled={!isDisabling && !hasChanged()}
               >
-                {isDisabling ? "Disable" : "Update"}
+                {isDisabling && !isDisabled ? "Disable" : "Update"}
               </Button>
             </div>
           </div>

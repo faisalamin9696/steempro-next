@@ -178,7 +178,7 @@ const CommunityMessages = (props: MessagesProps) => {
               transition={{ duration: 0.2 }}
             >
               <div
-                className=" flex flex-col"
+                className=" flex flex-col gap-2"
                 ref={(el) => {
                   messageItemRefs.current[msg.tid] = el;
                 }}

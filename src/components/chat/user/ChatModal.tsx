@@ -195,6 +195,7 @@ function ChatModal({
         isDismissable: false,
         backdrop: "blur",
         classNames: { base: "h-full" },
+        size: isMobile ? "full" : "xl",
       }}
       title={() => (
         <div className="flex flex-col gap-1">

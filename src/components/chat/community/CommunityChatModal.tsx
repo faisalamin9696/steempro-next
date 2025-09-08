@@ -179,7 +179,7 @@ export default function CommunityChatModal(props: Props) {
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       modalProps={{
-        size: isMobile ? "full" : "lg",
+        size: isMobile ? "full" : "xl",
         classNames: { base: "h-full" },
         isDismissable: false,
         scrollBehavior: "inside",
