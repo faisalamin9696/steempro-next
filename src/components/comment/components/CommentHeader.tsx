@@ -43,6 +43,7 @@ import Image from "next/image";
 import { Card } from "@heroui/card";
 import { Chip } from "@heroui/chip";
 import SAvatar from "@/components/ui/SAvatar";
+import CommentHeaderMenu from "./CommentHeaderMenu";
 
 interface Props {
   comment: Post | Feed;
@@ -57,24 +58,12 @@ interface Props {
 export default function CommentHeader(props: Props) {
   const { comment, className, isReply, compact, handleEdit, isDetail, hidden } =
     props;
-  const loginInfo = useAppSelector((state) => state.loginReducer.value);
-  const dispatch = useAppDispatch();
-  const { data: session } = useSession();
-
-  const username = session?.user?.name ?? loginInfo.name;
   const isUsingSteempro = JSON.parse(
     comment?.json_metadata ?? "{}"
   )?.app?.includes("steempro");
-
-  const isSelf = session?.user?.name === comment.author;
-  const canMute = username && Role.atLeast(comment.observer_role, "mod");
-  const canDelete = !comment.children && isSelf && allowDelete(comment);
-  const canEdit = isSelf;
   const settings =
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
   const [isRoleOpen, setIsRoleOpen] = useState(false);
-
-  const { authenticateUser, isAuthorized } = useLogin();
   const rpm = readingTime(comment.body);
   const [showHistory, setShowHistory] = useState(false);
 
@@ -87,155 +76,6 @@ export default function CommentHeader(props: Props) {
     mute: false,
     muteNote: "",
   });
-
-  const menuItems = [
-    { show: canEdit, key: "edit", name: "Edit", icon: RiEdit2Fill },
-    {
-      show: canDelete,
-      key: "delete",
-      name: "Delete",
-      icon: MdDelete,
-      color: "danger",
-    },
-    {
-      show: Role.atLeast(comment?.observer_role, "mod"),
-      key: "role",
-      name: "Edit Role/Title",
-      icon: FaUserEdit,
-    },
-    {
-      show: canMute,
-      key: "mute",
-      name: comment.is_muted ? "Unmute" : "Mute",
-      icon: MdDoNotDisturb,
-      color: "warning",
-    },
-    {
-      show: canMute,
-      key: "pin",
-      name: comment.is_pinned ? "Unpin" : "Pin",
-      icon: BsPinAngleFill,
-    },
-    { show: true, key: "copy", name: "Copy Link", icon: FaRegCopy },
-    { show: false, key: "promote", name: "Promote", icon: GrAnnounce },
-    { show: true, key: "history", name: "Edit History", icon: LuHistory },
-  ];
-  const renderedItems = menuItems
-    .filter((item) => item.show)
-    .map((item) => (
-      <DropdownItem
-        key={item.key}
-        color={(item.color as any) || "default"}
-        startContent={<item.icon className={"text-lg"} />}
-      >
-        {item.name}
-      </DropdownItem>
-    ));
-
-  const unmuteMutation = useMutation({
-    mutationFn: (data: { key: string; isKeychain?: boolean }) =>
-      mutePost(
-        loginInfo,
-        data.key,
-        !!!comment.is_muted,
-        {
-          community: comment.category,
-          account: comment.author,
-          permlink: comment.permlink,
-        },
-        data.isKeychain
-      ),
-    onSettled(data, error, variables, context) {
-      if (error) {
-        toast.error(error.message || JSON.stringify(error));
-        return;
-      }
-      dispatch(addCommentHandler({ ...comment, is_muted: 0 }));
-      toast.success(`Unmuted`);
-    },
-  });
-
-  const pinMutation = useMutation({
-    mutationFn: (data: { key: string; isKeychain?: boolean }) =>
-      pinPost(
-        loginInfo,
-        data.key,
-        !!!comment.is_pinned,
-        {
-          community: comment.category,
-          account: comment.author,
-          permlink: comment.permlink,
-        },
-        data.isKeychain
-      ),
-    onSettled(data, error, variables, context) {
-      if (error) {
-        toast.error(error.message || JSON.stringify(error));
-        return;
-      }
-      dispatch(
-        addCommentHandler({ ...comment, is_pinned: comment.is_pinned ? 0 : 1 })
-      );
-      toast.success(!!!comment.is_pinned ? "Pinned" : "Unpinned");
-    },
-  });
-
-  const isPending = pinMutation.isPending || unmuteMutation.isPending;
-
-  async function handleMenuActions(key: Key) {
-    switch (key) {
-      case "edit":
-        handleEdit && handleEdit();
-        break;
-
-      case "history":
-        setShowHistory(!showHistory);
-        break;
-
-      case "copy":
-        navigator.clipboard.writeText(window.location.href);
-        navigator.clipboard.writeText(
-          `${AppStrings.steempro_base_url}/@${comment.author}/${comment.permlink}`
-        );
-        break;
-      case "role":
-        setIsRoleOpen(!isRoleOpen);
-        break;
-      case "delete":
-        setConfirmationModal({ isOpen: true });
-        break;
-
-      case "mute":
-      case "pin":
-        authenticateUser();
-        if (!isAuthorized()) return;
-        const credentials = getCredentials(getSessionKey(session?.user?.name));
-        if (!credentials?.key) {
-          toast.error("Invalid credentials");
-          return;
-        }
-        if (key === "mute") {
-          // mute option will trigger the modal that's why only mute check
-          if (comment.is_muted !== 0) {
-            unmuteMutation.mutate({
-              key: credentials.key,
-              isKeychain: credentials.keychainLogin,
-            });
-            return;
-          }
-
-          // trigger for mute
-          setConfirmationModal({ isOpen: true, mute: true });
-          return;
-        }
-        if (key === "pin")
-          pinMutation.mutate({
-            key: credentials.key,
-            isKeychain: credentials.keychainLogin,
-          });
-        break;
-    }
-  }
 
   const ExtraInformation = ({ className }: { className?: string }) => {
     return (
@@ -260,125 +100,107 @@ export default function CommentHeader(props: Props) {
         className
       )}
     >
-      <div className="flex flex-row items-center gap-1">
-        <SAvatar size="sm" username={comment.author} />
-        <div className="flex flex-col gap-1">
-          <div className="flex flex-row items-center gap-1 text-sm">
-           
-              <SLink
-                href={`/@${comment.author}`}
-              >
-                {comment.author}
-              </SLink>
-            
-            <Reputation reputation={comment.author_reputation} />
-            {!!comment.is_pinned && (
-              <Chip
-                color="success"
-                variant="flat"
-                size="sm"
-                className="ms-1 h-5 px-0"
-              >
-                Pinned
-              </Chip>
-            )}
-            {!isReply && !compact ? (
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button
-                    size="sm"
-                    radius="full"
-                    isLoading={isPending}
-                    isDisabled={isPending}
-                    isIconOnly
-                    variant="light"
-                  >
-                    <FaEllipsis size={18} />
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  aria-labelledby="comment options"
-                  onAction={handleMenuActions}
-                  hideEmptyContent
+      <div className="flex flex-row justify-between flex-1">
+        <div className="flex flex-row items-center gap-1 flex-1">
+          <SAvatar size="sm" username={comment.author} />
+          <div className="flex flex-col gap-1">
+            <div className="flex flex-row items-center gap-1 text-sm">
+              <SLink href={`/@${comment.author}`}>{comment.author}</SLink>
+
+              <Reputation reputation={comment.author_reputation} />
+              {!!comment.is_pinned && (
+                <Chip
+                  color="success"
+                  variant="flat"
+                  size="sm"
+                  className="ms-1 h-5 px-0"
                 >
-                  {renderedItems}
-                </DropdownMenu>
-              </Dropdown>
-            ) : null}
-            {isDetail && isUsingSteempro && (
-              <Card title="Posted using SteemPro" className=" rounded-full">
-                <Image
-                  quality={75}
-                  title="Posted using SteemPro"
-                  alt=""
-                  height={20}
-                  width={20}
-                  src="/logo192.png"
-                />
-              </Card>
-            )}
-          </div>
-          <div className="flex flex-wrap items-center gap-x-2 text-default-900/60 dark:text-gray-200 text-sm">
-            <RoleTitleCard comment={comment} />
-
-            <div className={twMerge(`flex items-center gap-1`)}>
-              <TimeAgoWrapper
-                handleEditClick={() => {
-                  setShowHistory(!showHistory);
-                }}
-                lang={settings.lang.code}
-                created={comment.created * 1000}
-                lastUpdate={comment.last_update * 1000}
-              />
-              {!isReply && (
-                <div className="flex gap-2 sm:items-center">
-                  <p className={""}>in</p>
-
-                  <STag
-                    className="text-md font-semibold"
-                    onlyText
-                    content={
-                      comment.community ||
-                      (validateCommunity(comment.category)
-                        ? comment.category
-                        : `#${comment.category}`)
-                    }
-                    tag={comment.category}
+                  Pinned
+                </Chip>
+              )}
+              {!isReply && !compact ? (
+                <div className="flex md:hidden">
+                  <CommentHeaderMenu
+                    comment={comment}
+                    handleEdit={handleEdit}
                   />
                 </div>
+              ) : null}
+              {isDetail && isUsingSteempro && (
+                <Card title="Posted using SteemPro" className=" rounded-full">
+                  <Image
+                    quality={75}
+                    title="Posted using SteemPro"
+                    alt=""
+                    height={20}
+                    width={20}
+                    src="/logo192.png"
+                  />
+                </Card>
               )}
+            </div>
+            <div className="flex flex-wrap items-center gap-x-2 text-default-900/60 dark:text-gray-200 text-sm">
+              <RoleTitleCard comment={comment} />
+
+              <div className={twMerge(`flex items-center gap-1`)}>
+                <TimeAgoWrapper
+                  handleEditClick={() => {
+                    setShowHistory(!showHistory);
+                  }}
+                  lang={settings.lang.code}
+                  created={comment.created * 1000}
+                  lastUpdate={comment.last_update * 1000}
+                />
+                {!isReply && (
+                  <div className="flex gap-2 sm:items-center">
+                    <p className={""}>in</p>
+
+                    <STag
+                      className="text-md font-semibold"
+                      onlyText
+                      content={
+                        comment.community ||
+                        (validateCommunity(comment.category)
+                          ? comment.category
+                          : `#${comment.category}`)
+                      }
+                      tag={comment.category}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {!hidden && !isReply && !compact && comment.depth === 0 && (
-        <div className="absolute top-0 text-tiny right-0 items-center px-1">
-          <Popover
-            className="hidden max-sm:block"
-            placement="bottom"
-            showArrow
-            offset={10}
-          >
-            <PopoverTrigger className="absolute top-0 text-tiny right-0 items-center px-1">
-              <Button
-                isIconOnly
-                radius="full"
-                className="hidden max-sm:block"
-                size="sm"
-                variant="light"
-                color="default"
-              >
-                <FaInfoCircle className="text-lg text-default-800" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent>
-              <ExtraInformation />
-            </PopoverContent>
-          </Popover>
-          <ExtraInformation className="flex max-sm:hidden" />
-        </div>
-      )}
+        {!hidden && !isReply && !compact && comment.depth === 0 && (
+          <div className="text-tiny items-center px-1">
+            <Popover
+              className="hidden max-sm:block"
+              placement="bottom"
+              showArrow
+              offset={10}
+            >
+              <PopoverTrigger className="absolute top-0 text-tiny right-0 items-center px-1">
+                <Button
+                  isIconOnly
+                  radius="full"
+                  className="hidden max-sm:block"
+                  size="sm"
+                  variant="light"
+                  color="default"
+                >
+                  <FaInfoCircle className="text-lg text-default-800" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <ExtraInformation />
+              </PopoverContent>
+            </Popover>
+            <ExtraInformation className="flex max-sm:hidden" />
+          </div>
+        )}
+      </div>
       {isRoleOpen && (
         <EditRoleModal
           comment={comment}

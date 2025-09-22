@@ -101,11 +101,11 @@ class PayoutDetail extends Component<DetailProps> {
     }
 
     return (
-      <div className="flex flex-col gap-3 w-full text-sm text-white">
+      <div className="flex flex-col gap-3 w-full text-sm py-2">
         {/* Power Up Indicator */}
         {fullPower && (
           <div className="flex justify-between">
-            <span className="font-medium text-white">Reward</span>
+            <span className="font-medium">Reward</span>
             <span className="text-green-300 font-semibold">Power Up 100%</span>
           </div>
         )}
@@ -113,25 +113,25 @@ class PayoutDetail extends Component<DetailProps> {
         {/* Main Payouts */}
         {pendingPayout > 0 && (
           <div className="flex justify-between">
-            <span className="font-medium text-white">Pending Payout</span>
+            <span className="font-medium">Pending Payout</span>
             <span className="font-semibold">${pendingPayout.toFixed(3)}</span>
           </div>
         )}
         {promotedPayout > 0 && (
           <div className="flex justify-between">
-            <span className="font-medium text-white">Promoted</span>
+            <span className="font-medium">Promoted</span>
             <span className="font-semibold">${promotedPayout.toFixed(3)}</span>
           </div>
         )}
         {authorPayout > 0 && (
           <div className="flex justify-between">
-            <span className="font-medium text-white">Author Payout</span>
+            <span className="font-medium">Author Payout</span>
             <span className="font-semibold">${authorPayout.toFixed(3)}</span>
           </div>
         )}
         {curatorPayout > 0 && (
           <div className="flex justify-between">
-            <span className="font-medium text-white">Curators Payout</span>
+            <span className="font-medium">Curators Payout</span>
             <span className="font-semibold">${curatorPayout.toFixed(3)}</span>
           </div>
         )}
@@ -168,7 +168,7 @@ class PayoutDetail extends Component<DetailProps> {
         {/* Payout Info */}
         {payoutDate && (
           <div className="flex justify-between">
-            <span className="font-medium text-white">Payout Date</span>
+            <span className="font-medium">Payout Date</span>
             <span
               className="font-semibold"
               title={new Date(data.cashout_time * 1000).toLocaleString()}
@@ -179,15 +179,15 @@ class PayoutDetail extends Component<DetailProps> {
         )}
         {!payoutDate && !authorPayout && !curatorPayout && (
           <div className="flex justify-between">
-            <span className="font-medium text-white">Payout</span>
-            <span className="text-white font-semibold">Reward Distributed</span>
+            <span className="font-medium">Payout</span>
+            <span className="font-semibold">Reward Distributed</span>
           </div>
         )}
 
         {/* Max Payout Info */}
         {payoutLimitHit && (
           <div className="flex justify-between">
-            <span className="font-medium text-white">Max Accepted</span>
+            <span className="font-medium">Max Accepted</span>
             <span className="font-semibold">${maxPayout.toFixed(3)}</span>
           </div>
         )}

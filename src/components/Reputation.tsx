@@ -16,7 +16,7 @@ export default function Reputation({
     <Tooltip content={`${"Reputation score"}: ` + reputation}>
       <div
         className={twMerge(
-          "!normal-case rounded-md py-[1px] px-[3px] text-sm bg-background dark:bg-foreground/20 max-sm:text-xs text-default-900  shadow-md",
+          "!normal-case rounded-md py-[1px] px-[3px] text-sm bg-foreground/10 max-sm:text-xs text-default-900  shadow-md",
           className
         )}
       >

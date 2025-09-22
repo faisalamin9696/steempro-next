@@ -33,7 +33,7 @@ import WalletTab from "./walletTab/WalletTab";
 import SettingsPage from "@/app/settings/SettingsPage";
 import SLink from "@/components/ui/SLink";
 import NotificationsTable from "@/components/NotificationsTable";
-import ChatModal from "@/components/chat/user/ChatModal";
+import UserChatModal from "@/components/chat/user/UserChatModal";
 
 export default function ProfilePage({ data }: { data: AccountExt }) {
   let { username, tab } = useParams() as { username: string; tab: string };
@@ -133,7 +133,7 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
         )}
       </div>
       {chatDisclosure.isOpen && (
-        <ChatModal
+        <UserChatModal
           isOpen={chatDisclosure.isOpen}
           onOpenChange={chatDisclosure.onOpenChange}
           account={profileInfo}

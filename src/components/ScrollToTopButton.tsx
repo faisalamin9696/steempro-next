@@ -3,7 +3,13 @@ import { useEffect, useState } from "react";
 import { FaArrowUp } from "react-icons/fa"; // Import an icon for the button
 import { twMerge } from "tailwind-merge";
 
-export const ScrollToTopButton = ({ className }: { className?: string }) => {
+export const ScrollToTopButton = ({
+  className,
+  translateClass: translate,
+}: {
+  className?: string;
+  translateClass?: string;
+}) => {
   const [isVisible, setIsVisible] = useState(false);
 
   // Show/hide the button based on scroll position
@@ -31,7 +37,7 @@ export const ScrollToTopButton = ({ className }: { className?: string }) => {
     <div
       className={twMerge(
         `fixed bottom-8 right-8 z-50 transition-transform duration-300 ${
-          isVisible ? "translate-y-0" : "translate-y-20"
+          isVisible ? "translate-y-0" : `${translate || "translate-y-20"} `
         }`,
         className
       )}

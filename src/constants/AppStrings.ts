@@ -10,6 +10,7 @@ export const AppStrings = {
   chain_id: "0000000000000000000000000000000000000000000000000000000000000000",
   rpc_servers: [
     "https://api.steemit.com",
+    "https://api.steempro.com",
     "https://api.steemyy.com",
     "https://rpc.amarbangla.net",
     "https://steemapi.boylikegirl.club",

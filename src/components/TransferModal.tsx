@@ -287,7 +287,7 @@ const TransferModal = (props: TransferModalProps) => {
       dispatch(
         saveLoginHandler({
           ...loginInfo,
-          vests_out: loginInfo.vests_out + outVests,
+          vests_out: loginInfo.vests_out - (oldDelegation || 0) + outVests,
         })
       );
 

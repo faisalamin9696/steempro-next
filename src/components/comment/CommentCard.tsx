@@ -29,6 +29,8 @@ export interface CommentProps {
   onPublishClick?: (comment: Feed | Post) => void;
   isSearch?: boolean;
   isCommunity?: boolean;
+  stickLeft?: boolean;
+  handleEdit?: () => void;
 }
 
 export default memo(function CommentCard(props: Props) {

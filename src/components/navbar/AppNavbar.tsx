@@ -49,6 +49,7 @@ import { mutate } from "swr";
 import SModal from "../ui/SModal";
 import { SearchModal } from "../SearchModal";
 // import Lottie from "lottie-react";
+// import giftAnimation from "@/assets/gift_anim.json";
 
 export async function refreshData(username?: string | null) {
   mutate("/steem_requests_api/getSteemProps");
@@ -205,6 +206,17 @@ function AppNavbar() {
             >
               <MdSearch size={24} className="text-default-600 " />
             </Button>
+
+            {/* {isAuthenticated && (
+              <Button
+                size="sm"
+                variant="light"
+                isIconOnly
+                onPress={crateDisclosure.onOpen}
+              >
+                <Lottie style={{ height: 40 }} animationData={giftAnimation} />
+              </Button>
+            )} */}
 
             <Button
               as={SLink}
@@ -468,6 +480,25 @@ function AppNavbar() {
         )}
         body={(onClose) => <></>}
       />
+
+      {/* <SModal
+        modalProps={{
+          size: "2xl",
+          scrollBehavior: "inside",
+          hideCloseButton: true,
+          placement: "center",
+          backdrop: "blur",
+        }}
+        shouldDestroy
+        isOpen={crateDisclosure.isOpen}
+        onOpenChange={crateDisclosure.onOpenChange}
+        body={() => <CrateCard />}
+        footer={(onClose) => (
+          <Button color="danger" variant="flat" onPress={onClose}>
+            Cancel
+          </Button>
+        )}
+      /> */}
     </nav>
   );
 }

@@ -7,6 +7,7 @@ import { AppStrings } from "@/constants/AppStrings";
 import { SessionProvider } from "next-auth/react";
 import { Providers } from "./providers";
 import { auth } from "@/auth";
+import Script from "next/script";
 // export const runtime = 'edge' // 'nodejs' (default) | 'edge'
 // const inter = Inter({ subsets: ["latin"] });
 
@@ -70,10 +71,15 @@ export default async function RootLayout({
       />
       <link rel="preconnect " href={AppStrings.sds_base_url} />
 
-      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4510618528305465"
-        crossOrigin="anonymous"></script>
-
       <script async src="https://embed.redditmedia.com/widgets/platform.js" />
+
+      {/* steempro-chest  */}
+      <Script
+        strategy="afterInteractive"
+        async
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4510618528305465`}
+        crossOrigin="anonymous"
+      />
 
       <body>
         <SessionProvider session={session}>

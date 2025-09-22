@@ -78,23 +78,34 @@ export default function ReplyBody({
     <div className="flex gap-2 w-full ">
       <div className="flex flex-col text-sm sm:text-medium-100 w-full">
         <div className={twMerge("flex justify-between")}>
-          <div className="flex flex-wrap items-start  justify-between w-full">
-            <div className="flex flex-row">
+          <div className="flex flex-wrap items-start justify-between w-full">
+            <div className="flex flex-row w-full">
               <SAvatar
                 size="xs"
                 username={comment.author}
                 className="block sm:hidden me-1"
               />
 
-              <div className="flex flex-col gap-0 items-start">
-                <div className="flex gap-1 items-center">
-                  <SLink
-                    className=" hover:text-blue-500"
-                    href={`/@${comment.author}`}
-                  >
-                    {comment.author}
-                  </SLink>
-                  <Reputation reputation={comment.author_reputation} />
+              <div className="flex flex-col gap-0 items-start flex-1">
+                <div className="flex w-full justify-between items-center">
+                  <div className="flex gap-2 items-center">
+                    <SLink
+                      className=" hover:text-blue-500"
+                      href={`/@${comment.author}`}
+                    >
+                      {comment.author}
+                    </SLink>
+                    <Reputation reputation={comment.author_reputation} />
+
+                    {comment.author === comment.root_author && (
+                      <GiFeather
+                        title="Post Author"
+                        className=" opacity-80"
+                        size={14}
+                      />
+                    )}
+                  </div>
+
                   <Dropdown>
                     <DropdownTrigger>
                       <Button
@@ -114,13 +125,6 @@ export default function ReplyBody({
                       {renderedItems}
                     </DropdownMenu>
                   </Dropdown>
-                  {comment.author === comment.root_author && (
-                    <GiFeather
-                      title="Post Author"
-                      className=" opacity-80"
-                      size={14}
-                    />
-                  )}
                 </div>
 
                 <div className="flex gap-1 items-center">

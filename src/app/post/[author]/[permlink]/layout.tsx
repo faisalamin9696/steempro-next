@@ -33,7 +33,7 @@ export default async function Layout({
 
   return (
     <MainWrapper
-      endClassName={"1md:block min-w-[320px] w-[320px]"}
+      endClassName={"1md:block min-w-[320px] w-[320px] !relative !top-0"}
       endContent={<ProfileInfoCard account={account} />}
     >
       <PostPage data={posts} />

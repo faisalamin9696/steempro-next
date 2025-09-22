@@ -15,7 +15,7 @@ import { Chip } from "@heroui/chip";
 import SAvatar from "../../ui/SAvatar";
 import EmptyChat from "../components/EmptyChat";
 import LoadingCard from "../../LoadingCard";
-import Messages from "./Messages";
+import UserMessages from "./UserMessages";
 import { Button } from "@heroui/button";
 import { BsArrowDown } from "react-icons/bs";
 import { twMerge } from "tailwind-merge";
@@ -48,7 +48,7 @@ export function getDecryptedData(key: string, item: Message): Message {
   }
 }
 
-function ChatModal({
+function UserChatModal({
   isOpen,
   onOpenChange,
   account,
@@ -217,7 +217,7 @@ function ChatModal({
               {isLoading ? (
                 <LoadingCard />
               ) : !messages.length ? null : (
-                <Messages
+                <UserMessages
                   account={account}
                   messages={messages}
                   setRefMessage={(message) => {
@@ -286,4 +286,4 @@ function ChatModal({
   );
 }
 
-export default ChatModal;
+export default UserChatModal;

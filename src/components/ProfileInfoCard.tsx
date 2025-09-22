@@ -23,7 +23,7 @@ import { useSession } from "next-auth/react";
 import SLink from "./ui/SLink";
 import { FaLocationDot } from "react-icons/fa6";
 import WitnessVotesCard from "./WitnessVotesCard";
-import ChatModal from "./chat/user/ChatModal";
+import UserChatModal from "./chat/user/UserChatModal";
 import ChatButton from "./ui/ChatButton";
 import SModal from "./ui/SModal";
 
@@ -376,7 +376,7 @@ export default memo(function ProfileInfoCard(props: Props) {
       />
 
       {chatDisclosure.isOpen && (
-        <ChatModal
+        <UserChatModal
           isOpen={chatDisclosure.isOpen}
           onOpenChange={chatDisclosure.onOpenChange}
           account={account}

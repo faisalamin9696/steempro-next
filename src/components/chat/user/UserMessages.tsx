@@ -9,7 +9,7 @@ import { supabase } from "@/libs/supabase";
 import { toast } from "sonner";
 import { Button } from "@heroui/button";
 import MessageItem from "../components/MessageItem";
-import { getDecryptedData } from "./ChatModal";
+import { getDecryptedData } from "./UserChatModal";
 
 interface MessagesProps {
   account: AccountExt;
@@ -22,7 +22,7 @@ interface MessagesProps {
 
 const ITEMS_PER_BATCH = 30;
 
-const Messages = (props: MessagesProps) => {
+const UserMessages = (props: MessagesProps) => {
   const {
     account,
     setMessageAlert,
@@ -257,4 +257,4 @@ const Messages = (props: MessagesProps) => {
   );
 };
 
-export default Messages;
+export default UserMessages;
