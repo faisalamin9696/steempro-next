@@ -422,24 +422,18 @@ export default memo(function CommentFooter(props: CommentProps) {
             <RiHeartAdd2Line size={24} />
           )}
 
-          <Tooltip
-            content={`${comment.upvote_count} Voters`}
-            placement="right"
-            closeDelay={250}
-          >
-            {!!comment.upvote_count && (
-              <button
-                onClick={voterDisclosure.onOpen}
-                disabled={isVoting}
-                className={twMerge(
-                  "text-sm uppercase h-8 text-center",
-                  "hover:text-opacity-hover disabled:text-opacity-disabled"
-                )}
-              >
-                {abbreviateNumber(comment.upvote_count)}
-              </button>
-            )}
-          </Tooltip>
+          {!!comment.upvote_count && (
+            <button
+              onClick={voterDisclosure.onOpen}
+              disabled={isVoting}
+              className={twMerge(
+                "text-sm uppercase h-8 text-center",
+                "hover:text-opacity-hover disabled:text-opacity-disabled"
+              )}
+            >
+              {abbreviateNumber(comment.upvote_count)}
+            </button>
+          )}
         </div>
       </Tooltip>
 
@@ -472,91 +466,96 @@ export default memo(function CommentFooter(props: CommentProps) {
           )}
         </Tooltip>
       </div>
-      <Tooltip content="Resteem" placement="bottom" closeDelay={250}>
-        <div>
-          {!isReply && (
-            <ConfirmationPopup
-              popoverProps={{ placement: "right" }}
-              triggerProps={{
-                isDisabled: reblogMutation.isPending,
-                variant: "light",
-                radius: "none",
-                color: isResteemd ? "success" : undefined,
-                isLoading: reblogMutation.isPending,
-                size: "sm",
-                isIconOnly: !comment.resteem_count ? true : false,
-                className: twMerge(
-                  "hover:!bg-transparent  text-inherit min-h-12 min-w-0",
+      {!isReply ||
+        (comment.depth === 0 && (
+          <Tooltip content="Resteem" placement="bottom" closeDelay={250}>
+            <div>
+              <ConfirmationPopup
+                popoverProps={{ placement: "right" }}
+                triggerProps={{
+                  isDisabled: reblogMutation.isPending,
+                  variant: "light",
+                  radius: "none",
+                  color: isResteemd ? "success" : undefined,
+                  isLoading: reblogMutation.isPending,
+                  size: "sm",
+                  isIconOnly: !comment.resteem_count ? true : false,
+                  className: twMerge(
+                    "hover:!bg-transparent  text-inherit min-h-12 min-w-0",
 
-                  !comment.resteem_count ? "w-12" : ""
-                ),
-                disableRipple: true,
-              }}
-              subTitle="Resteem this post?"
-              buttonTitle={
-                <div className="flex flex-col items-center gap-2">
-                  {!reblogMutation.isPending && <AiOutlineRetweet size={24} />}
-                  {!!comment.resteem_count && (
-                    <div className="text-sm">
-                      {abbreviateNumber(comment.resteem_count)}
-                    </div>
-                  )}
-                </div>
-              }
-              onConfirm={() => {
-                if (isResteemd) {
-                  toast.success("Already resteem");
-                  return;
-                }
-                handleResteem();
-              }}
-            />
-          )}
-        </div>
-      </Tooltip>
-
-      <Tooltip content="Payout" placement="bottom" closeDelay={250}>
-        <div>
-          <Popover placement="right" size="md" className=" w-64">
-            <PopoverTrigger>
-              <Button
-                disableRipple
-                radius="none"
-                size="sm"
-                variant="light"
-                className="px-1 pr-2 h-14 hover:bg-transparent text-inherit "
-                // title={`${
-                //   !comment.max_accepted_payout
-                //     ? "Declined"
-                //     : "$" + comment.payout?.toLocaleString()
-                // }  Payout`}
-              >
-                <div className="flex flex-col items-center gap-3">
-                  {(comment.payout && !comment.percent_steem_dollars) ||
-                  !comment.max_accepted_payout ? (
-                    <SiSteem size={20} />
-                  ) : (
-                    <PiCurrencyCircleDollarFill size={24} />
-                  )}
-
-                  <div
-                    className={twMerge(
-                      "text-sm",
-                      !comment.max_accepted_payout &&
-                        "line-through opacity-disabled"
+                    !comment.resteem_count ? "w-12" : ""
+                  ),
+                  disableRipple: true,
+                }}
+                subTitle="Resteem this post?"
+                buttonTitle={
+                  <div className="flex flex-col items-center gap-2">
+                    {!reblogMutation.isPending && (
+                      <AiOutlineRetweet size={24} />
                     )}
-                  >
-                    {comment.payout?.toFixed(2)}
+                    {!!comment.resteem_count && (
+                      <div className="text-sm">
+                        {abbreviateNumber(comment.resteem_count)}
+                      </div>
+                    )}
                   </div>
-                </div>
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent>
-              <RewardBreakdownCard comment={comment} />
-            </PopoverContent>
-          </Popover>
-        </div>
-      </Tooltip>
+                }
+                onConfirm={() => {
+                  if (isResteemd) {
+                    toast.success("Already resteem");
+                    return;
+                  }
+                  handleResteem();
+                }}
+              />
+            </div>
+          </Tooltip>
+        ))}
+
+      {!isReply && (
+        <Tooltip content="Payout" placement="bottom" closeDelay={250}>
+          <div>
+            <Popover placement="right" size="md" className=" w-64">
+              <PopoverTrigger>
+                <Button
+                  disableRipple
+                  radius="none"
+                  size="sm"
+                  variant="light"
+                  className="px-1 pr-2 h-14 hover:bg-transparent text-inherit "
+                  // title={`${
+                  //   !comment.max_accepted_payout
+                  //     ? "Declined"
+                  //     : "$" + comment.payout?.toLocaleString()
+                  // }  Payout`}
+                >
+                  <div className="flex flex-col items-center gap-3">
+                    {(comment.payout && !comment.percent_steem_dollars) ||
+                    !comment.max_accepted_payout ? (
+                      <SiSteem size={20} />
+                    ) : (
+                      <PiCurrencyCircleDollarFill size={24} />
+                    )}
+
+                    <div
+                      className={twMerge(
+                        "text-sm",
+                        !comment.max_accepted_payout &&
+                          "line-through opacity-disabled"
+                      )}
+                    >
+                      {comment.payout?.toFixed(2)}
+                    </div>
+                  </div>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <RewardBreakdownCard comment={comment} />
+              </PopoverContent>
+            </Popover>
+          </div>
+        </Tooltip>
+      )}
 
       <CommentHeaderMenu
         placement="right"
@@ -707,44 +706,45 @@ export default memo(function CommentFooter(props: CommentProps) {
                 </Button>
               )}
 
-              {!isReply && (
-                <ConfirmationPopup
-                  triggerProps={{
-                    title: `${comment.resteem_count} Resteems`,
-                    isDisabled: reblogMutation.isPending,
-                    variant: isResteemd ? "flat" : "solid",
-                    radius: "full",
-                    color: isResteemd ? "success" : undefined,
-                    isLoading: reblogMutation.isPending,
-                    size: "sm",
-                    isIconOnly: !comment.resteem_count ? true : false,
-                    className: twMerge(
-                      "bg-foreground/10",
-                      !comment.resteem_count ? "w-12" : ""
-                    ),
-                  }}
-                  subTitle="Resteem this post?"
-                  buttonTitle={
-                    <div className="flex flex-row items-center gap-2 text-default-700">
-                      {!reblogMutation.isPending && (
-                        <AiOutlineRetweet className="text-lg" />
-                      )}
-                      {!!comment.resteem_count && (
-                        <div className="text-sm">
-                          {abbreviateNumber(comment.resteem_count)}
-                        </div>
-                      )}
-                    </div>
-                  }
-                  onConfirm={() => {
-                    if (isResteemd) {
-                      toast.success("Already resteem");
-                      return;
+              {!isReply ||
+                (comment.depth === 0 && (
+                  <ConfirmationPopup
+                    triggerProps={{
+                      title: `${comment.resteem_count} Resteems`,
+                      isDisabled: reblogMutation.isPending,
+                      variant: isResteemd ? "flat" : "solid",
+                      radius: "full",
+                      color: isResteemd ? "success" : undefined,
+                      isLoading: reblogMutation.isPending,
+                      size: "sm",
+                      isIconOnly: !comment.resteem_count ? true : false,
+                      className: twMerge(
+                        "bg-foreground/10",
+                        !comment.resteem_count ? "w-12" : ""
+                      ),
+                    }}
+                    subTitle="Resteem this post?"
+                    buttonTitle={
+                      <div className="flex flex-row items-center gap-2 text-default-700">
+                        {!reblogMutation.isPending && (
+                          <AiOutlineRetweet className="text-lg" />
+                        )}
+                        {!!comment.resteem_count && (
+                          <div className="text-sm">
+                            {abbreviateNumber(comment.resteem_count)}
+                          </div>
+                        )}
+                      </div>
                     }
-                    handleResteem();
-                  }}
-                />
-              )}
+                    onConfirm={() => {
+                      if (isResteemd) {
+                        toast.success("Already resteem");
+                        return;
+                      }
+                      handleResteem();
+                    }}
+                  />
+                ))}
             </div>
           </div>
 
