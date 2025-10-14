@@ -302,9 +302,9 @@ export default memo(function CommentFooter(props: CommentProps) {
         fetchedUser?.weight ?? settings.voteOptions.value ?? 100;
       timer = longPressUpvote
         ? setTimeout(() => {
-            handleVibrate();
-            castVote(voteWeight, false, true);
-          }, 800)
+          handleVibrate();
+          castVote(voteWeight, false, true);
+        }, 800)
         : undefined;
     }
     return () => clearTimeout(timer);
@@ -321,9 +321,9 @@ export default memo(function CommentFooter(props: CommentProps) {
         fetchedUser?.weight ?? settings.voteOptions.value ?? 100;
       timer = longPressDownvote
         ? setTimeout(() => {
-            handleVibrate();
-            castVote(voteWeight, true, true);
-          }, 800)
+          handleVibrate();
+          castVote(voteWeight, true, true);
+        }, 800)
         : undefined;
     }
     return () => clearTimeout(timer);
@@ -413,8 +413,8 @@ export default memo(function CommentFooter(props: CommentProps) {
                 isUpvoted
                   ? "text-success-400"
                   : isDownvoted
-                  ? "text-danger-400"
-                  : ""
+                    ? "text-danger-400"
+                    : ""
               }
               size={24}
             />
@@ -466,51 +466,50 @@ export default memo(function CommentFooter(props: CommentProps) {
           )}
         </Tooltip>
       </div>
-      {!isReply ||
-        (comment.depth === 0 && (
-          <Tooltip content="Resteem" placement="bottom" closeDelay={250}>
-            <div>
-              <ConfirmationPopup
-                popoverProps={{ placement: "right" }}
-                triggerProps={{
-                  isDisabled: reblogMutation.isPending,
-                  variant: "light",
-                  radius: "none",
-                  color: isResteemd ? "success" : undefined,
-                  isLoading: reblogMutation.isPending,
-                  size: "sm",
-                  isIconOnly: !comment.resteem_count ? true : false,
-                  className: twMerge(
-                    "hover:!bg-transparent  text-inherit min-h-12 min-w-0",
+      {!isReply && (
+        <Tooltip content="Resteem" placement="bottom" closeDelay={250}>
+          <div>
+            <ConfirmationPopup
+              popoverProps={{ placement: "right" }}
+              triggerProps={{
+                isDisabled: reblogMutation.isPending,
+                variant: "light",
+                radius: "none",
+                color: isResteemd ? "success" : undefined,
+                isLoading: reblogMutation.isPending,
+                size: "sm",
+                isIconOnly: !comment.resteem_count ? true : false,
+                className: twMerge(
+                  "hover:!bg-transparent  text-inherit min-h-12 min-w-0",
 
-                    !comment.resteem_count ? "w-12" : ""
-                  ),
-                  disableRipple: true,
-                }}
-                subTitle="Resteem this post?"
-                buttonTitle={
-                  <div className="flex flex-col items-center gap-2">
-                    {!reblogMutation.isPending && (
-                      <AiOutlineRetweet size={24} />
-                    )}
-                    {!!comment.resteem_count && (
-                      <div className="text-sm">
-                        {abbreviateNumber(comment.resteem_count)}
-                      </div>
-                    )}
-                  </div>
+                  !comment.resteem_count ? "w-12" : ""
+                ),
+                disableRipple: true,
+              }}
+              subTitle="Resteem this post?"
+              buttonTitle={
+                <div className="flex flex-col items-center gap-2">
+                  {!reblogMutation.isPending && (
+                    <AiOutlineRetweet size={24} />
+                  )}
+                  {!!comment.resteem_count && (
+                    <div className="text-sm">
+                      {abbreviateNumber(comment.resteem_count)}
+                    </div>
+                  )}
+                </div>
+              }
+              onConfirm={() => {
+                if (isResteemd) {
+                  toast.success("Already resteem");
+                  return;
                 }
-                onConfirm={() => {
-                  if (isResteemd) {
-                    toast.success("Already resteem");
-                    return;
-                  }
-                  handleResteem();
-                }}
-              />
-            </div>
-          </Tooltip>
-        ))}
+                handleResteem();
+              }}
+            />
+          </div>
+        </Tooltip>
+      )}
 
       {!isReply && (
         <Tooltip content="Payout" placement="bottom" closeDelay={250}>
@@ -523,15 +522,15 @@ export default memo(function CommentFooter(props: CommentProps) {
                   size="sm"
                   variant="light"
                   className="px-1 pr-2 h-14 hover:bg-transparent text-inherit "
-                  // title={`${
-                  //   !comment.max_accepted_payout
-                  //     ? "Declined"
-                  //     : "$" + comment.payout?.toLocaleString()
-                  // }  Payout`}
+                // title={`${
+                //   !comment.max_accepted_payout
+                //     ? "Declined"
+                //     : "$" + comment.payout?.toLocaleString()
+                // }  Payout`}
                 >
                   <div className="flex flex-col items-center gap-3">
                     {(comment.payout && !comment.percent_steem_dollars) ||
-                    !comment.max_accepted_payout ? (
+                      !comment.max_accepted_payout ? (
                       <SiSteem size={20} />
                     ) : (
                       <PiCurrencyCircleDollarFill size={24} />
@@ -541,7 +540,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                       className={twMerge(
                         "text-sm",
                         !comment.max_accepted_payout &&
-                          "line-through opacity-disabled"
+                        "line-through opacity-disabled"
                       )}
                     >
                       {comment.payout?.toFixed(2)}
@@ -706,45 +705,44 @@ export default memo(function CommentFooter(props: CommentProps) {
                 </Button>
               )}
 
-              {!isReply ||
-                (comment.depth === 0 && (
-                  <ConfirmationPopup
-                    triggerProps={{
-                      title: `${comment.resteem_count} Resteems`,
-                      isDisabled: reblogMutation.isPending,
-                      variant: isResteemd ? "flat" : "solid",
-                      radius: "full",
-                      color: isResteemd ? "success" : undefined,
-                      isLoading: reblogMutation.isPending,
-                      size: "sm",
-                      isIconOnly: !comment.resteem_count ? true : false,
-                      className: twMerge(
-                        "bg-foreground/10",
-                        !comment.resteem_count ? "w-12" : ""
-                      ),
-                    }}
-                    subTitle="Resteem this post?"
-                    buttonTitle={
-                      <div className="flex flex-row items-center gap-2 text-default-700">
-                        {!reblogMutation.isPending && (
-                          <AiOutlineRetweet className="text-lg" />
-                        )}
-                        {!!comment.resteem_count && (
-                          <div className="text-sm">
-                            {abbreviateNumber(comment.resteem_count)}
-                          </div>
-                        )}
-                      </div>
+              {!isReply &&
+                <ConfirmationPopup
+                  triggerProps={{
+                    title: `${comment.resteem_count} Resteems`,
+                    isDisabled: reblogMutation.isPending,
+                    variant: isResteemd ? "flat" : "solid",
+                    radius: "full",
+                    color: isResteemd ? "success" : undefined,
+                    isLoading: reblogMutation.isPending,
+                    size: "sm",
+                    isIconOnly: !comment.resteem_count ? true : false,
+                    className: twMerge(
+                      "bg-foreground/10",
+                      !comment.resteem_count ? "w-12" : ""
+                    ),
+                  }}
+                  subTitle="Resteem this post?"
+                  buttonTitle={
+                    <div className="flex flex-row items-center gap-2 text-default-700">
+                      {!reblogMutation.isPending && (
+                        <AiOutlineRetweet className="text-lg" />
+                      )}
+                      {!!comment.resteem_count && (
+                        <div className="text-sm">
+                          {abbreviateNumber(comment.resteem_count)}
+                        </div>
+                      )}
+                    </div>
+                  }
+                  onConfirm={() => {
+                    if (isResteemd) {
+                      toast.success("Already resteem");
+                      return;
                     }
-                    onConfirm={() => {
-                      if (isResteemd) {
-                        toast.success("Already resteem");
-                        return;
-                      }
-                      handleResteem();
-                    }}
-                  />
-                ))}
+                    handleResteem();
+                  }}
+                />
+              }
             </div>
           </div>
 
@@ -754,15 +752,14 @@ export default memo(function CommentFooter(props: CommentProps) {
                 radius="full"
                 size="sm"
                 className="px-1 pr-2 bg-foreground/10"
-                title={`${
-                  !comment.max_accepted_payout
-                    ? "Declined"
-                    : "$" + comment.payout?.toLocaleString()
-                }  Payout`}
+                title={`${!comment.max_accepted_payout
+                  ? "Declined"
+                  : "$" + comment.payout?.toLocaleString()
+                  }  Payout`}
               >
                 <div className="flex flex-row items-center gap-3 text-default-700">
                   {(comment.payout && !comment.percent_steem_dollars) ||
-                  !comment.max_accepted_payout ? (
+                    !comment.max_accepted_payout ? (
                     <SiSteem size={20} />
                   ) : (
                     <PiCurrencyCircleDollarFill size={24} />
@@ -772,7 +769,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                     className={twMerge(
                       "text-sm",
                       !comment.max_accepted_payout &&
-                        "line-through opacity-disabled"
+                      "line-through opacity-disabled"
                     )}
                   >
                     {comment.payout?.toFixed(2)}
