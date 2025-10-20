@@ -9,6 +9,7 @@ import { CommunityReducer } from "./reducers/CommunityReducer";
 import { ScheduleReducer } from "./reducers/ScheduleReducer";
 import { CommonReducer } from "./reducers/CommonReducer";
 import { OpenOrdersReducer } from "./reducers/OpenOrderReducer";
+import { ProposalsReducer } from "./reducers/ProposalsReducer";
 
 export const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ export const store = configureStore({
     scheduleReducer: ScheduleReducer,
     commonReducer: CommonReducer,
     openOrdersReducer: OpenOrdersReducer,
+    proposalsReducer: ProposalsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

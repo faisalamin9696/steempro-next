@@ -1974,6 +1974,67 @@ export const voteForProposal = async (
   );
 };
 
+export const removeProposal = async (
+  account: AccountExt,
+  proposal_id: number,
+  key: string,
+  isKeychain?: boolean
+): Promise<TransactionConfirmation> => {
+  
+  const operation: Operation = [
+    "remove_proposal",
+    {
+      proposal_owner: account.name,
+      proposal_ids: [proposal_id],
+    },
+  ];
+
+  if (isKeychain) {
+    await validateKeychain();
+
+    return new Promise((resolve, reject) => {
+      return new Promise((resolve, reject) => {
+        window.steem_keychain.requestBroadcast(
+          account.name,
+          [operation],
+          "Active",
+          function (response) {
+            if (response?.success) {
+              resolve(response);
+            } else {
+              reject(response);
+            }
+          }
+        );
+      });
+    });
+  }
+
+  const keyData = getKeyType(account, key);
+
+  if (keyData && PrivKey.atLeast(keyData.type, "ACTIVE")) {
+    const privateKey = PrivateKey.fromString(key);
+    
+    return new Promise((resolve, reject) => {
+      client.broadcast
+        .sendOperations([operation], privateKey)
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((err) => {
+          reject(err);
+          console.error("Proposal remove error", err);
+        });
+    });
+  }
+
+  return Promise.reject(
+    new Error(
+      "Check private key permission! Required private active key or above."
+    )
+  );
+};
+
 export const sendMessage = async (
   sender: AccountExt,
   recipient: string,

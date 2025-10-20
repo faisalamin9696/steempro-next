@@ -3,18 +3,29 @@
 import ErrorCard from "@/components/ErrorCard";
 import LoadingCard from "@/components/LoadingCard";
 import { getProposals } from "@/libs/steem/condenser";
-import React from "react";
+import React, { useEffect } from "react";
 import { FaFileInvoiceDollar } from "react-icons/fa";
 import useSWR from "swr";
 import ProposalItemCard from "@/components/ProposalItemCard";
 import { DaoStats } from "@/components/DaoStats";
 import STable from "@/components/ui/STable";
+import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
+import { addProposalsHandler } from "@/hooks/redux/reducers/ProposalsReducer";
 
 function Proposals() {
   const { data, error, isLoading } = useSWR<Proposal[]>(
     "proposals-list",
     getProposals
   );
+  const proposalsData = useAppSelector(state => state.proposalsReducer.values);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (data) {
+      dispatch(addProposalsHandler(data))
+    }
+
+  }, [data])
 
   if (error) {
     return <ErrorCard message={error} />;
@@ -33,18 +44,18 @@ function Proposals() {
         </p>
       </div>
 
-      <DaoStats proposals={data} />
+      <DaoStats proposals={proposalsData} />
 
       <STable
         filterByValue={["subject", "creator", "receiver"]}
-        data={data || []}
+        data={proposalsData}
         title="DAO Proposals"
         bodyClassName="flex flex-col gap-6 mt-6"
         titleIcon={FaFileInvoiceDollar}
-        subTitle={(filteredItems)=>`Showing ${filteredItems?.length} of ${data?.length} proposals`}
+        subTitle={(filteredItems) => `Showing ${filteredItems?.length} of ${proposalsData?.length} proposals`}
         tableRow={(proposal) => (
           <ProposalItemCard
-            returnProposal={data?.find((p) => p.proposal_id === 0)}
+            returnProposal={proposalsData?.find((p) => p.proposal_id === 0)}
             proposal={proposal}
           />
         )}

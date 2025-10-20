@@ -671,7 +671,7 @@ type Proposal = {
   subject: string;
   permlink: string;
   total_votes: string;
-  status?: "active" | "expired" | "upcoming";
+  status?: "active" | "expired" | "upcoming" | "removed";
 };
 
 type AssetTypes = "STEEM" | "SBD" | "VESTS";

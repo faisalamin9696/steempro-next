@@ -173,6 +173,9 @@ const ProposalItemCard = ({
     return "success";
   };
 
+  if (proposal.status === 'removed')
+    return null;
+
   return (
     <div key={proposal.id}>
       <div className="space-y-3">
@@ -274,7 +277,7 @@ const ProposalItemCard = ({
 
           <div className="flex flex-row gap-0">
             <ProposalVoteButton
-              className="rounded-s-md px-2 sm:px-3"
+              className="rounded-s-lg px-2 sm:px-3"
               proposal={proposal}
               getVoteStatus={setIsVoted}
             />
