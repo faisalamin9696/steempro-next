@@ -37,7 +37,7 @@ export let CurrentSetting: Setting = {
     usersList: [],
   },
   favouriteBene: [],
-  imageHosting: "https://images.steempro.com",
+  imageHosting: "https://steemitimages.com",
 };
 
 export const WitnessAccount = "faisalamin";
