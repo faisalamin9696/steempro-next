@@ -126,7 +126,7 @@ export default ({
           attribs
         );
         sanitizeErrors.push("An image in this post did not save properly.");
-        return { tagName: "img", attribs: {  alt } };
+        return { tagName: "img", attribs: { alt } };
       }
 
       // replace http:// with // to force https when needed
@@ -212,6 +212,7 @@ export default ({
       // If it's not a (relative or absolute) steem URL...
       if (
         !href.match(`^(/(?!/)|${"steemitimages.com"})`) &&
+        !href.match(`^(/(?!/)|${"images.steempro.com"})`) &&
         !href.match(`^(/(?!/)|https://${AppStrings.steempro_site_url})`) &&
         !href.match(`^(/(?!/)|steem://)`)
       ) {

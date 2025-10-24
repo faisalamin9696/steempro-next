@@ -1,8 +1,6 @@
 import { filesize } from "filesize";
 import { proxifyImageUrl } from "./proxifyUrl";
-import { AppStrings } from "../constants/AppStrings";
-
-const BASE_IMAGE_URL = AppStrings.image_hostings[0];
+import { CurrentSetting } from "@/constants/AppConstants";
 
 // get the image from meta data
 export const catchImageFromMetadata = (
@@ -39,6 +37,8 @@ export const getResizedAvatar = (
   if (!author) {
     return "";
   }
+  const BASE_IMAGE_URL = CurrentSetting.imageHosting;
+
   // author = author.replace('@', '').toLowerCase().trim();
   return `${BASE_IMAGE_URL}/u/${author}/avatar/${sizeString}`;
 };
@@ -55,10 +55,6 @@ export const getCoverImageUrl = (meta: any) => {
   }
 };
 
-const IMG_PROXY = "https://steemitimages.com/0x0/";
-const IMG_PROXY_PREVIEW = "https://steemitimages.com/600x800/";
-const IMG_PROXY_SMALL = "https://steemitimages.com/40x40/";
-
 export const MAXIMUM_UPLOAD_SIZE = 10000000;
 //  15728640;
 export const MAXIMUM_UPLOAD_SIZE_HUMAN = filesize(MAXIMUM_UPLOAD_SIZE);
@@ -67,6 +63,11 @@ export const getProxyImageURL = (
   url: string,
   type: "preview" | "small" | "large" = "preview"
 ) => {
+  const BASE_IMAGE_URL = CurrentSetting.imageHosting;
+
+  const IMG_PROXY = `${BASE_IMAGE_URL}/0x0/`;
+  const IMG_PROXY_PREVIEW = `${BASE_IMAGE_URL}/600x800/`;
+  const IMG_PROXY_SMALL = `${BASE_IMAGE_URL}/40x40/`;
   url = url.replaceAll("amp;", "");
   if (
     url?.indexOf("https://ipfs.busy.org") === 0 ||

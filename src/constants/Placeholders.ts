@@ -1,5 +1,6 @@
 import moment from "moment";
 import { RewardTypes } from "./AppConstants";
+import { AppStrings } from "./AppStrings";
 
 export const empty_comment = (
   author: string,
@@ -226,6 +227,7 @@ export const empty_settings = (): Setting => {
       enabled: false,
       usersList: [],
     },
-    favouriteBene:[]
+    favouriteBene: [],
+    imageHosting: AppStrings.image_hostings[0],
   };
 };

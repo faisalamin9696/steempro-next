@@ -392,6 +392,7 @@ type Setting = {
     usersList: { name: string; weight: number; community: string }[];
   };
   favouriteBene: Beneficiary[];
+  imageHosting: string;
 };
 
 type FeedStyle = "blogs" | "list" | "grid";

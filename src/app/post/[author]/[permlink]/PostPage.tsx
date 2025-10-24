@@ -21,23 +21,6 @@ import { twMerge } from "tailwind-merge";
 import MarkdownViewer from "@/components/body/MarkdownViewer";
 import SubmitPage from "@/app/submit/SubmitPage";
 import { PiWarning } from "react-icons/pi";
-import {
-  BiBookmark,
-  BiDotsHorizontal,
-  BiDotsHorizontalRounded,
-  BiDownvote,
-  BiUpvote,
-} from "react-icons/bi";
-import { FaCommentAlt, FaRegComment } from "react-icons/fa";
-import { LuBookMarked } from "react-icons/lu";
-import { AiOutlineRetweet } from "react-icons/ai";
-import {
-  RiHeartAdd2Fill,
-  RiHeartAdd2Line,
-  RiHeartPulseLine,
-} from "react-icons/ri";
-import { GiHeartPlus } from "react-icons/gi";
-import { FaHeartCirclePlus } from "react-icons/fa6";
 import { ScrollToTopButton } from "@/components/ScrollToTopButton";
 
 interface Props {

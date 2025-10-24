@@ -1,4 +1,7 @@
 /*global $STM_Config:false*/
+
+import { CurrentSetting } from "@/constants/AppConstants";
+
 /**
  * this regular expression should capture all possible proxy domains
  * Possible URL schemes are:
@@ -14,9 +17,8 @@ const rProxyDomainsDimensions =
 const NATURAL_SIZE = "0x0/";
 const CAPPED_SIZE = "640x0/";
 const DOUBLE_CAPPED_SIZE = "1280x0/";
-const IMAGE_PROXY_URL = "https://steemitimages.com/";
-export const imageProxy = () => IMAGE_PROXY_URL;
 
+export const imageProxy = () => CurrentSetting.imageHosting + "/";
 export const defaultSrcSet = (url) =>
   `${url} 1x, ${url.replace(CAPPED_SIZE, DOUBLE_CAPPED_SIZE)} 2x`;
 
@@ -38,6 +40,8 @@ export function proxifyImageUrl(
   dimensions = "",
   emptyCheck: boolean = false
 ) {
+  const IMAGE_PROXY_URL = CurrentSetting.imageHosting + "/";
+
   if (url == null) return "";
 
   if (emptyCheck && url === "") return "";

@@ -93,7 +93,8 @@ function ImageViewerModal(props: Props) {
         scrollBehavior: "inside",
         size: "2xl",
         hideCloseButton: true,
-        placement: 'center'
+        placement: 'center',
+        classNames: { 'base': '!max-h-full' }
       }}
       body={() => (
         <TransformWrapper ref={transformComponentRef}>
@@ -104,28 +105,18 @@ function ImageViewerModal(props: Props) {
                 isLoaded={isLoaded}
                 handleOpenImage={handleOpenImage}
               />
-              <div className="justify-center flex flex-col items-center gap-2">
+              <div className="  justify-center flex flex-col items-center gap-2">
                 <TransformComponent>
-                  <div className="flex flex-col justify-center w-full">
-                    <Image
-                      unoptimized
-                      className={twMerge(
-                        "zoomable",
-                        isFetching && "bg-background/50"
-                      )}
-                      alt={"image"}
-                      src={src}
-                      height={0}
-                      width={0}
-                      onLoad={onLoadCompleted}
-                      onError={onLoadCompleted}
-                      style={{
-                        width: "auto",
-                        height: "auto",
-                        objectFit: "contain",
-                      }}
-                    />
-                  </div>
+                  <img alt={"image"} onLoad={onLoadCompleted}
+                    onError={onLoadCompleted} className={twMerge(
+                      "zoomable",
+                      isFetching && "bg-background/50"
+                    )} src={src} style={{
+                      width: "auto",
+                      maxWidth: '100%',
+                      maxHeight: '640px',
+                      objectFit: "contain",
+                    }} />
                 </TransformComponent>
 
                 <div className="text-sm text-default-500 mt-2">{props.alt}</div>

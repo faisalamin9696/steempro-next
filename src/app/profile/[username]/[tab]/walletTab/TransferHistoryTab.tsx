@@ -67,10 +67,10 @@ fill_order,fill_transfer_from_savings,fill_vesting_withdraw,transfer,transfer_fr
 
   useEffect(() => {
     if (historyData) {
-      historyData.reverse();
-      setAllRows(historyData);
+      const sortedData = historyData.reverse();
+      setAllRows(sortedData);
     }
-  }, [historyData]);
+  }, [historyData, username]);
 
   if (isLoading) return <LoadingCard />;
 

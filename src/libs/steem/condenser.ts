@@ -22,8 +22,6 @@ const getExpirationISO = () => {
   return date.toISOString().split(".")[0]; // Remove milliseconds for Steem format
 };
 
-const IMAGE_API = AppStrings.image_hostings[0];
-
 export let client = new Client(AppStrings.rpc_servers, {
   timeout: AppStrings.chain_timeout,
   failoverThreshold: 10,
@@ -140,6 +138,8 @@ export const uploadImage = (file: File, username: string, sign) => {
 };
 
 const _upload = async (fd: FormData, username: string, signature: string) => {
+  const IMAGE_API = CurrentSetting.imageHosting;
+
   const controller = new AbortController(); // Handles timeout cancellation
   const timeout = setTimeout(() => controller.abort(), 50000); // 50s timeout
 
@@ -1980,7 +1980,6 @@ export const removeProposal = async (
   key: string,
   isKeychain?: boolean
 ): Promise<TransactionConfirmation> => {
-  
   const operation: Operation = [
     "remove_proposal",
     {
@@ -2014,7 +2013,7 @@ export const removeProposal = async (
 
   if (keyData && PrivKey.atLeast(keyData.type, "ACTIVE")) {
     const privateKey = PrivateKey.fromString(key);
-    
+
     return new Promise((resolve, reject) => {
       client.broadcast
         .sendOperations([operation], privateKey)

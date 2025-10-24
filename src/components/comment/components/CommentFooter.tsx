@@ -422,7 +422,7 @@ export default memo(function CommentFooter(props: CommentProps) {
             <RiHeartAdd2Line size={24} />
           )}
 
-          {!!comment.upvote_count && (
+          {!!(comment.upvote_count + comment.downvote_count) && (
             <button
               onClick={voterDisclosure.onOpen}
               disabled={isVoting}
@@ -431,7 +431,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                 "hover:text-opacity-hover disabled:text-opacity-disabled"
               )}
             >
-              {abbreviateNumber(comment.upvote_count)}
+              {abbreviateNumber(comment.upvote_count + comment.downvote_count)}
             </button>
           )}
         </div>
@@ -480,8 +480,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                 size: "sm",
                 isIconOnly: !comment.resteem_count ? true : false,
                 className: twMerge(
-                  "hover:!bg-transparent  text-inherit min-h-12 min-w-0",
-
+                  "hover:!bg-transparent min-h-12 min-w-0",
                   !comment.resteem_count ? "w-12" : ""
                 ),
                 disableRipple: true,
@@ -624,7 +623,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                   )}
                 </Button>
 
-                {!!comment.upvote_count && (
+                {!!(comment.upvote_count + comment.downvote_count) && (
                   <button
                     title={`${comment.upvote_count} Votes`}
                     onClick={voterDisclosure.onOpen}
@@ -634,7 +633,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                       "hover:text-opacity-hover disabled:text-opacity-disabled"
                     )}
                   >
-                    {abbreviateNumber(comment.upvote_count)}
+                    {abbreviateNumber(comment.upvote_count + comment.downvote_count)}
                   </button>
                 )}
 
@@ -717,7 +716,7 @@ export default memo(function CommentFooter(props: CommentProps) {
                     size: "sm",
                     isIconOnly: !comment.resteem_count ? true : false,
                     className: twMerge(
-                      "bg-foreground/10",
+                      !isResteemd && "bg-foreground/10",
                       !comment.resteem_count ? "w-12" : ""
                     ),
                   }}

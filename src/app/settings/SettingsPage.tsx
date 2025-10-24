@@ -45,6 +45,7 @@ import { useSession } from "next-auth/react";
 import { useDropzone } from "react-dropzone";
 import { useDisclosure } from "@heroui/modal";
 import CustomUsersVotingCard from "@/components/CustomUsersVotingCard";
+import { IoServer } from "react-icons/io5";
 
 let isCover: boolean = false;
 
@@ -52,7 +53,6 @@ const iconSize = 24;
 export default function SettingsPage({ username }: { username?: string }) {
   username = username?.toLowerCase();
   const { data: session } = useSession();
-
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const [parsedData, setParsedData] = useState<any>();
   const {
@@ -75,6 +75,8 @@ export default function SettingsPage({ username }: { username?: string }) {
     session?.user?.name === username || (session?.user?.name && !username);
 
   const [rpc, setRpc] = useState(settings.rpc || AppStrings.rpc_servers[0]);
+  const [hosting, setHosting] = useState(settings.imageHosting || AppStrings.image_hostings[0]);
+
   const [nsfw, setNsfw] = useState(settings.nsfw || "Always warn");
 
   const customVotingDisclosure = useDisclosure();
@@ -166,6 +168,14 @@ export default function SettingsPage({ username }: { username?: string }) {
     // !important: update the condenser client after updating the setting
     updateClient();
     toast.success(`RPC changed to ${newRpc}`);
+  }
+
+
+  function handleHostingChange(newHosting: string) {
+    setHosting(newHosting);
+    const newSetting = updateSettings({ ...settings, imageHosting: newHosting });
+    dispatch(updateSettingsHandler(newSetting));
+    toast.success(`Image hosting changed to ${newHosting}`);
   }
 
   function handleNsfwChange(newNsfw: NSFW) {
@@ -355,6 +365,33 @@ export default function SettingsPage({ username }: { username?: string }) {
               );
             })}
           </Select>
+
+
+          <Select
+            startContent={<IoServer className={className} size={iconSize - 4} />}
+            aria-label="Select Image Hosting"
+            variant="flat"
+            label="Select Image Hosting"
+            disallowEmptySelection
+            onChange={(key) => {
+              handleHostingChange(key.target.value as string);
+            }}
+            selectedKeys={[hosting]}
+            // className=" max-w-[250px]"
+            classNames={{
+              value: "text-sm",
+              // innerWrapper: ' w-10'
+            }}
+          >
+            {AppStrings.image_hostings.map((item) => {
+              return (
+                <SelectItem className="text-sm" key={item}>
+                  {item}
+                </SelectItem>
+              );
+            })}
+          </Select>
+
 
           <Select
             startContent={<MdDisabledVisible className={className} size={iconSize - 4} />}
