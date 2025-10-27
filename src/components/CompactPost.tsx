@@ -72,10 +72,6 @@ export default memo(function CompactPost(props: Props) {
         </span>
 
         <div className=" flex items-center gap-2">
-          {/* <ViewCountCard
-            comment={commentInfo}
-            className="text-tiny font-light"
-          /> */}
           <span className="py-1 text-xs font-regular gap-1 text-default-900/80 mr-1 flex flex-row items-center">
             <svg
               className="h-5"

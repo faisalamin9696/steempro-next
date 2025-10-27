@@ -80,11 +80,11 @@ export default function PromotionCard(props: Props) {
           <TimeAgoWrapper created={data.created * 1000} />
         </div>
       </Card>
-      {!sm && (
+      {/* {!sm && (
         <div className="shadow-sm shadow-foreground/10   absolute right-0 m-2 rounded-lg backdrop-blur-xl dark:bg-default/30 bg-foreground/20 px-1">
           <ViewCountCard comment={data} compact views={views} />
         </div>
-      )}
+      )} */}
       <div className="absolute right-0 m-1">{topChildren}</div>
     </Card>
   );
