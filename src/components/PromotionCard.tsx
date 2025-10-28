@@ -24,9 +24,8 @@ export default function PromotionCard(props: Props) {
   const [author, permlink] = authPerm.split("/");
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
 
-  const URL = `/posts_api/getPost/${authPerm}/${false}/${
-    loginInfo.name || "null"
-  }`;
+  const URL = `/posts_api/getPost/${authPerm}/${false}/${loginInfo.name || "null"
+    }`;
   const { data } = useSWR(URL, fetchSds<Post>);
 
   if (!data) return null;
@@ -80,11 +79,11 @@ export default function PromotionCard(props: Props) {
           <TimeAgoWrapper created={data.created * 1000} />
         </div>
       </Card>
-      {/* {!sm && (
+      {!sm && (
         <div className="shadow-sm shadow-foreground/10   absolute right-0 m-2 rounded-lg backdrop-blur-xl dark:bg-default/30 bg-foreground/20 px-1">
           <ViewCountCard comment={data} compact views={views} />
         </div>
-      )} */}
+      )}
       <div className="absolute right-0 m-1">{topChildren}</div>
     </Card>
   );

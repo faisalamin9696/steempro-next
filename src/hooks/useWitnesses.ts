@@ -7,6 +7,7 @@ export const useWitnesses = (observer?: string | null) => {
   return useQuery({
     queryKey: ["witnessesList"],
     queryFn: () => fetchSds<Witness[]>(URL),
+    gcTime: 300000,
   });
 };
 

@@ -86,10 +86,10 @@ export default function CommentHeader(props: Props) {
           <p className="text-tiny font-light ">{rpm.text}</p>
         </div>
 
-        {/* <ViewCountCard
+        <ViewCountCard
           comment={comment}
           className="shadow-sm shadow-foreground/30 rounded-full bg-white dark:border-none dark:bg-foreground/10 text-tiny px-2 py-[1px] font-light "
-        /> */}
+        />
       </div>
     );
   };

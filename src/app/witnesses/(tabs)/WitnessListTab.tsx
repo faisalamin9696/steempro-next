@@ -16,7 +16,6 @@ import { RiUserStarFill } from "react-icons/ri";
 import WitnessItemCard from "@/components/WitnessItemCard";
 import { SiTraefikproxy } from "react-icons/si";
 import { getTimeFromNow } from "@/utils/helper/time";
-import moment from "moment";
 
 interface Props {
   data: WitnessDataProps;
