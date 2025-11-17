@@ -92,7 +92,7 @@ export default function AccountHeader(props: Props) {
                   {posting_json_metadata?.profile?.name ?? profileInfo.name}
                 </p>
 
-                <div className=" flex flex-row items-center gap-1">
+                <div className=" flex flex-row items-center gap-2">
                   <SLink
                     href={`/@${profileInfo.name}`}
                     className=" font-normal text-sm hover:underline"

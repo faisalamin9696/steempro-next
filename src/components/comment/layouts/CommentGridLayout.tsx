@@ -157,7 +157,7 @@ export default function CommentGridLayout(props: CommentProps) {
             <SAvatar size="sm" username={comment.author} />
 
             <div className="flex flex-col gap-1 text-sm">
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center gap-2">
                 <SLink href={`/@${commentInfo.author}`}>{comment.author}</SLink>
 
                 <Reputation

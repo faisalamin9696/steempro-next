@@ -63,7 +63,7 @@ export default function NotificationsModal(props: Props) {
               </div>
             }
           >
-            <NotificationsTable {...props} />
+            <NotificationsTable {...props} compact />
           </Tab>
           <Tab
             key="chat"

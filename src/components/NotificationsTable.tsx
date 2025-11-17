@@ -18,7 +18,6 @@ import { markasRead } from "@/libs/steem/condenser";
 import { useLogin } from "./auth/AuthProvider";
 import { getCredentials, getSessionKey } from "@/utils/user";
 import { useSession } from "next-auth/react";
-import { Badge } from "@heroui/badge";
 import SLink from "./ui/SLink";
 import { addCommonDataHandler } from "@/hooks/redux/reducers/CommonReducer";
 import InfiniteScroll from "./ui/InfiniteScroll";
@@ -33,6 +32,7 @@ interface Props {
   username: string;
   isOpen: boolean;
   onOpenChange?: (isOpen: boolean) => void;
+  compact?: boolean;
 }
 const typeColorMap = {
   reply: "secondary",
@@ -57,9 +57,8 @@ const ITEMS_PER_BATCH = 50;
 let tempLastRead = 0;
 
 export default function NotificationsTable(props: Props) {
+  const { username, isOpen, onOpenChange, compact } = props;
   const { mutate } = useSWRConfig();
-
-  const { username, isOpen, onOpenChange } = props;
   const commonData = useAppSelector((state) => state.commonReducer.values);
   const getKey = (
     pageIndex: number,
@@ -209,7 +208,7 @@ export default function NotificationsTable(props: Props) {
         loadingComponent={
           <div
             className={
-              isSelf
+              compact
                 ? "flex flex-col gap-4"
                 : "grid grid-cols-1 gap-4 sm:grid-cols-2"
             }
@@ -221,7 +220,7 @@ export default function NotificationsTable(props: Props) {
           </div>
         }
         itemsClassName={
-          isSelf
+          compact
             ? "flex flex-col gap-4"
             : "grid grid-cols-1 gap-4 sm:grid-cols-2"
         }
@@ -240,21 +239,13 @@ export default function NotificationsTable(props: Props) {
             <SLink
               onClick={() => onOpenChange?.(!isOpen)}
               href={getTargetUrl(notification)}
-              className="flex gap-2 items-start border-b-1 border-default-900/20 pb-4"
+              className="flex gap-2 border-b-1 border-default-900/20 pb-4 items-center"
             >
-              <Badge
-                className="h-2 w-2"
-                showOutline={false}
-                color="success"
-                size="sm"
-                isInvisible={
-                  !!notification.is_read || notification.time < tempLastRead
-                }
-                placement="bottom-right"
-                shape="circle"
-              >
-                <SAvatar size="1xs" username={notification.account} />
-              </Badge>
+              {!(!!notification.is_read || notification.time < tempLastRead) && (
+                <div className="h-2 w-2 bg-success-400 rounded-full" />
+              )}
+
+              <SAvatar size="sm" username={notification.account} />
 
               <div className=" flex flex-col gap-2">
                 <div className="flex flex-row gap-2 items-center">

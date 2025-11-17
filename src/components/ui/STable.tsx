@@ -36,6 +36,7 @@ interface STableProps {
   searchEndContent?: React.ReactNode;
   endContent?: (filteredItems?: any[]) => string | React.ReactNode;
   loader?: React.ReactNode;
+  cardClassName?: string;
 }
 
 const getNestedValue = (obj: any, path: string) => {
@@ -81,6 +82,7 @@ function STable(props: STableProps) {
     searchEndContent,
     endContent,
     loader = <LoadingMoreCard />,
+    cardClassName,
   } = props;
 
   const [filterValue, setFilterValue] = useState("");
@@ -253,7 +255,8 @@ function STable(props: STableProps) {
     <Card
       className={twMerge(
         skipCard && "shadow-none !p-0 rounded-none",
-        stickyHeader ? "overflow-visible" : ""
+        stickyHeader ? "overflow-visible" : "",
+        cardClassName
       )}
     >
       {renderHeader()}

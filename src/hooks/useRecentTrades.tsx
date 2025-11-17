@@ -1,8 +1,7 @@
+import { CurrentSetting } from "@/constants/AppConstants";
 import parseAsset from "@/utils/helper/parse-asset";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-
-const CONDENSER_API = "https://api.steemit.com"; // Or your custom node
 
 interface RecentTrade {
   timestamp: string;
@@ -36,7 +35,7 @@ export const useRecentTrades = () => {
         id: 1,
       };
 
-      const res = await fetch(CONDENSER_API, {
+      const res = await fetch(CurrentSetting.rpc, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -67,7 +66,7 @@ export const useRecentTrades = () => {
   }, [data]);
 
   return {
-    trades:trades.reverse(),
+    trades: trades.reverse(),
     isLoading,
     error: error?.message || null,
   };

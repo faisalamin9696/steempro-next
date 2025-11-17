@@ -8,6 +8,8 @@ import { AiFillPushpin } from "react-icons/ai";
 import { Button } from "@heroui/button";
 import { twMerge } from "tailwind-merge";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
+import moment from "moment";
+import { getThumbnail } from "@/utils/parseImage";
 
 interface Props {
   className?: string;
@@ -36,7 +38,14 @@ const CommunityCarousel = (props: Props) => {
           <div className="w-full" key={`${index}`}>
             <PromotionCard
               sm
-              authPerm={`${item.author}/${item.permlink}`}
+              item={{
+                id: index?.toString(),
+                author: item.author,
+                created_at: moment(item.created * 1000).toISOString(),
+                title: item.title,
+                permlink: item.permlink,
+                thumbnail: getThumbnail(item.json_images),
+              }}
               topChildren={
                 !!item.is_pinned && (
                   <Button

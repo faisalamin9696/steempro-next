@@ -22,6 +22,7 @@ import { ThemeProvider } from "next-themes";
 import { initFirebase } from "@/utils/helper/firabase";
 import { useRouter } from "next/navigation";
 import { cleanupCommentDrafts } from "@/utils/draft";
+import MobileNavbar from "@/components/navbar/MobileNavbar";
 
 interface Props {
   children: React.ReactNode;
@@ -107,8 +108,9 @@ export function Providers(props: Props) {
                     <AppWrapper>
                       <div className="w-full">
                         <AppNavbar />
-                        <div className="w-full flex flex-row ">
-                          <div className="flex-col hidden z-10 shadow-md dark:shadow-white/5 w-64 2lg:block sticky h-full-minus-64 top-16 pb-4">
+                        <MobileNavbar />
+                        <div className="w-full flex flex-row pb-20 md:pb-0">
+                          <div className="flex-col hidden z-10 shadow-md dark:shadow-white/5 w-72 2lg:block sticky h-full-minus-64 top-16 pb-4">
                             <DrawerContent />
                           </div>
                           <div className="w-full">{children}</div>

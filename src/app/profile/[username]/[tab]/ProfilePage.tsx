@@ -34,6 +34,10 @@ import SettingsPage from "@/app/settings/SettingsPage";
 import SLink from "@/components/ui/SLink";
 import NotificationsTable from "@/components/NotificationsTable";
 import UserChatModal from "@/components/chat/user/UserChatModal";
+import ChatNotificationsTable from "@/components/chat/user/ChatNotificationTable";
+import { Badge } from "@heroui/badge";
+import { BsChatDots } from "react-icons/bs";
+import { FaRegBell } from "react-icons/fa";
 
 export default function ProfilePage({ data }: { data: AccountExt }) {
   let { username, tab } = useParams() as { username: string; tab: string };
@@ -108,19 +112,23 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
           }}
         >
           {getProfileTabs(username, tab, isSelf ? loginInfo : profileInfo).map(
-            (tab) => (
+            (item) => (
               <Tab
                 as={SLink}
-                href={`/@${username}/${tab.key}`}
-                key={`/@${username}/${tab.key}`}
+                href={`/@${username}/${item.key}`}
+                key={`/@${username}/${item.key}`}
                 title={
-                  <div className="flex items-center space-x-2">
-                    {!isMobile && tab?.icon}
-                    <span>{tab.title}</span>
+                  <div className="flex items-center gap-1">
+                    {item?.icon}
+                    {isMobile ? (
+                      item.key === tab && <span>{item.title}</span>
+                    ) : (
+                      <span>{item.title}</span>
+                    )}
                   </div>
                 }
               >
-                {tab.children}
+                {item.children}
               </Tab>
             )
           )}
@@ -150,6 +158,7 @@ const getProfileTabs = (
 ) => {
   const { data: session } = useSession();
   const isSelf = session?.user?.name === username;
+  const commonData = useAppSelector((state) => state.commonReducer.values);
 
   const profileTabs = [
     {
@@ -193,13 +202,81 @@ const getProfileTabs = (
       icon: <MdSettings size={22} />,
       priority: 5,
     });
+  if (isSelf)
+    profileTabs.push({
+      title: "Notifications",
+      key: "notifications",
+      icon: <MdNotifications size={22} />,
+      children: (
+        <Tabs
+          variant={"solid"}
+          classNames={{
+            tabList: "gap-4",
+            cursor: "bg-primary-200",
+          }}
+        >
+          <Tab
+            key="general"
+            title={
+              <div className="flex flex-row gap-1 items-center">
+                <p>General</p>
+                <Badge
+                  color="primary"
+                  variant="solid"
+                  shape="circle"
+                  showOutline={false}
+                  size="sm"
+                  isInvisible={commonData.unread_count < 1}
+                  content={
+                    commonData.unread_count > 99
+                      ? "99+"
+                      : commonData.unread_count
+                  }
+                >
+                  <FaRegBell className="m-1" size={18} />
+                </Badge>
+              </div>
+            }
+          >
+            <NotificationsTable username={username} isOpen={true} />
+          </Tab>
+          <Tab
+            key="chat"
+            title={
+              <div className="flex flex-row gap-2 items-center">
+                <p>Chat</p>
+                <Badge
+                  color="secondary"
+                  variant="solid"
+                  size="sm"
+                  showOutline={false}
+                  isInvisible={!commonData.unread_count_chat}
+                  content={
+                    commonData.unread_count_chat > 99
+                      ? "99+"
+                      : commonData.unread_count_chat
+                  }
+                >
+                  <BsChatDots className="m-1" size={18} />
+                </Badge>
+              </div>
+            }
+          >
+            <div className="flex flex-col gap-4 p-1">
+              <ChatNotificationsTable onOpenChange={() => {}} isOpen={true} />
+            </div>
+          </Tab>
+        </Tabs>
+      ),
+      priority: 2,
+    });
   else
     profileTabs.push({
       title: "Notifications",
       key: "notifications",
       icon: <MdNotifications size={22} />,
-      children: <NotificationsTable username={username} isOpen={true} />,
       priority: 2,
+      children: <NotificationsTable username={username} isOpen={true} />,
     });
 
   const sortedProfileTabs = profileTabs.sort((a, b) => a.priority - b.priority);

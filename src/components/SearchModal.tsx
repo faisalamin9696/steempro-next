@@ -12,6 +12,7 @@ import SAvatar from "./ui/SAvatar";
 import Reputation from "./Reputation";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import { twMerge } from "tailwind-merge";
+import SLink from "./ui/SLink";
 
 type SearchTypes = "posts" | "comments" | "tags" | "people";
 
@@ -233,18 +234,17 @@ export const SearchModal = (props: Props) => {
                                 username={item?.name || ""}
                               />
                               <div className="flex flex-col items-start justify-center">
-                                <div className="flex items-start  gap-2">
+                                <div className="flex flex-row items-start gap-2">
                                   <div className=" flex-col items-start">
                                     <h4 className="text-sm font-semibold leading-none text-default-600">
                                       {posting_json_metadata?.profile?.name}
                                     </h4>
-                                    <h5
-                                      className={twMerge(
-                                        "text-sm tracking-tight text-default-500"
-                                      )}
+                                    <SLink
+                                      href={`/@${item?.name}`}
+                                      className="text-sm hover:text-blue-500"
                                     >
                                       @{item?.name}
-                                    </h5>
+                                    </SLink>
                                   </div>
                                   <Reputation reputation={item?.reputation} />
                                 </div>

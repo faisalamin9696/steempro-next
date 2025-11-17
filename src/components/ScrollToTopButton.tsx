@@ -37,9 +37,10 @@ export const ScrollToTopButton = ({
     <div
       className={twMerge(
         `fixed bottom-8 right-8 z-50 transition-transform duration-300 ${
-          isVisible ? "translate-y-0" : `${translate || "translate-y-20"} `
+          isVisible ? "translate-y-0" : `${translate || "translate-y-20"}`
         }`,
-        className
+        className,
+        "hidden md:block"
       )}
     >
       <Button

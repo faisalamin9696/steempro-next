@@ -12,12 +12,8 @@ import SLink from "@/components/ui/SLink";
 import ThemeSwitch from "@/components/ThemeSwitch";
 import { usePathname } from "next/navigation";
 
-interface Props {
-  onAccountSwitch?: () => void;
-  handleLogout: () => void;
-}
 
-export default memo(function Drawer(props: Props) {
+export default memo(function Drawer() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
@@ -66,7 +62,7 @@ export default memo(function Drawer(props: Props) {
           visibility: isOpen ? "visible" : "hidden",
           opacity: isOpen ? 1 : 0,
         }}
-        className={twMerge(`fixed z-50 top-0 left-0 h-[100vh] w-64 rounded-r-2xl bg-background  transition-transform duration-300 
+        className={twMerge(`fixed z-50 top-0 left-0 h-[100vh] w-72 rounded-r-2xl bg-background  transition-transform duration-300 
             ${isOpen ? "translate-x-0" : "-translate-x-full"}`)}
       >
         <div className=" flex flewx-row items-center justify-between p-2 pl-4 h-16 ">

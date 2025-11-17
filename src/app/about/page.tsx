@@ -4,9 +4,17 @@ import React from "react";
 import { AboutItem } from "../../components/AboutCard";
 import { Card } from "@heroui/card";
 import "./style.scss";
+import { Button } from "@heroui/button";
+import {
+  RiDiscordFill,
+  RiDiscordLine,
+  RiGithubFill,
+  RiGithubLine,
+} from "react-icons/ri";
+import { DiscordServerLink, GitHubLink } from "@/constants/AppConstants";
+import SLink from "@/components/ui/SLink";
 
 export default function AboutPage() {
-  
   return (
     <div className="flex flex-col gap-10 justify-between">
       <div>
@@ -35,6 +43,18 @@ export default function AboutPage() {
             href="mailto:steempro.official@gmail.com"
             secondHeading={"steempro.official@gmail.com"}
           />
+        </div>
+
+        <div className="flex flex-row gap-6 w-full justify-center">
+          <Button as={SLink} target="_blank" color="primary" href={DiscordServerLink}>
+            <RiDiscordFill size={24} />
+            Discord
+          </Button>
+
+          <Button as={SLink} target="_blank" href={GitHubLink}>
+            <RiGithubFill size={24} />
+            GitHub
+          </Button>
         </div>
       </div>
 

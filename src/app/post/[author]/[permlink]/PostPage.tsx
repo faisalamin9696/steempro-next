@@ -240,7 +240,7 @@ export default function PostPage(props: Props) {
                         </div>
                       </div>
                     )}
-                    <div className="flex md:hidden flex-row w-full sticky bottom-2 justify-center">
+                    <div className="flex md:hidden flex-row w-full sticky bottom-16 justify-center">
                       <CardFooter className="w-full p-0 overflow-visible bg-white/90 border-1 border-default-900/15 rounded-full dark:bg-black/90">
                         <CommentFooter
                           comment={commentInfo}

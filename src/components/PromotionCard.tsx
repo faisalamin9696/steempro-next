@@ -1,10 +1,7 @@
 "use client";
 
-import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
 import React from "react";
-import useSWR from "swr";
 import { Card } from "@heroui/card";
-import ViewCountCard from "./ViewCountCard";
 import Image from "next/image";
 import SAvatar from "./ui/SAvatar";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
@@ -13,29 +10,16 @@ import { twMerge } from "tailwind-merge";
 import SLink from "./ui/SLink";
 
 interface Props {
-  authPerm: string;
-  views?: number;
+  item: PromotedPost;
   topChildren?: React.ReactNode;
   sm?: boolean;
 }
 
 export default function PromotionCard(props: Props) {
-  const { sm, authPerm, views, topChildren } = props;
-  const [author, permlink] = authPerm.split("/");
-  const loginInfo = useAppSelector((state) => state.loginReducer.value);
+  const { sm, topChildren, item } = props;
+  const thumbnail = getThumbnail(JSON.stringify([item.thumbnail]), "512x512");
 
-  const URL = `/posts_api/getPost/${authPerm}/${false}/${loginInfo.name || "null"
-    }`;
-  const { data } = useSWR(URL, fetchSds<Post>);
-
-  if (!data) return null;
-
-  // const URL = `/posts_api/getPost/${authPerm}`
-  // const { data, isLoading, error, isValidating } = useSWR(URL, fetchSds<Post>)
-
-  const thumbnail = getThumbnail(data.json_images, "512x512");
-
-  const targetLink = `/${data?.category}/@${data?.author}/${data?.permlink}`;
+  const targetLink = `/@${item?.author}/${item?.permlink}`;
   return (
     <Card
       as={SLink}
@@ -70,20 +54,20 @@ export default function PromotionCard(props: Props) {
                 backdrop-blur-sm"
       >
         <p className="text-start font-bold  text-sm line-clamp-1">
-          {data?.title}
+          {item?.title}
         </p>
         <div className="flex flex-row items-center gap-2 text-tiny">
-          <SAvatar size="xs" username={author} />
-          <p>@{author} ● </p>
+          <SAvatar size="xs" username={item.author} />
+          <p>@{item.author} ● </p>
 
-          <TimeAgoWrapper created={data.created * 1000} />
+          <TimeAgoWrapper created={item.created_at} />
         </div>
       </Card>
-      {!sm && (
+      {/* {!sm && (
         <div className="shadow-sm shadow-foreground/10   absolute right-0 m-2 rounded-lg backdrop-blur-xl dark:bg-default/30 bg-foreground/20 px-1">
           <ViewCountCard comment={data} compact views={views} />
         </div>
-      )}
+      )} */}
       <div className="absolute right-0 m-1">{topChildren}</div>
     </Card>
   );

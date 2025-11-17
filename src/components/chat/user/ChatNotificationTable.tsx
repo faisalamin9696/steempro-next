@@ -189,6 +189,7 @@ export default function ChatNotificationsTable(props: Props) {
       <STable
         isLoading={isLoading}
         skipCard={isSelf}
+        cardClassName="bg-transparent"
         title={!isSelf ? null : "Chats"}
         subTitle={() => topContent}
         filterByValue={["sender_usr"]}

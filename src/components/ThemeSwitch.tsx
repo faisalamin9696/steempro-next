@@ -69,7 +69,7 @@ export default memo(function ThemeSwitch({ className, sm }: ThemeSwitchProps) {
       className={"mt-2"}
       classNames={{
         base: twMerge(
-          "inline-flex flex-row-reverse w-full max-w-md bg-default-400/20 dark:bg-default-500/20 hover:bg-content2 items-center",
+          "inline-flex flex-row-reverse w-full max-w-md hover:bg-content2 items-center",
           "justify-between cursor-pointer rounded-lg gap-2 p-2 border-2 border-transparent "
         ),
         wrapper: "ps-[2px] overflow-visible group-data-[selected]:bg-primary/50 bg-white/80",

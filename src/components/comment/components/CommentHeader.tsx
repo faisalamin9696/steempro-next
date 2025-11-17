@@ -104,7 +104,7 @@ export default function CommentHeader(props: Props) {
         <div className="flex flex-row items-center gap-1 flex-1">
           <SAvatar size="sm" username={comment.author} />
           <div className="flex flex-col gap-1">
-            <div className="flex flex-row items-center gap-1 text-sm">
+            <div className="flex flex-row items-center gap-2 text-sm">
               <SLink href={`/@${comment.author}`}>{comment.author}</SLink>
 
               <Reputation reputation={comment.author_reputation} />

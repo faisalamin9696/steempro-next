@@ -74,7 +74,6 @@ export default function SchedulesPage() {
           pageSize={30} // Make sure this matches your API's page size
         />
         <ScrollToTopButton />
-
       </div>
     </MainWrapper>
   );
