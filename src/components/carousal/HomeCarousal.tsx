@@ -7,6 +7,7 @@ import { usePromotedPosts } from "@/hooks/usePromotedPosts";
 
 const HomeCarousel = memo(() => {
   const { data, error } = usePromotedPosts();
+
   if (!data || data?.length <= 0 || error) {
     return null;
   }

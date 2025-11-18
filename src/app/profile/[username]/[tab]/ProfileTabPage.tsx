@@ -4,7 +4,6 @@ import FeedList from "@/components/FeedList";
 import { FeedPerPage } from "@/constants/AppConstants";
 import { getEndPoint } from "@/constants/AppFunctions";
 import { useSession } from "next-auth/react";
-import { useParams } from "next/navigation";
 import React from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -13,9 +12,8 @@ type Props = {
   tab: string;
 };
 
-export default function ProfileTabPage() {
-  let { username, tab } = useParams() as Props;
-  username = username?.toLowerCase();
+export default function ProfileTabPage(props: Props) {
+  let { username, tab } = props;
   tab = tab?.toLowerCase();
   const { data: session } = useSession();
 

@@ -16,7 +16,7 @@ export default function ScheduleButton(props: Props) {
       size="sm"
       title="Schedule post"
       onPress={onPress}
-      color="primary"
+      color="secondary"
       isDisabled={isDisabled}
       isLoading={isLoading}
       isIconOnly={!buttonText}

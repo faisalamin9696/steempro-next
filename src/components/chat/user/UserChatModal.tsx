@@ -5,7 +5,7 @@ import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { getCredentials, getSessionKey } from "@/utils/user";
 import { useSession } from "next-auth/react";
 import { Memo } from "@steempro/dsteem";
-import { supabase } from "@/libs/supabase";
+import { supabase } from "@/libs/supabase/supabase";
 import useSWR from "swr";
 import { toast } from "sonner";
 import { sendMessage } from "@/libs/steem/condenser";

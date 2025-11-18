@@ -187,7 +187,7 @@ export default memo(function BeneficiaryButton(props: Props) {
         size: "sm",
         isDisabled: isDisabled,
         color: "warning",
-        startContent: <FaUsersCog size={22} />,
+        startContent: <FaUsersCog size={20} />,
         radius: "lg",
         variant: "flat",
       }}

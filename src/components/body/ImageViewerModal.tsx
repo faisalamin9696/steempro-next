@@ -93,8 +93,8 @@ function ImageViewerModal(props: Props) {
         scrollBehavior: "inside",
         size: "2xl",
         hideCloseButton: true,
-        placement: 'center',
-        classNames: { 'base': '!max-h-full' }
+        placement: "center",
+        classNames: { base: "!max-h-full" },
       }}
       body={() => (
         <TransformWrapper ref={transformComponentRef}>
@@ -107,16 +107,23 @@ function ImageViewerModal(props: Props) {
               />
               <div className="  justify-center flex flex-col items-center gap-2">
                 <TransformComponent>
-                  <img alt={"image"} onLoad={onLoadCompleted}
-                    onError={onLoadCompleted} className={twMerge(
+                  <img
+                    fetchPriority="high"
+                    alt={"image"}
+                    onLoad={onLoadCompleted}
+                    onError={onLoadCompleted}
+                    className={twMerge(
                       "zoomable",
                       isFetching && "bg-background/50"
-                    )} src={src} style={{
+                    )}
+                    src={src}
+                    style={{
                       width: "auto",
-                      maxWidth: '100%',
-                      maxHeight: '640px',
+                      maxWidth: "100%",
+                      maxHeight: "640px",
                       objectFit: "contain",
-                    }} />
+                    }}
+                  />
                 </TransformComponent>
 
                 <div className="text-sm text-default-500 mt-2">{props.alt}</div>

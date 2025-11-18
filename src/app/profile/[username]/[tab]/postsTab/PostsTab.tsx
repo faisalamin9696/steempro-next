@@ -2,71 +2,73 @@
 
 import React from "react";
 import { Tab, Tabs } from "@heroui/tabs";
-import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { twMerge } from "tailwind-merge";
-import { usePathname } from "next/navigation";
 import ProfileTabPage from "../ProfileTabPage";
-import SLink from "@/components/ui/SLink";
+import { useDeviceInfo } from "@/hooks/useDeviceInfo";
+import { getMetadata, updateMetadata } from "@/utils/metadata";
+import { useRouter } from "next/navigation";
 
 interface Props {
-  username: string;
+  account: AccountExt;
   tab: string;
 }
 
 export default function PostsTab(props: Props) {
-  let { username, tab } = props;
-  const pathname = usePathname();
+  let { account, tab } = props;
+  const router = useRouter();
+  const { isMobile } = useDeviceInfo();
 
   const profileTabs = [
     {
       title: "Posts",
       key: "posts",
-      children: <ProfileTabPage />,
+      children: <ProfileTabPage username={account.name} tab="posts" />,
     },
     {
       title: "Friends",
       key: "friends",
-      children: <ProfileTabPage />,
+      children: <ProfileTabPage username={account.name} tab="friends" />,
     },
     {
       title: "Comments",
       key: "comments",
-      children: <ProfileTabPage />,
+      children: <ProfileTabPage username={account.name} tab="comments" />,
     },
     {
       title: "Replies",
       key: "replies",
-      children: <ProfileTabPage />,
+      children: <ProfileTabPage username={account.name} tab="replies" />,
     },
   ];
-  const { isMobile } = useDeviceInfo();
 
   return (
     <div className={twMerge("relative items-center flex-row w-full")}>
       <Tabs
         destroyInactiveTabPanel={false}
         size="sm"
-        disableAnimation={isMobile}
         variant={"underlined"}
         color={"secondary"}
         radius={isMobile ? "full" : "sm"}
         className="justify-center"
-        defaultSelectedKey={`/@${username}/${tab}`}
-        selectedKey={tab ? pathname : `/@${username}/${"posts"}`}
-        classNames={{
-          tabList: "max-sm:gap-0 max-sm:bg-transparent max-sm:p-0",
+        items={profileTabs}
+        defaultSelectedKey={tab}
+        onSelectionChange={(key) => {
+          if (["comments", "replies", "friends"].includes(key.toString())) {
+            router.push(`/@${account.name}/${key.toString()}`);
+          }
+          const { title, description } = getMetadata.profileSync(
+            account.name,
+            key?.toString(),
+            account
+          );
+          updateMetadata({ title, description });
         }}
       >
-        {profileTabs.map((tab) => (
-          <Tab
-            as={SLink}
-            key={`/@${username}/${tab.key}`}
-            title={tab.title}
-            href={`/@${username}/${tab.key}`}
-          >
-            {tab.children}
+        {(item) => (
+          <Tab key={item.key} title={item.title}>
+            {item.children}
           </Tab>
-        ))}
+        )}
       </Tabs>
     </div>
   );

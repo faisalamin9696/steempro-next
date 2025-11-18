@@ -78,6 +78,7 @@ export default memo(function CommentCover(props: Props) {
           {thumbnail ? (
             <div className="relative">
               <Image
+                priority
                 alt={alt || "image"}
                 src={isGif ? getStaticFrameFromGif(src) : src}
                 height={0}

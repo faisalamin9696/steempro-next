@@ -8,6 +8,7 @@ import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import { getThumbnail } from "@/utils/parseImage";
 import { twMerge } from "tailwind-merge";
 import SLink from "./ui/SLink";
+import ViewCountCard from "./ViewCountCard";
 
 interface Props {
   item: PromotedPost;
@@ -63,11 +64,11 @@ export default function PromotionCard(props: Props) {
           <TimeAgoWrapper created={item.created_at} />
         </div>
       </Card>
-      {/* {!sm && (
+      {!sm && (
         <div className="shadow-sm shadow-foreground/10   absolute right-0 m-2 rounded-lg backdrop-blur-xl dark:bg-default/30 bg-foreground/20 px-1">
-          <ViewCountCard comment={data} compact views={views} />
+          <ViewCountCard compact views={item?.views} />
         </div>
-      )} */}
+      )}
       <div className="absolute right-0 m-1">{topChildren}</div>
     </Card>
   );

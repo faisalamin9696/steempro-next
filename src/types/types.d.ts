@@ -53,14 +53,14 @@ type Feed = {
   percent_steem_dollars: number;
   is_new: number = 0;
   isEdit?: boolean;
-};
-
-type Post = Feed & {
+  root_title: string;
   parent_author: string;
   parent_permlink: string;
   root_author: string;
   root_permlink: string;
-  root_title: string;
+};
+
+type Post = Feed & {
   last_sync: number;
   total_payout_value: number;
   curator_payout_value: number;
@@ -700,8 +700,9 @@ type AccountRecoveryType = {
 type PromotedPost = {
   id: string;
   author: string;
-  permlink: string ;
-  title: string ;
-  thumbnail: string ;
-  created_at?: string ;
+  permlink: string;
+  title: string;
+  thumbnail: string;
+  created_at?: string;
+  views?: number;
 };

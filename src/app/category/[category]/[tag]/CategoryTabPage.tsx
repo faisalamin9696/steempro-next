@@ -8,13 +8,12 @@ import { useParams } from "next/navigation";
 import React from "react";
 
 type Props = {
-  category: string;
   tag: string;
 };
 
-function CategoryTabPage() {
+function CategoryTabPage({ category }: { category: string }) {
   const params = useParams();
-  let { category, tag } = params as Props;
+  let { tag } = params as Props;
   category = category?.toLowerCase();
   tag = tag?.toLowerCase();
   const { data: session } = useSession();

@@ -10,14 +10,11 @@ import { fetchSds, useAppSelector } from "@/constants/AppFunctions";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { Button } from "@heroui/button";
 import { useSession } from "next-auth/react";
-import { useParams } from "next/navigation";
 import React from "react";
 import { LuPencilLine } from "react-icons/lu";
 import useSWR from "swr";
 
-export default function SubscriptionTab() {
-  let { username } = useParams() as { username: string };
-  username = username?.toLowerCase();
+export default function SubscriptionTab({ username }: { username: string }) {
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const { isTablet } = useDeviceInfo();
   const { data: session } = useSession();

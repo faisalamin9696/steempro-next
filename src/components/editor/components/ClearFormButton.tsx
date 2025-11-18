@@ -21,7 +21,7 @@ export default memo(function ClearFormButton(props: Props) {
           color: "danger",
           isDisabled: isDisabled,
           isIconOnly: true,
-          startContent: !isLoading && <MdDelete size={22} />,
+          startContent: !isLoading && <MdDelete size={20} />,
           variant: "flat",
           isLoading: isLoading,
         }}

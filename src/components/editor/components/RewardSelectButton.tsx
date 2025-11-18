@@ -1,9 +1,7 @@
 import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
 import { Button } from "@heroui/button";
 import { RadioGroup, Radio } from "@heroui/radio";
-
 import React, { memo, useState } from "react";
-import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { SiSteem } from "react-icons/si";
 
 export const rewardTypes: Payout[] = [
@@ -20,9 +18,7 @@ interface Props {
 
 export default memo(function RewardSelectButton(props: Props) {
   const { onSelectReward, selectedValue, isDisabled } = props;
-
   const [rewardPopup, setRewardPopup] = useState(false);
-  const { isMobile } = useDeviceInfo();
 
   return (
     <div title="Payout reward type">
@@ -41,10 +37,10 @@ export default memo(function RewardSelectButton(props: Props) {
           <Button
             size="sm"
             isDisabled={isDisabled}
-            color="default"
-            startContent={<SiSteem size={22} />}
+            color="primary"
+            startContent={<SiSteem size={20} />}
             radius="lg"
-            variant="shadow"
+            variant="flat"
             className="px-2"
           >
             {selectedValue.shortTitle}

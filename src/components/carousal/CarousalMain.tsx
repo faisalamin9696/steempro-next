@@ -71,6 +71,7 @@ function CarousalMain(props: Props) {
               onPress={onClick}
               isIconOnly
               variant="flat"
+              aria-label={type === "NEXT" ? "Next" : "Previous"}
               radius="full"
               className={twMerge(
                 "absolute z-10 hover:bg-blue-500",

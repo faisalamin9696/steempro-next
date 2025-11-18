@@ -31,13 +31,15 @@ import PostsTab from "./postsTab/PostsTab";
 import CommunitiesTab from "./communitiesTab/CommunitiesTab";
 import WalletTab from "./walletTab/WalletTab";
 import SettingsPage from "@/app/settings/SettingsPage";
-import SLink from "@/components/ui/SLink";
 import NotificationsTable from "@/components/NotificationsTable";
 import UserChatModal from "@/components/chat/user/UserChatModal";
 import ChatNotificationsTable from "@/components/chat/user/ChatNotificationTable";
 import { Badge } from "@heroui/badge";
 import { BsChatDots } from "react-icons/bs";
 import { FaRegBell } from "react-icons/fa";
+import { getMetadata, updateMetadata } from "@/utils/metadata";
+
+let iconSize = 20;
 
 export default function ProfilePage({ data }: { data: AccountExt }) {
   let { username, tab } = useParams() as { username: string; tab: string };
@@ -45,13 +47,13 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
   tab = tab?.toLowerCase();
   const profileInfo =
     useAppSelector((state) => state.profileReducer.value)[data?.name] ?? data;
+
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
 
   const dispatch = useAppDispatch();
   const { isMobile } = useDeviceInfo();
   const { data: session } = useSession();
   const isSelf = session?.user?.name === username;
-
   const chatDisclosure = useDisclosure();
   const searchParams = useSearchParams();
   const chatParam = searchParams.has("chat");
@@ -94,43 +96,40 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
       <div className={twMerge("relative items-center flex-row w-full")}>
         <Tabs
           size={"sm"}
-          disableAnimation={isMobile}
           color={"secondary"}
           radius={isMobile ? "full" : "sm"}
           className="justify-center"
-          selectedKey={
-            tab
-              ? ["comments", "replies", "friends"].includes(tab)
-                ? `/@${username}/${"posts"}`
-                : `/@${username}/${tab}`
-              : `/@${username}/${"blog"}`
+          destroyInactiveTabPanel={false}
+          items={getProfileTabs(username, tab, data)}
+          defaultSelectedKey={
+            ["comments", "replies", "friends"].includes(tab) ? "posts" : tab
           }
-          classNames={{
-            tabList: "max-sm:gap-0 main-tab-list",
-            panel: "w-full",
-            tabContent: " w-full",
+          onSelectionChange={(key) => {
+            router.push(`/@${username}/${key.toString()}`);
+            const { title, description } = getMetadata.profileSync(
+              username,
+              key?.toString(),
+              isSelf ? loginInfo : profileInfo
+            );
+            updateMetadata({ title, description });
           }}
         >
-          {getProfileTabs(username, tab, isSelf ? loginInfo : profileInfo).map(
-            (item) => (
-              <Tab
-                as={SLink}
-                href={`/@${username}/${item.key}`}
-                key={`/@${username}/${item.key}`}
-                title={
-                  <div className="flex items-center gap-1">
-                    {item?.icon}
-                    {isMobile ? (
-                      item.key === tab && <span>{item.title}</span>
-                    ) : (
-                      <span>{item.title}</span>
-                    )}
-                  </div>
-                }
-              >
-                {item.children}
-              </Tab>
-            )
+          {(item) => (
+            <Tab
+              key={item.key}
+              title={
+                <div className="flex items-center gap-1">
+                  {item?.icon}
+                  {isMobile ? (
+                    item.key === tab && <span>{item.title}</span>
+                  ) : (
+                    <span>{item.title}</span>
+                  )}
+                </div>
+              }
+            >
+              {item.children}
+            </Tab>
           )}
         </Tabs>
 
@@ -151,11 +150,7 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
   );
 }
 
-const getProfileTabs = (
-  username: string,
-  tab: string,
-  walletProfile: AccountExt
-) => {
+const getProfileTabs = (username: string, tab: string, account: AccountExt) => {
   const { data: session } = useSession();
   const isSelf = session?.user?.name === username;
   const commonData = useAppSelector((state) => state.commonReducer.values);
@@ -164,15 +159,15 @@ const getProfileTabs = (
     {
       title: "Blog",
       key: "blog",
-      children: <ProfileTabPage />,
-      icon: <MdRssFeed size={22} />,
+      children: <ProfileTabPage tab="blog" username={username} />,
+      icon: <MdRssFeed size={iconSize} />,
       priority: 0,
     },
     {
       title: "Posts",
       key: "posts",
-      children: <PostsTab username={username} tab={tab} />,
-      icon: <MdFeed size={22} />,
+      children: <PostsTab tab={tab} account={account} />,
+      icon: <MdFeed size={iconSize} />,
       priority: 1,
     },
 
@@ -180,15 +175,15 @@ const getProfileTabs = (
       title: "Communities",
       key: "communities",
       children: <CommunitiesTab username={username} tab={tab} />,
-      icon: <MdGroups size={22} />,
+      icon: <MdGroups size={iconSize} />,
 
       priority: 3,
     },
     {
       title: "Wallet",
       key: "wallet",
-      children: <WalletTab data={walletProfile} />,
-      icon: <MdWallet size={22} />,
+      children: <WalletTab data={account} />,
+      icon: <MdWallet size={iconSize} />,
 
       priority: 4,
     },
@@ -199,85 +194,78 @@ const getProfileTabs = (
       title: "Settings",
       key: "settings",
       children: <SettingsPage />,
-      icon: <MdSettings size={22} />,
+      icon: <MdSettings size={iconSize} />,
       priority: 5,
     });
-  if (isSelf)
-    profileTabs.push({
-      title: "Notifications",
-      key: "notifications",
-      icon: <MdNotifications size={22} />,
-      children: (
-        <Tabs
-          variant={"solid"}
-          classNames={{
-            tabList: "gap-4",
-            cursor: "bg-primary-200",
-          }}
-        >
-          <Tab
-            key="general"
-            title={
-              <div className="flex flex-row gap-1 items-center">
-                <p>General</p>
-                <Badge
-                  color="primary"
-                  variant="solid"
-                  shape="circle"
-                  showOutline={false}
-                  size="sm"
-                  isInvisible={commonData.unread_count < 1}
-                  content={
-                    commonData.unread_count > 99
-                      ? "99+"
-                      : commonData.unread_count
-                  }
-                >
-                  <FaRegBell className="m-1" size={18} />
-                </Badge>
-              </div>
-            }
-          >
-            <NotificationsTable username={username} isOpen={true} />
-          </Tab>
-          <Tab
-            key="chat"
-            title={
-              <div className="flex flex-row gap-2 items-center">
-                <p>Chat</p>
-                <Badge
-                  color="secondary"
-                  variant="solid"
-                  size="sm"
-                  showOutline={false}
-                  isInvisible={!commonData.unread_count_chat}
-                  content={
-                    commonData.unread_count_chat > 99
-                      ? "99+"
-                      : commonData.unread_count_chat
-                  }
-                >
-                  <BsChatDots className="m-1" size={18} />
-                </Badge>
-              </div>
-            }
-          >
-            <div className="flex flex-col gap-4 p-1">
-              <ChatNotificationsTable onOpenChange={() => {}} isOpen={true} />
+
+  profileTabs.push({
+    title: "Notifications",
+    key: "notifications",
+    icon: <MdNotifications size={iconSize} />,
+    children: isSelf ? (
+      <Tabs
+        size={"sm"}
+        color={"secondary"}
+        className="justify-center"
+        destroyInactiveTabPanel={false}
+        variant={"underlined"}
+      >
+        <Tab
+          key="general"
+          title={
+            <div className="flex flex-row gap-1 items-center">
+              <p>General</p>
+              <Badge
+                color="secondary"
+                variant="solid"
+                shape="circle"
+                showOutline={false}
+                size="sm"
+                isInvisible={commonData.unread_count < 1}
+                content={
+                  commonData.unread_count > 99 ? "99+" : commonData.unread_count
+                }
+              >
+                <FaRegBell className="m-1" size={18} />
+              </Badge>
             </div>
-          </Tab>
-        </Tabs>
-      ),
-      priority: 2,
-    });
-  else
-    profileTabs.push({
-      title: "Notifications",
-      key: "notifications",
-      icon: <MdNotifications size={22} />,
-      priority: 2,
-      children: <NotificationsTable username={username} isOpen={true} />,
-    });
+          }
+        >
+          <NotificationsTable username={username} isOpen={true} />
+        </Tab>
+        <Tab
+          key="chat"
+          title={
+            <div className="flex flex-row gap-2 items-center">
+              <p>Chat</p>
+              <Badge
+                color="secondary"
+                variant="solid"
+                size="sm"
+                showOutline={false}
+                isInvisible={!commonData.unread_count_chat}
+                content={
+                  commonData.unread_count_chat > 99
+                    ? "99+"
+                    : commonData.unread_count_chat
+                }
+              >
+                <BsChatDots className="m-1" size={18} />
+              </Badge>
+            </div>
+          }
+        >
+          <div className="flex flex-col gap-4 p-1">
+            <ChatNotificationsTable onOpenChange={() => {}} isOpen={true} />
+          </div>
+        </Tab>
+      </Tabs>
+    ) : (
+      <NotificationsTable username={username} isOpen={true} />
+    ),
+
+    priority: 2,
+  });
 
   const sortedProfileTabs = profileTabs.sort((a, b) => a.priority - b.priority);
 

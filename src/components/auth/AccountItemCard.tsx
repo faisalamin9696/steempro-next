@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { twMerge } from "tailwind-merge";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/libs/supabase";
+import { supabase } from "@/libs/supabase/supabase";
 import { clearCommentHandler } from "@/hooks/redux/reducers/CommentReducer";
 import Image from "next/image";
 import { MdVpnKey } from "react-icons/md";
@@ -24,6 +24,7 @@ interface Props {
   className?: string;
   switchText?: string;
   isDisabled?: boolean;
+  onSwitching?: (switching: boolean) => void;
 }
 
 export const keysColorMap = {
@@ -39,8 +40,14 @@ export const BorderColorMap = {
 };
 
 export default function AccountItemCard(props: Props) {
-  const { defaultAccount, user, handleSwitchSuccess, switchText, isDisabled } =
-    props;
+  const {
+    defaultAccount,
+    user,
+    handleSwitchSuccess,
+    switchText,
+    isDisabled,
+    onSwitching,
+  } = props;
 
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -49,10 +56,10 @@ export default function AccountItemCard(props: Props) {
 
   async function handleSwitch() {
     setIsPending(true);
+    onSwitching?.(true);
     try {
       const account = await getAccountExt(user.username);
       if (account) {
-        setIsPending(true);
         const supaLogin = await supabase.auth.signInAnonymously();
         if (supaLogin.error) {
           throw new Error(supaLogin.error.message);
@@ -97,6 +104,7 @@ export default function AccountItemCard(props: Props) {
 
         handleSwitchSuccess({ ...user, username: account.name });
         setIsPending(false);
+        onSwitching?.(false);
         router.refresh();
       } else {
         throw new Error(`Failed to fetch account`);
@@ -104,6 +112,7 @@ export default function AccountItemCard(props: Props) {
     } catch (e: any) {
       toast.error(e?.message || String(e));
       setIsPending(false);
+      onSwitching?.(false);
     }
   }
 
@@ -135,7 +144,6 @@ export default function AccountItemCard(props: Props) {
                 disabled
                 className="min-w-0 h-6"
                 color="success"
-                
               >
                 {"Default"}
               </Button>

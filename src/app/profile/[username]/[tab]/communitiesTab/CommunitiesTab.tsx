@@ -18,12 +18,12 @@ export default function CommunitiesTab(props: Props) {
     {
       title: "Feed",
       key: "feed",
-      children: <ProfileTabPage />,
+      children: <ProfileTabPage tab="feed" username={username} />,
     },
     {
       title: "Subscriptions",
       key: "subscriptions",
-      children: <SubscriptionTab />,
+      children: <SubscriptionTab username={username} />,
     },
   ];
 

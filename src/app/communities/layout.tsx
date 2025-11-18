@@ -1,22 +1,13 @@
 import MainWrapper from "@/components/wrappers/MainWrapper";
+import { getMetadata } from "@/utils/metadata";
 import { Metadata } from "next";
 import React from "react";
+const { title, description, keywords } = getMetadata.communities();
 
 export const metadata: Metadata = {
-  title: `Communities on SteemPro - Join Engaging Discussions`,
-  description: `Explore diverse communities on SteemPro, a user-owned social network. Join engaging discussions, share your passions, and connect with like-minded individuals.`,
-  keywords: [
-    "SteemPro communities",
-    "user-owned social network",
-    "engaging discussions",
-    "connect with like-minded individuals",
-    "share your passions",
-    "diverse communities",
-    "blockchain social network",
-    "decentralized social media",
-    "crypto social network",
-    "SteemPro platform",
-  ].join(", "),
+  title,
+  description,
+  keywords: keywords.join(", "),
 };
 
 export default async function Layout({

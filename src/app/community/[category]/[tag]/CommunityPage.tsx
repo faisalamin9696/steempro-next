@@ -10,15 +10,18 @@ import { toast } from "sonner";
 import { useAppSelector } from "@/constants/AppFunctions";
 import CommunityMembers from "@/components/community/CommunityMembers";
 import CommunityTabPage from "./CommunityTabPage";
-import { FaFire } from "react-icons/fa";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
-import { MdInfo, MdNewLabel, MdPin } from "react-icons/md";
+import { MdInfo, MdNewLabel } from "react-icons/md";
 import { Tab, Tabs } from "@heroui/tabs";
 import FeedPatternSwitch from "@/components/FeedPatternSwitch";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import SModal from "@/components/ui/SModal";
 import { useEffect } from "react";
-import SLink from "@/components/ui/SLink";
+import { PiPushPinFill } from "react-icons/pi";
+import { FiTrendingUp } from "react-icons/fi";
+import { getMetadata, updateMetadata } from "@/utils/metadata";
+
+let iconSize = 20;
 
 export default function CommunityPage({
   account,
@@ -33,7 +36,7 @@ export default function CommunityPage({
 
   const chatDisclosure = useDisclosure();
   const leadershipDisclosure = useDisclosure();
-  const pathname = usePathname();
+  const router = useRouter();
 
   const { isMobile, isBetween920AndMobile } = useDeviceInfo();
   const communityInfo: Community =
@@ -51,15 +54,15 @@ export default function CommunityPage({
     {
       title: "Trending",
       key: "trending",
-      children: <CommunityTabPage />,
-      icon: <FaFire size={22} />,
+      children: <CommunityTabPage category="trending" />,
+      icon: <FiTrendingUp size={iconSize} />,
       priority: 1,
     },
     {
       title: "New",
       key: "created",
-      children: <CommunityTabPage />,
-      icon: <MdNewLabel size={22} />,
+      children: <CommunityTabPage category="created" />,
+      icon: <MdNewLabel size={iconSize} />,
       priority: 2,
     },
   ];
@@ -67,8 +70,8 @@ export default function CommunityPage({
     communityTabs.push({
       title: "Pinned",
       key: "pinned",
-      children: <CommunityTabPage />,
-      icon: <MdPin size={22} />,
+      children: <CommunityTabPage category="pinned" />,
+      icon: <PiPushPinFill size={iconSize} />,
       priority: 3,
     });
   }
@@ -84,7 +87,7 @@ export default function CommunityPage({
           onLeadershipPress={leadershipDisclosure.onOpen}
         />
       ),
-      icon: <MdInfo size={22} />,
+      icon: <MdInfo size={iconSize} />,
       priority: 5,
     });
   }
@@ -126,32 +129,31 @@ export default function CommunityPage({
             <Tabs
               destroyInactiveTabPanel={false}
               size={"sm"}
-              disableAnimation={isMobile}
               color={"secondary"}
               radius={isMobile ? "full" : "sm"}
               className="justify-center"
-              selectedKey={pathname}
-              classNames={{
-                tabList: "max-sm:gap-0 main-tab-list",
-                panel: "w-full",
-                tabContent: " w-full",
+              items={sortedCommunityTabs}
+              defaultSelectedKey={category}
+              onSelectionChange={(key) => {
+                router.push(`/${key.toString()}/${"hive-" + tag}`);
+                const { title, description, keywords } =
+                  getMetadata.communitySync(key?.toString(), community);
+                updateMetadata({ title, description, keywords });
               }}
             >
-              {sortedCommunityTabs.map((tab) => (
+              {(item) => (
                 <Tab
-                  as={SLink}
-                  href={`/${tab.key}/${"hive-" + tag}`}
-                  key={`/${tab.key}/${"hive-" + tag}`}
+                  key={item.key}
                   title={
                     <div className="flex items-center space-x-2">
-                      {!isMobile && tab?.icon}
-                      <span>{tab.title}</span>
+                      {item?.icon}
+                      <span>{item.title}</span>
                     </div>
                   }
                 >
-                  {tab.children}
+                  {item.children}
                 </Tab>
-              ))}
+              )}
             </Tabs>
             {!["about", "roles"].includes(category) && (
               <div className="absolute  top-0 right-0 max-sm:hidden">

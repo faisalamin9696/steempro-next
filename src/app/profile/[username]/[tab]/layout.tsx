@@ -6,6 +6,7 @@ import MainWrapper from "@/components/wrappers/MainWrapper";
 import ProfileInfoCard from "@/components/ProfileInfoCard";
 import ProfilePage from "./ProfilePage";
 import ErrorCardServer from "@/components/ErrorCardServer";
+import { getMetadata } from "@/utils/metadata";
 
 export default async function Layout({
   children,
@@ -38,39 +39,14 @@ export default async function Layout({
 
 export async function generateMetadata({ params }): Promise<Metadata> {
   let { username, tab } = await params;
-  username = username?.toLowerCase();
-  tab = tab?.toLowerCase();
+  const { title, description, keywords } = await getMetadata.profileAsync(
+    username,
+    tab
+  );
 
-  if (!tab) {
-    tab = "blog";
-  }
-  const session = await auth();
-
-  const result = await getAccountExt(username, session?.user?.name || "null");
-  const { name, about, website } =
-    JSON.parse(result.posting_json_metadata || "{}")?.profile ?? {};
-
-  const capCat = tab.charAt(0).toUpperCase() + tab.slice(1);
-  const pageTitle = !!name
-    ? `${name} (@${username}) - ${capCat} on the Decentralized Web`
-    : `@${username} - ${capCat} on the Decentralized Web`;
-  const pageDescription = about || "";
-
-  const keywords = [
-    `SteemPro @${username}`,
-    `${tab} by @${username}`,
-    `${username}'s SteemPro profile`,
-    `SteemPro user ${username}`,
-    `decentralized ${tab} content`,
-    `Steem ${tab} by ${username}`,
-    `blockchain blogging profile`,
-    `crypto social posts by ${username}`,
-    `${username} ${tab} on SteemPro`,
-    `Web3 creator ${username}`,
-  ];
   return {
-    title: pageTitle,
-    description: pageDescription,
+    title,
+    description,
     keywords: keywords.join(", "),
     openGraph: {
       images: [getResizedAvatar(username, "medium")],

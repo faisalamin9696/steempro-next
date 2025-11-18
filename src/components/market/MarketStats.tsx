@@ -1,12 +1,8 @@
 import { useMarketData } from "@/hooks/useMarketData";
 import { Card, CardBody } from "@heroui/card";
 import React from "react";
-import {
-  BiTrendingUp,
-  BiTrendingDown,
-  BiDollar,
-  BiBarChart,
-} from "react-icons/bi";
+import { BiDollar, BiBarChart } from "react-icons/bi";
+import { FiTrendingDown, FiTrendingUp } from "react-icons/fi";
 
 function MarketStats() {
   const { ticker, volume, isLoading, error } = useMarketData();
@@ -70,9 +66,9 @@ function MarketStats() {
               </p>
             </div>
             {percentChange >= 0 ? (
-              <BiTrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-green-500" />
+              <FiTrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-green-500" />
             ) : (
-              <BiTrendingDown className="w-6 h-6 sm:w-8 sm:h-8 text-red-500" />
+              <FiTrendingDown className="w-6 h-6 sm:w-8 sm:h-8 text-red-500" />
             )}
           </div>
           <p

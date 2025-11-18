@@ -7,12 +7,12 @@ import { addCommentHandler } from "@/hooks/redux/reducers/CommentReducer";
 import { getSettings } from "@/utils/user";
 import { Card, CardFooter } from "@heroui/card";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ViewCountTime } from "@/constants/AppConstants";
 import { hasNsfwTag } from "@/utils/stateFunctions";
 import TagsListCard from "@/components/TagsListCard";
 import { Button } from "@heroui/button";
-import { updatePostView } from "@/libs/mysql/database";
+import { updatePostView } from "@/libs/supabase/database";
 import { addRepliesHandler } from "@/hooks/redux/reducers/RepliesReducer";
 import PostReplies from "@/components/reply/PostReplies";
 import { useSession } from "next-auth/react";
@@ -31,7 +31,7 @@ export default function PostPage(props: Props) {
   const { data } = props;
   const post = data?.[0];
   const replies = data?.slice(1);
-
+  const router = useRouter();
   const pathname = usePathname();
   const { data: session } = useSession();
   const dispatch = useAppDispatch();
@@ -72,19 +72,16 @@ export default function PostPage(props: Props) {
 
   useEffect(() => {
     if (post && location.pathname?.split("/")?.length === 3) {
-      window.history.replaceState(
-        {},
-        "",
-        `/${post?.category}/@${post?.author}/${post?.permlink}`
-      );
+      router.replace(`/${post?.category}/@${post?.author}/${post?.permlink}`);
     }
     dispatch(addCommentHandler(post));
   }, []);
 
   useEffect(() => {
-    // count view after ViewCountTime mili seconds
+    // count view after ViewCountTime mili seconds - onlyt logged in user count check added 18/11/2025
     const timeout = setTimeout(() => {
-      if (commentInfo.depth === 0 && !isSelf) updatePostView(commentInfo);
+      if (commentInfo.depth === 0 && !isSelf && session?.user?.name)
+        updatePostView(commentInfo);
     }, ViewCountTime);
 
     return () => clearTimeout(timeout);
@@ -272,7 +269,10 @@ export default function PostPage(props: Props) {
         />
       </div>
 
-      <ScrollToTopButton className="bottom-14" translateClass={"translate-y-24"} />
+      <ScrollToTopButton
+        className="bottom-14"
+        translateClass={"translate-y-24"}
+      />
     </div>
   );
 }

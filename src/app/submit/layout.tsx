@@ -1,5 +1,14 @@
 import MainWrapper from "@/components/wrappers/MainWrapper";
 import SubmitPage from "./SubmitPage";
+import { getMetadata } from "@/utils/metadata";
+import { Metadata } from "next";
+
+const { title, description, keywords } = getMetadata.submit();
+export const metadata: Metadata = {
+  title,
+  description,
+  keywords: keywords.join(", "),
+};
 
 export default async function Layout({
   children,
@@ -13,24 +22,4 @@ export default async function Layout({
       </MainWrapper>
     </main>
   );
-}
-
-export async function generateMetadata() {
-  const keywords = [
-    "submit posts to SteemPro",
-    "share ideas with global audience",
-    "SteemPro community",
-    "submit articles to SteemPro",
-    "reach global audience",
-    "SteemPro contributions",
-    "SteemPro content submission",
-    "share stories on SteemPro",
-    "SteemPro ideas",
-    "SteemPro platform",
-  ];
-  return {
-    title: `Create and Submit - Share Your Ideas with the World!`,
-    description: `Submit your posts, articles, and content to SteemPro and reach a global audience. Join our community and share your ideas, stories, and insights with the world. Start contributing today!`,
-    keywords: keywords.join(", "),
-  };
 }

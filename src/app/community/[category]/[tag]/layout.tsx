@@ -1,9 +1,9 @@
 import { getAccountExt, getCommunity } from "@/libs/steem/sds";
-import { getResizedAvatar } from "@/utils/parseImage";
 import { Metadata, ResolvingMetadata } from "next";
 import CommunityPage from "./CommunityPage";
 import { auth } from "@/auth";
 import ErrorCardServer from "@/components/ErrorCardServer";
+import { getMetadata } from "@/utils/metadata";
 
 export default async function Layout({
   params,
@@ -33,39 +33,18 @@ export async function generateMetadata(
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   let { category, tag } = await params;
-  category = category?.toLowerCase();
-  tag = tag?.toLowerCase();
-  const community = `hive-${tag}`;
-  const previousImages = (await parent)?.openGraph?.images || [];
-  const result = await getCommunity(community);
-  const { title, about } = result ?? {};
-  const pageTitle = title
-    ? `${title} - ${category} in the ${community} Community`
-    : `${community} Community ${category} List`;
-  const pageDescription = about || "";
-
-  const keywords = [
-    `${community} community discussions`,
-    `${community} ${category} content`,
-    `${title} - ${community} on SteemPro`,
-    `latest ${category} from ${community}`,
-    `top ${category} topics in ${community}`,
-    `#${community} news and updates`,
-    `#${category} posts on SteemPro`,
-    `${category} conversations at ${community}`,
-    `${community} ${category} insights`,
-    `${community} trending ${category}`,
-  ];
+  const { title, description, keywords, images } =
+    await getMetadata.communityAsync(category, tag, parent);
 
   return {
-    title: pageTitle,
-    description: pageDescription,
+    title,
+    description,
     keywords: keywords.join(", "),
     openGraph: {
-      images: [getResizedAvatar(result.account, "medium"), ...previousImages],
+      images: [...images],
     },
     twitter: {
-      images: [getResizedAvatar(result.account, "medium"), ...previousImages],
+      images: [...images],
     },
   };
 }

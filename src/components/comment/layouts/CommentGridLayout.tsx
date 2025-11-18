@@ -3,16 +3,15 @@
 import React from "react";
 import BodyShort from "../../body/BodyShort";
 import Image from "next/image";
-import { getResizedAvatar, getThumbnail } from "@/utils/parseImage";
+import { getThumbnail } from "@/utils/parseImage";
 import TimeAgoWrapper from "../../wrappers/TimeAgoWrapper";
 import { Card, CardBody } from "@heroui/card";
-import { User } from "@heroui/user";
 import Reputation from "@/components/Reputation";
 import CommentFooter from "../components/CommentFooter";
 import STag from "@/components/ui/STag";
 import "./style.scss";
 import { CommentProps } from "../CommentCard";
-import { abbreviateNumber, validateCommunity } from "@/utils/helper";
+import { validateCommunity } from "@/utils/helper";
 import { useAppSelector } from "@/constants/AppFunctions";
 import { hasNsfwTag } from "@/utils/stateFunctions";
 import NsfwOverlay from "@/components/NsfwOverlay";
@@ -132,7 +131,9 @@ export default function CommentGridLayout(props: CommentProps) {
                     commentInfo.is_muted ? " blur-[2px]" : ""
                   )}
                 >
-                  {commentInfo.title}
+                  {!commentInfo?.parent_permlink
+                    ? commentInfo.title
+                    : `RE: ${commentInfo?.root_title}`}
                 </p>
                 <div
                   className={twMerge(

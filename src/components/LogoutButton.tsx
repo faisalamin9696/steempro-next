@@ -66,7 +66,7 @@ function LogoutButton({
     <>
       <Button
         className={twMerge(
-          "w-full justify-start items-center px-1 text-foreground",
+          "w-full justify-start items-center text-foreground",
           className
         )}
         size="md"

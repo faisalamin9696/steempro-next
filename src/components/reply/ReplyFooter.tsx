@@ -32,7 +32,6 @@ import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
-import { CustomEvent } from "@piwikpro/react-piwik-pro";
 import SLink from "../ui/SLink";
 import { AsyncUtils } from "@/utils/async.utils";
 import {
@@ -309,7 +308,6 @@ export default function ReplyFooter({
     handleClear();
     if (showEdit) isEditing && isEditing(!showEdit);
     toast.success(showEdit ? "Updated" : "Sent");
-    CustomEvent.trackEvent("comment_submit_form", newComment.author, "Sent");
   }
 
   const postingMutation = useMutation({

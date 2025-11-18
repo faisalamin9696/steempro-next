@@ -38,6 +38,7 @@ const AboutCard = (props: Props): React.ReactNode => {
             className="w-full"
             size="sm"
             href={props.href ?? `/@${username}`}
+            variant="flat"
           >
             Contact
           </Button>

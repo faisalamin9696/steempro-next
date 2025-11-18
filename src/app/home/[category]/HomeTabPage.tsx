@@ -4,15 +4,14 @@ import FeedList from "@/components/FeedList";
 import { FeedPerPage } from "@/constants/AppConstants";
 import { getEndPoint, useAppSelector } from "@/constants/AppFunctions";
 import { useSession } from "next-auth/react";
-import { useParams } from "next/navigation";
 import React from "react";
 
 type Props = {
   category: string;
 };
 
-function HomeTabPage() {
-  let { category } = useParams() as Props;
+function HomeTabPage(props: Props) {
+  let { category } = props;
   category = category?.toLowerCase();
   const { data: session } = useSession();
 

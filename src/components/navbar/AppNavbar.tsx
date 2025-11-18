@@ -40,6 +40,7 @@ import { SearchModal } from "../SearchModal";
 import LogoutButton from "../LogoutButton";
 import { PiUserSwitchFill } from "react-icons/pi";
 import AccountsModal from "../auth/AccountsModal";
+import { FiLogIn } from "react-icons/fi";
 // import Lottie from "lottie-react";
 // import giftAnimation from "@/assets/gift_anim.json";
 
@@ -122,8 +123,8 @@ function AppNavbar() {
               src={"/logo-default.png"}
               alt="logo"
               priority
-              height={40}
-              width={160}
+              height={30}
+              width={150}
               style={{ height: "auto" }}
             />
           </SLink>
@@ -221,22 +222,23 @@ function AppNavbar() {
 
             {!isAuthenticated && (
               <Button
-                className="hidden md:block"
+                className="hidden md:flex"
                 isIconOnly={status !== "unauthenticated"}
-                radius="lg"
+                radius="full"
                 variant="flat"
                 color="success"
                 onPress={handleLogin}
                 size="md"
                 isDisabled={status === "loading"}
                 isLoading={status === "loading"}
+                startContent={<FiLogIn />}
               >
                 Login
               </Button>
             )}
 
             {isAuthenticated && (
-              <div className="hidden md:block">
+              <div>
                 <Popover
                   placement="top"
                   color="default"
@@ -267,7 +269,7 @@ function AppNavbar() {
                       <Button
                         size="md"
                         variant="light"
-                        className="w-full justify-start items-center px-1"
+                        className="w-full justify-start items-center"
                         as={SLink}
                         href={`/@${session?.user?.name}`}
                         onPress={handleItemClick}
@@ -282,7 +284,7 @@ function AppNavbar() {
                       <Button
                         size="md"
                         variant="light"
-                        className="w-full justify-start items-center px-1"
+                        className="w-full justify-start items-center"
                         as={SLink}
                         href={`/@${session?.user?.name}/wallet`}
                         onPress={handleItemClick}
@@ -294,7 +296,7 @@ function AppNavbar() {
                       {!credentials?.passwordless &&
                         !credentials?.keychainLogin && (
                           <Button
-                            className="w-full justify-start items-center px-1"
+                            className="w-full justify-start items-center"
                             size="md"
                             variant="light"
                             onPress={() => {
@@ -314,7 +316,7 @@ function AppNavbar() {
                         )}
 
                       <Button
-                        className="w-full justify-start items-center px-1"
+                        className="w-full justify-start items-center"
                         size="md"
                         variant="light"
                         onPress={() => {

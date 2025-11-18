@@ -5,7 +5,7 @@ import {
   validateKeychain,
 } from "@/libs/steem/condenser";
 import { getAccountExt } from "@/libs/steem/sds";
-import { supabase } from "@/libs/supabase";
+import { supabase } from "@/libs/supabase/supabase";
 import { AsyncUtils } from "@/utils/async.utils";
 import { validate_account_name } from "@/utils/chainValidation";
 import { getResizedAvatar } from "@/utils/parseImage";

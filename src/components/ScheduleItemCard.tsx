@@ -344,9 +344,9 @@ function ScheduleItemCard({ item }: { item: Schedule }) {
           <div className=" flex flex-col gap-4 w-full">
             <div className=" items-center">
               <div className=" flex flex-row items-start gap-2">
-                <FaClock className=" text-lg" />
+                <FaClock size={20} />
                 <div className="text-sm flex-col items-center gap-1">
-                  <div className="flex flec-row items-center gap-1">
+                  <div className="flex flex-row items-center gap-1">
                     {moment(scheduleInfo.time).format("YYYY-MM-DD HH:mm")}
 
                     <p>in</p>

@@ -19,7 +19,7 @@ import { toast } from "sonner";
 import { FaLock } from "react-icons/fa6";
 import SignupCard from "../SignupCard";
 import AvailableAccountList from "../AvailableAccountList";
-import { supabase } from "@/libs/supabase";
+import { supabase } from "@/libs/supabase/supabase";
 import { saveLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 
 interface Props {

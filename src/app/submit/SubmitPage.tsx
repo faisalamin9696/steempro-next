@@ -46,7 +46,6 @@ import axios from "axios";
 import ScheduleModal from "@/components/ScheduleModal";
 import { IoClose } from "react-icons/io5";
 import { ZonedDateTime } from "@internationalized/date";
-import { CustomEvent } from "@piwikpro/react-piwik-pro";
 import { Authority, cryptoUtils, Signature } from "@steempro/dsteem";
 import { AsyncUtils } from "@/utils/async.utils";
 import { useAppDispatch, useAppSelector } from "@/constants/AppFunctions";
@@ -193,11 +192,6 @@ export default function SubmitPage(props: Props) {
       }
       toast.success("Published");
       clearForm();
-      CustomEvent.trackEvent(
-        "post_submit_page",
-        variables.postData.author.name,
-        "Published"
-      );
     },
   });
 

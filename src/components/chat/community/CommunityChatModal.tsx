@@ -4,7 +4,7 @@ import { Button } from "@heroui/button";
 import React, { useEffect, useRef, useState } from "react";
 import { mapSds, useAppSelector } from "@/constants/AppFunctions";
 import useSWR from "swr";
-import { supabase } from "@/libs/supabase";
+import { supabase } from "@/libs/supabase/supabase";
 import LoadingCard from "../../LoadingCard";
 import EmptyChat from "../components/EmptyChat";
 import { toast } from "sonner";

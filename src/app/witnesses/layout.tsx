@@ -1,4 +1,13 @@
 import MainWrapper from "@/components/wrappers/MainWrapper";
+import { getMetadata } from "@/utils/metadata";
+import { Metadata } from "next";
+
+const { title, description, keywords } = getMetadata.witnesses();
+export const metadata: Metadata = {
+  title,
+  description,
+  keywords: keywords.join(", "),
+};
 
 export default async function Layout({
   children,
@@ -12,23 +21,3 @@ export default async function Layout({
   );
 }
 
-export async function generateMetadata() {
-  const keywords = [
-    "Steem blockchain witnesses",
-    "trusted block producers",
-    "Steem block producers",
-    "blockchain security",
-    "blockchain governance",
-    "Steem blockchain",
-    "witness role",
-    "witness contributions",
-    "Steem network",
-    "block producer responsibilities",
-  ];
-
-  return {
-    title: `Steem Blockchain Witnesses: Trusted Block Producers`,
-    description: `Discover the trusted witnesses (block producers) contributing to the security and governance of the Steem blockchain. Learn about their role and contributions.`,
-    keywords: keywords.join(", "),
-  };
-}

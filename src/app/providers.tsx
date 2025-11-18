@@ -14,8 +14,7 @@ import { SWRConfig } from "swr";
 import { fetchSds } from "@/constants/AppFunctions";
 import { Next13ProgressBar } from "next13-progressbar";
 import AppWrapper from "@/components/wrappers/AppWrapper";
-import { supabase } from "@/libs/supabase";
-import PiwikPro from "@piwikpro/react-piwik-pro";
+import { supabase } from "@/libs/supabase/supabase";
 import DrawerContent from "@/components/navbar/components/DrawerContent";
 import AppNavbar from "@/components/navbar/AppNavbar";
 import { ThemeProvider } from "next-themes";
@@ -74,10 +73,6 @@ export function Providers(props: Props) {
   useEffect(() => {
     setIsMounted(true);
     cleanupCommentDrafts();
-    PiwikPro.initialize(
-      "70c8840a-d55a-4a1f-a3af-d1a06b46a5dc",
-      "https://steempro.piwik.pro"
-    );
   }, []);
 
   return (

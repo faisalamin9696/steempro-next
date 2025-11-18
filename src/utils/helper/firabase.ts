@@ -18,8 +18,5 @@ export function initFirebase() {
     appId: "1:691442331419:web:8e4e8d47f0fe08a5486dbe",
     measurementId: "G-4TNHNTQ4YD",
   });
-
   analytics = getAnalytics(app);
-
-  logEvent(analytics, "test-event");
 }

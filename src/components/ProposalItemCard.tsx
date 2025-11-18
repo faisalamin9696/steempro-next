@@ -206,9 +206,9 @@ const ProposalItemCard = ({
                 />
               </span>
               {proposal.creator !== proposal.receiver && (
-                <>
+              <>
                   <span className="inline">•</span>
-                  <span className="flex flex-row gap-2">
+                  <span className="flex flex-row gap-2 items-center">
                     to
                     <SAvatar
                       username={proposal.receiver}

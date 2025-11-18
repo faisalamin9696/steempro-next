@@ -12,7 +12,6 @@ import SLink from "@/components/ui/SLink";
 import ThemeSwitch from "@/components/ThemeSwitch";
 import { usePathname } from "next/navigation";
 
-
 export default memo(function Drawer() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
@@ -52,7 +51,13 @@ export default memo(function Drawer() {
       {/* Drawer button */}
 
       <div className="2lg:hidden me-2">
-        <Button size="sm" isIconOnly variant="light" onPress={toggleDrawer}>
+        <Button
+          aria-label={"Drawer Button"}
+          size="sm"
+          isIconOnly
+          variant="light"
+          onPress={toggleDrawer}
+        >
           <RxHamburgerMenu className="text-xl" />
         </Button>
       </div>
@@ -72,8 +77,8 @@ export default memo(function Drawer() {
                 src={"/logo-default.png"}
                 alt="logo"
                 priority
-                height={40}
-                width={160}
+                height={30}
+                width={150}
                 style={{ height: "auto" }}
               />
             </SLink>

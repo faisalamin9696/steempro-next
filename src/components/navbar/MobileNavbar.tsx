@@ -1,47 +1,19 @@
 "use client";
 
-import {
-  FaHome,
-  FaBell,
-  FaPlus,
-  FaUser,
-  FaWallet,
-  FaRegBell,
-  FaArrowUp,
-  FaCoins,
-  FaLock,
-  FaUnlock,
-  FaUserCircle,
-} from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import SLink from "../ui/SLink";
 import { Card } from "@heroui/card";
 import { usePathname } from "next/navigation";
-import { twMerge } from "tailwind-merge";
 import { useSession } from "next-auth/react";
-import { useAppSelector } from "@/constants/AppFunctions";
-import NotificationsModal from "../NotificationsModal";
-import { useDisclosure } from "@heroui/modal";
-import { Badge } from "@heroui/badge";
-import { Button, ButtonGroup } from "@heroui/button";
+import { Button } from "@heroui/button";
 import { useLogin } from "../auth/AuthProvider";
 import { FiLogIn } from "react-icons/fi";
-import { BiBell } from "react-icons/bi";
 import { useEffect, useState } from "react";
-import { FaAnglesUp } from "react-icons/fa6";
-import { TbHome, TbHomeFilled, TbHomeUp } from "react-icons/tb";
-import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
-import { Divider } from "@heroui/divider";
-import { Spinner } from "@heroui/spinner";
-import { IoFlash, IoLogOut } from "react-icons/io5";
-import { MdOutlineRefresh } from "react-icons/md";
-import { PiUserSwitchFill } from "react-icons/pi";
-import { BorderColorMap } from "../auth/AccountItemCard";
-import SAvatar from "../ui/SAvatar";
-import { refreshData } from "./AppNavbar";
+import { TbHome, TbHomeFilled } from "react-icons/tb";
 import { BsBell, BsBellFill, BsWallet, BsWalletFill } from "react-icons/bs";
-import { HiOutlineArrowSmallUp } from "react-icons/hi2";
 import { RiArrowUpDoubleLine } from "react-icons/ri";
 import { toast } from "sonner";
+import { PiUser, PiUserFill } from "react-icons/pi";
 
 const MobileNavbar = () => {
   const pathname = usePathname();
@@ -52,11 +24,7 @@ const MobileNavbar = () => {
   const submitLink = `/submit`;
   const walletLink = `/@${session?.user?.name}/wallet`;
   const profileLink = `/@${session?.user?.name}`;
-  const commonData = useAppSelector((state) => state.commonReducer.values);
-  const loginInfo = useAppSelector((state) => state.loginReducer.value);
-  const notiDisclosure = useDisclosure();
-  const { authenticateUser, isAuthorized, credentials, setCredentials } =
-    useLogin();
+  const { authenticateUser } = useLogin();
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   function handleLogin() {
@@ -152,7 +120,6 @@ const MobileNavbar = () => {
             size="sm"
             radius="full"
             color="primary"
-            
           >
             <FaPlus />
           </Button>
@@ -196,6 +163,27 @@ const MobileNavbar = () => {
           )}
 
           {isAuthenticated && (
+            <Button
+              as={SLink}
+              href={profileLink}
+              color={isActive(profileLink) ? "primary" : "default"}
+              variant={isActive(profileLink) ? "flat" : "light"}
+              disableRipple
+              size="sm"
+              radius="full"
+            >
+              <div className="flex flex-col items-center">
+                {isActive(profileLink) ? (
+                  <PiUserFill size={24} />
+                ) : (
+                  <PiUser size={24} />
+                )}
+                {/* <span className="text-xs">Wallet</span> */}
+              </div>
+            </Button>
+          )}
+
+          {/* {isAuthenticated && (
             <SLink href={profileLink}>
               <SAvatar
                 onlyImage
@@ -212,7 +200,7 @@ const MobileNavbar = () => {
                 loadSize="medium"
               />
             </SLink>
-          )}
+          )} */}
         </div>
       </Card>
     </>

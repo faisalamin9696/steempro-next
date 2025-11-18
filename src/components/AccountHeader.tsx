@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useAppSelector } from "@/constants/AppFunctions";
 import SAvatar from "./ui/SAvatar";
 import { Button } from "@heroui/button";
@@ -14,7 +14,6 @@ import { Accordion, AccordionItem } from "@heroui/accordion";
 import ProfileInfoCard from "./ProfileInfoCard";
 import { useSession } from "next-auth/react";
 import SLink from "./ui/SLink";
-import { usePathname, useRouter } from "next/navigation";
 import Reputation from "./Reputation";
 import ChatButton from "./ui/ChatButton";
 import SModal from "./ui/SModal";
@@ -28,13 +27,6 @@ export default function AccountHeader(props: Props) {
   const { account, onChatPress } = props;
   const { isTablet } = useDeviceInfo();
   const { data: session } = useSession();
-
-  const router = useRouter();
-  const pathname = usePathname();
-
-  useEffect(() => {
-    router.refresh();
-  }, [pathname]);
 
   const profileInfo: AccountExt =
     useAppSelector((state) => state.profileReducer.value)[

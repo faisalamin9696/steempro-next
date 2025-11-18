@@ -14,7 +14,7 @@ import SLink from "@/components/ui/SLink";
 
 export default function CommentListLayout(props: CommentProps) {
   const { comment, isReply, isSearch } = props;
-  const commentInfo =
+  const commentInfo: Feed =
     useAppSelector((state) => state.commentReducer.values)[
       `${comment.author}/${comment.permlink}`
     ] ?? comment;
@@ -54,7 +54,9 @@ export default function CommentListLayout(props: CommentProps) {
             >
               <div className="pl-1 text-container space-y-2 flex-1">
                 <div className=" text-start font-bold text-md">
-                  {commentInfo.title}
+                  {!commentInfo?.parent_permlink
+                    ? commentInfo.title
+                    : `RE: ${commentInfo?.root_title}`}
                 </div>
 
                 {isReply && !isSearch ? (
@@ -101,7 +103,11 @@ export default function CommentListLayout(props: CommentProps) {
       </div>
 
       {!isSearch && (
-        <CommentFooter {...props} comment={commentInfo} className="w-full mt-4" />
+        <CommentFooter
+          {...props}
+          comment={commentInfo}
+          className="w-full mt-4"
+        />
       )}
     </div>
   );

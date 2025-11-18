@@ -4,45 +4,47 @@ import { Tab, Tabs } from "@heroui/tabs";
 import React from "react";
 import FeedPatternSwitch from "@/components/FeedPatternSwitch";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
-import { FaFire } from "react-icons/fa";
 import { FaCircleDollarToSlot } from "react-icons/fa6";
 import { MdWhatshot, MdNewLabel } from "react-icons/md";
 import { twMerge } from "tailwind-merge";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import CategoryTabPage from "./CategoryTabPage";
-import SLink from "@/components/ui/SLink";
+import { FiTrendingUp } from "react-icons/fi";
+import { getMetadata, updateMetadata } from "@/utils/metadata";
+
+let iconSize = 20;
 
 export default function CategoryPage() {
   let { category, tag } = useParams() as { category: string; tag: string };
   category = category?.toLowerCase();
   tag = tag?.toLowerCase();
   const { isMobile } = useDeviceInfo();
-  const pathname = usePathname();
+  const router = useRouter();
 
   let homeTabs = [
     {
       title: "Trending",
       key: "trending",
-      children: <CategoryTabPage />,
-      icon: <FaFire size={22} />,
+      children: <CategoryTabPage category="trending" />,
+      icon: <FiTrendingUp size={iconSize} />,
     },
     {
       title: "Hot",
       key: "hot",
-      children: <CategoryTabPage />,
-      icon: <MdWhatshot size={22} />,
+      children: <CategoryTabPage category="hot" />,
+      icon: <MdWhatshot size={iconSize} />,
     },
     {
       title: "New",
       key: "created",
-      children: <CategoryTabPage />,
-      icon: <MdNewLabel size={22} />,
+      children: <CategoryTabPage category="created" />,
+      icon: <MdNewLabel size={iconSize} />,
     },
     {
       title: "Payout",
       key: "payout",
-      children: <CategoryTabPage />,
-      icon: <FaCircleDollarToSlot size={22} />,
+      children: <CategoryTabPage category="payout" />,
+      icon: <FaCircleDollarToSlot size={iconSize} />,
     },
   ];
 
@@ -52,32 +54,32 @@ export default function CategoryPage() {
         destroyInactiveTabPanel={false}
         size={"sm"}
         color={"secondary"}
-        disableAnimation={isMobile}
         radius={isMobile ? "full" : "sm"}
         className="justify-center"
         defaultSelectedKey={category}
-        selectedKey={pathname}
-        classNames={{
-          tabList: "max-sm:gap-0 main-tab-list",
-          tab: "max-sm:px-2 max-sm:h-5",
-          base: "",
+        items={homeTabs}
+        onSelectionChange={(key) => {
+          router.push(`/${key.toString()}/${tag}`);
+          const { title, description } = getMetadata.category(
+            key?.toString(),
+            tag
+          );
+          updateMetadata({ title, description });
         }}
       >
-        {homeTabs.map((tab) => (
+        {(item) => (
           <Tab
-            as={SLink}
-            href={`/${tab.key}/${tag}`}
-            key={`/${tab.key}/${tag}`}
+            key={item.key}
             title={
               <div className="flex items-center space-x-2">
-                {!isMobile && tab?.icon}
-                <span>{tab.title}</span>
+                {item?.icon}
+                <span>{item.title}</span>
               </div>
             }
           >
-            {tab.children}
+            {item.children}
           </Tab>
-        ))}
+        )}
       </Tabs>
 
       {category !== "wallet" && (

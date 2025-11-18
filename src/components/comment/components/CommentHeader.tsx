@@ -87,7 +87,8 @@ export default function CommentHeader(props: Props) {
         </div>
 
         <ViewCountCard
-          comment={comment}
+          author={comment.author}
+          permlink={comment.permlink}
           className="shadow-sm shadow-foreground/30 rounded-full bg-white dark:border-none dark:bg-foreground/10 text-tiny px-2 py-[1px] font-light "
         />
       </div>

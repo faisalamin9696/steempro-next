@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { supabase } from "../libs/supabase";
+import { supabase } from "../libs/supabase/supabase";
 
 type UseRealtimeMessagesProps = {
   sender: string;

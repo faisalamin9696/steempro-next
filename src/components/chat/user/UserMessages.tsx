@@ -5,7 +5,7 @@ import useRealtimeMessages from "@/hooks/useRealtimeMessages";
 import { useAppSelector } from "@/constants/AppFunctions";
 import { getCredentials } from "@/utils/user";
 import { useMutation } from "@tanstack/react-query";
-import { supabase } from "@/libs/supabase";
+import { supabase } from "@/libs/supabase/supabase";
 import { toast } from "sonner";
 import { Button } from "@heroui/button";
 import MessageItem from "../components/MessageItem";

@@ -17,6 +17,7 @@ function AvailableAccountList(props: Props) {
   const [accounts, setAccounts] = useState<User[]>();
   const [isPending, setIsPending] = useState(true);
   const credentials = getCredentials();
+  const [isSwitching, setIsSwitching] = useState(false);
 
   useEffect(() => {
     const allCredentials = getAllCredentials();
@@ -64,8 +65,9 @@ function AvailableAccountList(props: Props) {
             <div key={`${user?.username}-${user.type}`}>
               <AccountItemCard
                 switchText={switchText ?? "Login"}
-                isDisabled={isPending}
+                isDisabled={isPending || isSwitching}
                 user={user}
+                onSwitching={setIsSwitching}
                 handleSwitchSuccess={(user) => {
                   handleSwitchSuccess(user);
                 }}

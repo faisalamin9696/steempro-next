@@ -25,9 +25,7 @@ export default function CommentBlogLayout(props: CommentProps) {
   const isNsfw = hasNsfwTag(comment) && settings.nsfw !== "Always show";
 
   return (
-    <div
-      className="w-full rounded-2xl flex-col gap-4 comment-card"
-    >
+    <div className="w-full rounded-2xl flex-col gap-4 comment-card">
       <div className="p-2">
         <CommentHeader comment={commentInfo} compact className="w-full" />
       </div>
@@ -47,7 +45,9 @@ export default function CommentBlogLayout(props: CommentProps) {
             commentInfo.is_muted ? " blur-[2px]" : ""
           )}
         >
-          {commentInfo.title}
+          {!commentInfo?.parent_permlink
+            ? commentInfo.title
+            : `RE: ${commentInfo?.root_title}`}
         </h2>
 
         <div className={twMerge(commentInfo.is_muted ? " blur-[2px]" : "")}>

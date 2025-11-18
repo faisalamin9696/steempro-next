@@ -1,46 +1,50 @@
 "use client";
 
 import { Tabs, Tab } from "@heroui/tabs";
-import React from "react";
+import React, { useState } from "react";
 import FeedPatternSwitch from "@/components/FeedPatternSwitch";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
-import { FaFire } from "react-icons/fa";
 import { MdNewLabel, MdWhatshot } from "react-icons/md";
 import { FaCircleDollarToSlot } from "react-icons/fa6";
 import { twMerge } from "tailwind-merge";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import HomeTabPage from "./HomeTabPage";
-import SLink from "@/components/ui/SLink";
+import { FiTrendingUp } from "react-icons/fi";
+import { getMetadata, updateMetadata } from "@/utils/metadata";
+
+let iconSize = 20;
 
 export default function HomePage() {
   let { category } = useParams() as { category: string };
   category = category?.toLowerCase();
   const { isMobile } = useDeviceInfo();
+  const [selectedKey, setSelectedKey] = useState(category);
+  const router = useRouter();
 
   let categoryTabs = [
     {
       title: "Trending",
       key: "trending",
-      children: <HomeTabPage />,
-      icon: <FaFire size={22} />,
+      children: <HomeTabPage category="trending" />,
+      icon: <FiTrendingUp size={iconSize} />,
     },
     {
       title: "Hot",
       key: "hot",
-      children: <HomeTabPage />,
-      icon: <MdWhatshot size={22} />,
+      children: <HomeTabPage category="hot" />,
+      icon: <MdWhatshot size={iconSize} />,
     },
     {
       title: "New",
       key: "created",
-      children: <HomeTabPage />,
-      icon: <MdNewLabel size={22} />,
+      children: <HomeTabPage category="created" />,
+      icon: <MdNewLabel size={iconSize} />,
     },
     {
       title: "Payout",
       key: "payout",
-      children: <HomeTabPage />,
-      icon: <FaCircleDollarToSlot size={22} />,
+      children: <HomeTabPage category="payout" />,
+      icon: <FaCircleDollarToSlot size={iconSize} />,
     },
   ];
 
@@ -53,20 +57,25 @@ export default function HomePage() {
         radius={isMobile ? "full" : "sm"}
         className="justify-center"
         defaultSelectedKey={`/${"trending"}`}
-        selectedKey={category ? `/${category}` : "/trending"}
         classNames={{
           tabList: "max-sm:gap-0 main-tab-list",
           base: "",
         }}
+        items={categoryTabs}
+        selectedKey={selectedKey}
+        onSelectionChange={(key) => {
+          setSelectedKey(key?.toString());
+          router.push(`/${key.toString()}`);
+          const { title, description } = getMetadata.home(key.toString());
+          updateMetadata({ title, description });
+        }}
       >
         {categoryTabs.map((tab) => (
           <Tab
-            as={SLink}
-            href={`/${tab.key}`}
-            key={`/${tab.key}`}
+            key={`${tab.key}`}
             title={
               <div className="flex items-center space-x-2">
-                {!isMobile && tab?.icon}
+                {tab?.icon}
                 <span>{tab.title}</span>
               </div>
             }

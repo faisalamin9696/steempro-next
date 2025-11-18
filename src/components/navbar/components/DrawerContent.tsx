@@ -1,6 +1,5 @@
 import SLink from "@/components/ui/SLink";
 import ThemeSwitch from "@/components/ThemeSwitch";
-import { DiscordServerLink, GitHubLink } from "@/constants/AppConstants";
 import { Button } from "@heroui/button";
 import { Divider } from "@heroui/divider";
 import { useSession } from "next-auth/react";
@@ -19,10 +18,6 @@ import {
 import {
   RiCalendar2Fill,
   RiCalendar2Line,
-  RiDiscordFill,
-  RiDiscordLine,
-  RiGithubFill,
-  RiGithubLine,
   RiGroup2Fill,
   RiGroup2Line,
   RiInformation2Fill,
@@ -48,6 +43,7 @@ import { PiUserSwitchFill } from "react-icons/pi";
 import AccountsModal from "@/components/auth/AccountsModal";
 import { useLogin } from "@/components/auth/AuthProvider";
 import { useDisclosure } from "@heroui/modal";
+import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 
 const iconSize = 24;
 function DrawerContent() {
@@ -61,6 +57,7 @@ function DrawerContent() {
   const { setCredentials } = useLogin();
   const accountDisclosure = useDisclosure();
   const isAuthenticated = status === "authenticated";
+  const { isTablet, isMobile } = useDeviceInfo();
 
   const menuItems = [
     {
@@ -68,7 +65,9 @@ function DrawerContent() {
       href: "/",
       unFocusedIcon: <IoHomeOutline size={iconSize} />,
       focusedIcon: <IoHome size={iconSize} />,
-      belowContent: session?.user?.name ? null : <Divider className=" my-2" />,
+      belowContent:
+        isMobile || session?.user?.name ? null : <Divider className=" my-2" />,
+      children: isMobile ? <></> : null,
     },
 
     {
@@ -88,7 +87,7 @@ function DrawerContent() {
     },
 
     {
-      children: <LogoutButton iconSize={iconSize} className=" gap-4 p-4" />,
+      children: <LogoutButton iconSize={iconSize} />,
       loginRequired: true,
       belowContent: <Divider className=" my-2" />,
     },
@@ -165,7 +164,7 @@ function DrawerContent() {
                 className={`bg-center bg-cover bg-no-repeat bg-[#3e4146]/50 h-16 rounded-md`}
                 style={{ backgroundImage: `url(${cover_picture})` }}
               >
-                <div className="absolute inset-0 bg-white/40 h-16 dark:bg-black/40 rounded-md m-2"></div>
+                <div className="absolute inset-0 h-16 bg-background/20 rounded-md m-2"></div>
               </div>
             </div>
 
@@ -285,7 +284,7 @@ function DrawerContent() {
                   radius="sm"
                   variant={isFocused ? "flat" : "light"}
                   className={twMerge(
-                    "w-full justify-start gap-4",
+                    "w-full justify-start",
                     isFocused && " font-semibold"
                   )}
                   as={SLink}

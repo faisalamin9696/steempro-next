@@ -1,11 +1,12 @@
 import MainWrapper from "@/components/wrappers/MainWrapper";
+import { getMetadata } from "@/utils/metadata";
 import { Metadata } from "next";
 import React from "react";
 
+const { title, description } = getMetadata.proposals();
 export const metadata: Metadata = {
-  title: "SteemPro Proposals - Fund and Support Community Projects",
-  description:
-    "Explore and support community-driven projects on SteemPro. Vote for proposals that enhance the Steem ecosystem and help shape the future of decentralized social media.",
+  title,
+  description,
 };
 
 function Layout({ children }) {

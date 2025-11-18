@@ -1,22 +1,14 @@
 import MainWrapper from "@/components/wrappers/MainWrapper";
+import { getMetadata } from "@/utils/metadata";
 import { Metadata } from "next";
 import React from "react";
 
+const { title, description, keywords } = getMetadata.market();
+
 export const metadata: Metadata = {
-  title: `SteemPro Market – Buy, Sell, and Discover Digital Assets on the Steem Blockchain`,
-  description: `Explore the SteemPro Market – a decentralized marketplace to trade digital assets, tokens, NFTs, and services on the Steem blockchain. Fast, secure, and user-driven.`,
-  keywords: [
-    "steempro market",
-    "steem marketplace",
-    "steem blockchain trading",
-    "steem nft",
-    "steem token sale",
-    "digital assets steem",
-    "steem commerce",
-    "decentralized marketplace",
-    "steem market app",
-    "steempro buy sell",
-  ].join(", "),
+  title,
+  description,
+  keywords: keywords.join(", "),
 };
 
 export default async function Layout({

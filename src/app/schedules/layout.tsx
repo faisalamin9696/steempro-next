@@ -1,13 +1,12 @@
 import MainWrapper from "@/components/wrappers/MainWrapper";
 import React from "react";
-import SchedulesPage from "./page";
 import { Metadata } from "next";
+import { getMetadata } from "@/utils/metadata";
 
+const { title, description } = getMetadata.schedules();
 export const metadata: Metadata = {
-  title: "Scheduled posts",
-  description:
-    "Manage your scheduled posts easily with SteemPro. View, edit, and delete scheduled posts in one place. Stay organized and keep your content strategy on track.",
-  keywords: "SteemPro, schedule posts, scheduling",
+  title,
+  description,
 };
 
 export default async function Layout({
