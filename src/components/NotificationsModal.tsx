@@ -34,6 +34,7 @@ export default function NotificationsModal(props: Props) {
       }}
       body={() => (
         <Tabs
+          destroyInactiveTabPanel={false}
           variant={"solid"}
           classNames={{
             tabList: "gap-4",

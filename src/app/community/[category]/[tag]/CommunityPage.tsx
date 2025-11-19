@@ -14,7 +14,7 @@ import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { MdInfo, MdNewLabel } from "react-icons/md";
 import { Tab, Tabs } from "@heroui/tabs";
 import FeedPatternSwitch from "@/components/FeedPatternSwitch";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import SModal from "@/components/ui/SModal";
 import { useEffect } from "react";
 import { PiPushPinFill } from "react-icons/pi";
@@ -33,12 +33,11 @@ export default function CommunityPage({
   let { category, tag } = useParams() as { category: string; tag: string };
   category = category?.toLowerCase();
   tag = tag?.toLowerCase();
-
   const chatDisclosure = useDisclosure();
   const leadershipDisclosure = useDisclosure();
-  const router = useRouter();
-
   const { isMobile, isBetween920AndMobile } = useDeviceInfo();
+  const pathname = usePathname()?.split("/")?.[1];
+
   const communityInfo: Community =
     useAppSelector((state) => state.communityReducer.values)[
       community.account
@@ -132,10 +131,15 @@ export default function CommunityPage({
               color={"secondary"}
               radius={isMobile ? "full" : "sm"}
               className="justify-center"
+              selectedKey={pathname || "trending"}
               items={sortedCommunityTabs}
               defaultSelectedKey={category}
               onSelectionChange={(key) => {
-                router.push(`/${key.toString()}/${"hive-" + tag}`);
+                window.history.pushState(
+                  {},
+                  "",
+                  `/${key.toString()}/${"hive-" + tag}`
+                );
                 const { title, description, keywords } =
                   getMetadata.communitySync(key?.toString(), community);
                 updateMetadata({ title, description, keywords });
@@ -145,9 +149,13 @@ export default function CommunityPage({
                 <Tab
                   key={item.key}
                   title={
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-1">
                       {item?.icon}
-                      <span>{item.title}</span>
+                      {isMobile ? (
+                        item.key === pathname && <span>{item.title}</span>
+                      ) : (
+                        <span>{item.title}</span>
+                      )}
                     </div>
                   }
                 >
@@ -156,7 +164,7 @@ export default function CommunityPage({
               )}
             </Tabs>
             {!["about", "roles"].includes(category) && (
-              <div className="absolute  top-0 right-0 max-sm:hidden">
+              <div className="absolute top-0 right-0">
                 <FeedPatternSwitch />
               </div>
             )}

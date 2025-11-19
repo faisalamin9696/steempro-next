@@ -79,7 +79,6 @@ export default memo(function Drawer() {
                 priority
                 height={30}
                 width={150}
-                style={{ height: "auto" }}
               />
             </SLink>
 

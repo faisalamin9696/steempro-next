@@ -7,13 +7,13 @@ const nextConfig = {
       static: 180,
     },
   },
-  webpack: (config, context) => {
-    config.module.rules.push({
-      test: /\.node$/,
-      loader: "node-loader",
-    });
-    return config;
-  },
+  // webpack: (config, context) => {
+  //   config.module.rules.push({
+  //     test: /\.node$/,
+  //     loader: "node-loader",
+  //   });
+  //   return config;
+  // },
   images: {
     unoptimized: true,
     remotePatterns: [

@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Card } from "@heroui/card";
-import Image from "next/image";
 import SAvatar from "./ui/SAvatar";
 import TimeAgoWrapper from "./wrappers/TimeAgoWrapper";
 import { getThumbnail } from "@/utils/parseImage";
@@ -31,12 +30,11 @@ export default function PromotionCard(props: Props) {
       )}
     >
       {thumbnail && (
-        <Image
+        <img
+          fetchPriority="high"
           className="bg-blue-800 "
           alt={"image"}
           src={thumbnail}
-          height={150}
-          width={200}
           style={{
             objectFit: "cover",
             width: "100%",

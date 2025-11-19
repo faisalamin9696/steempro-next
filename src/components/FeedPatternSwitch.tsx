@@ -50,7 +50,7 @@ export default memo(function FeedPatternSwitch() {
   };
 
   return (
-    <div className="flex space-x-1">
+    <div className="space-x-1 hidden md:flex">
       <Dropdown size="sm" title="View" showArrow>
         <DropdownTrigger>
           <Button

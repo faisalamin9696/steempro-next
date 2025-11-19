@@ -123,9 +123,9 @@ const CommentEditHistory: React.FC<Props> = ({
             <Tabs
               variant="light"
               radius={isMobile ? "full" : "sm"}
-              disableAnimation={isMobile}
               size="sm"
               aria-label="Edit History Tabs"
+              destroyInactiveTabPanel={false}
             >
               {history.map((item: any, index) => (
                 <Tab key={index} title={`Version ${index + 1}`}>

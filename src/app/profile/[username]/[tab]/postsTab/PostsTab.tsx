@@ -6,7 +6,7 @@ import { twMerge } from "tailwind-merge";
 import ProfileTabPage from "../ProfileTabPage";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { getMetadata, updateMetadata } from "@/utils/metadata";
-import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 interface Props {
   account: AccountExt;
@@ -15,8 +15,8 @@ interface Props {
 
 export default function PostsTab(props: Props) {
   let { account, tab } = props;
-  const router = useRouter();
   const { isMobile } = useDeviceInfo();
+  const pathname = usePathname()?.split("/")?.[2];
 
   const profileTabs = [
     {
@@ -52,9 +52,14 @@ export default function PostsTab(props: Props) {
         className="justify-center"
         items={profileTabs}
         defaultSelectedKey={tab}
+        selectedKey={pathname}
         onSelectionChange={(key) => {
           if (["comments", "replies", "friends"].includes(key.toString())) {
-            router.push(`/@${account.name}/${key.toString()}`);
+            window.history.pushState(
+              {},
+              "",
+              `/@${account.name}/${key.toString()}`
+            );
           }
           const { title, description } = getMetadata.profileSync(
             account.name,

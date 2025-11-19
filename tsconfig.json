@@ -30,8 +30,6 @@
     ".next/types/**/*.ts",
     "src/app/api/auth/[...nextAuth]",
     "src/app/api/schedules",
-    "src/app/api/steem",
-    "src/libs/mysql/db.ts"
   ],
   "exclude": ["node_modules"],
 }

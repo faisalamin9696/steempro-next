@@ -57,7 +57,7 @@ function DrawerContent() {
   const { setCredentials } = useLogin();
   const accountDisclosure = useDisclosure();
   const isAuthenticated = status === "authenticated";
-  const { isTablet, isMobile } = useDeviceInfo();
+  const { isMobile } = useDeviceInfo();
 
   const menuItems = [
     {
@@ -155,7 +155,7 @@ function DrawerContent() {
   );
 
   return (
-    <div className="scrollbar-thin flex flex-col pb-2 justify-between overflow-auto h-full-minus-64">
+    <div className="scrollbar-thin flex flex-col pb-2 pt-2 justify-between overflow-auto h-full-minus-64">
       <div className="flex flex-col ">
         {isAuthenticated && (
           <div className={"pb-4 overflow-x-hidden relative p-2 rounded-md"}>

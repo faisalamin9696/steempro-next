@@ -180,10 +180,7 @@ export const SearchModal = (props: Props) => {
                 // Reset search when tab changes
                 setSearchParams(null);
               }}
-              classNames={{
-                tab: "!w-full capitalize px-0",
-                tabList: "w-full capitalize px-0",
-              }}
+              destroyInactiveTabPanel={false}
             >
               {["posts", "comments", "tags", "people"].map((tab) => (
                 <Tab key={tab} value={tab} title={tab}>

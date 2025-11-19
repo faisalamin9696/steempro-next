@@ -131,7 +131,7 @@ export default function CommentGridLayout(props: CommentProps) {
                     commentInfo.is_muted ? " blur-[2px]" : ""
                   )}
                 >
-                  {!commentInfo?.parent_permlink
+                  {!commentInfo?.parent_author
                     ? commentInfo.title
                     : `RE: ${commentInfo?.root_title}`}
                 </p>

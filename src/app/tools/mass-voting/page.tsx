@@ -201,7 +201,6 @@ export default function MassVotingPage() {
             value={links}
             onValueChange={setLinks}
             placeholder="Paste the links here (separate by space)"
-            disableAnimation
             classNames={{
               input: "resize-y",
             }}

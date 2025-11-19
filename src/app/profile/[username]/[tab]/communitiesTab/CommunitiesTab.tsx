@@ -14,7 +14,7 @@ interface Props {
 
 export default function CommunitiesTab(props: Props) {
   const { username, tab } = props;
-  const profileTabs = [
+  const communitiesTabs = [
     {
       title: "Feed",
       key: "feed",
@@ -32,21 +32,22 @@ export default function CommunitiesTab(props: Props) {
   return (
     <div className={twMerge("relative items-center flex-row w-full")}>
       <Tabs
+        destroyInactiveTabPanel={false}
         size="sm"
         color={"secondary"}
-        disableAnimation={isMobile}
         variant={"underlined"}
         radius={isMobile ? "full" : "sm"}
         className="justify-center"
         classNames={{
           tabList: "max-sm:gap-0 max-sm:bg-transparent max-sm:p-0",
         }}
+        items={communitiesTabs}
       >
-        {profileTabs.map((tab) => (
-          <Tab key={tab.key} title={tab.title}>
-            {tab.children}
+        {(item) => (
+          <Tab key={item.key} title={item.title}>
+            {item.children}
           </Tab>
-        ))}
+        )}
       </Tabs>
     </div>
   );

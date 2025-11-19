@@ -24,6 +24,7 @@ function SnippetModal(props: Props) {
             color="default"
             size="sm"
             aria-label="snippet tab"
+            destroyInactiveTabPanel={false}
           >
             <Tab key="snippet" title="Snippets">
               <SnippetTab {...props} />

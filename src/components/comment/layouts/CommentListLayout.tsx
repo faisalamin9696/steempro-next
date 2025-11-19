@@ -20,7 +20,7 @@ export default function CommentListLayout(props: CommentProps) {
     ] ?? comment;
   const settings =
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
-  const thumbnail = getThumbnail(commentInfo.json_images, "256x512");
+  const thumbnail = getThumbnail(commentInfo.json_images, "640x0");
   const targetUrl = `/${comment.category}/@${comment.author}/${comment.permlink}`;
   const isNsfw = hasNsfwTag(comment) && settings?.nsfw !== "Always show";
 
@@ -54,7 +54,7 @@ export default function CommentListLayout(props: CommentProps) {
             >
               <div className="pl-1 text-container space-y-2 flex-1">
                 <div className=" text-start font-bold text-md">
-                  {!commentInfo?.parent_permlink
+                  {!commentInfo?.parent_author
                     ? commentInfo.title
                     : `RE: ${commentInfo?.root_title}`}
                 </div>

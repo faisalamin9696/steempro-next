@@ -28,7 +28,7 @@ export default memo(function CompactPost(props: Props) {
     useAppSelector((state) => state.settingsReducer.value) ?? getSettings();
   // const URL = `/posts_api/getPost/${authPerm}`
   // const { data, isLoading, error, isValidating } = useSWR(URL, fetchSds<Post>)
-  const thumbnail = getThumbnail(commentInfo.json_images, "256x512");
+  const thumbnail = getThumbnail(commentInfo.json_images, "640x0");
   const isNsfw = hasNsfwTag(commentInfo) && settings?.nsfw !== "Always show";
 
   return (

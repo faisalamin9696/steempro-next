@@ -125,7 +125,6 @@ function AppNavbar() {
               priority
               height={30}
               width={150}
-              style={{ height: "auto" }}
             />
           </SLink>
           <SLink href={"/"} className="block lg:hidden">

@@ -1,16 +1,23 @@
 "use client";
 
 import { Tabs, Tab } from "@heroui/tabs";
-import React, { useState } from "react";
+import React from "react";
 import FeedPatternSwitch from "@/components/FeedPatternSwitch";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { MdNewLabel, MdWhatshot } from "react-icons/md";
 import { FaCircleDollarToSlot } from "react-icons/fa6";
 import { twMerge } from "tailwind-merge";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import HomeTabPage from "./HomeTabPage";
 import { FiTrendingUp } from "react-icons/fi";
 import { getMetadata, updateMetadata } from "@/utils/metadata";
+// import dynamic from "next/dynamic";
+// const HomeCarousel = dynamic(
+//   () => import("@/components/carousal/HomeCarousal"),
+//   {
+//     ssr: false, // Set to false if the component doesn't need server-side rendering
+//   }
+// );
 
 let iconSize = 20;
 
@@ -18,8 +25,7 @@ export default function HomePage() {
   let { category } = useParams() as { category: string };
   category = category?.toLowerCase();
   const { isMobile } = useDeviceInfo();
-  const [selectedKey, setSelectedKey] = useState(category);
-  const router = useRouter();
+  const pathname = usePathname()?.replace("/", "");
 
   let categoryTabs = [
     {
@@ -50,43 +56,39 @@ export default function HomePage() {
 
   return (
     <div className={twMerge("relative items-center flex-row w-full")}>
+      {/* <HomeCarousel /> */}
       <Tabs
+        destroyInactiveTabPanel={false}
         size={"sm"}
-        disableAnimation={isMobile}
         color={"secondary"}
         radius={isMobile ? "full" : "sm"}
         className="justify-center"
-        defaultSelectedKey={`/${"trending"}`}
-        classNames={{
-          tabList: "max-sm:gap-0 main-tab-list",
-          base: "",
-        }}
+        defaultSelectedKey={category}
         items={categoryTabs}
-        selectedKey={selectedKey}
+        selectedKey={pathname || "trending"}
         onSelectionChange={(key) => {
-          setSelectedKey(key?.toString());
-          router.push(`/${key.toString()}`);
+          window.history.pushState({}, "", `/${key.toString()}`);
           const { title, description } = getMetadata.home(key.toString());
           updateMetadata({ title, description });
         }}
       >
-        {categoryTabs.map((tab) => (
+        {(item) => (
           <Tab
-            key={`${tab.key}`}
+            key={`${item.key}`}
             title={
               <div className="flex items-center space-x-2">
-                {tab?.icon}
-                <span>{tab.title}</span>
+                {item?.icon}
+                <span>{item.title}</span>
               </div>
             }
           >
-            {tab.children}
+            {item.children}
           </Tab>
-        ))}
+        )}
       </Tabs>
 
       {category !== "wallet" && (
-        <div className="absolute  top-0 right-0 max-sm:hidden">
+        <div className="absolute  top-0 right-0">
           <FeedPatternSwitch />
         </div>
       )}

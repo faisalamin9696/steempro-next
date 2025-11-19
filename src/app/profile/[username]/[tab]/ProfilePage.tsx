@@ -58,7 +58,7 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
   const searchParams = useSearchParams();
   const chatParam = searchParams.has("chat");
   const router = useRouter();
-  const pathname = usePathname();
+  const pathname = usePathname()?.split("/")?.[2];
   const { authenticateUser, isAuthorized } = useLogin();
 
   useEffect(() => {
@@ -101,11 +101,14 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
           className="justify-center"
           destroyInactiveTabPanel={false}
           items={getProfileTabs(username, tab, data)}
-          defaultSelectedKey={
-            ["comments", "replies", "friends"].includes(tab) ? "posts" : tab
+          selectedKey={
+            ["comments", "replies", "friends"].includes(pathname)
+              ? "posts"
+              : pathname || "posts"
           }
           onSelectionChange={(key) => {
-            router.push(`/@${username}/${key.toString()}`);
+            window.history.pushState({}, "", `/@${username}/${key.toString()}`);
+            // router.push(`/@${username}/${key.toString()}`);
             const { title, description } = getMetadata.profileSync(
               username,
               key?.toString(),
@@ -121,7 +124,7 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
                 <div className="flex items-center gap-1">
                   {item?.icon}
                   {isMobile ? (
-                    item.key === tab && <span>{item.title}</span>
+                    item.key === pathname && <span>{item.title}</span>
                   ) : (
                     <span>{item.title}</span>
                   )}
@@ -134,7 +137,7 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
         </Tabs>
 
         {!["notifications", "wallet", "settings"].includes(tab) && (
-          <div className="absolute  top-0 right-0 max-sm:hidden">
+          <div className="absolute top-0 right-0">
             <FeedPatternSwitch />
           </div>
         )}

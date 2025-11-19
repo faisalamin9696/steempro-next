@@ -12,6 +12,7 @@ import RemarkableSpoiler from "@quochuync/remarkable-spoiler";
 import "@quochuync/remarkable-spoiler/styles.css";
 import RemarkableTable from "./RemarkableTable";
 import { ParsedBody } from "./ParsedBody";
+import "@/app/markdown.scss";
 
 interface Props {
   // HTML properties

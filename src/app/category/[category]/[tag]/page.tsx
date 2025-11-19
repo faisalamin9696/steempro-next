@@ -7,7 +7,7 @@ import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { FaCircleDollarToSlot } from "react-icons/fa6";
 import { MdWhatshot, MdNewLabel } from "react-icons/md";
 import { twMerge } from "tailwind-merge";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import CategoryTabPage from "./CategoryTabPage";
 import { FiTrendingUp } from "react-icons/fi";
 import { getMetadata, updateMetadata } from "@/utils/metadata";
@@ -20,6 +20,7 @@ export default function CategoryPage() {
   tag = tag?.toLowerCase();
   const { isMobile } = useDeviceInfo();
   const router = useRouter();
+  const pathname = usePathname()?.split("/")?.[1];
 
   let homeTabs = [
     {
@@ -58,8 +59,9 @@ export default function CategoryPage() {
         className="justify-center"
         defaultSelectedKey={category}
         items={homeTabs}
+        selectedKey={pathname}
         onSelectionChange={(key) => {
-          router.push(`/${key.toString()}/${tag}`);
+          window.history.pushState({}, "", `/${key.toString()}/${tag}`);
           const { title, description } = getMetadata.category(
             key?.toString(),
             tag
@@ -83,7 +85,7 @@ export default function CategoryPage() {
       </Tabs>
 
       {category !== "wallet" && (
-        <div className="absolute  top-0 right-0 max-sm:hidden">
+        <div className="absolute  top-0 right-0">
           <FeedPatternSwitch />
         </div>
       )}

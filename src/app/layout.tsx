@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import "./markdown.scss";
 import "./main.scss";
 import { Toaster } from "sonner";
-import { AppStrings } from "@/constants/AppStrings";
 import { SessionProvider } from "next-auth/react";
 import { Providers } from "./providers";
 import { auth } from "@/auth";
-import Script from "next/script";
 // export const runtime = 'edge' // 'nodejs' (default) | 'edge'
 // const inter = Inter({ subsets: ["latin"] });
 
@@ -61,26 +58,15 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning={true}>
-      <link
-        rel="dns-prefetch"
-        href="https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg"
-      />
-      <link
-        rel="preconnect"
-        href="https://agaf0ijry8z9fi9i.public.blob.vercel-storage.com/og.jpg"
-      />
-      <link rel="preconnect " href={AppStrings.sds_base_url} />
 
-      <script async src="https://embed.redditmedia.com/widgets/platform.js" />
-
+      {/* <script async src="https://embed.redditmedia.com/widgets/platform.js" /> */}
       {/* steempro-chest  */}
-      <Script
+      {/* <Script
         strategy="afterInteractive"
         async
         src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4510618528305465`}
         crossOrigin="anonymous"
-      />
-
+      /> */}
       <body>
         <SessionProvider session={session}>
           <Providers>

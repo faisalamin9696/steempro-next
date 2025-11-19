@@ -14,7 +14,7 @@ import SLink from "@/components/ui/SLink";
 
 export default function CommentBlogLayout(props: CommentProps) {
   const { comment, isReply } = props;
-  const commentInfo =
+  const commentInfo: Feed =
     useAppSelector((state) => state.commentReducer.values)[
       `${comment.author}/${comment.permlink}`
     ] ?? comment;
@@ -45,7 +45,7 @@ export default function CommentBlogLayout(props: CommentProps) {
             commentInfo.is_muted ? " blur-[2px]" : ""
           )}
         >
-          {!commentInfo?.parent_permlink
+          {!commentInfo?.parent_author
             ? commentInfo.title
             : `RE: ${commentInfo?.root_title}`}
         </h2>
