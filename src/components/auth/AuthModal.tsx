@@ -13,8 +13,6 @@ import KeyLogin from "./authType/KeyLogin";
 import UnlockAcccount from "./authType/UnlockAccount";
 import SModal from "../ui/SModal";
 import PrivateKeyAuth from "./authType/PrivateKeyAuth";
-import { BsQrCode } from "react-icons/bs";
-import SteemAuthLogin from "./authType/SteemAuthLogin";
 
 interface Props {
   isOpen: boolean;
@@ -40,9 +38,7 @@ export default function AuthModal(props: Props) {
   } = props;
   const loginInfo = useAppSelector((state) => state.loginReducer.value);
   const [credentials, setCredentials] = useState(getCredentials());
-  const [loginMethod, setLoginMethod] = useState<
-    "password" | "keychain" | "mobile"
-  >("keychain");
+  const [useKeychain, setUseKeychain] = React.useState(true);
   const { data: session, status } = useSession();
   const isLocked =
     !!requestActive && credentials?.type !== "ACTIVE"
@@ -92,93 +88,73 @@ export default function AuthModal(props: Props) {
             </div>
           </div>
         ) : (
-          <div className="font-bold">
-            {addMemo ? (
-              <div className="flex items-center gap-2">
-                <p>SteemPro Chat</p>
+          <div className=" flex flex-col gap-1">
+            <div className=" flex flex-row gap-2 justify-between border-b border-default-200 dark:border-default-100 pb-4">
+              <p className="font-bold">
+                {addMemo ? (
+                  <div className="flex items-center gap-2">
+                    <p>SteemPro Chat</p>
 
-                <SAvatar
-                  onlyImage
-                  username={loginInfo.name}
-                  className="shadow-lg cursor-pointer bg-foreground-900/40"
-                  size="xs"
+                    <SAvatar
+                      onlyImage
+                      username={loginInfo.name}
+                      className="shadow-lg cursor-pointer bg-foreground-900/40"
+                      size="xs"
+                    />
+                  </div>
+                ) : requestActive ? (
+                  "Sign Transaction"
+                ) : (
+                  "Log in"
+                )}
+              </p>
+            </div>
+
+            {!addMemo && !requestActive && (
+              <Tabs
+                aria-label="Options"
+                classNames={{
+                  tabList: "gap-6 w-full relative rounded-none p-0",
+                  cursor: "w-full bg-primary-300",
+                  tab: " px-0 h-12",
+                }}
+                color="default"
+                variant="underlined"
+                fullWidth
+                onSelectionChange={(key) => setUseKeychain(key === "keychain")}
+              >
+                <Tab
+                  key="keychain"
+                  title={
+                    <div className="flex items-center space-x-2">
+                      <Image
+                        alt="keychain"
+                        src={"/keychain_transparent.svg"}
+                        height={38}
+                        width={38}
+                      />
+
+                      <span>Keychain</span>
+                    </div>
+                  }
                 />
-              </div>
-            ) : requestActive ? (
-              "Sign Transaction"
-            ) : (
-              "Login"
+
+                <Tab
+                  key="password"
+                  title={
+                    <div className="flex items-center space-x-2">
+                      <MdVpnKey size={24} />
+                      <span>Private Key</span>
+                    </div>
+                  }
+                />
+              </Tabs>
             )}
           </div>
         )
       }
       body={(onClose) => (
         <div className=" flex flex-col gap-4">
-          {!addMemo && !requestActive && (
-            <Tabs
-              aria-label="Options"
-              classNames={{
-                tabList: "gap-6 w-full relative rounded-none p-0",
-                cursor: "w-full bg-primary-300",
-                tab: " px-0 h-12",
-              }}
-              destroyInactiveTabPanel={false}
-              color="default"
-              variant="underlined"
-              fullWidth
-              onSelectionChange={(key) => setLoginMethod(key.toString() as any)}
-            >
-              <Tab
-                key="keychain"
-                title={
-                  <div className="flex items-center space-x-2">
-                    <Image
-                      alt="keychain"
-                      src={"/keychain_transparent.svg"}
-                      height={38}
-                      width={38}
-                    />
-
-                    <span>Keychain</span>
-                  </div>
-                }
-              >
-                <KeychainLogin
-                  addNew={addNew}
-                  onClose={onClose}
-                  onSuccess={() => {}}
-                  onLoginSuccess={onLoginSuccess}
-                />
-              </Tab>
-
-              <Tab
-                key="password"
-                title={
-                  <div className="flex items-center space-x-2">
-                    <MdVpnKey size={24} />
-                    <span>Private Key</span>
-                  </div>
-                }
-              >
-                <KeyLogin
-                  addNew={addNew}
-                  onClose={onClose}
-                  onSuccess={() => {}}
-                  onLoginSuccess={onLoginSuccess}
-                />
-              </Tab>
-              {/* <Tab
-                  key="mobile"
-                  title={
-                    <div className="flex items-center space-x-2">
-                      <BsQrCode size={24} />
-                      <span>SteemAuth</span>
-                    </div>
-                  }
-                /> */}
-            </Tabs>
-          )}
-
           {addMemo ? (
             <MemoLogin
               onClose={onClose}
@@ -192,14 +168,26 @@ export default function AuthModal(props: Props) {
               onSuccess={() => {}}
               onLoginSuccess={onLoginSuccess}
             />
+          ) : requestActive ? (
+            <PrivateKeyAuth
+              type={keyType}
+              onClose={onClose}
+              onActiveSuccess={onActiveSuccess}
+            />
+          ) : useKeychain ? (
+            <KeychainLogin
+              addNew={addNew}
+              onClose={onClose}
+              onSuccess={() => {}}
+              onLoginSuccess={onLoginSuccess}
+            />
           ) : (
-            requestActive && (
-              <PrivateKeyAuth
-                type={keyType}
-                onClose={onClose}
-                onActiveSuccess={onActiveSuccess}
-              />
-            )
+            <KeyLogin
+              addNew={addNew}
+              onClose={onClose}
+              onSuccess={() => {}}
+              onLoginSuccess={onLoginSuccess}
+            />
           )}
         </div>
       )}

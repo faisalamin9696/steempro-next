@@ -2,15 +2,8 @@
 
 import PromotionCard from "../PromotionCard";
 import CarousalMain from "./CarousalMain";
-import { memo } from "react";
-import { usePromotedPosts } from "@/hooks/usePromotedPosts";
 
-const HomeCarousel = memo(() => {
-  const { data, error } = usePromotedPosts();
-
-  if (!data || data?.length <= 0 || error) {
-    return null;
-  }
+const HomeCarousel = ({ data }: { data: PromotedPost[] }) => {
   return (
     <CarousalMain>
       {data?.map?.((item, index) => (
@@ -20,5 +13,5 @@ const HomeCarousel = memo(() => {
       ))}
     </CarousalMain>
   );
-});
+};
 export default HomeCarousel;

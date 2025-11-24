@@ -104,11 +104,10 @@ export default function ProfilePage({ data }: { data: AccountExt }) {
           selectedKey={
             ["comments", "replies", "friends"].includes(pathname)
               ? "posts"
-              : pathname || "posts"
+              : pathname || "blog"
           }
           onSelectionChange={(key) => {
             window.history.pushState({}, "", `/@${username}/${key.toString()}`);
-            // router.push(`/@${username}/${key.toString()}`);
             const { title, description } = getMetadata.profileSync(
               username,
               key?.toString(),
