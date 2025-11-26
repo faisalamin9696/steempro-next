@@ -14,6 +14,9 @@ import { BsBell, BsBellFill, BsWallet, BsWalletFill } from "react-icons/bs";
 import { RiArrowUpDoubleLine } from "react-icons/ri";
 import { toast } from "sonner";
 import { PiUser, PiUserFill } from "react-icons/pi";
+import { Badge } from "@heroui/badge";
+import { useAppSelector } from "@/constants/AppFunctions";
+import { twMerge } from "tailwind-merge";
 
 const MobileNavbar = () => {
   const pathname = usePathname();
@@ -26,6 +29,7 @@ const MobileNavbar = () => {
   const profileLink = `/@${session?.user?.name}`;
   const { authenticateUser } = useLogin();
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const commonData = useAppSelector((state) => state.commonReducer.values);
 
   function handleLogin() {
     authenticateUser();
@@ -91,27 +95,53 @@ const MobileNavbar = () => {
             </div>
           </Button>
 
-          <Button
-            as={isAuthenticated ? SLink : undefined}
-            href={notificationsLink}
-            color={isActive(notificationsLink) ? "primary" : "default"}
-            variant={isActive(notificationsLink) ? "flat" : "light"}
-            disableRipple
+          <Badge
             size="sm"
-            radius="full"
-            onPress={() => {
-              if (!isAuthenticated) toast.info("Login to continue");
-            }}
+            content={
+              commonData.unread_count + commonData.unread_count_chat > 0
+                ? ""
+                : undefined
+            }
+            showOutline={
+              commonData.unread_count + commonData.unread_count_chat > 0
+            }
+            // content={
+            //   commonData.unread_count > 99
+            //     ? "99+"
+            //     : commonData.unread_count > 0 && commonData.unread_count
+            // }
+            classNames={{'badge':'right-4 top-2'}}
+            className={twMerge(
+              "z-0",
+              commonData.unread_count_chat > 0 &&
+                "border-green-400 animate-pulse border-[2px]"
+            )}
+            color={"primary"}
+            shape="circle"
+            placement="top-right"
           >
-            <div className="flex flex-col items-center">
-              {isActive(notificationsLink) ? (
-                <BsBellFill size={24} />
-              ) : (
-                <BsBell size={24} />
-              )}
-              {/* <span className="text-xs">Notifications</span> */}
-            </div>
-          </Button>
+            <Button
+              as={isAuthenticated ? SLink : undefined}
+              href={notificationsLink}
+              color={isActive(notificationsLink) ? "primary" : "default"}
+              variant={isActive(notificationsLink) ? "flat" : "light"}
+              disableRipple
+              size="sm"
+              radius="full"
+              onPress={() => {
+                if (!isAuthenticated) toast.info("Login to continue");
+              }}
+            >
+              <div className="flex flex-col items-center">
+                {isActive(notificationsLink) ? (
+                  <BsBellFill size={24} />
+                ) : (
+                  <BsBell size={24} />
+                )}
+                {/* <span className="text-xs">Notifications</span> */}
+              </div>
+            </Button>
+          </Badge>
 
           <Button
             as={SLink}
