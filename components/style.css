@@ -1,0 +1,25 @@
+.swiper-button-next,
+.swiper-button-prev {
+  width: calc(var(--swiper-navigation-size));
+  height: calc(var(--swiper-navigation-size));
+  padding: 14px;
+  background: var(--swiper);
+  border-radius: 100%;
+}
+
+.swiper-pagination-bullet {
+  opacity: 1;
+  border-radius: 100%;
+  cursor: pointer;
+}
+
+.swiper-pagination-bullet-active {
+  color: #fff;
+  background: #007aff;
+  opacity: 1;
+}
+
+.swiper-pagination .span {
+  height: 20px;
+  width: 20px;
+}

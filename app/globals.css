@@ -1,0 +1,61 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@plugin './hero.ts';
+@source '../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+@custom-variant dark (&:is(.dark *));
+@config "../tailwind.config.ts";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+
+  /* Security gradient */
+  --security-gradient: linear-gradient(
+    135deg,
+    hsl(199 89% 48%) 0%,
+    hsl(240 72% 58%) 100%
+  );
+
+  /* Glow effects */
+  --glow-primary: 0 0 30px hsl(199 89% 48% / 0.3);
+  --glow-security: 0 0 40px hsl(199 89% 48% / 0.2);
+}
+
+/* Only apply dark mode if no manual theme is set AND system prefers dark */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]):not(.light) {
+    --background: #000000;
+    --foreground: #ededed;
+  }
+}
+
+/* Manual dark theme override */
+[data-theme="dark"],
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
+
+/* Manual light theme override (force light) */
+[data-theme="light"] .light {
+  --background: #e4e4e7;
+  --foreground: #171717;
+}
+
+.card {
+  @apply bg-content1/30;
+}
+
+.post-card {
+  @apply bg-content1/30 hover:bg-content1/50 transition-colors;
+}
+
+
+

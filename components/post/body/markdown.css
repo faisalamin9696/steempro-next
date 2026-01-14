@@ -1,0 +1,224 @@
+.markdown-body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+
+  /* Prose-like spacing */
+  font-size: 1rem;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  word-wrap: break-word;
+  hyphens: auto;
+
+  /* Dark mode invert (approx) */
+  color: #1f2937;
+}
+
+.dark .markdown-body {
+  color: #e5e7eb;
+}
+
+/* Small screens: reduce font size */
+@media (max-width: 640px) {
+  .markdown-body {
+    font-size: 0.875rem;
+  }
+}
+
+.markdown-body a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+.markdown-body hr {
+  clear: both;
+  margin: 15px 0;
+}
+
+.markdown-body p {
+  line-height: 1.75;
+}
+
+.markdown-body pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.markdown-body div.pull-right {
+  float: right;
+  padding-left: 1rem;
+  max-width: 50%;
+}
+
+.markdown-body div.pull-left {
+  float: left;
+  padding-right: 1rem;
+  max-width: 50%;
+}
+
+/* Scrollable table container */
+.markdown-body .table-scrollable {
+  width: 100%;
+  overflow-x: auto;
+  min-width: 100%;
+}
+
+/* Table */
+.markdown-body table {
+  width: 100%;
+  table-layout: auto;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.markdown-body table thead {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.dark .markdown-body table thead {
+  background-color: #1f2937;
+  color: #e5e7eb;
+}
+
+.markdown-body table th {
+  background-color: #f3f4f6;
+  color: #111827;
+  text-align: left;
+  padding: 0.75rem;
+  font-weight: 600;
+}
+
+.dark .markdown-body table th {
+  background-color: #1f2937;
+  color: #e5e7eb;
+}
+
+/* Body cells */
+.markdown-body table td {
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  color: #1f2937;
+  vertical-align: middle;
+}
+
+.dark .markdown-body table td {
+  border-color: #374151;
+  color: #e5e7eb;
+}
+
+/* Odd rows */
+.markdown-body tbody tr:nth-child(odd) {
+  background-color: white;
+}
+
+.dark .markdown-body tbody tr:nth-child(odd) {
+  background-color: #111827;
+}
+
+/* After clear fix */
+.markdown-body::after,
+.markdown-body hr::after {
+  display: table;
+  clear: both;
+  content: "";
+}
+
+/* Negative group */
+.markdown-body .MarkdownViewer__negative_group {
+  color: crimson;
+  border-top: 1px solid #cacaca;
+  padding-top: 1rem;
+}
+
+/* Video Wrapper */
+.markdown-body div.videoWrapper {
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.2%;
+  position: relative;
+}
+
+.markdown-body div.videoWrapper iframe {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+}
+
+/* alignment utilities */
+.markdown-body span.align-center {
+  display: block;
+  overflow: hidden;
+  clear: both;
+}
+
+/* Details box */
+.markdown-body details {
+  background: #f8f8f8;
+  border-radius: 6px;
+  outline: 2px solid #e5e7eb;
+}
+
+.dark .markdown-body details {
+  background: #2c3a45;
+  outline-color: #6b7280;
+}
+
+/* Inline code */
+.markdown-body :not(pre) > code {
+  background: rgba(177, 176, 172, 0.28);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+}
+
+.dark .markdown-body :not(pre) > code {
+  background: rgba(131, 130, 128, 0.36);
+}
+
+/* Code inside pre */
+.markdown-body pre code {
+  padding: 0.25rem;
+  display: block;
+  overflow-x: auto;
+}
+
+/* Remove pseudo quotes */
+.markdown-body code::before,
+.markdown-body code::after {
+  content: "" !important;
+}
+
+/* Phishy class */
+.phishy {
+  color: #ef4444;
+  display: inline;
+}
+
+.phishy h1,
+.phishy h2,
+.phishy h3,
+.phishy ol,
+.phishy ul,
+.phishy li,
+.phishy ::marker {
+  color: #ef4444;
+}
+
+/* Put this in globals.css or your markdown css file */
+.markdown-body a,
+.markdown-body a:link,
+.markdown-body a:visited {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  white-space: normal;
+}
+
+/* Ensure images/inline elements inside links behave */
+.markdown-body img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
