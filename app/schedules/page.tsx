@@ -2,12 +2,12 @@
 
 import { useSession } from "next-auth/react";
 import useSWR from "swr";
-import { getSchedules } from "@/libs/supabase/database";
 import InfiniteList from "@/components/InfiniteList";
 import ScheduleCard from "@/components/submit/ScheduleCard";
 import { Card } from "@heroui/card";
 import { Skeleton } from "@heroui/skeleton";
 import LoginAlertCard from "@/components/ui/LoginAlertCard";
+import { getSchedules } from "@/libs/supabase/schedule";
 
 function SchedulePage() {
   const { data: session } = useSession();

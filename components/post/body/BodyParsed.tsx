@@ -33,6 +33,42 @@ export function BodyParsed({
               {domToReact(children as DOMNode[], options)}
             </table>
           );
+
+        case "p":
+          // Prevent hydration errors by converting p to div if it contains block elements
+          const hasBlockChild = children.some(
+            (child) =>
+              child instanceof Element &&
+              [
+                "div",
+                "p",
+                "table",
+                "center",
+                "blockquote",
+                "pre",
+                "h1",
+                "h2",
+                "h3",
+                "h4",
+                "h5",
+                "h6",
+                "ul",
+                "ol",
+                "iframe",
+                "hr",
+                "details",
+                "summary",
+              ].includes(child.name)
+          );
+
+          if (hasBlockChild) {
+            return (
+              <div {...(attribs as any)}>
+                {domToReact(children as DOMNode[], options)}
+              </div>
+            );
+          }
+          break;
       }
     },
   };

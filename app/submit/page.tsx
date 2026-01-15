@@ -7,7 +7,6 @@ import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
 import TagsInput from "@/components/submit/TagsInput";
 import { Constants } from "@/constants";
-import BeneficiariesButton from "@/components/post/body/BeneficiariesButton";
 import { ZonedDateTime } from "@internationalized/date";
 import ScheduleButton from "@/components/ui/ScheduleButton";
 import moment from "moment";
@@ -20,6 +19,8 @@ import { toast } from "sonner";
 import { useDraft } from "@/hooks/useDraft";
 import { empty_community } from "@/constants/templates";
 import PayoutTypeButton from "@/components/post/PayoutTypeButton";
+import BeneficiariesButton from "@/components/submit/BeneficiariesButton";
+import { readingTime } from "@/utils/reading-time-estimator";
 
 const ICON_SIZE = 22;
 function SubmitPage({
@@ -41,7 +42,8 @@ function SubmitPage({
   const [markdown, setMarkdown] = useState(
     isEdit ? root?.body || "" : draft.body
   );
-  
+  const rpm = readingTime(markdown);
+
   const [payoutType, setPayoutType] = useState(Constants.reward_types[1]);
   const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>(
     isEdit
@@ -280,7 +282,7 @@ function SubmitPage({
           <p className="text-base font-semibold text-muted">Preview</p>
           <div className="flex flex-col bg-default-100 p-4 rounded-xl gap-4">
             <div className="flex flex-row gap-2 justify-end">
-              <p className="text-muted">{`1 words, <1 min read`}</p>
+              <p className="text-muted">{`${rpm.words} words, ~${rpm.text}`}</p>
             </div>
             <div className="flex flex-col items-center w-full">
               <MarkdownViewer body={markdown} className="w-full" />

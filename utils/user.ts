@@ -1,7 +1,4 @@
-import {
-  encryptPrivateKey,
-  secureDecrypt,
-} from "./encryption";
+import { encryptPrivateKey, secureDecrypt } from "./encryption";
 import secureLocalStorage from "react-secure-storage";
 import CryptoJS from "crypto-js";
 import { Constants } from "@/constants";
@@ -107,8 +104,6 @@ export const saveSessionKey = (userPassword: string) => {
   return enc;
 };
 
-
-
 export function secureLocalStorageFresh(
   key: string,
   prefix: "@secure.j" | "@secure.s"
@@ -120,3 +115,10 @@ export function secureLocalStorageFresh(
   );
   return freshData;
 }
+
+export const getChatMemoKey = (username: string) => {
+  return secureLocalStorageFresh(
+    `chat_memo_key_${username}`,
+    "@secure.s"
+  ) as string;
+};

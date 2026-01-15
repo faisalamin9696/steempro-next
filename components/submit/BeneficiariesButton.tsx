@@ -1,6 +1,6 @@
 import { Button, ButtonProps } from "@heroui/button";
 import { useState } from "react";
-import BeneficiariesModal from "../../submit/BeneficiariesModal";
+import BeneficiariesModal from "./BeneficiariesModal";
 import { UserCog } from "lucide-react";
 
 interface Props extends ButtonProps {

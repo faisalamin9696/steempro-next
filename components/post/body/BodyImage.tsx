@@ -89,7 +89,7 @@ function BodyImage({
         style={{ width, height }}
       >
         {isLoading && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-default-100/40 backdrop-blur-[4px] transition-opacity duration-300 gap-3">
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-default-100/40 backdrop-blur-xs transition-opacity duration-300 gap-3">
             <div className="animate-pulse flex flex-col items-center gap-2 text-default-400">
               <Image size={32} strokeWidth={1.2} />
             </div>

@@ -41,6 +41,10 @@ export default function PostPage({
       (state) =>
         state.commentReducer.values[`${data?.author}/${data?.permlink}`]
     ) ?? data;
+  const [translatedBody, setTranslatedBody] = useState<string | null>(null);
+  const [translatedTitle, setTranslatedTitle] = useState<string | null>(null);
+  const [isTranslated, setIsTranslated] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState<string>();
 
   const handleViewTrack = useCallback(async () => {
     if (
@@ -73,6 +77,30 @@ export default function PostPage({
     scrollToWithOffset(target, 80);
   }, [data]);
 
+  const handleTranslate = async (translated: string, language: string) => {
+    setTranslatedBody(translated);
+    setIsTranslated(true);
+    setCurrentLanguage(language);
+
+    // Also translate the title if it exists
+    if (commentData.title) {
+      try {
+        const { translateText } = await import("@/utils/translate");
+        const titleResult = await translateText(commentData.title, language);
+        setTranslatedTitle(titleResult.translatedText);
+      } catch (error) {
+        console.error("Title translation failed:", error);
+      }
+    }
+  };
+
+  const handleResetTranslation = () => {
+    setTranslatedBody(null);
+    setTranslatedTitle(null);
+    setIsTranslated(false);
+    setCurrentLanguage(undefined);
+  };
+
   if (commentData.link_id === 0) {
     return (
       <div className="flex flex-col items-center">
@@ -86,6 +114,11 @@ export default function PostPage({
       </div>
     );
   }
+
+  const tags =
+    typeof JSON.parse(commentData.json_metadata)?.tags === "string"
+      ? []
+      : JSON.parse(commentData.json_metadata)?.tags || [];
 
   return (
     <div className="flex flex-col">
@@ -132,9 +165,15 @@ export default function PostPage({
                 comment={commentData}
                 onEditPress={() => setEdit(true)}
                 isDetail
+                showTranslate
+                onTranslate={handleTranslate}
+                onResetTranslation={handleResetTranslation}
+                isTranslated={isTranslated}
               />
               {!edit && (
-                <h1 className="text-3xl font-bold">{commentData.title}</h1>
+                <h1 className="text-3xl font-bold">
+                  {translatedTitle || commentData.title}
+                </h1>
               )}
             </div>
 
@@ -153,7 +192,7 @@ export default function PostPage({
                     isNsfw={hasNsfwTag(commentData)}
                     placement="start"
                   >
-                    <MarkdownViewer body={commentData.body} />
+                    <MarkdownViewer body={translatedBody || commentData.body} />
                   </NsfwOverlay>
 
                   <div
@@ -166,20 +205,18 @@ export default function PostPage({
                   </div>
 
                   <div className="flex flex-wrap gap-2">
-                    {(JSON.parse(commentData.json_metadata)?.tags || []).map(
-                      (item: string) => {
-                        return (
-                          <Chip
-                            as={Link}
-                            href={`/trending/${item}`}
-                            color="secondary"
-                            prefetch={false}
-                          >
-                            #{item}
-                          </Chip>
-                        );
-                      }
-                    )}
+                    {tags.map((item: string) => {
+                      return (
+                        <Chip
+                          as={Link}
+                          href={`/trending/${item}`}
+                          color="secondary"
+                          prefetch={false}
+                        >
+                          #{item}
+                        </Chip>
+                      );
+                    })}
                   </div>
                 </div>
 

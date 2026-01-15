@@ -28,7 +28,7 @@ function FollowButton({
   const [isPending, setIsPending] = useState(false);
   const { authenticateOperation } = useAccountsContext();
   const { data: session } = useSession();
-  const isSelf = session?.user?.name === account.name;
+  const isMe = session?.user?.name === account.name;
   const dispatch = useAppDispatch();
 
   const handleFollow = async () => {
@@ -50,7 +50,7 @@ function FollowButton({
         observer_follows_author: +isFollowed,
       };
 
-      if (isSelf) {
+      if (isMe) {
         dispatch(addLoginHandler(updatedData));
       }
       dispatch(addProfileHandler(updatedData));

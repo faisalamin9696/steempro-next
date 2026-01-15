@@ -32,7 +32,7 @@ export const BalanceCard = ({
   expiringCount,
 }: BalanceCardProps) => {
   const { data: session } = useSession();
-  const isSelf = session?.user?.name === account.name;
+  const isMe = session?.user?.name === account.name;
   const { vestsToSteem } = useSteemUtils();
   return (
     <SCard
@@ -154,7 +154,7 @@ export const BalanceCard = ({
             Transfer
           </Button>
 
-          {isSelf && (
+          {isMe && (
             <>
               <Button
                 onPress={onPowerUp}

@@ -8,7 +8,7 @@ import { useSdsList } from "@/hooks/sds-client-hooks";
 import EmptyList from "../EmptyList";
 import { Card, Spinner } from "@heroui/react";
 import MarkdownEditor from "../submit/MarkdownEditor";
-import BeneficiariesButton from "../post/body/BeneficiariesButton";
+import BeneficiariesButton from "../submit/BeneficiariesButton";
 import { Constants } from "@/constants";
 import PublishButton from "../submit/PublishButton";
 import LoadingStatus from "../LoadingStatus";
@@ -19,6 +19,7 @@ import PayoutTypeButton from "../post/PayoutTypeButton";
 import { Select, SelectItem } from "@heroui/react";
 import { Clock, TrendingUp, ThumbsUp } from "lucide-react";
 import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
+import { useDraft } from "@/hooks/useDraft";
 
 interface CommentsListProps {
   root: Post;
@@ -29,13 +30,17 @@ const ITEMS_PER_PAGE = 10;
 const pageCache = new Map<string, number>();
 
 const CommentsList = ({ root }: CommentsListProps) => {
+  let { ...draftData } = useDraft(
+    `comment-editor-${root.author}-${root.permlink}`
+  );
+  const [draft, setDraft] = useState(draftData.draft);
   const api = `/posts_api/getPostReplies/${root.author}/${root.permlink}/true`;
   // Stable references
   const uniqueKey = useRef(btoa(api)).current;
   const [page, setPage] = useState(() => pageCache.get(uniqueKey) || 1);
   const pageRef = useRef(page);
   pageRef.current = page;
-  const [markdown, setMarkdown] = useState("");
+  const [markdown, setMarkdown] = useState(draft.body);
   const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([]);
   const [payoutType, setPayoutType] = useState<Payout>(
     Constants.reward_types[1]
@@ -50,6 +55,16 @@ const CommentsList = ({ root }: CommentsListProps) => {
     "newest"
   );
   const { isMobile } = useDeviceInfo();
+
+  useEffect(() => {
+    const latestDraft = draftData.loadDraft();
+    setDraft(latestDraft);
+    loadDraft(latestDraft);
+  }, []);
+
+  function loadDraft(data: DraftData) {
+    setMarkdown(data.body);
+  }
 
   const postReplies = useMemo(() => {
     if (!allReplies) return [];
@@ -135,7 +150,10 @@ const CommentsList = ({ root }: CommentsListProps) => {
               insidePreview
               value={markdown}
               rows={6}
-              onChange={setMarkdown}
+              onChange={(body) => {
+                setMarkdown(body);
+                draftData.setBody(body);
+              }}
               placeholder="Write your comment here... Use @ to mention users"
               body={root.body}
               disabled={isPending}

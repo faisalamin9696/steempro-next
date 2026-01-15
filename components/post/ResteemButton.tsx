@@ -8,6 +8,7 @@ import { Repeat } from "lucide-react";
 import { useSession } from "next-auth/react";
 import SPopover from "../ui/SPopover";
 import { useAccountsContext } from "../auth/AccountsContext";
+import { Spinner } from "@heroui/react";
 
 const ICON_SIZE = 20;
 
@@ -62,9 +63,11 @@ function ResteemButton(props: Props) {
       description="Resteem this post?"
       className=""
       trigger={
-        <Button isLoading={comment.status === "resteeming"} {...props}>
+        <Button isDisabled={comment.status === "resteeming"} {...props}>
           <div className={labelClass}>
-            {comment.status !== "resteeming" && (
+            {comment.status === "resteeming" ? (
+              <Spinner color="current" size="sm" />
+            ) : (
               <Repeat
                 size={ICON_SIZE}
                 className={comment.observer_resteem ? "text-success-500" : ""}

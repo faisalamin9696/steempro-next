@@ -15,7 +15,7 @@ export const AccountRecoveryStatus = ({ account }: { account: AccountExt }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const STORAGE_KEY = `recovery_alert_dismissed_${account.name}`;
   const { data: session } = useSession();
-  const isSelf = session?.user?.name === account.name;
+  const isMe = session?.user?.name === account.name;
 
   useEffect(() => {
     const dismissedAt = localStorage.getItem(STORAGE_KEY);
@@ -38,7 +38,7 @@ export const AccountRecoveryStatus = ({ account }: { account: AccountExt }) => {
   };
 
   // If there is a pending recovery change
-  if ((recoveryData && !isDismissed)) {
+  if (recoveryData && !isDismissed) {
     return (
       <>
         <Alert
@@ -70,7 +70,7 @@ export const AccountRecoveryStatus = ({ account }: { account: AccountExt }) => {
                 </p>
               </div>
 
-              {isSelf && (
+              {isMe && (
                 <div className="flex flex-wrap gap-2 justify-end">
                   <Button
                     size="sm"

@@ -18,9 +18,9 @@ import {
 import { sdsApi } from "@/libs/sds";
 import moment from "moment";
 import { diff_match_patch as diffMatchPatch } from "diff-match-patch";
-import MarkdownViewer from "./MarkdownViewer";
 import { History, ArrowLeftRight, FileText, Tag } from "lucide-react";
 import LoadingStatus from "@/components/LoadingStatus";
+import MarkdownViewer from "./body/MarkdownViewer";
 
 interface HistoryItem {
   time: number;
@@ -212,10 +212,13 @@ export default function EditHistoryModal({
         {(onClose) => (
           <>
             <ModalHeader className="flex gap-2 border-b border-divider items-center">
-              <History size={20} /> Edit History{" "}
-              <span className="text-small font-normal text-muted max-w-60 truncate">
-                @{author}/{permlink}
-              </span>
+              <History size={20} />
+              <div className="flex flex-wrap gap-1">
+                Edit History
+                <span className="text-small font-normal text-muted truncate">
+                  @{author}/{permlink}
+                </span>
+              </div>
             </ModalHeader>
             <ModalBody>
               {data.loading ? (
@@ -270,7 +273,7 @@ export default function EditHistoryModal({
                     </ScrollShadow>
                   </div>
                   <div className="md:col-span-9 flex flex-col min-h-0 h-full max-h-[calc(85vh-120px)]">
-                    <div className="p-4 border-b border-divider flex justify-between items-center bg-content1">
+                    <div className="p-4 border-b border-divider flex flex-wrap gap-2 justify-between items-center bg-content1">
                       <div className="flex flex-col min-w-0">
                         <span className="font-bold truncate">
                           {current?.title || "Untitled"}
@@ -345,7 +348,7 @@ export default function EditHistoryModal({
                             </Section>
                           )}
                           <Section title="Title">
-                            <div className="text-xl font-bold p-4 bg-content2 rounded-lg border border-divider">
+                            <div className="text-lg font-semibold p-4 bg-content2 rounded-lg border border-divider">
                               {current.title}
                             </div>
                           </Section>

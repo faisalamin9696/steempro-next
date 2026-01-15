@@ -69,6 +69,14 @@ export const useDraft = (
       if (saved) {
         const parsedData = JSON.parse(saved) as DraftData;
 
+        // Check if draft is older than 7 days
+        const sevenDaysAgo = moment().subtract(7, "days").unix();
+        if (parsedData.updatedAt && parsedData.updatedAt < sevenDaysAgo) {
+          console.warn(`Draft ${draftKey} is older than 7 days, clearing...`);
+          clearDraft();
+          return empty_draft;
+        }
+
         // Validate the loaded data structure
         if (
           typeof parsedData.title === "string" &&

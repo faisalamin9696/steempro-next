@@ -17,7 +17,6 @@ import {
 import moment from "moment";
 import { toast } from "sonner";
 import { useState } from "react";
-import { deleteSchedule, updateSchedule } from "@/libs/supabase/database";
 import { saveDraftToStorage } from "@/hooks/useDraft";
 import ScheduleModal from "../ui/ScheduleModal";
 import {
@@ -27,16 +26,13 @@ import {
 } from "@internationalized/date";
 import {
   extractMetadata,
-  makeJsonMetadata,
   validateCommunityAccount,
 } from "@/utils/editor";
-import { getThumbnail } from "@/utils/image";
-import { extractBodySummary } from "@/utils/extractContent";
-import { Image } from "@heroui/react";
 import Link from "next/link";
 import { empty_comment, empty_community } from "@/constants/templates";
 import SPopover from "../ui/SPopover";
 import PostBody from "../post/PostBody";
+import { deleteSchedule, updateSchedule } from "@/libs/supabase/schedule";
 
 interface Props {
   schedule: Schedule;
@@ -50,11 +46,9 @@ export default function ScheduleCard({ schedule, onRefresh }: Props) {
   const [isDrafting, setIsDrafting] = useState(false);
   const isPending = isRescheduling || isDeleting || isEditing || isDrafting;
 
-  const metadata = extractMetadata(schedule.body);
   const targetUrl = schedule?.permlink
     ? `/@${schedule.username}/${schedule.permlink}`
     : undefined;
-  const thumbnail = getThumbnail(JSON.stringify(metadata?.["image"] ?? []));
 
   const handleDelete = async () => {
     setIsDeleting(true);

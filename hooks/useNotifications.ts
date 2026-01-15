@@ -90,7 +90,7 @@ const parseNotifications = (
           id: id,
           type: "resteem",
           timestamp,
-          from: author,
+          from: account,
           message: `resteemed your post`,
           url: `/@${author}/${permlink}`,
           read: Boolean(is_read),

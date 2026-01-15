@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@heroui/button";
-import { Input } from "@heroui/input";
 import { Badge } from "@heroui/badge";
 import Image from "next/image";
 import Link from "next/link";
@@ -29,7 +28,6 @@ import {
 import ManageAccountsButton from "../auth/ManageAccountsButton";
 import { useState } from "react";
 import SearchModal from "../search/SearchModal";
-import BackgroundImage from "../BackgroundImage";
 
 export async function refreshData(username?: string | null) {
   mutate("globals");
@@ -171,7 +169,6 @@ function SNavbar() {
                 <SAvatar
                   username={session?.user?.name ?? ""}
                   className="cursor-pointer transition-transform hover:scale-105"
-                  size="sm"
                   showLink={false}
                   isBordered
                   color={

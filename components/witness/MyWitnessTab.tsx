@@ -126,7 +126,7 @@ const MyWitnessTab = ({ witness, username }: MyWitnessTabProps) => {
             <div className="flex flex-col gap-4">
               <Input
                 label="Witness URL"
-                placeholder="https://steemit.com/witness-category/@username/witness-thread"
+                placeholder="https://steempro.com/witness-category/@username/witness-thread"
                 labelPlacement="outside"
                 value={url}
                 onValueChange={setUrl}

@@ -109,7 +109,7 @@ function CommunityPage({
       </Accordion>
       {pinnedPost?.length > 0 && (
         <div className="mt-3">
-          <HomeCarousal data={pinnedPost} showPagination size="sm" />
+          <HomeCarousal data={pinnedPost} showPagination/>
         </div>
       )}
       <STabs

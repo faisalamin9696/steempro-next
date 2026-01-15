@@ -9,12 +9,6 @@ import { Pencil, Trash2, Plus, FileText } from "lucide-react";
 import { toast } from "sonner";
 import useSWR from "swr";
 import { useSession } from "next-auth/react";
-import {
-  getSnippets,
-  addSnippet,
-  updateSnippet,
-  deleteSnippet,
-} from "@/libs/supabase/database";
 import InfiniteList from "../InfiniteList";
 import { Skeleton } from "@heroui/skeleton";
 import SPopover from "../ui/SPopover";
@@ -22,6 +16,7 @@ import ErrorCard from "../ui/ErrorCard";
 import MarkdownEditor from "./MarkdownEditor";
 import SModal from "../ui/SModal";
 import LoginAlertCard from "../ui/LoginAlertCard";
+import { getSnippets, updateSnippet, addSnippet, deleteSnippet } from "@/libs/supabase/snippets";
 
 interface Props {
   isOpen: boolean;

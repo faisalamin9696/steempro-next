@@ -22,7 +22,7 @@ import { Constants } from "@/constants";
 import MarkdownViewer from "../post/body/MarkdownViewer";
 import { useSteemUtils } from "@/hooks/useSteemUtils";
 import FollowButton from "./FollowButton";
-import ChatButton from "../ui/ChatButton";
+import ChatButton from "../chat/ChatButton";
 import EditButton from "../ui/EditButton";
 import ShareButton from "../ui/ShareButton";
 
@@ -36,11 +36,11 @@ interface Props extends CardProps {
 function ProfileCard({ account, headerClass, ...props }: Props) {
   const { data: session } = useSession();
   const { globalProps } = useSteemUtils();
-  const isSelf = session?.user?.name === account.name;
+  const isMe = session?.user?.name === account.name;
   const loginData = useAppSelector((s) => s.loginReducer.value);
   const otherProfileData =
     useAppSelector((s) => s.profileReducer.values[account.name]) ?? account;
-  const profileData = isSelf ? loginData : otherProfileData;
+  const profileData = isMe ? loginData : otherProfileData;
   const { name, posting_json_metadata, created } = profileData || {};
   const shareUrl = `${Constants.site_url}/@${name}`;
   const { profile = {} } = JSON.parse(posting_json_metadata || "{}");
@@ -52,10 +52,10 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (isSelf) {
+    if (isMe) {
       dispatch(addLoginHandler(account));
     }
-  }, [isSelf]);
+  }, [isMe]);
 
   const {
     name: fullName = "",
@@ -83,7 +83,7 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
 
       <CardBody className="flex flex-col gap-4">
         <div className="hidden lg:flex flex-row w-full flex-wrap justify-start gap-2">
-          {!isSelf && (
+          {!isMe && (
             <>
               <FollowButton size={"sm"} radius="md" account={profileData} />
 
@@ -91,7 +91,7 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
             </>
           )}
 
-          {isSelf && (
+          {isMe && (
             <EditButton
               size={"sm"}
               variant="flat"

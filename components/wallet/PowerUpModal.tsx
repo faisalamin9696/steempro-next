@@ -34,7 +34,7 @@ export const PowerUpModal = ({
   const dispatch = useAppDispatch();
   const loginData = useAppSelector((state) => state.loginReducer.value);
   const [confirm, setConfirm] = useState(false);
-  const isSelf = session?.user?.name === normalizeUsername(recipient);
+  const isMe = session?.user?.name === normalizeUsername(recipient);
   const availableBalance = loginData.balance_steem;
   const { authenticateOperation } = useAccountsContext();
 
@@ -62,7 +62,7 @@ export const PowerUpModal = ({
         addLoginHandler({
           ...loginData,
           balance_steem: loginData.balance_steem - Number(amount),
-          vests_own: isSelf
+          vests_own: isMe
             ? loginData.vests_own + steemToVests(amount)
             : loginData.vests_own,
         })

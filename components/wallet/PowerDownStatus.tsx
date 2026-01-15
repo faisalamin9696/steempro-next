@@ -21,7 +21,7 @@ export const PowerDownStatus = ({ account }: PowerDownStatusProps) => {
   const withdrawn = account.powerdown_done ?? 0;
   const isPoweringDown = toWithdraw > 0;
   const { data: session } = useSession();
-  const isSelf = session?.user?.name === account.name;
+  const isMe = session?.user?.name === account.name;
   const [isPending, setIsPending] = useState(false);
   const dispatch = useAppDispatch();
   const { vestsToSteem } = useSteemUtils();
@@ -67,11 +67,11 @@ export const PowerDownStatus = ({ account }: PowerDownStatusProps) => {
       }
       classNames={{
         title: "font-semibold pb-2",
-        description: twMerge("w-full", isSelf && "pe-4"),
+        description: twMerge("w-full", isMe && "pe-4"),
       }}
       hideIconWrapper
       endContent={
-        isSelf && (
+        isMe && (
           <Button
             variant="flat"
             size="sm"

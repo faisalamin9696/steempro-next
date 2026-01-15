@@ -36,7 +36,7 @@ import ShareModal from "../ui/ShareModal";
 import { useAccountsContext } from "../auth/AccountsContext";
 import MuteModal from "../community/modals/MuteModal";
 import RoleTitleModal from "../community/modals/RoleTitleModal";
-import EditHistoryModal from "./body/EditHistoryModal";
+import EditHistoryModal from "./EditHistoryModal";
 
 const ICON_SIZE = 16;
 
@@ -59,7 +59,7 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
   ...buttonProps
 }) => {
   const { data: session } = useSession();
-  const isSelf = comment.author === session?.user?.name;
+  const isMe = comment.author === session?.user?.name;
   const dispatch = useAppDispatch();
   const canDelete =
     isDetail &&
@@ -67,8 +67,8 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
     !comment.downvote_count &&
     comment.cashout_time !== 0 &&
     !comment.children &&
-    isSelf;
-  const canEdit = isSelf && isDetail;
+    isMe;
+  const canEdit = isMe && isDetail;
   const canMute = isDetail && Role.atLeast(comment.observer_role, "mod");
   const canSetRole = isDetail && Role.atLeast(comment.observer_role, "mod");
   const [isPending, setIsPending] = useState(false);
@@ -225,16 +225,16 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
         comment.category,
         comment.author,
         comment.permlink,
-        shouldMute,
+        shouldPin,
         key,
         useKeychain
       );
-      toast.success(`${shouldMute ? "Pinned" : "Unpinned"} successfully!`);
+      toast.success(`${shouldPin ? "Pinned" : "Unpinned"} successfully!`);
 
       dispatch(
         addCommentHandler({
           ...comment,
-          is_pinned: +shouldMute,
+          is_pinned: +shouldPin,
         })
       );
       setIsMuteModalOpen(false);
@@ -253,7 +253,7 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
   };
 
   const menuItems: React.JSX.Element[] = [
-    ...(isSelf
+    ...(isMe
       ? [
           canEdit && (
             <DropdownItem

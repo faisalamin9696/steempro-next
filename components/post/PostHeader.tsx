@@ -6,14 +6,30 @@ import SAvatar from "../ui/SAvatar";
 import SUsername from "../ui/SUsername";
 import PostOptionButton from "./PostOptionButton";
 import { Pin } from "lucide-react";
+import TranslateButton from "../ui/TranslateButton";
 
 interface Props {
   comment: Feed | Post;
   onEditPress?: () => void;
   isDetail?: boolean;
+  // Translation props
+  showTranslate?: boolean;
+  onTranslate?: (translatedText: string, language: string) => void;
+  onResetTranslation?: () => void;
+  isTranslated?: boolean;
+  currentLanguage?: string;
 }
 
-function PostHeader({ comment, onEditPress, isDetail }: Props) {
+function PostHeader({
+  comment,
+  onEditPress,
+  isDetail,
+  showTranslate = false,
+  onTranslate,
+  onResetTranslation,
+  isTranslated = false,
+  currentLanguage,
+}: Props) {
   const {
     author,
     author_reputation,
@@ -94,6 +110,19 @@ function PostHeader({ comment, onEditPress, isDetail }: Props) {
             >
               (edited)
             </p>
+          )}
+
+          {showTranslate && onTranslate && onResetTranslation && (
+            <TranslateButton
+              originalText={comment.body}
+              onTranslate={onTranslate}
+              onReset={onResetTranslation}
+              isTranslated={isTranslated}
+              currentLanguage={currentLanguage}
+              size="sm"
+              variant="light"
+              className="text-default-800"
+            />
           )}
         </div>
       </div>

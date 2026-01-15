@@ -1,5 +1,4 @@
 import {
-  forwardRef,
   useCallback,
   useEffect,
   useMemo,
@@ -9,8 +8,7 @@ import {
 import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
 import SAvatar from "../ui/SAvatar";
-import MentionInput, { MentionItem } from "../ui/MentionInput";
-import Reputation from "../post/Reputation";
+import MentionInput, { MentionItem } from "./MentionInput";
 import { twMerge } from "tailwind-merge";
 import { sdsApi } from "@/libs/sds";
 import ImageUploadButton from "../post/ImageUploadButton";
@@ -33,10 +31,8 @@ import {
 } from "lucide-react";
 import {
   Divider,
-  Spinner,
   Tab,
   Tabs,
-  Textarea,
   TextAreaProps,
 } from "@heroui/react";
 import MarkdownViewer from "../post/body/MarkdownViewer";
@@ -82,13 +78,16 @@ async function fetchUsers(
     if (debounceTimer) clearTimeout(debounceTimer);
 
     // Basic guards
-    if (!query || query.length < 3) return resolve(users);
+    if (!query || query.length < 3) {
+      const exists = users.filter((u) =>
+        u.id.toString().startsWith(query.toLowerCase())
+      );
+
+      if (exists.length) return resolve(exists);
+      else return resolve(users);
+    }
 
     // Prevent duplicate fetch for existing users
-    const exists = users.filter((u) =>
-      u.id.toString().startsWith(query.toLowerCase())
-    );
-    if (exists.length) return resolve(exists);
 
     // Save resolve to complete after debounce
     lastResolve = resolve as any;
@@ -153,7 +152,7 @@ const MarkdownEditor = ({
 
       const allPlaceholders =
         fileData.map((f) => f.placeholder).join("\n") +
-        (fileData.length > 0 ? "\n" : "");
+        (fileData.length > 0 ? "\n\n" : "");
 
       // 2. Insert all placeholders at once at the current cursor position
       const currentValue = textarea.value;
@@ -546,6 +545,7 @@ const MarkdownEditor = ({
               onKeyDown={handleKeyDown}
               value={value}
               onChange={onChange}
+              localUsers={initialUsers}
               onSearch={(query) => fetchUsers(query, initialUsers)}
               placeholder="Write your post content here... Use @ to mention users"
               variant="flat"
@@ -563,8 +563,8 @@ const MarkdownEditor = ({
               renderSuggestion={(item, focused) => (
                 <div
                   className={twMerge(
-                    "flex w-full items-center justify-between px-4 py-2 text-sm transition",
-                    focused && "bg-foreground/10"
+                    "flex w-full items-center justify-between py-1 text-sm transition",
+                    focused && "bg-foreground/10 rounded-xl"
                   )}
                 >
                   <div className="flex flex-row items-center gap-2">
@@ -577,7 +577,7 @@ const MarkdownEditor = ({
                       <p className="font-semibold text-xs leading-none">
                         {item.display}
                       </p>
-                      <p className="text-[10px] text-muted">@{item.id}</p>
+                      <p className="text-[12px] text-muted">@{item.id}</p>
                     </div>
                   </div>
                 </div>
@@ -585,9 +585,9 @@ const MarkdownEditor = ({
               {...props}
             />
           ) : (
-            <div className="flex flex-col items-center w-full p-3 min-h-40">
+            <div className="flex flex-col items-center w-full p-3 min-h-40 bg-default-100">
               <div className="flex flex-col lg:max-w-[65ch] w-full gap-2 self-center">
-                <MarkdownViewer body={value} />
+                <MarkdownViewer body={value}  />
               </div>
             </div>
           )}

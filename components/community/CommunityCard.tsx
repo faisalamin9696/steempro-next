@@ -26,7 +26,7 @@ interface Props extends CardProps {
 function CommunityCard({ community, account, headerClass, ...props }: Props) {
   const { data: session } = useSession();
   const { account: name, title, about, rank, created } = community || {};
-  const isSelf = session?.user?.name === name;
+  const isMe = session?.user?.name === name;
   const displayName = (title || name).replace("@", "");
   const shareUrl = `${Constants.site_url}/trending/${name}`;
   const roles: Role[] = mapSds(community.roles);

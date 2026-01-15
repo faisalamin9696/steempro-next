@@ -8,9 +8,14 @@ import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
 import SubscribeButton from "./SubscribeButton";
 import { Constants } from "@/constants";
 import { useAppSelector } from "@/hooks/redux/store";
-import ChatButton from "../ui/ChatButton";
+import ChatButton from "../chat/ChatButton";
 import ShareButton from "../ui/ShareButton";
 import EditButton from "../ui/EditButton";
+import { useState, useEffect } from "react";
+import { getUnreadChatCount } from "@/libs/supabase/chat";
+import ChatModal from "../chat/ChatModal";
+import MemoKeyModal from "../chat/MemoKeyModal";
+import { getChatMemoKey } from "@/utils/user";
 
 function CommunityHeader({
   account,
@@ -26,11 +31,30 @@ function CommunityHeader({
   const { account: name, title, description } = community || {};
   const { profile = {} } = JSON.parse(posting_json_metadata || "{}");
   const { data: session } = useSession();
-  const isSelf = session?.user?.name === name;
+  const isMe = session?.user?.name === name;
   const { isMobile } = useDeviceInfo();
   const { cover_image = "" }: PostingJsonMetadata = profile;
   const displayName = (title || name).replace("@", "");
   const shareUrl = `${Constants.site_url}/trending/${name}`;
+
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isMemoModalOpen, setIsMemoModalOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const handleOpenChat = () => {
+    const memoKey = getChatMemoKey(session?.user?.name || "");
+    if (memoKey) {
+      setIsChatOpen(true);
+    } else {
+      setIsMemoModalOpen(true);
+    }
+  };
+
+  useEffect(() => {
+    if (session?.user?.name) {
+      getUnreadChatCount(session.user.name).then(setUnreadCount);
+    }
+  }, [session]);
 
   return (
     <>
@@ -65,7 +89,7 @@ function CommunityHeader({
             </div>
 
             <div className="flex flex-row w-full flex-wrap justify-end gap-2">
-              {!isSelf && (
+              {!isMe && (
                 <>
                   <SubscribeButton
                     size={isMobile ? "sm" : "md"}
@@ -73,11 +97,15 @@ function CommunityHeader({
                     community={community}
                   />
 
-                  <ChatButton size={isMobile ? "sm" : "md"} />
+                  <ChatButton
+                    size={isMobile ? "sm" : "md"}
+                    unreadCount={unreadCount}
+                    onPress={handleOpenChat}
+                  />
                 </>
               )}
 
-              {isSelf && (
+              {isMe && (
                 <EditButton
                   size={isMobile ? "sm" : "md"}
                   variant="flat"
@@ -105,6 +133,21 @@ function CommunityHeader({
           </div>
         </div>
       </div>
+      {isChatOpen && (
+        <ChatModal
+          isOpen={isChatOpen}
+          onOpenChange={setIsChatOpen}
+          community={name}
+        />
+      )}
+      {isMemoModalOpen && (
+        <MemoKeyModal
+          isOpen={isMemoModalOpen}
+          onOpenChange={setIsMemoModalOpen}
+          username={session?.user?.name || ""}
+          onSuccess={() => setIsChatOpen(true)}
+        />
+      )}
     </>
   );
 }

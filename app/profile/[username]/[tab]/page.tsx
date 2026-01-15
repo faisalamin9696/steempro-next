@@ -31,18 +31,18 @@ function ProfilePage({ account }: { account: AccountExt }) {
   const { data: session } = useSession();
   const { useSmaller } = useDeviceInfo();
   const isMobile = useSmaller("sm");
-  const isSelf = session?.user?.name === account.name;
-  const profileData = isSelf ? loginData : otherProfileData ?? account;
+  const isMe = session?.user?.name === account.name;
+  const profileData = isMe ? loginData : otherProfileData ?? account;
   const { layout, className } = useFeedLayout();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (isSelf) {
+    if (isMe) {
       dispatch(addLoginHandler(account));
     } else {
       dispatch(addProfileHandler(account));
     }
-  }, [account, isSelf]);
+  }, [account, isMe]);
 
   const handleSelectionChange = (key: Key) => {
     if (!key) return;
@@ -56,6 +56,11 @@ function ProfilePage({ account }: { account: AccountExt }) {
   const profilePostsTab = useMemo(
     () => [
       { id: "posts", title: "Posts", api: "getPostsByAuthor" + apiParams },
+      {
+        id: "friends",
+        title: "Friends",
+        api: "getAccountFriendsFeed" + apiParams,
+      },
       {
         id: "comments",
         title: "Comments",
@@ -122,7 +127,9 @@ function ProfilePage({ account }: { account: AccountExt }) {
     [apiParams, isMobile, profileData]
   );
 
-  const normalizedTab = ["posts", "comments", "replies"].includes(tab)
+  const normalizedTab = ["posts", "friends", "comments", "replies"].includes(
+    tab
+  )
     ? "posts"
     : tab ?? "blog";
 
@@ -147,6 +154,7 @@ function ProfilePage({ account }: { account: AccountExt }) {
           />
         </AccordionItem>
       </Accordion>
+
       <STabs
         variant="bordered"
         selectedKey={normalizedTab}

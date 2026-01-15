@@ -49,7 +49,7 @@ export const Delegations = ({ account }: DelegationsProps) => {
   const { vestsToSteem } = useSteemUtils();
   const [typeFilter, setTypeFilter] = useState<DelegationType>("all");
   const [delegations, setDelegations] = useState<Delegation[]>([]);
-  const isSelf = session?.user?.name === account.name;
+  const isMe = session?.user?.name === account.name;
   const [isDelegationModalOpen, setIsDelegationModalOpen] = useState(false);
   const [modalData, setModalData] = useState<
     | {
@@ -72,7 +72,7 @@ export const Delegations = ({ account }: DelegationsProps) => {
 
   useEffect(() => {
     dispatch(
-      isSelf
+      isMe
         ? addLoginHandler({
             ...account,
             incoming_delegations:
@@ -92,7 +92,7 @@ export const Delegations = ({ account }: DelegationsProps) => {
               delegations?.filter((d) => d.status === "expiring") ?? [],
           })
     );
-  }, [delegations, isSelf]);
+  }, [delegations, isMe]);
 
   const dispatch = useAppDispatch();
 

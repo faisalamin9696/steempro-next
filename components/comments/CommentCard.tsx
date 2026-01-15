@@ -11,6 +11,8 @@ import { Constants } from "@/constants";
 import { useAppSelector } from "@/hooks/redux/store";
 import CommentHeader from "./CommentHeader";
 import CommentFooter from "./CommentFooter";
+import { useDraft } from "@/hooks/useDraft";
+import { twMerge } from "tailwind-merge";
 
 interface CommentCardProps {
   comment: Post;
@@ -36,11 +38,45 @@ export default function CommentCard({
 }: CommentCardProps) {
   const commentRef = useRef<HTMLDivElement>(null);
 
+  let { ...draftData } = useDraft(
+    `comment-editor-${comment.author}-${comment.permlink}`
+  );
+
+  const commentData =
+    useAppSelector(
+      (state) =>
+        state.commentReducer.values[`${comment.author}/${comment.permlink}`]
+    ) ?? comment;
+
+  const [draft, setDraft] = useState(draftData.draft);
+
   const [showReplies, setShowReplies] = useState(depth < AUTO_EXPAND_DEPTH);
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [edit, setEdit] = useState(false);
-  const [replyText, setReplyText] = useState("");
+  const [replyText, setReplyText] = useState(
+    edit ? commentData?.body || "" : draft.body
+  );
+  const isLowQuality =
+    Boolean(commentData.is_muted) || commentData.author_role === "muted";
+
   const [isPending, setIsPending] = useState(false);
+
+  // Translation state
+  const [translatedBody, setTranslatedBody] = useState<string | null>(null);
+  const [isTranslated, setIsTranslated] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState<string | undefined>();
+
+  const handleTranslate = (translated: string, language: string) => {
+    setTranslatedBody(translated);
+    setIsTranslated(true);
+    setCurrentLanguage(language);
+  };
+
+  const handleResetTranslation = () => {
+    setTranslatedBody(null);
+    setIsTranslated(false);
+    setCurrentLanguage(undefined);
+  };
 
   const isDeep = comment.depth - root.depth > MAX_DEPTH;
 
@@ -49,11 +85,17 @@ export default function CommentCard({
       state.repliesReducer.values[`${root.author}/${root.permlink}`] ?? []
   );
 
-  const commentData =
-    useAppSelector(
-      (state) =>
-        state.commentReducer.values[`${comment.author}/${comment.permlink}`]
-    ) ?? comment;
+  useEffect(() => {
+    if (!edit) {
+      const latestDraft = draftData.loadDraft();
+      setDraft(latestDraft);
+      loadDraft(latestDraft);
+    }
+  }, []);
+
+  function loadDraft(data: DraftData) {
+    setReplyText(data.body);
+  }
 
   const childReplies = useMemo(() => {
     if (!postReplies.length) return [];
@@ -127,12 +169,22 @@ export default function CommentCard({
           depth ? "pl-3 sm:pl-1" : ""
         }`}
       >
-        <CommentHeader comment={commentData} />
+        <CommentHeader
+          comment={commentData}
+          showTranslate
+          onTranslate={handleTranslate}
+          onResetTranslation={handleResetTranslation}
+          isTranslated={isTranslated}
+          currentLanguage={currentLanguage}
+        />
 
         {!edit && (
           <MarkdownViewer
-            body={commentData.body}
-            className="prose-sm text-default-800!"
+            body={translatedBody || commentData.body}
+            className={twMerge(
+              "prose-sm! text-default-800!",
+              isLowQuality && "opacity-50 text-warning!"
+            )}
           />
         )}
 
@@ -159,7 +211,10 @@ export default function CommentCard({
               insidePreview
               value={replyText}
               rows={6}
-              onChange={setReplyText}
+              onChange={(body) => {
+                setReplyText(body);
+                if (!edit) draftData.setBody(body);
+              }}
               placeholder={
                 edit ? `Update reply...` : `Reply to @${comment.author}...`
               }

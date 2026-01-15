@@ -4,7 +4,7 @@ import { proxifyImageUrl } from "@/utils/proxifyUrl";
 import BackgroundImage from "../BackgroundImage";
 import SAvatar from "../ui/SAvatar";
 import FollowButton from "./FollowButton";
-import ChatButton from "../ui/ChatButton";
+import ChatButton from "../chat/ChatButton";
 import { useSession } from "next-auth/react";
 import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
@@ -13,14 +13,20 @@ import { addLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { Constants } from "@/constants";
 import ShareButton from "../ui/ShareButton";
 import EditButton from "../ui/EditButton";
+import { useState } from "react";
+import { getUnreadChatCount } from "@/libs/supabase/chat";
+import ChatModal from "../chat/ChatModal";
+import MemoKeyModal from "../chat/MemoKeyModal";
+import secureLocalStorage from "react-secure-storage";
+import { getChatMemoKey } from "@/utils/user";
 
 function ProfileHeader({ account }: { account: AccountExt }) {
   const { data: session } = useSession();
-  const isSelf = session?.user?.name === account.name;
+  const isMe = session?.user?.name === account.name;
   const otherProfileData =
     useAppSelector((s) => s.profileReducer.values[account.name]) ?? account;
   const loginData = useAppSelector((s) => s.loginReducer.value);
-  const profileData = isSelf ? loginData : otherProfileData;
+  const profileData = isMe ? loginData : otherProfileData;
   const { name, posting_json_metadata } = profileData || {};
   const { profile = {} } = JSON.parse(posting_json_metadata || "{}");
   const { isMobile } = useDeviceInfo();
@@ -30,9 +36,25 @@ function ProfileHeader({ account }: { account: AccountExt }) {
   const displayName = (fullName || profileData.name).replace("@", "");
   const shareUrl = `${Constants.site_url}/@${name}`;
 
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isMemoModalOpen, setIsMemoModalOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const handleOpenChat = () => {
+    const memoKey = getChatMemoKey(session?.user?.name || "");
+    if (memoKey) {
+      setIsChatOpen(true);
+    } else {
+      setIsMemoModalOpen(true);
+    }
+  };
+
   useEffect(() => {
-    if (isSelf) dispatch(addLoginHandler(account));
-  }, [isSelf]);
+    if (isMe) dispatch(addLoginHandler(account));
+    if (session?.user?.name) {
+      getUnreadChatCount(session.user.name).then(setUnreadCount);
+    }
+  }, [isMe, session]);
 
   return (
     <>
@@ -67,7 +89,7 @@ function ProfileHeader({ account }: { account: AccountExt }) {
             </div>
 
             <div className="flex flex-row w-full flex-wrap justify-end gap-2">
-              {!isSelf && (
+              {!isMe && (
                 <>
                   <FollowButton
                     size={isMobile ? "sm" : "md"}
@@ -75,11 +97,15 @@ function ProfileHeader({ account }: { account: AccountExt }) {
                     account={profileData}
                   />
 
-                  <ChatButton size={isMobile ? "sm" : "md"} />
+                  <ChatButton
+                    size={isMobile ? "sm" : "md"}
+                    unreadCount={unreadCount}
+                    onPress={handleOpenChat}
+                  />
                 </>
               )}
 
-              {isSelf && (
+              {isMe && (
                 <EditButton
                   size={isMobile ? "sm" : "md"}
                   variant="flat"
@@ -108,6 +134,21 @@ function ProfileHeader({ account }: { account: AccountExt }) {
           </div>
         </div>
       </div>
+      {isChatOpen && (
+        <ChatModal
+          isOpen={isChatOpen}
+          onOpenChange={setIsChatOpen}
+          recipient={account.name}
+        />
+      )}
+      {isMemoModalOpen && (
+        <MemoKeyModal
+          isOpen={isMemoModalOpen}
+          onOpenChange={setIsMemoModalOpen}
+          username={session?.user?.name || ""}
+          onSuccess={() => setIsChatOpen(true)}
+        />
+      )}
     </>
   );
 }

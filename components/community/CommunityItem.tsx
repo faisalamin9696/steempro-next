@@ -16,7 +16,7 @@ export default function CommunityItem({ community, account }: Props) {
   const [isSubscribed, setIsSubscribed] = useState(
     Boolean(community.observer_subscribed)
   );
-  const isSelf = session?.user?.name === account;
+  const isMe = session?.user?.name === account;
 
   return (
     <Card className="post-card p-3 shadow-none border-1 border-divider hover:border-primary/50">
@@ -63,7 +63,7 @@ export default function CommunityItem({ community, account }: Props) {
           </div>
         </div>
 
-        {!isSelf ? (
+        {!isMe ? (
           <SubscribeButton
             size="sm"
             variant={isSubscribed ? "bordered" : "flat"}

@@ -58,7 +58,7 @@ const NotificationsCard = ({ username }: { username: string }) => {
   ).unread_notifications_count;
   const { data: session } = useSession();
 
-  const isSelf = session?.user?.name === username;
+  const isMe = session?.user?.name === username;
 
   useEffect(() => {
     fetchNotifications(true, typeFilter);
@@ -185,7 +185,7 @@ const NotificationsCard = ({ username }: { username: string }) => {
         size="sm"
         iconSize={20}
         description={
-          isSelf
+          isMe
             ? `${unreadCount > 0 ? `${unreadCount} unread` : "All caught up"}`
             : ""
         }

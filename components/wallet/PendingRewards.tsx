@@ -27,7 +27,7 @@ export const PendingRewards = ({ account }: PendingRewardsProps) => {
   const [isPending, setIsPending] = useState(false);
   const dispatch = useAppDispatch();
   const { authenticateOperation } = useAccountsContext();
-  const isSelf = session?.user?.name === account.name;
+  const isMe = session?.user?.name === account.name;
 
   async function handleRedeem() {
     setIsPending(true);
@@ -78,7 +78,7 @@ export const PendingRewards = ({ account }: PendingRewardsProps) => {
       classNames={{ title: "font-semibold pb-2" }}
       hideIconWrapper
       endContent={
-        isSelf && (
+        isMe && (
           <Button
             onPress={handleRedeem}
             size="sm"

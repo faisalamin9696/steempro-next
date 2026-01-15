@@ -25,8 +25,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useAccountsContext } from "../auth/AccountsContext";
 import GrantAuthorityModal from "../ui/GrantAuthorityModal";
-import { addSchedule } from "@/libs/supabase/database";
 import { AsyncUtils } from "@/utils/async.utils";
+import { addSchedule } from "@/libs/supabase/schedule";
 
 interface BaseProps extends Omit<ButtonProps, "title"> {
   buttonTitle?: string;

@@ -6,6 +6,7 @@ import React, {
   forwardRef,
 } from "react";
 import { Textarea, Listbox, ListboxItem, Spinner } from "@heroui/react";
+import { createPortal } from "react-dom";
 import { twMerge } from "tailwind-merge";
 
 // Coordinates helper (simplified version of textarea-caret)
@@ -86,6 +87,7 @@ interface MentionInputProps
   onSearch: (query: string) => Promise<MentionItem[]>;
   trigger?: string;
   renderSuggestion?: (item: MentionItem, focused: boolean) => React.ReactNode;
+  localUsers?: MentionItem[];
 }
 
 const MentionInput = forwardRef<HTMLTextAreaElement, MentionInputProps>(
@@ -98,6 +100,7 @@ const MentionInput = forwardRef<HTMLTextAreaElement, MentionInputProps>(
       renderSuggestion,
       className,
       onKeyDown,
+      localUsers = [],
       ...props
     },
     ref
@@ -138,32 +141,82 @@ const MentionInput = forwardRef<HTMLTextAreaElement, MentionInputProps>(
           const rect = textareaRef.current.getBoundingClientRect();
 
           setCoords({
-            top: rect.top + top - textareaRef.current.scrollTop,
-            left: rect.left + left - textareaRef.current.scrollLeft,
+            top:
+              rect.top + top - textareaRef.current.scrollTop + window.scrollY,
+            left:
+              rect.left +
+              left -
+              textareaRef.current.scrollLeft +
+              window.scrollX,
           });
         }
 
-        setLoading(true);
-        setIsOpen(true);
-        const results = await onSearch(currentQuery);
-        setSuggestions(results);
-        setSelectedIndex(0);
-        setLoading(false);
+        // 1. Filter local users immediately
+        let localMatches: MentionItem[] = [];
+        if (localUsers && localUsers.length > 0) {
+          const qLower = currentQuery.toLowerCase();
+          localMatches = localUsers.filter(
+            (u) =>
+              u.id.toString().toLowerCase().includes(qLower) ||
+              u.display.toLowerCase().includes(qLower)
+          );
+        }
 
-        if (results.length === 0) {
-          setIsOpen(false);
+        // Show local matches immediately if we have them or if query is empty (show all locals)
+        if (
+          localUsers.length > 0 &&
+          (localMatches.length > 0 || currentQuery === "")
+        ) {
+          // If query is empty, show all local users.
+          // If query is not empty, show matches.
+          // Logic in 'localMatches' calculation handles query filtering,
+          // but if query is "", includes("") is true for all strings.
+          // So localMatches contains all localUsers if query is "".
+          setSuggestions(localMatches);
+          setSelectedIndex(0);
+          setLoading(false);
+          setIsOpen(true);
+        }
+
+        // 2. Decide if we need to search remotely
+        // We avoid search if query is short (< 3)
+        if (currentQuery.length < 3) {
+          if (localMatches.length === 0 && !localUsers.length) {
+            setIsOpen(false);
+          }
+          return;
+        }
+
+        setLoading(true);
+        if (localMatches.length === 0) setIsOpen(true); // Open if not already open
+
+        try {
+          const results = await onSearch(currentQuery);
+          // Check if query hasn't changed while we were waiting?
+          // (Simplified: we just set what we got.
+          // Ideally we should track the request, but onSearch is a prop)
+
+          setSuggestions(results);
+          if (results.length > 0) {
+            setSelectedIndex(0);
+            setIsOpen(true);
+          } else if (localMatches.length === 0) {
+            setIsOpen(false);
+          }
+        } catch (e) {
+          console.error(e);
+        } finally {
+          setLoading(false);
         }
       },
-      [trigger, onSearch]
+      [trigger, onSearch, localUsers]
     );
 
     // Close on click outside or scroll
     useEffect(() => {
       const handleEvent = () => isOpen && setIsOpen(false);
-      window.addEventListener("scroll", handleEvent, true);
       window.addEventListener("resize", handleEvent);
       return () => {
-        window.removeEventListener("scroll", handleEvent, true);
         window.removeEventListener("resize", handleEvent);
       };
     }, [isOpen]);
@@ -220,6 +273,12 @@ const MentionInput = forwardRef<HTMLTextAreaElement, MentionInputProps>(
       }
     };
 
+    // Ensure we have access to document for portal
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+      setMounted(true);
+    }, []);
+
     return (
       <div className="relative w-full h-full">
         <Textarea
@@ -235,54 +294,60 @@ const MentionInput = forwardRef<HTMLTextAreaElement, MentionInputProps>(
           {...props}
         />
 
-        {isOpen && (
-          <div
-            className="fixed z-100 pointer-events-auto shadow-2xl rounded-xl border border-border bg-content1 min-w-[220px] max-h-[300px] overflow-y-auto animate-in fade-in zoom-in duration-100"
-            style={{
-              top: coords.top + 25, // offset below the cursor
-              left: coords.left,
-            }}
-            onMouseDown={(e) => e.preventDefault()} // Prevent losing focus on click
-          >
-            {loading ? (
-              <div className="p-4 flex justify-center">
-                <Spinner size="sm" />
-              </div>
-            ) : (
-              <Listbox
-                aria-label="User suggestions"
-                variant="flat"
-                disableAnimation
-                onAction={(key) => {
-                  const item = suggestions.find((s) => s.id === key);
-                  if (item) handleSelect(item);
-                }}
-              >
-                {suggestions.map((item, index) => (
-                  <ListboxItem
-                    key={item.id}
-                    textValue={item.display}
-                    className={twMerge(
-                      "transition-colors",
-                      index === selectedIndex && "bg-default-200/60"
-                    )}
-                  >
-                    {renderSuggestion ? (
-                      renderSuggestion(item, index === selectedIndex)
-                    ) : (
-                      <div className="flex items-center gap-2 text-left">
-                        <span className="font-semibold">{item.display}</span>
-                        <span className="text-xs text-default-400">
-                          @{item.id}
-                        </span>
-                      </div>
-                    )}
-                  </ListboxItem>
-                ))}
-              </Listbox>
-            )}
-          </div>
-        )}
+        {isOpen &&
+          mounted &&
+          createPortal(
+            <div
+              className="absolute z-40 pointer-events-auto shadow-2xl rounded-xl border border-border bg-content1 min-w-[220px] max-h-[300px] overflow-y-auto animate-in fade-in zoom-in duration-100"
+              style={{
+                top: coords.top + 25, // offset below the cursor
+                left: coords.left,
+              }}
+              onMouseDown={(e) => e.preventDefault()} // Prevent losing focus on click
+            >
+              {loading ? (
+                <div className="p-4 flex justify-center">
+                  <Spinner size="sm" />
+                </div>
+              ) : (
+                <Listbox
+                  aria-label="User suggestions"
+                  variant="flat"
+                  className="gap-"
+                  shouldHighlightOnFocus
+                  disableAnimation
+                  onAction={(key) => {
+                    const item = suggestions.find((s) => s.id === key);
+                    if (item) handleSelect(item);
+                  }}
+                  classNames={{"list":"gap-2"}}
+                >
+                  {suggestions.map((item, index) => (
+                    <ListboxItem
+                      key={item.id}
+                      textValue={item.display}
+                      className={twMerge(
+                        "transition-colors rounded-xl",
+                        index === selectedIndex && "bg-default-200/60"
+                      )}
+                    >
+                      {renderSuggestion ? (
+                        renderSuggestion(item, index === selectedIndex)
+                      ) : (
+                        <div className="flex items-center gap-2 text-left">
+                          <span className="font-semibold">{item.display}</span>
+                          <span className="text-xs text-default-400">
+                            @{item.id}
+                          </span>
+                        </div>
+                      )}
+                    </ListboxItem>
+                  ))}
+                </Listbox>
+              )}
+            </div>,
+            document.body
+          )}
       </div>
     );
   }
