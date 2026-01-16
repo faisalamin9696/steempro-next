@@ -42,15 +42,15 @@ const NotificationsCard = ({ username }: { username: string }) => {
   const [typeFilter, setTypeFilter] = useState<NotificationType | "all">("all");
 
   const {
-    notifications: data,
+    notifications,
     loading,
     fetchNotifications,
     markAllAsRead,
     loadMore,
     isPending,
+    hasMore,
   } = useNotifications(username);
 
-  const [notifications, setNotifications] = useState<CustomNotification[]>([]);
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
   const { globalProps } = useSteemUtils();
   const unreadCount = useAppSelector(
@@ -73,12 +73,6 @@ const NotificationsCard = ({ username }: { username: string }) => {
       },
     []
   );
-
-  useEffect(() => {
-    if (data) {
-      setNotifications(data);
-    }
-  }, [data]);
 
   // Better filtering + sorting (no mutation)
   const filteredNotifications = useMemo(() => {
@@ -261,17 +255,15 @@ const NotificationsCard = ({ username }: { username: string }) => {
         <DataTable
           data={filteredNotifications}
           loadMore={(offset) => loadMore(offset, typeFilter)}
-          hasMore={(data) => data.length > 0 && data.length % 50 === 0}
+          hasMore={() => hasMore}
           columns={columns}
           searchPlaceholder="Search by user or activity..."
           emptyMessage={
             loading ? "Loading notifications..." : "No notifications found"
           }
-          initialLoadCount={50}
+          initialLoadCount={Math.max(notifications.length, 50)}
           loadMoreCount={50}
-          onLoadedMore={(data) => {
-            setNotifications((prev) => [...prev, ...data]);
-          }}
+          onLoadedMore={() => {}}
         />
       </SCard>
     </div>

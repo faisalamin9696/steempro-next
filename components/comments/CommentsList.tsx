@@ -20,6 +20,7 @@ import { Select, SelectItem } from "@heroui/react";
 import { Clock, TrendingUp, ThumbsUp } from "lucide-react";
 import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
 import { useDraft } from "@/hooks/useDraft";
+import { useSession } from "next-auth/react";
 
 interface CommentsListProps {
   root: Post;
@@ -34,10 +35,13 @@ const CommentsList = ({ root }: CommentsListProps) => {
     `comment-editor-${root.author}-${root.permlink}`
   );
   const [draft, setDraft] = useState(draftData.draft);
-  const api = `/posts_api/getPostReplies/${root.author}/${root.permlink}/true`;
+  const { data: session } = useSession();
+  const api = `/posts_api/getPostReplies/${root.author}/${root.permlink}/true/${
+    session?.user?.name || "steem"
+  }`;
   // Stable references
   const uniqueKey = useRef(btoa(api)).current;
-  const [page, setPage] = useState(() => pageCache.get(uniqueKey) || 1);
+  const [page, setPage] = useState(1);
   const pageRef = useRef(page);
   pageRef.current = page;
   const [markdown, setMarkdown] = useState(draft.body);

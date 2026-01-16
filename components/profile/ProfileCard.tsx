@@ -241,11 +241,18 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
 
       {showUsersModal.isOpen && (
         <UsersModal
-          data={profileData.witness_votes}
+          data={showUsersModal.fetchType ? [] : profileData.witness_votes}
           isOpen={showUsersModal.isOpen}
           onOpenChange={(isOpen) => setShowUsersModal({ isOpen })}
           fetchType={showUsersModal.fetchType}
           username={profileData.name}
+          title={
+            showUsersModal.fetchType === "followers"
+              ? "Followers"
+              : showUsersModal.fetchType === "following"
+              ? "Following"
+              : "Witness Votes"
+          }
         />
       )}
     </Card>

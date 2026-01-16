@@ -21,6 +21,14 @@ export interface CustomNotification {
 
 const LIMIT = 50;
 
+interface CacheEntry {
+  notifications: CustomNotification[];
+  hasMore: boolean;
+}
+
+// Module level cache to keep data stale for the session
+const notificationCache = new Map<string, CacheEntry>();
+
 const parseNotifications = (
   history: SDSNotification[],
   username: string
@@ -43,7 +51,6 @@ const parseNotifications = (
 
     switch (type) {
       case "vote":
-        // if (author === username && account !== username) {
         notification = {
           id: id,
           type: "vote",
@@ -54,12 +61,9 @@ const parseNotifications = (
           read: Boolean(is_read),
           voted_rshares: voted_rshares,
         };
-        // }
         break;
 
       case "mention":
-        // if (account !== username) {
-
         notification = {
           id: id,
           type: "mention",
@@ -69,7 +73,6 @@ const parseNotifications = (
           url: `/@${author}/${permlink}`,
           read: Boolean(is_read),
         };
-        // }
         break;
 
       case "reply":
@@ -85,7 +88,6 @@ const parseNotifications = (
         break;
 
       case "resteem":
-        // if (author !== username) {
         notification = {
           id: id,
           type: "resteem",
@@ -95,10 +97,8 @@ const parseNotifications = (
           url: `/@${author}/${permlink}`,
           read: Boolean(is_read),
         };
-        // }
         break;
       case "follow":
-        // if (account !== username) {
         notification = {
           id: id,
           type: "follow",
@@ -108,7 +108,6 @@ const parseNotifications = (
           url: `/@${account}/${permlink}`,
           read: Boolean(is_read),
         };
-        // }
         break;
     }
 
@@ -117,22 +116,51 @@ const parseNotifications = (
     }
   }
 
-  // Sort by timestamp descending
   return newNotifications.sort((a, b) => b.timestamp - a.timestamp);
 };
 
 export const useNotifications = (username: string | undefined) => {
-  const [notifications, setNotifications] = useState<CustomNotification[]>([]);
   const [loading, setLoading] = useState(false);
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const dispatch = useDispatch();
   const { authenticateOperation } = useAccountsContext();
 
+  const getCacheKey = useCallback(
+    (type: string) => `${username}_${type}`,
+    [username]
+  );
+
+  const [notifications, setNotifications] = useState<CustomNotification[]>(
+    () => {
+      if (username) {
+        return notificationCache.get(getCacheKey("all"))?.notifications || [];
+      }
+      return [];
+    }
+  );
+
+  const [hasMore, setHasMore] = useState(() => {
+    if (username) {
+      return notificationCache.get(getCacheKey("all"))?.hasMore ?? true;
+    }
+    return true;
+  });
+
   const fetchNotifications = useCallback(
     async (reset: boolean = false, typeFilter: NotificationType | "all") => {
       if (!username) {
         setNotifications([]);
+        setHasMore(false);
+        return;
+      }
+
+      const cacheKey = getCacheKey(typeFilter);
+      const cached = notificationCache.get(cacheKey);
+
+      if (reset && cached && cached.notifications.length > 0) {
+        setNotifications(cached.notifications);
+        setHasMore(cached.hasMore);
         return;
       }
 
@@ -145,10 +173,25 @@ export const useNotifications = (username: string | undefined) => {
           LIMIT
         );
         const parsed = parseNotifications(history, username);
+        const more = parsed.length === LIMIT;
+
         if (reset) {
           setNotifications(parsed);
+          setHasMore(more);
+          notificationCache.set(cacheKey, {
+            notifications: parsed,
+            hasMore: more,
+          });
         } else {
-          setNotifications((prev) => [...prev, ...parsed]);
+          setNotifications((prev) => {
+            const updated = [...prev, ...parsed];
+            notificationCache.set(cacheKey, {
+              notifications: updated,
+              hasMore: more,
+            });
+            return updated;
+          });
+          setHasMore(more);
         }
       } catch (err) {
         setError("Failed to fetch notifications");
@@ -157,14 +200,30 @@ export const useNotifications = (username: string | undefined) => {
         setLoading(false);
       }
     },
-    [username, notifications]
+    [username, getCacheKey]
   );
 
-  const markAsRead = useCallback((id: number) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
-  }, []);
+  const markAsRead = useCallback(
+    (id: number) => {
+      setNotifications((prev) => {
+        const updated = prev.map((n) =>
+          n.id === id ? { ...n, read: true } : n
+        );
+        notificationCache.forEach((entry, key) => {
+          if (key.startsWith(`${username}_`)) {
+            notificationCache.set(key, {
+              ...entry,
+              notifications: entry.notifications.map((n) =>
+                n.id === id ? { ...n, read: true } : n
+              ),
+            });
+          }
+        });
+        return updated;
+      });
+    },
+    [username]
+  );
 
   const markAllAsRead = async () => {
     if (!username) return;
@@ -174,7 +233,21 @@ export const useNotifications = (username: string | undefined) => {
       await steemApi.markAsRead(username, key, useKeychain);
       await AsyncUtils.sleep(2);
       dispatch(addCommonDataHandler({ unread_notifications_count: 0 }));
-      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      setNotifications((prev) => {
+        const updated = prev.map((n) => ({ ...n, read: true }));
+        notificationCache.forEach((entry, key) => {
+          if (key.startsWith(`${username}_`)) {
+            notificationCache.set(key, {
+              ...entry,
+              notifications: entry.notifications.map((n) => ({
+                ...n,
+                read: true,
+              })),
+            });
+          }
+        });
+        return updated;
+      });
       toast.success("All notifications marked as read");
     }).finally(() => {
       setIsPending(false);
@@ -194,9 +267,22 @@ export const useNotifications = (username: string | undefined) => {
         offset
       );
       const parsed = parseNotifications(history, username);
+      const more = parsed.length === LIMIT;
+      const cacheKey = getCacheKey(typeFilter || "all");
+
+      setNotifications((prev) => {
+        const updated = [...prev, ...parsed];
+        notificationCache.set(cacheKey, {
+          notifications: updated,
+          hasMore: more,
+        });
+        return updated;
+      });
+      setHasMore(more);
+
       return parsed;
     },
-    [notifications.length, username]
+    [username, getCacheKey]
   );
 
   return {
@@ -208,5 +294,6 @@ export const useNotifications = (username: string | undefined) => {
     markAllAsRead,
     loadMore,
     isPending,
+    hasMore,
   };
 };

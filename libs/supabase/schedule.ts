@@ -57,9 +57,12 @@ export async function addSchedule(props: Schedule) {
 
 export async function getSchedules(username: string) {
   try {
-    const { data, error } = await supabase.rpc("get_schedules", {
-      p_username: username,
-    });
+    const { data, error } = await supabase
+      .rpc("get_schedules", {
+        p_username: username,
+      })
+      .order("time", { ascending: false });
+      
     if (error) {
       console.error("Get schedules failed:", error);
       throw new Error(error.message);

@@ -191,7 +191,7 @@ export function DataTable<T extends Record<string, any>>({
         }
       }
     },
-    [hasMore, loadMoreCount, loadMore, isFetching]
+    [hasMore, loadMoreCount, loadMore, isFetching, data]
   );
 
   useEffect(() => {

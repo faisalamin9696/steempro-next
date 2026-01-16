@@ -15,6 +15,11 @@ import { twMerge } from "tailwind-merge";
 import { mapSds } from "@/constants/functions";
 import MarkdownViewer from "../post/body/MarkdownViewer";
 import { Role as RoleLevel } from "@/utils/community";
+import UsersModal from "../ui/UsersModal";
+import { useState } from "react";
+import SAvatar from "../ui/SAvatar";
+import SUsername from "../ui/SUsername";
+import { Badge, Chip } from "@heroui/react";
 
 const ICON_SIZE = 20;
 
@@ -35,6 +40,10 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
   );
   const { profile = {} } = JSON.parse(account.posting_json_metadata || "{}");
   const { cover_image = "" }: PostingJsonMetadata = profile;
+  const [showUsersModal, setShowUsersModal] = useState<{
+    isOpen: boolean;
+    isLeaders?: boolean;
+  }>({ isOpen: false, isLeaders: false });
 
   return (
     <Card className="flex flex-col gap-2 " {...props}>
@@ -78,7 +87,14 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
         <StatsGrid
           items={[
             { label: "Rank", value: community.rank },
-            { label: "Members", value: community.count_subs },
+            {
+              label: "Members",
+              value: community.count_subs,
+              onClick: () => {
+                setShowUsersModal({ isOpen: true, isLeaders: false });
+              },
+              className: "cursor-pointer hover:underline",
+            },
             {
               label: (
                 <span className="flex flex-row gap-1 items-center">
@@ -98,7 +114,12 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
               radius="md"
               max={5}
               renderCount={(count) => (
-                <p className="text-small ms-2 font-medium hover:underline cursor-pointer">
+                <p
+                  onClick={() =>
+                    setShowUsersModal({ isOpen: true, isLeaders: true })
+                  }
+                  className="text-small ms-2 font-medium hover:underline cursor-pointer"
+                >
                   +{count} more
                 </p>
               )}
@@ -121,6 +142,49 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
           />
         </Section>
       </CardBody>
+
+      {showUsersModal.isOpen && (
+        <UsersModal
+          data={showUsersModal?.isLeaders ? leaderShip : []}
+          columns={[
+            {
+              key: "account",
+              searchable: true,
+              header: "User",
+              render: (acc) => (
+                <div className="flex flex-row gap-2 items-center">
+                  <SAvatar size="sm" username={acc} />
+                  <SUsername username={acc} />
+                </div>
+              ),
+            },
+            {
+              key: "role",
+              header: "Role",
+              render: (role) => (
+                <Chip
+                  size="sm"
+                  variant="flat"
+                  color={
+                    role === "mod"
+                      ? "success"
+                      : role === "admin"
+                      ? "warning"
+                      : "default"
+                  }
+                >
+                  {role}
+                </Chip>
+              ),
+            },
+          ]}
+          isOpen={showUsersModal.isOpen}
+          onOpenChange={(isOpen) => setShowUsersModal({ isOpen })}
+          fetchType={showUsersModal?.isLeaders ? undefined : "subscribers"}
+          username={community.account}
+          title={showUsersModal?.isLeaders ? "Leaders" : "Members"}
+        />
+      )}
     </Card>
   );
 }
@@ -144,10 +208,15 @@ const ItemRow = ({
 
 const StatsGrid = ({ items }) => (
   <div className="grid grid-cols-3 gap-2 w-full">
-    {items.map(({ label, value }) => (
+    {items.map(({ label, value, onClick, className }) => (
       <div key={label} className="flex flex-col items-start">
         <p className="font-semibold text-base">{value}</p>
-        <p className="text-xs text-muted">{label}</p>
+        <p
+          onClick={onClick}
+          className={twMerge("text-xs text-muted", className)}
+        >
+          {label}
+        </p>
       </div>
     ))}
   </div>

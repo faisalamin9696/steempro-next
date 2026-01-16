@@ -27,7 +27,7 @@ export function FeedList({
   const cachedData = feedCache.get(cacheKey);
 
   const [feed, setFeed] = useState<Feed[]>(cachedData?.feed || []);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(!cachedData);
   const [loadingMore, setLoadingMore] = useState(false);
   const [offset, setOffset] = useState(cachedData?.offset || 0);
   const [hasMore, setHasMore] = useState(cachedData?.hasMore ?? true);
@@ -101,8 +101,18 @@ export function FeedList({
   );
 
   useEffect(() => {
-    if (!feedCache.has(cacheKey)) {
+    const cached = feedCache.get(cacheKey);
+    if (!cached) {
+      setFeed([]);
+      setOffset(0);
+      setHasMore(true);
+      setLoading(true);
       loadFeed(false);
+    } else {
+      setFeed(cached.feed);
+      setOffset(cached.offset);
+      setHasMore(cached.hasMore);
+      setLoading(false);
     }
   }, [cacheKey, loadFeed]);
 

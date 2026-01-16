@@ -7,34 +7,41 @@ import LoadingStatus from "../LoadingStatus";
 import { useSdsList } from "@/hooks/sds-client-hooks";
 import { useMemo } from "react";
 
-interface BaseProps extends Pick<ModalProps, "isOpen" | "onOpenChange"> {
+interface BaseProps<T extends Record<string, any>>
+  extends Pick<ModalProps, "isOpen" | "onOpenChange"> {
   title?: string;
+  columns?: ColumnDef<T>[];
+  renderUser?: (username: string, item: T) => React.ReactNode;
 }
 
-type UnifiedUsersModalProps = BaseProps &
+type UnifiedUsersModalProps<T extends Record<string, any>> = BaseProps<T> &
   (
     | {
-        data: string[];
+        data: (T | string)[];
         username?: string;
-        fetchType?: "followers" | "following";
+        fetchType?: "followers" | "following" | "subscribers";
       }
     | {
         data?: never;
         username: string;
-        fetchType: "followers" | "following";
+        fetchType: "followers" | "following" | "subscribers";
       }
   );
 
-export default function UnifiedUsersModal({
+export default function UnifiedUsersModal<
+  T extends Record<string, any> = { username: string }
+>({
   isOpen,
   onOpenChange,
   data,
   username,
   fetchType,
   title,
-}: UnifiedUsersModalProps) {
+  columns,
+  renderUser,
+}: UnifiedUsersModalProps<T>) {
   /** ------------------------------
-   *  1. Auto-fetch followers/following if fetchType is used and data is missing
+   *  1. Auto-fetch followers/following/subscribers if fetchType is used and data is missing
    * ------------------------------ */
 
   const shouldFetch = !data || (!!fetchType && !!username);
@@ -45,7 +52,9 @@ export default function UnifiedUsersModal({
     isLoading,
   } = useSdsList<string>(
     shouldFetch
-      ? fetchType === "following"
+      ? fetchType === "subscribers"
+        ? `/communities_api/getCommunitySubscribers/${username}`
+        : fetchType === "following"
         ? `/followers_api/getFollowing/${username}`
         : `/followers_api/getFollowers/${username}`
       : null
@@ -54,31 +63,42 @@ export default function UnifiedUsersModal({
   /** ------------------------------
    *  2. Build data source
    * ------------------------------ */
-  const finalUsernames = data?.length ? data : followsData ?? [];
-  const mappedData = useMemo(
-    () => finalUsernames.map((item) => ({ username: item })),
-    [finalUsernames]
-  );
+  const mappedData = useMemo(() => {
+    const rawData = (data?.length ? data : (followsData as any) ?? []) as (
+      | string
+      | T
+    )[];
+    return rawData.map((item) => {
+      if (typeof item === "string") {
+        return { username: item } as unknown as T;
+      }
+      return item as T;
+    });
+  }, [data, followsData]);
 
   /** ------------------------------
    *  3. Table Columns
    * ------------------------------ */
-  const columns: ColumnDef<{ username: string }>[] = [
-    {
-      key: "username",
-      header: "Username",
-      sortable: true,
-      searchable: true,
-      render(value) {
-        return (
-          <div className="flex flex-row gap-2 items-center">
-            <SAvatar size="sm" username={value} />
-            <SUsername username={value} />
-          </div>
-        );
-      },
-    },
-  ];
+  const finalColumns = useMemo(() => {
+    if (columns && !shouldFetch) return columns;
+    return [
+      {
+        key: "username",
+        header: "Username",
+        sortable: true,
+        searchable: true,
+        render(value, row) {
+          if (renderUser) return renderUser(value, row);
+          return (
+            <div className="flex flex-row gap-2 items-center">
+              <SAvatar size="sm" username={value} />
+              <SUsername username={value} />
+            </div>
+          );
+        },
+      } as ColumnDef<T>,
+    ];
+  }, [columns, renderUser]);
 
   /** ------------------------------
    *  4. Title Logic
@@ -120,8 +140,8 @@ export default function UnifiedUsersModal({
         }
         return (
           <DataTable
-            searchPlaceholder="Search by username..."
-            columns={columns}
+            searchPlaceholder="Search..."
+            columns={finalColumns}
             data={mappedData}
           />
         );
