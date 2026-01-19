@@ -46,13 +46,43 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
   const {
     accounts,
     current,
-    loginWithKey,
-    loginWithKeychain,
-    removeAccount,
-    switchAccount,
+    loginWithKey: _loginWithKey,
+    loginWithKeychain: _loginWithKeychain,
+    removeAccount: _removeAccount,
+    switchAccount: _switchAccount,
     isPending,
-    logout,
+    logout: _logout,
   } = useSteemAuth();
+
+  const loginWithKeychain = async (username: string) => {
+    SESSION_PIN = null;
+    return _loginWithKeychain(username);
+  };
+
+  const loginWithKey = async (
+    username: string,
+    key: string,
+    pin?: string,
+    type: AccountKeyType = "posting"
+  ) => {
+    SESSION_PIN = null;
+    return _loginWithKey(username, key, pin, type);
+  };
+
+  const removeAccount = (username?: string | null, type?: AccountKeyType) => {
+    SESSION_PIN = null;
+    return _removeAccount(username, type);
+  };
+
+  const switchAccount = async (username: string, type?: AccountKeyType) => {
+    SESSION_PIN = null;
+    return _switchAccount(username, type);
+  };
+
+  const logout = async () => {
+    SESSION_PIN = null;
+    return _logout();
+  };
 
   function manageAccounts() {
     setShowAuthModal(!showAuthModal);
@@ -78,7 +108,10 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
       // If opsType is Active but we only have Posting, fail?
       // For now, assuming current.type handles this or we rely on user to be logged in with correct key.
       // But we can check:
-      if (opsType === "active" && current.type !== "active" || opsType === "owner") {
+      if (
+        (opsType === "active" && current.type !== "active") ||
+        opsType === "owner"
+      ) {
         setPinModal({
           isOpen: true,
           mode: "key",

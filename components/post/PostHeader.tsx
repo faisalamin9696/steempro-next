@@ -7,6 +7,9 @@ import SUsername from "../ui/SUsername";
 import PostOptionButton from "./PostOptionButton";
 import { Pin } from "lucide-react";
 import TranslateButton from "../ui/TranslateButton";
+import { Image } from "@heroui/react";
+import { parsePostMeta } from "@/utils/user";
+import { getAppDetails } from "@/utils/app";
 
 interface Props {
   comment: Feed | Post;
@@ -39,7 +42,11 @@ function PostHeader({
     community,
     created,
     last_update,
+    json_metadata,
   } = comment;
+
+  const { app } = parsePostMeta(json_metadata);
+  const { name: appName, icon: appIcon } = getAppDetails(app);
 
   const communityName = community || category;
 
@@ -71,16 +78,32 @@ function PostHeader({
               </Chip>
             )}
           </div>
-          <PostOptionButton
-            comment={comment}
-            size="sm"
-            isIconOnly
-            radius="md"
-            className="min-h-0 h-6"
-            placement="bottom-start"
-            onEditPress={onEditPress}
-            isDetail={isDetail}
-          />
+
+          <div className="flex flex-row gap-2 items-center">
+            {appName && appIcon && (
+              <div className=" opacity-80">
+                <Image
+                  title={`Posted via ${appName}`}
+                  src={appIcon}
+                  alt={appName}
+                  width={14}
+                  height={14}
+                  className="min-w-[14px] bg-foreground/10 rounded-full"
+                  removeWrapper
+                />
+              </div>
+            )}
+            <PostOptionButton
+              comment={comment}
+              size="sm"
+              isIconOnly
+              radius="md"
+              className="min-h-0 h-6"
+              placement="bottom-start"
+              onEditPress={onEditPress}
+              isDetail={isDetail}
+            />
+          </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2 text-sm">
@@ -102,7 +125,6 @@ function PostHeader({
               <Pin size={16} className="text-muted rotate-45" />
             )}
           </span>
-
           {isDetail && created !== last_update && (
             <p
               title={moment.unix(last_update).toLocaleString()}

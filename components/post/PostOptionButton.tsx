@@ -317,9 +317,9 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
           startContent={
             !isPending &&
             (shouldMute ? (
-              <CircleSlash size={ICON_SIZE} />
-            ) : (
               <CircleSlash2 size={ICON_SIZE} />
+            ) : (
+              <CircleSlash size={ICON_SIZE} />
             ))
           }
         >

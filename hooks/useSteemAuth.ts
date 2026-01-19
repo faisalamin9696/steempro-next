@@ -7,6 +7,7 @@ import { PrivateKey } from "@steempro/dsteem";
 import { Session, User } from "@supabase/supabase-js";
 import moment from "moment";
 import { signIn, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import secureLocalStorage from "react-secure-storage";
 import { toast } from "sonner";
@@ -17,6 +18,7 @@ export function useSteemAuth() {
   const [accounts, setAccounts] = useState<LocalAccount[]>([]);
   const [current, setCurrent] = useState<LocalAccount | null>(null);
   const [isPending, setIsPending] = useState(false);
+  const router = useRouter();
 
   // -------------------------------
   // Load from secure storage
@@ -38,19 +40,19 @@ export function useSteemAuth() {
   const persist = (accs: LocalAccount[], curr: LocalAccount | null) => {
     secureLocalStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ accounts: accs, current: curr })
+      JSON.stringify({ accounts: accs, current: curr }),
     );
   };
 
   const autheticateUser = async (
-    username: string
+    username: string,
   ): Promise<{ user: User | null; session: Session | null }> => {
     setIsPending(true);
     try {
       // 1. Authenticate with email (auto signup if needed)
       const result = await authenticateWithEmail(
         username + "@steempro.com",
-        username
+        username,
       );
 
       if (!result.success || !result.session) {
@@ -72,6 +74,7 @@ export function useSteemAuth() {
       if (error) {
         throw new Error(error);
       }
+      router.refresh();
 
       return normalizedData;
     } catch (err) {
@@ -103,7 +106,7 @@ export function useSteemAuth() {
           const updated = [
             ...accounts.filter(
               (a) =>
-                !(a.username === res.username && a.loginMethod === "keychain")
+                !(a.username === res.username && a.loginMethod === "keychain"),
             ),
             acc,
           ];
@@ -127,7 +130,7 @@ export function useSteemAuth() {
     username: string,
     key: string,
     pin?: string,
-    type: AccountKeyType = "posting"
+    type: AccountKeyType = "posting",
   ): Promise<void> => {
     let privateKey: PrivateKey;
 
@@ -185,11 +188,11 @@ export function useSteemAuth() {
   const removeAccount = (
     username?: string | null,
     type?: AccountKeyType,
-    skipNextCurrent?: boolean
+    skipNextCurrent?: boolean,
   ) => {
     if (!username) return;
     const updated = accounts.filter(
-      (a) => !(a.username === username && a.type === type)
+      (a) => !(a.username === username && a.type === type),
     );
     const newCurrent = updated.length ? updated[0] : null;
     setAccounts(updated);
@@ -211,6 +214,7 @@ export function useSteemAuth() {
       .then(async () => {
         removeAccount(current.username, current.type, true);
         await signOut();
+        router.refresh();
       })
       .catch((e) => {
         throw new Error(e);

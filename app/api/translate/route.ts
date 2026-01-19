@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { rateLimiter } from "@/libs/rate-limit";
+import { translate } from "google-translate-api-x";
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,9 +23,9 @@ export async function POST(request: NextRequest) {
     // Clean IPv6 localhost
     const cleanIp = ipAddress === "::1" ? "127.0.0.1" : ipAddress;
 
-    // Apply rate limiting (10 requests per IP per minute)
+    // Apply rate limiting (10 requests per IP per 5 minutes)
     const rateLimitKey = `translate:${cleanIp}`;
-    const isRateLimited = rateLimiter.check(rateLimitKey, 10, 60 * 5000); // 5 minute
+    const isRateLimited = rateLimiter.check(rateLimitKey, 10, 5 * 60 * 1000); // 5 minutes
 
     if (isRateLimited) {
       return NextResponse.json(
@@ -33,44 +34,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Use Google Translate API (free tier via googleapis)
-    // Note: You'll need to set GOOGLE_TRANSLATE_API_KEY in your .env.local
-    const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY;
-
-    if (!apiKey) {
-      return NextResponse.json(
-        { error: "Translation API key not configured" },
-        { status: 500 }
-      );
-    }
-
-    // Google Translate API
-    const url = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        q: text,
-        target: targetLang,
-        ...(sourceLang !== "auto" && { source: sourceLang }),
-      }),
+    // Use google-translate-api-x
+    const res: any = await translate(text, {
+      to: targetLang,
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Google Translate API error:", errorData);
-      throw new Error("Translation failed");
-    }
+    const translatedText = Array.isArray(res)
+      ? res.map((t: any) => t.text)
+      : (res as any).text;
 
-    const data = await response.json();
+    const firstResult = Array.isArray(res) ? res[0] : res;
+    const detectedSourceLanguage = firstResult?.from?.language?.iso;
 
     return NextResponse.json({
-      translatedText: data.data.translations[0].translatedText,
-      detectedSourceLanguage:
-        data.data.translations[0].detectedSourceLanguage || sourceLang,
+      translatedText,
+      detectedSourceLanguage: detectedSourceLanguage || sourceLang,
     });
   } catch (error) {
     console.error("Translation API error:", error);

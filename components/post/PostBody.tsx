@@ -54,6 +54,7 @@ function PostBody(props: Props) {
               <Image
                 className={twMerge(isBlog ? "my-4 w-full" : "sm:hidden my-4")}
                 as={NextImage}
+                alt="thumbnail"
                 height={0}
                 width={0}
                 classNames={{
@@ -88,6 +89,7 @@ function PostBody(props: Props) {
               className={twMerge("hidden sm:block")}
               height={80}
               width={160}
+              alt="thumbnail"
               style={{
                 objectFit: "cover",
               }}

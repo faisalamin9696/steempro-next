@@ -1,10 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
 import SAvatar from "../ui/SAvatar";
@@ -29,12 +23,7 @@ import {
   Quote,
   SquareDashedBottomCode,
 } from "lucide-react";
-import {
-  Divider,
-  Tab,
-  Tabs,
-  TextAreaProps,
-} from "@heroui/react";
+import { Divider, Tab, Tabs, TextAreaProps } from "@heroui/react";
 import MarkdownViewer from "../post/body/MarkdownViewer";
 import { extractMetadata } from "@/utils/editor";
 import { steemApi } from "@/libs/steem";
@@ -556,9 +545,9 @@ const MarkdownEditor = ({
               className="bg-transparent"
               rows={props.rows ?? 10}
               classNames={{
-                input: twMerge("resize-y min-h-10"),
+                input: twMerge("resize-y min-h-10 p-3 pr-1 pb-1 scrollbar-thin"),
                 base: "h-full rounded-none!",
-                inputWrapper: "h-full rounded-none!",
+                inputWrapper: "h-full rounded-none! p-0 pr-2 pb-2",
               }}
               renderSuggestion={(item, focused) => (
                 <div
@@ -587,7 +576,7 @@ const MarkdownEditor = ({
           ) : (
             <div className="flex flex-col items-center w-full p-3 min-h-40 bg-default-100">
               <div className="flex flex-col lg:max-w-[65ch] w-full gap-2 self-center">
-                <MarkdownViewer body={value}  />
+                <MarkdownViewer body={value} />
               </div>
             </div>
           )}

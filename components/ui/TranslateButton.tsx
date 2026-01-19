@@ -8,9 +8,10 @@ import {
   DropdownMenu,
   DropdownItem,
   ButtonProps,
+  Spinner,
 } from "@heroui/react";
-import { Languages, Loader2 } from "lucide-react";
-import { translateText, POPULAR_LANGUAGES } from "@/utils/translate";
+import { Languages } from "lucide-react";
+import { POPULAR_LANGUAGES, translateMarkdown } from "@/utils/translate";
 import { toast } from "sonner";
 
 interface TranslateButtonProps extends ButtonProps {
@@ -38,7 +39,7 @@ export default function TranslateButton({
 
     setIsTranslating(true);
     try {
-      const result = await translateText(originalText, languageCode);
+      const result = await translateMarkdown(originalText, languageCode);
       onTranslate(result.translatedText, languageCode);
       toast.success("Translation completed");
     } catch (error) {
@@ -59,8 +60,8 @@ export default function TranslateButton({
       <Button
         title="Show original text"
         onPress={handleReset}
-        startContent={<Languages size={16} />}
         className="text-primary"
+        startContent={<Languages size={16} className="text-primary" />}
         isIconOnly
         {...props}
       />
@@ -74,11 +75,7 @@ export default function TranslateButton({
           title="Translate"
           isIconOnly
           startContent={
-            isTranslating ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : (
-              <Languages size={16} />
-            )
+            isTranslating ? <Spinner size="sm" /> : <Languages size={16} />
           }
           isDisabled={isTranslating}
           {...props}

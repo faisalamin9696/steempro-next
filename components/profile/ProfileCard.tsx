@@ -55,7 +55,7 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
     if (isMe) {
       dispatch(addLoginHandler(account));
     }
-  }, [isMe]);
+  }, [isMe, account, dispatch]);
 
   const {
     name: fullName = "",
@@ -250,8 +250,8 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
             showUsersModal.fetchType === "followers"
               ? "Followers"
               : showUsersModal.fetchType === "following"
-              ? "Following"
-              : "Witness Votes"
+                ? "Following"
+                : "Witness Votes"
           }
         />
       )}

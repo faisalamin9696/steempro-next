@@ -9,6 +9,8 @@ import NsfwOverlay from "../nsfw/NsfwOverlay";
 import { hasNsfwTag } from "@/utils";
 import { getThumbnail } from "@/utils/image";
 import { twMerge } from "tailwind-merge";
+import { Alert } from "@heroui/react";
+import { CircleSlash2 } from "lucide-react";
 
 interface Props {
   comment: Feed | Post;
@@ -20,9 +22,9 @@ function PostCard({ comment, isDetail, layout = "list" }: Props) {
   const commentData =
     useAppSelector(
       (state) =>
-        state.commentReducer.values[`${comment.author}/${comment.permlink}`]
+        state.commentReducer.values[`${comment.author}/${comment.permlink}`],
     ) ?? comment;
-
+  const isMuted = Boolean(commentData.is_muted);
   const isNsfw = hasNsfwTag(commentData);
 
   if (commentData.link_id === 0) return null;
@@ -36,6 +38,19 @@ function PostCard({ comment, isDetail, layout = "list" }: Props) {
 
     return (
       <article className={twMerge(cardClassName, "h-full rounded-2xl")}>
+        {isMuted && (
+          <Alert
+            color="warning"
+            variant="faded"
+            title="Muted"
+            icon={
+              <div>
+                <CircleSlash2 />
+              </div>
+            }
+            className="rounded-none border-none border-b border-default-100"
+          />
+        )}
         <div className="relative aspect-video w-full overflow-hidden bg-content2/50">
           <NsfwOverlay isNsfw={isNsfw} className="h-full w-full">
             <Link
@@ -80,6 +95,19 @@ function PostCard({ comment, isDetail, layout = "list" }: Props) {
   // List Layout
   return (
     <article className={twMerge(cardClassName, "rounded-2xl p-4 gap-4")}>
+      {isMuted && (
+        <Alert
+          color="warning"
+          variant="faded"
+          title="This post is muted by a community moderator"
+          icon={
+            <div>
+              <CircleSlash2 />
+            </div>
+          }
+          className="mb-1"
+        />
+      )}
       <PostHeader comment={commentData} isDetail={isDetail} />
 
       <div className="z-10 text-default-600">

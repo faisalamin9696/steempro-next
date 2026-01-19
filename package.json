@@ -24,6 +24,7 @@
     "filesize": "^11.0.13",
     "framer-motion": "^12.23.24",
     "fuse.js": "^7.1.0",
+    "google-translate-api-x": "^10.7.2",
     "html-react-parser": "^5.2.11",
     "lodash": "^4.17.21",
     "lucide-react": "^0.562.0",

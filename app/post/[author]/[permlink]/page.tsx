@@ -4,18 +4,20 @@ import MarkdownViewer from "@/components/post/body/MarkdownViewer";
 import PostHeader from "@/components/post/PostHeader";
 import { useParams } from "next/navigation";
 import { Card } from "@heroui/card";
-import { useAppSelector } from "@/hooks/redux/store";
-import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
-import { twMerge } from "tailwind-merge";
 import PostFooter from "@/components/post/PostFooter";
 import CommentsList from "@/components/comments/CommentsList";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
+import { addCommentHandler } from "@/hooks/redux/reducers/CommentReducer";
 import { Alert, Chip } from "@heroui/react";
 import SubmitPage from "@/app/submit/page";
 import NsfwOverlay from "@/components/nsfw/NsfwOverlay";
 import { hasNsfwTag } from "@/utils";
 import { trackPostView } from "@/utils/track-view";
 import { scrollToWithOffset } from "@/utils/helper";
+import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
+import { twMerge } from "tailwind-merge";
+import { CircleSlash2 } from "lucide-react";
 
 export default function PostPage({
   initAuthor,
@@ -30,6 +32,8 @@ export default function PostPage({
     author: string;
     permlink: string;
   };
+  const dispatch = useAppDispatch();
+
   if (initAuthor && initPermlink) {
     author = initAuthor;
     permlink = initPermlink;
@@ -39,13 +43,13 @@ export default function PostPage({
   const commentData =
     useAppSelector(
       (state) =>
-        state.commentReducer.values[`${data?.author}/${data?.permlink}`]
+        state.commentReducer.values[`${data?.author}/${data?.permlink}`],
     ) ?? data;
   const [translatedBody, setTranslatedBody] = useState<string | null>(null);
   const [translatedTitle, setTranslatedTitle] = useState<string | null>(null);
   const [isTranslated, setIsTranslated] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState<string>();
-
+  const isMuted = Boolean(commentData.is_muted);
   const handleViewTrack = useCallback(async () => {
     if (
       !commentData.author ||
@@ -59,6 +63,12 @@ export default function PostPage({
       // ignore error
     }
   }, [commentData.author, commentData.permlink, commentData.link_id]);
+
+  useEffect(() => {
+    if (data) {
+      dispatch(addCommentHandler(data));
+    }
+  }, [data]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -86,8 +96,12 @@ export default function PostPage({
     if (commentData.title) {
       try {
         const { translateText } = await import("@/utils/translate");
-        const titleResult = await translateText(commentData.title, language);
-        setTranslatedTitle(titleResult.translatedText);
+        const titleResult = await translateText(
+          commentData.title,
+          language,
+          "auto",
+        );
+        setTranslatedTitle(titleResult.translatedText as string);
       } catch (error) {
         console.error("Title translation failed:", error);
       }
@@ -128,6 +142,21 @@ export default function PostPage({
             fullWidth
             className="card p-4 rounded-xl flex flex-col gap-4 items-center pb-20 overflow-visible"
           >
+            {isMuted && (
+              <Alert
+                color="warning"
+                variant="faded"
+                title="This post is muted"
+                description="This post has been muted by a community moderator."
+                icon={
+                  <div>
+                    <CircleSlash2 size={24} />
+                  </div>
+                }
+                className="mb-4"
+              />
+            )}
+
             {(commentData.depth ?? 0) > 0 && (
               <Card className="card flex flex-col gap-3 px-4 py-2 rounded-lg w-full">
                 <div className="flex flex-col gap-1">
@@ -198,7 +227,7 @@ export default function PostPage({
                   <div
                     className={twMerge(
                       "flex md:hidden flex-row w-full sticky bottom-16 justify-center p-1 z-10",
-                      "overflow-visible border-1 border-default-900/15 rounded-xl backdrop-blur-sm bg-background/50"
+                      "overflow-visible border-1 border-default-900/15 rounded-xl backdrop-blur-sm bg-background/50",
                     )}
                   >
                     <PostFooter comment={commentData} isMobile isDetail />

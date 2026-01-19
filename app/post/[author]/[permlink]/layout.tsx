@@ -33,7 +33,6 @@ async function layout({ children, params }: LayoutProps) {
 
 export default layout;
 
-
 export async function generateMetadata({ params }): Promise<Metadata> {
   let { author, permlink } = await params;
 
@@ -52,4 +51,3 @@ export async function generateMetadata({ params }): Promise<Metadata> {
     },
   };
 }
-
