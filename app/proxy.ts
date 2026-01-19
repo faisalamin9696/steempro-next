@@ -1,5 +1,6 @@
 import { updateSession } from "@/libs/supabase/proxy";
 import { type NextRequest } from "next/server";
+export { auth as middleware } from "@/auth"
 
 export async function proxy(request: NextRequest) {
   return await updateSession(request);

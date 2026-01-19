@@ -31,41 +31,35 @@ function Providers({
     <SessionProvider session={session}>
       <ScrollToTop />
       <ReduxProvider store={store}>
-        <ThemeProvider
-          attribute="class"
-          disableTransitionOnChange
-          defaultTheme="dark"
-        >
-          <HeroUIProvider navigate={router.push}>
-            <SWRConfig
-              value={{
-                refreshInterval: 10 * 60 * 1000,
-                revalidateOnFocus: false,
-                errorRetryCount: 3,
-                shouldRetryOnError: true,
-                dedupingInterval: 10000,
-                loadingTimeout: 20000,
-              }}
-            >
-              <AccountsProvider>
-                <AppWrapper globals={globals}>
-                  <div className="flex flex-col">
-                    <SNavbar />
-                    <MobileNavbar />
-                    <div className="flex flex-row justify-start">
-                      <aside className="hidden sticky top-16 h-[calc(100vh-4rem)] shrink-0 xl:block border-e border-black/5 dark:border-white/5">
-                        <SDrawerContent />
-                      </aside>
-                      <span className="px-0.5 w-full pb-20 md:pb-0">
-                        {children}
-                      </span>
-                    </div>
+        <HeroUIProvider navigate={router.push}>
+          <SWRConfig
+            value={{
+              refreshInterval: 10 * 60 * 1000,
+              revalidateOnFocus: false,
+              errorRetryCount: 3,
+              shouldRetryOnError: true,
+              dedupingInterval: 10000,
+              loadingTimeout: 20000,
+            }}
+          >
+            <AccountsProvider>
+              <AppWrapper globals={globals}>
+                <div className="flex flex-col">
+                  <SNavbar />
+                  <MobileNavbar />
+                  <div className="flex flex-row justify-start">
+                    <aside className="hidden sticky top-16 h-[calc(100vh-4rem)] shrink-0 xl:block border-e border-black/5 dark:border-white/5">
+                      <SDrawerContent />
+                    </aside>
+                    <span className="px-0.5 w-full pb-20 md:pb-0">
+                      {children}
+                    </span>
                   </div>
-                </AppWrapper>
-              </AccountsProvider>
-            </SWRConfig>
-          </HeroUIProvider>
-        </ThemeProvider>
+                </div>
+              </AppWrapper>
+            </AccountsProvider>
+          </SWRConfig>
+        </HeroUIProvider>
       </ReduxProvider>
       <Suspense fallback={null}>
         <Next13ProgressBar

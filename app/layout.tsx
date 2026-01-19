@@ -4,6 +4,7 @@ import "./globals.css";
 import AppLayout from "./AppLayout";
 import { Suspense } from "react";
 import LoadingCard from "@/components/ui/LoadingCard";
+import { ThemeProvider } from "next-themes";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -60,7 +61,13 @@ export default async function RootLayout({
 
       <body className={`*:${geistSans.variable} ${geistMono.variable}`}>
         <Suspense fallback={<LoadingCard />}>
-          <AppLayout>{children}</AppLayout>
+          <ThemeProvider
+            attribute="class"
+            disableTransitionOnChange
+            defaultTheme="dark"
+          >
+            <AppLayout>{children}</AppLayout>
+          </ThemeProvider>
         </Suspense>
       </body>
     </html>
