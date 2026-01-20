@@ -8,13 +8,17 @@ async function layout({ children }: { children: React.ReactNode }) {
 
 export default layout;
 
-export async function generateMetadata({ params }): Promise<Metadata> {
+export async function generateMetadata({ params }: any): Promise<Metadata> {
   let { category, tag } = await params;
-  const { title, description, keywords } = getMetadata.category(category, tag);
+  const { title, description, keywords, alternates } = getMetadata.category(
+    category,
+    tag,
+  );
 
   return {
     title,
     description,
     keywords: keywords.join(", "),
+    alternates,
   };
 }

@@ -12,9 +12,8 @@ import { TrendingUp, Sparkles, ClockPlus, Logs } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import { Key, useEffect, useMemo, useState } from "react";
-
 import { FeedList } from "@/components/FeedList";
-import HomeCarousal from "@/components/HomeCarousal";
+import HomeCarousal from "@/components/carousal/HomeCarousal";
 
 const ICON_SIZE = 20;
 

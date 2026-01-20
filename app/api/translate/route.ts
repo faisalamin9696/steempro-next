@@ -1,15 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { rateLimiter } from "@/libs/rate-limit";
 import { translate } from "google-translate-api-x";
+import { checkBotId } from "botid/server";
 
 export async function POST(request: NextRequest) {
   try {
+    const verification = await checkBotId();
+
+    if (verification.isBot) {
+      return NextResponse.json({ error: "Access denied" }, { status: 403 });
+    }
     const { text, targetLang, sourceLang = "auto" } = await request.json();
 
     if (!text || !targetLang) {
       return NextResponse.json(
         { error: "Missing required parameters" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -30,7 +36,7 @@ export async function POST(request: NextRequest) {
     if (isRateLimited) {
       return NextResponse.json(
         { error: "Rate limit exceeded. Please try again later." },
-        { status: 429 }
+        { status: 429 },
       );
     }
 

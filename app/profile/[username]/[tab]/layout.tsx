@@ -9,6 +9,7 @@ import { auth } from "@/auth";
 import { getMetadata } from "@/utils/metadata";
 import { Metadata } from "next";
 import { getResizedAvatar } from "@/utils/image";
+import StructuredData from "@/components/seo/StructuredData";
 
 async function layout({
   children,
@@ -20,9 +21,11 @@ async function layout({
   const { username } = await params;
   const session = await auth();
   const account = await sdsApi.getAccountExt(username, session?.user?.name);
+  const jsonLd = getMetadata.profileStructuredData(username, account);
 
   return (
     <Suspense fallback={<ProfileHeaderSkeleton />}>
+      <StructuredData data={jsonLd} />
       <MainWrapper
         endClass="w-[320px] min-w-[320px] 1md:hidden! lg:block!"
         end={<ProfileCard account={account} className="card" />}
@@ -36,17 +39,16 @@ async function layout({
 
 export default layout;
 
-export async function generateMetadata({ params }): Promise<Metadata> {
+export async function generateMetadata({ params }: any): Promise<Metadata> {
   let { username, tab } = await params;
-  const { title, description, keywords } = await getMetadata.profileAsync(
-    username,
-    tab
-  );
+  const { title, description, keywords, alternates } =
+    await getMetadata.profileAsync(username, tab);
 
   return {
     title,
     description,
     keywords: keywords.join(", "),
+    alternates,
     openGraph: {
       images: [getResizedAvatar(username, "medium")],
     },

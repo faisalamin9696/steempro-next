@@ -2,15 +2,21 @@
 import { rateLimiter } from "@/libs/rate-limit";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/libs/supabase/server";
+import { checkBotId } from "botid/server";
 
 export async function POST(req: NextRequest) {
   try {
+    const verification = await checkBotId();
+
+    if (verification.isBot) {
+      return NextResponse.json({ error: "Access denied" }, { status: 403 });
+    }
     const { author, permlink } = await req.json();
 
     if (!author || !permlink) {
       return NextResponse.json(
         { error: "Author and permlink are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -34,7 +40,7 @@ export async function POST(req: NextRequest) {
     if (isRateLimited) {
       return NextResponse.json(
         { message: "Rate limited - please wait before viewing again" },
-        { status: 429, statusText: "Rate limited" }
+        { status: 429, statusText: "Rate limited" },
       );
     }
 
@@ -54,14 +60,14 @@ export async function POST(req: NextRequest) {
       {
         onConflict: "auth_perm,uid", // Specify the unique constraint columns
         ignoreDuplicates: true,
-      }
+      },
     );
 
     if (insertError) {
       console.error("Insert view failed:", insertError);
       return NextResponse.json(
         { message: insertError.message },
-        { status: 500, statusText: "Internal Server Error" }
+        { status: 500, statusText: "Internal Server Error" },
       );
     }
 

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AppLayout from "./AppLayout";
@@ -15,6 +15,14 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  minimumScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.steempro.com"),
@@ -35,11 +43,17 @@ export const metadata: Metadata = {
   manifest: "/site.webmanifest",
   openGraph: {
     siteName: "SteemPro",
+    title: "SteemPro - Decentralized Social Media",
+    description:
+      "Experience a social network empowered by the Steem blockchain.",
     url: "/",
     images: ["opengraph-image.jpg"],
   },
   twitter: {
     card: "summary_large_image",
+    title: "SteemPro - Decentralized Social Media",
+    description:
+      "Experience a social network empowered by the Steem blockchain.",
     site: "@steemproblogs",
     images: ["opengraph-image.jpg"],
   },
@@ -52,13 +66,6 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <meta
-          name="viewport"
-          content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
-        />
-      </head>
-
       <body className={`*:${geistSans.variable} ${geistMono.variable}`}>
         <Suspense fallback={<LoadingCard />}>
           <ThemeProvider

@@ -18,6 +18,7 @@ interface CustomImageProps {
   imageClass?: string;
   fetchPriority?: "low" | "high" | "auto";
   quality?: number;
+  priority?: boolean;
 }
 
 function BodyImage({
@@ -31,6 +32,7 @@ function BodyImage({
   imageClass,
   fetchPriority = "auto",
   quality = 75,
+  priority = false,
 }: CustomImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -53,7 +55,7 @@ function BodyImage({
       <div
         className={twMerge(
           "flex flex-col items-center justify-center bg-default-100/50 border border-dashed border-default-300 rounded-xl transition-all duration-300",
-          className
+          className,
         )}
         style={{
           width,
@@ -84,11 +86,11 @@ function BodyImage({
         key={src}
         className={twMerge(
           "relative block overflow-hidden rounded-lg group",
-          className
+          className,
         )}
         style={{ width, height }}
       >
-        {isLoading && (
+        {isLoading && !priority && (
           <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-default-100/40 backdrop-blur-xs transition-opacity duration-300 gap-3">
             <div className="animate-pulse flex flex-col items-center gap-2 text-default-400">
               <Image size={32} strokeWidth={1.2} />
@@ -111,12 +113,13 @@ function BodyImage({
           isZoomed
           className={twMerge(
             `z-0 rounded-lg transition-all duration-500 cursor-zoom-in group-hover:opacity-90 ${
-              isLoading ? "opacity-0" : "opacity-100"
+              !priority && isLoading ? "opacity-0" : "opacity-100"
             }`,
-            imageClass
+            imageClass,
           )}
           onLoad={handleLoad}
           onError={handleError}
+          onErrorCapture={handleError}
           onLoadingComplete={handleLoad}
           removeWrapper
           onClick={() => setIsModalOpen(true)}
@@ -125,8 +128,12 @@ function BodyImage({
             width,
             height,
           }}
-          fetchPriority={fetchPriority}
+          fetchPriority={priority ? "high" : fetchPriority}
+          priority={priority}
           quality={quality}
+          disableSkeleton={priority}
+          disableAnimation={priority}
+          loading={priority ? "eager" : "lazy"}
         />
         {!isLoading && (
           <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none">
@@ -149,6 +156,6 @@ function BodyImage({
   );
 }
 
-import ImageModal from "@/components/ui/ImageModal";
+import ImageModal from "@/components/post/ImageModal";
 
 export default BodyImage;

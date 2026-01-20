@@ -4,13 +4,13 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "./style.css";
 import { Swiper, SwiperSlide } from "swiper/react";
-import BodyImage from "./post/body/BodyImage";
 import { proxifyImageUrl } from "@/utils/proxifyUrl";
-import SAvatar from "./ui/SAvatar";
 import moment from "moment";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
-import SUsername from "./ui/SUsername";
-import PostLink from "./post/PostLink";
+import BodyImage from "../post/body/BodyImage";
+import PostLink from "../post/PostLink";
+import SAvatar from "../ui/SAvatar";
+import SUsername from "../ui/SUsername";
 
 function HomeCarousel({
   data,
@@ -49,7 +49,7 @@ function HomeCarousel({
           1080: { slidesPerView: 3 },
         }}
       >
-        {data?.map((item) => (
+        {data?.map((item, index) => (
           <SwiperSlide
             key={item.id}
             className={size === "sm" ? "h-30" : "h-40"}
@@ -60,7 +60,7 @@ function HomeCarousel({
                 width="100%"
                 src={proxifyImageUrl(item.thumbnail, "640x0")}
                 imageClass="rounded-2xl object-cover transition-transform duration-500 group-hover:scale-105"
-                fetchPriority="high"
+                priority={index < 3}
               />
 
               {/* Caption overlay */}

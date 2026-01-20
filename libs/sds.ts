@@ -8,28 +8,28 @@ class SdsApi {
     apiPath: string,
     observer: string | null = "steem",
     limit: number = 50,
-    offset: number = 0
+    offset: number = 0,
   ): Promise<Feed[]> {
     const length = 500;
     return sdsFetcher(
-      `/feeds_api/${apiPath}/${observer}/${length}/${limit}/${offset}`
+      `/feeds_api/${apiPath}/${observer}/${length}/${limit}/${offset}`,
     );
   }
 
   getCommunityPinnedPosts(
     community: string,
-    observer: string | null = "steem"
+    observer: string | null = "steem",
   ): Promise<Feed[]> {
     const length = 250;
     return sdsFetcher(
-      `/communities_api/getCommunityPinnedPosts/${community}/${observer}/${length}`
+      `/communities_api/getCommunityPinnedPosts/${community}/${observer}/${length}`,
     );
   }
 
   async getAccountExt(
     username: string,
     observer: string | null = "steem",
-    fields?: string[]
+    fields?: string[],
   ): Promise<AccountExt> {
     const essentialFields = [
       "name",
@@ -76,14 +76,14 @@ class SdsApi {
     return sdsFetcher<AccountExt>(
       `/accounts_api/getAccountExt/${username}/${observer}/${(
         fields ?? essentialFields
-      ).join(",")}`
+      ).join(",")}`,
     );
   }
 
   async getAccountsExt(
     usernames: string[],
     observer: string | null = "steem",
-    fields?: string[]
+    fields?: string[],
   ): Promise<AccountExt[]> {
     const essentialFields = [
       "name",
@@ -129,26 +129,26 @@ class SdsApi {
     return sdsFetcher<AccountExt[]>(
       `/accounts_api/getAccountsExt/${usernames.join(",")}/${observer}/${(
         fields ?? essentialFields
-      ).join(",")}`
+      ).join(",")}`,
     );
   }
 
   async getAccountsByPrefix(
     prefix: string,
     observer: string | null = "steem",
-    requestOptions?: RequestInit
+    requestOptions?: RequestInit,
   ): Promise<
     Pick<AccountExt, "name" | "reputation" | "posting_json_metadata">[]
   > {
     return sdsFetcher(
       `/accounts_api/getAccountsByPrefix/${prefix}/${observer}/name,reputation,posting_json_metadata/10`,
-      requestOptions
+      requestOptions,
     );
   }
 
   async getContentHistory(
     author: string,
-    permlink: string
+    permlink: string,
   ): Promise<
     {
       time: number;
@@ -158,33 +158,33 @@ class SdsApi {
     }[]
   > {
     return sdsFetcher(
-      `/content_history_api/getContentHistory/${author}/${permlink}`
+      `/content_history_api/getContentHistory/${author}/${permlink}`,
     );
   }
 
   async getPostWithReplies(
     author: string,
     permlink: string,
-    observer: string | null = "steem"
+    observer: string | null = "steem",
   ): Promise<Post[]> {
     return sdsFetcher(
-      `/posts_api/getPostWithReplies/${author}/${permlink}/true/${observer}`
+      `/posts_api/getPostWithReplies/${author}/${permlink}/true/${observer}`,
     );
   }
 
   async getPost(
     author: string,
     permlink: string,
-    observer: string | null = "steem"
+    observer: string | null = "steem",
   ): Promise<Post> {
     return sdsFetcher(
-      `/posts_api/getPost/${author}/${permlink}/true/${observer}`
+      `/posts_api/getPost/${author}/${permlink}/true/${observer}`,
     );
   }
 
   async getCommunity(
     name: string,
-    observer: string | null = "steem"
+    observer: string | null = "steem",
   ): Promise<Community> {
     return sdsFetcher(`/communities_api/getCommunity/${name}/${observer}`);
   }
@@ -192,10 +192,10 @@ class SdsApi {
   async getCommunities(
     observer: string | null = "steem",
     limit: number = 1000,
-    offset: number = 0
+    offset: number = 0,
   ): Promise<Community[]> {
     return sdsFetcher(
-      `/communities_api/getCommunitiesByRank/${observer}/${limit}/${offset}`
+      `/communities_api/getCommunitiesByRank/${observer}/${limit}/${offset}`,
     );
   }
 
@@ -203,18 +203,18 @@ class SdsApi {
     subscriber: string,
     observer: string | null = "steem",
     limit: number = 1000,
-    offset: number = 0
+    offset: number = 0,
   ): Promise<Community[]> {
     return sdsFetcher(
-      `/communities_api/getCommunitiesBySubscriber/${subscriber}/${observer}/${limit}/${offset}`
+      `/communities_api/getCommunitiesBySubscriber/${subscriber}/${observer}/${limit}/${offset}`,
     );
   }
 
   getUnreadNotificationsCount(username: string): Promise<number> {
     return sdsFetcher(
       `/notifications_api/getFilteredUnreadCount/${username}/${JSON.stringify(
-        Constants.notifications_filter
-      )}`
+        Constants.notifications_filter,
+      )}`,
     );
   }
 
@@ -222,19 +222,19 @@ class SdsApi {
     username: string,
     typeFilter: NotificationType | "all" = "all",
     limit: number = 250,
-    offset: number = 0
+    offset: number = 0,
   ): Promise<SDSNotification[]> {
     if (typeFilter === "all") {
       return sdsFetcher(
         `/notifications_api/getFilteredNotificationsByStatus/${username}/all/${JSON.stringify(
-          Constants.notifications_filter
-        )}/${limit}/${offset}`
+          Constants.notifications_filter,
+        )}/${limit}/${offset}`,
       );
     } else {
       return sdsFetcher(
         `/notifications_api/getFilteredNotificationsByStatusType/${username}/all/${typeFilter}/${JSON.stringify(
-          Constants.notifications_filter
-        )}/${limit}/${offset}`
+          Constants.notifications_filter,
+        )}/${limit}/${offset}`,
       );
     }
   }
@@ -244,12 +244,15 @@ class SdsApi {
   }
 
   async getGlobalProps(): Promise<GlobalProps> {
-    return sdsFetcher("/steem_requests_api/getSteemProps", { keepalive: true });
+    return sdsFetcher("/steem_requests_api/getSteemProps", {
+      keepalive: true,
+      next: { revalidate: 60 },
+    } as any);
   }
 
   async getSubscriberCommunities(username: string): Promise<Community[]> {
     return sdsFetcher(
-      `/communities_api/getCommunitiesBySubscriber/${username}`
+      `/communities_api/getCommunitiesBySubscriber/${username}`,
     );
   }
 
@@ -257,7 +260,7 @@ class SdsApi {
     account: string,
     delegationType: "incoming" | "outgoing" | "expiring" | "all" = "incoming",
     limit: number = 1000,
-    offset: number = 0
+    offset: number = 0,
   ): Promise<Delegation[]> {
     if (delegationType === "all") {
       const [incoming, outgoing, expiring] = await Promise.all([
@@ -272,9 +275,9 @@ class SdsApi {
         delegationType === "incoming"
           ? "getIncomingDelegations"
           : delegationType === "outgoing"
-          ? "getOutgoingDelegations"
-          : "getExpiringDelegations"
-      }/${account}/${limit}/${offset}`
+            ? "getOutgoingDelegations"
+            : "getExpiringDelegations"
+      }/${account}/${limit}/${offset}`,
     );
 
     return (result ?? []).map((item) => ({
@@ -286,10 +289,10 @@ class SdsApi {
   async getWitnessesByRank(
     observer: string | null = "steem",
     limit: number = 1000,
-    offset: number = 0
+    offset: number = 0,
   ): Promise<Witness[]> {
     return sdsFetcher(
-      `/witnesses_api/getWitnessesByRank/${observer}/${limit}/${offset}`
+      `/witnesses_api/getWitnessesByRank/${observer}/${limit}/${offset}`,
     );
   }
 
@@ -307,7 +310,7 @@ class SdsApi {
       | "claim_reward_balance"
       | "all" = "all",
     limit: number = 2500,
-    offset: number = 0
+    offset: number = 0,
   ): Promise<AccountHistory[]> {
     const essentialFields = [
       "transfer",
@@ -332,7 +335,7 @@ class SdsApi {
         typeFilter === "all" ? essentialFields.join(",") : typeFilter
       }/${moment()
         .subtract(3, "months")
-        .unix()}-${moment().unix()}/${limit}/${offset}`
+        .unix()}-${moment().unix()}/${limit}/${offset}`,
     );
   }
 
@@ -354,7 +357,7 @@ class SdsApi {
   async getProposalVotes(
     proposalId: number,
     voter: string,
-    limit: number = 1000
+    limit: number = 1000,
   ): Promise<ProposalVote[]> {
     const votes: ProposalVote[] = [];
     let currentVoter = voter;
@@ -370,13 +373,13 @@ class SdsApi {
       const response: ProposalVote[] = await client.call(
         "condenser_api",
         "list_proposal_votes",
-        [[proposalId, currentVoter], fetchLimit, "by_proposal_voter"]
+        [[proposalId, currentVoter], fetchLimit, "by_proposal_voter"],
       );
 
       if (!response || response.length === 0) break;
 
       const relevant = response.filter(
-        (x) => x.proposal.proposal_id === proposalId
+        (x) => x.proposal.proposal_id === proposalId,
       );
 
       if (relevant.length === 0) break;
@@ -410,10 +413,10 @@ class SdsApi {
     text: string,
     observer: string | null = "steem",
     limit: number = 1000,
-    offset: number = 0
+    offset: number = 0,
   ): Promise<Post[]> {
     return sdsFetcher(
-      `/content_search_api/getPostsByText/${text}/any/${observer}/500/time/DESC/${limit}/${offset}`
+      `/content_search_api/getPostsByText/${text}/any/${observer}/500/time/DESC/${limit}/${offset}`,
     );
   }
 
@@ -422,10 +425,10 @@ class SdsApi {
     text: string,
     observer: string | null = "steem",
     limit: number = 1000,
-    offset: number = 0
+    offset: number = 0,
   ): Promise<Post[]> {
     return sdsFetcher(
-      `/content_search_api/getPostsByAuthorText/${author}/${text}/any/${observer}/500/time/DESC/${limit}/${offset}`
+      `/content_search_api/getPostsByAuthorText/${author}/${text}/any/${observer}/500/time/DESC/${limit}/${offset}`,
     );
   }
 
@@ -433,10 +436,10 @@ class SdsApi {
     text: string,
     observer: string | null = "steem",
     limit: number = 1000,
-    offset: number = 0
+    offset: number = 0,
   ): Promise<Post[]> {
     return sdsFetcher(
-      `/content_search_api/getCommentsByText/${text}/any/${observer}/500/time/DESC/${limit}/${offset}`
+      `/content_search_api/getCommentsByText/${text}/any/${observer}/500/time/DESC/${limit}/${offset}`,
     );
   }
 
@@ -445,10 +448,10 @@ class SdsApi {
     text: string,
     observer: string | null = "steem",
     limit: number = 1000,
-    offset: number = 0
+    offset: number = 0,
   ): Promise<Post[]> {
     return sdsFetcher(
-      `/content_search_api/getCommentsByAuthorText/${author}/${text}/any/${observer}/500/time/DESC/${limit}/${offset}`
+      `/content_search_api/getCommentsByAuthorText/${author}/${text}/any/${observer}/500/time/DESC/${limit}/${offset}`,
     );
   }
 
@@ -527,7 +530,7 @@ class SdsApi {
 
   async getMarketHistory(
     bucketSeconds: number = 3600,
-    hours: number = 24
+    hours: number = 24,
   ): Promise<MarketHistory[]> {
     const end = new Date().toISOString().split(".")[0];
     const start = new Date(Date.now() - hours * 60 * 60 * 1000)

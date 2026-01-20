@@ -11,8 +11,9 @@ export function BodyParsed({
   body: string;
   isNsfw?: boolean;
 }): React.ReactNode {
+  let imageCount = 0;
   const options = {
-    replace(domNode: DOMNode) {
+    replace(domNode: DOMNode): any {
       if (!(domNode instanceof Element)) return;
 
       const { name, attribs, children } = domNode;
@@ -20,7 +21,14 @@ export function BodyParsed({
       switch (name) {
         case "img":
           if (attribs?.src) {
-            return <BodyImage src={attribs.src} alt={attribs.alt} />;
+            imageCount++;
+            return (
+              <BodyImage
+                src={attribs.src}
+                alt={attribs.alt}
+                priority={imageCount === 1}
+              />
+            );
           }
           break;
 
@@ -58,7 +66,7 @@ export function BodyParsed({
                 "hr",
                 "details",
                 "summary",
-              ].includes(child.name)
+              ].includes(child.name),
           );
 
           if (hasBlockChild) {

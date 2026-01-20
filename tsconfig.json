@@ -32,6 +32,6 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts",
     "/app/api/auth/[...nextAuth]"
-, "components/ui/SModal.tsx2"  ],
+  ],
   "exclude": ["node_modules"]
 }

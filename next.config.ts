@@ -1,4 +1,6 @@
 import type { NextConfig } from "next";
+import { withBotId } from "botid/next/config";
+
 const nextConfig: NextConfig = {
   reactCompiler: true,
   cacheComponents: true,
@@ -9,6 +11,7 @@ const nextConfig: NextConfig = {
     turbopackFileSystemCacheForDev: true,
     cssChunking: false, // default
   },
+  productionBrowserSourceMaps: true,
 
   images: {
     qualities: [25, 50, 75],
@@ -129,4 +132,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withBotId(nextConfig);

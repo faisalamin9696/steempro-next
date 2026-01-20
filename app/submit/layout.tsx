@@ -4,13 +4,13 @@ import { getMetadata } from "@/utils/metadata";
 import { Metadata } from "next";
 import { Suspense } from "react";
 
-const { title, description, keywords } = getMetadata.submit();
+const { title, description, keywords, alternates } = getMetadata.submit();
 export const metadata: Metadata = {
   title,
   description,
   keywords: keywords.join(", "),
+  alternates,
 };
-
 
 async function layout({ children }: { children: React.ReactNode }) {
   return (

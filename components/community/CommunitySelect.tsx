@@ -4,30 +4,31 @@ import {
   SelectProps,
   SharedSelection,
 } from "@heroui/react";
-import SAvatar from "./SAvatar";
 import { useSubscriberCommunities } from "@/hooks/useSubscriberCommunities";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import SAvatar from "../ui/SAvatar";
 
 interface Props extends Omit<SelectProps, "children"> {
   initialCommunity?: Community;
   community?: Community;
   onSelectCommunity: (community?: Community) => void;
 }
+
 function CommunitySelect({ community, onSelectCommunity, ...props }: Props) {
   const { data: session } = useSession();
   const [initialCommunity, setInitialCommunity] = useState(
-    props.initialCommunity
+    props.initialCommunity,
   );
   const { communities: communitites, isLoading } = useSubscriberCommunities(
     session?.user?.name!,
-    initialCommunity
+    initialCommunity,
   );
   const handleSelectionChange = (e: SharedSelection) => {
     const selectedValue = e.currentKey?.toString();
     if (selectedValue) {
       onSelectCommunity(
-        communitites?.filter((item) => item.account === selectedValue)[0]
+        communitites?.filter((item) => item.account === selectedValue)[0],
       );
     }
   };

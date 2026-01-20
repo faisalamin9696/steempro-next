@@ -83,7 +83,7 @@ function SDrawerContent() {
       <div className="flex flex-col flex-1 overflow-y-auto scrollbar-hide space-y-6">
         {sections.map((section, idx) => (
           <div key={idx} className="space-y-2">
-            <p className="px-4 text-[10px] font-bold text-default-400 uppercase tracking-widest opacity-80">
+            <p className="px-4 text-[10px] font-bold text-default-500 uppercase tracking-widest opacity-80">
               {section.group}
             </p>
             <div className="flex flex-col gap-1">

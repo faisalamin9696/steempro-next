@@ -203,57 +203,62 @@ export default function PrivacyPolicyPage() {
       </div>
 
       {/* Sidebar / Quick Links */}
-      <div className="lg:col-span-4 space-y-6">
-        <Card className="border-none bg-default-50 shadow-sm sticky top-24">
-          <CardHeader className="px-6 pt-6">
-            <p className="font-bold">Contact Support</p>
-          </CardHeader>
-          <CardBody className="px-6 pb-6 space-y-6">
-            <p className="text-xs text-muted">
-              Have questions about your privacy or technical security? Our team
-              is here to help.
-            </p>
-
-            <div className="space-y-3">
-              <Button
-                as="a"
-                href={`mailto:${Constants.official_email}`}
-                variant="flat"
-                fullWidth
-                startContent={<Mail size={18} />}
-                className="justify-start font-semibold"
-              >
-                {Constants.official_email}
-              </Button>
-              <Button
-                as={Link}
-                href="/about"
-                variant="light"
-                fullWidth
-                startContent={<Info size={18} />}
-                className="justify-start text-muted font-medium"
-              >
-                About SteemPro
-              </Button>
-            </div>
-
-            <Divider />
-
-            <div className="space-y-2">
-              <p className="text-[10px] font-bold text-muted uppercase tracking-tighter text-center">
-                Effective Date
+      <div className="lg:col-span-4">
+        <div className="sticky top-24 space-y-6">
+          <Card className="border-none bg-default-50 shadow-sm">
+            <CardHeader className="px-6 pt-6">
+              <p className="font-bold">Contact Support</p>
+            </CardHeader>
+            <CardBody className="px-6 pb-6 space-y-6">
+              <p className="text-xs text-muted">
+                Have questions about your privacy or technical security? Our
+                team is here to help.
               </p>
-              <p className="text-sm font-bold text-center">January 1, 2024</p>
-            </div>
-          </CardBody>
-        </Card>
 
-        <div className="px-6 text-center space-y-4">
-          <FileCheck className="mx-auto text-success/40 opacity-50" size={48} />
-          <p className="text-[10px] text-muted italic">
-            By using SteemPro, you acknowledge that you have read and understood
-            this Privacy Policy and our Terms of Service.
-          </p>
+              <div className="space-y-3">
+                <Button
+                  as="a"
+                  href={`mailto:${Constants.official_email}`}
+                  variant="flat"
+                  fullWidth
+                  startContent={<Mail size={18} />}
+                  className="justify-start font-semibold"
+                >
+                  {Constants.official_email}
+                </Button>
+                <Button
+                  as={Link}
+                  href="/about"
+                  variant="light"
+                  fullWidth
+                  startContent={<Info size={18} />}
+                  className="justify-start text-muted font-medium"
+                >
+                  About SteemPro
+                </Button>
+              </div>
+
+              <Divider />
+
+              <div className="space-y-2">
+                <p className="text-[10px] font-bold text-muted uppercase tracking-tighter text-center">
+                  Effective Date
+                </p>
+                <p className="text-sm font-bold text-center">January 1, 2024</p>
+              </div>
+            </CardBody>
+          </Card>
+
+          <div className="px-6 text-center space-y-4">
+            <FileCheck
+              className="mx-auto text-success/40 opacity-50"
+              size={48}
+            />
+            <p className="text-[10px] text-muted italic">
+              By using SteemPro, you acknowledge that you have read and
+              understood this Privacy Policy and our Terms of Service.
+            </p>
+          </div>
         </div>
       </div>
     </div>

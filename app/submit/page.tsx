@@ -8,10 +8,8 @@ import { Button } from "@heroui/button";
 import TagsInput from "@/components/submit/TagsInput";
 import { Constants } from "@/constants";
 import { ZonedDateTime } from "@internationalized/date";
-import ScheduleButton from "@/components/ui/ScheduleButton";
 import moment from "moment";
 import { X } from "lucide-react";
-import CommunitySelect from "@/components/ui/CommunitySelect";
 import PublishButton from "@/components/submit/PublishButton";
 import ClearButton from "@/components/ui/ClearButton";
 import { twMerge } from "tailwind-merge";
@@ -21,6 +19,8 @@ import { empty_community } from "@/constants/templates";
 import PayoutTypeButton from "@/components/post/PayoutTypeButton";
 import BeneficiariesButton from "@/components/submit/BeneficiariesButton";
 import { readingTime } from "@/utils/reading-time-estimator";
+import CommunitySelect from "@/components/community/CommunitySelect";
+import ScheduleButton from "@/components/submit/ScheduleButton";
 
 const ICON_SIZE = 22;
 function SubmitPage({

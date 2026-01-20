@@ -16,12 +16,21 @@ export function getAppDetails(appStr: string | undefined): {
 
   const apps: Record<string, { name: string; icon: string }> = {
     steempro: { name: "SteemPro", icon: "/favicon.ico" },
-    steemit: { name: "Steemit", icon: "https://steemit.com/favicon.ico" },
-    upvu: { name: "UPVU", icon: "https://upvu.org/favicon.ico" },
-    steemx: { name: "SteemX", icon: "https://steemx.org/favicon.ico" },
+    steemit: {
+      name: "Steemit",
+      icon: "https://www.google.com/s2/favicons?domain=steemit.com",
+    },
+    upvu: {
+      name: "UPVU",
+      icon: "https://www.google.com/s2/favicons?domain=upvu.org",
+    },
+    steemx: {
+      name: "SteemX",
+      icon: "https://www.google.com/s2/favicons?domain=steemx.org",
+    },
     steempress: {
       name: "SteemPress",
-      icon: "https://steempress.io/favicon.ico",
+      icon: "https://www.google.com/s2/favicons?domain=steempress.io",
     },
     // ecblog: {
     //   name: "ECBlog",
@@ -31,7 +40,14 @@ export function getAppDetails(appStr: string | undefined): {
       name: "SteemMobile",
       icon: "/steemmobile.png",
     },
-    steemhunt: { name: "SteemHunt", icon: "https://steemhunt.com/favicon.ico" },
+    steemhunt: {
+      name: "SteemHunt",
+      icon: "https://www.google.com/s2/favicons?domain=steemhunt.com",
+    },
+    wherein: {
+      name: "Wherein",
+      icon: "https://www.google.com/s2/favicons?domain=wherein.io",
+    },
   };
 
   if (apps[app]) {

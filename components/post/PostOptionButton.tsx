@@ -76,7 +76,7 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
   const shouldPin = !comment.is_pinned;
 
   const postReplies = useAppSelector(
-    (state) => state.repliesReducer.values[`${root?.author}/${root?.permlink}`]
+    (state) => state.repliesReducer.values[`${root?.author}/${root?.permlink}`],
   );
   const { authenticateOperation } = useAccountsContext();
   const [isShareOpen, setIsShareOpen] = useState(false);
@@ -97,7 +97,7 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
         note,
         shouldMute,
         key,
-        useKeychain
+        useKeychain,
       );
       toast.success(`${shouldMute ? "Muted" : "Unmuted"} successfully!`);
 
@@ -105,7 +105,7 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
         addCommentHandler({
           ...comment,
           is_muted: +shouldMute,
-        })
+        }),
       );
       setIsMuteModalOpen(false);
     }).finally(() => {
@@ -127,7 +127,7 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
           role,
           title,
           key,
-          useKeychain
+          useKeychain,
         );
       } else {
         // Update Role if changed
@@ -138,7 +138,7 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
             comment.author,
             role,
             key,
-            useKeychain
+            useKeychain,
           );
         }
 
@@ -150,7 +150,7 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
             comment.author,
             title,
             key,
-            useKeychain
+            useKeychain,
           );
         }
       }
@@ -161,7 +161,7 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
           ...comment,
           author_role: role as RoleTypes,
           author_title: title,
-        })
+        }),
       );
       setIsRoleModalOpen(false);
     }).finally(() => {
@@ -178,7 +178,7 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
         comment.author,
         comment.permlink,
         key,
-        useKeychain
+        useKeychain,
       );
 
       if (root) {
@@ -189,14 +189,14 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
           .map((item) =>
             ancestors.has(item.link_id)
               ? { ...item, children: Math.max(0, item.children - 1) }
-              : item
+              : item,
           );
 
         dispatch(
           addRepliesHandler({
             comment: root,
             replies: updatedReplies,
-          })
+          }),
         );
       }
 
@@ -204,7 +204,7 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
         addCommentHandler({
           ...comment,
           link_id: 0,
-        })
+        }),
       );
       toast.success("Deleted", {
         description:
@@ -227,7 +227,7 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
         comment.permlink,
         shouldPin,
         key,
-        useKeychain
+        useKeychain,
       );
       toast.success(`${shouldPin ? "Pinned" : "Unpinned"} successfully!`);
 
@@ -235,7 +235,7 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
         addCommentHandler({
           ...comment,
           is_pinned: +shouldPin,
-        })
+        }),
       );
       setIsMuteModalOpen(false);
     }).finally(() => {
@@ -361,6 +361,7 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
       <Dropdown placement={placement} shouldBlockScroll={false}>
         <DropdownTrigger>
           <Button
+            aria-label="Post Options"
             variant="light"
             size="sm"
             isLoading={isPending}

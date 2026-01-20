@@ -5,7 +5,7 @@ import SAvatar from "../ui/SAvatar";
 import MentionInput, { MentionItem } from "./MentionInput";
 import { twMerge } from "tailwind-merge";
 import { sdsApi } from "@/libs/sds";
-import ImageUploadButton from "../post/ImageUploadButton";
+import ImageUploadButton from "./ImageUploadButton";
 import {
   AlignCenter,
   AlignJustify,
@@ -37,8 +37,10 @@ import { useAccountsContext } from "../auth/AccountsContext";
 import SnippetsModal from "./SnippetsModal";
 import React from "react";
 
-interface MarkdownEditorProps
-  extends Omit<TextAreaProps, "value" | "onChange"> {
+interface MarkdownEditorProps extends Omit<
+  TextAreaProps,
+  "value" | "onChange"
+> {
   value: string;
   onChange: (value: string) => void;
   cardClass?: string;
@@ -61,7 +63,7 @@ const ICON_SIZE = 18;
 
 async function fetchUsers(
   query: string,
-  users: MentionItem[]
+  users: MentionItem[],
 ): Promise<MentionItem[]> {
   return new Promise((resolve) => {
     if (debounceTimer) clearTimeout(debounceTimer);
@@ -69,7 +71,7 @@ async function fetchUsers(
     // Basic guards
     if (!query || query.length < 3) {
       const exists = users.filter((u) =>
-        u.id.toString().startsWith(query.toLowerCase())
+        u.id.toString().startsWith(query.toLowerCase()),
       );
 
       if (exists.length) return resolve(exists);
@@ -134,14 +136,14 @@ const MarkdownEditor = ({
       const fileData = files.map((file, index) => {
         const placeholder = `![Uploading ${file.name}... #${
           uploadCount + index + 1
-        }]()`;
+        }]()\n`;
         return { file, placeholder };
       });
       setUploadCount((prev) => prev + files.length);
 
       const allPlaceholders =
         fileData.map((f) => f.placeholder).join("\n") +
-        (fileData.length > 0 ? "\n\n" : "");
+        (fileData.length > 0 ? "\n" : "");
 
       // 2. Insert all placeholders at once at the current cursor position
       const currentValue = textarea.value;
@@ -167,7 +169,7 @@ const MarkdownEditor = ({
             session?.user?.name!,
             base64Data,
             key,
-            useKeychain
+            useKeychain,
           );
 
           if (!signature) {
@@ -181,7 +183,7 @@ const MarkdownEditor = ({
             file,
             session?.user?.name!,
             signature.toString(),
-            setProgress
+            setProgress,
           );
 
           if (!uploadResult) {
@@ -189,7 +191,7 @@ const MarkdownEditor = ({
           }
 
           // Replace the specific placeholder with the final markdown
-          const finalMarkdown = `![${file.name}](${uploadResult})`;
+          const finalMarkdown = `![${file.name}](${uploadResult})\n`;
 
           // Update our local tracking variable and the editor state
           currentText = currentText.replace(placeholder, finalMarkdown);
@@ -205,7 +207,7 @@ const MarkdownEditor = ({
           const errorMessage = err?.message || "Unknown error";
           uploadErrors.push(`${file.name}: ${errorMessage}`);
 
-          const errorMarkdown = `![${file.name}](UPLOAD_FAILED)`;
+          const errorMarkdown = `![${file.name}](UPLOAD_FAILED)\n`;
           currentText = currentText.replace(placeholder, errorMarkdown);
           onChange(currentText);
           setProgress(0);
@@ -218,7 +220,7 @@ const MarkdownEditor = ({
 
       return currentText;
     },
-    [session?.user?.name, uploadCount, onChange]
+    [session?.user?.name, uploadCount, onChange],
   );
 
   const handleUploads = useCallback(
@@ -229,7 +231,7 @@ const MarkdownEditor = ({
         error: (error) => error.message || "Upload failed",
       });
     },
-    [handleImagesOneByOne]
+    [handleImagesOneByOne],
   );
 
   const handlePastedImage = useCallback(
@@ -253,7 +255,7 @@ const MarkdownEditor = ({
         handleUploads(files);
       }
     },
-    [handleUploads]
+    [handleUploads],
   );
 
   useEffect(() => {
@@ -268,7 +270,7 @@ const MarkdownEditor = ({
     (acceptedFiles: File[]) => {
       handleUploads(acceptedFiles);
     },
-    [handleUploads]
+    [handleUploads],
   );
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: onDrop,
@@ -461,7 +463,7 @@ const MarkdownEditor = ({
                   size="sm"
                   onPress={button.action}
                   className={twMerge(
-                    "min-w-0 min-h-0 h-8 w-8 p-0 text-default-900 hover:text-teal-500"
+                    "min-w-0 min-h-0 h-8 w-8 p-0 text-default-900 hover:text-teal-500",
                   )}
                   title={button.label}
                   type="button"
@@ -487,7 +489,7 @@ const MarkdownEditor = ({
                 size="sm"
                 onPress={() => setIsSnippetsModalOpen(true)}
                 className={twMerge(
-                  "min-w-0 min-h-0 h-8 w-8 p-0 text-purple-600 hover:text-purple-500"
+                  "min-w-0 min-h-0 h-8 w-8 p-0 text-purple-600 hover:text-purple-500",
                 )}
                 title={"Snippets"}
                 type="button"
@@ -545,7 +547,9 @@ const MarkdownEditor = ({
               className="bg-transparent"
               rows={props.rows ?? 10}
               classNames={{
-                input: twMerge("resize-y min-h-10 p-3 pr-1 pb-1 scrollbar-thin"),
+                input: twMerge(
+                  "resize-y min-h-10 p-3 pr-1 pb-1 scrollbar-thin",
+                ),
                 base: "h-full rounded-none!",
                 inputWrapper: "h-full rounded-none! p-0 pr-2 pb-2",
               }}
@@ -553,7 +557,7 @@ const MarkdownEditor = ({
                 <div
                   className={twMerge(
                     "flex w-full items-center justify-between py-1 text-sm transition",
-                    focused && "bg-foreground/10 rounded-xl"
+                    focused && "bg-foreground/10 rounded-xl",
                   )}
                 >
                   <div className="flex flex-row items-center gap-2">

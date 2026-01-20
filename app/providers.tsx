@@ -1,7 +1,6 @@
 "use client";
 
 import { Suspense } from "react";
-import { ThemeProvider } from "next-themes";
 import { Provider as ReduxProvider } from "react-redux";
 import { SWRConfig } from "swr";
 import { store } from "@/hooks/redux/store";
@@ -48,7 +47,7 @@ function Providers({
                   <SNavbar />
                   <MobileNavbar />
                   <div className="flex flex-row justify-start">
-                    <aside className="hidden sticky top-16 h-[calc(100vh-4rem)] shrink-0 xl:block border-e border-black/5 dark:border-white/5">
+                    <aside className="w-72 hidden sticky top-16 h-[calc(100vh-4rem)] shrink-0 xl:block border-e border-black/5 dark:border-white/5">
                       <SDrawerContent />
                     </aside>
                     <span className="px-0.5 w-full pb-20 md:pb-0">

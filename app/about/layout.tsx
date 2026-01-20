@@ -18,6 +18,9 @@ export const metadata: Metadata = {
     "SteemPro engagement",
     "Steem enthusiasts",
   ].join(", "),
+  alternates: {
+    canonical: "https://www.steempro.com/about",
+  },
 };
 
 function layout({ children }: { children: React.ReactNode }) {

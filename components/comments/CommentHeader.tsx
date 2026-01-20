@@ -4,7 +4,7 @@ import SUsername from "../ui/SUsername";
 import { CornerDownRight, Link2, TriangleAlert } from "lucide-react";
 import PostLink from "../post/PostLink";
 import Reputation from "../post/Reputation";
-import TranslateButton from "../ui/TranslateButton";
+import TranslateButton from "../TranslateButton";
 
 interface CommentHeaderProps {
   comment: Post | Feed;

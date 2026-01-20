@@ -5,10 +5,11 @@ import { Settings } from "lucide-react";
 import { Metadata } from "next";
 import React from "react";
 
-const { title, description } = getMetadata.settings();
+const { title, description, alternates } = getMetadata.settings();
 export const metadata: Metadata = {
   title,
   description,
+  alternates,
 };
 
 function layout({ children }: { children: React.ReactNode }) {

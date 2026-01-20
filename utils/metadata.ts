@@ -4,6 +4,9 @@ import { ResolvingMetadata } from "next";
 import { getResizedAvatar, getThumbnail } from "./image";
 import { sdsApi } from "@/libs/sds";
 
+const DEFAULT_DESCRIPTION =
+  "SteemPro is a decentralized social media platform powered by the Steem blockchain. Explore trending discussions, join vibrant communities, and share your unique perspective.";
+
 export const getMetadata = {
   home: (category: string) => {
     category = category?.toLowerCase();
@@ -14,6 +17,12 @@ export const getMetadata = {
     return {
       title: pageTitle,
       description: pageDescription,
+      alternates: {
+        canonical:
+          category === "trending"
+            ? "https://www.steempro.com"
+            : `https://www.steempro.com/${category}`,
+      },
     };
   },
   profileAsync: async (username: string, tab: string) => {
@@ -31,7 +40,7 @@ export const getMetadata = {
     const pageTitle = !!name
       ? `${name} (@${username}) - ${capCat} on the Decentralized Web`
       : `@${username} - ${capCat} on the Decentralized Web`;
-    const pageDescription = about || "";
+    const pageDescription = about || DEFAULT_DESCRIPTION;
 
     const keywords = [
       `SteemPro @${username}`,
@@ -49,6 +58,22 @@ export const getMetadata = {
       title: pageTitle,
       description: pageDescription,
       keywords: keywords,
+      alternates: {
+        canonical: `https://www.steempro.com/@${username}`,
+      },
+    };
+  },
+  profileStructuredData: (username: string, account: AccountExt) => {
+    const { name, about } =
+      JSON.parse(account.posting_json_metadata || "{}")?.profile ?? {};
+    return {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      name: name || username,
+      alternateName: username,
+      description: about,
+      image: getResizedAvatar(username, "large"),
+      url: `https://www.steempro.com/@${username}`,
     };
   },
   profileSync: (username: string, tab: string, account: AccountExt) => {
@@ -63,7 +88,7 @@ export const getMetadata = {
     const pageTitle = !!name
       ? `${name} (@${username}) - ${capCat} on the Decentralized Web`
       : `@${username} - ${capCat} on the Decentralized Web`;
-    const pageDescription = about || "";
+    const pageDescription = about || DEFAULT_DESCRIPTION;
 
     const keywords = [
       `SteemPro @${username}`,
@@ -81,6 +106,9 @@ export const getMetadata = {
       title: pageTitle,
       description: pageDescription,
       keywords: keywords,
+      alternates: {
+        canonical: `https://www.steempro.com/@${username}`,
+      },
     };
   },
   category: (category: string, tag: string) => {
@@ -100,7 +128,14 @@ export const getMetadata = {
       `#${tag} ${category} news from SteemPro`,
       `Engaging ${category} discussions – SteemPro ${tag}`,
     ];
-    return { title: pageTitle, description: pageDescription, keywords };
+    return {
+      title: pageTitle,
+      description: pageDescription,
+      keywords,
+      alternates: {
+        canonical: `https://www.steempro.com/${category}/${tag}`,
+      },
+    };
   },
   communities: () => {
     return {
@@ -118,6 +153,9 @@ export const getMetadata = {
         "crypto social network",
         "SteemPro platform",
       ],
+      alternates: {
+        canonical: "https://www.steempro.com/communities",
+      },
     };
   },
   market: () => {
@@ -136,6 +174,9 @@ export const getMetadata = {
         "steem market app",
         "steempro buy sell",
       ],
+      alternates: {
+        canonical: "https://www.steempro.com/market",
+      },
     };
   },
   postAsync: async (author: string, permlink: string) => {
@@ -149,7 +190,9 @@ export const getMetadata = {
       : getThumbnail(result.json_images, "640x480");
     const pageTitle = isReply ? `RE: ${result?.root_title}` : result?.title;
     const pageDescription =
-      extractBodySummary(result?.body, 250, isReply) + " by " + result?.author;
+      extractBodySummary(result?.body, 250, isReply) +
+        " by " +
+        result?.author || DEFAULT_DESCRIPTION;
 
     const keywords = [
       `SteemPro @${result.author}`,
@@ -169,12 +212,39 @@ export const getMetadata = {
       description: pageDescription,
       keywords: keywords,
       thumbnail,
+      alternates: {
+        canonical: `https://www.steempro.com/@${author}/${permlink}`,
+      },
+    };
+  },
+  postStructuredData: (post: Post) => {
+    return {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      headline: post.title,
+      description: extractBodySummary(post.body, 160),
+      image: getThumbnail(post.json_images, "640x480"),
+      author: {
+        "@type": "Person",
+        name: post.author,
+        url: `https://www.steempro.com/@${post.author}`,
+      },
+      datePublished: new Date(post.created * 1000).toISOString(),
+      dateModified: new Date(post.last_update * 1000).toISOString(),
+      publisher: {
+        "@type": "Organization",
+        name: "SteemPro",
+        logo: {
+          "@type": "ImageObject",
+          url: "https://www.steempro.com/favicon.ico",
+        },
+      },
     };
   },
   communityAsync: async (
     category: string,
     tag: string,
-    parent: ResolvingMetadata
+    parent: ResolvingMetadata,
   ) => {
     category = category?.toLowerCase();
     tag = tag?.toLowerCase();
@@ -185,7 +255,7 @@ export const getMetadata = {
     const pageTitle = title
       ? `${title} - ${category} in the ${community} Community`
       : `${community} Community ${category} List`;
-    const pageDescription = about || "";
+    const pageDescription = about || DEFAULT_DESCRIPTION;
 
     const keywords = [
       `${community} community discussions`,
@@ -213,7 +283,7 @@ export const getMetadata = {
     const pageTitle = title
       ? `${title} - ${category} in the ${community} Community`
       : `${community} Community ${category} List`;
-    const pageDescription = about || "";
+    const pageDescription = about || DEFAULT_DESCRIPTION;
 
     const keywords = [
       `${community} community discussions`,
@@ -238,6 +308,9 @@ export const getMetadata = {
       title: "SteemPro Proposals - Fund and Support Community Projects",
       description:
         "Explore and support community-driven projects on SteemPro. Vote for proposals that enhance the Steem ecosystem and help shape the future of decentralized social media.",
+      alternates: {
+        canonical: "https://www.steempro.com/proposals",
+      },
     };
   },
 
@@ -247,7 +320,7 @@ export const getMetadata = {
       if (proposal) {
         const result = await sdsApi.getPost(
           proposal.creator,
-          proposal.permlink
+          proposal.permlink,
         );
 
         const thumbnail = getThumbnail(result.json_images, "640x480");
@@ -261,9 +334,17 @@ export const getMetadata = {
           thumbnail,
         };
       }
-      return { title: `Proposal #${id}`, description: "", thumbnail: "" };
+      return {
+        title: `Proposal #${id}`,
+        description: DEFAULT_DESCRIPTION,
+        thumbnail: "",
+      };
     } catch (error) {
-      return { title: `Proposal #${id}`, description: "", thumbnail: "" };
+      return {
+        title: `Proposal #${id}`,
+        description: DEFAULT_DESCRIPTION,
+        thumbnail: "",
+      };
     }
   },
 
@@ -273,12 +354,18 @@ export const getMetadata = {
       description:
         "Manage your scheduled posts easily with SteemPro. View, edit, and delete scheduled posts in one place. Stay organized and keep your content strategy on track.",
       keywords: "SteemPro, schedule posts, scheduling",
+      alternates: {
+        canonical: "https://www.steempro.com/schedules",
+      },
     };
   },
   settings: () => {
     return {
       title: `Settings - Customize Your SteemPro Experience`,
       description: `Explore the settings page on SteemPro to personalize and optimize your experience on the Steem blockchain. Customize your preferences, security settings, notifications, and more to tailor SteemPro to your needs and preferences.`,
+      alternates: {
+        canonical: "https://www.steempro.com/settings",
+      },
     };
   },
   submit: () => {
@@ -298,6 +385,9 @@ export const getMetadata = {
       title: `Create and Submit - Share Your Ideas with the World!`,
       description: `Submit your posts, articles, and content to SteemPro and reach a global audience. Join our community and share your ideas, stories, and insights with the world. Start contributing today!`,
       keywords,
+      alternates: {
+        canonical: "https://www.steempro.com/submit",
+      },
     };
   },
   tools: () => {
@@ -318,6 +408,9 @@ export const getMetadata = {
       title: `SteemPro Tools - Enhancing Your Steem Experience`,
       description: `Discover a suite of powerful tools tailored for Steem users, designed to streamline your interactions, boost efficiency, and elevate your Steem experience to new heights.`,
       keywords,
+      alternates: {
+        canonical: "https://www.steempro.com/tools",
+      },
     };
   },
   witnesses: () => {
@@ -338,6 +431,9 @@ export const getMetadata = {
       title: `Steem Blockchain Witnesses: Trusted Block Producers`,
       description: `Discover the trusted witnesses (block producers) contributing to the security and governance of the Steem blockchain. Learn about their role and contributions.`,
       keywords,
+      alternates: {
+        canonical: "https://www.steempro.com/witnesses",
+      },
     };
   },
 };
@@ -384,7 +480,7 @@ export const updateMetadata = (options: MetadataOptions): void => {
 const updateMetaTag = (
   attribute: string,
   value: string,
-  content: string
+  content: string,
 ): void => {
   if (!content) return;
 

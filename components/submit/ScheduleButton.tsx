@@ -1,8 +1,8 @@
 import { Button, ButtonProps } from "@heroui/button";
 import { useState } from "react";
-import ScheduleModal from "./ScheduleModal";
 import { ZonedDateTime } from "@internationalized/date";
 import { CalendarPlus } from "lucide-react";
+import ScheduleModal from "../ui/ScheduleModal";
 
 interface Props extends ButtonProps {
   onDateTimeChange: (datetime: ZonedDateTime | null) => void;

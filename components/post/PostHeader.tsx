@@ -6,7 +6,7 @@ import SAvatar from "../ui/SAvatar";
 import SUsername from "../ui/SUsername";
 import PostOptionButton from "./PostOptionButton";
 import { Pin } from "lucide-react";
-import TranslateButton from "../ui/TranslateButton";
+import TranslateButton from "../TranslateButton";
 import { Image } from "@heroui/react";
 import { parsePostMeta } from "@/utils/user";
 import { getAppDetails } from "@/utils/app";

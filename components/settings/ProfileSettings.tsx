@@ -24,7 +24,7 @@ import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { handleSteemError } from "@/utils/steemApiError";
 import { addLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
-import ImageUploadButton from "../post/ImageUploadButton";
+import ImageUploadButton from "../submit/ImageUploadButton";
 import { toBase64 } from "@/utils/helper";
 import { proxifyImageUrl } from "@/utils/proxifyUrl";
 import { twMerge } from "tailwind-merge";
@@ -83,13 +83,13 @@ const ProfileSettings = ({ className }: { className?: string }) => {
 
   const handleImageUpload = async (
     files: File[],
-    type: "profile_image" | "cover_image"
+    type: "profile_image" | "cover_image",
   ) => {
     const file = files[0];
     if (!file || !session?.user?.name) return;
 
     const toastId = toast.loading(
-      `Uploading ${type === "profile_image" ? "avatar" : "cover"}...`
+      `Uploading ${type === "profile_image" ? "avatar" : "cover"}...`,
     );
 
     try {
@@ -99,7 +99,7 @@ const ProfileSettings = ({ className }: { className?: string }) => {
         session.user.name,
         base64Data,
         key,
-        useKeychain
+        useKeychain,
       );
 
       if (!signature) throw new Error("Signing failed");
@@ -113,7 +113,7 @@ const ProfileSettings = ({ className }: { className?: string }) => {
             ...prev,
             [type === "profile_image" ? "profile" : "cover"]: progress,
           }));
-        }
+        },
       );
 
       if (uploadResult) {
@@ -141,13 +141,13 @@ const ProfileSettings = ({ className }: { className?: string }) => {
           session?.user?.name!,
           formData,
           key,
-          useKeychain
+          useKeychain,
         );
 
         // Update local state by merging the new profile data
         const updatedAccount = { ...loginData };
         const metadata = JSON.parse(
-          updatedAccount.posting_json_metadata || "{}"
+          updatedAccount.posting_json_metadata || "{}",
         );
         metadata.profile = { ...(metadata.profile || {}), ...formData };
         updatedAccount.posting_json_metadata = JSON.stringify(metadata);
