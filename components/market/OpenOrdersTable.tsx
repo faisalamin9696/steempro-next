@@ -1,5 +1,5 @@
 import { steemApi } from "@/libs/steem";
-import {  Chip } from "@heroui/chip";
+import { Chip } from "@heroui/chip";
 import { Spinner } from "@heroui/spinner";
 import { Button } from "@heroui/button";
 import { Trash2 } from "lucide-react";
@@ -9,6 +9,9 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useAccountsContext } from "../auth/AccountsContext";
 import { ColumnDef, DataTable } from "../ui/data-table";
+import { getOrderAmount, getOrderPrice } from "@/app/market/page";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
+import { addLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 
 const OpenOrdersTable = ({
   orders,
@@ -20,20 +23,33 @@ const OpenOrdersTable = ({
   const { data: session } = useSession();
   const [cancelling, setCancelling] = useState<number | null>(null);
   const { authenticateOperation } = useAccountsContext();
+  const dispatch = useAppDispatch();
+  const loginData = useAppSelector((s) => s.loginReducer.value);
 
-  const handleCancel = async (orderId: number) => {
+  const handleCancel = async (order: OpenOrder) => {
     if (!session?.user?.name) return;
-    setCancelling(orderId);
+    setCancelling(order.orderid);
     try {
       const { key, useKeychain } = await authenticateOperation("active");
 
       await steemApi.cancelLimitOrder(
         session.user.name,
-        orderId,
+        order.orderid,
         key,
-        useKeychain
+        useKeychain,
       );
       toast.success("Order cancelled");
+      const isBuying = order.sell_price.base.includes("SBD");
+      dispatch(
+        addLoginHandler({
+          ...loginData,
+          [isBuying ? "balance_sbd" : "balance_steem"]:
+            loginData[isBuying ? "balance_sbd" : "balance_steem"] +
+            (isBuying
+              ? parseFloat(getOrderAmount(order).sbd_amount)
+              : parseFloat(getOrderAmount(order).steem_amount)),
+        }),
+      );
       onUpdate();
     } catch (e: any) {
       toast.error(e.message || "Failed to cancel order");
@@ -81,45 +97,25 @@ const OpenOrdersTable = ({
       key: "real_price",
       header: "Price",
       render: (_info, order) => {
-        const isBuying = order.sell_price.base.includes("SBD");
-        const steem_amount = isBuying
-          ? order.sell_price.quote.split(" ")[0]
-          : order.sell_price.base.split(" ")[0];
-        const sbd_amount = isBuying
-          ? order.sell_price.base.split(" ")[0]
-          : order.sell_price.quote.split(" ")[0];
-        const price = parseFloat(sbd_amount) / parseFloat(steem_amount);
-        return price.toFixed(6);
+        return getOrderPrice(order);
       },
     },
     {
       key: "for_sale",
       header: "STEEM",
       render: (_info, order) => {
-        const isBuying = order.sell_price.base.includes("SBD");
-        const steem_amount = isBuying
-          ? order.sell_price.quote.split(" ")[0]
-          : order.sell_price.base.split(" ")[0];
-        const sbd_amount = isBuying
-          ? order.sell_price.base.split(" ")[0]
-          : order.sell_price.quote.split(" ")[0];
-        return steem_amount;
+        return getOrderAmount(order).steem_amount;
       },
     },
     {
-      key: "for_sale",
+      key: "sell_price",
       header: "SBD",
       render: (_info, order) => {
-        const isBuying = order.sell_price.base.includes("SBD");
-
-        const sbd_amount = isBuying
-          ? order.sell_price.base.split(" ")[0]
-          : order.sell_price.quote.split(" ")[0];
-        return sbd_amount;
+        return getOrderAmount(order).sbd_amount;
       },
     },
     {
-      key: "for_sale",
+      key: "actions",
       header: "Action",
       render: (_value, order) => (
         <Button
@@ -128,7 +124,7 @@ const OpenOrdersTable = ({
           color="danger"
           size="sm"
           isLoading={cancelling === order.orderid}
-          onPress={() => handleCancel(order.orderid)}
+          onPress={() => handleCancel(order)}
         >
           <Trash2 size={16} />
         </Button>

@@ -5,6 +5,8 @@ import { useSession } from "next-auth/react";
 import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
 import { useAccountsContext } from "../auth/AccountsContext";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
+import { addLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 
 const TradeForm = ({
   type,
@@ -24,6 +26,8 @@ const TradeForm = ({
   const [isPending, setIsPending] = useState(false);
   const { data: session } = useSession();
   const { authenticateOperation } = useAccountsContext();
+  const dispatch = useAppDispatch();
+  const loginData = useAppSelector((s) => s.loginReducer.value);
 
   const total = useMemo(() => {
     const p = parseFloat(price) || 0;
@@ -42,7 +46,7 @@ const TradeForm = ({
       setPrice(
         type === "buy"
           ? ticker.lowest_ask.toFixed(6)
-          : ticker.highest_bid.toFixed(6)
+          : ticker.highest_bid.toFixed(6),
       );
     }
   }, [ticker, type, selectedPrice]);
@@ -66,11 +70,19 @@ const TradeForm = ({
         false,
         60 * 60 * 24 * 7, // 1 week
         key,
-        useKeychain
+        useKeychain,
       );
 
       toast.success(`Order created successfully`);
       setAmount("");
+      dispatch(
+        addLoginHandler({
+          ...loginData,
+          [type === "buy" ? "balance_sbd" : "balance_steem"]:
+            loginData[type === "buy" ? "balance_sbd" : "balance_steem"] -
+            parseFloat(amountToSell),
+        }),
+      );
       onSuccess();
     } catch (e: any) {
       toast.error(e.message || "Failed to create order");

@@ -1,4 +1,4 @@
-import { heroui } from "@heroui/theme";
+import { heroui } from "@heroui/react";
 export default heroui({
   addCommonColors: false, // override common colors (e.g. "blue", "green", "pink").
   defaultTheme: "light", // default theme from the themes object

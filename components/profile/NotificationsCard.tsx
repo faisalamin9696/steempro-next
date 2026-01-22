@@ -265,6 +265,15 @@ const NotificationsCard = ({ username }: { username: string }) => {
           initialLoadCount={Math.max(notifications.length, 50)}
           loadMoreCount={50}
           onLoadedMore={() => {}}
+          groupBy={(note) => {
+            const date = moment.unix(note.timestamp);
+            const today = moment();
+            const yesterday = moment().subtract(1, "day");
+
+            if (date.isSame(today, "day")) return "Today";
+            if (date.isSame(yesterday, "day")) return "Yesterday";
+            return date.format("MMMM D, YYYY");
+          }}
         />
       </SCard>
     </div>

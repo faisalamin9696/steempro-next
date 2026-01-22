@@ -10,16 +10,36 @@ import { Delegations } from "@/components/wallet/Delegations";
 import { Tab, Tabs } from "@heroui/tabs";
 import { DelegationModal } from "@/components/wallet/DelegationModal";
 import { useSession } from "next-auth/react";
-
 import { AccountRecoveryStatus } from "@/components/wallet/AccountRecoveryStatus";
 import { ConversionStatus } from "@/components/wallet/ConversionStatus";
+import OpenOrdersTable from "@/components/market/OpenOrdersTable";
+import { sdsApi } from "@/libs/sds";
+import useSWR from "swr";
+import SCard from "@/components/ui/SCard";
+import { Plus } from "lucide-react";
+import { Button } from "@heroui/button";
+import Link from "next/link";
+import { WithdrawSavingsModal } from "@/components/wallet/WithdrawSavingsModal";
 
 const WalletTab = ({ account }: { account: AccountExt }) => {
   const [showTransferModal, setShowTransferModal] = useState(false);
   const [showPowerUpModal, setShowPowerUpModal] = useState(false);
   const [showPowerDownModal, setShowPowerDownModal] = useState(false);
   const [showDelegationModal, setShowDelegationModal] = useState(false);
+  const [showWithdrawSavingsModal, setShowWithdrawSavingsModal] =
+    useState(false);
+  const [withdrawSavingsCurrency, setWithdrawSavingsCurrency] = useState<
+    "STEEM" | "SBD"
+  >("STEEM");
+
   const { data: session } = useSession();
+  const isMe = account.name === session?.user?.name;
+
+  const { data: openOrders, mutate: mutateOrders } = useSWR(
+    isMe ? `market-open-orders-${session?.user?.name!}` : null,
+    () => sdsApi.getOpenOrders(session?.user?.name!),
+    { refreshInterval: 15000 },
+  );
 
   const [initialTransferRecipient, setInitialTransferRecipient] = useState<
     string | undefined
@@ -65,9 +85,13 @@ const WalletTab = ({ account }: { account: AccountExt }) => {
               onDelegate={() => {
                 const target = getTarget();
                 setInitialDelegationData(
-                  target ? { delegatee: target, amount: "" } : undefined
+                  target ? { delegatee: target, amount: "" } : undefined,
                 );
                 setShowDelegationModal(true);
+              }}
+              onWithdrawSavings={(currency) => {
+                setWithdrawSavingsCurrency(currency);
+                setShowWithdrawSavingsModal(true);
               }}
               expiringCount={account.expiring_delegations?.length}
             />
@@ -75,9 +99,9 @@ const WalletTab = ({ account }: { account: AccountExt }) => {
             {/* Tabs for History and Delegations */}
             <div>
               <Tabs
-                fullWidth
                 defaultSelectedKey="history"
                 className="w-full"
+                color="secondary"
                 classNames={{
                   panel: "px-0",
                 }}
@@ -89,6 +113,38 @@ const WalletTab = ({ account }: { account: AccountExt }) => {
                 <Tab key={"delegations"} title="Delegations">
                   <Delegations account={account} />
                 </Tab>
+
+                {isMe && (
+                  <Tab key={"orders"} title="Orders">
+                    <SCard
+                      title={`Orders (${openOrders?.length})`}
+                      icon={Plus}
+                      iconClass="p-2 rounded-lg bg-primary/10 border border-primary/20"
+                      titleClass="font-semibold"
+                      classNames={{ body: "gap-4" }}
+                      className="card"
+                      iconSize="sm"
+                      description={"Your open orders"}
+                      titleEndContent={
+                        <Button
+                          size="sm"
+                          color="primary"
+                          variant="light"
+                          as={Link}
+                          href="/market"
+                        >
+                          <Plus />
+                          New Order
+                        </Button>
+                      }
+                    >
+                      <OpenOrdersTable
+                        orders={openOrders}
+                        onUpdate={mutateOrders}
+                      />
+                    </SCard>
+                  </Tab>
+                )}
               </Tabs>
             </div>
           </div>
@@ -118,6 +174,12 @@ const WalletTab = ({ account }: { account: AccountExt }) => {
         onOpenChange={setShowDelegationModal}
         outgoingDelegations={account.outgoing_delegations}
         initialData={initialDelegationData}
+      />
+
+      <WithdrawSavingsModal
+        isOpen={showWithdrawSavingsModal}
+        onOpenChange={setShowWithdrawSavingsModal}
+        initialCurrency={withdrawSavingsCurrency}
       />
     </div>
   );

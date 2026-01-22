@@ -16,6 +16,7 @@ import OrderBookTable from "@/components/market/OrderBookTable";
 import OpenOrdersTable from "@/components/market/OpenOrdersTable";
 import TradeHistoryTable from "@/components/market/TradeHistoryTable";
 import TradeForm from "@/components/market/TradeForm";
+import { useAppSelector } from "@/hooks/redux/store";
 
 export default function MarketPage() {
   const { data: session } = useSession();
@@ -44,10 +45,7 @@ export default function MarketPage() {
     { refreshInterval: 15000 },
   );
 
-  const { data: account } = useSWR(
-    session?.user?.name ? `account-market-${session.user.name}` : null,
-    () => sdsApi.getAccountExt(session?.user?.name || ""),
-  );
+  const loginData = useAppSelector((state) => state.loginReducer.value);
 
   const { data: history } = useSWR(
     "market-trade-history",
@@ -67,10 +65,10 @@ export default function MarketPage() {
 
   const balances = useMemo(
     () => ({
-      steem: account?.balance_steem || 0,
-      sbd: account?.balance_sbd || 0,
+      steem: loginData?.balance_steem || 0,
+      sbd: loginData?.balance_sbd || 0,
     }),
-    [account],
+    [loginData],
   );
 
   const refreshAll = () => {
@@ -237,4 +235,27 @@ export default function MarketPage() {
       </main>
     </div>
   );
+}
+
+export function getOrderPrice(order: OpenOrder) {
+  const isBuying = order.sell_price.base.includes("SBD");
+  const steem_amount = isBuying
+    ? order.sell_price.quote.split(" ")[0]
+    : order.sell_price.base.split(" ")[0];
+  const sbd_amount = isBuying
+    ? order.sell_price.base.split(" ")[0]
+    : order.sell_price.quote.split(" ")[0];
+  const price = parseFloat(sbd_amount) / parseFloat(steem_amount);
+  return price.toFixed(6);
+}
+
+export function getOrderAmount(order: OpenOrder) {
+  const isBuying = order.sell_price.base.includes("SBD");
+  const steem_amount = isBuying
+    ? order.sell_price.quote.split(" ")[0]
+    : order.sell_price.base.split(" ")[0];
+  const sbd_amount = isBuying
+    ? order.sell_price.base.split(" ")[0]
+    : order.sell_price.quote.split(" ")[0];
+  return { steem_amount, sbd_amount };
 }

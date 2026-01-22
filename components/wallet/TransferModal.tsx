@@ -40,6 +40,10 @@ export const TransferModal = ({
   const { data: session } = useSession();
   const lognData = useAppSelector((s) => s.loginReducer.value);
   let [recipient, setRecipient] = useState(initialRecipient || "");
+  let [savingRecipient, setSavingRecipient] = useState(
+    initialRecipient ?? session?.user?.name ?? "",
+  );
+
   const [amount, setAmount] = useState("");
   const [currency, setCurrency] = useState<Currencies>("STEEM");
   const [memo, setMemo] = useState("");
@@ -50,6 +54,7 @@ export const TransferModal = ({
   const [confirmSaving, setConfirmSaving] = useState(false);
   const [confirmConvert, setConfirmConvert] = useState(false);
   const { authenticateOperation } = useAccountsContext();
+  const isMe = session?.user?.name === normalizeUsername(savingRecipient);
 
   useEffect(() => {
     if (isOpen && initialRecipient) {
@@ -99,13 +104,15 @@ export const TransferModal = ({
   // Transfer handler
   const handleTransfer = async (toSavings = false) => {
     recipient = normalizeUsername(recipient);
+    savingRecipient = normalizeUsername(savingRecipient);
+
     setIsPending(true);
 
     await handleSteemError(async () => {
       const { key, useKeychain } = await authenticateOperation("active");
       await steemApi.transfer(
         session?.user?.name!,
-        recipient,
+        toSavings ? savingRecipient : recipient,
         `${parseFloat(amount).toFixed(3)} ${currency}`,
         memo,
         toSavings,
@@ -117,7 +124,9 @@ export const TransferModal = ({
       const updatedAccount = {
         ...lognData,
         savings_sbd: toSavings
-          ? lognData.savings_sbd + Number(amount)
+          ? isMe
+            ? lognData.savings_sbd + Number(amount)
+            : lognData.savings_sbd
           : lognData.savings_sbd,
         balance_steem:
           currency === "STEEM"
@@ -377,6 +386,19 @@ export const TransferModal = ({
                     </p>
                   }
                 />
+
+                <SInput
+                  id="recipient"
+                  placeholder="Username"
+                  value={savingRecipient}
+                  onValueChange={setSavingRecipient}
+                  label="To"
+                  labelPlacement="outside-top"
+                  isRequired
+                  autoCapitalize="off"
+                  isDisabled={isPending}
+                />
+
                 <div className="grid grid-cols-2 gap-4">
                   <Input
                     id="savings-amount"

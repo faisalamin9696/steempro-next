@@ -47,7 +47,7 @@ class SteemApi {
     account: string,
     photo: any,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ): Promise<Signature | null> => {
     try {
       // Convert the photo to a Uint8Array
@@ -71,7 +71,7 @@ class SteemApi {
 
       if (!privateKey) {
         throw new Error(
-          "Private posting key is required if Keychain is not used"
+          "Private posting key is required if Keychain is not used",
         );
       }
 
@@ -91,7 +91,7 @@ class SteemApi {
     file: File,
     username: string,
     signature: string,
-    onProgress?: (percentage: number) => void
+    onProgress?: (percentage: number) => void,
   ): Promise<string | null> => {
     return new Promise((resolve, reject) => {
       // Validate inputs
@@ -115,7 +115,7 @@ class SteemApi {
       xhr.open("POST", url);
       xhr.setRequestHeader(
         "Authorization",
-        Constants.activeSettings.image_server
+        Constants.activeSettings.image_server,
       );
 
       // Set timeout to 60 seconds
@@ -218,7 +218,7 @@ class SteemApi {
     username: string,
     required: "Posting" | "Active",
     privateWif?: string,
-    useKeychain?: boolean
+    useKeychain?: boolean,
   ) {
     if (useKeychain) return; // Keychain handles auth automatically
 
@@ -230,13 +230,13 @@ class SteemApi {
 
     if (keyAuthority === "unknown") {
       throw new Error(
-        "The provided private key does not belong to this account."
+        "The provided private key does not belong to this account.",
       );
     }
 
     if (required === "Active" && keyAuthority === "posting") {
       throw new Error(
-        "Active authority required. Posting key cannot sign this operation."
+        "Active authority required. Posting key cannot sign this operation.",
       );
     }
     return true;
@@ -270,7 +270,7 @@ class SteemApi {
     username: string,
     operations: Operation[],
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ): Promise<TransactionConfirmation> {
     try {
       if (useKeychain && (window as any).steem_keychain) {
@@ -279,7 +279,7 @@ class SteemApi {
 
       if (!privateKey) {
         throw new Error(
-          "Private posting key is required if Keychain is not used"
+          "Private posting key is required if Keychain is not used",
         );
       }
 
@@ -288,14 +288,14 @@ class SteemApi {
         username,
         required,
         privateKey,
-        useKeychain
+        useKeychain,
       );
 
       const postingKey = PrivateKey.fromString(privateKey);
 
       const result = await this.client.broadcast.sendOperations(
         operations,
-        postingKey
+        postingKey,
       );
 
       return this.handleResponse(result);
@@ -309,7 +309,7 @@ class SteemApi {
    */
   private async broadcastWithKeychain(
     username: string,
-    operations: Operation[]
+    operations: Operation[],
   ): Promise<TransactionConfirmation> {
     keychainApi.validateKeychain();
     return new Promise((resolve, reject) => {
@@ -322,7 +322,7 @@ class SteemApi {
         (res: any) => {
           if (res.success) resolve(res);
           else reject(res.error);
-        }
+        },
       );
     });
   }
@@ -331,7 +331,7 @@ class SteemApi {
    * Consistent error handling
    */
   private handleResponse(
-    response: TransactionConfirmation
+    response: TransactionConfirmation,
   ): TransactionConfirmation {
     if (!response || (response as any).error) {
       throw new Error(JSON.stringify(response));
@@ -356,16 +356,16 @@ class SteemApi {
               const signature = Signature.fromString(res.result);
               resolve({ signature, hash });
             } else reject(res.error);
-          }
+          },
         );
-      }
+      },
     );
   }
   signMessage(
     account: string,
     message: string,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ): Promise<{ signature: Signature; hash?: Buffer }> {
     // Make hash optional
     if (useKeychain) {
@@ -374,7 +374,7 @@ class SteemApi {
 
     if (!privateKey) {
       throw new Error(
-        "Private posting key is required if Keychain is not used"
+        "Private posting key is required if Keychain is not used",
       );
     }
 
@@ -391,7 +391,7 @@ class SteemApi {
   async verifySignature(
     username: string,
     hash: Buffer,
-    signature: Signature
+    signature: Signature,
   ): Promise<boolean> {
     try {
       const account = await sdsApi.getAccountExt(username);
@@ -426,7 +426,7 @@ class SteemApi {
     data: PostingContent,
     options = null,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) => {
     const operations: Operation[] = [
       [
@@ -460,7 +460,7 @@ class SteemApi {
     permlink: string,
     weight: number,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     const operations: Operation[] = [
       [
@@ -485,7 +485,7 @@ class SteemApi {
     author: string,
     permlink: string,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     const json = JSON.stringify([
       "reblog",
@@ -519,7 +519,7 @@ class SteemApi {
     author: string,
     permlink: string,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     const operations: Operation[] = [
       [
@@ -542,7 +542,7 @@ class SteemApi {
     following: string,
     follow: boolean = true,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     const json = JSON.stringify([
       "follow",
@@ -576,7 +576,7 @@ class SteemApi {
     following: string,
     mute: boolean = true,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     const json = JSON.stringify([
       "follow",
@@ -610,7 +610,7 @@ class SteemApi {
     notes: string,
     mute: boolean,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) => {
     const action = mute ? "mutePost" : "unmutePost";
 
@@ -645,7 +645,7 @@ class SteemApi {
     targetAccount: string,
     role: string,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) => {
     const json = JSON.stringify([
       "setRole",
@@ -677,7 +677,7 @@ class SteemApi {
     targetAccount: string,
     title: string,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) => {
     const json = JSON.stringify([
       "setUserTitle",
@@ -710,7 +710,7 @@ class SteemApi {
     role: string,
     title: string,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) => {
     const json_title = JSON.stringify([
       "setUserTitle",
@@ -760,7 +760,7 @@ class SteemApi {
     community: string,
     subscribe: boolean,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) => {
     const action = subscribe ? "subscribe" : "unsubscribe";
 
@@ -792,7 +792,7 @@ class SteemApi {
     rewardSbd: number,
     rewardVests: number,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) => {
     const operations: Operation[] = [
       [
@@ -813,11 +813,11 @@ class SteemApi {
     account: string,
     params: Partial<PostingJsonMetadata>,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     const existing = await sdsApi.getAccountExt(account);
     const existingMetadata = JSON.parse(
-      existing?.posting_json_metadata || "{}"
+      existing?.posting_json_metadata || "{}",
     );
     const profile = existingMetadata.profile || {};
 
@@ -845,14 +845,14 @@ class SteemApi {
         ],
       ],
       privateKey,
-      useKeychain
+      useKeychain,
     );
   }
 
   markAsRead(
     account: string,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     let currentTime = new Date().toISOString().slice(0, 19);
     return this.broadcast(
@@ -874,7 +874,7 @@ class SteemApi {
         ],
       ],
       privateKey,
-      useKeychain
+      useKeychain,
     );
   }
 
@@ -885,7 +885,7 @@ class SteemApi {
     permlink: string,
     pin: boolean = true,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     const json = JSON.stringify([
       pin ? "pinPost" : "unpinPost",
@@ -931,7 +931,7 @@ class SteemApi {
     witness: string,
     approve: boolean,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     const operations: Operation[] = [
       [
@@ -954,7 +954,7 @@ class SteemApi {
     account: string,
     proxy: string,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     const operations: Operation[] = [
       [
@@ -986,7 +986,7 @@ class SteemApi {
     memo: string,
     toSavings: boolean = false,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     return this.broadcast(
       from,
@@ -997,7 +997,39 @@ class SteemApi {
         ],
       ],
       privateKey,
-      useKeychain
+      useKeychain,
+    );
+  }
+
+  /**
+   * Withdraw from savings
+   * @param from
+   * @param to
+   * @param amount
+   * @param memo
+   * @param privateKey
+   * @param useKeychain
+   * @returns
+   */
+  withdrawFromSavings(
+    from: string,
+    to: string,
+    amount: string,
+    memo: string,
+    privateKey?: string,
+    useKeychain: boolean = false,
+  ) {
+    const requestId = this.generateRequestId();
+    return this.broadcast(
+      from,
+      [
+        [
+          "transfer_from_savings",
+          { from, to, amount, memo, request_id: requestId },
+        ],
+      ],
+      privateKey,
+      useKeychain,
     );
   }
 
@@ -1015,7 +1047,7 @@ class SteemApi {
     to: string,
     amount: number,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     return this.broadcast(
       from,
@@ -1026,7 +1058,7 @@ class SteemApi {
         ],
       ],
       privateKey,
-      useKeychain
+      useKeychain,
     );
   }
 
@@ -1044,7 +1076,7 @@ class SteemApi {
     to: string,
     vests: number,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     return this.broadcast(
       from,
@@ -1059,7 +1091,7 @@ class SteemApi {
         ],
       ],
       privateKey,
-      useKeychain
+      useKeychain,
     );
   }
 
@@ -1075,7 +1107,7 @@ class SteemApi {
     account: string,
     vests: number,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     return this.broadcast(
       account,
@@ -1086,7 +1118,7 @@ class SteemApi {
         ],
       ],
       privateKey,
-      useKeychain
+      useKeychain,
     );
   }
 
@@ -1106,7 +1138,7 @@ class SteemApi {
     blockSigningKey: string,
     props: any,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     return this.broadcast(
       owner,
@@ -1123,7 +1155,7 @@ class SteemApi {
         ],
       ],
       privateKey,
-      useKeychain
+      useKeychain,
     );
   }
 
@@ -1132,7 +1164,7 @@ class SteemApi {
     proposalIds: number[],
     approve: boolean,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     const op: Operation = [
       "update_proposal_votes",
@@ -1151,7 +1183,7 @@ class SteemApi {
     account: string,
     proposalIds: number[],
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     const op: Operation = [
       "remove_proposal",
@@ -1172,7 +1204,7 @@ class SteemApi {
     fillOrKill = false,
     expirationSeconds = 60 * 60, // 1 hour
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     const expiration = new Date(Date.now() + expirationSeconds * 1000)
       .toISOString()
@@ -1197,7 +1229,7 @@ class SteemApi {
     owner: string,
     orderId: number,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     const op: Operation = [
       "limit_order_cancel",
@@ -1217,7 +1249,7 @@ class SteemApi {
     owner: string,
     amount: string, // Example: "10.000 SBD"
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     const requestId = this.generateRequestId();
 
@@ -1243,14 +1275,14 @@ class SteemApi {
     account: string,
     authorizedAccount: string,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) => {
     const accountData = await sdsApi.getAccountExt(account);
     if (!accountData) throw new Error("Account not found");
 
     const postingAuths = accountData.posting_account_auths || [];
     const isAlreadyAuthorized = postingAuths.some(
-      ([acc]) => acc === authorizedAccount
+      ([acc]) => acc === authorizedAccount,
     );
 
     if (isAlreadyAuthorized) return;
@@ -1285,7 +1317,7 @@ class SteemApi {
     percent: number,
     autoVest: boolean,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     const operations: Operation[] = [
       [
@@ -1309,7 +1341,7 @@ class SteemApi {
     accountToRecover: string,
     newRecoveryAccount: string,
     privateKey?: string,
-    useKeychain: boolean = false
+    useKeychain: boolean = false,
   ) {
     const operations: Operation[] = [
       [
@@ -1326,7 +1358,7 @@ class SteemApi {
       accountToRecover,
       operations,
       privateKey,
-      useKeychain
+      useKeychain,
     );
   }
 }

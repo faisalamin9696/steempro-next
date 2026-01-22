@@ -30,6 +30,8 @@ interface BaseDataTableProps<T> {
   emptyMessage?: string;
   filterByValue?: string | string[];
   hasMore?: (data: T[]) => boolean;
+  groupBy?: (item: T) => string;
+  renderGroupHeader?: (group: string) => React.ReactNode;
 }
 
 interface BasicDataTableProps<T> extends BaseDataTableProps<T> {
@@ -80,6 +82,8 @@ export function DataTable<T extends Record<string, any>>({
   filterByValue,
   loadMore,
   onLoadedMore,
+  groupBy,
+  renderGroupHeader,
   ...props
 }: DataTableProps<T>) {
   const [sortColumn, setSortColumn] = useState<string | null>(null);
@@ -267,17 +271,43 @@ export function DataTable<T extends Record<string, any>>({
                 </TableCell>
               </TableRow>
             ) : (
-              displayedData.map((row, index) => (
-                <TableRow key={index} className="border-y border-muted/30 ">
-                  {columns.map((column) => (
-                    <TableCell key={column.key} className={column.className}>
-                      {column.render
-                        ? column.render(row[column.key], row)
-                        : row[column.key]}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              displayedData.map((row, index) => {
+                const currentGroup = groupBy ? groupBy(row) : null;
+                const prevGroup =
+                  index > 0 && groupBy
+                    ? groupBy(displayedData[index - 1])
+                    : null;
+                const showHeader = groupBy && currentGroup !== prevGroup;
+
+                return (
+                  <React.Fragment key={index}>
+                    {showHeader && (
+                      <TableRow className="bg-default-100/50 hover:bg-default-100/50 border-0">
+                        <TableCell
+                          colSpan={columns.length}
+                          className="py-2 text-xs font-semibold text-muted uppercase tracking-wider"
+                        >
+                          {renderGroupHeader
+                            ? renderGroupHeader(currentGroup!)
+                            : currentGroup}
+                        </TableCell>
+                      </TableRow>
+                    )}
+                    <TableRow className="border-y border-muted/30 ">
+                      {columns.map((column) => (
+                        <TableCell
+                          key={column.key}
+                          className={column.className}
+                        >
+                          {column.render
+                            ? column.render(row[column.key], row)
+                            : row[column.key]}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </React.Fragment>
+                );
+              })
             )}
           </TableBody>
         </Table>
