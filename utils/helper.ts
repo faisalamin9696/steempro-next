@@ -54,7 +54,7 @@ export const calculateVoteValue = (
 export function validateHost(host?: string | null) {
   if (!host) return false;
   const validHosts = JSON.parse(
-    process.env.NEXT_PUBLIC_ALLOWED_ORIGINS ?? `[]`,
+    process.env.ALLOWED_ORIGINS ?? `[]`,
   ) as string[];
 
   return validHosts.includes(host);

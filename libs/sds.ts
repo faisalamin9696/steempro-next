@@ -308,6 +308,7 @@ class SdsApi {
       | "withdraw_vesting"
       | "fill_vesting_withdraw"
       | "claim_reward_balance"
+      | "custom_json"
       | "all" = "all",
     limit: number = 2500,
     offset: number = 0,
