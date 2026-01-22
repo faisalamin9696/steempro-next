@@ -75,6 +75,10 @@ export default async function RootLayout({
               method: "POST",
             },
             {
+              path: "/api/price",
+              method: "POST",
+            },
+            {
               path: "/api/chat",
               method: "POST",
             },

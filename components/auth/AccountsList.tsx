@@ -32,6 +32,7 @@ const AccountCard = ({
       isPressable
       fullWidth
       isDisabled={isDisabled}
+      as={"div"}
     >
       <div className="flex flex-wrap items-start gap-4 justify-between w-full">
         <div className="flex items-start gap-4">

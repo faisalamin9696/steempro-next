@@ -2,15 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { rateLimiter } from "@/libs/rate-limit";
 import { translate } from "google-translate-api-x";
 import { checkBotId } from "botid/server";
+import { validateHost } from "@/utils/helper";
 
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
     const verification = await checkBotId();
 
-    if (verification.isBot) {
+    if (verification.isBot || !validateHost(req.headers.get("host"))) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
-    const { text, targetLang, sourceLang = "auto" } = await request.json();
+    const { text, targetLang, sourceLang = "auto" } = await req.json();
 
     if (!text || !targetLang) {
       return NextResponse.json(
@@ -21,9 +22,9 @@ export async function POST(request: NextRequest) {
 
     // Get client IP address
     const ipAddress =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-      request.headers.get("x-real-ip") ||
-      request?.["ip"] ||
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      req.headers.get("x-real-ip") ||
+      req?.["ip"] ||
       "unknown";
 
     // Clean IPv6 localhost

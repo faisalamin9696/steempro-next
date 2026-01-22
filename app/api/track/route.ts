@@ -3,12 +3,13 @@ import { rateLimiter } from "@/libs/rate-limit";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/libs/supabase/server";
 import { checkBotId } from "botid/server";
+import { validateHost } from "@/utils/helper";
 
 export async function POST(req: NextRequest) {
   try {
     const verification = await checkBotId();
 
-    if (verification.isBot) {
+    if (verification.isBot|| !validateHost(req.headers.get("host"))) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
     const { author, permlink } = await req.json();

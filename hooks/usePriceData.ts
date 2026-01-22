@@ -16,7 +16,7 @@ export const usePriceData = () => {
     setError(null);
 
     try {
-      const res = await fetch("/api/price", { signal });
+      const res = await fetch("/api/price", { signal, method: "POST" });
 
       if (!res.ok) {
         throw new Error("Request failed");

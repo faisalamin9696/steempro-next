@@ -44,7 +44,7 @@ function ProposalPage({ data, post }: { data: Proposal; post: Post }) {
       />
 
       <div className="w-full relative">
-        <PostPage data={post} />
+        <PostPage data={post} key={`${post.author}-${post.permlink}`} />
       </div>
       {isProposalDetails && (
         <ProposalDetailModal

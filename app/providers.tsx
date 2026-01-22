@@ -15,6 +15,7 @@ import { MobileNavbar } from "@/components/navbar/MobileNavbar";
 import { Session } from "next-auth";
 import ScrollToTop from "@/components/ui/ScrollToTop";
 import LoadingCard from "@/components/ui/LoadingCard";
+import { ScrollToTopButton } from "@/components/ScrollToTopButton";
 
 function Providers({
   children,
@@ -61,6 +62,7 @@ function Providers({
                         {children}
                       </span>
                     </div>
+                    <ScrollToTopButton />
                   </div>
                 ) : (
                   <LoadingCard />

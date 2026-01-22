@@ -6,6 +6,7 @@ import { useState } from "react";
 import LoginModal from "./LoginModal";
 import { useAccountsContext } from "./AccountsContext";
 import { Plus, UserCog } from "lucide-react";
+import { toast } from "sonner";
 
 interface Props extends Pick<ModalProps, "isOpen" | "onOpenChange"> {}
 
@@ -65,7 +66,10 @@ function AuthModal(props: Props) {
       <LoginModal
         isOpen={showLoginModal}
         onOpenChange={setShowLoginModal}
-        onLoginSuccess={() => setShowLoginModal(false)}
+        onLoginSuccess={() => {
+          setShowLoginModal(false);
+          toast.success("Success", { description: "Logged in successfully" });
+        }}
       />
     </>
   );

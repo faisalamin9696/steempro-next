@@ -90,7 +90,7 @@ const TagsInput = ({ tags, onChange, ...props }: TagsInputProps) => {
         <Input
           size="lg"
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onValueChange={setInputValue}
           onKeyDown={handleKeyDown}
           placeholder="Add tags (press Enter or comma)"
           classNames={{ inputWrapper: "border border-border" }}

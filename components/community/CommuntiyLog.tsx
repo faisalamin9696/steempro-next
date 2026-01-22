@@ -73,7 +73,7 @@ function CommuntiyLog({ account }: { account: string }) {
   return isLoading || !data ? (
     <LoadingStatus />
   ) : (
-    <Card className="card max-h-100 overflow-auto">
+    <Card className="card max-h-svh overflow-auto">
       <CardBody>
         <DataTable columns={columns} data={data} />
       </CardBody>

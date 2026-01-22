@@ -72,7 +72,7 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
       <div className={twMerge("hidden lg:block", headerClass)}>
         <BackgroundImage
           fetchPriority="high"
-          className="border-x-2 border-t-2 border-card rounded-t-xl"
+          className="border-x-2 border-t-2 border-transparent rounded-t-2xl"
           src={proxifyImageUrl(cover_image)}
           height={100}
           width="100%"

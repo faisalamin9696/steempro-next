@@ -19,7 +19,7 @@ export const toBase64 = (file: File) =>
     reader.readAsDataURL(file);
     reader.onload = () => {
       resolve(
-        reader?.result?.toString().replace(/^data:image\/?[A-z]*;base64,/, "")
+        reader?.result?.toString().replace(/^data:image\/?[A-z]*;base64,/, ""),
       );
     };
     reader.onerror = (error) => reject(error);
@@ -34,7 +34,7 @@ export const calculateVoteValue = (
   weight: number,
   fund_per_rshare: number,
   median_price: number,
-  isDownvote: boolean = false
+  isDownvote: boolean = false,
 ): number => {
   const totalVests = account.vests_own + account.vests_in - account.vests_out;
   const vp = isDownvote
@@ -50,3 +50,12 @@ export const calculateVoteValue = (
 
   return full_vote_value || 0;
 };
+
+export function validateHost(host?: string | null) {
+  if (!host) return false;
+  const validHosts = JSON.parse(
+    process.env.NEXT_PUBLIC_ALLOWED_ORIGINS ?? `[]`,
+  ) as string[];
+
+  return validHosts.includes(host);
+}

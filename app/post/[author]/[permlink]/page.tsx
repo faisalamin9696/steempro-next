@@ -238,6 +238,7 @@ export default function PostPage({
                     {tags.map((item: string) => {
                       return (
                         <Chip
+                          key={item}
                           as={Link}
                           href={`/trending/${item}`}
                           color="secondary"

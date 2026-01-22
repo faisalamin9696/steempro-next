@@ -55,7 +55,7 @@ export const WalletHistory = ({ username }: WalletHistoryProps) => {
 
   const { data, isLoading } = useSWR(
     username ? `account-hostory-${username}-${typeFilter}` : null,
-    () => sdsApi.getAccountHistory(username, typeFilter)
+    () => sdsApi.getAccountHistory(username, typeFilter),
   );
 
   const filteredHistory = useMemo(() => {
@@ -122,7 +122,9 @@ export const WalletHistory = ({ username }: WalletHistoryProps) => {
       searchable: true,
       className: "font-mono w-full",
       render(value, row) {
-        return <OperationItem key={row.id} operation={row} />;
+        return (
+          <OperationItem key={`${row.id}-${row.block_num}`} operation={row} />
+        );
       },
     },
 

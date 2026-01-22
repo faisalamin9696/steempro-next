@@ -28,7 +28,7 @@ async function layout({ children, params }: LayoutProps) {
         endClass="w-[320px] min-w-[320px] hidden lg:block"
         end={<ProfileCard account={account} className="card" />}
       >
-        {<PostPage data={post} />}
+        {<PostPage key={`${author}-${permlink}`} data={post} />}
       </MainWrapper>
     </Suspense>
   );
