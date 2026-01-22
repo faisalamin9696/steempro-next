@@ -1,16 +1,15 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Modal,
   ModalContent,
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Button,
-  Card,
-  CardBody,
-} from "@heroui/react";
+} from "@heroui/modal";
+import { Card, CardBody } from "@heroui/card";
+import { Button } from "@heroui/button";
 import { ShieldCheck, RefreshCcw, LogIn, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
 import { signOut } from "next-auth/react";

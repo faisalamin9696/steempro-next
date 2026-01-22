@@ -7,7 +7,7 @@ import SUsername from "../ui/SUsername";
 import PostOptionButton from "./PostOptionButton";
 import { Pin } from "lucide-react";
 import TranslateButton from "../TranslateButton";
-import { Image } from "@heroui/react";
+import { Image } from "@heroui/image";
 import { parsePostMeta } from "@/utils/user";
 import { getAppDetails } from "@/utils/app";
 
@@ -46,7 +46,11 @@ function PostHeader({
   } = comment;
 
   const { app } = parsePostMeta(json_metadata);
-  const { name: appName, icon: appIcon } = getAppDetails(app);
+  const {
+    name: appName,
+    icon: appIcon,
+    website: appWebsite,
+  } = getAppDetails(app);
 
   const communityName = community || category;
 
@@ -82,15 +86,17 @@ function PostHeader({
           <div className="flex flex-row gap-2 items-center">
             {appName && appIcon && (
               <div className=" opacity-80">
-                <Image
-                  title={`Posted via ${appName}`}
-                  src={appIcon}
-                  alt={appName}
-                  width={14}
-                  height={14}
-                  className="min-w-[14px] bg-foreground/10 rounded-full"
-                  removeWrapper
-                />
+                <Link href={appWebsite} target="_blank">
+                  <Image
+                    title={`Posted via ${appName}`}
+                    src={appIcon}
+                    alt={appName}
+                    width={14}
+                    height={14}
+                    className="min-w-[14px] bg-foreground/10 rounded-full"
+                    removeWrapper
+                  />
+                </Link>
               </div>
             )}
             <PostOptionButton

@@ -1,7 +1,7 @@
 "use client";
 
 import { useAppSelector } from "@/hooks/redux/store";
-import { Button, Card, CardHeader, Divider } from "@heroui/react";
+import { Button } from "@heroui/button";
 import { Copy, ShieldCheck, Key, Check } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";

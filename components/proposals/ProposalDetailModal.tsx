@@ -21,7 +21,8 @@ import {
 } from "@/hooks/useProposals";
 import { getFundingBadge, getProposalStatusIcon } from "./ProposalItem";
 import { useAppSelector } from "@/hooks/redux/store";
-import { Chip, Tab, Tabs } from "@heroui/react";
+import { Tab, Tabs } from "@heroui/tabs";
+import { Chip } from "@heroui/chip";
 import { useState } from "react";
 import LoadingStatus from "../LoadingStatus";
 import { ColumnDef, DataTable } from "../ui/data-table";
@@ -40,7 +41,7 @@ const ProposalDetailModal = ({
 }) => {
   const { vestsToSteem } = useSteemUtils();
   const proposalsData = useAppSelector(
-    (state) => state.proposalsReducer.values
+    (state) => state.proposalsReducer.values,
   );
   const returnProposal = proposalsData.find((p) => p.proposal_id === 0);
   const [activeTab, setActiveTab] = useState<string>("info");
@@ -71,8 +72,8 @@ const ProposalDetailModal = ({
         const title = isInvalidProxy
           ? `proxy to @${row.proxy} who didn't vote`
           : isValidProxy
-          ? `Proxy to @${row.proxy}`
-          : undefined;
+            ? `Proxy to @${row.proxy}`
+            : undefined;
 
         return (
           <div className="flex flex-col items-start gap-2">
@@ -82,7 +83,7 @@ const ProposalDetailModal = ({
               <span
                 className={twMerge(
                   "text-[10px] sm:text-xs text-muted leading-tight",
-                  isInvalidProxy && "text-warning font-medium italic"
+                  isInvalidProxy && "text-warning font-medium italic",
                 )}
               >
                 {title}
@@ -137,8 +138,8 @@ const ProposalDetailModal = ({
                   badge === "Funded"
                     ? "text-green-500 border-green-500/30"
                     : badge === "Not Funded"
-                    ? "text-primary border-primary/30"
-                    : "text-warning border-warning/30"
+                      ? "text-primary border-primary/30"
+                      : "text-warning border-warning/30"
                 }
                 classNames={{
                   content: "flex flex-row gap-1 items-center px-1",

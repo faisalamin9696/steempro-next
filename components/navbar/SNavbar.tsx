@@ -11,7 +11,8 @@ import { useAppSelector } from "@/hooks/redux/store";
 import SAvatar from "../ui/SAvatar";
 import SDrawer from "./SDrawer";
 import SPopover from "../ui/SPopover";
-import { Chip, Spinner } from "@heroui/react";
+import {  Chip } from "@heroui/chip";
+import { Spinner } from "@heroui/spinner";
 import LogoutButton from "../ui/LogoutButton";
 import { useAccountsContext } from "../auth/AccountsContext";
 import {
@@ -64,9 +65,12 @@ function SNavbar() {
               src="/logo-default.png"
               alt="SteemPro"
               priority
-              height={32}
-              width={140}
+              height={30}
+              width={150}
               className="hidden md:block w-auto h-8"
+              style={{
+                width: "auto",
+              }}
             />
 
             <Image
@@ -128,7 +132,7 @@ function SNavbar() {
                 showOutline={unreadCount > 0}
                 classNames={{ badge: "right-2 top-2" }}
                 className={twMerge(
-                  "z-0"
+                  "z-0",
                   // commonData.unread_count_chat > 0 &&
                   //   "border-green-400 animate-pulse border-2"
                 )}
@@ -175,10 +179,10 @@ function SNavbar() {
                     current?.loginMethod === "keychain"
                       ? "primary"
                       : current?.type === "active"
-                      ? "success"
-                      : current?.type === "posting"
-                      ? "warning"
-                      : "default"
+                        ? "success"
+                        : current?.type === "posting"
+                          ? "warning"
+                          : "default"
                   }
                 />
               }

@@ -1,7 +1,8 @@
-import React from "react";
 import SModal from "./SModal";
-import { Button, Input, Tooltip } from "@heroui/react";
-import { Copy, Check, Send, Share2 } from "lucide-react";
+import { Tooltip } from "@heroui/tooltip";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+import { Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 

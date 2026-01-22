@@ -1,23 +1,20 @@
 "use client";
 
-import MainWrapper from "@/components/wrappers/MainWrapper";
 import { Constants } from "@/constants";
 import { Button } from "@heroui/button";
-import { Metadata } from "next";
 import Link from "next/link";
 import {
   Shield,
   Lock,
   Eye,
-  FileText,
   Globe,
   AlertCircle,
   Mail,
   Info,
   FileCheck,
 } from "lucide-react";
-import PageHeader from "@/components/ui/PageHeader";
-import { Card, CardBody, CardHeader, Divider } from "@heroui/react";
+import { Card, CardBody, CardHeader } from "@heroui/card";
+import { Divider } from "@heroui/divider";
 
 export default function PrivacyPolicyPage() {
   return (

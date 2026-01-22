@@ -2,18 +2,13 @@ import { useMemo, useState, useEffect } from "react";
 import { ArrowUpRight, Repeat } from "lucide-react";
 import { toast } from "sonner";
 import SModal from "../ui/SModal";
-import {
-  Alert,
-  Button,
-  Card,
-  Checkbox,
-  Input,
-  Select,
-  SelectItem,
-  Tab,
-  Tabs,
-  Textarea,
-} from "@heroui/react";
+import { Select, SelectItem } from "@heroui/select";
+import { Input, Textarea } from "@heroui/input";
+import { Card } from "@heroui/card";
+import { Button } from "@heroui/button";
+import { Checkbox } from "@heroui/checkbox";
+import { Tabs, Tab } from "@heroui/tabs";
+import { Alert } from "@heroui/alert";
 import SInput from "../ui/SInput";
 import { handleSteemError } from "@/utils/steemApiError";
 import { steemApi } from "@/libs/steem";
@@ -115,7 +110,7 @@ export const TransferModal = ({
         memo,
         toSavings,
         key,
-        useKeychain
+        useKeychain,
       );
 
       // Update account state
@@ -160,14 +155,14 @@ export const TransferModal = ({
         session?.user?.name!,
         `${parseFloat(convertAmount).toFixed(3)} SBD`,
         key,
-        useKeychain
+        useKeychain,
       );
 
       dispatch(
         addLoginHandler({
           ...lognData,
           balance_sbd: lognData.balance_sbd - Number(convertAmount),
-        })
+        }),
       );
 
       toast.success("Conversion Initiated", {
@@ -184,7 +179,7 @@ export const TransferModal = ({
   // Determine if warnings should be shown
   const shouldShowWarnings = useMemo(() => {
     return Object.values(validationResult.transferChecks).some(
-      (check) => check
+      (check) => check,
     );
   }, [validationResult.transferChecks]);
 

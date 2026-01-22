@@ -14,7 +14,7 @@ import OperationItem from "./OperationItem";
 import moment from "moment";
 import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
-import { Select, SelectItem } from "@heroui/react";
+import { Select, SelectItem } from "@heroui/select";
 import useSWR from "swr";
 import { sdsApi } from "@/libs/sds";
 import LoadingStatus from "../LoadingStatus";

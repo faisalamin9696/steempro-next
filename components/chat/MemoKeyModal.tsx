@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import SModal from "../ui/SModal";
-import { Input, Button, Alert } from "@heroui/react";
+import { Alert } from "@heroui/alert";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
 import { Lock, Key } from "lucide-react";
 import { steemApi } from "@/libs/steem";
 import { toast } from "sonner";
@@ -40,7 +42,7 @@ function MemoKeyModal({ isOpen, onOpenChange, username, onSuccess }: Props) {
         onOpenChange(false);
       } else {
         toast.error(
-          "The provided key is not a valid Memo, Active, or Owner key for this account."
+          "The provided key is not a valid Memo, Active, or Owner key for this account.",
         );
       }
     } catch (error: any) {

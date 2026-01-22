@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { Users } from "lucide-react";
 import SModal from "../ui/SModal";
-import { Alert, Button, Checkbox, Input } from "@heroui/react";
+import {  Checkbox } from "@heroui/checkbox";
+import { Alert } from "@heroui/alert";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
 import SInput from "../ui/SInput";
 import { useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";

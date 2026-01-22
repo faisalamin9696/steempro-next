@@ -2,7 +2,11 @@ import { useState, useEffect } from "react";
 import { Zap } from "lucide-react";
 import { toast } from "sonner";
 import SModal from "../ui/SModal";
-import { Alert, Button, Card, Checkbox, Input } from "@heroui/react";
+import { Alert } from "@heroui/alert";
+import { Button } from "@heroui/button";
+import { Card } from "@heroui/card";
+import { Input } from "@heroui/input";
+import { Checkbox } from "@heroui/checkbox";
 import { handleSteemError } from "@/utils/steemApiError";
 import { steemApi } from "@/libs/steem";
 import { useSession } from "next-auth/react";
@@ -28,7 +32,7 @@ export const PowerUpModal = ({
   const [amount, setAmount] = useState("");
   const { data: session } = useSession();
   let [recipient, setRecipient] = useState(
-    initialRecipient ?? session?.user?.name ?? ""
+    initialRecipient ?? session?.user?.name ?? "",
   );
   const [isPending, setIsPending] = useState(false);
   const dispatch = useAppDispatch();
@@ -55,7 +59,7 @@ export const PowerUpModal = ({
         recipient,
         Number(amount),
         key,
-        useKeychain
+        useKeychain,
       );
 
       dispatch(
@@ -65,7 +69,7 @@ export const PowerUpModal = ({
           vests_own: isMe
             ? loginData.vests_own + steemToVests(amount)
             : loginData.vests_own,
-        })
+        }),
       );
 
       toast.success("Power Up Initiated", {

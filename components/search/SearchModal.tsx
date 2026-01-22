@@ -1,7 +1,11 @@
 "use client";
 
 import SModal from "../ui/SModal";
-import { Tabs, Tab, Spinner, Chip, Divider, Input } from "@heroui/react";
+import { Tabs, Tab } from "@heroui/tabs";
+import { Spinner } from "@heroui/spinner";
+import { Chip } from "@heroui/chip";
+import { Divider } from "@heroui/divider";
+import { Input } from "@heroui/input";
 import {
   Search,
   User,
@@ -65,7 +69,7 @@ const SearchModal = ({ isOpen, onOpenChange, onClose }: SearchModalProps) => {
         if (tab === "accounts") {
           const accounts =
             (await sdsApi.getAccountsByPrefix(
-              normalizeUsername(trimmedQuery)
+              normalizeUsername(trimmedQuery),
             )) || [];
           setResults((prev) => ({ ...prev, accounts }));
         } else if (tab === "posts") {
@@ -76,7 +80,7 @@ const SearchModal = ({ isOpen, onOpenChange, onClose }: SearchModalProps) => {
                 trimmedAuthor,
                 trimmedQuery,
                 null,
-                250
+                250,
               )) || [];
           } else {
             posts =
@@ -91,7 +95,7 @@ const SearchModal = ({ isOpen, onOpenChange, onClose }: SearchModalProps) => {
                 trimmedAuthor,
                 trimmedQuery,
                 null,
-                250
+                250,
               )) || [];
           } else {
             comments =
@@ -105,7 +109,7 @@ const SearchModal = ({ isOpen, onOpenChange, onClose }: SearchModalProps) => {
         setIsLoading(false);
       }
     },
-    [] // Removed [results] dependency to fix infinite loop
+    [], // Removed [results] dependency to fix infinite loop
   );
 
   useEffect(() => {
@@ -218,7 +222,7 @@ const SearchModal = ({ isOpen, onOpenChange, onClose }: SearchModalProps) => {
       placement="top"
       scrollBehavior="inside"
       className="bg-linear-to-b from-transparent to-default-50/30"
-      classNames={{ body: "", header: "sm:py-0", closeButton:'sm:hidden' }}
+      classNames={{ body: "", header: "sm:py-0", closeButton: "sm:hidden" }}
     >
       {(onClose) => (
         <div className="flex flex-col gap-3">

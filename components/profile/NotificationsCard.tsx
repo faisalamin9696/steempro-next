@@ -8,12 +8,13 @@ import {
   CheckCheck,
   Filter,
   Repeat,
-  LinkIcon,
   Link2,
 } from "lucide-react";
 import { DataTable, ColumnDef } from "@/components/ui/data-table";
 import { useNotifications, CustomNotification } from "@/hooks/useNotifications";
-import { Button, Chip, Select, SelectItem } from "@heroui/react";
+import { Select, SelectItem } from "@heroui/select";
+import { Button } from "@heroui/button";
+import { Chip } from "@heroui/chip";
 import moment from "moment";
 import Link from "next/link";
 import SAvatar from "../ui/SAvatar";
@@ -54,7 +55,7 @@ const NotificationsCard = ({ username }: { username: string }) => {
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
   const { globalProps } = useSteemUtils();
   const unreadCount = useAppSelector(
-    (s) => s.commonReducer.values
+    (s) => s.commonReducer.values,
   ).unread_notifications_count;
   const { data: session } = useSession();
 
@@ -71,7 +72,7 @@ const NotificationsCard = ({ username }: { username: string }) => {
         color: FALLBACK_COLOR,
         label: type,
       },
-    []
+    [],
   );
 
   // Better filtering + sorting (no mutation)
@@ -166,7 +167,7 @@ const NotificationsCard = ({ username }: { username: string }) => {
         },
       },
     ],
-    [getConfig, rewardFactor]
+    [getConfig, rewardFactor],
   );
 
   return (

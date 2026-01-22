@@ -9,7 +9,7 @@ import NsfwOverlay from "../nsfw/NsfwOverlay";
 import { hasNsfwTag } from "@/utils";
 import { getThumbnail } from "@/utils/image";
 import { twMerge } from "tailwind-merge";
-import { Alert } from "@heroui/react";
+import { Alert } from "@heroui/alert";
 import { CircleSlash2 } from "lucide-react";
 
 interface Props {

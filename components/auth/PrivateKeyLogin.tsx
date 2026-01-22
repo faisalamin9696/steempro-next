@@ -1,4 +1,6 @@
-import { Alert, Button, Input } from "@heroui/react";
+import { Alert } from "@heroui/alert";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
 import { useState } from "react";
 import { useAccountsContext } from "./AccountsContext";
 import { steemApi } from "@/libs/steem";
@@ -48,7 +50,7 @@ function PrivateKeyLogin({ onSuccess }: { onSuccess: () => void }) {
           const derivedKey = PrivateKey.fromLogin(
             username,
             key,
-            "active"
+            "active",
           ).toString();
           keyToVerify = derivedKey;
           toast.info("Master Password detected", {
@@ -114,7 +116,7 @@ function PrivateKeyLogin({ onSuccess }: { onSuccess: () => void }) {
         username,
         key,
         pin,
-        (verifiedType as "posting" | "active" | "memo") || "posting"
+        (verifiedType as "posting" | "active" | "memo") || "posting",
       );
       onSuccess();
     } catch (e: any) {

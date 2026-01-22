@@ -1,18 +1,15 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Card, CardBody, Tabs, Tab, Chip, Divider } from "@heroui/react";
-import {
-  TrendingUp,
-  History,
-  ClipboardList,
-  Plus,
-  ChartCandlestick,
-} from "lucide-react";
+import { Card, CardBody } from "@heroui/card";
+import { Chip } from "@heroui/chip";
+import { Divider } from "@heroui/divider";
+import { Tabs, Tab } from "@heroui/tabs";
+
+import { TrendingUp, History, ClipboardList, Plus } from "lucide-react";
 import { sdsApi } from "@/libs/sds";
 import { useSession } from "next-auth/react";
 import useSWR from "swr";
-import SCard from "@/components/ui/SCard";
 import MarketStats from "@/components/market/MarketStats";
 import MarketCandleChart from "@/components/market/MarketCandleChart";
 import OrderBookTable from "@/components/market/OrderBookTable";
@@ -30,7 +27,7 @@ export default function MarketPage() {
     () => sdsApi.getTicker(),
     {
       refreshInterval: 5000,
-    }
+    },
   );
 
   const { data: book, mutate: mutateBook } = useSWR(
@@ -38,18 +35,18 @@ export default function MarketPage() {
     () => sdsApi.getOrderBook(30),
     {
       refreshInterval: 10000,
-    }
+    },
   );
 
   const { data: openOrders, mutate: mutateOrders } = useSWR(
     session?.user?.name ? `market-open-orders-${session.user.name}` : null,
     () => sdsApi.getOpenOrders(session?.user?.name || ""),
-    { refreshInterval: 15000 }
+    { refreshInterval: 15000 },
   );
 
   const { data: account } = useSWR(
     session?.user?.name ? `account-market-${session.user.name}` : null,
-    () => sdsApi.getAccountExt(session?.user?.name || "")
+    () => sdsApi.getAccountExt(session?.user?.name || ""),
   );
 
   const { data: history } = useSWR(
@@ -57,7 +54,7 @@ export default function MarketPage() {
     () => sdsApi.getTradeHistory(40),
     {
       refreshInterval: 10000,
-    }
+    },
   );
 
   const { data: marketHistory, mutate: mutateHistory } = useSWR(
@@ -65,7 +62,7 @@ export default function MarketPage() {
     () => sdsApi.getMarketHistory(3600, 24),
     {
       refreshInterval: 60000,
-    }
+    },
   );
 
   const balances = useMemo(
@@ -73,7 +70,7 @@ export default function MarketPage() {
       steem: account?.balance_steem || 0,
       sbd: account?.balance_sbd || 0,
     }),
-    [account]
+    [account],
   );
 
   const refreshAll = () => {

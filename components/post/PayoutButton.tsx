@@ -7,7 +7,7 @@ import SUsername from "../ui/SUsername";
 import { Constants } from "@/constants";
 import useSWR from "swr";
 import { sdsApi } from "@/libs/sds";
-import { Spinner } from "@heroui/react";
+import { Spinner } from "@heroui/spinner";
 import { useState } from "react";
 
 const ICON_SIZE = 20;

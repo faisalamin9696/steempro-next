@@ -9,13 +9,16 @@ import {
   getChatLastRead,
 } from "@/libs/supabase/chat";
 import { useSession } from "next-auth/react";
-import { ScrollShadow, Input, Button, Badge, Spinner } from "@heroui/react";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+import { ScrollShadow } from "@heroui/scroll-shadow";
+import { Badge } from "@heroui/badge";
+import { Spinner } from "@heroui/spinner";
 import moment from "moment";
 import { Send, MessageSquare, ChevronLeft, Bell } from "lucide-react";
 import SAvatar from "../ui/SAvatar";
-import secureLocalStorage from "react-secure-storage";
 import { Memo } from "@steempro/dsteem";
-import { getChatMemoKey, secureLocalStorageFresh } from "@/utils/user";
+import { getChatMemoKey } from "@/utils/user";
 import useRealtimeUserMessages from "../../hooks/useRealtimeUserMessages";
 import useRealtimeCommunityMsgs from "../../hooks/useRealtimeCommunityMessages";
 import { useCallback } from "react";

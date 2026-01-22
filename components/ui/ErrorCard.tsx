@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   AlertCircle,
@@ -10,7 +10,8 @@ import {
   ChevronUp,
   ShieldAlert,
 } from "lucide-react";
-import { Button, Card, CardBody, CardFooter, Divider } from "@heroui/react";
+import { Card, CardBody, CardFooter } from "@heroui/card";
+import { Button } from "@heroui/button";
 import Link from "next/link";
 
 interface ErrorCardProps {

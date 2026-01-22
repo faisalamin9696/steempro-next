@@ -5,7 +5,8 @@ import { steemApi } from "@/libs/steem";
 import { handleSteemError } from "@/utils/steemApiError";
 import { toast } from "sonner";
 import SModal from "../ui/SModal";
-import { Button, Alert } from "@heroui/react";
+import { Alert } from "@heroui/alert";
+import { Button } from "@heroui/button";
 import { ShieldCheck } from "lucide-react";
 import { useAccountsContext } from "../auth/AccountsContext";
 import { useAppSelector } from "@/hooks/redux/store";
@@ -36,7 +37,7 @@ export default function RecoveryUpdateModal({
         loginData.name,
         newRecovery,
         key,
-        useKeychain
+        useKeychain,
       );
       toast.success("Recovery Account Change Initiated", {
         description: `Request to change recovery account to @${newRecovery} has been broadcasted.`,

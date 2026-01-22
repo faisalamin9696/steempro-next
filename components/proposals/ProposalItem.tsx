@@ -1,4 +1,5 @@
-import { Card, CardBody, Chip } from "@heroui/react";
+import { Card, CardBody } from "@heroui/card";
+import { Chip } from "@heroui/chip";
 import Link from "next/link";
 import { formatProposalVotes } from "@/hooks/useProposals";
 import ProposalActions from "./ProposalActions";
@@ -18,14 +19,14 @@ export default function ProposalItem({ proposal, onView }: Props) {
   const { vestsToSteem } = useSteemUtils();
 
   const proposalsData = useAppSelector(
-    (state) => state.proposalsReducer.values
+    (state) => state.proposalsReducer.values,
   );
   const returnProposal = proposalsData.find((p) => p.proposal_id === 0);
 
   const daily_pay = parseFloat(proposal.daily_pay.split(" SBD")[0]);
   const durationInDays = moment(proposal.end_date).diff(
     moment(proposal.start_date),
-    "days"
+    "days",
   );
   const totalPayout = durationInDays * daily_pay;
 
@@ -39,7 +40,10 @@ export default function ProposalItem({ proposal, onView }: Props) {
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2 mb-2">
                 <h3 className="font-semibold text-default-900 text-sm sm:text-base">
-                  <Link className="transition-colors hover:text-blue-500" href={`/proposals/${proposal.id}`}>
+                  <Link
+                    className="transition-colors hover:text-blue-500"
+                    href={`/proposals/${proposal.id}`}
+                  >
                     {proposal.subject}
                   </Link>
                 </h3>
@@ -123,7 +127,7 @@ export default function ProposalItem({ proposal, onView }: Props) {
 
 export const isProposalFunded = (
   proposal: Proposal,
-  returnProposal?: Proposal
+  returnProposal?: Proposal,
 ): boolean => {
   if (!returnProposal) return false;
   try {
@@ -144,7 +148,7 @@ const getDailyPayColor = (dailyPay: string) => {
 
 export const getFundingBadge = (
   proposal: Proposal,
-  returnProposal?: Proposal
+  returnProposal?: Proposal,
 ) => {
   if (proposal.proposal_id === 0) {
     return "Funding Threshold";
@@ -162,15 +166,15 @@ export const getFundingBadge = (
 
 export const getProposalStatusIcon = (
   proposal: Proposal,
-  returnProposal?: Proposal
+  returnProposal?: Proposal,
 ) => {
   const statusLabel = getFundingBadge(proposal, returnProposal);
   const statusColor =
     statusLabel === "Funded"
       ? "text-success"
       : statusLabel === "Not Funded"
-      ? "text-primary"
-      : "text-warning";
+        ? "text-primary"
+        : "text-warning";
   return statusLabel === "Funded" ? (
     <CheckCircle size={16} className={statusColor} />
   ) : statusLabel === "Not Funded" ? (

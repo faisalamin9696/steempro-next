@@ -1,5 +1,6 @@
 import SModal from "../ui/SModal";
-import { ModalProps, Tab, Tabs } from "@heroui/react";
+import { Tab, Tabs } from "@heroui/tabs";
+import { ModalProps } from "@heroui/modal";
 import PrivateKeyLogin from "./PrivateKeyLogin";
 import KeychainLogin from "./KeychainLogin";
 import { KeySquare } from "lucide-react";

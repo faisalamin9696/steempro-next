@@ -3,7 +3,7 @@ import { useSession } from "next-auth/react";
 import useSWR from "swr";
 import { sdsApi } from "@/libs/sds";
 import SPopover from "../ui/SPopover";
-import { Button } from "@heroui/react";
+import { Button } from "@heroui/button";
 import { Vote } from "lucide-react";
 
 export default function ProposalVoteButton({

@@ -9,8 +9,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cn, Input } from "@heroui/react";
+import { Input } from "@heroui/input";
 import { AsyncUtils } from "@/utils/async.utils";
+import { twMerge } from "tailwind-merge";
 
 export interface ColumnDef<T> {
   key: string;
@@ -191,7 +192,7 @@ export function DataTable<T extends Record<string, any>>({
         }
       }
     },
-    [hasMore, loadMoreCount, loadMore, isFetching, data]
+    [hasMore, loadMoreCount, loadMore, isFetching, data],
   );
 
   useEffect(() => {
@@ -219,7 +220,7 @@ export function DataTable<T extends Record<string, any>>({
   };
 
   return (
-    <div className={cn("space-y-3", className)}>
+    <div className={twMerge("space-y-3", className)}>
       {hasSearch && (
         <Input
           placeholder={searchPlaceholder}
@@ -238,10 +239,10 @@ export function DataTable<T extends Record<string, any>>({
               {columns.map((column) => (
                 <TableHead
                   key={column.key}
-                  className={cn(
+                  className={twMerge(
                     column.sortable &&
                       "cursor-pointer select-none hover:text-foreground transition-colors",
-                    column.className
+                    column.className,
                   )}
                   onClick={
                     column.sortable ? () => handleSort(column.key) : undefined

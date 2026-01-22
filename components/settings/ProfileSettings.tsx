@@ -1,15 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import {
-  Card,
-  CardBody,
-  Input,
-  Button,
-  Textarea,
-  CardHeader,
-  Avatar,
-} from "@heroui/react";
+import { useState, useEffect } from "react";
+import { Avatar } from "@heroui/avatar";
+import { Input, Textarea } from "@heroui/input";
+import { Button } from "@heroui/button";
 import {
   User,
   Globe,

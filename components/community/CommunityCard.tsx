@@ -19,7 +19,7 @@ import UsersModal from "../ui/UsersModal";
 import { useState } from "react";
 import SAvatar from "../ui/SAvatar";
 import SUsername from "../ui/SUsername";
-import { Badge, Chip } from "@heroui/react";
+import {  Chip } from "@heroui/chip";
 
 const ICON_SIZE = 20;
 

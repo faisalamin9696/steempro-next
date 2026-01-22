@@ -1,4 +1,6 @@
-import { Button, Card, Chip } from "@heroui/react";
+import { Button } from "@heroui/button";
+import { Card } from "@heroui/card";
+import { Chip } from "@heroui/chip";
 import SAvatar from "../ui/SAvatar";
 import { useAccountsContext } from "./AccountsContext";
 import SModal from "../ui/SModal";

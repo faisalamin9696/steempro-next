@@ -1,6 +1,7 @@
 import { useSdsList } from "@/hooks/sds-client-hooks";
 import { ColumnDef, DataTable } from "../ui/data-table";
-import { Card, CardBody, Chip, Spinner } from "@heroui/react";
+import { Card, CardBody } from "@heroui/card";
+import {  Chip } from "@heroui/chip";
 import Link from "next/link";
 import SUsername from "../ui/SUsername";
 import moment from "moment";

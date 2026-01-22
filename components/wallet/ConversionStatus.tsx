@@ -1,7 +1,7 @@
 "use client";
 
 import { sdsApi } from "@/libs/sds";
-import { Alert } from "@heroui/react";
+import { Alert } from "@heroui/alert";
 import { RefreshCw } from "lucide-react";
 import moment from "moment";
 import useSWR from "swr";

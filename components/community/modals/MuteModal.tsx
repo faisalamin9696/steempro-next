@@ -1,10 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Button,
-  Input,
-} from "@heroui/react";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
 import SModal from "@/components/ui/SModal";
 
 interface MuteModalProps {

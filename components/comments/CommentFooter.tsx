@@ -1,4 +1,4 @@
-import { ButtonGroup, Button } from "@heroui/react";
+import { ButtonGroup, Button } from "@heroui/button";
 import { MessageSquare, ChevronUp, ChevronDown } from "lucide-react";
 import PostOptionButton from "../post/PostOptionButton";
 import PostVoteButton from "../post/PostVoteButton";

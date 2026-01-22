@@ -1,14 +1,8 @@
 "use client";
 
-import {
-  Card,
-  CardBody,
-  Select,
-  SelectItem,
-  Switch,
-  Slider,
-  CardHeader,
-} from "@heroui/react";
+import { Select, SelectItem } from "@heroui/select";
+import { Switch } from "@heroui/switch";
+import { Slider } from "@heroui/slider";
 import {
   Network,
   Image as ImageIcon,

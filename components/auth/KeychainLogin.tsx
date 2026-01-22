@@ -1,4 +1,4 @@
-import { Button } from "@heroui/react";
+import { Button } from "@heroui/button";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useAccountsContext } from "./AccountsContext";

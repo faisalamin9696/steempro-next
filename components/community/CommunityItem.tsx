@@ -1,4 +1,4 @@
-import { Card } from "@heroui/react";
+import { Card } from "@heroui/card";
 import SAvatar from "../ui/SAvatar";
 import { Users, ShieldCheck, DollarSign } from "lucide-react";
 import { useSession } from "next-auth/react";

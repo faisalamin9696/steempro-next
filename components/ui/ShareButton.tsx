@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, ButtonProps } from "@heroui/react";
+import { Button, ButtonProps } from "@heroui/button";
 import { Share } from "lucide-react";
 import ShareModal from "./ShareModal";
 

@@ -1,6 +1,7 @@
 "use client";
 
-import { Button, Card, CardBody, CardFooter } from "@heroui/react";
+import { Card, CardBody, CardFooter } from "@heroui/card";
+import { Button } from "@heroui/button";
 import { FileQuestion, Home } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";

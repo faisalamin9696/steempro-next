@@ -1,5 +1,5 @@
 import { Button, ButtonProps } from "@heroui/button";
-import { CircularProgress } from "@heroui/react";
+import { CircularProgress } from "@heroui/progress";
 import { ImageUp } from "lucide-react";
 import { useRef } from "react";
 

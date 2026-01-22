@@ -17,15 +17,11 @@ import { DataTable, ColumnDef } from "@/components/ui/data-table";
 import { formatVotes } from "@/hooks/useWitnesses";
 import { toast } from "sonner";
 import SAvatar from "@/components/ui/SAvatar";
-import {
-  Button,
-  Card,
-  CardBody,
-  Checkbox,
-  Tabs,
-  Tab,
-  Alert,
-} from "@heroui/react";
+import { Card, CardBody } from "@heroui/card";
+import { Button } from "@heroui/button";
+import { Tabs, Tab } from "@heroui/tabs";
+import { Checkbox } from "@heroui/checkbox";
+import { Alert } from "@heroui/alert";
 import WitnessDetailsModal from "@/components/witness/WitnessDetailsModal";
 import MyWitnessTab from "@/components/witness/MyWitnessTab";
 import SUsername from "@/components/ui/SUsername";
@@ -37,6 +33,8 @@ import { normalizeUsername } from "@/utils/editor";
 import SInput from "@/components/ui/SInput";
 import { useAccountsContext } from "@/components/auth/AccountsContext";
 import LoginAlertCard from "@/components/ui/LoginAlertCard";
+import moment from "moment";
+import { twMerge } from "tailwind-merge";
 
 const WitnessesPage = ({ data }: { data: Witness[] }) => {
   const loginData = useAppSelector((s) => s.loginReducer.value);
@@ -80,10 +78,10 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
         witnessName,
         approve,
         key,
-        useKeychain
+        useKeychain,
       );
       toast.success(
-        `Successfully ${approve ? "voted for" : "unvoted"} ${witnessName}`
+        `Successfully ${approve ? "voted for" : "unvoted"} ${witnessName}`,
       );
       const updatedList = approve
         ? loginData.witness_votes.concat(witnessName)
@@ -92,7 +90,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
         addLoginHandler({
           ...loginData,
           witness_votes: updatedList,
-        })
+        }),
       );
     }).finally(() => {
       setVotingFor(null);
@@ -110,7 +108,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
       toast.success(
         proxyName
           ? `Successfully set proxy to ${proxyName}`
-          : "Successfully removed proxy"
+          : "Successfully removed proxy",
       );
       dispatch(addLoginHandler({ ...loginData, proxy: proxyName }));
       setProxyInput("");
@@ -184,7 +182,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
       header: "Missed",
       sortable: true,
       className: "w-24",
-      render: (value) => (
+      render: (value, row) => (
         <div className="flex items-center gap-2">
           {value > 0 && (
             <AlertTriangle className="h-3.5 w-3.5 text-yellow-500" />
@@ -194,14 +192,41 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
               value > 100
                 ? "text-danger"
                 : value > 0
-                ? "text-yellow-500"
-                : "text-muted"
+                  ? "text-yellow-500"
+                  : "text-muted"
             }
           >
             {value?.toLocaleString()}
           </span>
         </div>
       ),
+    },
+
+    {
+      key: "last_price_report",
+      header: "Price",
+      sortable: true,
+      render: (value, row) => {
+        const isOld = moment
+          .unix(value)
+          .isBefore(moment().subtract(2, "hours"));
+        return (
+          <div className="flex flex-row items-center gap-2">
+            {isOld && (
+              <AlertTriangle className="h-3.5 w-3.5 text-yellow-500 shrink-0" />
+            )}
+            <span
+              className={twMerge(
+                "flex flex-col shrink-0",
+                isOld ? "text-yellow-500" : "text-muted",
+              )}
+            >
+              <span className="text-sm">{row.reported_price.base}</span>
+              {isOld && <span className="text-xs font-mono">{"Outdated"}</span>}
+            </span>
+          </div>
+        );
+      },
     },
 
     {
@@ -228,7 +253,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
               isDisabled={
                 !loginData ||
                 votingFor === value ||
-                !isWitnessActive(row) ||
+                // !isWitnessActive(row) ||
                 hasProxy
               }
               onPress={() =>
@@ -356,7 +381,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
                       placeholder="e.g. steempro.com"
                       labelPlacement="outside"
                       value={
-                        hasProxy ? loginData.proxy ?? proxyInput : proxyInput
+                        hasProxy ? (loginData.proxy ?? proxyInput) : proxyInput
                       }
                       onValueChange={setProxyInput}
                       startContent={<span className="text-muted">@</span>}

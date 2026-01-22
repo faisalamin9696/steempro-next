@@ -6,7 +6,8 @@ import { MessageCircleMore, Send } from "lucide-react";
 import useInfiniteScroll from "react-infinite-scroll-hook";
 import { useSdsList } from "@/hooks/sds-client-hooks";
 import EmptyList from "../EmptyList";
-import { Card, Spinner } from "@heroui/react";
+import { Spinner } from "@heroui/spinner";
+import { Card } from "@heroui/card";
 import MarkdownEditor from "../submit/MarkdownEditor";
 import BeneficiariesButton from "../submit/BeneficiariesButton";
 import { Constants } from "@/constants";
@@ -16,7 +17,7 @@ import ClearButton from "../ui/ClearButton";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
 import { addRepliesHandler } from "@/hooks/redux/reducers/RepliesReducer";
 import PayoutTypeButton from "../post/PayoutTypeButton";
-import { Select, SelectItem } from "@heroui/react";
+import { Select, SelectItem } from "@heroui/select";
 import { Clock, TrendingUp, ThumbsUp } from "lucide-react";
 import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
 import { useDraft } from "@/hooks/useDraft";
@@ -32,7 +33,7 @@ const pageCache = new Map<string, number>();
 
 const CommentsList = ({ root }: CommentsListProps) => {
   let { ...draftData } = useDraft(
-    `comment-editor-${root.author}-${root.permlink}`
+    `comment-editor-${root.author}-${root.permlink}`,
   );
   const [draft, setDraft] = useState(draftData.draft);
   const { data: session } = useSession();
@@ -47,16 +48,16 @@ const CommentsList = ({ root }: CommentsListProps) => {
   const [markdown, setMarkdown] = useState(draft.body);
   const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([]);
   const [payoutType, setPayoutType] = useState<Payout>(
-    Constants.reward_types[1]
+    Constants.reward_types[1],
   );
   const [isPending, setIsPending] = useState(false);
   const { data, isLoading, error } = useSdsList<Post>(api);
   const allReplies =
     useAppSelector(
-      (state) => state.repliesReducer.values[`${root.author}/${root.permlink}`]
+      (state) => state.repliesReducer.values[`${root.author}/${root.permlink}`],
     ) ?? data;
   const [sortOrder, setSortOrder] = useState<"newest" | "payout" | "upvotes">(
-    "newest"
+    "newest",
   );
   const { isMobile } = useDeviceInfo();
 
@@ -75,7 +76,7 @@ const CommentsList = ({ root }: CommentsListProps) => {
     const filtered = allReplies.filter(
       (reply) =>
         reply.parent_author === root.author &&
-        reply.parent_permlink === root.permlink
+        reply.parent_permlink === root.permlink,
     );
 
     return [...filtered].sort((a, b) => {
@@ -269,12 +270,8 @@ const CommentsList = ({ root }: CommentsListProps) => {
             <div className="infinite-list p-2">
               <div className="flex flex-col gap-6">
                 {visibleItems.map((item) => (
-                  <div>
-                    <CommentCard
-                      key={item.link_id}
-                      comment={item}
-                      root={root}
-                    />
+                  <div key={item.link_id}>
+                    <CommentCard comment={item} root={root} />
                   </div>
                 ))}
               </div>

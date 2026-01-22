@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Provider as ReduxProvider } from "react-redux";
 import { SWRConfig } from "swr";
 import { store } from "@/hooks/redux/store";
@@ -14,6 +14,7 @@ import { AccountsProvider } from "@/components/auth/AccountsContext";
 import { MobileNavbar } from "@/components/navbar/MobileNavbar";
 import { Session } from "next-auth";
 import ScrollToTop from "@/components/ui/ScrollToTop";
+import LoadingCard from "@/components/ui/LoadingCard";
 
 function Providers({
   children,
@@ -25,6 +26,11 @@ function Providers({
   session: Session | null;
 }) {
   const router = useRouter();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   return (
     <SessionProvider session={session}>
@@ -43,18 +49,22 @@ function Providers({
           >
             <AccountsProvider>
               <AppWrapper globals={globals}>
-                <div className="flex flex-col">
-                  <SNavbar />
-                  <MobileNavbar />
-                  <div className="flex flex-row justify-start">
-                    <aside className="w-72 hidden sticky top-16 h-[calc(100vh-4rem)] shrink-0 xl:block border-e border-black/5 dark:border-white/5">
-                      <SDrawerContent />
-                    </aside>
-                    <span className="px-0.5 w-full pb-20 md:pb-0">
-                      {children}
-                    </span>
+                {isMounted ? (
+                  <div className="flex flex-col">
+                    <SNavbar />
+                    <MobileNavbar />
+                    <div className="flex flex-row justify-start">
+                      <aside className="w-72 hidden sticky top-16 h-[calc(100vh-4rem)] shrink-0 xl:block border-e border-black/5 dark:border-white/5">
+                        <SDrawerContent />
+                      </aside>
+                      <span className="px-0.5 w-full pb-20 md:pb-0">
+                        {children}
+                      </span>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <LoadingCard />
+                )}
               </AppWrapper>
             </AccountsProvider>
           </SWRConfig>

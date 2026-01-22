@@ -7,14 +7,12 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Button,
-  Listbox,
-  ListboxItem,
-  ScrollShadow,
-  Tabs,
-  Tab,
-  Chip,
-} from "@heroui/react";
+} from "@heroui/modal";
+import {Listbox, ListboxItem} from '@heroui/listbox'
+import { Tabs, Tab } from "@heroui/tabs";
+import {  Chip } from "@heroui/chip";
+import { Button } from "@heroui/button";
+import { ScrollShadow } from "@heroui/scroll-shadow";
 import { sdsApi } from "@/libs/sds";
 import moment from "moment";
 import { diff_match_patch as diffMatchPatch } from "diff-match-patch";

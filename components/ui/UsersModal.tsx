@@ -1,4 +1,4 @@
-import { ModalProps } from "@heroui/react";
+import { ModalProps } from "@heroui/modal";
 import SModal from "../ui/SModal";
 import { ColumnDef, DataTable } from "../ui/data-table";
 import SUsername from "../ui/SUsername";

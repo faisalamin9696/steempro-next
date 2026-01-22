@@ -5,7 +5,7 @@ import { Image as HeroImage } from "@heroui/image";
 import { twMerge } from "tailwind-merge";
 import NextImage from "next/image";
 import { Image, ImageOff } from "lucide-react";
-import { Progress } from "@heroui/react";
+import { Progress } from "@heroui/progress";
 
 interface CustomImageProps {
   src: string | null;

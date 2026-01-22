@@ -1,17 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-  Input,
   Select,
   SelectItem,
-} from "@heroui/react";
+} from "@heroui/select";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
 import { Role } from "@/utils/community";
 import SModal from "@/components/ui/SModal";
 

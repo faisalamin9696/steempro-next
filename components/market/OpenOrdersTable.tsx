@@ -1,5 +1,7 @@
 import { steemApi } from "@/libs/steem";
-import { Spinner, Chip, Button } from "@heroui/react";
+import {  Chip } from "@heroui/chip";
+import { Spinner } from "@heroui/spinner";
+import { Button } from "@heroui/button";
 import { Trash2 } from "lucide-react";
 import moment from "moment";
 import { useSession } from "next-auth/react";

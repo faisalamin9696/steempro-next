@@ -1,4 +1,4 @@
-import { Alert } from "@heroui/react";
+import { Alert } from "@heroui/alert";
 import React from "react";
 
 interface ExchangeValidationWarningProps {

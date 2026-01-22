@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Tabs, Tab } from "@heroui/react";
+import { Tabs, Tab } from "@heroui/tabs";
 import { Settings, UserCircle, Shield } from "lucide-react";
 import GeneralSettings from "@/components/settings/GeneralSettings";
 import ProfileSettings from "@/components/settings/ProfileSettings";

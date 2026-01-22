@@ -2,8 +2,8 @@ import {
   Select,
   SelectItem,
   SelectProps,
-  SharedSelection,
-} from "@heroui/react";
+} from "@heroui/select";
+import { SharedSelection } from "@heroui/system";
 import { useSubscriberCommunities } from "@/hooks/useSubscriberCommunities";
 import { useSession } from "next-auth/react";
 import { useState } from "react";

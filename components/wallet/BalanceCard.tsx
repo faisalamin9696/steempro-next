@@ -1,4 +1,6 @@
-import { Button, Card, Divider } from "@heroui/react";
+import { Card } from "@heroui/card";
+import { Button } from "@heroui/button";
+import { Divider } from "@heroui/divider";
 import {
   ArrowUpRight,
   ArrowDownLeft,

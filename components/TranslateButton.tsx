@@ -2,14 +2,13 @@
 
 import { useState } from "react";
 import {
-  Button,
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-  ButtonProps,
-  Spinner,
-} from "@heroui/react";
+} from "@heroui/dropdown";
+import { Button, ButtonProps } from "@heroui/button";
+import { Spinner } from "@heroui/spinner";
 import { Languages } from "lucide-react";
 import { POPULAR_LANGUAGES, translateMarkdown } from "@/utils/translate";
 import { toast } from "sonner";
@@ -69,7 +68,7 @@ export default function TranslateButton({
   }
 
   return (
-    <Dropdown maxHeight={200}>
+    <Dropdown>
       <DropdownTrigger>
         <Button
           title="Translate"
@@ -82,7 +81,7 @@ export default function TranslateButton({
         />
       </DropdownTrigger>
       <DropdownMenu
-        classNames={{ list: "max-h-[200px] overflow-auto" }}
+        classNames={{ base: "max-h-[200px] overflow-auto" }}
         aria-label="Translation languages"
         onAction={(key) => handleTranslate(key as string)}
       >

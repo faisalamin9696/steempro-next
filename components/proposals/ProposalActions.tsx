@@ -1,4 +1,4 @@
-import { Button } from "@heroui/react";
+import { Button } from "@heroui/button";
 import { Eye, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";

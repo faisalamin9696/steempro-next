@@ -18,7 +18,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@heroui/react";
+} from "@heroui/dropdown";
 import {
   Award,
   CircleSlash,

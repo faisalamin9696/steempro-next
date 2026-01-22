@@ -1,4 +1,4 @@
-import { Card, CardBody, CardHeader, CardProps } from "@heroui/react";
+import { Card, CardBody, CardHeader, CardProps } from "@heroui/card";
 import { LucideProps } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 import { twMerge } from "tailwind-merge";

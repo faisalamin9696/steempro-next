@@ -1,5 +1,7 @@
 import { DelegationModal } from "./DelegationModal";
-import { Button, Chip, Select, SelectItem } from "@heroui/react";
+import {Select, SelectItem } from "@heroui/select";
+import { Button } from "@heroui/button";
+import { Chip } from "@heroui/chip";
 import {
   ArrowDownLeft,
   ArrowUpRight,

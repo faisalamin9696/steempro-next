@@ -1,5 +1,5 @@
 import { validateAccountName } from "@/utils/chainValidation";
-import { Input, InputProps } from "@heroui/react";
+import { Input, InputProps } from "@heroui/input";
 import { useEffect, useRef, useState } from "react";
 import SAvatar from "./SAvatar";
 import { normalizeUsername } from "@/utils/editor";

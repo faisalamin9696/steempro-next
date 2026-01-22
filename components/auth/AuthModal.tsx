@@ -1,4 +1,5 @@
-import { Button, ModalProps } from "@heroui/react";
+import { Button } from "@heroui/button";
+import { ModalProps } from "@heroui/modal";
 import SModal from "../ui/SModal";
 import { AccountsList } from "./AccountsList";
 import { useState } from "react";

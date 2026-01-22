@@ -27,8 +27,8 @@ export async function POST(request: NextRequest) {
       "unknown";
 
     // Clean IPv6 localhost
-    const cleanIp = ipAddress === "::1" ? "127.0.0.1" : ipAddress;
-
+    const cleanIp = ipAddress === "::ffff:127.0.0.1" ? "127.0.0.1" : ipAddress;
+    
     // Apply rate limiting (10 requests per IP per 5 minutes)
     const rateLimitKey = `translate:${cleanIp}`;
     const isRateLimited = rateLimiter.check(rateLimitKey, 10, 5 * 60 * 1000); // 5 minutes

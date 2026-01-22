@@ -1,5 +1,6 @@
 import { steemApi } from "@/libs/steem";
-import { Input, Button } from "@heroui/react";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
 import { useSession } from "next-auth/react";
 import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";

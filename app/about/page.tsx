@@ -1,7 +1,10 @@
 "use client";
 
 import { Constants } from "@/constants";
-import { Card, CardBody, Chip, Button } from "@heroui/react";
+import { Card, CardBody } from "@heroui/card";
+import { Chip } from "@heroui/chip";
+import { Button } from "@heroui/button";
+
 import {
   Globe,
   Zap,

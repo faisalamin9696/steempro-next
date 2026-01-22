@@ -11,7 +11,9 @@ import { formatVotes } from "@/hooks/useWitnesses";
 import { toast } from "sonner";
 import SModal from "../ui/SModal";
 import SAvatar from "../ui/SAvatar";
-import { Chip, Button, Tabs, Tab } from "@heroui/react";
+import { Button } from "@heroui/button";
+import { Chip } from "@heroui/chip";
+import { Tabs, Tab } from "@heroui/tabs";
 import moment from "moment";
 import { useState, useMemo } from "react";
 import useSWR from "swr";
@@ -20,6 +22,7 @@ import { ColumnDef, DataTable } from "../ui/data-table";
 import LoadingStatus from "../LoadingStatus";
 import SUsername from "../ui/SUsername";
 import { useSteemUtils } from "@/hooks/useSteemUtils";
+import { twMerge } from "tailwind-merge";
 
 interface WitnessDetailsModalProps {
   witness: Witness | null;
@@ -37,7 +40,7 @@ const WitnessDetailsModal = ({
 
   const { data: votesData, isLoading: isVotesLoading } = useSWR(
     witness?.name && isOpen ? `witness-votes-${witness?.name}` : null,
-    () => sdsApi.getWitnessVotes(witness?.name!)
+    () => sdsApi.getWitnessVotes(witness?.name!),
   );
 
   if (!witness) return null;
@@ -66,7 +69,7 @@ const WitnessDetailsModal = ({
         acc.total += curr.vests_own + curr.vests_proxied;
         return acc;
       },
-      { own: 0, proxied: 0, total: 0 }
+      { own: 0, proxied: 0, total: 0 },
     );
   }, [votesData]);
 
@@ -117,10 +120,12 @@ const WitnessDetailsModal = ({
     label,
     value,
     copyable = false,
+    className,
   }: {
     label: string;
     value: string | number | null | undefined;
     copyable?: boolean;
+    className?: string;
   }) => {
     const display = value ?? "N/A";
 
@@ -129,7 +134,12 @@ const WitnessDetailsModal = ({
         <span className="text-xs text-muted">{label}</span>
 
         <div className="flex items-center gap-2 min-w-0">
-          <span className="font-mono text-sm truncate break-all min-w-0">
+          <span
+            className={twMerge(
+              "font-mono text-sm truncate break-all min-w-0",
+              className,
+            )}
+          >
             {display}
           </span>
 
@@ -277,7 +287,7 @@ const WitnessDetailsModal = ({
                     value={
                       witness.props?.sbd_interest_rate !== undefined
                         ? `${(witness.props.sbd_interest_rate / 100).toFixed(
-                            2
+                            2,
                           )}%`
                         : "N/A"
                     }
@@ -289,6 +299,17 @@ const WitnessDetailsModal = ({
                   <DetailRow
                     label="Quote"
                     value={witness.reported_price.quote}
+                  />
+                  <DetailRow
+                    label="Last Update"
+                    value={moment.unix(witness.last_price_report).fromNow()}
+                    className={
+                      moment
+                        .unix(witness.last_price_report)
+                        .isBefore(moment().subtract(2, "hours"))
+                        ? "text-warning"
+                        : ""
+                    }
                   />
                 </Section>
 

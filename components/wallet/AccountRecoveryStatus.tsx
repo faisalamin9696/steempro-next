@@ -1,6 +1,7 @@
 "use client";
 
-import { Alert, Button } from "@heroui/react";
+import { Alert } from "@heroui/alert";
+import { Button } from "@heroui/button";
 import { ArrowRight } from "lucide-react";
 import { useAccountRecoveryData } from "@/hooks/useAccountRecoveryData";
 import { useEffect, useState } from "react";

@@ -4,7 +4,8 @@ import InfiniteList from "@/components/InfiniteList";
 import CommunityItem from "@/components/community/CommunityItem";
 import CommunitySkeleton from "@/components/skeleton/CommunitySkeleton";
 import { useMemo, useState } from "react";
-import { Checkbox, Input } from "@heroui/react";
+import { Checkbox } from "@heroui/checkbox";
+import { Input } from "@heroui/input";
 import { Search } from "lucide-react";
 import { useAppSelector } from "@/hooks/redux/store";
 
@@ -80,7 +81,6 @@ function CommunitiesPage({
         filterFn={filterCommunities}
         enableClientPagination
         clientItemsPerPage={20}
-        
       />
     </div>
   );

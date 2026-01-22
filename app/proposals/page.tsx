@@ -7,7 +7,7 @@ import {
   Receipt,
   Search,
 } from "lucide-react";
-import { Input } from "@heroui/react";
+import { Input } from "@heroui/input";
 import ProposalDetailModal from "@/components/proposals/ProposalDetailModal";
 import ProposalItem from "@/components/proposals/ProposalItem";
 import InfiniteList from "@/components/InfiniteList";

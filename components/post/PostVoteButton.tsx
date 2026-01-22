@@ -1,4 +1,4 @@
-import { Button, ButtonProps } from "@heroui/react";
+import { Button, ButtonProps } from "@heroui/button";
 import { addCommentHandler } from "@/hooks/redux/reducers/CommentReducer";
 import { steemApi } from "@/libs/steem";
 import { handleSteemError } from "@/utils/steemApiError";

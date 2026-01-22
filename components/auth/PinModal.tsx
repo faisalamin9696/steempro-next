@@ -1,4 +1,7 @@
-import { Alert, Button, Checkbox, Input } from "@heroui/react";
+import { Alert } from "@heroui/alert";
+import { Button } from "@heroui/button";
+import { Checkbox } from "@heroui/checkbox";
+import { Input } from "@heroui/input";
 import SModal from "../ui/SModal";
 import { useState } from "react";
 import { toast } from "sonner";

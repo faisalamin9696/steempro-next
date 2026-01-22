@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Modal, ModalContent, Button, Tooltip } from "@heroui/react";
+import { Modal, ModalContent } from "@heroui/modal";
+import { Tooltip } from "@heroui/tooltip";
+import { Button } from "@heroui/button";
 import {
   TransformWrapper,
   TransformComponent,
@@ -164,7 +166,9 @@ export default function ImageModal({
                     onLoad={() => setIsLoading(false)}
                     className={twMerge(
                       "max-w-full max-h-full object-contain shadow-2xl transition-all duration-500 ease-out pointer-events-none select-none",
-                      isLoading ? "opacity-0 scale-95" : "opacity-100 scale-100"
+                      isLoading
+                        ? "opacity-0 scale-95"
+                        : "opacity-100 scale-100",
                     )}
                   />
                 </TransformComponent>

@@ -1,13 +1,9 @@
-import React, { useState } from "react";
-import {
-  Card,
-  CardBody,
-  Button,
-  Input,
-  Switch,
-  Divider,
-  Alert,
-} from "@heroui/react";
+import { useState } from "react";
+import { Card, CardBody } from "@heroui/card";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+import { Divider } from "@heroui/divider";
+import { Alert } from "@heroui/alert";
 import { steemApi } from "@/libs/steem";
 import { handleSteemError } from "@/utils/steemApiError";
 import { toast } from "sonner";
@@ -17,9 +13,6 @@ import {
   Globe,
   HardDrive,
   Percent,
-  LogOut,
-  Power,
-  PowerOff,
   CheckCircle,
   XCircle,
 } from "lucide-react";
@@ -35,13 +28,13 @@ const MyWitnessTab = ({ witness, username }: MyWitnessTabProps) => {
   const [url, setUrl] = useState(witness.url);
   const [signingKey, setSigningKey] = useState(witness.signing_key);
   const [accountCreationFee, setAccountCreationFee] = useState(
-    witness.props.account_creation_fee.split(" ")[0]
+    witness.props.account_creation_fee.split(" ")[0],
   );
   const [maximumBlockSize, setMaximumBlockSize] = useState(
-    witness.props.maximum_block_size.toString()
+    witness.props.maximum_block_size.toString(),
   );
   const [sbdInterestRate, setSbdInterestRate] = useState(
-    (witness.props.sbd_interest_rate / 100).toString()
+    (witness.props.sbd_interest_rate / 100).toString(),
   );
   const [isUpdating, setIsUpdating] = useState(false);
   const { authenticateOperation } = useAccountsContext();
@@ -66,7 +59,7 @@ const MyWitnessTab = ({ witness, username }: MyWitnessTabProps) => {
         targetSigningKey,
         props,
         key,
-        useKeychain
+        useKeychain,
       );
 
       toast.success("Witness properties updated successfully");
@@ -96,7 +89,7 @@ const MyWitnessTab = ({ witness, username }: MyWitnessTabProps) => {
                 Manage your witness node properties and status.
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 self-end">
               {!isDisabled ? (
                 <CheckCircle className="h-4 w-4 text-green-500" size={14} />
               ) : (

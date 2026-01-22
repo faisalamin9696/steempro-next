@@ -5,14 +5,16 @@ import React, {
   useCallback,
   forwardRef,
 } from "react";
-import { Textarea, Listbox, ListboxItem, Spinner } from "@heroui/react";
+import { Listbox, ListboxItem } from "@heroui/listbox";
+import { Spinner } from "@heroui/spinner";
 import { createPortal } from "react-dom";
+import { Textarea } from "@heroui/input";
 import { twMerge } from "tailwind-merge";
 
 // Coordinates helper (simplified version of textarea-caret)
 function getCaretCoordinates(
   element: HTMLTextAreaElement,
-  position: number
+  position: number,
 ): { top: number; left: number } {
   const div = document.createElement("div");
   const style = window.getComputedStyle(element);
@@ -80,8 +82,10 @@ export interface MentionItem {
   [key: string]: any;
 }
 
-interface MentionInputProps
-  extends Omit<React.ComponentProps<typeof Textarea>, "onChange"> {
+interface MentionInputProps extends Omit<
+  React.ComponentProps<typeof Textarea>,
+  "onChange"
+> {
   value: string;
   onChange: (value: string) => void;
   onSearch: (query: string) => Promise<MentionItem[]>;
@@ -103,7 +107,7 @@ const MentionInput = forwardRef<HTMLTextAreaElement, MentionInputProps>(
       localUsers = [],
       ...props
     },
-    ref
+    ref,
   ) => {
     const [suggestions, setSuggestions] = useState<MentionItem[]>([]);
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -158,7 +162,7 @@ const MentionInput = forwardRef<HTMLTextAreaElement, MentionInputProps>(
           localMatches = localUsers.filter(
             (u) =>
               u.id.toString().toLowerCase().includes(qLower) ||
-              u.display.toLowerCase().includes(qLower)
+              u.display.toLowerCase().includes(qLower),
           );
         }
 
@@ -209,7 +213,7 @@ const MentionInput = forwardRef<HTMLTextAreaElement, MentionInputProps>(
           setLoading(false);
         }
       },
-      [trigger, onSearch, localUsers]
+      [trigger, onSearch, localUsers],
     );
 
     // Close on click outside or scroll
@@ -262,7 +266,7 @@ const MentionInput = forwardRef<HTMLTextAreaElement, MentionInputProps>(
         } else if (e.key === "ArrowUp") {
           e.preventDefault();
           setSelectedIndex(
-            (prev) => (prev - 1 + suggestions.length) % suggestions.length
+            (prev) => (prev - 1 + suggestions.length) % suggestions.length,
           );
         } else if (e.key === "Enter" || e.key === "Tab") {
           e.preventDefault();
@@ -320,7 +324,7 @@ const MentionInput = forwardRef<HTMLTextAreaElement, MentionInputProps>(
                     const item = suggestions.find((s) => s.id === key);
                     if (item) handleSelect(item);
                   }}
-                  classNames={{"list":"gap-2"}}
+                  classNames={{ list: "gap-2" }}
                 >
                   {suggestions.map((item, index) => (
                     <ListboxItem
@@ -328,7 +332,7 @@ const MentionInput = forwardRef<HTMLTextAreaElement, MentionInputProps>(
                       textValue={item.display}
                       className={twMerge(
                         "transition-colors rounded-xl",
-                        index === selectedIndex && "bg-default-200/60"
+                        index === selectedIndex && "bg-default-200/60",
                       )}
                     >
                       {renderSuggestion ? (
@@ -346,11 +350,11 @@ const MentionInput = forwardRef<HTMLTextAreaElement, MentionInputProps>(
                 </Listbox>
               )}
             </div>,
-            document.body
+            document.body,
           )}
       </div>
     );
-  }
+  },
 );
 
 MentionInput.displayName = "MentionInput";

@@ -34,18 +34,22 @@ async function executeTranslation(
   targetLang: string,
   sourceLang: string = "auto",
 ) {
-  const res = await fetch("/api/translate", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text, targetLang, sourceLang }),
-  });
+  try {
+    const res = await fetch("/api/translate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text, targetLang, sourceLang }),
+    });
 
-  if (!res.ok) throw new Error("Translation failed");
+    if (!res.ok) throw new Error("Translation failed");
 
-  return res.json() as Promise<{
-    translatedText: string | string[];
-    detectedSourceLanguage?: string;
-  }>;
+    return res.json() as Promise<{
+      translatedText: string | string[];
+      detectedSourceLanguage?: string;
+    }>;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function translateText(

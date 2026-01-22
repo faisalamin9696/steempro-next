@@ -3,7 +3,7 @@ import { Send, X, Navigation, ExternalLink } from "lucide-react";
 import SAvatar from "../ui/SAvatar";
 import MarkdownViewer from "../post/body/MarkdownViewer";
 import Link from "next/link";
-import { Button } from "@heroui/react";
+import { Button } from "@heroui/button";
 import MarkdownEditor from "../submit/MarkdownEditor";
 import { scrollToWithOffset } from "@/utils/helper";
 import PublishButton from "../submit/PublishButton";

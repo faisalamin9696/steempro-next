@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, ButtonProps } from "@heroui/react";
+import { Button, ButtonProps } from "@heroui/button";
 import { PencilLine, Share } from "lucide-react";
 import SModal, { RenderFn } from "./SModal";
 import ProfileSettings from "../settings/ProfileSettings";

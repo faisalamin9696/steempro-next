@@ -1,6 +1,7 @@
 "use client";
 
-import { Alert, Button } from "@heroui/react";
+import { Alert } from "@heroui/alert";
+import { Button } from "@heroui/button";
 import SModal from "./SModal";
 import { ModalProps } from "@heroui/modal";
 import { Shield } from "lucide-react";

@@ -8,7 +8,7 @@ import { Repeat } from "lucide-react";
 import { useSession } from "next-auth/react";
 import SPopover from "../ui/SPopover";
 import { useAccountsContext } from "../auth/AccountsContext";
-import { Spinner } from "@heroui/react";
+import { Spinner } from "@heroui/spinner";
 
 const ICON_SIZE = 20;
 

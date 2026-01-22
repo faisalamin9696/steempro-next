@@ -76,6 +76,9 @@ export default memo(function SDrawer() {
               priority
               height={30}
               width={150}
+              style={{
+                width: "auto",
+              }}
             />
           </Link>
 

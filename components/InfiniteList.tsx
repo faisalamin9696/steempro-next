@@ -1,6 +1,7 @@
 import useInfiniteScroll from "react-infinite-scroll-hook";
 import { useState, useCallback, useMemo, useEffect } from "react";
-import { Button, Spinner } from "@heroui/react";
+import { Button } from "@heroui/button";
+import { Spinner } from "@heroui/spinner";
 import EmptyList from "./EmptyList";
 import CommentSkeleton from "./skeleton/CommentSkeleton";
 

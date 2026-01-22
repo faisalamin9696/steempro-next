@@ -23,7 +23,9 @@ import {
   Quote,
   SquareDashedBottomCode,
 } from "lucide-react";
-import { Divider, Tab, Tabs, TextAreaProps } from "@heroui/react";
+import { Divider } from "@heroui/divider";
+import { Tabs, Tab } from "@heroui/tabs";
+import { TextAreaProps } from "@heroui/input";
 import MarkdownViewer from "../post/body/MarkdownViewer";
 import { extractMetadata } from "@/utils/editor";
 import { steemApi } from "@/libs/steem";

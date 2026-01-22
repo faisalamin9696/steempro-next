@@ -7,7 +7,7 @@ import { addCommunityHandler } from "@/hooks/redux/reducers/CommunityReducer";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
 import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
 import { getMetadata, updateMetadata } from "@/utils/metadata";
-import { Accordion, AccordionItem } from "@heroui/react";
+import { Accordion, AccordionItem } from "@heroui/accordion";
 import { TrendingUp, Sparkles, ClockPlus, Logs } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";

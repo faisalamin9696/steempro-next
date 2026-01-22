@@ -1,6 +1,8 @@
 import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
 import { useCommentFooterData } from "@/hooks/useCommentFooterData";
-import { Button, Card, Slider, SliderProps } from "@heroui/react";
+import { Slider, SliderProps } from "@heroui/slider";
+import { Card } from "@heroui/card";
+import { Button } from "@heroui/button";
 import { ArrowBigDown, ArrowBigUp } from "lucide-react";
 import { useState, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
