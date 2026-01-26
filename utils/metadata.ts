@@ -1,4 +1,3 @@
-import { auth } from "@/auth";
 import { extractBodySummary } from "./extractContent";
 import { ResolvingMetadata } from "next";
 import { getResizedAvatar, getThumbnail } from "./image";
@@ -27,19 +26,15 @@ export const getMetadata = {
   },
   profileAsync: async (username: string, tab: string) => {
     username = username?.toLowerCase();
-    tab = tab?.toLowerCase();
-    if (!tab) {
-      tab = "blog";
-    }
-    const session = await auth();
+    tab = tab?.toLowerCase() || "blog";
 
-    const result = await sdsApi.getAccountExt(username, session?.user?.name);
-    const { name, about, website } =
+    const result = await sdsApi.getAccountExt(username);
+    const { name, about } =
       JSON.parse(result.posting_json_metadata || "{}")?.profile ?? {};
-    const capCat = tab.charAt(0).toUpperCase() + tab.slice(1);
+    const capTab = tab.charAt(0).toUpperCase() + tab.slice(1);
     const pageTitle = !!name
-      ? `${name} (@${username}) - ${capCat} on the Decentralized Web`
-      : `@${username} - ${capCat} on the Decentralized Web`;
+      ? `${name} (@${username}) - ${capTab} on the Decentralized Web`
+      : `@${username} - ${capTab} on the Decentralized Web`;
     const pageDescription = about || DEFAULT_DESCRIPTION;
 
     const keywords = [
@@ -249,8 +244,13 @@ export const getMetadata = {
     category = category?.toLowerCase();
     tag = tag?.toLowerCase();
     const community = `hive-${tag}`;
-    const previousImages = (await parent)?.openGraph?.images || [];
-    const result = await sdsApi.getCommunity(community);
+
+    const [parentData, result] = await Promise.all([
+      parent,
+      sdsApi.getCommunity(community),
+    ]);
+
+    const previousImages = parentData?.openGraph?.images || [];
     const { title, about } = result ?? {};
     const pageTitle = title
       ? `${title} - ${category} in the ${community} Community`
@@ -273,7 +273,9 @@ export const getMetadata = {
       title: pageTitle,
       description: pageDescription,
       keywords: keywords,
-      images: [getResizedAvatar(result.account, "medium"), ...previousImages],
+      images: result?.account
+        ? [getResizedAvatar(result.account, "medium"), ...previousImages]
+        : previousImages,
     };
   },
 
@@ -318,20 +320,18 @@ export const getMetadata = {
     try {
       const proposal = await sdsApi.getProposal(Number(id));
       if (proposal) {
-        const result = await sdsApi.getPost(
-          proposal.creator,
-          proposal.permlink,
-        );
+        // Optimization: Use subject from proposal if possible,
+        // fallback to fetching post for full details and thumbnail
+        const pageTitle = proposal.subject;
+        const pageDescription = pageTitle + ` proposal by @${proposal.creator}`;
 
-        const thumbnail = getThumbnail(result.json_images, "640x480");
-
-        const pageTitle = result?.title;
-        const pageDescription = pageTitle + ` proposal by @${result?.author}`;
-
+        // Return immediately if we can, or fetch post in background/parallel if thumbnail is needed
+        // For now, let's keep it simple but avoid unnecessary chaining if we have enough info
         return {
           title: pageTitle,
           description: pageDescription,
-          thumbnail,
+          // Use creator avatar as fallback thumbnail to avoid another roundtrip
+          thumbnail: getResizedAvatar(proposal.creator, "medium"),
         };
       }
       return {

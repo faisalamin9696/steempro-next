@@ -93,7 +93,7 @@ function PostHeader({
                     alt={appName}
                     width={14}
                     height={14}
-                    className="min-w-[14px] bg-foreground/10 rounded-full"
+                    className="min-w-[14px] rounded-full"
                     removeWrapper
                   />
                 </Link>

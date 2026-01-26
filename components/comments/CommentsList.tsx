@@ -225,7 +225,7 @@ const CommentsList = ({ root }: CommentsListProps) => {
       ) : isLoading && visibleItems.length === 0 ? (
         <LoadingStatus message="Loading comments..." />
       ) : (
-        <div className="p-3 w-full bg-foreground/10 dark:bg-background/30 rounded-xl">
+        <div className="p-3 w-full bg-foreground/5 dark:bg-background/50 rounded-xl">
           <div className="flex flex-row items-center flex-wrap justify-between gap-2 pb-4">
             <div className="flex flex-row items-center gap-2">
               <MessageCircleMore size={24} className="text-primary" />

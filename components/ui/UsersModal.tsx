@@ -7,8 +7,10 @@ import LoadingStatus from "../LoadingStatus";
 import { useSdsList } from "@/hooks/sds-client-hooks";
 import { useMemo } from "react";
 
-interface BaseProps<T extends Record<string, any>>
-  extends Pick<ModalProps, "isOpen" | "onOpenChange"> {
+interface BaseProps<T extends Record<string, any>> extends Pick<
+  ModalProps,
+  "isOpen" | "onOpenChange"
+> {
   title?: string;
   columns?: ColumnDef<T>[];
   renderUser?: (username: string, item: T) => React.ReactNode;
@@ -29,7 +31,7 @@ type UnifiedUsersModalProps<T extends Record<string, any>> = BaseProps<T> &
   );
 
 export default function UnifiedUsersModal<
-  T extends Record<string, any> = { username: string }
+  T extends Record<string, any> = { username: string },
 >({
   isOpen,
   onOpenChange,
@@ -55,16 +57,16 @@ export default function UnifiedUsersModal<
       ? fetchType === "subscribers"
         ? `/communities_api/getCommunitySubscribers/${username}`
         : fetchType === "following"
-        ? `/followers_api/getFollowing/${username}`
-        : `/followers_api/getFollowers/${username}`
-      : null
+          ? `/followers_api/getFollowing/${username}`
+          : `/followers_api/getFollowers/${username}`
+      : null,
   );
 
   /** ------------------------------
    *  2. Build data source
    * ------------------------------ */
   const mappedData = useMemo(() => {
-    const rawData = (data?.length ? data : (followsData as any) ?? []) as (
+    const rawData = (data?.length ? data : ((followsData as any) ?? [])) as (
       | string
       | T
     )[];
@@ -143,6 +145,8 @@ export default function UnifiedUsersModal<
             searchPlaceholder="Search..."
             columns={finalColumns}
             data={mappedData}
+            initialLoadCount={15}
+            loadMoreCount={15}
           />
         );
       }}

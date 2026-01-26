@@ -71,6 +71,14 @@ export default async function RootLayout({
         <BotIdClient
           protect={[
             {
+              path: "/api/boost/request-permission",
+              method: "POST",
+            },
+            {
+              path: "/api/boost",
+              method: "POST",
+            },
+            {
               path: "/api/translate",
               method: "POST",
             },

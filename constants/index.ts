@@ -95,49 +95,49 @@ export const Constants = {
     reply: {
       status: false,
       minRep: 25,
-      minSp: 15,
+      minSp: 0,
     },
     follow: {
       status: false,
-      minRep: 25,
+      minRep: 0,
       minSp: 0,
     },
     mention: {
       status: false,
       minRep: 25,
-      minSp: 15,
+      minSp: 0,
     },
     resteem: {
       status: false,
       minRep: 25,
-      minSp: 15,
+      minSp: 0,
     },
   },
   get notifications_filter() {
     return {
       mention: {
-        exclude: this.default_notifications_filter.mention.status,
+        // exclude: this.default_notifications_filter.mention.status,
         minSP: this.default_notifications_filter.mention.minSp,
         minReputation: this.default_notifications_filter.mention.minRep,
       },
       vote: {
-        exclude: this.default_notifications_filter.vote.status,
+        // exclude: this.default_notifications_filter.vote.status,
         minVoteAmount: this.default_notifications_filter.vote.minVote,
         minReputation: this.default_notifications_filter.vote.minRep,
         minSP: this.default_notifications_filter.vote.minSp,
       },
       follow: {
-        exclude: this.default_notifications_filter.follow.status,
+        // exclude: this.default_notifications_filter.follow.status,
         minSP: this.default_notifications_filter.follow.minSp,
         minReputation: this.default_notifications_filter.follow.minRep,
       },
       resteem: {
-        exclude: this.default_notifications_filter.resteem.status,
+        // exclude: this.default_notifications_filter.resteem.status,
         minSP: this.default_notifications_filter.resteem.minSp,
         minReputation: this.default_notifications_filter.resteem.minRep,
       },
       reply: {
-        exclude: this.default_notifications_filter.reply.status,
+        // exclude: this.default_notifications_filter.reply.status,
         minSP: this.default_notifications_filter.reply.minSp,
         minReputation: this.default_notifications_filter.reply.minRep,
       },

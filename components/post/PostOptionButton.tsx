@@ -17,6 +17,7 @@ import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
+  DropdownSection,
   DropdownTrigger,
 } from "@heroui/dropdown";
 import {
@@ -37,8 +38,10 @@ import { useAccountsContext } from "../auth/AccountsContext";
 import MuteModal from "../community/modals/MuteModal";
 import RoleTitleModal from "../community/modals/RoleTitleModal";
 import EditHistoryModal from "./EditHistoryModal";
+import BoostModal from "./BoostModal";
+import { Rocket } from "lucide-react";
 
-const ICON_SIZE = 16;
+const ICON_SIZE = 18;
 
 interface CommentHeaderOptionProps extends ButtonProps {
   comment: Feed | Post;
@@ -83,7 +86,11 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
   const [isMuteModalOpen, setIsMuteModalOpen] = useState(false);
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isBoostOpen, setIsBoostOpen] = useState(false);
   const shareUrl = `${Constants.site_url}/@${comment.author}/${comment.permlink}`;
+  const isModerator = Constants.team.find(
+    (item) => item.name === session?.user?.name,
+  );
 
   async function handleMute(note: string = "mute") {
     setIsPending(true);
@@ -252,7 +259,7 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
     setIsShareOpen(!isShareOpen);
   };
 
-  const menuItems: React.JSX.Element[] = [
+  const menuItems = [
     ...(isMe
       ? [
           canEdit && (
@@ -264,6 +271,7 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
               Edit
             </DropdownItem>
           ),
+
           canDelete && (
             <DropdownItem
               onPress={handleDelete}
@@ -301,60 +309,71 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
     >
       Share
     </DropdownItem>,
-    ...[
-      canMute && (
+    canMute && (
+      <DropdownItem
+        onPress={() => {
+          setIsMuteModalOpen(true);
+        }}
+        key="mute"
+        className="text-warning"
+        color="warning"
+        startContent={
+          !isPending &&
+          (shouldMute ? (
+            <CircleSlash2 size={ICON_SIZE} />
+          ) : (
+            <CircleSlash size={ICON_SIZE} />
+          ))
+        }
+      >
+        {shouldMute ? "Mute" : "Unmute"}
+      </DropdownItem>
+    ),
+    canMute && comment.depth === 0 && (
+      <DropdownItem
+        onPress={() => {
+          handlePin();
+        }}
+        key="pin"
+        className="text-secondary"
+        color="secondary"
+        startContent={
+          !isPending &&
+          (shouldPin ? <Pin size={ICON_SIZE} /> : <PinOff size={ICON_SIZE} />)
+        }
+      >
+        {shouldPin ? "Pin" : "Unpin"}
+      </DropdownItem>
+    ),
+    canSetRole && (
+      <DropdownItem
+        onPress={() => setIsRoleModalOpen(true)}
+        key="role"
+        className="text-primary"
+        color="primary"
+        startContent={<Award size={ICON_SIZE} />}
+      >
+        Update Role/Title
+      </DropdownItem>
+    ),
+
+    (isMe || isModerator) && (comment?.depth ?? 0) === 0 && (
+      <DropdownSection title="Promote" className="mt-2">
         <DropdownItem
-          onPress={() => {
-            if (shouldMute) {
-              setIsMuteModalOpen(true);
-            } else {
-              handleMute("");
-            }
-          }}
-          key="mute"
-          className="text-warning"
-          color="warning"
-          startContent={
-            !isPending &&
-            (shouldMute ? (
-              <CircleSlash2 size={ICON_SIZE} />
-            ) : (
-              <CircleSlash size={ICON_SIZE} />
-            ))
-          }
+          onPress={() => setIsBoostOpen(true)}
+          key="boost"
+          className="text-success"
+          color="success"
+          description="Boost your post to reach more users"
+          startContent={<Rocket size={ICON_SIZE} />}
         >
-          {shouldMute ? "Mute" : "Unmute"}
+          Boost Post
         </DropdownItem>
-      ),
-      canMute && comment.depth === 0 && (
-        <DropdownItem
-          onPress={() => {
-            handlePin();
-          }}
-          key="pin"
-          className="text-secondary"
-          color="secondary"
-          startContent={
-            !isPending &&
-            (shouldPin ? <Pin size={ICON_SIZE} /> : <PinOff size={ICON_SIZE} />)
-          }
-        >
-          {shouldPin ? "Pin" : "Unpin"}
-        </DropdownItem>
-      ),
-      canSetRole && (
-        <DropdownItem
-          onPress={() => setIsRoleModalOpen(true)}
-          key="role"
-          className="text-primary"
-          color="primary"
-          startContent={<Award size={ICON_SIZE} />}
-        >
-          Update Role/Title
-        </DropdownItem>
-      ),
-    ],
-  ].filter(Boolean) as React.JSX.Element[];
+      </DropdownSection>
+    ),
+  ]
+    .flat()
+    .filter(Boolean) as React.JSX.Element[];
 
   return (
     <>
@@ -388,6 +407,7 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
           onOpenChange={setIsMuteModalOpen}
           onMute={handleMute}
           isPending={isPending}
+          isMuted={Boolean(comment.is_muted)}
         />
       )}
 
@@ -409,6 +429,13 @@ const PostOptionButton: React.FC<CommentHeaderOptionProps> = ({
           onOpenChange={setIsHistoryOpen}
           author={comment.author}
           permlink={comment.permlink}
+        />
+      )}
+      {isBoostOpen && (
+        <BoostModal
+          isOpen={isBoostOpen}
+          onOpenChange={setIsBoostOpen}
+          post={comment}
         />
       )}
     </>

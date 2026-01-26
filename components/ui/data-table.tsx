@@ -282,10 +282,10 @@ export function DataTable<T extends Record<string, any>>({
                 return (
                   <React.Fragment key={index}>
                     {showHeader && (
-                      <TableRow className="bg-default-100/50 hover:bg-default-100/50 border-0">
+                      <TableRow className="bg-default-100/30 hover:bg-default-100/50 border-1 border-muted/30">
                         <TableCell
                           colSpan={columns.length}
-                          className="py-2 text-xs font-semibold text-muted uppercase tracking-wider"
+                          className="py-2 text-xs text-muted/50 uppercase tracking-wider font-mono"
                         >
                           {renderGroupHeader
                             ? renderGroupHeader(currentGroup!)

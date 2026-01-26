@@ -13,6 +13,7 @@ import {
   Users,
   CircleDollarSign,
   Info,
+  Ellipsis,
 } from "lucide-react";
 import SCard from "../ui/SCard";
 import { SteemIcon } from "../icons/SteemIcon";
@@ -69,7 +70,7 @@ export const BalanceCard = ({
           !isLoading &&
           !error && (
             <div className="flex flex-col items-end">
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted">
                 Est. Account Value
               </p>
               <p className="text-lg font-bold text-success">
@@ -94,7 +95,7 @@ export const BalanceCard = ({
                 </div>
                 <div>
                   <div className="flex items-center gap-1 mb-1">
-                    <p className="text-sm font-medium text-muted-foreground">
+                    <p className="text-sm font-medium text-muted">
                       STEEM
                     </p>
                     <Tooltip
@@ -111,7 +112,7 @@ export const BalanceCard = ({
                     >
                       <Info
                         size={14}
-                        className="text-muted-foreground cursor-pointer opacity-50 hover:opacity-100"
+                        className="text-muted cursor-pointer opacity-50 hover:opacity-100"
                       />
                     </Tooltip>
                   </div>
@@ -153,7 +154,7 @@ export const BalanceCard = ({
                 </div>
                 <div>
                   <div className="flex items-center gap-1 mb-1">
-                    <p className="text-sm font-medium text-muted-foreground">
+                    <p className="text-sm font-medium text-muted">
                       SBD
                     </p>
                     <Tooltip
@@ -174,7 +175,7 @@ export const BalanceCard = ({
                     >
                       <Info
                         size={14}
-                        className="text-muted-foreground cursor-pointer opacity-50 hover:opacity-100"
+                        className="text-muted cursor-pointer opacity-50 hover:opacity-100"
                       />
                     </Tooltip>
                   </div>
@@ -220,7 +221,7 @@ export const BalanceCard = ({
               <div className="flex flex-col sm:flex-row gap-4 w-full sm:items-center justify-between">
                 <div>
                   <div className="flex items-center gap-1">
-                    <p className="text-sm font-medium text-muted-foreground">
+                    <p className="text-sm font-medium text-muted">
                       Effective Power
                     </p>
                     <Tooltip
@@ -244,7 +245,7 @@ export const BalanceCard = ({
                     >
                       <Info
                         size={14}
-                        className="text-muted-foreground cursor-pointer opacity-50 hover:opacity-100"
+                        className="text-muted cursor-pointer opacity-50 hover:opacity-100"
                       />
                     </Tooltip>
                   </div>
@@ -257,7 +258,7 @@ export const BalanceCard = ({
                         vestsToSteem(account.vests_in)
                       ).toLocaleString()}
                     </span>
-                    <span className="text-sm font-medium text-muted-foreground">
+                    <span className="text-sm font-medium text-muted">
                       SP
                     </span>
                   </div>
@@ -269,8 +270,8 @@ export const BalanceCard = ({
                     orientation="vertical"
                   />
 
-                  <div className="text-right">
-                    <p className="text-xs text-muted-foreground">Own Power</p>
+                  <div className="sm:text-right">
+                    <p className="text-xs text-muted">Own Power</p>
                     <p className="font-semibold text-lg">
                       {vestsToSteem(account.vests_own).toLocaleString()}
                     </p>
@@ -281,7 +282,7 @@ export const BalanceCard = ({
 
             {/* Delegation Breakdown (Previously separate card) */}
             <div className="p-4 bg-default-50/20 border-t border-default-200">
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted mb-3">
                 Delegation Details
               </h4>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -290,7 +291,7 @@ export const BalanceCard = ({
                     <ArrowUpFromLine size={16} />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Outgoing</p>
+                    <p className="text-xs text-muted">Outgoing</p>
                     <p className="text-sm font-semibold">
                       {vestsToSteem(account.vests_out) > 0
                         ? `-${vestsToSteem(account.vests_out).toLocaleString()}`
@@ -303,7 +304,7 @@ export const BalanceCard = ({
                     <ArrowDownToLine size={16} />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Incoming</p>
+                    <p className="text-xs text-muted">Incoming</p>
                     <p className="text-sm font-semibold">
                       {vestsToSteem(account.vests_in) > 0
                         ? `+${vestsToSteem(account.vests_in).toLocaleString()}`
@@ -316,7 +317,7 @@ export const BalanceCard = ({
                     <Clock size={16} />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-muted">
                       Expiring (5d)
                     </p>
                     <p className="text-sm font-semibold">
@@ -333,7 +334,7 @@ export const BalanceCard = ({
                     <SteemIcon size={16} />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Available</p>
+                    <p className="text-xs text-muted">Available</p>
                     <p className="text-sm font-semibold text-primary">
                       {(
                         vestsToSteem(account.vests_own) -
@@ -352,6 +353,7 @@ export const BalanceCard = ({
 
       {session?.user?.name && (
         <SCard
+        icon={Ellipsis}
           title="Quick Actions"
           iconColor="primary" // Reusing primary color for consistency
           titleClass="font-semibold"

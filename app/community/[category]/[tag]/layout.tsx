@@ -20,18 +20,13 @@ async function layout({
 }) {
   const { tag } = await params;
   const session = await auth();
-  const account = await sdsApi.getAccountExt(
-    `hive-${tag}`,
-    session?.user?.name
-  );
-  const community = await sdsApi.getCommunity(
-    `hive-${tag}`,
-    session?.user?.name
-  );
-  const pinnedPosts = await sdsApi.getCommunityPinnedPosts(
-    community.account,
-    session?.user?.name
-  );
+  const [[account, community], pinnedPosts] = await Promise.all([
+    Promise.all([
+      sdsApi.getAccountExt(`hive-${tag}`, session?.user?.name),
+      sdsApi.getCommunity(`hive-${tag}`, session?.user?.name),
+    ]),
+    sdsApi.getCommunityPinnedPosts(`hive-${tag}`, session?.user?.name),
+  ]);
 
   return (
     <Suspense fallback={<ProfileHeaderSkeleton />}>
@@ -70,7 +65,7 @@ export default layout;
 
 export async function generateMetadata(
   { params }: { params: Promise<{ category: string; tag: string }> },
-  parent: ResolvingMetadata
+  parent: ResolvingMetadata,
 ): Promise<Metadata> {
   let { tag, category } = await params;
   const { title, description, keywords, images } =

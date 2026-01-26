@@ -17,8 +17,10 @@ interface LayoutProps {
 async function layout({ children, params }: LayoutProps) {
   const { author, permlink } = await params;
   const session = await auth();
-  const account = await sdsApi.getAccountExt(author, session?.user?.name);
-  const post = await sdsApi.getPost(author, permlink, session?.user?.name);
+  const [account, post] = await Promise.all([
+    sdsApi.getAccountExt(author, session?.user?.name),
+    sdsApi.getPost(author, permlink, session?.user?.name),
+  ]);
   const jsonLd = getMetadata.postStructuredData(post);
 
   return (

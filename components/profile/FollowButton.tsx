@@ -23,6 +23,7 @@ function FollowButton({
   ...rest
 }: FollowButtonProps) {
   const isFollowed = Boolean(account.observer_follows_author);
+  const shouldFollow = !account.observer_follows_author;
   const color = isFollowed ? "warning" : "primary";
   const title = isFollowed ? "Unfollow" : "Follow";
   const [isPending, setIsPending] = useState(false);
@@ -38,16 +39,16 @@ function FollowButton({
       await steemApi.follow(
         session?.user?.name!,
         account.name,
-        !isFollowed,
+        shouldFollow,
         key,
-        useKeychain
+        useKeychain,
       );
       toast.success(
-        isFollowed ? "Unfollowed successfully" : "Followed successfully"
+        isFollowed ? "Unfollowed successfully" : "Followed successfully",
       );
       const updatedData = {
         ...account,
-        observer_follows_author: +isFollowed,
+        observer_follows_author: +shouldFollow,
       };
 
       if (isMe) {

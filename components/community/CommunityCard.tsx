@@ -19,7 +19,7 @@ import UsersModal from "../ui/UsersModal";
 import { useState } from "react";
 import SAvatar from "../ui/SAvatar";
 import SUsername from "../ui/SUsername";
-import {  Chip } from "@heroui/chip";
+import { Chip } from "@heroui/chip";
 
 const ICON_SIZE = 20;
 
@@ -36,7 +36,7 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
   const shareUrl = `${Constants.site_url}/trending/${name}`;
   const roles: Role[] = mapSds(community.roles);
   const leaderShip = roles.filter((item) =>
-    RoleLevel.atLeast(item.role, "mod")
+    RoleLevel.atLeast(item.role, "mod"),
   );
   const { profile = {} } = JSON.parse(account.posting_json_metadata || "{}");
   const { cover_image = "" }: PostingJsonMetadata = profile;
@@ -151,10 +151,14 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
               key: "account",
               searchable: true,
               header: "User",
-              render: (acc) => (
+              render: (acc, row) => (
                 <div className="flex flex-row gap-2 items-center">
                   <SAvatar size="sm" username={acc} />
-                  <SUsername username={acc} />
+
+                  <div className="flex flex-col gap-1">
+                    <SUsername username={acc} />
+                    {row.title && <Chip size="sm">{row.title}</Chip>}
+                  </div>
                 </div>
               ),
             },
@@ -169,8 +173,8 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
                     role === "mod"
                       ? "success"
                       : role === "admin"
-                      ? "warning"
-                      : "default"
+                        ? "warning"
+                        : "default"
                   }
                 >
                   {role}

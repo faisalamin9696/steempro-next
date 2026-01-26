@@ -38,7 +38,7 @@ export const defaultWidth = () => Number.parseInt(CAPPED_SIZE.split("x")[0]);
 export function proxifyImageUrl(
   url: string | null,
   dimensions = "",
-  emptyCheck: boolean = false
+  emptyCheck: boolean = false,
 ) {
   const IMAGE_PROXY_URL = Constants.activeSettings.image_server + "/";
 
@@ -58,7 +58,7 @@ export function proxifyImageUrl(
     let dims = dimensions + "/";
     if (typeof dimensions !== "string") {
       dims = proxyList
-        ? proxyList?.shift()?.match(/([0-9]+x[0-9]+)\//g)?.[0] ?? ""
+        ? (proxyList?.shift()?.match(/([0-9]+x[0-9]+)\//g)?.[0] ?? "")
         : NATURAL_SIZE;
     }
 
@@ -84,4 +84,8 @@ export function proxifyImageUrl(
 
 export const getDoubleSize = (url: string) => {
   return url.replace(CAPPED_SIZE, DOUBLE_CAPPED_SIZE);
+};
+
+export const getNaturalSize = (url: string) => {
+  return url.replace(CAPPED_SIZE, NATURAL_SIZE);
 };

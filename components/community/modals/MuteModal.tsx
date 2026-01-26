@@ -10,6 +10,7 @@ interface MuteModalProps {
   onOpenChange: (isOpen: boolean) => void;
   onMute: (note: string) => Promise<void>;
   isPending?: boolean;
+  isMuted: boolean;
 }
 
 const MuteModal = ({
@@ -17,6 +18,7 @@ const MuteModal = ({
   onOpenChange,
   onMute,
   isPending = false,
+  isMuted,
 }: MuteModalProps) => {
   const [note, setNote] = useState("");
 
@@ -31,15 +33,13 @@ const MuteModal = ({
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       placement="center"
-      title={"Mute Post"}
-      description={
-        "Provide a reason for muting this post. This note is required."
-      }
+      title={isMuted ? "Unmute post/comment" : "Mute post/comment"}
+      description={`Provide a reason for ${isMuted ? "unmuting" : "muting"} this post/comment. This note is required.`}
     >
       {(onClose) => (
         <div className="flex flex-col gap-6">
           <Input
-            label="Mute Note"
+            label={`${isMuted ? "Unmute" : "Mute"} Note`}
             placeholder="Enter reason..."
             value={note}
             onValueChange={setNote}
@@ -65,7 +65,7 @@ const MuteModal = ({
               isLoading={isPending}
               isDisabled={!note.trim()}
             >
-              Mute Post
+              {isMuted ? "Unmute" : "Mute"}
             </Button>
           </div>
         </div>

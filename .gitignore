@@ -44,3 +44,6 @@ next-env.d.ts
 .env
 .vercel
 .agent
+
+.vercel
+.env*.local

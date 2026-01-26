@@ -140,10 +140,18 @@ class SdsApi {
   ): Promise<
     Pick<AccountExt, "name" | "reputation" | "posting_json_metadata">[]
   > {
+    if (!prefix) return [];
     return sdsFetcher(
       `/accounts_api/getAccountsByPrefix/${prefix}/${observer}/name,reputation,posting_json_metadata/10`,
       requestOptions,
     );
+  }
+  getFollowers(username: string): Promise<string[]> {
+    return sdsFetcher(`/followers_api/getFollowers/${username}`);
+  }
+
+  getFollowing(username: string): Promise<string[]> {
+    return sdsFetcher(`/followers_api/getFollowing/${username}`);
   }
 
   async getContentHistory(
@@ -308,10 +316,15 @@ class SdsApi {
       | "withdraw_vesting"
       | "fill_vesting_withdraw"
       | "claim_reward_balance"
+      | "vote"
       | "custom_json"
       | "all" = "all",
     limit: number = 2500,
     offset: number = 0,
+    duration: {
+      amount?: moment.DurationInputArg1;
+      unit?: moment.DurationInputArg2;
+    } = { amount: 3, unit: "months" },
   ): Promise<AccountHistory[]> {
     const essentialFields = [
       "transfer",
@@ -335,7 +348,7 @@ class SdsApi {
       `/account_history_api/getHistoryByOpTypesTime/${account}/${
         typeFilter === "all" ? essentialFields.join(",") : typeFilter
       }/${moment()
-        .subtract(3, "months")
+        .subtract(duration.amount, duration.unit)
         .unix()}-${moment().unix()}/${limit}/${offset}`,
     );
   }

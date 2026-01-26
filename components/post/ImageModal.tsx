@@ -11,8 +11,8 @@ import {
 } from "react-zoom-pan-pinch";
 import { ZoomIn, ZoomOut, RotateCcw, ExternalLink, X } from "lucide-react";
 import { twMerge } from "tailwind-merge";
-import LoadingStatus from "@/components/LoadingStatus";
-import { getProxyImageURL } from "@/utils/image";
+import { Spinner } from "@heroui/spinner";
+import { getNaturalSize } from "@/utils/proxifyUrl";
 
 interface ImageModalProps {
   isOpen: boolean;
@@ -86,7 +86,8 @@ export default function ImageModal({
   alt = "Image full view",
 }: ImageModalProps) {
   const [isLoading, setIsLoading] = useState(true);
-  const highResImage = getProxyImageURL(src, "large");
+  const highResImage = getNaturalSize(src);
+  const lowResImage = src;
 
   // Reset loading state when src changes or modal opens
   useEffect(() => {
@@ -130,47 +131,67 @@ export default function ImageModal({
       <ModalContent className="relative h-full w-full overflow-hidden flex items-center justify-center p-0">
         {(onClose) => (
           <>
-            <Button
-              isIconOnly
-              radius="full"
-              variant="flat"
-              onPress={onClose}
-              className="absolute top-6 right-6 z-110 bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/10"
-            >
-              <X size={24} />
-            </Button>
+            {/* Header / Close Button */}
+            <div className="absolute top-0 left-0 right-0 p-6 flex justify-end z-[110] bg-gradient-to-b from-black/40 to-transparent">
+              <Button
+                isIconOnly
+                radius="full"
+                variant="flat"
+                onPress={onClose}
+                className="bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/10"
+              >
+                <X size={24} />
+              </Button>
+            </div>
 
             {isLoading && (
-              <div className="absolute inset-0 z-50 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-300">
-                <LoadingStatus message="Fetching high resolution..." />
+              <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-[110] animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="flex items-center gap-3 px-4 py-2 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl">
+                  <Spinner size="sm" color="primary" />
+                  <span className="text-white/90 text-sm font-medium tracking-wide drop-shadow-sm">
+                    Loading HD
+                  </span>
+                </div>
               </div>
             )}
 
             <TransformWrapper
               initialScale={1}
               minScale={0.5}
-              maxScale={5}
+              maxScale={8}
               centerOnInit
+              doubleClick={{ mode: "reset" }}
               wheel={{ step: 0.1 }}
-              pinch={{ step: 5 }}
             >
               <>
-                {!isLoading && <Controls src={highResImage} />}
+                {!isLoading && <Controls src={highResImage!} />}
                 <TransformComponent
-                  wrapperClass="!w-full !h-full cursor-move"
+                  wrapperClass="!w-full !h-full cursor-grab active:cursor-grabbing"
                   contentClass="!w-full !h-full flex items-center justify-center"
                 >
-                  <img
-                    src={highResImage!}
-                    alt={alt}
-                    onLoad={() => setIsLoading(false)}
-                    className={twMerge(
-                      "max-w-full max-h-full object-contain shadow-2xl transition-all duration-500 ease-out pointer-events-none select-none",
-                      isLoading
-                        ? "opacity-0 scale-95"
-                        : "opacity-100 scale-100",
-                    )}
-                  />
+                  <div className="relative flex items-center justify-center max-w-[95vw] max-h-[95vh]">
+                    {/* Low Res Placeholder */}
+                    <img
+                      src={lowResImage!}
+                      alt={alt}
+                      className={twMerge(
+                        "max-w-full max-h-full object-contain transition-all duration-1000 ease-in-out pointer-events-none select-none",
+                        isLoading ? "opacity-100" : "opacity-0 invisible",
+                      )}
+                    />
+                    {/* High Res Image */}
+                    <img
+                      src={highResImage!}
+                      alt={alt}
+                      onLoad={() => setIsLoading(false)}
+                      className={twMerge(
+                        "absolute inset-0 w-full h-full object-contain shadow-2xl transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) pointer-events-none select-none",
+                        isLoading
+                          ? "opacity-0 scale-95 grayscale-[0.5]"
+                          : "opacity-100 scale-100 grayscale-0",
+                      )}
+                    />
+                  </div>
                 </TransformComponent>
               </>
             </TransformWrapper>

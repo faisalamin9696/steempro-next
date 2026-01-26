@@ -16,13 +16,13 @@ const VotersModal = ({ isOpen, onOpenChange, comment }: VotersModalProps) => {
   const { voters, isLoading, error } = usePostVoters(
     comment.author,
     comment.permlink,
-    isOpen
+    isOpen,
   );
 
   const sortedVoters = useMemo(() => {
     if (!voters) return [];
     return [...voters].sort(
-      (a, b) => Math.abs(Number(b.rshares)) - Math.abs(Number(a.rshares))
+      (a, b) => Math.abs(Number(b.rshares)) - Math.abs(Number(a.rshares)),
     );
   }, [voters]);
 
@@ -31,11 +31,7 @@ const VotersModal = ({ isOpen, onOpenChange, comment }: VotersModalProps) => {
     const total_rs = comment.net_rshares;
     const percent_rs = rshares / total_rs;
     const value = comment.payout * percent_rs;
-    // const value =
-    //   (rs / Constants.globalProps.recent_reward_claims) *
-    //   Constants.globalProps.total_reward_fund *
-    //   Constants.globalProps.median_price;
-    if (value < 0.001) return "<$0.001";
+    if (value < 0.001 || isNaN(value)) return "<$0.001";
     if (value < 1) return `$${value.toFixed(3)}`;
     return `$${value.toFixed(2)}`;
   };
