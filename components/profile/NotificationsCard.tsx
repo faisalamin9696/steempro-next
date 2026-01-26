@@ -185,6 +185,7 @@ const NotificationsCard = ({ username }: { username: string }) => {
             : ""
         }
         titleEndContent={
+          isMe &&
           unreadCount > 0 && (
             <Button
               variant="bordered"

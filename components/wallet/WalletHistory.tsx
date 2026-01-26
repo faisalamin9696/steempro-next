@@ -120,7 +120,7 @@ export const WalletHistory = ({ username }: WalletHistoryProps) => {
       key: "description",
       header: "Description",
       searchable: true,
-      className: "font-mono w-full",
+      className: "font-mono flex-1",
       render(value, row) {
         return (
           <OperationItem key={`${row.id}-${row.block_num}`} operation={row} />
