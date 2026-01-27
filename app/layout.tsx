@@ -114,15 +114,15 @@ export default async function RootLayout({
         className={`*:${geistSans.variable} ${geistMono.variable}`}
         suppressHydrationWarning={true}
       >
-        <Suspense fallback={<LoadingCard />}>
-          <ThemeProvider
-            attribute="class"
-            disableTransitionOnChange
-            defaultTheme="dark"
-          >
+        <ThemeProvider
+          attribute="class"
+          disableTransitionOnChange
+          defaultTheme="dark"
+        >
+          <Suspense fallback={<LoadingCard />}>
             <AppLayout>{children}</AppLayout>
-          </ThemeProvider>
-        </Suspense>
+          </Suspense>
+        </ThemeProvider>
       </body>
     </html>
   );

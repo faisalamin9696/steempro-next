@@ -1,17 +1,16 @@
 import { auth } from "@/auth";
 import { sdsApi } from "@/libs/sds";
-import React, { use } from "react";
+import React, { Suspense } from "react";
 import Providers from "./providers";
-import { Toaster } from "sonner";
+import LoadingCard from "@/components/ui/LoadingCard";
 
-function AppLayout({ children }: { children: React.ReactNode }) {
-  const globals = use(sdsApi.getGlobalProps());
-  const session = use(auth());
+async function AppLayout({ children }: { children: React.ReactNode }) {
+  const globals = await sdsApi.getGlobalProps();
+  const session = await auth();
 
   return (
     <Providers globals={globals} session={session}>
-      {children}
-      <Toaster richColors closeButton />
+      <Suspense fallback={<LoadingCard />}>{children}</Suspense>
     </Providers>
   );
 }

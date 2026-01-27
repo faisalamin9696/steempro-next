@@ -60,7 +60,7 @@ function HomeCarousel({
                 width="100%"
                 src={proxifyImageUrl(item.thumbnail, "640x0")}
                 imageClass="rounded-2xl object-cover transition-transform duration-500 group-hover:scale-105"
-                priority={index < 3}
+                priority={index < 4}
               />
 
               {/* Caption overlay */}

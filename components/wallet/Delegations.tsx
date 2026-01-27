@@ -1,12 +1,15 @@
 import { DelegationModal } from "./DelegationModal";
-import {Select, SelectItem } from "@heroui/select";
+import { Select, SelectItem } from "@heroui/select";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
 import {
   ArrowDownLeft,
   ArrowUpRight,
+  Edit2,
   Filter,
   History,
+  PencilLine,
+  SquarePen,
   Trash2,
   Users,
 } from "lucide-react";
@@ -63,7 +66,7 @@ export const Delegations = ({ account }: DelegationsProps) => {
 
   const { data, isLoading, error } = useSWR(
     account.name ? `delegations-${account.name}-${typeFilter}` : null,
-    () => sdsApi.getDelegations(account.name, typeFilter)
+    () => sdsApi.getDelegations(account.name, typeFilter),
   );
 
   useEffect(() => {
@@ -92,7 +95,7 @@ export const Delegations = ({ account }: DelegationsProps) => {
               delegations?.filter((d) => d.status === "outgoing") ?? [],
             expiring_delegations:
               delegations?.filter((d) => d.status === "expiring") ?? [],
-          })
+          }),
     );
   }, [delegations, isMe]);
 
@@ -174,7 +177,7 @@ export const Delegations = ({ account }: DelegationsProps) => {
       className: "text-muted",
       render: (value, row) => {
         const date = moment.unix(
-          row.status === "expiring" ? row?.expiration ?? 0 : row.time
+          row.status === "expiring" ? (row?.expiration ?? 0) : row.time,
         );
         return date.fromNow(true);
       },
@@ -200,7 +203,7 @@ export const Delegations = ({ account }: DelegationsProps) => {
                 setIsDelegationModalOpen(true);
               }}
             >
-              <Users size={18} />
+              <SquarePen size={18} />
             </Button>
             <Button
               variant="light"

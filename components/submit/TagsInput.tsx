@@ -3,6 +3,8 @@ import { Chip } from "@heroui/chip";
 import { Input, InputProps } from "@heroui/input";
 import { validateTags } from "@/utils/editor";
 import { toast } from "sonner";
+import { Copy, Check } from "lucide-react";
+import { Button } from "@heroui/button";
 
 interface TagsInputProps extends Omit<InputProps, "onChange"> {
   tags: string[];
@@ -12,6 +14,7 @@ interface TagsInputProps extends Omit<InputProps, "onChange"> {
 const TagsInput = ({ tags, onChange, ...props }: TagsInputProps) => {
   const [inputValue, setInputValue] = useState("");
   const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [isCopied, setIsCopied] = useState(false);
 
   /* ---------- TAG LOGIC ---------- */
 
@@ -64,6 +67,18 @@ const TagsInput = ({ tags, onChange, ...props }: TagsInputProps) => {
     setDragIndex(null);
   };
 
+  const handleCopyTags = async () => {
+    if (tags.length === 0) return;
+    try {
+      await navigator.clipboard.writeText(tags.join(" "));
+      setIsCopied(true);
+      toast.success("Tags copied to clipboard");
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      toast.error("Failed to copy tags");
+    }
+  };
+
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap gap-2 items-center rounded-lg">
@@ -100,9 +115,24 @@ const TagsInput = ({ tags, onChange, ...props }: TagsInputProps) => {
         />
       </div>
 
-      <p className="text-xs text-muted">
-        {tags.length}/8 tags • Drag to reorder
-      </p>
+      <div className="flex items-center px-1 gap-2">
+        <p className="text-xs text-muted">
+          {tags.length}/8 tags • Drag to reorder
+        </p>
+        {tags.length > 0 && (
+          <Button
+            isIconOnly
+            size="sm"
+            variant="light"
+            radius="sm"
+            onPress={handleCopyTags}
+            className="text-muted hover:text-primary min-w-0 h-6 w-6"
+            title="Copy all tags"
+          >
+            {isCopied ? <Check size={14} /> : <Copy size={14} />}
+          </Button>
+        )}
+      </div>
     </div>
   );
 };

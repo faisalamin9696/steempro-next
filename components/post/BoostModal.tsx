@@ -9,7 +9,6 @@ import moment from "moment";
 import {
   CheckCircle2,
   XCircle,
-  Clock,
   Rocket,
   Shield,
   Info,
@@ -17,7 +16,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Lottie from "lottie-react";
-import { Spinner } from "@heroui/react";
+import { Spinner } from "@heroui/spinner";
 import SModal from "@/components/ui/SModal";
 import rocketAnimation from "@/public/rocket-anim.json";
 import successAnimation from "@/public/success-anim.json";
