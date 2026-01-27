@@ -36,7 +36,7 @@ function CommunityPage({
 
   const communityData =
     useAppSelector(
-      (state) => state.communityReducer.values[community.account]
+      (state) => state.communityReducer.values[community.account],
     ) ?? community;
 
   useEffect(() => {
@@ -81,7 +81,7 @@ function CommunityPage({
         children: <CommuntiyLog account={community.account} />,
       },
     ],
-    [apiParams, isMobile]
+    [apiParams, isMobile],
   );
 
   return (
@@ -108,10 +108,11 @@ function CommunityPage({
       </Accordion>
       {pinnedPost?.length > 0 && (
         <div className="mt-3">
-          <HomeCarousal data={pinnedPost} showPagination/>
+          <HomeCarousal data={pinnedPost} showPagination />
         </div>
       )}
       <STabs
+        key={`tabs-community-${session?.user?.name || "anonymous"}`}
         variant="bordered"
         selectedKey={selectedKey}
         onSelectionChange={handleSelectionChange}

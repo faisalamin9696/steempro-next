@@ -73,6 +73,7 @@ class SdsApi {
       "memo_key",
       "recovery_account",
     ];
+
     return sdsFetcher<AccountExt>(
       `/accounts_api/getAccountExt/${username}/${observer}/${(
         fields ?? essentialFields

@@ -15,7 +15,7 @@ function HomePage() {
   const { category } = useParams();
   const { data: session } = useSession();
   const [selectedKey, setSelectedKey] = useState(
-    (category as string) || "trending"
+    (category as string) || "trending",
   );
   const { isMobile } = useDeviceInfo();
 
@@ -64,6 +64,7 @@ function HomePage() {
 
   return (
     <STabs
+      key={`tabs-home-${session?.user?.name || "anonymous"}`}
       variant="bordered"
       selectedKey={selectedKey}
       items={homeTabs}

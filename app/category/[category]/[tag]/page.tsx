@@ -15,7 +15,7 @@ function CategoryPage() {
   const { category, tag } = useParams();
   const { data: session } = useSession();
   const [selectedKey, setSelectedKey] = useState(
-    (category as string) || "trending"
+    (category as string) || "trending",
   );
   const { isMobile } = useDeviceInfo();
   const apiParam = `/${tag}`;
@@ -63,6 +63,7 @@ function CategoryPage() {
 
   return (
     <STabs
+      key={`tabs-category-${session?.user?.name || "anonymous"}`}
       variant="bordered"
       selectedKey={selectedKey}
       onSelectionChange={handleSelectionChange}

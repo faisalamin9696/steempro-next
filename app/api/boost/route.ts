@@ -15,7 +15,7 @@ async function getBoostStatus(
   // Fetch everything in parallel
   const [officialAccount, post, history, authorExt] = await Promise.all([
     sdsApi.getAccountExt(Constants.official_account),
-    sdsApi.getPost(author, permlink, username ?? null),
+    sdsApi.getPost(author, permlink, Constants.official_account),
     sdsApi.getAccountHistory(Constants.official_account, "vote", 500, 0, {
       amount: 24,
       unit: "hours",
@@ -44,6 +44,8 @@ async function getBoostStatus(
   const alreadyVotedByOfficial = history.some(
     (h) => h.op[0] === "vote" && h.op[1].author === author,
   );
+  const alreadyVotedThisPost = post.observer_vote > 0;
+
   const isCooldownMet = isModerator || !alreadyVotedByOfficial;
 
   const isFollowed = authorExt.observer_follows_author;
@@ -51,17 +53,17 @@ async function getBoostStatus(
 
   const results = {
     reputation: {
-      label: "Reputation 40+ or above",
+      label: "Reputation 40+",
       met: isReputationMet,
       value: reputation,
     },
     app: {
-      label: "Posted using SteemPro app",
+      label: "Using SteemPro",
       met: isPostedBySteemPro || isModerator,
       value: isModerator ? "Admin" : isPostedBySteemPro ? "Yes" : "No",
     },
     cooldown: {
-      label: "One boost every 24 hours",
+      label: "Boost (24H)",
       met: isCooldownMet,
       value: isModerator
         ? "Admin"
@@ -73,6 +75,11 @@ async function getBoostStatus(
       label: "Service Status",
       met: isOfficialVpMet,
       value: isOfficialVpMet ? "Active" : "Cooldown",
+    },
+    voted: {
+      label: "Already boosted",
+      met: !alreadyVotedThisPost,
+      value: alreadyVotedThisPost ? "Yes" : "No",
     },
   };
 
@@ -98,6 +105,7 @@ async function getBoostStatus(
       results.app.met &&
       isOfficialVpMet &&
       isCooldownMet &&
+      !alreadyVotedThisPost &&
       isPermissionMet &&
       isAgeMet &&
       !extraChecks.isMuted &&
@@ -207,13 +215,19 @@ export async function POST(req: NextRequest) {
         { status: 429 },
       );
     }
+    if (status.results.voted.met === false) {
+      return NextResponse.json(
+        { error: "Post already voted by observer" },
+        { status: 400 },
+      );
+    }
     if (status.isFollowed === false && !status.isModerator) {
       return NextResponse.json(
         { error: "NOT_FOLLOWED", message: "Permission required" },
         { status: 403 },
       );
     }
-    
+
     if (status.extraChecks.isMuted)
       return NextResponse.json({ error: "Post is muted" }, { status: 400 });
     if (status.extraChecks.payoutDeclined)
@@ -239,13 +253,30 @@ export async function POST(req: NextRequest) {
           color: 0x3b82f6,
           url: postLink,
           fields: [
-            { name: "User", value: `@${username}`, inline: true },
+            { name: "By", value: `@${username}`, inline: true },
             {
               name: "Reputation",
               value: `${status.results.reputation.value}`,
               inline: true,
             },
-            { name: "Post Link", value: `[View Post](${postLink})` },
+            {
+              name: "\u200b",
+              value: "\u200b",
+              inline: true,
+            },
+
+            { name: "User", value: `@${author}`, inline: true },
+
+            {
+              name: "Post Link",
+              value: `[View Post](${postLink})`,
+              inline: true,
+            },
+            {
+              name: "\u200b",
+              value: "\u200b",
+              inline: true,
+            },
           ],
           timestamp: new Date().toISOString(),
           footer: { text: "SteemPro Boost System" },

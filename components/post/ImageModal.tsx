@@ -132,7 +132,7 @@ export default function ImageModal({
         {(onClose) => (
           <>
             {/* Header / Close Button */}
-            <div className="absolute top-0 left-0 right-0 p-6 flex justify-end z-[110] bg-gradient-to-b from-black/40 to-transparent">
+            <div className="absolute top-0 left-0 right-0 p-6 flex justify-end z-110 bg-linear-to-b from-black/40 to-transparent">
               <Button
                 isIconOnly
                 radius="full"
@@ -145,7 +145,7 @@ export default function ImageModal({
             </div>
 
             {isLoading && (
-              <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-[110] animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-110 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div className="flex items-center gap-3 px-4 py-2 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl">
                   <Spinner size="sm" color="primary" />
                   <span className="text-white/90 text-sm font-medium tracking-wide drop-shadow-sm">

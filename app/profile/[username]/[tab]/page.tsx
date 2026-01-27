@@ -25,14 +25,14 @@ function ProfilePage({ account }: { account: AccountExt }) {
   const initialTab = tab ?? "blog";
   const loginData = useAppSelector((s) => s.loginReducer.value);
   const otherProfileData = useAppSelector(
-    (s) => s.profileReducer.values[account.name]
+    (s) => s.profileReducer.values[account.name],
   );
   const [selectedKey, setSelectedKey] = useState(initialTab);
   const { data: session } = useSession();
   const { useSmaller } = useDeviceInfo();
   const isMobile = useSmaller("sm");
   const isMe = session?.user?.name === account.name;
-  const profileData = isMe ? loginData : otherProfileData ?? account;
+  const profileData = isMe ? loginData : (otherProfileData ?? account);
   const { layout, className } = useFeedLayout();
   const dispatch = useAppDispatch();
 
@@ -72,7 +72,7 @@ function ProfilePage({ account }: { account: AccountExt }) {
         api: "getCommentsByParentAuthor" + apiParams,
       },
     ],
-    [apiParams]
+    [apiParams],
   );
 
   const profileTabs = useMemo(
@@ -90,6 +90,7 @@ function ProfilePage({ account }: { account: AccountExt }) {
         icon: <Newspaper size={ICON_SIZE} />,
         children: (
           <STabs
+            key={`tabs-posts-${session?.user?.name || "anonymous"}`}
             classNames={{ tabList: "pt-0" }}
             selectedKey={selectedKey}
             onSelectionChange={handleSelectionChange}
@@ -124,14 +125,14 @@ function ProfilePage({ account }: { account: AccountExt }) {
         children: <WalletTab account={profileData} />,
       },
     ],
-    [apiParams, isMobile, profileData]
+    [apiParams, isMobile, profileData],
   );
 
   const normalizedTab = ["posts", "friends", "comments", "replies"].includes(
-    tab
+    tab,
   )
     ? "posts"
-    : tab ?? "blog";
+    : (tab ?? "blog");
 
   return (
     <div className="flex flex-col gap-2">
@@ -156,6 +157,7 @@ function ProfilePage({ account }: { account: AccountExt }) {
       </Accordion>
 
       <STabs
+        key={`tabs-profile-${session?.user?.name || "anonymous"}`}
         variant="bordered"
         selectedKey={normalizedTab}
         onSelectionChange={handleSelectionChange}
