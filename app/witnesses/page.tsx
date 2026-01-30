@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   Vote,
   ExternalLink,
@@ -45,20 +45,48 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
   const [activeTab, setActiveTab] = useState("witnesses");
   const [proxyInput, setProxyInput] = useState("");
   const [isProxying, setIsProxying] = useState(false);
+  const [highlightedWitness, setHighlightedWitness] = useState<string | null>(
+    null,
+  );
   const dispatch = useAppDispatch();
   const { authenticateOperation } = useAccountsContext();
   const hasProxy = !!loginData?.proxy;
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const handleHashChange = () => {
+        const hash = window.location.hash.replace("#", "");
+        if (hash) {
+          setHighlightedWitness(hash);
+        }
+      };
+
+      handleHashChange();
+      window.addEventListener("hashchange", handleHashChange);
+      return () => window.removeEventListener("hashchange", handleHashChange);
+    }
+  }, []);
   const userWitness = useMemo(() => {
     if (!loginData.name) return null;
     return data.find((w) => w.name === loginData.name);
   }, [data, loginData.name]);
 
   const filteredWitnesses = useMemo(() => {
+    let result = [...data];
     if (onlyVoted) {
-      return data.filter((w) => w.observer_votes_witness === 1);
+      result = result.filter((w) => w.observer_votes_witness === 1);
     }
-    return data;
-  }, [data, onlyVoted]);
+
+    if (highlightedWitness) {
+      const matchIndex = result.findIndex((w) => w.name === highlightedWitness);
+      if (matchIndex !== -1) {
+        const match = result.splice(matchIndex, 1)[0];
+        result.unshift(match);
+      }
+    }
+
+    return result;
+  }, [data, onlyVoted, highlightedWitness]);
 
   const handleViewDetails = (witness: Witness) => {
     setSelectedWitness(witness);
@@ -346,6 +374,8 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
                   columns={columns}
                   searchPlaceholder="Search witnesses by name..."
                   emptyMessage="No witnesses found"
+                  rowIdKey="name"
+                  highlightId={highlightedWitness || undefined}
                 />
               </CardBody>
             </Card>

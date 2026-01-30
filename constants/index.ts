@@ -1,5 +1,8 @@
 export const Constants = {
   official_account: "steempro.com",
+  funds_account: "steempro.funds",
+  official_community: "hive-160125",
+
   site_url: "https://steempro.com",
   sds_url: "https://sds0.steemworld.org",
   steemit_url: "https://steemit.com",

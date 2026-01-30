@@ -10,7 +10,7 @@ export const formatVests = (vests: number): string => {
 export const scrollToWithOffset = (el: HTMLElement, offset: number = 0) => {
   const elementPosition = el.getBoundingClientRect().top + window.pageYOffset;
   const offsetPosition = elementPosition - offset;
-  window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+  window.scrollTo({ top: offsetPosition, behavior: "smooth"});
 };
 
 export const toBase64 = (file: File) =>

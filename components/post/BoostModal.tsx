@@ -187,7 +187,6 @@ export default function BoostModal({ isOpen, onOpenChange, post }: Props) {
       onOpenChange={onOpenChange}
       size="md"
       scrollBehavior="inside"
-      hideCloseButton
       title={isLaunched ? "" : "Boost Post"}
       description={isLaunched ? "" : "Launch your post to new heights!"}
       classNames={{ footer: "p-0" }}
@@ -306,7 +305,7 @@ export default function BoostModal({ isOpen, onOpenChange, post }: Props) {
                                     : "bg-danger-50/70 dark:bg-danger-950/10 border-danger-200/60 dark:border-danger-800/20"
                                 }`}
                               >
-                                <div className="flex items-center gap-2 min-w-0">
+                                <div className="flex items-center gap-1 min-w-0">
                                   <div
                                     className={
                                       item.met ? "text-success" : "text-danger"
@@ -318,7 +317,7 @@ export default function BoostModal({ isOpen, onOpenChange, post }: Props) {
                                       <XCircle size={13} strokeWidth={3} />
                                     )}
                                   </div>
-                                  <span className="text-[11px] font-bold uppercase tracking-tight text-muted/80 truncate">
+                                  <span className="text-[11px] font-semibold uppercase tracking-tight text-muted/80 truncate">
                                     {item.label}
                                   </span>
                                 </div>
@@ -360,6 +359,19 @@ export default function BoostModal({ isOpen, onOpenChange, post }: Props) {
                         />
                       )}
 
+                      {status.results.age && !status.results.age.met && (
+                        <Alert
+                          color="danger"
+                          variant="flat"
+                          className="rounded-2xl border border-danger-200/20 text-xs py-2"
+                          description={
+                            status.extraChecks.ageSeconds < 300
+                              ? "Post is too new. Please wait at least 5 minutes after posting."
+                              : "Post is too old. Only posts newer than 5 days can be boosted."
+                          }
+                        />
+                      )}
+
                       {needsPermission && (
                         <Alert
                           color="warning"
@@ -373,15 +385,7 @@ export default function BoostModal({ isOpen, onOpenChange, post }: Props) {
                   )}
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-3 mt-1">
-                  <Button
-                    fullWidth
-                    variant="flat"
-                    onPress={onClose}
-                    className="sm:order-1 h-12 rounded-2xl font-semibold active:scale-95 transition-transform"
-                  >
-                    Maybe Later
-                  </Button>
+                <div className="flex flex-col xs:flex-row-reverse gap-3 mt-1">
                   {needsPermission ? (
                     <Button
                       fullWidth
@@ -406,12 +410,23 @@ export default function BoostModal({ isOpen, onOpenChange, post }: Props) {
                       onPress={handleBoost}
                       className="sm:order-2 h-12 rounded-2xl font-bold shadow-xl shadow-primary-500/20 active:scale-95 transition-transform"
                       endContent={
-                        !isPending && !isLaunching && <ChevronRight size={18} />
+                        !isPending &&
+                        !isLaunching && (
+                          <Rocket className="shrink-0" size={18} />
+                        )
                       }
                     >
                       {isLaunching ? "Launching..." : "Launch Boost"}
                     </Button>
                   )}
+                  <Button
+                    fullWidth
+                    variant="flat"
+                    onPress={onClose}
+                    className="sm:order-1 h-12 rounded-2xl font-semibold active:scale-95 transition-transform"
+                  >
+                    Maybe Later
+                  </Button>
                 </div>
               </motion.div>
             )}

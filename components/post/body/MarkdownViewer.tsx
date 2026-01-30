@@ -1,6 +1,6 @@
 "use client";
 
-import  { memo, useState, useMemo, useCallback } from "react";
+import { memo, useState, useMemo, useCallback } from "react";
 import { Remarkable } from "remarkable";
 import sanitizeConfig, { noImageText } from "@/utils/sanitizeConfig";
 import sanitize from "sanitize-html";
@@ -12,7 +12,7 @@ import RemarkableSpoiler from "@quochuync/remarkable-spoiler";
 import "@quochuync/remarkable-spoiler/styles.css";
 import RemarkableTable from "@/utils/remarkableTable";
 import { BodyParsed } from "./BodyParsed";
-import "./markdown.css";
+import "./markdown.scss";
 
 interface MarkdownViewerProps {
   body: string;
@@ -75,13 +75,11 @@ const MarkdownViewer = memo(function MarkdownViewer({
     // Remove HTML comments
     processedBody = processedBody.replace(
       /<!--([\s\S]+?)(-->|$)/g,
-      "(html comment removed: $1)"
+      "(html comment removed: $1)",
     );
 
-    // Render markdown or use HTML directly
-    let renderedText = isHtml
-      ? processedBody
-      : remarkable.render(processedBody);
+    // Render markdown
+    let renderedText = remarkable.render(processedBody);
 
     // Wrap in html tags if not present
     if (!renderedText.startsWith("<html>")) {
@@ -100,7 +98,7 @@ const MarkdownViewer = memo(function MarkdownViewer({
           large: true,
           highQualityPost,
           noImage: noImage && allowNoImage,
-        })
+        }),
       );
     } else {
       console.warn("MarkdownViewer rendering unsanitized content");
@@ -127,7 +125,7 @@ const MarkdownViewer = memo(function MarkdownViewer({
       if (embedMd) {
         finalText = finalText.replace(
           match[0],
-          renderToString(embedMd.markdown)
+          renderToString(embedMd.markdown),
         );
       }
       embedIndex += 1;
@@ -160,7 +158,7 @@ const MarkdownViewer = memo(function MarkdownViewer({
     <div
       className={twMerge(
         "markdown-body prose dark:prose-invert prose-sm sm:prose-lg prose-a:text-blue-500",
-        className
+        className,
       )}
     >
       <BodyParsed body={cleanText} isNsfw={isNsfw} />

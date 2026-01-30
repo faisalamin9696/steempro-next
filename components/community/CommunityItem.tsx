@@ -14,7 +14,7 @@ interface Props {
 export default function CommunityItem({ community, account }: Props) {
   const { data: session } = useSession();
   const [isSubscribed, setIsSubscribed] = useState(
-    Boolean(community.observer_subscribed)
+    Boolean(community.observer_subscribed),
   );
   const isMe = session?.user?.name === account;
 
@@ -63,7 +63,7 @@ export default function CommunityItem({ community, account }: Props) {
           </div>
         </div>
 
-        {!isMe ? (
+        {!account || isMe ? (
           <SubscribeButton
             size="sm"
             variant={isSubscribed ? "bordered" : "flat"}

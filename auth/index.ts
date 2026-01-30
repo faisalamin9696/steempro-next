@@ -28,4 +28,12 @@ export const { handlers, auth } = NextAuth({
     // 10 years 10 * 12 * 365 * 24 * 60 * 60
     maxAge: 3784320000,
   },
+  callbacks: {
+    async session({ session, token }: any) {
+      if (session.user) {
+        session.user.id = token.sub;
+      }
+      return session;
+    },
+  },
 });

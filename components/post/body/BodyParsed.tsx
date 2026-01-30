@@ -37,9 +37,9 @@ export function BodyParsed({
 
         case "table":
           return (
-            <table className="markdown-body table-scrollable">
-              {domToReact(children as DOMNode[], options)}
-            </table>
+            <div className="table-wrapper scrollbar-thin py-3">
+              <table>{domToReact(children as DOMNode[], options)}</table>
+            </div>
           );
 
         case "p":

@@ -32,6 +32,8 @@ interface BaseDataTableProps<T> {
   hasMore?: (data: T[]) => boolean;
   groupBy?: (item: T) => string;
   renderGroupHeader?: (group: string) => React.ReactNode;
+  rowIdKey?: string;
+  highlightId?: string;
 }
 
 interface BasicDataTableProps<T> extends BaseDataTableProps<T> {
@@ -84,6 +86,8 @@ export function DataTable<T extends Record<string, any>>({
   onLoadedMore,
   groupBy,
   renderGroupHeader,
+  rowIdKey,
+  highlightId,
   ...props
 }: DataTableProps<T>) {
   const [sortColumn, setSortColumn] = useState<string | null>(null);
@@ -293,7 +297,16 @@ export function DataTable<T extends Record<string, any>>({
                         </TableCell>
                       </TableRow>
                     )}
-                    <TableRow className="border-y border-muted/30 ">
+                    <TableRow
+                      id={rowIdKey ? String(row[rowIdKey]) : undefined}
+                      className={twMerge(
+                        "border-y border-muted/30 transition-colors duration-500",
+                        highlightId &&
+                          rowIdKey &&
+                          String(row[rowIdKey]) === highlightId &&
+                          "bg-primary/20 border-primary/50",
+                      )}
+                    >
                       {columns.map((column) => (
                         <TableCell
                           key={column.key}

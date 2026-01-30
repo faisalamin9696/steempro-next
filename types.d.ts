@@ -1,5 +1,5 @@
 type RoleTypes = "muted" | "guest" | "member" | "mod" | "admin" | "owner";
-
+type Games = "steem-heights"
 interface Window {
   steem_keychain: any;
 }

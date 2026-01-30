@@ -26,6 +26,13 @@ class SdsApi {
     );
   }
 
+  getGameSeason(game: "steem-heights"): Promise<Feed[]> {
+    const length = 500;
+    return sdsFetcher(
+      `/feeds_api/getActiveCommunityPostsByTagAuthor/${Constants.official_community}/${game}/${Constants.funds_account}/steem/${length}/1`,
+    );
+  }
+
   async getAccountExt(
     username: string,
     observer: string | null = "steem",

@@ -602,6 +602,43 @@ class SteemApi {
     return this.broadcast(follower, operations, privateKey, useKeychain);
   }
 
+  /**
+   * Record a game score on the blockchain
+   */
+  recordGameScore(
+    player: string,
+    score: number,
+    game: string = "steem-heights",
+    season: number = 1,
+    privateKey?: string,
+    useKeychain: boolean = false,
+    broadcaster?: string,
+  ) {
+    const json = JSON.stringify({
+      player,
+      score,
+      game,
+      season,
+      timestamp: new Date().toISOString(),
+    });
+
+    const activeAccount = broadcaster || player;
+
+    const operations: Operation[] = [
+      [
+        "custom_json",
+        {
+          required_auths: [],
+          required_posting_auths: [activeAccount],
+          id: "steempro_game_heights",
+          json,
+        },
+      ],
+    ];
+
+    return this.broadcast(activeAccount, operations, privateKey, useKeychain);
+  }
+
   mutePost = async (
     account: string,
     community: string,

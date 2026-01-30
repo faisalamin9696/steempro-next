@@ -6,6 +6,7 @@ import { validateHost } from "@/utils/helper";
 import { parsePostMeta } from "@/utils/user";
 import { checkBotId } from "botid/server";
 import { NextRequest, NextResponse } from "next/server";
+import moment from "moment";
 
 async function getBoostStatus(
   author: string,
@@ -51,6 +52,18 @@ async function getBoostStatus(
   const isFollowed = authorExt.observer_follows_author;
   const isPermissionMet = isModerator || isFollowed;
 
+  const extraChecks = {
+    isMuted: post.is_muted,
+    isAuthorMuted: post.is_author_muted,
+    payoutDeclined: post.max_accepted_payout === 0,
+    votesNotAllowed: !post.allow_votes,
+    curationDisabled: !post.allow_curation_rewards,
+    ageSeconds: Math.floor(Date.now() / 1000) - post.created,
+  };
+
+  const isAgeMet =
+    extraChecks.ageSeconds >= 300 && extraChecks.ageSeconds <= 432000;
+
   const results = {
     reputation: {
       label: "Reputation 40+",
@@ -68,7 +81,7 @@ async function getBoostStatus(
       value: isModerator
         ? "Admin"
         : alreadyVotedByOfficial
-          ? "Already used"
+          ? "Used"
           : "Available",
     },
     service: {
@@ -81,20 +94,12 @@ async function getBoostStatus(
       met: !alreadyVotedThisPost,
       value: alreadyVotedThisPost ? "Yes" : "No",
     },
+    age: {
+      label: "Post Age",
+      met: isAgeMet,
+      value: moment.unix(post.created).fromNow(true),
+    },
   };
-
-  const extraChecks = {
-    isMuted: post.is_muted,
-    isAuthorMuted: post.is_author_muted,
-    payoutDeclined: post.max_accepted_payout === 0,
-    votesNotAllowed: !post.allow_votes,
-    curationDisabled: !post.allow_curation_rewards,
-    ageSeconds: Math.floor(Date.now() / 1000) - post.created,
-  };
-
-  const isAgeMet =
-    extraChecks.ageSeconds >= 5 * 60 &&
-    extraChecks.ageSeconds <= 5 * 24 * 60 * 60;
 
   return {
     results,
@@ -233,7 +238,7 @@ export async function POST(req: NextRequest) {
     if (status.extraChecks.payoutDeclined)
       return NextResponse.json({ error: "Payout declined" }, { status: 400 });
     if (status.extraChecks.ageSeconds < 300)
-      return NextResponse.json({ error: "Post too young" }, { status: 400 });
+      return NextResponse.json({ error: "Post too new" }, { status: 400 });
     if (status.extraChecks.ageSeconds > 432000)
       return NextResponse.json({ error: "Post too old" }, { status: 400 });
 

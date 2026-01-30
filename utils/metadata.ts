@@ -436,6 +436,44 @@ export const getMetadata = {
       },
     };
   },
+  games: () => {
+    return {
+      title: "Mini Games by SteemPro - Play and Earn on Steem",
+      description:
+        "Explore a collection of mini games by SteemPro. Play, compete, and earn rewards on the Steem blockchain. Experience decentralized gaming with proof of skill.",
+      keywords: [
+        "SteemPro mini games",
+        "blockchain games",
+        "play to earn Steem",
+        "decentralized gaming",
+        "Steem Heights",
+        "skill-based games",
+        "crypto rewards gaming",
+      ],
+      alternates: {
+        canonical: "https://www.steempro.com/games",
+      },
+    };
+  },
+  steemHeights: () => {
+    return {
+      title: "Steem Heights - The Ultimate Scaling Challenge by SteemPro",
+      description:
+        "Test your focus and precision in Steem Heights. Scale the skyline, reach new altitudes, and secure your place on the blockchain leaderboard. Win Steem rewards!",
+      keywords: [
+        "Steem Heights game",
+        "scaling challenge",
+        "precision game",
+        "Steem rewards game",
+        "blockchain leaderboard",
+        "SteemPro gaming",
+        "stacking blocks game",
+      ],
+      alternates: {
+        canonical: "https://www.steempro.com/games/steem-heights",
+      },
+    };
+  },
 };
 
 interface MetadataOptions {

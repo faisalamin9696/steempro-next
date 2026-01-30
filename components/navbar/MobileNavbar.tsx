@@ -7,10 +7,8 @@ import { useEffect, useState, useMemo } from "react";
 import {
   Bell,
   House,
-  PlusCircle,
   User,
   Wallet,
-  ChevronUp,
   ChevronsUp,
   Plus,
   LogIn,
@@ -76,7 +74,7 @@ export function MobileNavbar() {
           }
         },
         icon: Bell,
-        active: pathname?.includes("/notifications"),
+        active: pathname?.includes(`/@${username}/notifications`),
         badge: isAuth && unreadCount > 0,
         key: "notifications",
       },
@@ -98,7 +96,7 @@ export function MobileNavbar() {
           }
         },
         icon: Wallet,
-        active: pathname?.includes("/wallet"),
+        active: pathname?.includes(`/@${username}/wallet`),
         key: "wallet",
       },
       {
@@ -115,12 +113,12 @@ export function MobileNavbar() {
         active:
           !!username &&
           pathname.startsWith(`/@${username}`) &&
-          !pathname?.includes("/wallet") &&
-          !pathname?.includes("/notifications"),
+          !pathname?.includes(`/@${username}/wallet`) &&
+          !pathname?.includes(`/@${username}/notifications`),
         key: "profile",
       },
     ],
-    [pathname, showScrollUp, isAuth, username, unreadCount, manageAccounts]
+    [pathname, showScrollUp, isAuth, username, unreadCount, manageAccounts],
   );
 
   return (
@@ -141,7 +139,7 @@ export function MobileNavbar() {
               className={twMerge(
                 "relative flex-1 flex flex-col items-center justify-center py-1.5 rounded-xl transition-all duration-300",
                 isActive ? "text-primary" : "text-muted hover:text-default-800",
-                item.className
+                item.className,
               )}
             >
               <div className="relative h-6 w-6 flex items-center justify-center">
@@ -177,7 +175,7 @@ export function MobileNavbar() {
                         showOutline={unreadCount > 0}
                         classNames={{ badge: "-right-1 top-1" }}
                         className={twMerge(
-                          "z-0"
+                          "z-0",
                           // unreadCount > 0 &&
                           //   "border-green-400 animate-pulse border-2"
                         )}

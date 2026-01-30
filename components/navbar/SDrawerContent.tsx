@@ -16,6 +16,7 @@ import {
   ChartCandlestick,
   Compass,
   DatabaseZap,
+  Gamepad2,
   House,
   Info,
   Landmark,
@@ -36,7 +37,7 @@ function SDrawerContent() {
   const { data: session, status } = useSession();
   const pathname = usePathname()?.replace(
     /\b(trending|payout|created|hot)\b/g,
-    ""
+    "",
   );
   const isAuthenticated = status === "authenticated";
   const isLogin = !!session?.user?.name;
@@ -56,6 +57,7 @@ function SDrawerContent() {
         { title: "Home", href: "/", icon: House },
         { title: "Explore", href: `/popular`, icon: Compass, login: true },
         { title: "Communities", href: `/communities`, icon: Users },
+        { title: "Games", href: `/games`, icon: Gamepad2 },
       ],
     },
     {
@@ -118,14 +120,14 @@ function SDrawerContent() {
                         "relative flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200",
                         !isActive &&
                           "hover:bg-default/50 text-default-600 hover:text-foreground",
-                        isActive && "text-primary font-medium"
+                        isActive && "text-primary font-medium",
                       )}
                     >
                       <Icon
                         size={iconSize}
                         className={twMerge(
                           "transition-transform group-hover:scale-110",
-                          isActive && "opacity-80"
+                          isActive && "opacity-80",
                         )}
                         strokeWidth={isActive ? 2.5 : 2}
                       />

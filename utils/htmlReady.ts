@@ -30,7 +30,7 @@ const XMLSerializer = new xmldom.XMLSerializer();
 
 export default function (
   html,
-  { mutate = true, hideImages = false, isProxifyImages = false } = {}
+  { mutate = true, hideImages = false, isProxifyImages = false } = {},
 ) {
   const state: any = { mutate };
   state.hashtags = new Set();
@@ -47,7 +47,7 @@ export default function (
       if (hideImages) {
         // eslint-disable-next-line no-restricted-syntax
         for (const image of Array.from(
-          doc.getElementsByTagName("img")
+          doc.getElementsByTagName("img"),
         ) as any) {
           const pre = doc.createElement("pre");
           pre.setAttribute("class", "image-url-only");
@@ -71,7 +71,7 @@ export default function (
     // xmldom error is bad
     console.log(
       "rendering error",
-      JSON.stringify({ error: error?.message, html })
+      JSON.stringify({ error: error?.message, html }),
     );
     return { html: "Error " + error?.message };
   }
@@ -87,7 +87,7 @@ function traverse(node, state, depth = 0) {
     if (tag === "img") img(state, child);
     else if (tag === "iframe") iframe(state, child);
     else if (tag === "a") link(state, child);
-    else if (child.nodeName === "#text") linkifyNode(child, state);
+    else if (child.nodeName === "#text") detectImageLinksOrLinkify(child, state);
     else if (tag === "p") handleDir(state, child);
 
     traverse(child, state, depth + 1);
@@ -161,7 +161,7 @@ function iframe(state, child) {
 
   child.parentNode.replaceChild(
     DOMParser.parseFromString(`<div class="iframeWrapper">${html}</div>`),
-    child
+    child,
   );
   const styleAttr = document.createAttribute("style");
   styleAttr.value = `position: relative; width: 100%; height: 0; padding-bottom: ${aspectRatioPercent}%;`;
@@ -199,20 +199,20 @@ function proxifyImages(doc, state) {
       const proxifiedImageUrl = proxifyImageUrl(
         url,
         isGif ? "0x0" : "640x0",
-        true
+        true,
       );
 
       if (state.lightbox && process.env.BROWSER) {
         const parentNode = node.parentNode;
         parentNode.appendChild(
           DOMParser.parseFromString(`<a href="${getDoubleSize(
-            proxifyImageUrl(url, "640x0", true)!
+            proxifyImageUrl(url, "640x0", true)!,
           )}">
                     <img
                         src="${proxifiedImageUrl}"
                         alt="${alt}"
                     />
-                </a>`)
+                </a>`),
         );
         parentNode.removeChild(node);
       } else {
@@ -221,6 +221,31 @@ function proxifyImages(doc, state) {
     }
   });
 }
+
+function detectImageLinksOrLinkify(textNode, state) {
+  const imageRegex = /(https?:\/\/\S+\.(?:jpg|jpeg|png|gif)(?:\?[^\s]*)?)/gi;
+  const match = textNode.data.match(imageRegex);
+
+  if (match) {
+    match.forEach((url) => {
+      const linkURL = proxifyImageUrl(url, "0x0");
+
+      const imgElement = textNode.ownerDocument.createElement("img");
+      imgElement.setAttribute("src", linkURL);
+
+      const anchorElement = textNode.ownerDocument.createElement("a");
+      anchorElement.setAttribute("href", linkURL);
+      anchorElement.appendChild(imgElement);
+      textNode.parentNode.replaceChild(anchorElement, textNode);
+
+      link(state, anchorElement);
+      img(state, imgElement);
+    });
+  } else {
+    linkifyNode(textNode, state);
+  }
+}
+
 function linkifyNode(child: any, state: any) {
   try {
     const tag = child.parentNode.tagName
@@ -243,7 +268,7 @@ function linkifyNode(child: any, state: any) {
       state.hashtags,
       state.usertags,
       state.images,
-      state.links
+      state.links,
     );
 
     if (mutate && content !== data) {
@@ -257,7 +282,7 @@ function linkifyNode(child: any, state: any) {
         const author = postMatch[3].replace("@", "");
         const permlink = postMatch[4];
         newChild = DOMParser.parseFromString(
-          `<span><a href="/${tag}/@${author}/${permlink}">@${author}/${permlink}</a></span>`
+          `<span><a href="/${tag}/@${author}/${permlink}">@${author}/${permlink}</a></span>`,
         );
       }
 
@@ -271,7 +296,7 @@ function linkifyNode(child: any, state: any) {
         const author = mentionMatch[2].replace("@", "").toLowerCase();
         if (author.indexOf("/") === -1) {
           newChild = DOMParser.parseFromString(
-            `<span><a href="/@${author}">@${author}</a></span>`
+            `<span><a href="/@${author}">@${author}</a></span>`,
           );
         }
       }
@@ -292,7 +317,7 @@ function linkifyNode(child: any, state: any) {
           const section = tpostMatch[3];
           const href = `/@${author}/${section}`;
           newChild = DOMParser.parseFromString(
-            `<span><a href="${href}">@${author}/${section}</a></span>`
+            `<span><a href="${href}">@${author}/${section}</a></span>`,
           );
         }
       }
@@ -332,7 +357,7 @@ function linkify(content, mutate, hashtags, usertags, images, links) {
       return valid
         ? `${preceedings}<a href="/@${userLower}">@${user}</a>`
         : `${preceedings}@${user}`;
-    }
+    },
   );
 
   content = content.replace(linksAny("gi"), (ln) => {
