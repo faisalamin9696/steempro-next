@@ -95,7 +95,7 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
 
         <Card
           ref={ref}
-          className="relative w-full aspect-2/3 bg-zinc-950 border-4 border-zinc-900 rounded-3xl overflow-hidden shadow-[0_0_80px_-20px_rgba(0,0,0,0.8)] cursor-pointer active:scale-[0.99] transition-transform"
+          className="relative w-full aspect-2/3 bg-zinc-950 border-4 border-zinc-900 rounded-3xl overflow-hidden shadow-[0_0_80px_-20px_rgba(0,0,0,0.8)] cursor-pointer active:scale-[0.99] transition-transform touch-none"
           onMouseDown={handleAction}
         >
           {/* Countdown Progress Bar */}
@@ -234,7 +234,7 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-zinc-950/80 backdrop-blur-sm  flex flex-col items-center justify-center p-8 text-center z-50"
+                className="absolute inset-0 bg-zinc-950/80 backdrop-blur-sm  flex flex-col items-center justify-center p-8 text-center"
               >
                 {gameState === "idle" ? (
                   <div className="space-y-8">
