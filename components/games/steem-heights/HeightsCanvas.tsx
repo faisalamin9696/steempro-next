@@ -41,6 +41,7 @@ interface Props {
   setIsPaused: (paused: boolean) => void;
   startGame: () => void;
   setGameState: (state: "idle") => void;
+  scrollToLeaderboard?: () => void;
 }
 
 export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
@@ -64,6 +65,7 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
       setIsPaused,
       startGame,
       setGameState,
+      scrollToLeaderboard,
     },
     ref,
   ) => {
@@ -77,7 +79,17 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
             <span className="text-[10px] text-zinc-500 font-black uppercase tracking-widest">
               Current Altitude
             </span>
-            <span className="text-4xl font-black italic ">{score}m</span>
+            <div className="flex items-end gap-3">
+              <span className="text-4xl font-black italic ">{score}m</span>
+              <Button
+                size="sm"
+                variant="flat"
+                onPress={scrollToLeaderboard}
+                className="lg:hidden h-7 bg-zinc-300/50 dark:bg-zinc-900/50 text-zinc-400 font-bold uppercase text-[9px] tracking-widest px-3 rounded-full border border-white/5 active:scale-95 transition-all"
+              >
+                Leaderboard
+              </Button>
+            </div>
           </div>
           {gameState === "playing" && (
             <motion.div

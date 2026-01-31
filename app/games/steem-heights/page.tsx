@@ -27,7 +27,10 @@ const SteemHeightsPage = () => {
               <div className="flex flex-col items-center order-1 lg:order-2 h-svh sm:h-auto">
                 <div className="w-full max-w-[450px] relative">
                   <div className="absolute -inset-8 bg-amber-500/5 blur-[100px] rounded-full opacity-50 pointer-events-none" />
-                  <HeightsCanvas {...heights} />
+                  <HeightsCanvas
+                    {...heights}
+                    scrollToLeaderboard={scrollToLeaderboard}
+                  />
                 </div>
               </div>
 
@@ -42,7 +45,7 @@ const SteemHeightsPage = () => {
                   size="sm"
                   onPress={scrollToLeaderboard}
                   startContent={<ChevronDown size={16} />}
-                  className="rounded-full border-zinc-800 text-zinc-500 hover:text-amber-500 hover:border-amber-500/50 font-bold uppercase text-[10px] tracking-widest transition-all"
+                  className="hidden lg:flex rounded-full border-zinc-800 text-zinc-500 hover:text-amber-500 hover:border-amber-500/50 font-bold uppercase text-[10px] tracking-widest transition-all"
                 >
                   View Leaderboard
                 </Button>
