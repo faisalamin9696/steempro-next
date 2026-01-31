@@ -27,12 +27,12 @@ export const HeightsLeaderboard = ({
   isSeasonActive,
 }: Props) => {
   return (
-    <Card className="p-6 bg-zinc-900/10 border-zinc-800 shadow-xl overflow-hidden relative min-h-[400px]">
+    <Card className=" bg-zinc-900/10 border-zinc-800 shadow-xl overflow-hidden relative min-h-[400px]">
       <div className="absolute top-0 right-0 p-4 opacity-10">
         <Target size={120} className="text-zinc-500" />
       </div>
 
-      <div className="relative z-10 space-y-6">
+      <div className="relative z-10 space-y-6 p-4">
         <Tabs
           aria-label="Leaderboard Tabs"
           variant="underlined"
@@ -85,7 +85,7 @@ export const HeightsLeaderboard = ({
 
               {/* Podium */}
               {highScores.length > 0 && (
-                <div className="flex justify-center items-end gap-2 px-2 pb-4 border-b border-zinc-800/50">
+                <div className="flex justify-center items-end gap-2 px-2 pb-8">
                   {/* 2nd Place */}
                   {highScores[1] && (
                     <div className="flex flex-col items-center gap-2 w-24">
@@ -216,22 +216,22 @@ export const HeightsLeaderboard = ({
                     ),
                   },
                   {
-                    key: "plays",
-                    header: "Plays",
-                    className: "px-2 py-2",
-                    render: (plays) => (
-                      <span className="text-xs font-bold text-zinc-500">
-                        {plays}
-                      </span>
-                    ),
-                  },
-                  {
                     key: "score",
                     header: "Altitude",
                     className: "px-2 py-2",
                     render: (score) => (
                       <span className="text-xs font-black text-white bg-zinc-800 px-2 py-0.5 rounded-md">
                         {score}m
+                      </span>
+                    ),
+                  },
+                  {
+                    key: "plays",
+                    header: "Plays",
+                    className: "px-2 py-2",
+                    render: (plays) => (
+                      <span className="text-xs font-bold text-zinc-500">
+                        {plays}
                       </span>
                     ),
                   },
