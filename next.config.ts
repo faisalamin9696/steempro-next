@@ -129,6 +129,17 @@ const nextConfig: NextConfig = {
         source: "/SCHEDULES",
         destination: "/schedules",
       },
+      // communities page uppercase handle
+      {
+        source: "/GAMES",
+        destination: "/games",
+      },
+
+      // schedules page uppercase handle
+      {
+        source: "/GAMES/STEEM-HEIGHTS",
+        destination: "/games/steem-heights",
+      },
     ];
   },
 

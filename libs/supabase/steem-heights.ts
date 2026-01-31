@@ -10,17 +10,23 @@ export const getHighScores = async (season: number, game: Games) => {
 
   if (!data) return [];
 
-  // Group by player and get the highest score
-  const seen = new Set();
-  return data
-    .filter((item: any) => {
-      if (!seen.has(item.player)) {
-        seen.add(item.player);
-        return true;
+  // Group by player, get the highest score and count plays
+  const playerStats = new Map();
+  data.forEach((item: any) => {
+    if (!playerStats.has(item.player)) {
+      playerStats.set(item.player, { ...item, plays: 1 });
+    } else {
+      const stats = playerStats.get(item.player);
+      stats.plays += 1;
+      // Since data is ordered by score descending, the first one we saw is the highest.
+      // But we can double check just in case.
+      if (item.score > stats.score) {
+        stats.score = item.score;
       }
-      return false;
-    })
-    .slice(0, 10);
+    }
+  });
+
+  return Array.from(playerStats.values()).sort((a, b) => b.score - a.score);
 };
 
 export const getSeasonalWinners = async (game: Games) => {

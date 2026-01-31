@@ -91,8 +91,6 @@ function PayoutButton(props: Props) {
 function PayoutDetailContent({ data }: { data: Post }) {
   const isPending = data.cashout_time > 0;
 
-  // Snippet Calculations
-  const beneficiary = data.beneficiaries;
   const pendingPayout = data.pending_payout_value;
   const authorPayout =
     data.pending_payout_value === 0

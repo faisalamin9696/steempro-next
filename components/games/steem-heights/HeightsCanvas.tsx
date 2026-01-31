@@ -20,7 +20,7 @@ import {
   CANVAS_HEIGHT,
   BLOCK_HEIGHT,
   TIME_LIMIT,
-} from "./constants";
+} from "./Config";
 
 interface Props {
   gameState: "idle" | "playing" | "gameover";
@@ -33,6 +33,7 @@ interface Props {
   isLoggedIn: boolean;
   isMuted: boolean;
   isPaused: boolean;
+  isSeasonActive: boolean;
   showPerfect: boolean;
   lastImpactTime: number;
   handleAction: () => void;
@@ -55,6 +56,7 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
       isLoggedIn,
       isMuted,
       isPaused,
+      isSeasonActive,
       showPerfect,
       lastImpactTime,
       handleAction,
@@ -68,9 +70,9 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
     const viewY = Math.max(0, (blocks.length - 10) * BLOCK_HEIGHT);
 
     return (
-      <div className="relative w-full max-w-[420px] group select-none">
+      <div className="flex flex-col gap-4 w-full max-w-[420px] group select-none">
         {/* Score Floating Panel */}
-        <div className="absolute -top-16 left-4 right-4 flex justify-between items-end">
+        <div className="px-2 flex justify-between items-end">
           <div className="flex flex-col">
             <span className="text-[10px] text-zinc-500 font-black uppercase tracking-widest">
               Current Altitude
@@ -251,7 +253,7 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
                     </div>
                     <Button
                       size="lg"
-                      className="bg-amber-500 text-black font-black px-12 h-16 rounded-2xl shadow-xl hover:scale-105 transition-transform"
+                      className="bg-amber-500 text-black font-black px-12 h-14 rounded-2xl shadow-xl hover:scale-105 transition-transform"
                       onPress={startGame}
                     >
                       BEGIN THE CLIMB
@@ -268,7 +270,7 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <h2 className="text-4xl font-black italic text-white">
+                      <h2 className="text-3xl font-black italic text-white">
                         CLIMB ENDED
                       </h2>
                       <div className="flex flex-col items-center gap-1">
@@ -281,9 +283,14 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
                             RECORDING ON BLOCKCHAIN...
                           </div>
                         )}
-                        {!isLoggedIn && (
+                        {!isLoggedIn && isSeasonActive && (
                           <div className="bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-bold px-3 py-1 rounded-full mt-2">
                             LOGIN TO RECORD SCORE ON BLOCKCHAIN
+                          </div>
+                        )}
+                        {!isSeasonActive && (
+                          <div className="bg-zinc-800/50 border border-white/5 text-zinc-400 text-[10px] font-bold px-3 py-1 rounded-full mt-2">
+                            SEASON INACTIVE • SCORE NOT RECORDED
                           </div>
                         )}
                       </div>
@@ -291,7 +298,7 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
                     <div className="flex flex-col gap-3">
                       <Button
                         size="lg"
-                        className="bg-amber-500 text-black font-black w-full h-16 rounded-2xl shadow-xl"
+                        className="bg-amber-500 text-black font-black w-full h-14 rounded-2xl shadow-xl"
                         onPress={startGame}
                         isDisabled={isSavingScore}
                       >

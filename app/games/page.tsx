@@ -1,45 +1,39 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardHeader, CardBody } from "@heroui/card";
+import { Card, CardBody } from "@heroui/card";
 import { Image } from "@heroui/image";
 import { Button } from "@heroui/button";
-import { Chip } from "@heroui/chip";
-import { Zap, Trophy, Play, Gamepad2, Info } from "lucide-react";
-import Link from "next/link";
+import {
+  Trophy,
+  Gamepad2,
+  Info,
+  Code2,
+  ExternalLink,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
-const GAMES = [
-  {
-    id: "steem-heights",
-    title: "Steem Heights",
-    description:
-      "Scale the skyline with unwavering focus. Align each block with surgical precision to reach record-breaking altitudes.",
-    image: "/assets/games/steem-heights.png",
-    category: "Precision",
-    difficulty: "Medium",
-    href: "/games/steem-heights",
-    stats: {
-      // players: "1.2k",
-      rewards: "Active",
-    },
-    featured: true,
-  },
-];
-
-const CATEGORIES = ["All Games", "Precision", "Prediction", "Knowledge"];
+import {
+  OfficialGameCard,
+  ThirdPartyGameCard,
+} from "@/components/games/GameCard";
+import { DeveloperTemplateModal } from "@/components/games/DeveloperTemplateModal";
+import {
+  OFFICIAL_GAMES,
+  THIRD_PARTY_GAMES,
+  CATEGORIES,
+} from "@/components/games/Config";
 
 export default function GamesLandingPage() {
   const [activeCategory, setActiveCategory] = useState("All Games");
 
-  const filteredGames = GAMES.filter((game) => {
+  const filteredGames = OFFICIAL_GAMES.filter((game) => {
     if (activeCategory === "All Games") return true;
     return game.category === activeCategory;
   });
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto space-y-16">
+      <div className="flex flex-col gap-6">
         {/* Header Section */}
         <div className="text-center space-y-4 max-w-3xl mx-auto">
           <motion.div
@@ -70,7 +64,7 @@ export default function GamesLandingPage() {
         </div>
 
         {/* Categories Bar */}
-        <div className="flex flex-wrap justify-center gap-4">
+        <div className="flex flex-wrap justify-center gap-3 mt-4">
           {CATEGORIES.map((cat, i) => (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -82,7 +76,7 @@ export default function GamesLandingPage() {
                 onPress={() => setActiveCategory(cat)}
                 variant={activeCategory === cat ? "solid" : "bordered"}
                 size="sm"
-                className={`rounded-full font-bold px-6 h-10 transition-all duration-300 ${
+                className={`rounded-full font-bold px-4 h-8 transition-all duration-300 ${
                   activeCategory === cat
                     ? "bg-white text-black border border-zinc-800"
                     : "text-zinc-500 border border-muted/50 hover:border-zinc-600"
@@ -95,7 +89,7 @@ export default function GamesLandingPage() {
         </div>
 
         {/* Game Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-8 min-h-[450px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[450px]">
           <AnimatePresence mode="popLayout">
             {filteredGames.length > 0 ? (
               filteredGames.map((game, index) => (
@@ -107,66 +101,7 @@ export default function GamesLandingPage() {
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <Card
-                    isFooterBlurred
-                    className="w-full h-[450px] border-none bg-zinc-950/50 group hover:scale-[1.02] transition-all duration-500"
-                  >
-                    <CardHeader className="absolute z-10 top-1 flex-col items-start gap-2">
-                      <div className="flex w-full justify-between items-start pt-2 px-2">
-                        <Chip
-                          variant="flat"
-                          color="warning"
-                          size="sm"
-                          className="font-black uppercase text-[10px] backdrop-blur-md"
-                        >
-                          {game.category}
-                        </Chip>
-                        {game.featured && (
-                          <div className="bg-amber-500 text-black text-[10px] font-black px-2 py-0.5 rounded italic shadow-2xl">
-                            HOT
-                          </div>
-                        )}
-                      </div>
-                    </CardHeader>
-
-                    <Image
-                      removeWrapper
-                      alt={game.title}
-                      className="z-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 brightness-50 group-hover:brightness-75"
-                      src={game.image}
-                    />
-
-                    <CardBody className="absolute bottom-0 z-10 w-full bg-linear-to-t from-black via-black/90 to-transparent p-6 space-y-4">
-                      <div className="space-y-1">
-                        <h2 className="text-2xl font-black italic tracking-tight text-white uppercase group-hover:text-amber-500 transition-colors">
-                          {game.title}
-                        </h2>
-                        <p className="text-zinc-400 text-xs font-medium line-clamp-2 leading-relaxed">
-                          {game.description}
-                        </p>
-                      </div>
-
-                      <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-zinc-500">
-                        <div className="flex items-center gap-1">
-                          <Zap size={10} className="text-amber-500" />
-                          {game.difficulty}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Trophy size={10} className="text-amber-500" />
-                          {game.stats.rewards}
-                        </div>
-                      </div>
-
-                      <Button
-                        as={Link}
-                        href={game.href}
-                        className="w-full bg-white/10 hover:bg-white text-white hover:text-black font-black uppercase text-xs backdrop-blur-md border border-white/20 transition-all py-6 h-auto"
-                        endContent={<Play size={16} fill="currentColor" />}
-                      >
-                        Play Now
-                      </Button>
-                    </CardBody>
-                  </Card>
+                  <OfficialGameCard game={game} />
                 </motion.div>
               ))
             ) : (
@@ -198,6 +133,51 @@ export default function GamesLandingPage() {
           </AnimatePresence>
         </div>
 
+        {/* 3rd Party Games Section */}
+        <div className="space-y-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-widest">
+                <ExternalLink size={12} /> Ecosystem Favorites
+              </div>
+              <h2 className="text-3xl md:text-5xl font-black italic tracking-tighter text-white">
+                COMMUNITY <span className="text-zinc-600">TITLES</span>
+              </h2>
+            </div>
+            <p className="text-zinc-500 text-sm max-w-sm font-medium">
+              Explore amazing games developed by the Steem community and partner
+              studios.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {THIRD_PARTY_GAMES.map((game) => (
+              <ThirdPartyGameCard key={game.id} game={game} />
+            ))}
+
+            {/* Call to Action for Developers */}
+            <Card className="h-[500px] border-2 border-dashed border-zinc-900 bg-transparent hover:border-amber-500/50 transition-all group cursor-pointer overflow-hidden">
+              <CardBody className="flex flex-col items-center justify-center text-center p-8 space-y-6">
+                <div className="p-6 rounded-full bg-zinc-950 border border-zinc-900 group-hover:border-amber-500/50 transition-colors">
+                  <Code2
+                    size={48}
+                    className="text-zinc-700 group-hover:text-amber-500 transition-colors"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-black italic uppercase tracking-tight text-white">
+                    Your Game Here?
+                  </h3>
+                  <p className="text-zinc-500 text-xs font-medium">
+                    Build your own game and showcase it on SteemPro Gaming Zone.
+                  </p>
+                </div>
+                <DeveloperTemplateModal />
+              </CardBody>
+            </Card>
+          </div>
+        </div>
+
         {/* Information Section */}
         <div className="bg-zinc-950 border border-zinc-900 rounded-3xl p-8 md:p-12 shadow-2xl shadow-amber-500/5 transition-all hover:border-zinc-800">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -214,7 +194,7 @@ export default function GamesLandingPage() {
                 and proof of skill. Top performers are eligible for curated
                 rewards from the SteemPro community.
               </p>
-              <div className="flex gap-4">
+              <div className="flex flex-wrap gap-4">
                 <div className="flex-1 p-4 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 space-y-2 group hover:bg-zinc-900 hover:border-zinc-700 transition-all">
                   <div className="text-amber-500 font-black text-xl italic tracking-tighter leading-none group-hover:scale-105 transition-transform">
                     TRANSPARENT

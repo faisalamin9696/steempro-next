@@ -183,6 +183,7 @@ export default function ImageModal({
                     <img
                       src={highResImage!}
                       alt={alt}
+                      fetchPriority="high"
                       onLoad={() => setIsLoading(false)}
                       className={twMerge(
                         "absolute inset-0 w-full h-full object-contain shadow-2xl transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) pointer-events-none select-none",

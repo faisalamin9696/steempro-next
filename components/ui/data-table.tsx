@@ -18,7 +18,7 @@ export interface ColumnDef<T> {
   header: string;
   sortable?: boolean;
   searchable?: boolean;
-  render?: (value: any, row: T) => React.ReactNode;
+  render?: (value: any, row: T, index: number) => React.ReactNode;
   className?: string;
 }
 
@@ -313,7 +313,7 @@ export function DataTable<T extends Record<string, any>>({
                           className={column.className}
                         >
                           {column.render
-                            ? column.render(row[column.key], row)
+                            ? column.render(row[column.key], row, index)
                             : row[column.key]}
                         </TableCell>
                       ))}

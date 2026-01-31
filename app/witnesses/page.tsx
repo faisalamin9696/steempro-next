@@ -232,7 +232,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
 
     {
       key: "last_price_report",
-      header: "Price",
+      header: "Feed",
       sortable: true,
       render: (value, row) => {
         const isOld = moment
@@ -249,7 +249,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
                 isOld ? "text-yellow-500" : "text-muted",
               )}
             >
-              <span className="text-sm">{row.reported_price.base}</span>
+              <span className="text-sm">{parseFloat(row.reported_price.base)}</span>
               {isOld && <span className="text-xs font-mono">{"Outdated"}</span>}
             </span>
           </div>

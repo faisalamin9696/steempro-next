@@ -1,6 +1,6 @@
 .markdown-body {
-  font-family: "Source Sans Pro", serif;
-
+  font-family:
+    "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   /* Prose-like spacing */
   line-height: 1.75;
   overflow-wrap: anywhere;
@@ -47,8 +47,6 @@
   h5,
   h6 {
     font-weight: 600;
-    font-family:
-      "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
 
   h1 {

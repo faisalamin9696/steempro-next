@@ -5,17 +5,22 @@ import { useSession } from "next-auth/react";
 import { supabase } from "@/libs/supabase/supabase";
 import * as heightsDb from "@/libs/supabase/steem-heights";
 import { sdsApi } from "@/libs/sds";
-import {
-  CANVAS_WIDTH,
-  CANVAS_HEIGHT,
-  INITIAL_WIDTH,
-  BLOCK_HEIGHT,
-  INITIAL_SPEED,
-  TIME_LIMIT,
-  Block,
-  HighScore,
-} from "./constants";
+
 import { toast } from "sonner";
+import {
+  Block,
+  INITIAL_SPEED,
+  HighScore,
+  TIME_LIMIT,
+  CANVAS_WIDTH,
+  INITIAL_WIDTH,
+  CANVAS_HEIGHT,
+  BLOCK_HEIGHT,
+  SPEED_INCREMENT_PERFECT,
+  SPEED_INCREMENT_NORMAL,
+  MAX_SPEED,
+  SCORE_PER_BLOCK,
+} from "@/components/games/steem-heights/Config";
 
 export const useHeights = () => {
   const { data: session } = useSession();
@@ -37,7 +42,6 @@ export const useHeights = () => {
   const [lastImpactTime, setLastImpactTime] = useState(0);
   const [timeLeft, setTimeLeft] = useState(TIME_LIMIT);
   const [isPaused, setIsPaused] = useState(false);
-
   const requestRef = useRef<number | null>(null);
   const directionRef = useRef<number>(1);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -157,6 +161,10 @@ export const useHeights = () => {
     if (requestRef.current) cancelAnimationFrame(requestRef.current);
 
     if (session?.user?.name && score > 0) {
+      if (!seasonPost) {
+        console.log("No active season, skipping score recording");
+        return;
+      }
       // Broadcast to Steem blockchain
       try {
         setIsSavingScore(true);
@@ -262,8 +270,8 @@ export const useHeights = () => {
   }, [gameState]);
 
   const handleAction = async () => {
-    if (isPaused) return;
-    if (gameState === "idle" || gameState === "gameover") {
+    if (isPaused || isSavingScore) return;
+    if (gameState === "idle" || (gameState === "gameover" && !isSavingScore)) {
       startGame();
       return;
     }
@@ -297,10 +305,15 @@ export const useHeights = () => {
     const placedBlock = { ...currentBlock, x: leftEdge, width: newWidth };
     const newBlocks = [...blocks, placedBlock];
     setBlocks(newBlocks);
-    setScore((s) => s + 1);
+    setScore((s) => s + SCORE_PER_BLOCK);
     setLastImpactTime(Date.now());
     setTimeLeft(TIME_LIMIT);
-    setSpeed((s) => Math.min(s + (isPerfect ? 0.01 : 0.05), 10));
+    setSpeed((s) =>
+      Math.min(
+        s + (isPerfect ? SPEED_INCREMENT_PERFECT : SPEED_INCREMENT_NORMAL),
+        MAX_SPEED,
+      ),
+    );
     setCurrentBlock({
       x: directionRef.current === 1 ? 0 : CANVAS_WIDTH - newWidth,
       y: CANVAS_HEIGHT - BLOCK_HEIGHT * (newBlocks.length + 1),
@@ -322,6 +335,7 @@ export const useHeights = () => {
     seasonPost,
     isSavingScore,
     isLoggedIn: !!session?.user?.name,
+    isSeasonActive: !!seasonPost,
     isMuted,
     setIsMuted,
     showPerfect,

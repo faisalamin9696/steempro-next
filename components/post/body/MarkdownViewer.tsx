@@ -157,7 +157,7 @@ const MarkdownViewer = memo(function MarkdownViewer({
   return (
     <div
       className={twMerge(
-        "markdown-body prose dark:prose-invert prose-sm sm:prose-lg prose-a:text-blue-500",
+        "markdown-body prose dark:prose-invert prose-a:text-blue-500",
         className,
       )}
     >
