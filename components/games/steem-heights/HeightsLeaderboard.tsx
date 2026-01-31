@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Card } from "@heroui/card";
 import { Trophy, Target, History, Award, Crown } from "lucide-react";
 import { Tabs, Tab } from "@heroui/tabs";
@@ -9,7 +8,7 @@ import { HighScore } from "./Config";
 import SUsername from "@/components/ui/SUsername";
 import SAvatar from "@/components/ui/SAvatar";
 import { ScrollShadow } from "@heroui/react";
-import { DataTable, ColumnDef } from "@/components/ui/data-table";
+import { DataTable } from "@/components/ui/data-table";
 
 interface Props {
   highScores: HighScore[];

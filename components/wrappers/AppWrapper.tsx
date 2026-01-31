@@ -35,12 +35,12 @@ function AppWrapper({
 
   const { data: globalProps } = useSWR<GlobalProps>(
     () => (session?.user?.name ? `globals` : null),
-    () => sdsApi.getGlobalProps()
+    () => sdsApi.getGlobalProps(),
   );
 
   const { data: accountData } = useSWR<AccountExt>(
     () => (session?.user?.name ? `account-${session.user.name}` : null),
-    () => sdsApi.getAccountExt(session?.user?.name || "")
+    () => sdsApi.getAccountExt(session?.user?.name || ""),
   );
 
   const { data: unreadNotificationsCount } = useSWR<number>(
@@ -48,7 +48,7 @@ function AppWrapper({
       session?.user?.name
         ? `account-unread-notifications-${session.user.name}`
         : null,
-    () => sdsApi.getUnreadNotificationsCount(session?.user?.name || "")
+    () => sdsApi.getUnreadNotificationsCount(session?.user?.name || ""),
   );
   useEffect(() => {
     if (globalProps) {
@@ -72,7 +72,7 @@ function AppWrapper({
       dispatch(
         addCommonDataHandler({
           unread_notifications_count: unreadNotificationsCount,
-        })
+        }),
       );
     }
   }, [accountData, unreadNotificationsCount]);
@@ -81,10 +81,12 @@ function AppWrapper({
     <div>
       {children}
       <MigrationModal />
+      <GamingZoneAnnouncementModal />
     </div>
   );
 }
 
 import MigrationModal from "../ui/MigrationModal";
+import GamingZoneAnnouncementModal from "../games/GamingZoneAnnouncementModal";
 
 export default AppWrapper;

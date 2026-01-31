@@ -7,7 +7,6 @@ import { HeightsLeaderboard } from "@/components/games/steem-heights/HeightsLead
 import { useHeights } from "@/hooks/games/useHeights";
 import { Button } from "@heroui/button";
 import { ChevronDown } from "lucide-react";
-import { motion } from "framer-motion";
 
 const SteemHeightsPage = () => {
   const heights = useHeights();
