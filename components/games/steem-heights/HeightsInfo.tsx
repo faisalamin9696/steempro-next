@@ -1,7 +1,13 @@
 "use client";
 
-import { Zap, Trophy, Clock } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Zap, Trophy, Clock, Info } from "lucide-react";
 import moment from "moment";
+import Link from "next/link";
+import { useDisclosure } from "@heroui/modal";
+import { Button } from "@heroui/button";
+import { HowToPlayModal } from "./HowToPlayModal";
+import { motion } from "framer-motion";
 
 interface Props {
   season: number;
@@ -9,6 +15,7 @@ interface Props {
 }
 
 export const HeightsInfo = ({ season, seasonPost }: Props) => {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const getRewardPool = () => {
     if (!seasonPost?.body) return null;
     // Common patterns: "Reward Pool: 100 STEEM", "Pool: 50 SBD", etc.
@@ -18,25 +25,37 @@ export const HeightsInfo = ({ season, seasonPost }: Props) => {
     return match ? match[1] : null;
   };
 
-  const getTimeLeft = () => {
-    if (!seasonPost?.created) return null;
-    const createdAt = moment.unix(seasonPost.created);
-    const endAt = createdAt.add(7, "days");
-    const now = moment();
-    const diff = endAt.diff(now);
+  const [timeLeft, setTimeLeft] = useState<string | null>(null);
 
-    if (diff <= 0) return "Season Ended";
+  useEffect(() => {
+    if (!seasonPost?.created) return;
 
-    const duration = moment.duration(diff);
-    const days = Math.floor(duration.asDays());
-    const hours = duration.hours();
-    const minutes = duration.minutes();
+    const calculateTimeLeft = () => {
+      const createdAt = moment.unix(seasonPost.created);
+      const endAt = createdAt.add(7, "days");
+      const now = moment();
+      const diff = endAt.diff(now);
 
-    return `${days}d ${hours}h ${minutes}m`;
-  };
+      if (diff <= 0) {
+        setTimeLeft("Season Ended");
+        return;
+      }
+
+      const duration = moment.duration(diff);
+      const days = Math.floor(duration.asDays());
+      const hours = duration.hours();
+      const minutes = duration.minutes();
+      const seconds = duration.seconds();
+
+      setTimeLeft(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+    };
+
+    calculateTimeLeft();
+    const interval = setInterval(calculateTimeLeft, 1000);
+    return () => clearInterval(interval);
+  }, [seasonPost]);
 
   const rewardPool = getRewardPool();
-  const timeLeft = getTimeLeft();
 
   return (
     <div className="space-y-6 text-center lg:text-left">
@@ -44,9 +63,14 @@ export const HeightsInfo = ({ season, seasonPost }: Props) => {
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-black uppercase tracking-widest">
           <Zap size={12} className="fill-amber-500" /> Skill Competition
         </div>
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-widest">
+        <Link
+          href={
+            seasonPost ? `/@${seasonPost.author}/${seasonPost.permlink}` : "#"
+          }
+          className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-widest hover:text-amber-500 hover:border-amber-500/50 transition-all cursor-pointer"
+        >
           Season {season}
-        </div>
+        </Link>
         {timeLeft && (
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-widest">
             <Clock size={10} /> {timeLeft}
@@ -70,6 +94,34 @@ export const HeightsInfo = ({ season, seasonPost }: Props) => {
         precision to reach record-breaking altitudes. In this climb, focus is
         your greatest power.
       </p>
+
+      <div className="pt-6 relative group">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <Button
+            size="lg"
+            onPress={onOpen}
+            className="bg-amber-500 hover:bg-amber-400 text-black font-black uppercase text-xs tracking-[0.3em] h-14 px-10 rounded-2xl shadow-2xl shadow-amber-900/40 relative overflow-hidden group/btn transition-all active:scale-95"
+            startContent={
+              <Info
+                size={18}
+                className="group-hover/btn:rotate-12 transition-transform"
+              />
+            }
+          >
+            <span className="relative z-10">Climber's Handbook</span>
+            <div className="absolute inset-0 bg-linear-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700 pointer-events-none" />
+          </Button>
+
+          {/* Subtle Glow beneath */}
+          <div className="absolute -inset-1 bg-amber-500/20 blur-xl rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+        </motion.div>
+      </div>
+
+      <HowToPlayModal isOpen={isOpen} onOpenChange={onOpenChange} />
     </div>
   );
 };

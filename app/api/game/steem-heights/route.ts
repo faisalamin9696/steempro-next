@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { score, season } = body;
+    const { score, season, combos } = body;
 
     if (!score || typeof score !== "number") {
       return NextResponse.json({ error: "Invalid score" }, { status: 400 });
@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
     const result = await steemApi.recordGameScore(
       session.user.name,
       score,
+      combos,
       "steem-heights",
       season || 1,
       gameKey,

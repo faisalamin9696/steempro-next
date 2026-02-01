@@ -190,7 +190,7 @@ function SDrawerContent() {
                 </Link>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 mt-1">
+              <div className="flex flex-row mt-1 w-full justify-around">
                 <div className="flex items-center gap-2 bg-default/5 hover:bg-default/10 transition-colors p-2 rounded-xl border border-default/10">
                   <div className="p-1.5 rounded-lg bg-warning/10 text-warning">
                     <Zap size={14} className="fill-current" />
@@ -218,20 +218,16 @@ function SDrawerContent() {
                     </span>
                   </div>
                 </div>
-              </div>
 
-              {!isMobile && (
-                <div className="pt-1">
+                {(
                   <LogoutButton
-                    className="h-9 text-xs font-medium border-default-200/50"
+                    size="lg"
                     color="danger"
                     variant="flat"
-                    fullWidth
-                  >
-                    Sign Out
-                  </LogoutButton>
-                </div>
-              )}
+                    isIconOnly
+                  />
+                )}
+              </div>
             </div>
           </div>
         )}

@@ -9,6 +9,7 @@ import { sdsApi } from "@/libs/sds";
 import { toast } from "sonner";
 import {
   Block,
+  Debris,
   INITIAL_SPEED,
   HighScore,
   TIME_LIMIT,
@@ -20,6 +21,9 @@ import {
   SPEED_INCREMENT_NORMAL,
   MAX_SPEED,
   SCORE_PER_BLOCK,
+  BONUS_SCORE,
+  BONUS_HEIGHT_INCREMENT,
+  GameStats,
 } from "@/components/games/steem-heights/Config";
 
 export const useHeights = () => {
@@ -29,6 +33,7 @@ export const useHeights = () => {
   );
   const [score, setScore] = useState(0);
   const [blocks, setBlocks] = useState<Block[]>([]);
+  const [debris, setDebris] = useState<Debris[]>([]);
   const [currentBlock, setCurrentBlock] = useState<Block | null>(null);
   const [speed, setSpeed] = useState(INITIAL_SPEED);
   const [highScores, setHighScores] = useState<HighScore[]>([]);
@@ -36,6 +41,12 @@ export const useHeights = () => {
   const [userHistory, setUserHistory] = useState<HighScore[]>([]);
   const [currentSeason, setCurrentSeason] = useState<number>(1);
   const [seasonPost, setSeasonPost] = useState<any | null>(null);
+  const [globalStats, setGlobalStats] = useState<GameStats>({
+    totalParticipants: 0,
+    activePlayers24h: 0,
+    totalPlays: 0,
+    totalAltitude: 0,
+  });
   const [isSavingScore, setIsSavingScore] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [showPerfect, setShowPerfect] = useState(false);
@@ -45,9 +56,16 @@ export const useHeights = () => {
   const requestRef = useRef<number | null>(null);
   const directionRef = useRef<number>(1);
   const audioContextRef = useRef<AudioContext | null>(null);
+  const currentBlockRef = useRef<Block | null>(null);
+  const lastFrameTimeRef = useRef<number>(0);
+  const [perfectStreak, setPerfectStreak] = useState(0);
+  const [combos, setCombos] = useState(0);
+  const [totalBonusScore, setTotalBonusScore] = useState(0);
+  const [showBonus, setShowBonus] = useState(false);
+  const [lastBonus, setLastBonus] = useState(0);
 
   const playSound = useCallback(
-    (type: "stack" | "perfect" | "gameover") => {
+    (type: "stack" | "perfect" | "gameover" | "combo") => {
       if (isMuted) return;
       if (!audioContextRef.current) {
         audioContextRef.current = new (
@@ -71,8 +89,10 @@ export const useHeights = () => {
         osc.stop(now + 0.1);
       } else if (type === "perfect") {
         osc.type = "sine";
-        osc.frequency.setValueAtTime(880, now);
-        osc.frequency.exponentialRampToValueAtTime(1760, now + 0.1);
+        // Base frequency 880Hz, increase by semitone for each streak count
+        const frequency = 880 * Math.pow(1.059463, Math.min(perfectStreak, 12));
+        osc.frequency.setValueAtTime(frequency, now);
+        osc.frequency.exponentialRampToValueAtTime(frequency * 2, now + 0.1);
         gain.gain.setValueAtTime(0.2, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
         osc.start(now);
@@ -85,9 +105,32 @@ export const useHeights = () => {
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
         osc.start(now);
         osc.stop(now + 0.5);
+      } else if (type === "combo") {
+        // Sparkly rising arpeggio
+        const notes = [523.25, 659.25, 783.99, 1046.5, 1318.51]; // C5, E5, G5, C6, E6
+        notes.forEach((freq, i) => {
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.type = i === notes.length - 1 ? "sine" : "triangle";
+          o.frequency.setValueAtTime(freq, now + i * 0.06);
+          o.frequency.exponentialRampToValueAtTime(
+            freq * 1.05,
+            now + i * 0.06 + 0.1,
+          );
+
+          o.connect(g);
+          g.connect(ctx.destination);
+
+          const volume = i === notes.length - 1 ? 0.15 : 0.1;
+          g.gain.setValueAtTime(volume, now + i * 0.06);
+          g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.06 + 0.2);
+
+          o.start(now + i * 0.06);
+          o.stop(now + i * 0.06 + 0.25);
+        });
       }
     },
-    [isMuted],
+    [isMuted, perfectStreak],
   );
 
   const fetchHighScores = useCallback(async (season: number) => {
@@ -127,10 +170,20 @@ export const useHeights = () => {
     }
   }, [fetchHighScores]);
 
+  const fetchGameStats = useCallback(async () => {
+    try {
+      const stats = await heightsDb.getGameStats("steem-heights");
+      setGlobalStats(stats);
+    } catch (error) {
+      console.error("Failed to fetch game stats:", error);
+    }
+  }, []);
+
   useEffect(() => {
     fetchUserHistory();
     fetchCurrentSeason();
     fetchSeasonalWinners();
+    fetchGameStats();
 
     const channel = supabase
       .channel("leaderboard_realtime")
@@ -153,7 +206,13 @@ export const useHeights = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [fetchHighScores, fetchUserHistory]);
+  }, [
+    fetchHighScores,
+    fetchUserHistory,
+    fetchCurrentSeason,
+    fetchSeasonalWinners,
+    fetchGameStats,
+  ]);
 
   const triggerGameOver = useCallback(async () => {
     setGameState("gameover");
@@ -171,7 +230,7 @@ export const useHeights = () => {
         const response = await fetch("/api/game/steem-heights", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ score, season: currentSeason }),
+          body: JSON.stringify({ score, season: currentSeason, combos }),
         });
 
         if (response.ok) {
@@ -194,7 +253,6 @@ export const useHeights = () => {
       fetchSeasonalWinners();
     }
   }, [session, score, playSound, fetchHighScores]);
-
   const startGame = () => {
     const firstBlock = {
       x: (CANVAS_WIDTH - INITIAL_WIDTH) / 2,
@@ -203,12 +261,15 @@ export const useHeights = () => {
       color: "#f59e0b",
     };
     setBlocks([firstBlock]);
-    setCurrentBlock({
+    setDebris([]);
+    const startBlock = {
       x: 0,
       y: CANVAS_HEIGHT - BLOCK_HEIGHT * 2,
       width: INITIAL_WIDTH,
       color: "#fbbf24",
-    });
+    };
+    setCurrentBlock(startBlock);
+    currentBlockRef.current = startBlock;
     setScore(0);
     setSpeed(INITIAL_SPEED);
     setGameState("playing");
@@ -216,6 +277,12 @@ export const useHeights = () => {
     setShowPerfect(false);
     setTimeLeft(TIME_LIMIT);
     setIsPaused(false);
+    setPerfectStreak(0);
+    setCombos(0);
+    setTotalBonusScore(0);
+    setShowBonus(false);
+    setLastBonus(0);
+    lastFrameTimeRef.current = performance.now();
   };
 
   useEffect(() => {
@@ -233,22 +300,51 @@ export const useHeights = () => {
     return () => clearInterval(timer);
   }, [gameState, triggerGameOver, isPaused]);
 
-  const update = useCallback(() => {
-    if (gameState !== "playing" || isPaused || !currentBlock) return;
-    setCurrentBlock((prev) => {
-      if (!prev) return null;
-      let newX = prev.x + speed * directionRef.current;
-      if (newX + prev.width > CANVAS_WIDTH) {
-        newX = CANVAS_WIDTH - prev.width;
+  const update = useCallback(
+    (timestamp: number) => {
+      if (gameState !== "playing" || isPaused) {
+        lastFrameTimeRef.current = timestamp;
+        return;
+      }
+
+      if (!lastFrameTimeRef.current) lastFrameTimeRef.current = timestamp;
+      const dt = timestamp - lastFrameTimeRef.current;
+      lastFrameTimeRef.current = timestamp;
+
+      // Scale movement based on a 60FPS baseline (16.67ms per frame)
+      const dtScale = dt / (1000 / 60);
+
+      const current = currentBlockRef.current;
+      if (!current) return;
+
+      let newX = current.x + speed * directionRef.current * dtScale;
+      if (newX + current.width > CANVAS_WIDTH) {
+        newX = CANVAS_WIDTH - current.width;
         directionRef.current = -1;
       } else if (newX < 0) {
         newX = 0;
         directionRef.current = 1;
       }
-      return { ...prev, x: newX };
-    });
-    requestRef.current = requestAnimationFrame(update);
-  }, [gameState, speed, currentBlock, isPaused]);
+
+      const updatedBlock = { ...current, x: newX };
+      currentBlockRef.current = updatedBlock;
+      setCurrentBlock(updatedBlock);
+
+      // Animate debris
+      setDebris((prevDebris) =>
+        prevDebris
+          .map((d) => ({
+            ...d,
+            y: d.y + 1 * dtScale,
+            rotation: d.rotation + d.velocity * 2 * dtScale,
+          }))
+          .filter((d) => d.y < CANVAS_HEIGHT + 100),
+      );
+
+      requestRef.current = requestAnimationFrame(update);
+    },
+    [gameState, speed, isPaused],
+  );
 
   useEffect(() => {
     if (gameState === "playing" && !isPaused) {
@@ -275,26 +371,66 @@ export const useHeights = () => {
       startGame();
       return;
     }
-    if (!currentBlock) return;
+    const current = currentBlockRef.current;
+    if (!current) return;
+
     const lastBlock = blocks[blocks.length - 1];
-    const isPerfect = Math.abs(currentBlock.x - lastBlock.x) < 4;
+    const isPerfect = Math.abs(current.x - lastBlock.x) < 4;
     let leftEdge, rightEdge, newWidth;
+    let bonusAltitude = 0;
+    let isBonus = false;
 
     if (isPerfect) {
       leftEdge = lastBlock.x;
-      rightEdge = lastBlock.x + lastBlock.width;
       newWidth = lastBlock.width;
-      setShowPerfect(true);
-      setTimeout(() => setShowPerfect(false), 800);
+      const newStreak = perfectStreak + 1;
+      setPerfectStreak(newStreak);
       playSound("perfect");
+
+      // Bonus every 3 perfects
+      if (newStreak > 0 && newStreak % 3 === 0) {
+        isBonus = true;
+        // Dynamic bonus based on speed: 1-5m
+        const dynamicBonus = Math.max(1, Math.min(5, Math.ceil(speed / 2)));
+        bonusAltitude = dynamicBonus;
+        setLastBonus(dynamicBonus);
+        setTotalBonusScore((t) => t + bonusAltitude);
+        setCombos((c) => c + 1);
+        setShowBonus(true);
+        playSound("combo");
+        setTimeout(() => setShowBonus(false), 600);
+      } else {
+        setShowPerfect(true);
+        setTimeout(() => setShowPerfect(false), 500);
+      }
     } else {
-      leftEdge = Math.max(currentBlock.x, lastBlock.x);
+      leftEdge = Math.max(current.x, lastBlock.x);
       rightEdge = Math.min(
-        currentBlock.x + currentBlock.width,
+        current.x + current.width,
         lastBlock.x + lastBlock.width,
       );
       newWidth = rightEdge - leftEdge;
+      setPerfectStreak(0);
       playSound("stack");
+
+      // Calculate debris
+      const isLeft = current.x < lastBlock.x;
+      const debrisWidth = current.width - newWidth;
+
+      if (debrisWidth > 0) {
+        const debrisX = isLeft ? current.x : rightEdge;
+        setDebris((prev) => [
+          ...prev,
+          {
+            x: debrisX,
+            y: current.y,
+            width: debrisWidth,
+            color: current.color,
+            velocity: isLeft ? -2 : 2,
+            rotation: 0,
+          },
+        ]);
+      }
     }
 
     if (newWidth <= 0) {
@@ -302,10 +438,15 @@ export const useHeights = () => {
       return;
     }
 
-    const placedBlock = { ...currentBlock, x: leftEdge, width: newWidth };
+    const placedBlock = {
+      ...current,
+      x: leftEdge,
+      width: newWidth,
+      grow: isBonus,
+    };
     const newBlocks = [...blocks, placedBlock];
     setBlocks(newBlocks);
-    setScore((s) => s + SCORE_PER_BLOCK);
+    setScore((s) => s + SCORE_PER_BLOCK + bonusAltitude);
     setLastImpactTime(Date.now());
     setTimeLeft(TIME_LIMIT);
     setSpeed((s) =>
@@ -314,18 +455,22 @@ export const useHeights = () => {
         MAX_SPEED,
       ),
     );
-    setCurrentBlock({
+
+    const nextBlock = {
       x: directionRef.current === 1 ? 0 : CANVAS_WIDTH - newWidth,
       y: CANVAS_HEIGHT - BLOCK_HEIGHT * (newBlocks.length + 1),
       width: newWidth,
       color: `hsl(${(newBlocks.length * 20) % 360}, 70%, 50%)`,
-    });
+    };
+    setCurrentBlock(nextBlock);
+    currentBlockRef.current = nextBlock;
   };
 
   return {
     gameState,
     score,
     blocks,
+    debris,
     currentBlock,
     speed,
     highScores,
@@ -346,5 +491,12 @@ export const useHeights = () => {
     handleAction,
     startGame,
     setGameState,
+    perfectStreak,
+    combos,
+    totalBonusScore,
+    showBonus,
+    lastBonus,
+    globalStats,
+    username: session?.user?.name || "",
   };
 };

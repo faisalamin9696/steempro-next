@@ -3,16 +3,23 @@ import { Chip } from "@heroui/chip";
 import { Input, InputProps } from "@heroui/input";
 import { validateTags } from "@/utils/editor";
 import { toast } from "sonner";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, Trash2 } from "lucide-react";
 import { Button } from "@heroui/button";
 
 interface TagsInputProps extends Omit<InputProps, "onChange"> {
   tags: string[];
   onChange: (tags: string[]) => void;
+  inputValue: string;
+  onInputValueChange: (value: string) => void;
 }
 
-const TagsInput = ({ tags, onChange, ...props }: TagsInputProps) => {
-  const [inputValue, setInputValue] = useState("");
+const TagsInput = ({
+  tags,
+  onChange,
+  inputValue,
+  onInputValueChange,
+  ...props
+}: TagsInputProps) => {
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [isCopied, setIsCopied] = useState(false);
 
@@ -38,7 +45,7 @@ const TagsInput = ({ tags, onChange, ...props }: TagsInputProps) => {
 
     if (tag && !tags.includes(tag)) {
       onChange([...tags, ...tag.split(" ")]);
-      setInputValue("");
+      onInputValueChange("");
     }
   };
 
@@ -105,7 +112,7 @@ const TagsInput = ({ tags, onChange, ...props }: TagsInputProps) => {
         <Input
           size="lg"
           value={inputValue}
-          onValueChange={setInputValue}
+          onValueChange={onInputValueChange}
           onKeyDown={handleKeyDown}
           placeholder="Add tags (press Enter or comma)"
           classNames={{ inputWrapper: "border border-border" }}
@@ -120,17 +127,30 @@ const TagsInput = ({ tags, onChange, ...props }: TagsInputProps) => {
           {tags.length}/8 tags • Drag to reorder
         </p>
         {tags.length > 0 && (
-          <Button
-            isIconOnly
-            size="sm"
-            variant="light"
-            radius="sm"
-            onPress={handleCopyTags}
-            className="text-muted hover:text-primary min-w-0 h-6 w-6"
-            title="Copy all tags"
-          >
-            {isCopied ? <Check size={14} /> : <Copy size={14} />}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              isIconOnly
+              size="sm"
+              variant="light"
+              radius="sm"
+              onPress={handleCopyTags}
+              className="text-muted hover:text-primary min-w-0 h-6 w-6"
+              title="Copy all tags"
+            >
+              {isCopied ? <Check size={14} /> : <Copy size={14} />}
+            </Button>
+            <Button
+              isIconOnly
+              size="sm"
+              variant="light"
+              radius="sm"
+              onPress={() => onChange([])}
+              className="text-muted hover:text-danger min-w-0 h-6 w-6"
+              title="Clear all tags"
+            >
+              <Trash2 size={14} />
+            </Button>
+          </div>
         )}
       </div>
     </div>

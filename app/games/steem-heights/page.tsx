@@ -62,6 +62,9 @@ const SteemHeightsPage = () => {
             seasonalWinners={heights.seasonalWinners}
             currentSeason={heights.currentSeason}
             isSeasonActive={heights.isSeasonActive}
+            seasonPost={heights.seasonPost}
+            globalStats={heights.globalStats}
+            username={heights.username}
           />
         </div>
       </div>

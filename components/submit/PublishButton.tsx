@@ -27,6 +27,7 @@ import { useAccountsContext } from "../auth/AccountsContext";
 import GrantAuthorityModal from "../ui/GrantAuthorityModal";
 import { AsyncUtils } from "@/utils/async.utils";
 import { addSchedule } from "@/libs/supabase/schedule";
+import UnfinishedTagsModal from "./UnfinishedTagsModal";
 
 interface BaseProps extends Omit<ButtonProps, "title"> {
   buttonTitle?: string;
@@ -41,6 +42,9 @@ interface BaseProps extends Omit<ButtonProps, "title"> {
   isEdit?: boolean;
   onPending: (isPending: boolean) => void;
   isReply?: boolean;
+  setTags?: (tags: string[]) => void;
+  pendingTag?: string;
+  setPendingTag?: (value: string) => void;
 }
 
 interface RootPostProps extends BaseProps {
@@ -71,6 +75,9 @@ function PublishButton(props: Props) {
     onPublished,
     isEdit = false,
     isReply = false,
+    setTags,
+    pendingTag,
+    setPendingTag,
     ...buttonProps
   } = props;
 
@@ -78,13 +85,14 @@ function PublishButton(props: Props) {
   const dispatch = useAppDispatch();
   const [isPending, setIsPending] = useState(false);
   const [isGrantModalOpen, setIsGrantModalOpen] = useState(false);
+  const [isTagsWarningModalOpen, setIsTagsWarningModalOpen] = useState(false);
   const { authenticateOperation } = useAccountsContext();
-  const author = session?.user?.name!;
+  const author = session?.user?.name! || "";
 
   const postReplies =
     useAppSelector(
       (state) =>
-        root && state.repliesReducer.values[`${root.author}/${root.permlink}`]
+        root && state.repliesReducer.values[`${root.author}/${root.permlink}`],
     ) ?? [];
 
   /* ------------------ VALIDATION ------------------ */
@@ -107,7 +115,7 @@ function PublishButton(props: Props) {
     }
 
     const normalizedTags = tags.filter(
-      (t) => t && t !== " " && t !== community?.account
+      (t) => t && t !== " " && t !== community?.account,
     );
 
     if (!isReply && !normalizedTags.length && !community?.account) {
@@ -135,7 +143,7 @@ function PublishButton(props: Props) {
   const sanitizeBody = (text: string) =>
     text.replace(/[\x00-\x09\x0B-\x0C\x0E-\x1F\x7F-\x9F]/g, "");
 
-  const preparePostData = async () => {
+  const preparePostData = async (overrideTags?: string[]) => {
     let permlink = isReply
       ? generateReplyPermlink(comment!.author)
       : generatePermlink(title);
@@ -149,13 +157,16 @@ function PublishButton(props: Props) {
       }
     }
 
-    const normalizedTags = tags.filter((t) => t && t !== community?.account);
+    const tagsToUse = overrideTags || tags;
+    const normalizedTags = tagsToUse.filter(
+      (t) => t && t !== community?.account,
+    );
 
     const parent_permlink = isReply
       ? comment!.permlink
       : community?.account && community.account !== author
-      ? community.account
-      : normalizedTags[0] || "steempro";
+        ? community.account
+        : normalizedTags[0] || "steempro";
 
     const cleanBody = sanitizeBody(body);
 
@@ -185,7 +196,7 @@ function PublishButton(props: Props) {
         : makeJsonMetadataForUpdate(
             JSON.parse(comment.json_metadata || "{}"),
             extractMetadata(cleanBody),
-            normalizedTags
+            normalizedTags,
           );
 
       postData.title = title.trim();
@@ -198,14 +209,20 @@ function PublishButton(props: Props) {
 
   /* ------------------ PUBLISH ------------------ */
 
-  const handlePublish = async () => {
+  const handlePublish = async (overrideTags?: string[]) => {
     if (!validate()) return;
-    if (scheduleTime) return handleSchedule();
+
+    if (!overrideTags && pendingTag && pendingTag.trim()) {
+      setIsTagsWarningModalOpen(true);
+      return;
+    }
+
+    if (scheduleTime) return handleSchedule(false, overrideTags);
     setIsPending(true);
     onPending(true);
 
     await handleSteemError(async () => {
-      const { postData, options } = await preparePostData();
+      const { postData, options } = await preparePostData(overrideTags);
       const { key, useKeychain } = await authenticateOperation("posting");
       await steemApi.publish(postData, options, key, useKeychain);
 
@@ -216,7 +233,7 @@ function PublishButton(props: Props) {
           addCommentHandler({
             ...root,
             children: (root.children ?? 0) + 1,
-          })
+          }),
         );
       }
 
@@ -227,7 +244,7 @@ function PublishButton(props: Props) {
             postData.permlink,
             body,
             root.observer_role,
-            root.observer_title
+            root.observer_title,
           ),
           created: moment().unix(),
           last_update: moment().unix(),
@@ -253,10 +270,10 @@ function PublishButton(props: Props) {
               ...postReplies.map((r) =>
                 ancestors.has(r.link_id)
                   ? { ...r, children: Math.max(0, r.children + 1) }
-                  : r
+                  : r,
               ),
             ],
-          })
+          }),
         );
       }
 
@@ -268,7 +285,7 @@ function PublishButton(props: Props) {
             body,
             json_metadata: JSON.stringify(postData.json_metadata),
             last_update: moment().unix(),
-          })
+          }),
         );
       }
 
@@ -279,7 +296,7 @@ function PublishButton(props: Props) {
     });
   };
 
-  async function handleSchedule(force = false) {
+  async function handleSchedule(force = false, overrideTags?: string[]) {
     if (!session?.user?.name) {
       toast.error("Error", { description: "Login required" });
       return;
@@ -292,7 +309,7 @@ function PublishButton(props: Props) {
         const accountData = await sdsApi.getAccountExt(author);
         const postingAuths = accountData.posting_account_auths || [];
         const isAuthorized = postingAuths.some(
-          ([acc]) => acc === Constants.official_account
+          ([acc]) => acc === Constants.official_account,
         );
 
         if (!isAuthorized) {
@@ -302,7 +319,8 @@ function PublishButton(props: Props) {
       }
 
       // 2. Prepare Data
-      const { postData, options, normalizedTags } = await preparePostData();
+      const { postData, options, normalizedTags } =
+        await preparePostData(overrideTags);
 
       const scheduleData: Schedule = {
         username: author,
@@ -332,7 +350,7 @@ function PublishButton(props: Props) {
         author,
         Constants.official_account,
         key,
-        useKeychain
+        useKeychain,
       );
       await AsyncUtils.sleep(3);
       toast.success("Permission granted successfully!");
@@ -350,7 +368,7 @@ function PublishButton(props: Props) {
         color={scheduleTime ? "secondary" : "success"}
         variant="flat"
         isLoading={isPending}
-        onPress={handlePublish}
+        onPress={() => handlePublish()}
         {...buttonProps}
         startContent={isPending ? undefined : props.startContent}
       >
@@ -363,6 +381,19 @@ function PublishButton(props: Props) {
         onConfirm={handleGrantAuthority}
         isPending={isPending}
       />
+
+      {setTags && setPendingTag && (
+        <UnfinishedTagsModal
+          isOpen={isTagsWarningModalOpen}
+          onOpenChange={setIsTagsWarningModalOpen}
+          pendingTag={pendingTag || ""}
+          tags={tags}
+          setTags={setTags}
+          setPendingTag={setPendingTag}
+          onConfirm={(updatedTags) => handlePublish(updatedTags)}
+          onDiscard={() => handlePublish(tags)}
+        />
+      )}
     </>
   );
 }
@@ -371,7 +402,7 @@ export default PublishButton;
 
 export function collectAncestorLinkIds(
   replies: Post[],
-  comment: Post | Feed
+  comment: Post | Feed,
 ): Set<number> {
   const map = new Map(replies.map((r) => [`${r.author}/${r.permlink}`, r]));
 
@@ -380,7 +411,7 @@ export function collectAncestorLinkIds(
 
   while (current.parent_author && current.parent_permlink) {
     const parent = map.get(
-      `${current.parent_author}/${current.parent_permlink}`
+      `${current.parent_author}/${current.parent_permlink}`,
     );
     if (!parent) break;
     ancestors.add(parent.link_id);

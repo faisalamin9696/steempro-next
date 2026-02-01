@@ -64,3 +64,38 @@ export const getUserHistory = async (username: string, game: Games) => {
 
   return data || [];
 };
+
+export const getGameStats = async (game: Games) => {
+  const { data: allPlays } = await supabase
+    .from("steempro_game_leaderboard")
+    .select("player, created_at, score")
+    .eq("game", game);
+
+  if (!allPlays)
+    return {
+      totalParticipants: 0,
+      activePlayers24h: 0,
+      totalPlays: 0,
+      totalAltitude: 0,
+    };
+
+  const uniquePlayers = new Set(allPlays.map((p) => p.player));
+  const yesterday = Date.now() - 24 * 60 * 60 * 1000;
+  const active24h = new Set(
+    allPlays
+      .filter((p) => new Date(p.created_at).getTime() > yesterday)
+      .map((p) => p.player),
+  );
+
+  const totalAltitude = allPlays.reduce(
+    (acc, curr) => acc + (curr.score || 0),
+    0,
+  );
+
+  return {
+    totalParticipants: uniquePlayers.size,
+    activePlayers24h: active24h.size,
+    totalPlays: allPlays.length,
+    totalAltitude,
+  };
+};

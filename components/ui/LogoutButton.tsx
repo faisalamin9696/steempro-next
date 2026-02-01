@@ -4,9 +4,10 @@ import { LogOut } from "lucide-react";
 
 interface Props extends Omit<ButtonProps, "onPress"> {
   onPress?: () => void;
+  iconSize?: number;
 }
 
-function LogoutButton({ onPress, ...props }: Props) {
+function LogoutButton({ onPress, iconSize = 20, ...props }: Props) {
   const { manageLogout } = useAccountsContext();
 
   return (
@@ -17,11 +18,11 @@ function LogoutButton({ onPress, ...props }: Props) {
         onPress?.();
         manageLogout();
       }}
-      startContent={<LogOut size={20} />}
+      startContent={<LogOut size={iconSize} />}
       className="text-default-900 hover:text-danger"
       {...props}
     >
-      Logout
+      {!props.isIconOnly && "Logout"}
     </Button>
   );
 }

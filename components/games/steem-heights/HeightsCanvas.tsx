@@ -13,9 +13,13 @@ import {
   VolumeX,
   Pause,
   Play,
+  Info,
 } from "lucide-react";
+import { useDisclosure } from "@heroui/modal";
+import { HeightsGuideModal } from "./HeightsGuideModal";
 import {
   Block,
+  Debris,
   CANVAS_WIDTH,
   CANVAS_HEIGHT,
   BLOCK_HEIGHT,
@@ -26,6 +30,7 @@ interface Props {
   gameState: "idle" | "playing" | "gameover";
   score: number;
   blocks: Block[];
+  debris: Debris[];
   currentBlock: Block | null;
   speed: number;
   timeLeft: number;
@@ -42,6 +47,11 @@ interface Props {
   startGame: () => void;
   setGameState: (state: "idle") => void;
   scrollToLeaderboard?: () => void;
+  perfectStreak: number;
+  combos: number;
+  totalBonusScore: number;
+  showBonus: boolean;
+  lastBonus: number;
 }
 
 export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
@@ -50,6 +60,7 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
       gameState,
       score,
       blocks,
+      debris,
       currentBlock,
       speed,
       timeLeft,
@@ -66,9 +77,15 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
       startGame,
       setGameState,
       scrollToLeaderboard,
+      perfectStreak,
+      combos,
+      totalBonusScore,
+      showBonus,
+      lastBonus,
     },
     ref,
   ) => {
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const viewY = Math.max(0, (blocks.length - 10) * BLOCK_HEIGHT);
 
     return (
@@ -76,9 +93,21 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
         {/* Score Floating Panel */}
         <div className="px-2 flex justify-between items-end">
           <div className="flex flex-col">
-            <span className="text-[10px] text-zinc-500 font-black uppercase tracking-widest">
-              Current Altitude
-            </span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] text-zinc-500 font-black uppercase tracking-widest">
+                Current Altitude
+              </span>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpen();
+                }}
+                className="text-zinc-500 hover:text-amber-500 transition-colors"
+                title="How to Play"
+              >
+                <Info size={14} />
+              </button>
+            </div>
             <div className="flex items-end gap-3">
               <span className="text-4xl font-black italic ">{score}m</span>
               <Button
@@ -180,9 +209,7 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
             {blocks.map((block, i) => (
               <motion.div
                 key={i}
-                initial={{ scale: 1.1, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="absolute rounded-sm shadow-lg border-t border-white/20"
+                className="absolute rounded-sm shadow-sm border-t border-white/20 z-1"
                 style={{
                   left: `${(block.x / CANVAS_WIDTH) * 100}%`,
                   bottom: `${((CANVAS_HEIGHT - block.y - BLOCK_HEIGHT) / CANVAS_HEIGHT) * 100}%`,
@@ -191,8 +218,32 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
                   backgroundColor: block.color,
                 }}
               >
+                {block.grow && (
+                  <motion.div
+                    className="absolute inset-0 bg-white"
+                    initial={{ opacity: 0.6 }}
+                    animate={{ opacity: 0 }}
+                    transition={{ duration: 0.4 }}
+                  />
+                )}
                 <div className="absolute inset-0 bg-linear-to-br from-white/10 to-transparent pointer-events-none" />
               </motion.div>
+            ))}
+
+            {debris.map((d, i) => (
+              <div
+                key={`debris-${i}`}
+                className="absolute rounded-sm shadow-lg border-t border-white/20 z-0"
+                style={{
+                  left: `${(d.x / CANVAS_WIDTH) * 100}%`,
+                  bottom: `${((CANVAS_HEIGHT - d.y - BLOCK_HEIGHT) / CANVAS_HEIGHT) * 100}%`,
+                  width: `${(d.width / CANVAS_WIDTH) * 100}%`,
+                  height: `${((BLOCK_HEIGHT - 1) / CANVAS_HEIGHT) * 100}%`,
+                  backgroundColor: d.color,
+                  transform: `rotate(${d.rotation}deg)`,
+                  opacity: 0.8,
+                }}
+              />
             ))}
 
             {currentBlock && gameState === "playing" && (
@@ -225,6 +276,22 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
               >
                 <div className="text-amber-500 font-black italic tracking-widest text-5xl drop-shadow-[0_4px_20px_rgba(245,158,11,0.8)]">
                   PERFECT!
+                </div>
+              </motion.div>
+            )}
+
+            {showBonus && (
+              <motion.div
+                initial={{ opacity: 0, y: -20, scale: 0.8 }}
+                animate={{ opacity: 1, y: 20, scale: 1 }}
+                exit={{ opacity: 0, y: -40 }}
+                className="absolute inset-x-0 top-20 pointer-events-none flex flex-col items-center justify-center text-center z-50"
+              >
+                <div className="text-amber-400 font-black italic tracking-tighter text-4xl drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]">
+                  +{lastBonus}m
+                </div>
+                <div className="text-white font-black text-sm uppercase tracking-[0.2em] -mt-1 drop-shadow-md">
+                  COMBO BONUS
                 </div>
               </motion.div>
             )}
@@ -276,21 +343,42 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
                     <div className="relative">
                       <Crown size={64} className="text-zinc-800 mx-auto" />
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-2xl font-black mt-4 text-white">
+                        <span className="text-2xl font-black mt-2 text-white">
                           {score}
                         </span>
                       </div>
+                      <p className="text-zinc-500 font-bold uppercase tracking-widest text-[9px]">
+                        Total Altitude
+                      </p>
                     </div>
-                    <div className="space-y-2">
-                      <h2 className="text-3xl font-black italic text-white">
-                        CLIMB ENDED
+                    <div className="space-y-4">
+                      <h2 className="text-3xl font-black italic text-white uppercase tracking-tight">
+                        Climb Ended
                       </h2>
+
+                      {/* Stats Row */}
+                      <div className="flex justify-center gap-4">
+                        <div className="flex flex-col items-center bg-zinc-900/50 p-4 rounded-2xl border border-white/5 w-24">
+                          <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider mb-1">
+                            Combos
+                          </span>
+                          <span className="text-xl font-black italic text-white">
+                            {combos}
+                          </span>
+                        </div>
+                        <div className="flex flex-col items-center bg-zinc-900/50 p-4 rounded-2xl border border-white/5 w-24">
+                          <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider mb-1">
+                            Bonus
+                          </span>
+                          <span className="text-xl font-black italic text-amber-500">
+                            +{totalBonusScore}m
+                          </span>
+                        </div>
+                      </div>
+
                       <div className="flex flex-col items-center gap-1">
-                        <p className="text-zinc-500 font-bold uppercase tracking-widest text-[10px]">
-                          Total Altitude Reached
-                        </p>
                         {isSavingScore && (
-                          <div className="flex items-center gap-2 text-amber-500 text-[10px] font-bold animate-pulse">
+                          <div className="flex items-center gap-2 text-amber-500 text-[10px] font-bold animate-pulse mt-1">
                             <RefreshCw size={12} className="animate-spin" />
                             RECORDING ON BLOCKCHAIN...
                           </div>
@@ -373,6 +461,8 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
             ))}
           </div>
         </div>
+
+        <HeightsGuideModal isOpen={isOpen} onOpenChange={onOpenChange} />
       </div>
     );
   },

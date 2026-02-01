@@ -608,6 +608,7 @@ class SteemApi {
   recordGameScore(
     player: string,
     score: number,
+    combos: number | null = null,
     game: string = "steem-heights",
     season: number = 1,
     privateKey?: string,
@@ -618,6 +619,7 @@ class SteemApi {
       player,
       score,
       game,
+      combos,
       season,
       timestamp: new Date().toISOString(),
     });

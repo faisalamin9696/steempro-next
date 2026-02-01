@@ -37,10 +37,11 @@ function SubmitPage({
   const [scheduleTime, setScheduleTime] = useState<ZonedDateTime | null>();
   const [title, setTitle] = useState(isEdit ? root?.title || "" : draft.title);
   const [tags, setTags] = useState<string[]>(
-    isEdit ? JSON.parse(root?.json_metadata || "{}")?.tags || [] : draft.tags
+    isEdit ? JSON.parse(root?.json_metadata || "{}")?.tags || [] : draft.tags,
   );
+  const [pendingTag, setPendingTag] = useState("");
   const [markdown, setMarkdown] = useState(
-    isEdit ? root?.body || "" : draft.body
+    isEdit ? root?.body || "" : draft.body,
   );
   const rpm = readingTime(markdown);
 
@@ -51,12 +52,12 @@ function SubmitPage({
           account: item[0],
           weight: item[1],
         }))
-      : draft.beneficiaries
+      : draft.beneficiaries,
   );
   const [community, setCommunity] = useState<Community | undefined>(
     isEdit
       ? root && empty_community(root?.category, root?.community)
-      : draft?.community
+      : draft?.community,
   );
   const [isPending, setIsPending] = useState(false);
 
@@ -70,6 +71,7 @@ function SubmitPage({
     setPayoutType(Constants.reward_types[1]);
     setCommunity(undefined);
     setBeneficiaries([]);
+    setPendingTag("");
     draftData.clearDraft();
   }
 
@@ -93,7 +95,7 @@ function SubmitPage({
     <div
       className={twMerge(
         "flex w-full flex-col gap-2 pb-4",
-        !isEdit && "1md:flex-row"
+        !isEdit && "1md:flex-row",
       )}
     >
       <div className="1md:w-full 1md:float-start 1md:sticky 1md:z-1 1md:self-start 1md:top-[80px]">
@@ -152,6 +154,8 @@ function SubmitPage({
                 setTags(_tags);
                 if (!isEdit) draftData.setTags(_tags);
               }}
+              inputValue={pendingTag}
+              onInputValueChange={setPendingTag}
               isDisabled={isPending}
             />
           )}
@@ -218,7 +222,7 @@ function SubmitPage({
                         beneficiaries: (root?.beneficiaries ?? []).map(
                           (item) => {
                             return { account: item[0], weight: item[1] };
-                          }
+                          },
                         ),
                         community:
                           root &&
@@ -236,6 +240,9 @@ function SubmitPage({
                 title={title}
                 body={markdown}
                 tags={tags}
+                setTags={setTags}
+                pendingTag={pendingTag}
+                setPendingTag={setPendingTag}
                 community={community}
                 beneficiaries={beneficiaries}
                 payoutType={payoutType}
@@ -269,7 +276,7 @@ function SubmitPage({
                 <X size={20} />
                 <p>
                   {moment(scheduleTime.toAbsoluteString()).format(
-                    "YYYY-MM-DD HH:mm:ss"
+                    "YYYY-MM-DD HH:mm:ss",
                   )}
                 </p>
               </Button>

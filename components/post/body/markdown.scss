@@ -3,35 +3,13 @@
     "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   /* Prose-like spacing */
   line-height: 1.75;
-  overflow-wrap: anywhere;
-  word-break: normal;
+  overflow-wrap: break-word;
   word-wrap: break-word;
-  hyphens: auto;
+  word-break: break-word;
+  hyphens: none;
 
   /* Dark mode invert (approx) */
   color: #1f2937;
-
-  div,
-  dl,
-  dt,
-  dd,
-  ul,
-  ol,
-  li,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  pre,
-  form,
-  p,
-  blockquote,
-  th,
-  td {
-    margin: 0;
-  }
 
   p {
     font-size: 100%;
@@ -159,7 +137,9 @@
   text-align: left;
   padding: 0.875rem 1rem;
   font-weight: 700;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: normal;
   border: 1px solid #cbd5e1;
   /* border-bottom: 2px solid #94a3b8; */
 }
@@ -176,13 +156,15 @@
   border: 1px solid #e2e8f0;
   color: #334155;
   vertical-align: middle;
-  white-space: nowrap;
+  white-space: normal;
   transition: all 0.2s ease;
   word-break: normal;
+  overflow-wrap: normal;
 }
 
 .markdown-body table td a {
-  white-space: nowrap;
+  white-space: normal;
+  word-break: normal;
 }
 
 .dark .markdown-body table td {
@@ -245,6 +227,24 @@
   clear: both;
 }
 
+.markdown-body {
+  div.text-justify {
+    text-align: justify;
+  }
+
+  div.text-right {
+    text-align: right;
+  }
+
+  div.text-center {
+    text-align: center;
+  }
+
+  div.text-rtl {
+    direction: rtl;
+  }
+}
+
 /* Details box */
 .markdown-body details {
   background: #f8f8f8;
@@ -259,13 +259,46 @@
 
 /* Inline code */
 .markdown-body :not(pre) > code {
-  background: rgba(177, 176, 172, 0.28);
-  padding: 0.2em 0.4em;
-  border-radius: 4px;
+  padding: 0.2rem;
+  font-size: 85%;
+  border-radius: 3px;
+  background-color: #f4f4f4;
+  font-weight: inherit;
+  color: #1f2937;
 }
 
 .dark .markdown-body :not(pre) > code {
-  background: rgba(131, 130, 128, 0.36);
+  background: #1f2937;
+  color: #e5e7eb;
+}
+
+.markdown-body {
+  strong {
+    font-weight: 600;
+  }
+
+  ol,
+  ul {
+    margin-left: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  blockquote {
+    border-left: 4px solid #e5e7eb;
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    color: #4b5563;
+    font-style: italic;
+
+    > p {
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  .dark & blockquote {
+    border-left-color: #4b5563;
+    color: #9ca3af;
+  }
 }
 
 /* Code inside pre */
@@ -307,7 +340,31 @@
 
 /* Ensure images/inline elements inside links behave */
 .markdown-body img {
+  width: 100%;
   max-width: 100%;
   height: auto;
+  max-height: none;
   display: block;
+}
+
+@media only screen and (min-width: 768px) {
+  .markdown-body img {
+    width: auto;
+  }
+}
+
+/* Small variant for comments */
+.markdown-body.MarkdownViewer--small {
+  font-family: inherit;
+  font-size: 100%;
+
+  img {
+    max-width: 400px;
+    max-height: 400px;
+  }
+
+  div.videoWrapper {
+    max-width: 480px;
+    padding-bottom: 270px;
+  }
 }
