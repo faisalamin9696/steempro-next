@@ -140,8 +140,8 @@ export default function GamesLandingPage() {
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-widest">
                 <ExternalLink size={12} /> Ecosystem Favorites
               </div>
-              <h2 className="text-3xl md:text-5xl font-black italic tracking-tighter text-white">
-                COMMUNITY <span className="text-zinc-600">TITLES</span>
+              <h2 className="text-3xl md:text-5xl font-black italic tracking-tighter">
+                COMMUNITY <span className="text-zinc-400 dark:text-zinc-600">TITLES</span>
               </h2>
             </div>
             <p className="text-zinc-500 text-sm max-w-sm font-medium">
@@ -165,7 +165,7 @@ export default function GamesLandingPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-xl font-black italic uppercase tracking-tight text-white">
+                  <h3 className="text-xl font-black italic uppercase tracking-tight">
                     Your Game Here?
                   </h3>
                   <p className="text-zinc-500 text-xs font-medium">
@@ -185,7 +185,7 @@ export default function GamesLandingPage() {
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-widest">
                 <Info size={12} /> Fair Play & Rewards
               </div>
-              <h3 className="text-3xl font-black italic tracking-tighter text-white">
+              <h3 className="text-3xl font-black italic tracking-tighter text-zinc-300">
                 IMMUTABLE <span className="text-zinc-600">SCORES</span>
               </h3>
               <p className="text-zinc-500 text-sm font-medium leading-relaxed">

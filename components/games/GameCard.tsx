@@ -25,7 +25,7 @@ export const OfficialGameCard = ({ game }: GameCardProps) => {
               variant="dot"
               color="warning"
               size="sm"
-              className="font-black uppercase text-[9px] bg-black/40 backdrop-blur-md border-white/10"
+              className="font-black uppercase text-[9px] bg-black/40 backdrop-blur-md border-white/10 text-white"
             >
               NATIVE
             </Chip>

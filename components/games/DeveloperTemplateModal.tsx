@@ -41,14 +41,14 @@ export const DeveloperTemplateModal = () => {
         onOpenChange={onOpenChange}
         size="2xl"
         classNames={{
-          base: "bg-zinc-950 border border-zinc-900",
-          header: "border-b border-zinc-900",
-          footer: "border-t border-zinc-900",
+          base: "dark:bg-zinc-950 border border-zinc-900",
+          header: "border-b border-zinc-300 dark:border-zinc-900",
+          footer: "border-t border-zinc-300 dark:border-zinc-900",
         }}
         title={() => (
           <div className="flex flex-row gap-2 items-center">
             <Code2 className="text-amber-500" />
-            <span className="font-black italic uppercase tracking-tight text-white">
+            <span className="font-black italic uppercase tracking-tight">
               Developer Integration Template
             </span>
           </div>
@@ -66,7 +66,7 @@ export const DeveloperTemplateModal = () => {
               as={Link}
               href={CONFIG_GITHUB_URL}
               target="_blank"
-              className="bg-white text-black font-black uppercase text-[10px] tracking-widest rounded-full px-6"
+              className="bg-foreground text-background font-black uppercase text-[10px] tracking-widest rounded-full px-6"
             >
               Get Started
             </Button>
@@ -75,7 +75,7 @@ export const DeveloperTemplateModal = () => {
       >
         {() => (
           <div className="space-y-4">
-            <p className="text-zinc-400 text-sm">
+            <p className="text-muted text-sm">
               Add your game to the ecosystem by following this data structure.
               Submit your PR or contact the team to get listed.
             </p>
@@ -83,16 +83,16 @@ export const DeveloperTemplateModal = () => {
               {codeString}
             </pre>
             <div className="grid grid-cols-2 gap-4">
-              <div className="p-3 bg-zinc-900/50 rounded-lg border border-zinc-800/50">
-                <span className="block text-white text-[10px] font-black uppercase mb-1">
+              <div className="p-3 bg-zinc-300 dark:bg-zinc-900/50 rounded-lg border border-zinc-800/50">
+                <span className="block text-[10px] font-black uppercase mb-1">
                   Thumbnail
                 </span>
                 <span className="text-zinc-500 text-[9px]">
                   Recommended: 800x1200px (Portrait)
                 </span>
               </div>
-              <div className="p-3 bg-zinc-900/50 rounded-lg border border-zinc-800/50">
-                <span className="block text-white text-[10px] font-black uppercase mb-1">
+              <div className="p-3 bg-zinc-300 dark:bg-zinc-900/50 rounded-lg border border-zinc-800/50">
+                <span className="block text-[10px] font-black uppercase mb-1">
                   Integration
                 </span>
                 <span className="text-zinc-500 text-[9px]">

@@ -72,7 +72,7 @@ Think you can beat my score? Join the climb on Steem Heights!
 
 [Play Steem Heights](https://www.steempro.com/games/steem-heights)
 
-#steemheights #gaming #steempro #play2ear`;
+#steemheights #gaming #steempro #play2earn`;
 
   const [title, setTitle] = useState(defaultTitle);
   const [body, setBody] = useState(defaultBody);
