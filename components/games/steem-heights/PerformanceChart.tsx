@@ -69,7 +69,7 @@ export const PerformanceChart = ({ userHistory }: PerformanceChartProps) => {
               <span className="text-[8px] font-bold text-zinc-600 w-8 text-right tabular-nums">
                 {Math.round(p * maxChartScore)}m
               </span>
-              <div className="flex-1 h-[1px] bg-zinc-400/10 border-t border-dashed border-zinc-500/10" />
+              <div className="flex-1 h-px bg-zinc-400/10 border-t border-dashed border-zinc-500/10" />
             </div>
           ))}
         </div>

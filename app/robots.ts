@@ -15,6 +15,7 @@ export default function robots(): MetadataRoute.Robots {
           "/privacy-policy",
         ],
       },
+      
       {
         userAgent: [
           "AhrefsBot",
@@ -31,7 +32,6 @@ export default function robots(): MetadataRoute.Robots {
           "DotBot",
           "GPTBot",
           "Google-CloudVertexBot",
-          "Google-Extended",
           "meta-externalagent",
           "MistralAI-User",
           "nsa",

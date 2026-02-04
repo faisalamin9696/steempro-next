@@ -385,7 +385,7 @@ export default function BoostModal({ isOpen, onOpenChange, post }: Props) {
                   )}
                 </div>
 
-                <div className="flex flex-col xs:flex-row-reverse gap-3 mt-1">
+                <div className="flex flex-col xs:flex-row-reverse sm:flex-row gap-3 mt-1">
                   {needsPermission ? (
                     <Button
                       fullWidth

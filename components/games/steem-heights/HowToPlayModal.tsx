@@ -73,12 +73,12 @@ export const HowToPlayModal = ({ isOpen, onOpenChange }: Props) => {
                   },
                   {
                     title: "Altitude Bonus",
-                    desc: "Every 10 successful combos grants a massive +10m Altitude Bonus!",
+                    desc: "Every successful combos grants a massive Altitude Bonus!",
                     icon: Trophy,
                     color: "text-emerald-500",
                     bg: "bg-emerald-500/10",
                     border: "border-emerald-500/20",
-                  },
+                  }, 
                 ].map((item, i) => (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
