@@ -14,16 +14,19 @@ interface Props {
   seasonPost: any | null;
 }
 
+export const getRewardPool = (seasonPost?: Post) => {
+  if (!seasonPost?.body) return null;
+  // Common patterns: "Reward Pool: 100 STEEM", "Pool: 50 SBD", etc.
+  const match = seasonPost.body.match(
+    /(?:Reward Pool|Pool|Prize Pool):\s*([\d,.]+\s*(?:STEEM|SBD))/i,
+  );
+  return match
+    ? { reward: parseFloat(match[1]), symbol: match[1].split(" ")[1] }
+    : null;
+};
+
 export const HeightsInfo = ({ season, seasonPost }: Props) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const getRewardPool = () => {
-    if (!seasonPost?.body) return null;
-    // Common patterns: "Reward Pool: 100 STEEM", "Pool: 50 SBD", etc.
-    const match = seasonPost.body.match(
-      /(?:Reward Pool|Pool|Prize Pool):\s*([\d,.]+\s*(?:STEEM|SBD))/i,
-    );
-    return match ? match[1] : null;
-  };
 
   const [timeLeft, setTimeLeft] = useState<string | null>(null);
 
@@ -55,7 +58,7 @@ export const HeightsInfo = ({ season, seasonPost }: Props) => {
     return () => clearInterval(interval);
   }, [seasonPost]);
 
-  const rewardPool = getRewardPool();
+  const rewardPool = getRewardPool(seasonPost);
 
   return (
     <div className="space-y-6 text-center lg:text-left">
@@ -84,7 +87,7 @@ export const HeightsInfo = ({ season, seasonPost }: Props) => {
         </h1>
         {rewardPool && (
           <div className="flex items-center justify-center lg:justify-start gap-2 text-amber-500 font-black italic tracking-tighter text-xl">
-            <Trophy size={18} /> {rewardPool} Pool
+            <Trophy size={18} /> {rewardPool.reward} {rewardPool.symbol} Pool
           </div>
         )}
       </div>

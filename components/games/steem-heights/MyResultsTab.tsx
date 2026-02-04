@@ -3,19 +3,45 @@
 import React from "react";
 import { ScrollShadow } from "@heroui/react";
 import { HighScore } from "./Config";
-import { Trophy, History, Target, TrendingUp, Share2 } from "lucide-react";
+import {
+  Trophy,
+  History,
+  Target,
+  TrendingUp,
+  Share2,
+  Award,
+} from "lucide-react";
 import { useDisclosure } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { ActivityPublishModal } from "./ActivityPublishModal";
 import { motion } from "framer-motion";
+import { calculateRewards } from "./GlobalSummitTab";
+import {
+  REWARD_MIN_ALTITUDE,
+  REWARD_MIN_PLAYS,
+  REWARD_RANK_CUTOFF,
+} from "./Config";
+import { getRewardPool } from "./HeightsInfo";
+import { PerformanceChart } from "./PerformanceChart";
 
 interface Props {
   userHistory: HighScore[];
   username: string;
+  highScores: HighScore[];
+  seasonPost: any | null;
 }
 
-export const MyResultsTab = ({ userHistory, username }: Props) => {
+export const MyResultsTab = ({
+  userHistory,
+  username,
+  highScores,
+  seasonPost,
+}: Props) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  const { rewardMap } = calculateRewards(highScores, seasonPost);
+  const userReward = rewardMap.get(username) || 0;
+  const symbol = getRewardPool(seasonPost)?.symbol || "STEEM";
 
   const bestScore =
     userHistory.length > 0 ? Math.max(...userHistory.map((h) => h.score)) : 0;
@@ -31,6 +57,13 @@ export const MyResultsTab = ({ userHistory, username }: Props) => {
           userHistory.reduce((acc, curr) => acc + curr.score, 0) / totalPlays,
         )
       : 0;
+
+  const isQualified =
+    bestScore >= REWARD_MIN_ALTITUDE ||
+    (bestScore >= 10 && totalPlays >= REWARD_MIN_PLAYS);
+
+  const userRank = highScores.findIndex((h) => h.player === username) + 1;
+  const isInTopCutoff = userRank > 0 && userRank <= REWARD_RANK_CUTOFF;
 
   return (
     <div className="space-y-6 pt-2">
@@ -71,12 +104,44 @@ export const MyResultsTab = ({ userHistory, username }: Props) => {
           >
             <stat.icon size={12} className={stat.color} />
             <div className="text-sm font-black">{stat.value}</div>
-            <div className="text-[7px] font-bold text-zinc-500 uppercase tracking-widest text-center">
+            <div className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest text-center">
               {stat.label}
             </div>
           </motion.div>
         ))}
       </div>
+
+      {/* Score History Chart */}
+      <PerformanceChart userHistory={userHistory} />
+
+      {/* Reward Status */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-4 flex flex-col items-center gap-2 text-center"
+      >
+        <Award size={20} className="text-emerald-500" />
+        <div className="flex flex-col">
+          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-500/70">
+            Estimated Seasonal Reward
+          </span>
+          <span className="text-xl font-black">
+            {userReward.toFixed(3)} {symbol}
+          </span>
+        </div>
+
+        {!isQualified || !isInTopCutoff ? (
+          <p className="text-[10px] text-zinc-500 font-medium max-w-[250px]">
+            {!isQualified
+              ? `Keep climbing! Reach ${REWARD_MIN_ALTITUDE}m altitude OR ${REWARD_MIN_PLAYS} plays with 10m+ altitude to qualify.`
+              : `You're qualified! Now break into the Top ${REWARD_RANK_CUTOFF} to secure your share of the pool.`}
+          </p>
+        ) : (
+          <p className="text-[10px] text-emerald-500/80 font-bold uppercase tracking-wider">
+            You are qualified and earning!
+          </p>
+        )}
+      </motion.div>
 
       <div className="flex justify-between items-center px-1">
         <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">

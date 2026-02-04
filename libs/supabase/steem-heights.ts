@@ -26,7 +26,12 @@ export const getHighScores = async (season: number, game: Games) => {
     }
   });
 
-  return Array.from(playerStats.values()).sort((a, b) => b.score - a.score);
+  return Array.from(playerStats.values()).sort((a, b) => {
+    if (b.score !== a.score) {
+      return b.score - a.score;
+    }
+    return (a.plays || 0) - (b.plays || 0);
+  });
 };
 
 export const getSeasonalWinners = async (game: Games) => {
@@ -38,19 +43,39 @@ export const getSeasonalWinners = async (game: Games) => {
 
   if (!data) return [];
 
-  const winnersMap = new Map();
+  // Map to store: Season -> Map(Player -> { maxScore, plays, ...item })
+  const seasonalPlayerStats = new Map<number, Map<string, any>>();
+
   data.forEach((item: any) => {
-    if (!winnersMap.has(item.season)) {
-      winnersMap.set(item.season, item);
+    if (!seasonalPlayerStats.has(item.season)) {
+      seasonalPlayerStats.set(item.season, new Map());
+    }
+
+    const playerMap = seasonalPlayerStats.get(item.season)!;
+    if (!playerMap.has(item.player)) {
+      playerMap.set(item.player, { ...item, plays: 1 });
     } else {
-      const currentWinner = winnersMap.get(item.season);
-      if (item.score > currentWinner.score) {
-        winnersMap.set(item.season, item);
+      const stats = playerMap.get(item.player);
+      stats.plays += 1;
+      if (item.score > stats.score) {
+        stats.score = item.score;
       }
     }
   });
 
-  return Array.from(winnersMap.values()).sort((a, b) => b.season - a.season);
+  // Now for each season, pick the best player based on score (desc) then plays (asc)
+  const winners: any[] = [];
+  seasonalPlayerStats.forEach((playerMap, season) => {
+    const sortedPlayers = Array.from(playerMap.values()).sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return (a.plays || 0) - (b.plays || 0);
+    });
+    if (sortedPlayers.length > 0) {
+      winners.push(sortedPlayers[0]);
+    }
+  });
+
+  return winners.sort((a, b) => b.season - a.season);
 };
 
 export const getUserHistory = async (username: string, game: Games) => {

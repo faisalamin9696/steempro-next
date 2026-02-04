@@ -424,7 +424,7 @@ class SteemApi {
 
   publish = async (
     data: PostingContent,
-    options = null,
+    options: any = null,
     privateKey?: string,
     useKeychain: boolean = false,
   ) => {

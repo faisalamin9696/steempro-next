@@ -11,6 +11,13 @@ export const SCORE_PER_BLOCK = 1;
 export const BONUS_SCORE = 5;
 export const BONUS_HEIGHT_INCREMENT = 10;
 
+// Reward System Configuration
+export const REWARD_MIN_ALTITUDE = 20;
+export const REWARD_MIN_PLAYS = 5;
+export const REWARD_RANK_CUTOFF = 50;
+export const PODIUM_POOL_PERCENT = 0.4;
+export const PERFORMANCE_POOL_PERCENT = 0.6;
+
 export interface Block {
   x: number;
   y: number;

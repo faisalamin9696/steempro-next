@@ -19,6 +19,7 @@ import ChatModal from "../chat/ChatModal";
 import MemoKeyModal from "../chat/MemoKeyModal";
 import secureLocalStorage from "react-secure-storage";
 import { getChatMemoKey } from "@/utils/user";
+import Reputation from "../post/Reputation";
 
 function ProfileHeader({ account }: { account: AccountExt }) {
   const { data: session } = useSession();
@@ -84,7 +85,10 @@ function ProfileHeader({ account }: { account: AccountExt }) {
 
               <div className="flex flex-col md:-mt-2">
                 <p className="text-lg sm:text-xl font-bold">{displayName}</p>
-                <p className="text-sm text-muted">@{name}</p>
+                <div className="flex flex-row gap-1">
+                  <p className="text-sm text-muted">@{name}</p>
+                  <Reputation value={profileData.reputation} />
+                </div>
               </div>
             </div>
 
@@ -130,7 +134,10 @@ function ProfileHeader({ account }: { account: AccountExt }) {
             <p className="text-lg sm:text-xl font-bold truncate">
               {displayName}
             </p>
-            <p className="text-sm text-muted truncate">@{name}</p>
+            <div className="flex flex-row gap-1">
+              <p className="text-sm text-muted">@{name}</p>
+              <Reputation value={profileData.reputation} />
+            </div>
           </div>
         </div>
       </div>

@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import {
   Trophy,
   Target,
@@ -9,13 +8,23 @@ import {
   Users,
   Zap,
   Cloud,
+  BarChart2,
 } from "lucide-react";
 import Link from "next/link";
 import SAvatar from "@/components/ui/SAvatar";
 import SUsername from "@/components/ui/SUsername";
 import { DataTable } from "@/components/ui/data-table";
-import { HighScore, GameStats } from "./Config";
+import {
+  HighScore,
+  GameStats,
+  REWARD_MIN_ALTITUDE,
+  REWARD_MIN_PLAYS,
+  REWARD_RANK_CUTOFF,
+  PODIUM_POOL_PERCENT,
+  PERFORMANCE_POOL_PERCENT,
+} from "./Config";
 import { motion } from "framer-motion";
+import { getRewardPool } from "./HeightsInfo";
 
 interface Props {
   currentSeason: number;
@@ -25,6 +34,84 @@ interface Props {
   globalStats: GameStats;
 }
 
+export const calculateRewards = (
+  highScores: HighScore[],
+  seasonPost: any | null,
+) => {
+  if (!seasonPost || !highScores.length)
+    return { rewardMap: new Map<string, number>(), globalAverage: 0 };
+
+  // 1. Eligibility Filter (Super Strict Anti-Cheat)
+  // - Must reach REWARD_MIN_ALTITUDE (Skill Barrier)
+  // - Must play REWARD_MIN_PLAYS times (Grind Barrier)
+  const qualifiedClimbers = highScores.filter((u, index) => {
+    const score = u.score || 0;
+    const plays = u.plays || 0;
+    // skip the plays condition to check for bot if the REWARD_MIN_ALTITUDE meet
+    const isQualified =
+      score >= REWARD_MIN_ALTITUDE ||
+      (score >= 10 && plays >= REWARD_MIN_PLAYS);
+
+    return isQualified && index < REWARD_RANK_CUTOFF;
+  });
+
+  const poolValue = getRewardPool(seasonPost)?.reward ?? 0;
+
+  if (poolValue <= 0 || qualifiedClimbers.length === 0)
+    return { rewardMap: new Map<string, number>(), globalAverage: 0 };
+
+  const rewardMap = new Map<string, number>();
+
+  // Calculate Global Average only from qualified climbers to avoid bot skewing
+  const totalScore = qualifiedClimbers.reduce(
+    (acc, cur) => acc + (cur.score || 0),
+    0,
+  );
+  const globalAverage = totalScore / qualifiedClimbers.length;
+
+  // Pools: Podium, Performance (Participation included in performance scale)
+  const podiumPool = poolValue * PODIUM_POOL_PERCENT;
+  const performancePool = poolValue * PERFORMANCE_POOL_PERCENT;
+
+  // 2. Podium Distribution (Rank 1-3)
+  const podiumWeights: { [key: number]: number } = {
+    0: 0.5, // 1st
+    1: 0.3, // 2nd
+    2: 0.2, // 3rd
+  };
+
+  // 3. Robust Performance Distribution (Rank 4+)
+  const rank4PlusQualified = qualifiedClimbers.slice(3);
+  const sumRank4PlusScores = rank4PlusQualified.reduce(
+    (acc, cur) => acc + (cur.score || 0),
+    0,
+  );
+
+  highScores.forEach((user, index) => {
+    let reward = 0;
+
+    // Check if player is qualified for ANY rewards (Skill + Effort check)
+    const score = user.score || 0;
+    const plays = user.plays || 0;
+    const isQualified =
+      (score >= REWARD_MIN_ALTITUDE ||
+        (score >= 10 && plays >= REWARD_MIN_PLAYS)) &&
+      index < REWARD_RANK_CUTOFF;
+
+    if (index < 3) {
+      // Podium is always qualified by default (guaranteed by ranking)
+      reward += podiumPool * (podiumWeights[index] || 0);
+    } else if (isQualified && sumRank4PlusScores > 0) {
+      // Performance Share: Only distributed to qualified users
+      reward += ((user.score || 0) / sumRank4PlusScores) * performancePool;
+    }
+
+    rewardMap.set(user.player, reward);
+  });
+
+  return { rewardMap, globalAverage };
+};
+
 export const GlobalSummitTab = ({
   currentSeason,
   isSeasonActive,
@@ -32,6 +119,16 @@ export const GlobalSummitTab = ({
   seasonPost,
   globalStats,
 }: Props) => {
+  const { rewardMap: rewards, globalAverage } = calculateRewards(
+    highScores,
+    seasonPost,
+  );
+  console.log("Reward Stats:", {
+    globalAverage,
+    totalPlayers: highScores.length,
+  });
+
+  const symbol = seasonPost?.pending_payout_value?.split(" ")[1] || "STEEM";
   return (
     <div className="space-y-12">
       {/* Season Badge & Status */}
@@ -56,7 +153,7 @@ export const GlobalSummitTab = ({
         </Link>
 
         {/* Global Statistics Cards */}
-        <div className="grid grid-cols-3 gap-3 w-full max-w-lg">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-2xl px-4">
           {[
             {
               label: "Total Climbers",
@@ -75,6 +172,12 @@ export const GlobalSummitTab = ({
               value: `${globalStats.totalAltitude.toLocaleString()}m`,
               icon: Cloud,
               color: "text-emerald-500",
+            },
+            {
+              label: "Avg Altitude",
+              value: `${Math.round(globalAverage).toLocaleString()}m`,
+              icon: BarChart2,
+              color: "text-cyan-500",
             },
           ].map((stat, i) => (
             <motion.div
@@ -140,11 +243,17 @@ export const GlobalSummitTab = ({
                     {highScores[1].score}m
                   </span>
                   <div className="flex flex-col items-center gap-0.5 mt-1">
+                    {rewards.has(highScores[1].player) && (
+                      <span className="text-[9px] font-black bg-blue-500/20 px-1.5 py-0.5 rounded-full border border-blue-500/30 mb-1">
+                        +{rewards.get(highScores[1].player)?.toFixed(3)}{" "}
+                        {symbol}
+                      </span>
+                    )}
                     <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-tighter leading-none">
                       {highScores[1].plays} Plays
                     </span>
                     {(highScores[1].combos ?? 0) > 0 && (
-                      <span className="text-[7px] font-black text-amber-500/80 uppercase tracking-wider bg-amber-500/5 px-1 rounded-sm border border-amber-500/10">
+                      <span className="text-[8px] font-black text-amber-500/80 uppercase tracking-wider bg-amber-500/5 px-1 rounded-sm border border-amber-500/10">
                         {highScores[1].combos} Combos
                       </span>
                     )}
@@ -183,11 +292,21 @@ export const GlobalSummitTab = ({
                     {highScores[0].score}m
                   </span>
                   <div className="flex flex-col items-center gap-0.5 mt-1">
+                    {rewards.has(highScores[0].player) && (
+                      <motion.div
+                        initial={{ scale: 0.8 }}
+                        animate={{ scale: 1 }}
+                        className="text-[10px] font-black text-black bg-amber-500 px-2 py-0.5 rounded-full shadow-lg shadow-amber-500/20 mb-1"
+                      >
+                        +{rewards.get(highScores[0].player)?.toFixed(3)}{" "}
+                        {symbol}
+                      </motion.div>
+                    )}
                     <span className="text-[8px] font-black uppercase tracking-tighter text-amber-500/70 leading-none">
                       {highScores[0].plays} Plays
                     </span>
                     {(highScores[0].combos ?? 0) > 0 && (
-                      <span className="text-[7px] font-black text-amber-400 uppercase tracking-wider bg-amber-500/10 px-1.5 py-0.5 rounded-md border border-amber-500/20 shadow-[0_0_8px_rgba(245,158,11,0.1)]">
+                      <span className="text-[8px] font-black text-amber-400 uppercase tracking-wider bg-amber-500/10 px-1.5 py-0.5 rounded-md border border-amber-500/20 shadow-[0_0_8px_rgba(245,158,11,0.1)]">
                         {highScores[0].combos} Combos
                       </span>
                     )}
@@ -223,11 +342,17 @@ export const GlobalSummitTab = ({
                     {highScores[2].score}m
                   </span>
                   <div className="flex flex-wrap items-center gap-0.5 mt-1 justify-center">
+                    {rewards.has(highScores[2].player) && (
+                      <span className="text-[9px] font-black bg-cyan-500/20 px-1.5 py-0.5 rounded-full border border-cyan-500/30 mb-1">
+                        +{rewards.get(highScores[2].player)?.toFixed(3)}{" "}
+                        {symbol}
+                      </span>
+                    )}
                     <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-tighter leading-none">
                       {highScores[2].plays} Plays
                     </span>
                     {(highScores[2].combos ?? 0) > 0 && (
-                      <span className="text-[7px] font-black text-amber-500/80 uppercase tracking-wider bg-amber-500/5 px-1 rounded-sm border border-amber-500/10">
+                      <span className="text-[8px] font-black text-amber-500/80 uppercase tracking-wider bg-amber-500/5 px-1 rounded-sm border border-amber-500/10">
                         {highScores[2].combos} Combos
                       </span>
                     )}
@@ -258,40 +383,44 @@ export const GlobalSummitTab = ({
               key: "player",
               header: "Player",
               className: "px-2 py-2",
-              render: (player) => (
+              render: (player, row) => (
                 <div className="flex items-center gap-2">
                   <SAvatar radius="full" size={"xs"} username={player} />
-                  <SUsername
-                    className="text-xs font-bold text-muted"
-                    username={`@${player}`}
-                  />
+                  <div>
+                    <SUsername
+                      className="text-xs font-bold text-muted"
+                      username={`@${player}`}
+                    />
+                    {rewards.has(row.player) && (
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                          {rewards.get(row.player)?.toFixed(3)} {symbol}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ),
             },
             {
               key: "score",
-              header: "Altitude",
+              header: "Performance",
               className: "px-2 py-2",
-              render: (score) => (
-                <span className="text-xs font-black text-white bg-zinc-800 px-2 py-0.5 rounded-md">
-                  {score}m
-                </span>
-              ),
-            },
-            {
-              key: "plays",
-              header: "Plays",
-              className: "px-2 py-2",
-              render: (plays, row) => (
-                <div className="flex flex-col gap-1 items-start">
-                  <span className="text-[10px] font-bold text-zinc-400 flex items-center gap-1">
-                    <History size={10} className="text-zinc-600" />
-                    {row.plays} Plays
-                  </span>
+              render: (score, row) => (
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-black text-white bg-zinc-800 px-2 py-0.5 rounded-md">
+                      {score}m
+                    </span>
+                    <span className="text-[10px] font-bold text-zinc-500 uppercase flex items-center gap-1">
+                      <History size={10} />
+                      {row.plays}
+                    </span>
+                  </div>
                   {(row.combos ?? 0) > 0 && (
-                    <div className="flex items-center gap-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 px-1.5 py-0.5 rounded-sm">
+                    <div className="flex items-center gap-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 px-1.5 py-0.5 rounded-sm w-fit">
                       <Target size={10} />
-                      <span className="text-[8px] font-black uppercase tracking-wider">
+                      <span className="text-[8px] font-bold uppercase tracking-wider">
                         {row.combos} Combos
                       </span>
                     </div>

@@ -30,7 +30,7 @@ export const HeightsLeaderboard = ({
   username,
 }: Props) => {
   return (
-    <Card className="bg-zinc-900/10 border-zinc-800 shadow-xl overflow-hidden relative min-h-[400px]">
+    <Card className="bg-zinc-50 dark:bg-zinc-900/50 border-zinc-800 shadow-xl overflow-hidden relative min-h-[400px]">
       <div className="absolute top-0 right-0 p-4 opacity-10">
         <Target size={120} className="text-zinc-500" />
       </div>
@@ -76,7 +76,12 @@ export const HeightsLeaderboard = ({
               </div>
             }
           >
-            <MyResultsTab userHistory={userHistory} username={username} />
+            <MyResultsTab
+              userHistory={userHistory}
+              username={username}
+              highScores={highScores}
+              seasonPost={seasonPost}
+            />
           </Tab>
 
           <Tab

@@ -9,6 +9,8 @@ import SAvatar from "../ui/SAvatar";
 import SUsername from "../ui/SUsername";
 import { Plus, Star, X } from "lucide-react";
 import { Card } from "@heroui/card";
+import { validateAccountName } from "@/utils/chainValidation";
+import { normalizeUsername } from "@/utils/editor";
 
 interface BeneficiariesModalProps {
   isOpen: boolean;
@@ -30,7 +32,7 @@ const BeneficiariesModal = ({
 
   useEffect(() => {
     const storedFavorites = secureLocalStorage.getItem(
-      "beneficiary-favorites"
+      "beneficiary-favorites",
     ) as Beneficiary[];
     if (storedFavorites) {
       setFavorites(storedFavorites);
@@ -39,7 +41,7 @@ const BeneficiariesModal = ({
 
   const toggleFavorite = (beneficiary: Beneficiary) => {
     const existingIndex = favorites.findIndex(
-      (f) => f.account === beneficiary.account
+      (f) => f.account === beneficiary.account,
     );
     let newFavorites: Beneficiary[];
 
@@ -79,14 +81,16 @@ const BeneficiariesModal = ({
 
   const totalPercentage = localBeneficiaries.reduce(
     (sum, b) => sum + b.weight / 100,
-    0
+    0,
   );
 
   const handleAdd = () => {
-    const username = newUsername.trim().toLowerCase();
+    const username = normalizeUsername(newUsername);
 
-    if (!username) {
-      toast.error("Error", { description: "Please enter a username" });
+    const validateUsername = validateAccountName(username);
+
+    if (validateUsername) {
+      toast.error("Error", { description: validateUsername });
       return;
     }
 
@@ -223,7 +227,7 @@ const BeneficiariesModal = ({
                     color="primary"
                   >
                     {favorites.some(
-                      (f) => f.account === beneficiary.account
+                      (f) => f.account === beneficiary.account,
                     ) ? (
                       <Star size={16} className="text-primary fill-primary" />
                     ) : (

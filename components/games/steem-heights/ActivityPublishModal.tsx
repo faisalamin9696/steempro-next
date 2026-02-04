@@ -14,9 +14,11 @@ import { toast } from "sonner";
 import { steemApi } from "@/libs/steem";
 import { HighScore } from "./Config";
 import { Share2, FileText, Send, CheckCircle2 } from "lucide-react";
-import { extractMetadata, makeJsonMetadata } from "@/utils/editor";
+import { extractMetadata, makeJsonMetadata, makeOptions } from "@/utils/editor";
 import { handleSteemError } from "@/utils/steemApiError";
 import { useAccountsContext } from "@/components/auth/AccountsContext";
+import MarkdownEditor from "@/components/submit/MarkdownEditor";
+import { Constants } from "@/constants";
 
 interface Props {
   isOpen: boolean;
@@ -93,6 +95,18 @@ Think you can beat my score? Join the climb on Steem Heights!
       "play2earn",
     ]);
 
+    const beneficiaries = [
+      { account: Constants.official_account, weight: 1000 },
+      { account: "null", weight: 500 },
+    ].sort((a, b) => (a.account < b.account ? -1 : 1));
+
+    const options = makeOptions({
+      author: username,
+      permlink,
+      payoutType: Constants.reward_types[1],
+      beneficiaries,
+    });
+
     await handleSteemError(async () => {
       const { key, useKeychain } = await authenticateOperation("posting");
       await steemApi.publish(
@@ -105,7 +119,7 @@ Think you can beat my score? Join the climb on Steem Heights!
           parent_permlink: "steempro", // Posting to a general tag or community
           json_metadata: jsonMetadata,
         },
-        null,
+        options,
         key,
         useKeychain,
       );
@@ -124,6 +138,7 @@ Think you can beat my score? Join the climb on Steem Heights!
       backdrop="blur"
       size="2xl"
       className="dark:bg-zinc-950 border border-white/10"
+      scrollBehavior="inside"
     >
       <ModalContent>
         {(onClose) => (
@@ -191,6 +206,26 @@ Think you can beat my score? Join the climb on Steem Heights!
                     </div>
                   </div>
 
+                  <div className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-xl space-y-3">
+                    <div className="flex items-center gap-2 text-emerald-500">
+                      <CheckCircle2 size={16} />
+                      <span className="text-[10px] font-black uppercase tracking-widest">
+                        Supporting the Climb
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-zinc-400 font-medium leading-relaxed">
+                      By publishing your journey, you&apos;re not just sharing
+                      stats you&apos;re fueling the platform! Together, we give{" "}
+                      <span className="text-emerald-500 font-bold">10%</span> to
+                      support <span className="text-white">SteemPro</span> and
+                      burn <span className="text-white">5%</span> for the{" "}
+                      <span className="text-emerald-500 font-bold">
+                        Steem Ecosystem
+                      </span>
+                      . Your ascent helps everyone grow!
+                    </p>
+                  </div>
+
                   <div className="space-y-4">
                     <Input
                       label="Post Title"
@@ -205,19 +240,25 @@ Think you can beat my score? Join the climb on Steem Heights!
                           "bg-zinc-300/50 dark:bg-zinc-900/50 border-white/5 data-[hover=true]:border-white/10 group-data-[focus=true]:border-emerald-500/50",
                       }}
                     />
-                    <Textarea
+                    <MarkdownEditor
                       label="Post Content (Markdown)"
                       placeholder="Describe your climb..."
                       value={body}
                       onValueChange={setBody}
                       readOnly
                       minRows={10}
+                      hideSnippets
+                      insidePreview
+                      isReadOnly
+                      hideToolbar
                       classNames={{
-                        label: "text-zinc-500 font-bold uppercase text-[9px]",
+                        // label: "text-zinc-500 font-bold uppercase text-[9px]",
                         input: "text-zinc-300 font-medium text-sm",
-                        inputWrapper:
-                          "bg-zinc-300/50 dark:bg-zinc-900/50 border-white/5 data-[hover=true]:border-white/10 group-data-[focus=true]:border-emerald-500/50",
+                        // inputWrapper:
+                        //   "bg-zinc-300/50 dark:bg-zinc-900/50 border-white/5 data-[hover=true]:border-white/10 group-data-[focus=true]:border-emerald-500/50",
                       }}
+                      onChange={() => {}}
+                      authors={[]}
                     />
                   </div>
                 </div>

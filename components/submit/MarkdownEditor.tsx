@@ -56,6 +56,7 @@ interface MarkdownEditorProps extends Omit<
     input?: string;
   };
   rows?: number;
+  hideToolbar?: boolean;
 }
 
 let debounceTimer: NodeJS.Timeout | null = null;
@@ -118,6 +119,7 @@ const MarkdownEditor = ({
   body = "",
   authors,
   hideSnippets,
+  hideToolbar,
   ...props
 }: MarkdownEditorProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -455,7 +457,7 @@ const MarkdownEditor = ({
         className="gap-1 p-2 bg-default-100 border border-border rounded-t-xl"
         isDisabled={props.disabled}
       >
-        {selectedTab !== "preview" && (
+        {selectedTab !== "preview" && !hideToolbar && (
           <div className="flex flex-row gap-1 justify-between">
             <div className="flex flex-wrap gap-1">
               {toolbarButtons.map((button, index) => (
@@ -505,7 +507,7 @@ const MarkdownEditor = ({
 
         {insidePreview && (
           <div className="flex flex-col gap-2">
-            {selectedTab !== "preview" && <Divider />}
+            {selectedTab !== "preview" && !hideToolbar && <Divider />}
             <Tabs
               selectedKey={selectedTab}
               onSelectionChange={(e) => setSelectedTab(e.toString() as any)}
