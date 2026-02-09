@@ -45,8 +45,8 @@ export const THIRD_PARTY_GAMES: Game[] = [
     description:
       "Cur8 Games is a gaming platform built on Steem where players can enjoy arcade, card and casual games while earning rewards. Play, complete quests, level up your profile and compete in the weekly leaderboard to win STEEM prizes!",
     image:
-      "https://cdn.steemitimages.com/DQmfE69wWrabJQwBXZ75RR8pZqzPt9h8M75GJ98MoSNNJjA/image.png",
-    category: "Mini Games",
+      "https://steemitimages.com/640x0/https://cdn.steemitimages.com/DQmfE69wWrabJQwBXZ75RR8pZqzPt9h8M75GJ98MoSNNJjA/image.png",
+    category: "Platform",
     difficulty: "Various",
     href: "https://games.cur8.fun",
     stats: {
