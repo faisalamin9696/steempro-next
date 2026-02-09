@@ -83,6 +83,8 @@ export const HeightsLeaderboard = ({
               username={username}
               highScores={highScores}
               seasonPost={seasonPost}
+              currentSeason={currentSeason}
+              seasonalHistory={seasonalHistory}
             />
           </Tab>
 

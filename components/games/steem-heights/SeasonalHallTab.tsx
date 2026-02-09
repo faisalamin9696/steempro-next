@@ -28,14 +28,15 @@ import { DataTable } from "@/components/ui/data-table";
 import { calculateRewards } from "./GlobalSummitTab";
 import { getCoopConfig, getRewardPool } from "./HeightsInfo";
 import { getCommunityReward } from "./GlobalSummitTab";
-import { Spinner } from "@heroui/react";
+import { AvatarGroup, Spinner } from "@heroui/react";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { Constants } from "@/constants";
+import { getSeasonFromTitle } from "@/hooks/games/useHeights";
 
 interface Props {
   seasonalWinners: any[];
-  seasonalPosts: any[];
+  seasonalPosts: Feed[];
 }
 
 export const SeasonalHallTab = ({ seasonalWinners, seasonalPosts }: Props) => {
@@ -52,10 +53,16 @@ export const SeasonalHallTab = ({ seasonalWinners, seasonalPosts }: Props) => {
   const selectedSeasonPost = useMemo(() => {
     if (!selectedSeason) return null;
     return seasonalPosts.find((p) => {
-      const match = p.title.match(/SEASON-(\d+)/i);
-      return match && parseInt(match[1]) === selectedSeason;
+      const season = getSeasonFromTitle(p.title);
+      return season === selectedSeason;
     });
   }, [selectedSeason, seasonalPosts]);
+
+  const filteredWinners = useMemo(() => {
+    return seasonalWinners.filter((w) =>
+      seasonalPosts.some((p) => getSeasonFromTitle(p.title) === w.season),
+    );
+  }, [seasonalWinners, seasonalPosts]);
 
   const handleFetchSeasonDetails = async (season: number) => {
     setSelectedSeason(season);
@@ -86,7 +93,7 @@ export const SeasonalHallTab = ({ seasonalWinners, seasonalPosts }: Props) => {
     const { rewardMap } = calculateRewards(
       seasonData,
       selectedSeasonPost,
-      activePool,
+      communityPool,
     );
 
     return seasonData.map((item, i) => ({
@@ -147,34 +154,37 @@ export const SeasonalHallTab = ({ seasonalWinners, seasonalPosts }: Props) => {
           Hall of Champions
         </div>
         <div className="flex -space-x-2">
-          {seasonalWinners.slice(0, 5).map((w, i) => (
-            <SAvatar
-              key={i}
-              username={w.player}
-              radius="full"
-              size="sm"
-              className="border-2 border-zinc-950 shadow-lg"
-            />
-          ))}
-          {seasonalWinners.length > 5 && (
-            <div className="w-8 h-8 rounded-full bg-zinc-900 border-2 border-zinc-950 flex items-center justify-center text-[10px] font-black text-zinc-500 z-10">
-              +{seasonalWinners.length - 5}
-            </div>
-          )}
+          <AvatarGroup
+            max={5}
+            renderCount={(count) => (
+              <p className="text-xs text-muted ms-2 font-medium hover:underline cursor-pointer">
+                +{count} more
+              </p>
+            )}
+          >
+            {filteredWinners.map((w, i) => (
+              <SAvatar
+                key={i}
+                username={w.player}
+                radius="full"
+                size="sm"
+                className="border-2 border-zinc-950 shadow-lg"
+              />
+            ))}
+          </AvatarGroup>
         </div>
       </div>
 
       {/* Compact Seasonal List */}
       <div className="space-y-2 mt-2">
-        {seasonalWinners.map((w, i) => {
+        {filteredWinners.map((w, i) => {
           const post = seasonalPosts.find((p) => {
-            const match = p.title.match(/SEASON-(\d+)/i);
-            return match && parseInt(match[1]) === w.season;
+            const season = getSeasonFromTitle(p.title);
+            return season === w.season;
           });
           const coopConfig = post ? getCoopConfig(post) : null;
-          const postPool = post ? (getRewardPool(post)?.reward ?? 0) : 0;
           const communityPool = getCommunityReward(w.totalAscent, coopConfig);
-          const totalReward = Math.max(postPool, communityPool);
+          const totalReward = communityPool;
           const symbol = post
             ? (getRewardPool(post)?.symbol ?? "STEEM")
             : "STEEM";
@@ -191,7 +201,7 @@ export const SeasonalHallTab = ({ seasonalWinners, seasonalPosts }: Props) => {
                     <span className="text-[8px] font-black text-zinc-500 uppercase leading-none mb-1">
                       SN
                     </span>
-                    <span className="text-xs font-black text-white leading-none">
+                    <span className="text-xs font-black leading-none">
                       {w.season}
                     </span>
                   </div>

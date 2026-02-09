@@ -227,8 +227,8 @@ Think you can beat my score? Join the climb on Steem Heights!
                       By publishing your journey, you&apos;re not just sharing
                       stats you&apos;re fueling the platform! Together, we give{" "}
                       <span className="text-emerald-500 font-bold">10%</span> to
-                      support <span className="text-white">SteemPro</span> and
-                      burn <span className="text-white">5%</span> for the{" "}
+                      support <span className="text-foreground">SteemPro</span> and
+                      burn <span className="text-foreground">5%</span> for the{" "}
                       <span className="text-emerald-500 font-bold">
                         Steem Ecosystem
                       </span>

@@ -163,7 +163,7 @@ export const GlobalSummitTab = ({
   const { rewardMap: rewards, globalAverage } = calculateRewards(
     highScores,
     seasonPost,
-    activePool,
+    communityPool,
   );
 
   console.log("Reward Stats:", {

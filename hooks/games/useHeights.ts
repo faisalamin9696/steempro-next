@@ -24,6 +24,10 @@ import {
   GameStats,
 } from "@/components/games/steem-heights/Config";
 
+export const getSeasonFromTitle = (title: string) => {
+  const match = title.match(/SEASON-(\d+)/i);
+  return match ? parseInt(match[1]) : null;
+};
 export const useHeights = () => {
   const { data: session } = useSession();
   const [gameState, setGameState] = useState<"idle" | "playing" | "gameover">(
@@ -38,8 +42,8 @@ export const useHeights = () => {
   const [seasonalWinners, setSeasonalWinners] = useState<any[]>([]);
   const [userHistory, setUserHistory] = useState<HighScore[]>([]);
   const [currentSeason, setCurrentSeason] = useState<number>(0);
-  const [activeSeasonPost, setActiveSeasonPost] = useState<any | null>(null);
-  const [seasonalHistory, setSeasonalHistory] = useState<any[]>([]);
+  const [activeSeasonPost, setActiveSeasonPost] = useState<Feed | null>(null);
+  const [seasonalHistory, setSeasonalHistory] = useState<Feed[]>([]);
   const [globalStats, setGlobalStats] = useState<GameStats>({
     totalParticipants: 0,
     activePlayers24h: 0,
@@ -154,16 +158,14 @@ export const useHeights = () => {
 
       if (feeds && feeds.length > 0) {
         setSeasonalHistory(
-          feeds.filter((item: any) => item.cashout_time === 0),
+          feeds.filter((item: Feed) => item.cashout_time === 0),
         );
-
         // An active season has a future cashout_time (> 0), while ended seasons have it as 0
         const activeFeed = feeds.find((item: any) => item.cashout_time > 0);
         if (activeFeed) {
           setActiveSeasonPost(activeFeed);
-          const match = activeFeed.title.match(/SEASON-(\d+)/i);
-          if (match && match[1]) {
-            const seasonNum = parseInt(match[1]);
+          const seasonNum = getSeasonFromTitle(activeFeed.title);
+          if (seasonNum) {
             setCurrentSeason(seasonNum);
             fetchHighScores(seasonNum);
             fetchGameStats(seasonNum);
