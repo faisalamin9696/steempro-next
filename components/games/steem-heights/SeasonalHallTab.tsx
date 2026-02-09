@@ -356,7 +356,7 @@ export const SeasonalHallTab = ({ seasonalWinners, seasonalPosts }: Props) => {
                           className={`relative flex-1 p-3 rounded-2xl border transition-all flex items-center gap-4 ${
                             idx === 0
                               ? "bg-amber-500/10 border-amber-500/30 ring-1 ring-amber-500/20"
-                              : "bg-zinc-800/40 border-white/5"
+                              : "bg-zinc-300/50 dark:bg-zinc-800/40 border-white/5"
                           }`}
                         >
                           <div
@@ -365,7 +365,7 @@ export const SeasonalHallTab = ({ seasonalWinners, seasonalPosts }: Props) => {
                                 ? "bg-amber-500 text-black shadow-lg shadow-amber-500/50"
                                 : idx === 1
                                   ? "bg-zinc-300 text-black"
-                                  : "bg-amber-700 text-white"
+                                  : "bg-amber-700"
                             }`}
                           >
                             {idx + 1}
@@ -383,7 +383,7 @@ export const SeasonalHallTab = ({ seasonalWinners, seasonalPosts }: Props) => {
                                 className="text-xs font-black truncate"
                               />
                               <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-black text-white italic">
+                                <span className="text-[10px] font-black italic">
                                   {winner.score}m
                                 </span>
                                 <span className="text-[9px] font-black text-emerald-500">
@@ -404,7 +404,7 @@ export const SeasonalHallTab = ({ seasonalWinners, seasonalPosts }: Props) => {
                           All Participants & Rankings
                         </h3>
                       </div>
-                      <div className="bg-zinc-900/40 border border-white/5 rounded-3xl overflow-hidden p-2">
+                      <div className="bg-zinc-300/50 dark:bg-zinc-900/50 border border-white/5 rounded-3xl overflow-hidden p-2">
                         <DataTable
                           data={processedData.map((item, i) => ({
                             ...item,
