@@ -1,88 +1,96 @@
 import { supabase } from "./supabase";
 
-export const getHighScores = async (season: number, game: Games) => {
-  const { data } = await supabase
-    .from("steempro_game_leaderboard")
-    .select("*")
-    .eq("game", game)
-    .eq("season", season)
-    .order("score", { ascending: false });
-
-  if (!data) return [];
-
-  // Group by player, get the highest score and count plays
-  const playerStats = new Map();
-  data.forEach((item: any) => {
-    if (!playerStats.has(item.player)) {
-      playerStats.set(item.player, { ...item, plays: 1 });
-    } else {
-      const stats = playerStats.get(item.player);
-      stats.plays += 1;
-      // Since data is ordered by score descending, the first one we saw is the highest.
-      // But we can double check just in case.
-      if (item.score > stats.score) {
-        stats.score = item.score;
-      }
-    }
+export const getHeightsHighScores = async (
+  season: number,
+  limit: number = 100,
+  offset: number = 0,
+) => {
+  const { data, error } = await supabase.rpc("get_heights_highest_score", {
+    p_season: season,
+    p_limit: limit,
+    p_offset: offset,
   });
 
-  return Array.from(playerStats.values()).sort((a, b) => {
-    if (b.score !== a.score) {
-      return b.score - a.score;
-    }
-    return (a.plays || 0) - (b.plays || 0);
-  });
+  if (error) {
+    console.error("getHeightsHighScores failed:", error);
+    return [];
+  }
+
+  return data || [];
 };
 
-export const getSeasonalWinners = async (game: Games) => {
+export const getHeightsSeasonalWinners = async () => {
   const { data } = await supabase
-    .from("steempro_game_leaderboard")
+    .from("steempro_game_heights")
     .select("*")
-    .eq("game", game)
+    .eq("game", "steem-heights")
     .order("score", { ascending: false });
 
   if (!data) return [];
 
-  // Map to store: Season -> Map(Player -> { maxScore, plays, ...item })
-  const seasonalPlayerStats = new Map<number, Map<string, any>>();
+  // Map to store: Season -> { winner, totalClimbers, totalAscent, totalEntries }
+  const seasonStats = new Map<
+    number,
+    {
+      playerStats: Map<string, any>;
+      totalAscent: number;
+      totalEntries: number;
+    }
+  >();
 
   data.forEach((item: any) => {
-    if (!seasonalPlayerStats.has(item.season)) {
-      seasonalPlayerStats.set(item.season, new Map());
+    if (!seasonStats.has(item.season)) {
+      seasonStats.set(item.season, {
+        playerStats: new Map(),
+        totalAscent: 0,
+        totalEntries: 0,
+      });
     }
 
-    const playerMap = seasonalPlayerStats.get(item.season)!;
+    const stats = seasonStats.get(item.season)!;
+    stats.totalEntries += 1;
+
+    const playerMap = stats.playerStats;
     if (!playerMap.has(item.player)) {
+      // First time seeing this player in this season.
+      // Since data is sorted by score DESC, this is their best score.
       playerMap.set(item.player, { ...item, plays: 1 });
+      stats.totalAscent += item.score || 0;
     } else {
-      const stats = playerMap.get(item.player);
-      stats.plays += 1;
-      if (item.score > stats.score) {
-        stats.score = item.score;
-      }
+      const pStats = playerMap.get(item.player);
+      pStats.plays += 1;
+      // Subsequent entries for the same player are <= max score, so we don't add them.
     }
   });
 
-  // Now for each season, pick the best player based on score (desc) then plays (asc)
   const winners: any[] = [];
-  seasonalPlayerStats.forEach((playerMap, season) => {
-    const sortedPlayers = Array.from(playerMap.values()).sort((a, b) => {
-      if (b.score !== a.score) return b.score - a.score;
-      return (a.plays || 0) - (b.plays || 0);
-    });
+  seasonStats.forEach((stats, season) => {
+    const sortedPlayers = Array.from(stats.playerStats.values()).sort(
+      (a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return (a.plays || 0) - (b.plays || 0);
+      },
+    );
+
     if (sortedPlayers.length > 0) {
-      winners.push(sortedPlayers[0]);
+      const totalClimbers = stats.playerStats.size;
+      winners.push({
+        ...sortedPlayers[0],
+        totalClimbers,
+        totalAscent: stats.totalAscent,
+        totalEntries: stats.totalEntries,
+        avgAltitude: totalClimbers > 0 ? stats.totalAscent / totalClimbers : 0,
+      });
     }
   });
 
   return winners.sort((a, b) => b.season - a.season);
 };
 
-export const getUserHistory = async (username: string, game: Games) => {
+export const getHeightsUserHistory = async (username: string) => {
   const { data } = await supabase
-    .from("steempro_game_leaderboard")
+    .from("steempro_game_heights")
     .select("*")
-    .eq("game", game)
     .eq("player", username)
     .order("created_at", { ascending: false })
     .limit(20);
@@ -90,11 +98,16 @@ export const getUserHistory = async (username: string, game: Games) => {
   return data || [];
 };
 
-export const getGameStats = async (game: Games) => {
-  const { data: allPlays } = await supabase
-    .from("steempro_game_leaderboard")
-    .select("player, created_at, score")
-    .eq("game", game);
+export const getHeightsGameStats = async (season?: number) => {
+  let query = supabase
+    .from("steempro_game_heights")
+    .select("player, created_at, score");
+
+  if (season) {
+    query = query.eq("season", season);
+  }
+
+  const { data: allPlays } = await query;
 
   if (!allPlays)
     return {

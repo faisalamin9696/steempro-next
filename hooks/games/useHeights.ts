@@ -21,8 +21,6 @@ import {
   SPEED_INCREMENT_NORMAL,
   MAX_SPEED,
   SCORE_PER_BLOCK,
-  BONUS_SCORE,
-  BONUS_HEIGHT_INCREMENT,
   GameStats,
 } from "@/components/games/steem-heights/Config";
 
@@ -39,8 +37,9 @@ export const useHeights = () => {
   const [highScores, setHighScores] = useState<HighScore[]>([]);
   const [seasonalWinners, setSeasonalWinners] = useState<any[]>([]);
   const [userHistory, setUserHistory] = useState<HighScore[]>([]);
-  const [currentSeason, setCurrentSeason] = useState<number>(1);
-  const [seasonPost, setSeasonPost] = useState<any | null>(null);
+  const [currentSeason, setCurrentSeason] = useState<number>(0);
+  const [activeSeasonPost, setActiveSeasonPost] = useState<any | null>(null);
+  const [seasonalHistory, setSeasonalHistory] = useState<any[]>([]);
   const [globalStats, setGlobalStats] = useState<GameStats>({
     totalParticipants: 0,
     activePlayers24h: 0,
@@ -134,35 +133,41 @@ export const useHeights = () => {
   );
 
   const fetchHighScores = useCallback(async (season: number) => {
-    const topScores = await heightsDb.getHighScores(season, "steem-heights");
+    const topScores = await heightsDb.getHeightsHighScores(season);
     setHighScores(topScores);
   }, []);
 
   const fetchSeasonalWinners = useCallback(async () => {
-    const winners = await heightsDb.getSeasonalWinners("steem-heights");
+    const winners = await heightsDb.getHeightsSeasonalWinners();
     setSeasonalWinners(winners);
   }, []);
 
   const fetchUserHistory = useCallback(async () => {
     if (!session?.user?.name) return;
-    const data = await heightsDb.getUserHistory(
-      session.user.name,
-      "steem-heights",
-    );
+    const data = await heightsDb.getHeightsUserHistory(session.user.name);
     setUserHistory(data);
-  }, [session]);
+  }, [session?.user?.name]);
 
   const fetchCurrentSeason = useCallback(async () => {
     try {
-      const feeds = await sdsApi.getGameSeason("steem-heights");
+      const feeds = await sdsApi.getGameSeasons("steem-heights");
+
       if (feeds && feeds.length > 0) {
-        const latestPost = feeds[0];
-        setSeasonPost(latestPost);
-        const match = latestPost.title.match(/SEASON-(\d+)/i);
-        if (match && match[1]) {
-          const seasonNum = parseInt(match[1]);
-          setCurrentSeason(seasonNum);
-          fetchHighScores(seasonNum);
+        setSeasonalHistory(
+          feeds.filter((item: any) => item.cashout_time === 0),
+        );
+
+        // An active season has a future cashout_time (> 0), while ended seasons have it as 0
+        const activeFeed = feeds.find((item: any) => item.cashout_time > 0);
+        if (activeFeed) {
+          setActiveSeasonPost(activeFeed);
+          const match = activeFeed.title.match(/SEASON-(\d+)/i);
+          if (match && match[1]) {
+            const seasonNum = parseInt(match[1]);
+            setCurrentSeason(seasonNum);
+            fetchHighScores(seasonNum);
+            fetchGameStats(seasonNum);
+          }
         }
       }
     } catch (error) {
@@ -170,9 +175,10 @@ export const useHeights = () => {
     }
   }, [fetchHighScores]);
 
-  const fetchGameStats = useCallback(async () => {
+  const fetchGameStats = useCallback(async (season?: number) => {
+    if (!season) return;
     try {
-      const stats = await heightsDb.getGameStats("steem-heights");
+      const stats = await heightsDb.getHeightsGameStats(season);
       setGlobalStats(stats);
     } catch (error) {
       console.error("Failed to fetch game stats:", error);
@@ -180,11 +186,15 @@ export const useHeights = () => {
   }, []);
 
   useEffect(() => {
-    fetchUserHistory();
     fetchCurrentSeason();
     fetchSeasonalWinners();
-    fetchGameStats();
+  }, [fetchCurrentSeason, fetchSeasonalWinners]);
 
+  useEffect(() => {
+    fetchUserHistory();
+  }, [fetchUserHistory]);
+
+  useEffect(() => {
     const channel = supabase
       .channel("leaderboard_realtime")
       .on(
@@ -192,11 +202,17 @@ export const useHeights = () => {
         {
           event: "INSERT",
           schema: "public",
-          table: "steempro_game_leaderboard",
+          table: "steempro_game_heights",
           filter: "game=eq.steem-heights",
         },
         () => {
-          fetchHighScores(currentSeason);
+          // We don't bother with currentSeason here since it's hard to sync
+          // The fetchCurrentSeason call in the other effect will handle it
+          // or we can just fetch the latest for the current season state
+          if (currentSeason) {
+            fetchHighScores(currentSeason);
+            fetchGameStats(currentSeason);
+          }
           fetchUserHistory();
           fetchSeasonalWinners();
         },
@@ -207,9 +223,9 @@ export const useHeights = () => {
       supabase.removeChannel(channel);
     };
   }, [
+    currentSeason,
     fetchHighScores,
     fetchUserHistory,
-    fetchCurrentSeason,
     fetchSeasonalWinners,
     fetchGameStats,
   ]);
@@ -220,7 +236,7 @@ export const useHeights = () => {
     if (requestRef.current) cancelAnimationFrame(requestRef.current);
 
     if (session?.user?.name && score > 0) {
-      if (!seasonPost) {
+      if (!activeSeasonPost) {
         console.log("No active season, skipping score recording");
         return;
       }
@@ -249,10 +265,22 @@ export const useHeights = () => {
       }
 
       fetchHighScores(currentSeason);
+      fetchGameStats(currentSeason);
       fetchUserHistory();
       fetchSeasonalWinners();
     }
-  }, [session, score, playSound, fetchHighScores]);
+  }, [
+    session,
+    score,
+    playSound,
+    fetchHighScores,
+    fetchGameStats,
+    fetchUserHistory,
+    fetchSeasonalWinners,
+    currentSeason,
+    combos,
+    activeSeasonPost,
+  ]);
   const startGame = () => {
     const firstBlock = {
       x: (CANVAS_WIDTH - INITIAL_WIDTH) / 2,
@@ -477,10 +505,11 @@ export const useHeights = () => {
     seasonalWinners,
     userHistory,
     currentSeason,
-    seasonPost,
+    seasonPost: activeSeasonPost,
+    seasonalHistory,
     isSavingScore,
     isLoggedIn: !!session?.user?.name,
-    isSeasonActive: !!seasonPost,
+    isSeasonActive: !!activeSeasonPost,
     isMuted,
     setIsMuted,
     showPerfect,

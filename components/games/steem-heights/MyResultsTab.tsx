@@ -21,7 +21,8 @@ import {
   REWARD_MIN_PLAYS,
   REWARD_RANK_CUTOFF,
 } from "./Config";
-import { getRewardPool } from "./HeightsInfo";
+import { getRewardPool, getCoopConfig } from "./HeightsInfo";
+import { getCommunityReward } from "./GlobalSummitTab";
 import { PerformanceChart } from "./PerformanceChart";
 
 interface Props {
@@ -39,7 +40,19 @@ export const MyResultsTab = ({
 }: Props) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const { rewardMap } = calculateRewards(highScores, seasonPost);
+  const coopConfig = getCoopConfig(seasonPost);
+  const totalLeaderboardAltitude = highScores.reduce(
+    (acc, cur) => acc + (cur.score || 0),
+    0,
+  );
+  const postPool = getRewardPool(seasonPost)?.reward ?? 0;
+  const communityPool = getCommunityReward(
+    totalLeaderboardAltitude,
+    coopConfig,
+  );
+  const activePool = Math.max(postPool, communityPool);
+
+  const { rewardMap } = calculateRewards(highScores, seasonPost, activePool);
   const userReward = rewardMap.get(username) || 0;
   const symbol = getRewardPool(seasonPost)?.symbol || "STEEM";
 

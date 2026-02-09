@@ -46,16 +46,17 @@ export const ActivityPublishModal = ({
   const totalPlays = todayHistory.length;
   const peakAltitude =
     todayHistory.length > 0 ? Math.max(...todayHistory.map((h) => h.score)) : 0;
+  const totalAltitude = todayHistory.reduce(
+    (acc, curr) => acc + (curr.score || 0),
+    0,
+  );
   const totalCombos = todayHistory.reduce(
     (acc, curr) => acc + (curr.combos || 0),
     0,
   );
   const avgAltitude =
     todayHistory.length > 0
-      ? Math.round(
-          todayHistory.reduce((acc, curr) => acc + curr.score, 0) /
-            todayHistory.length,
-        )
+      ? Math.round(totalAltitude / todayHistory.length)
       : 0;
 
   const defaultTitle = `My Daily Ascent on Steem Heights - ${today}`;
@@ -67,6 +68,7 @@ I've been scaling the peaks today! Here's my progress for ${today}:
 
 - 🚀 **Total Sessions**: ${totalPlays}
 - 🏔️ **Peak Altitude**: ${peakAltitude}m
+- ☁️ **Total Altitude**: ${totalAltitude}m
 - 🎯 **Total Combos**: ${totalCombos}
 - 📈 **Average Altitude**: ${avgAltitude}m
 
@@ -201,6 +203,14 @@ Think you can beat my score? Join the climb on Steem Heights!
                         </span>
                         <span className="text-lg font-black">
                           {peakAltitude}m
+                        </span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[9px] text-zinc-500 font-bold uppercase">
+                          Total Altitude
+                        </span>
+                        <span className="text-lg font-black">
+                          {totalAltitude}m
                         </span>
                       </div>
                     </div>

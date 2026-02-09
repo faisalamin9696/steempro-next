@@ -22,9 +22,11 @@ import {
   REWARD_RANK_CUTOFF,
   PODIUM_POOL_PERCENT,
   PERFORMANCE_POOL_PERCENT,
+  AVERAGE_POOL_PERCENT,
 } from "./Config";
 import { motion } from "framer-motion";
-import { getRewardPool } from "./HeightsInfo";
+import { getRewardPool, getCoopConfig } from "./HeightsInfo";
+import { CommunityGoalCard } from "./CommunityGoalCard";
 
 interface Props {
   currentSeason: number;
@@ -37,6 +39,7 @@ interface Props {
 export const calculateRewards = (
   highScores: HighScore[],
   seasonPost: any | null,
+  poolValue: number,
 ) => {
   if (!seasonPost || !highScores.length)
     return { rewardMap: new Map<string, number>(), globalAverage: 0 };
@@ -55,8 +58,6 @@ export const calculateRewards = (
     return isQualified && index < REWARD_RANK_CUTOFF;
   });
 
-  const poolValue = getRewardPool(seasonPost)?.reward ?? 0;
-
   if (poolValue <= 0 || qualifiedClimbers.length === 0)
     return { rewardMap: new Map<string, number>(), globalAverage: 0 };
 
@@ -69,18 +70,26 @@ export const calculateRewards = (
   );
   const globalAverage = totalScore / qualifiedClimbers.length;
 
-  // Pools: Podium, Performance (Participation included in performance scale)
+  // Pools: Podium, Performance, and Average Achievement
   const podiumPool = poolValue * PODIUM_POOL_PERCENT;
   const performancePool = poolValue * PERFORMANCE_POOL_PERCENT;
+  const averagePool = poolValue * AVERAGE_POOL_PERCENT;
 
-  // 2. Podium Distribution (Rank 1-3)
+  // 2. Average Altitude Achievement (Shared equally by those who reach globalAverage, excluding top 3)
+  const averageAchievers = qualifiedClimbers
+    .slice(3)
+    .filter((u) => (u.score || 0) >= globalAverage);
+  const averageRewardPerPerson =
+    averageAchievers.length > 0 ? averagePool / averageAchievers.length : 0;
+
+  // 3. Podium Distribution (Rank 1-3)
   const podiumWeights: { [key: number]: number } = {
     0: 0.5, // 1st
     1: 0.3, // 2nd
     2: 0.2, // 3rd
   };
 
-  // 3. Robust Performance Distribution (Rank 4+)
+  // 4. Robust Performance Distribution (Rank 4+)
   const rank4PlusQualified = qualifiedClimbers.slice(3);
   const sumRank4PlusScores = rank4PlusQualified.reduce(
     (acc, cur) => acc + (cur.score || 0),
@@ -106,10 +115,28 @@ export const calculateRewards = (
       reward += ((user.score || 0) / sumRank4PlusScores) * performancePool;
     }
 
+    // Add Average Altitude Reward if qualified and reached target (Excluding podium)
+    if (index >= 3 && isQualified && (score || 0) >= globalAverage) {
+      reward += averageRewardPerPerson;
+    }
+
     rewardMap.set(user.player, reward);
   });
 
   return { rewardMap, globalAverage };
+};
+
+export const getCommunityReward = (totalAltitude: number, config: any) => {
+  if (!config) return 0;
+  const { minReward, maxReward, stepSize, increasePercent, baseAltitude } =
+    config;
+
+  if (totalAltitude < baseAltitude) return 0;
+
+  const steps = Math.floor((totalAltitude - baseAltitude) / stepSize);
+  const reward = minReward + steps * (minReward * increasePercent);
+
+  return Math.min(reward, maxReward);
 };
 
 export const GlobalSummitTab = ({
@@ -119,18 +146,44 @@ export const GlobalSummitTab = ({
   seasonPost,
   globalStats,
 }: Props) => {
+  const coopConfig = getCoopConfig(seasonPost);
+  const symbol = seasonPost?.pending_payout_value?.split(" ")[1] || "STEEM";
+  const totalLeaderboardAltitude = highScores.reduce(
+    (acc, cur) => acc + (cur.score || 0),
+    0,
+  );
+
+  const postPool = getRewardPool(seasonPost)?.reward ?? 0;
+  const communityPool = getCommunityReward(
+    totalLeaderboardAltitude,
+    coopConfig,
+  );
+  const activePool = Math.max(postPool, communityPool);
+
   const { rewardMap: rewards, globalAverage } = calculateRewards(
     highScores,
     seasonPost,
+    activePool,
   );
+
   console.log("Reward Stats:", {
     globalAverage,
     totalPlayers: highScores.length,
+    activePool,
   });
 
-  const symbol = seasonPost?.pending_payout_value?.split(" ")[1] || "STEEM";
+  const totalAscent = totalLeaderboardAltitude;
+
   return (
     <div className="space-y-12">
+      {/* Community Global Goal (Co-op Mode) */}
+      {coopConfig && (
+        <CommunityGoalCard
+          totalAltitude={totalLeaderboardAltitude}
+          symbol={symbol}
+          config={coopConfig}
+        />
+      )}
       {/* Season Badge & Status */}
       <div className="flex flex-col items-center gap-6">
         <Link
@@ -144,12 +197,16 @@ export const GlobalSummitTab = ({
             className="text-amber-500 group-hover/season:scale-110 transition-transform"
           />
           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-500">
-            Season {currentSeason} Summit
+            {seasonPost
+              ? `Season ${currentSeason} Summit`
+              : "Global Summit Hall"}
           </span>
-          <ArrowUpRight
-            size={10}
-            className="text-amber-500/50 group-hover/season:text-amber-500 transition-colors"
-          />
+          {seasonPost && (
+            <ArrowUpRight
+              size={10}
+              className="text-amber-500/50 group-hover/season:text-amber-500 transition-colors"
+            />
+          )}
         </Link>
 
         {/* Global Statistics Cards */}
@@ -169,7 +226,7 @@ export const GlobalSummitTab = ({
             },
             {
               label: "Total Ascent",
-              value: `${globalStats.totalAltitude.toLocaleString()}m`,
+              value: `${totalAscent.toLocaleString()}m`,
               icon: Cloud,
               color: "text-emerald-500",
             },
@@ -197,17 +254,18 @@ export const GlobalSummitTab = ({
         </div>
 
         {!isSeasonActive && (
-          <div className="w-full bg-zinc-950/50 border border-zinc-800 rounded-2xl p-4 flex items-center gap-3 animate-pulse">
-            <div className="p-2 rounded-full bg-red-500/10 text-red-500">
-              <Target size={16} />
+          <div className="w-full bg-zinc-300/50 dark:bg-zinc-950/50 border border-zinc-400 dark:border-zinc-800 rounded-2xl p-4 flex items-center gap-3 animate-pulse">
+            <div className="p-2 rounded-full bg-amber-500/10 text-amber-500">
+              <Trophy size={16} />
             </div>
-            <div className="flex flex-col">
-              <span className="text-[10px] font-black uppercase text-white">
-                Season Inactive
+            <div className="flex flex-col text-left">
+              <span className="text-[10px] font-black uppercase text-amber-500">
+                Season Intermission
               </span>
-              <span className="text-[10px] font-medium text-zinc-500">
-                Scores are currently not being recorded for Season{" "}
-                {currentSeason}.
+              <span className="text-[10px] font-medium text-muted">
+                {seasonPost
+                  ? `Season ${currentSeason} ascent has concluded. The final altitude records are now locked.`
+                  : "No active climb is currently running. We are preparing the next big height, get your focus ready!"}
               </span>
             </div>
           </div>
@@ -367,21 +425,26 @@ export const GlobalSummitTab = ({
       {/* Leaderboard Table */}
       <div className="max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 pr-2">
         <DataTable
-          data={highScores.slice(3)}
+          data={highScores
+            .slice(3)
+            .map((item, i) => ({ ...item, rank: i + 4 }))}
           columns={[
             {
               key: "rank",
               header: "#",
+              sortable: true,
               className: "w-10 px-2 py-2",
-              render: (_, __, i) => (
+              render: (rank) => (
                 <span className="text-[10px] font-black text-muted">
-                  {i + 4 < 10 ? `0${i + 4}` : i + 4}
+                  {rank < 10 ? `0${rank}` : rank}
                 </span>
               ),
             },
             {
               key: "player",
               header: "Player",
+              sortable: true,
+              searchable: true,
               className: "px-2 py-2",
               render: (player, row) => (
                 <div className="flex items-center gap-2">
@@ -405,6 +468,7 @@ export const GlobalSummitTab = ({
             {
               key: "score",
               header: "Performance",
+              sortable: true,
               className: "px-2 py-2",
               render: (score, row) => (
                 <div className="flex flex-col gap-1.5">
