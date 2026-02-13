@@ -26,10 +26,10 @@ class SdsApi {
     );
   }
 
-  getGameSeason(game: "steem-heights"): Promise<Feed[]> {
+  getGameSeasons(game: "steem-heights", limit: number = 100): Promise<Feed[]> {
     const length = 500;
     return sdsFetcher(
-      `/feeds_api/getActiveCommunityPostsByTagAuthor/${Constants.official_community}/${game}/${Constants.funds_account}/steem/${length}/1`,
+      `/feeds_api/getCommunityPostsByTagAuthor/${Constants.official_community}/${game}/${Constants.funds_account}/steem/${length}/${limit}`,
     );
   }
 

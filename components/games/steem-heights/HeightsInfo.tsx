@@ -14,7 +14,15 @@ interface Props {
   seasonPost: any | null;
 }
 
-export const getRewardPool = (seasonPost?: Post) => {
+import {
+  COOP_BASE_REWARD,
+  COOP_BASE_ALTITUDE,
+  COOP_REWARD_STEP,
+  COOP_REWARD_INCREASE_PERCENT,
+  COOP_MAX_REWARD,
+} from "./Config";
+
+export const getRewardPool = (seasonPost?: any) => {
   if (!seasonPost?.body) return null;
   // Common patterns: "Reward Pool: 100 STEEM", "Pool: 50 SBD", etc.
   const match = seasonPost.body.match(
@@ -23,6 +31,51 @@ export const getRewardPool = (seasonPost?: Post) => {
   return match
     ? { reward: parseFloat(match[1]), symbol: match[1].split(" ")[1] }
     : null;
+};
+
+export const getCoopConfig = (seasonPost?: any) => {
+  const body = seasonPost?.body || "";
+
+  const minRewardMatch = body.match(
+    /(?:Initial Base Reward|Base Reward|Min Pool|Min Reward).*?[|:]\s*([\d.]+)/i,
+  );
+  const maxRewardMatch = body.match(
+    /(?:Max Potential Pool|Max Reward|Max Pool).*?[|:]\s*([\d.]+)/i,
+  );
+  const stepMatch = body.match(
+    /(?:Reward Step Size|Step Size|Reward Step|Increase Size).*?[|:]\s*([\d.]+)/i,
+  );
+  const percentMatch = body.match(
+    /(?:Reward Increase %|Increase Percentage|Increase %).*?[|:]\s*([\d.]+)/i,
+  );
+  const baseAltMatch = body.match(
+    /(?:Base Altitude Goal|Base Altitude|Min Altitude|Goal Start).*?[|:]\s*([\d.]+)/i,
+  );
+
+  // If none of the essential COOP parameters are found, it's NOT a COOP post
+  if (
+    !minRewardMatch &&
+    !maxRewardMatch &&
+    !stepMatch &&
+    !percentMatch &&
+    !baseAltMatch
+  ) {
+    return null;
+  }
+
+  return {
+    minReward: minRewardMatch
+      ? parseFloat(minRewardMatch[1])
+      : COOP_BASE_REWARD,
+    maxReward: maxRewardMatch ? parseFloat(maxRewardMatch[1]) : COOP_MAX_REWARD,
+    stepSize: stepMatch ? parseFloat(stepMatch[1]) : COOP_REWARD_STEP,
+    increasePercent: percentMatch
+      ? parseFloat(percentMatch[1])
+      : COOP_REWARD_INCREASE_PERCENT,
+    baseAltitude: baseAltMatch
+      ? parseFloat(baseAltMatch[1])
+      : COOP_BASE_ALTITUDE,
+  };
 };
 
 export const HeightsInfo = ({ season, seasonPost }: Props) => {
@@ -66,17 +119,23 @@ export const HeightsInfo = ({ season, seasonPost }: Props) => {
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-black uppercase tracking-widest">
           <Zap size={12} className="fill-amber-500" /> Skill Competition
         </div>
-        <Link
-          href={
-            seasonPost ? `/@${seasonPost.author}/${seasonPost.permlink}` : "#"
-          }
-          className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-widest hover:text-amber-500 hover:border-amber-500/50 transition-all cursor-pointer"
-        >
-          Season {season}
-        </Link>
-        {timeLeft && (
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-widest">
-            <Clock size={10} /> {timeLeft}
+        {seasonPost ? (
+          <>
+            <Link
+              href={`/@${seasonPost.author}/${seasonPost.permlink}`}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-widest hover:text-amber-500 hover:border-amber-500/50 transition-all cursor-pointer"
+            >
+              Season {season}
+            </Link>
+            {timeLeft && (
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-widest">
+                <Clock size={10} /> {timeLeft}
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest">
+            No Active Season
           </div>
         )}
       </div>

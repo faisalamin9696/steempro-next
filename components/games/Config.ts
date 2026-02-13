@@ -38,7 +38,7 @@ export const THIRD_PARTY_GAMES: Game[] = [
       website: "https://steempro.com/@stmpak.wit",
     },
   },
-
+  
     {
     id: "cur8-games",
     title: "Cur8 Games",
@@ -56,8 +56,25 @@ export const THIRD_PARTY_GAMES: Game[] = [
     developer: {
       name: "cur8",
       website: "https://steempro.com/@cur8",
+
+  {
+    id: "steem-hari-raid",
+    title: "Steem HARI-RAID",
+    description:
+      "Summon elemental battle cards, raid weekly boss monsters with other players, and earn real STEEM rewards in this Tap2Earn crypto game.",
+    image:
+      "https://steemitimages.com/640x0/https://cdn.steemitimages.com/DQmPCwz9KvoHNnUsA3KSkA2cpMzQqJrrU3nAoypQp35QNsQ/main_4000.jpg",
+    category: "Strategy",
+    difficulty: "Easy",
+    href: "https://hari-raid.h4lab.com",
+    usesBlockchain: true,
+    stats: { rewards: "External" },
+    developer: {
+      name: "H4LAB",
+      website: "http://h4lab.com/",
     },
   },
+  
 ];
 
 export const CATEGORIES = [

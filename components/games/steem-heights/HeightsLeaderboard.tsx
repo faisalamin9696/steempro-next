@@ -12,6 +12,7 @@ interface Props {
   highScores: HighScore[];
   userHistory: HighScore[];
   seasonalWinners: any[];
+  seasonalHistory: any[];
   currentSeason: number;
   isSeasonActive: boolean;
   seasonPost: any | null;
@@ -23,6 +24,7 @@ export const HeightsLeaderboard = ({
   highScores,
   userHistory,
   seasonalWinners,
+  seasonalHistory,
   currentSeason,
   isSeasonActive,
   seasonPost,
@@ -30,7 +32,7 @@ export const HeightsLeaderboard = ({
   username,
 }: Props) => {
   return (
-    <Card className="bg-zinc-50 dark:bg-zinc-900/50 border-zinc-800 shadow-xl overflow-hidden relative min-h-[400px]">
+    <Card className="w-full max-w-4xl mx-auto bg-zinc-50 dark:bg-zinc-900/50 border-zinc-800  overflow-hidden relative min-h-[400px]">
       <div className="absolute top-0 right-0 p-4 opacity-10">
         <Target size={120} className="text-zinc-500" />
       </div>
@@ -81,6 +83,8 @@ export const HeightsLeaderboard = ({
               username={username}
               highScores={highScores}
               seasonPost={seasonPost}
+              currentSeason={currentSeason}
+              seasonalHistory={seasonalHistory}
             />
           </Tab>
 
@@ -93,7 +97,10 @@ export const HeightsLeaderboard = ({
               </div>
             }
           >
-            <SeasonalHallTab seasonalWinners={seasonalWinners} />
+            <SeasonalHallTab
+              seasonalWinners={seasonalWinners}
+              seasonalPosts={seasonalHistory}
+            />
           </Tab>
         </Tabs>
       </div>

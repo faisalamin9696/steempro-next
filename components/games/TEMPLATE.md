@@ -48,3 +48,32 @@ If you want to host your game within the SteemPro codebase (like Steem Heights),
 - **Performance**: Ensure your game is optimized for web performance.
 - **Fair Play**: If you record scores, ensure they are sent to the blockchain or a verified backend.
 - **Aesthetic**: Use high-quality thumbnails (approx 800x1200) for the card.
+
+## Step 4: Cooperative Economy (Optional)
+
+If your game uses the SteemPro Seasonal Reward System, you can automate your game's configuration by including a Markdown table in your Steem launch post. The system will automatically parse these values.
+
+### Supported Parameters Table Template
+
+| Parameter                  | Value     |
+| :------------------------- | :-------- |
+| 🏔️ **Base Altitude Goal**  | 500       |
+| 💰 **Initial Base Reward** | 50 STEEM  |
+| 🚀 **Max Potential Pool**  | 500 STEEM |
+| 📈 **Reward Step Size**    | 1000      |
+| 💎 **Reward Increase %**   | 1.5       |
+
+### Reward Distribution Guidelines (Standard)
+
+To maintain a healthy and inclusive game economy, we recommend the following 40/40/20 split:
+
+1.  **Podium Pool (40%)**: Distributed among the Top 3 players (e.g., 50%, 30%, 20% of this pool).
+2.  **Performance Pool (40%)**: Distributed among all qualified players from Rank 4 downwards, proportional to their score achievement.
+3.  **Average Achievement Pool (20%)**: Distributed equally among all qualified players (excluding top 3) who reach or exceed the **Global Average Score**.
+
+### Eligibility Requirements
+
+To prevent bot abuse, rewards should only be distributed to players meeting these minimums:
+
+- **Skill Barrier**: Reaching a minimum score (e.g., 20m).
+- **Effort Barrier**: Completing a minimum number of sessions (e.g., 5 plays).
