@@ -38,8 +38,8 @@ export const THIRD_PARTY_GAMES: Game[] = [
       website: "https://steempro.com/@stmpak.wit",
     },
   },
-  
-    {
+
+  {
     id: "cur8-games",
     title: "Cur8 Games",
     description:
@@ -47,7 +47,7 @@ export const THIRD_PARTY_GAMES: Game[] = [
     image:
       "https://steemitimages.com/640x0/https://cdn.steemitimages.com/DQmfE69wWrabJQwBXZ75RR8pZqzPt9h8M75GJ98MoSNNJjA/image.png",
     category: "Platform",
-    difficulty: "Various",
+    difficulty: "Medium",
     href: "https://games.cur8.fun",
     stats: {
       rewards: "External",
@@ -56,6 +56,8 @@ export const THIRD_PARTY_GAMES: Game[] = [
     developer: {
       name: "cur8",
       website: "https://steempro.com/@cur8",
+    },
+  },
 
   {
     id: "steem-hari-raid",
@@ -74,7 +76,6 @@ export const THIRD_PARTY_GAMES: Game[] = [
       website: "http://h4lab.com/",
     },
   },
-  
 ];
 
 export const CATEGORIES = [
