@@ -38,6 +38,27 @@ export const THIRD_PARTY_GAMES: Game[] = [
       website: "https://steempro.com/@stmpak.wit",
     },
   },
+
+  {
+    id: "cur8-games",
+    title: "Cur8 Games",
+    description:
+      "Cur8 Games is a gaming platform built on Steem where players can enjoy arcade, card and casual games while earning rewards. Play, complete quests, level up your profile and compete in the weekly leaderboard to win STEEM prizes!",
+    image:
+      "https://steemitimages.com/640x0/https://cdn.steemitimages.com/DQmfE69wWrabJQwBXZ75RR8pZqzPt9h8M75GJ98MoSNNJjA/image.png",
+    category: "Platform",
+    difficulty: "Medium",
+    href: "https://games.cur8.fun",
+    stats: {
+      rewards: "External",
+    },
+    usesBlockchain: false,
+    developer: {
+      name: "cur8",
+      website: "https://steempro.com/@cur8",
+    },
+  },
+
   {
     id: "steem-hari-raid",
     title: "Steem HARI-RAID",
@@ -49,7 +70,7 @@ export const THIRD_PARTY_GAMES: Game[] = [
     difficulty: "Easy",
     href: "https://hari-raid.h4lab.com",
     usesBlockchain: true,
-    stats: { rewards: "Active" },
+    stats: { rewards: "External" },
     developer: {
       name: "H4LAB",
       website: "http://h4lab.com/",
