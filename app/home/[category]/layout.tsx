@@ -58,11 +58,5 @@ export default layout;
 
 export async function generateMetadata({ params }: any): Promise<Metadata> {
   let { category } = await params;
-  const { title, description, alternates } = getMetadata.home(category);
-
-  return {
-    title,
-    description,
-    alternates,
-  };
+  return getMetadata.home(category);
 }

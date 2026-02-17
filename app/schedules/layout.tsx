@@ -4,13 +4,7 @@ import { CalendarSearch } from "lucide-react";
 import { Metadata } from "next";
 import { getMetadata } from "@/utils/metadata";
 
-const { title, description, keywords, alternates } = getMetadata.schedules();
-export const metadata: Metadata = {
-  title,
-  description,
-  keywords,
-  alternates,
-};
+export const metadata: Metadata = getMetadata.schedules();
 
 async function layout({ children }: { children: React.ReactNode }) {
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { supabase } from "@/libs/supabase/supabase";
 import * as heightsDb from "@/libs/supabase/steem-heights";
@@ -22,6 +22,8 @@ import {
   MAX_SPEED,
   SCORE_PER_BLOCK,
   GameStats,
+  SKINS,
+  Skin,
 } from "@/components/games/steem-heights/Config";
 
 export const getSeasonFromTitle = (title: string) => {
@@ -56,6 +58,16 @@ export const useHeights = () => {
   const [lastImpactTime, setLastImpactTime] = useState(0);
   const [timeLeft, setTimeLeft] = useState(TIME_LIMIT);
   const [isPaused, setIsPaused] = useState(false);
+
+  const personalBest = useMemo(() => {
+    if (userHistory.length === 0) return 0;
+    return Math.max(...userHistory.map((h) => h.score));
+  }, [userHistory]);
+
+  const topScore = useMemo(() => {
+    if (highScores.length === 0) return 0;
+    return highScores[0].score;
+  }, [highScores]);
   const requestRef = useRef<number | null>(null);
   const directionRef = useRef<number>(1);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -66,6 +78,14 @@ export const useHeights = () => {
   const [totalBonusScore, setTotalBonusScore] = useState(0);
   const [showBonus, setShowBonus] = useState(false);
   const [lastBonus, setLastBonus] = useState(0);
+  const [selectedSkinId, setSelectedSkinId] = useState<string>("default");
+  const [lives, setLives] = useState(1);
+  const [windDrift, setWindDrift] = useState(0);
+
+  const selectedSkin = useMemo(
+    () => SKINS.find((s) => s.id === selectedSkinId) || SKINS[0],
+    [selectedSkinId],
+  );
 
   const playSound = useCallback(
     (type: "stack" | "perfect" | "gameover" | "combo") => {
@@ -296,12 +316,14 @@ export const useHeights = () => {
       x: 0,
       y: CANVAS_HEIGHT - BLOCK_HEIGHT * 2,
       width: INITIAL_WIDTH,
-      color: "#fbbf24",
+      color: selectedSkin.color,
     };
     setCurrentBlock(startBlock);
     currentBlockRef.current = startBlock;
     setScore(0);
     setSpeed(INITIAL_SPEED);
+    setLives(selectedSkin.perks.extraLife ? 2 : 1);
+    setWindDrift(0);
     setGameState("playing");
     directionRef.current = 1;
     setShowPerfect(false);
@@ -347,7 +369,21 @@ export const useHeights = () => {
       const current = currentBlockRef.current;
       if (!current) return;
 
-      let newX = current.x + speed * directionRef.current * dtScale;
+      // Calculate localized speed with Glacier perk
+      const effectiveSpeed = speed * (selectedSkin.perks.slowFactor || 1);
+
+      // Update Wind Drift (increase with altitude)
+      if (!selectedSkin.perks.windResist && gameState === "playing") {
+        const windIntensity = (score / 100) * 0.2;
+        const drift = Math.sin(timestamp / 2000) * windIntensity;
+        setWindDrift(drift);
+      } else {
+        setWindDrift(0);
+      }
+
+      let newX =
+        current.x +
+        (effectiveSpeed * directionRef.current + windDrift) * dtScale;
       if (newX + current.width > CANVAS_WIDTH) {
         newX = CANVAS_WIDTH - current.width;
         directionRef.current = -1;
@@ -373,7 +409,7 @@ export const useHeights = () => {
 
       requestRef.current = requestAnimationFrame(update);
     },
-    [gameState, speed, isPaused],
+    [gameState, speed, isPaused, selectedSkin, windDrift, score],
   );
 
   useEffect(() => {
@@ -420,8 +456,10 @@ export const useHeights = () => {
       // Bonus every 3 perfects
       if (newStreak > 0 && newStreak % 3 === 0) {
         isBonus = true;
-        // Dynamic bonus based on speed: 1-5m
-        const dynamicBonus = Math.max(1, Math.min(5, Math.ceil(speed / 2)));
+        // Dynamic bonus based on speed: 1-5m + Midas Perk
+        const dynamicBonus =
+          Math.max(1, Math.min(5, Math.ceil(speed / 2))) +
+          (selectedSkin.perks.bonusAltitude || 0);
         bonusAltitude = dynamicBonus;
         setLastBonus(dynamicBonus);
         setTotalBonusScore((t) => t + bonusAltitude);
@@ -464,6 +502,19 @@ export const useHeights = () => {
     }
 
     if (newWidth <= 0) {
+      if (lives > 1) {
+        setLives((l) => l - 1);
+        toast.info("PHOENIX SAVE! Extra life used.");
+        // Reset current block to start of the row to give another chance
+        const resetBlock = {
+          ...current,
+          x: directionRef.current === 1 ? 0 : CANVAS_WIDTH - current.width,
+        };
+        setCurrentBlock(resetBlock);
+        currentBlockRef.current = resetBlock;
+        playSound("stack");
+        return;
+      }
       triggerGameOver();
       return;
     }
@@ -490,7 +541,10 @@ export const useHeights = () => {
       x: directionRef.current === 1 ? 0 : CANVAS_WIDTH - newWidth,
       y: CANVAS_HEIGHT - BLOCK_HEIGHT * (newBlocks.length + 1),
       width: newWidth,
-      color: `hsl(${(newBlocks.length * 20) % 360}, 70%, 50%)`,
+      color:
+        selectedSkin.id === "default"
+          ? `hsl(${(newBlocks.length * 20) % 360}, 70%, 50%)`
+          : selectedSkin.color,
     };
     setCurrentBlock(nextBlock);
     currentBlockRef.current = nextBlock;
@@ -529,5 +583,11 @@ export const useHeights = () => {
     lastBonus,
     globalStats,
     username: session?.user?.name || "",
+    selectedSkin,
+    setSelectedSkinId,
+    lives,
+    windDrift,
+    personalBest,
+    topScore,
   };
 };

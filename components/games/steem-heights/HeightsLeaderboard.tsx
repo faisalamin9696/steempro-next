@@ -1,12 +1,13 @@
 "use client";
 
 import { Card } from "@heroui/card";
-import { Trophy, Target, History, Award } from "lucide-react";
+import { Trophy, Target, History, Award, ShoppingBag } from "lucide-react";
 import { Tabs, Tab } from "@heroui/tabs";
-import { HighScore, GameStats } from "./Config";
+import { HighScore, GameStats, Skin } from "./Config";
 import { GlobalSummitTab } from "./GlobalSummitTab";
 import { MyResultsTab } from "./MyResultsTab";
 import { SeasonalHallTab } from "./SeasonalHallTab";
+import { SkinShopTab } from "./SkinShopTab";
 
 interface Props {
   highScores: HighScore[];
@@ -18,6 +19,8 @@ interface Props {
   seasonPost: any | null;
   globalStats: GameStats;
   username: string;
+  selectedSkin: Skin;
+  setSelectedSkinId: (id: string) => void;
 }
 
 export const HeightsLeaderboard = ({
@@ -30,6 +33,8 @@ export const HeightsLeaderboard = ({
   seasonPost,
   globalStats,
   username,
+  selectedSkin,
+  setSelectedSkinId,
 }: Props) => {
   return (
     <Card className="w-full max-w-4xl mx-auto bg-zinc-50 dark:bg-zinc-900/50 border-zinc-800  overflow-hidden relative min-h-[400px]">
@@ -102,6 +107,22 @@ export const HeightsLeaderboard = ({
               seasonalPosts={seasonalHistory}
             />
           </Tab>
+
+          {/* <Tab
+            key="lab"
+            title={
+              <div className="flex items-center gap-2">
+                <ShoppingBag size={14} />
+                <span>Customization Lab</span>
+              </div>
+            }
+          >
+            <SkinShopTab
+              selectedSkin={selectedSkin}
+              onSelectSkin={setSelectedSkinId}
+              username={username}
+            />
+          </Tab> */}
         </Tabs>
       </div>
     </Card>

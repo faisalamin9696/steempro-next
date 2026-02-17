@@ -25,8 +25,8 @@ export const { handlers, auth } = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
-    // 10 years 10 * 12 * 365 * 24 * 60 * 60
-    maxAge: 3784320000,
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+    updateAge: 24 * 60 * 60, // 24 hours
   },
   callbacks: {
     async session({ session, token }: any) {

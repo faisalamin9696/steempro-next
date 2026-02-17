@@ -30,6 +30,8 @@ const SteemHeightsPage = () => {
                   <HeightsCanvas
                     {...heights}
                     scrollToLeaderboard={scrollToLeaderboard}
+                    highScores={heights.highScores}
+                    username={heights.username}
                   />
                 </div>
               </div>
@@ -66,6 +68,8 @@ const SteemHeightsPage = () => {
             globalStats={heights.globalStats}
             username={heights.username}
             seasonalHistory={heights.seasonalHistory}
+            selectedSkin={heights.selectedSkin}
+            setSelectedSkinId={heights.setSelectedSkinId}
           />
         </div>
       </div>

@@ -44,19 +44,24 @@ export const metadata: Metadata = {
   manifest: "/site.webmanifest",
   openGraph: {
     siteName: "SteemPro",
-    title: "SteemPro - Decentralized Social Media",
+    title: {
+      default: "SteemPro - Decentralized Social Media",
+      template: "%s | SteemPro",
+    },
     description:
       "Experience a social network empowered by the Steem blockchain.",
-    url: "/",
-    images: ["opengraph-image.jpg"],
+    images: ["/opengraph-image.jpg"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "SteemPro - Decentralized Social Media",
+    title: {
+      default: "SteemPro - Decentralized Social Media",
+      template: "%s | SteemPro",
+    },
     description:
       "Experience a social network empowered by the Steem blockchain.",
     site: "@steemproblogs",
-    images: ["opengraph-image.jpg"],
+    images: ["/opengraph-image.jpg"],
   },
 };
 

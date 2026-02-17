@@ -1,7 +1,14 @@
 import PinModal from "./PinModal";
 import { decryptPrivateKey, encryptPrivateKey } from "@/utils/encryption";
 import { useSteemAuth } from "@/hooks/useSteemAuth";
-import { createContext, useContext, ReactNode, useState } from "react";
+import { useSession } from "next-auth/react";
+import {
+  createContext,
+  useContext,
+  ReactNode,
+  useState,
+  useEffect,
+} from "react";
 import AuthModal from "./AuthModal";
 import LogoutModal from "../ui/LogoutModal";
 
@@ -13,13 +20,17 @@ interface AccountsContextState {
     username: string,
     key: string,
     pin?: string,
-    type?: AccountKeyType
+    type?: AccountKeyType,
   ) => Promise<void>;
   authenticateOperation: (
-    opsType: AccountKeyType
+    opsType: AccountKeyType,
   ) => Promise<{ key?: string; useKeychain?: boolean }>;
   removeAccount: (username?: string | null, type?: AccountKeyType) => void;
-  switchAccount: (username: string, type?: AccountKeyType) => void;
+  switchAccount: (
+    username: string,
+    type?: AccountKeyType,
+    silent?: boolean,
+  ) => void;
   isPending: boolean;
   manageAccounts: () => void;
   logout: () => Promise<void>;
@@ -27,12 +38,13 @@ interface AccountsContextState {
 }
 
 const AccountsContext = createContext<AccountsContextState>(
-  {} as AccountsContextState
+  {} as AccountsContextState,
 );
 
 let SESSION_PIN: string | null = null; // Encrypted PIN stored in memory for session
 
 export const AccountsProvider = ({ children }: { children: ReactNode }) => {
+  const { data: session, status } = useSession();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [pinModal, setPinModal] = useState<{
@@ -54,6 +66,12 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
     logout: _logout,
   } = useSteemAuth();
 
+  useEffect(() => {
+    if (status === "unauthenticated" && current && !isPending) {
+      _switchAccount(current.username, current.type, true);
+    }
+  }, [status, current, isPending, _switchAccount]);
+
   const loginWithKeychain = async (username: string) => {
     SESSION_PIN = null;
     return _loginWithKeychain(username);
@@ -63,7 +81,7 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
     username: string,
     key: string,
     pin?: string,
-    type: AccountKeyType = "posting"
+    type: AccountKeyType = "posting",
   ) => {
     SESSION_PIN = null;
     return _loginWithKey(username, key, pin, type);
@@ -74,9 +92,13 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
     return _removeAccount(username, type);
   };
 
-  const switchAccount = async (username: string, type?: AccountKeyType) => {
+  const switchAccount = async (
+    username: string,
+    type?: AccountKeyType,
+    silent?: boolean,
+  ) => {
     SESSION_PIN = null;
-    return _switchAccount(username, type);
+    return _switchAccount(username, type, silent);
   };
 
   const logout = async () => {
@@ -93,7 +115,7 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const authenticateOperation = async (
-    opsType: AccountKeyType = "posting"
+    opsType: AccountKeyType = "posting",
   ): Promise<{ key?: string; useKeychain?: boolean }> => {
     return new Promise((resolve, reject) => {
       if (!current) {
@@ -131,7 +153,7 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
         // Not encrypted, use global secret
         const key = decryptPrivateKey(
           current.key!,
-          process.env.NEXT_PUBLIC_AUTH_SECRET!
+          process.env.NEXT_PUBLIC_AUTH_SECRET!,
         );
         if (key) return resolve({ key, useKeychain: false });
         else return reject(new Error("Failed to decrypt key"));
@@ -143,7 +165,7 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
       if (SESSION_PIN) {
         const decryptedPin = decryptPrivateKey(
           SESSION_PIN,
-          process.env.NEXT_PUBLIC_AUTH_SECRET!
+          process.env.NEXT_PUBLIC_AUTH_SECRET!,
         );
         if (decryptedPin) {
           const key = decryptPrivateKey(current.key!, decryptedPin);
@@ -157,7 +179,7 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
           if (remember) {
             SESSION_PIN = encryptPrivateKey(
               pin,
-              process.env.NEXT_PUBLIC_AUTH_SECRET!
+              process.env.NEXT_PUBLIC_AUTH_SECRET!,
             );
           }
           const key = decryptPrivateKey(current.key!, pin);

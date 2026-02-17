@@ -168,7 +168,11 @@ export function useSteemAuth() {
   // -------------------------------
   // Switch Account
   // -------------------------------
-  const switchAccount = async (username: string, type?: AccountKeyType) => {
+  const switchAccount = async (
+    username: string,
+    type?: AccountKeyType,
+    silent?: boolean,
+  ) => {
     try {
       const acc =
         accounts.find((a) => a.username === username && a.type === type) ||
@@ -176,9 +180,10 @@ export function useSteemAuth() {
       await autheticateUser(username);
       setCurrent(acc);
       persist(accounts, acc);
-      toast.success("Success", { description: "Logged in successfully" });
+      if (!silent)
+        toast.success("Success", { description: "Logged in successfully" });
     } catch (error: any) {
-      toast.error("Error", { description: error?.message });
+      if (!silent) toast.error("Error", { description: error?.message });
     }
   };
 

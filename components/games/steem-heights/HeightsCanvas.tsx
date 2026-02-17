@@ -5,15 +5,21 @@ import { Card } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import {
+  Pause,
+  Play,
+  Info,
+  Heart,
+  ShoppingBag,
+  Star,
+  Zap,
+  Shield,
   Gamepad2,
   Crown,
   RefreshCw,
   ArrowUp,
   Volume2,
   VolumeX,
-  Pause,
-  Play,
-  Info,
+  Ghost,
 } from "lucide-react";
 import { useDisclosure } from "@heroui/modal";
 import { HeightsGuideModal } from "./HeightsGuideModal";
@@ -24,7 +30,10 @@ import {
   CANVAS_HEIGHT,
   BLOCK_HEIGHT,
   TIME_LIMIT,
+  Skin,
+  HighScore,
 } from "./Config";
+import SAvatar from "@/components/ui/SAvatar";
 
 interface Props {
   gameState: "idle" | "playing" | "gameover";
@@ -52,6 +61,11 @@ interface Props {
   totalBonusScore: number;
   showBonus: boolean;
   lastBonus: number;
+  lives: number;
+  windDrift: number;
+  selectedSkin: Skin;
+  highScores: HighScore[];
+  username: string;
 }
 
 export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
@@ -82,11 +96,38 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
       totalBonusScore,
       showBonus,
       lastBonus,
+      lives,
+      windDrift,
+      selectedSkin,
+      highScores,
+      username,
     },
     ref,
   ) => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const viewY = Math.max(0, (blocks.length - 10) * BLOCK_HEIGHT);
+
+    const renderBlockIcon = (width: number) => {
+      if (width < 30) return null; // Too small for icon
+      const iconSize = Math.min(12, width / 3);
+      const commonProps = {
+        size: iconSize,
+        className: "text-white/80 drop-shadow-sm",
+      };
+
+      switch (selectedSkin?.id) {
+        case "glacier":
+          return <Zap {...commonProps} />;
+        case "steel":
+          return <Shield {...commonProps} />;
+        case "phoenix":
+          return <Heart {...commonProps} />;
+        case "gold":
+          return <Star {...commonProps} />;
+        default:
+          return null;
+      }
+    };
 
     return (
       <div className="flex flex-col gap-4 w-full max-w-[420px] group select-none">
@@ -110,6 +151,18 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
             </div>
             <div className="flex items-end gap-3">
               <span className="text-4xl font-black italic ">{score}m</span>
+              <div className="flex gap-1 mb-1">
+                {Array.from({ length: lives }).map((_, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]"
+                  >
+                    <Heart size={14} fill="currentColor" />
+                  </motion.div>
+                ))}
+              </div>
               <Button
                 size="sm"
                 variant="flat"
@@ -127,7 +180,9 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
               className="flex items-baseline gap-2 text-zinc-500"
             >
               <span className="text-xs font-black text-amber-500 font-mono">
-                {(speed / 2).toFixed(1)}x
+                {windDrift === 0
+                  ? "OFF"
+                  : `${Math.abs(windDrift * 10).toFixed(1)} ${windDrift > 0 ? "→" : "←"}`}
               </span>
               <span className="text-[10px] font-black uppercase font-mono">
                 Wind
@@ -206,10 +261,69 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
               transform: `translateY(${(viewY / CANVAS_HEIGHT) * 100}%)`,
             }}
           >
+            {/* Ghost Markers */}
+            {gameState === "playing" && (
+              <>
+                {highScores.map((hs, hidx) => {
+                  const isOwn = hs.player === username;
+                  const isTop = hidx === 0;
+
+                  return (
+                    <div
+                      key={`ghost-${hs.player}-${hidx}`}
+                      className="absolute w-full border-t border-dashed border-zinc-500/20 z-0 flex items-center justify-start pointer-events-none"
+                      style={{
+                        bottom: `${((hs.score * BLOCK_HEIGHT) / CANVAS_HEIGHT) * 100}%`,
+                      }}
+                    >
+                      <div
+                        className={`flex items-center gap-2 bg-zinc-950/60 backdrop-blur-xs px-2 py-1 rounded-r-xl border-r border-y ${
+                          isOwn
+                            ? "border-amber-500/50 shadow-[0_0_10px_rgba(245,158,11,0.2)]"
+                            : "border-zinc-500/20"
+                        }`}
+                      >
+                        <div className="relative">
+                          <SAvatar
+                            username={hs.player}
+                            radius="full"
+                            size={20}
+                            className={`border shadow-sm ${
+                              isOwn
+                                ? "border-amber-500/50"
+                                : "border-zinc-700/50"
+                            }`}
+                          />
+
+                          {isTop && (
+                            <div className="absolute self-center -top-2 right-[4px]  text-amber-500 drop-shadow-sm">
+                              <Crown size={10} fill="currentColor" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex flex-col">
+                          <span
+                            className={`text-[8px] font-semibold uppercase tracking-widest leading-none ${
+                              isOwn ? "text-amber-500" : "text-zinc-400"
+                            }`}
+                          >
+                            {hs.player} {isOwn && "(YOU)"}
+                          </span>
+                          <span className="text-[8px] font-bold text-zinc-500 mt-0.5">
+                            {hs.score}m
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </>
+            )}
+
             {blocks.map((block, i) => (
               <motion.div
                 key={i}
-                className="absolute rounded-sm shadow-sm border-t border-white/20 z-1"
+                className="absolute rounded-sm shadow-sm border-t border-white/20 z-1 flex items-center justify-center overflow-hidden"
                 style={{
                   left: `${(block.x / CANVAS_WIDTH) * 100}%`,
                   bottom: `${((CANVAS_HEIGHT - block.y - BLOCK_HEIGHT) / CANVAS_HEIGHT) * 100}%`,
@@ -218,6 +332,7 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
                   backgroundColor: block.color,
                 }}
               >
+                <div className="absolute inset-0 bg-black/20" />
                 {block.grow && (
                   <motion.div
                     className="absolute inset-0 bg-white"
@@ -227,6 +342,7 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
                   />
                 )}
                 <div className="absolute inset-0 bg-linear-to-br from-white/10 to-transparent pointer-events-none" />
+                {renderBlockIcon(block.width)}
               </motion.div>
             ))}
 
@@ -248,7 +364,7 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
 
             {currentBlock && gameState === "playing" && (
               <motion.div
-                className="absolute rounded-sm shadow-xl border-t border-white/40 z-10"
+                className="absolute rounded-sm shadow-xl border-t border-white/40 z-10 flex items-center justify-center overflow-hidden"
                 style={{
                   left: `${(currentBlock.x / CANVAS_WIDTH) * 100}%`,
                   bottom: `${((CANVAS_HEIGHT - currentBlock.y - BLOCK_HEIGHT) / CANVAS_HEIGHT) * 100}%`,
@@ -259,8 +375,10 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
                   opacity: 0.9,
                 }}
               >
+                <div className="absolute inset-0 bg-black/20" />
                 <div className="absolute inset-0 bg-linear-to-br from-white/20 to-transparent pointer-events-none" />
                 <div className="absolute inset-0 animate-pulse bg-white/10" />
+                {renderBlockIcon(currentBlock.width)}
               </motion.div>
             )}
           </div>

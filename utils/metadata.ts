@@ -6,6 +6,8 @@ import { sdsApi } from "@/libs/sds";
 const DEFAULT_DESCRIPTION =
   "SteemPro is a decentralized social media platform powered by the Steem blockchain. Explore trending discussions, join vibrant communities, and share your unique perspective.";
 
+const DEFAULT_IMAGE = "https://www.steempro.com/opengraph-image.jpg";
+
 export const getMetadata = {
   home: (category: string) => {
     category = category?.toLowerCase();
@@ -13,14 +15,28 @@ export const getMetadata = {
     const capCat = category.charAt(0).toUpperCase() + category.slice(1);
     const pageTitle = `${capCat} topics`;
     const pageDescription = `Explore ${category} discussions on a user-owned social network. ${capCat} topics cover a wide range of interests and perspectives, providing valuable insights and lively conversations.`;
+    const url =
+      category === "trending"
+        ? "https://www.steempro.com"
+        : `https://www.steempro.com/${category}`;
+
     return {
       title: pageTitle,
       description: pageDescription,
       alternates: {
-        canonical:
-          category === "trending"
-            ? "https://www.steempro.com"
-            : `https://www.steempro.com/${category}`,
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [DEFAULT_IMAGE],
       },
     };
   },
@@ -36,6 +52,8 @@ export const getMetadata = {
       ? `${name} (@${username}) - ${capTab} on the Decentralized Web`
       : `@${username} - ${capTab} on the Decentralized Web`;
     const pageDescription = about || DEFAULT_DESCRIPTION;
+    const url = `https://www.steempro.com/@${username}`;
+    const image = getResizedAvatar(username, "large");
 
     const keywords = [
       `SteemPro @${username}`,
@@ -54,7 +72,19 @@ export const getMetadata = {
       description: pageDescription,
       keywords: keywords,
       alternates: {
-        canonical: `https://www.steempro.com/@${username}`,
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [image],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [image],
       },
     };
   },
@@ -84,6 +114,8 @@ export const getMetadata = {
       ? `${name} (@${username}) - ${capCat} on the Decentralized Web`
       : `@${username} - ${capCat} on the Decentralized Web`;
     const pageDescription = about || DEFAULT_DESCRIPTION;
+    const url = `https://www.steempro.com/@${username}`;
+    const image = getResizedAvatar(username, "large");
 
     const keywords = [
       `SteemPro @${username}`,
@@ -102,7 +134,19 @@ export const getMetadata = {
       description: pageDescription,
       keywords: keywords,
       alternates: {
-        canonical: `https://www.steempro.com/@${username}`,
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [image],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [image],
       },
     };
   },
@@ -112,6 +156,8 @@ export const getMetadata = {
     // const capCat = category.charAt(0).toUpperCase() + category.slice(1);
     const pageTitle = `Latest #${tag} ${category} topics on the Internet`;
     const pageDescription = `Explore the latest ${category} discussions and topics related to #${tag} on the internet. Stay updated with the most recent conversations and insights.`;
+    const url = `https://www.steempro.com/${category}/${tag}`;
+
     const keywords = [
       `SteemPro ${tag} ${category} content`,
       `Latest ${category} discussions on SteemPro`,
@@ -128,14 +174,30 @@ export const getMetadata = {
       description: pageDescription,
       keywords,
       alternates: {
-        canonical: `https://www.steempro.com/${category}/${tag}`,
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [DEFAULT_IMAGE],
       },
     };
   },
   communities: () => {
+    const pageTitle = `Communities on SteemPro - Join Engaging Discussions`;
+    const pageDescription = `Explore diverse communities on SteemPro, a user-owned social network. Join engaging discussions, share your passions, and connect with like-minded individuals.`;
+    const url = "https://www.steempro.com/communities";
+
     return {
-      title: `Communities on SteemPro - Join Engaging Discussions`,
-      description: `Explore diverse communities on SteemPro, a user-owned social network. Join engaging discussions, share your passions, and connect with like-minded individuals.`,
+      title: pageTitle,
+      description: pageDescription,
       keywords: [
         "SteemPro communities",
         "user-owned social network",
@@ -149,14 +211,30 @@ export const getMetadata = {
         "SteemPro platform",
       ],
       alternates: {
-        canonical: "https://www.steempro.com/communities",
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [DEFAULT_IMAGE],
       },
     };
   },
   market: () => {
+    const pageTitle = `SteemPro Market – Buy, Sell, and Discover Digital Assets on the Steem Blockchain`;
+    const pageDescription = `Explore the SteemPro Market – a decentralized marketplace to trade digital assets, tokens, NFTs, and services on the Steem blockchain. Fast, secure, and user-driven.`;
+    const url = "https://www.steempro.com/market";
+
     return {
-      title: `SteemPro Market – Buy, Sell, and Discover Digital Assets on the Steem Blockchain`,
-      description: `Explore the SteemPro Market – a decentralized marketplace to trade digital assets, tokens, NFTs, and services on the Steem blockchain. Fast, secure, and user-driven.`,
+      title: pageTitle,
+      description: pageDescription,
       keywords: [
         "steempro market",
         "steem marketplace",
@@ -170,7 +248,19 @@ export const getMetadata = {
         "steempro buy sell",
       ],
       alternates: {
-        canonical: "https://www.steempro.com/market",
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [DEFAULT_IMAGE],
       },
     };
   },
@@ -188,6 +278,7 @@ export const getMetadata = {
       extractBodySummary(result?.body, 250, isReply) +
         " by " +
         result?.author || DEFAULT_DESCRIPTION;
+    const url = `https://www.steempro.com/@${author}/${permlink}`;
 
     const keywords = [
       `SteemPro @${result.author}`,
@@ -208,7 +299,19 @@ export const getMetadata = {
       keywords: keywords,
       thumbnail,
       alternates: {
-        canonical: `https://www.steempro.com/@${author}/${permlink}`,
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [thumbnail || DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [thumbnail || DEFAULT_IMAGE],
       },
     };
   },
@@ -256,6 +359,10 @@ export const getMetadata = {
       ? `${title} - ${category} in the ${community} Community`
       : `${community} Community ${category} List`;
     const pageDescription = about || DEFAULT_DESCRIPTION;
+    const url = `https://www.steempro.com/community/${category}/${tag}`;
+    const image = result?.account
+      ? getResizedAvatar(result.account, "medium")
+      : DEFAULT_IMAGE;
 
     const keywords = [
       `${community} community discussions`,
@@ -276,6 +383,18 @@ export const getMetadata = {
       images: result?.account
         ? [getResizedAvatar(result.account, "medium"), ...previousImages]
         : previousImages,
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [image],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [image],
+      },
     };
   },
 
@@ -306,12 +425,29 @@ export const getMetadata = {
     };
   },
   proposals: () => {
+    const pageTitle =
+      "SteemPro Proposals - Fund and Support Community Projects";
+    const pageDescription =
+      "Explore and support community-driven projects on SteemPro. Vote for proposals that enhance the Steem ecosystem and help shape the future of decentralized social media.";
+    const url = "https://www.steempro.com/proposals";
+
     return {
-      title: "SteemPro Proposals - Fund and Support Community Projects",
-      description:
-        "Explore and support community-driven projects on SteemPro. Vote for proposals that enhance the Steem ecosystem and help shape the future of decentralized social media.",
+      title: pageTitle,
+      description: pageDescription,
       alternates: {
-        canonical: "https://www.steempro.com/proposals",
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [DEFAULT_IMAGE],
       },
     };
   },
@@ -324,6 +460,8 @@ export const getMetadata = {
         // fallback to fetching post for full details and thumbnail
         const pageTitle = proposal.subject;
         const pageDescription = pageTitle + ` proposal by @${proposal.creator}`;
+        const url = `https://www.steempro.com/proposals/${id}`;
+        const image = getResizedAvatar(proposal.creator, "medium");
 
         // Return immediately if we can, or fetch post in background/parallel if thumbnail is needed
         // For now, let's keep it simple but avoid unnecessary chaining if we have enough info
@@ -331,7 +469,19 @@ export const getMetadata = {
           title: pageTitle,
           description: pageDescription,
           // Use creator avatar as fallback thumbnail to avoid another roundtrip
-          thumbnail: getResizedAvatar(proposal.creator, "medium"),
+          thumbnail: image,
+          openGraph: {
+            title: pageTitle,
+            description: pageDescription,
+            url: url,
+            images: [image],
+          },
+          twitter: {
+            card: "summary_large_image",
+            title: pageTitle,
+            description: pageDescription,
+            images: [image],
+          },
         };
       }
       return {
@@ -349,26 +499,62 @@ export const getMetadata = {
   },
 
   schedules: () => {
+    const pageTitle = "Scheduled posts";
+    const pageDescription =
+      "Manage your scheduled posts easily with SteemPro. View, edit, and delete scheduled posts in one place. Stay organized and keep your content strategy on track.";
+    const url = "https://www.steempro.com/schedules";
+
     return {
-      title: "Scheduled posts",
-      description:
-        "Manage your scheduled posts easily with SteemPro. View, edit, and delete scheduled posts in one place. Stay organized and keep your content strategy on track.",
+      title: pageTitle,
+      description: pageDescription,
       keywords: "SteemPro, schedule posts, scheduling",
       alternates: {
-        canonical: "https://www.steempro.com/schedules",
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [DEFAULT_IMAGE],
       },
     };
   },
   settings: () => {
+    const pageTitle = `Settings - Customize Your SteemPro Experience`;
+    const pageDescription = `Explore the settings page on SteemPro to personalize and optimize your experience on the Steem blockchain. Customize your preferences, security settings, notifications, and more to tailor SteemPro to your needs and preferences.`;
+    const url = "https://www.steempro.com/settings";
+
     return {
-      title: `Settings - Customize Your SteemPro Experience`,
-      description: `Explore the settings page on SteemPro to personalize and optimize your experience on the Steem blockchain. Customize your preferences, security settings, notifications, and more to tailor SteemPro to your needs and preferences.`,
+      title: pageTitle,
+      description: pageDescription,
       alternates: {
-        canonical: "https://www.steempro.com/settings",
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [DEFAULT_IMAGE],
       },
     };
   },
   submit: () => {
+    const pageTitle = `Create and Submit - Share Your Ideas with the World!`;
+    const pageDescription = `Submit your posts, articles, and content to SteemPro and reach a global audience. Join our community and share your ideas, stories, and insights with the world. Start contributing today!`;
+    const url = "https://www.steempro.com/submit";
+
     const keywords = [
       "submit posts to SteemPro",
       "share ideas with global audience",
@@ -382,15 +568,31 @@ export const getMetadata = {
       "SteemPro platform",
     ];
     return {
-      title: `Create and Submit - Share Your Ideas with the World!`,
-      description: `Submit your posts, articles, and content to SteemPro and reach a global audience. Join our community and share your ideas, stories, and insights with the world. Start contributing today!`,
+      title: pageTitle,
+      description: pageDescription,
       keywords,
       alternates: {
-        canonical: "https://www.steempro.com/submit",
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [DEFAULT_IMAGE],
       },
     };
   },
   tools: () => {
+    const pageTitle = `SteemPro Tools - Enhancing Your Steem Experience`;
+    const pageDescription = `Discover a suite of powerful tools tailored for Steem users, designed to streamline your interactions, boost efficiency, and elevate your Steem experience to new heights.`;
+    const url = "https://www.steempro.com/tools";
+
     const keywords = [
       "SteemPro tools",
       "Steem tools",
@@ -405,15 +607,31 @@ export const getMetadata = {
     ];
 
     return {
-      title: `SteemPro Tools - Enhancing Your Steem Experience`,
-      description: `Discover a suite of powerful tools tailored for Steem users, designed to streamline your interactions, boost efficiency, and elevate your Steem experience to new heights.`,
+      title: pageTitle,
+      description: pageDescription,
       keywords,
       alternates: {
-        canonical: "https://www.steempro.com/tools",
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [DEFAULT_IMAGE],
       },
     };
   },
   witnesses: () => {
+    const pageTitle = `Steem Blockchain Witnesses: Trusted Block Producers`;
+    const pageDescription = `Discover the trusted witnesses (block producers) contributing to the security and governance of the Steem blockchain. Learn about their role and contributions.`;
+    const url = "https://www.steempro.com/witnesses";
+
     const keywords = [
       "Steem blockchain witnesses",
       "trusted block producers",
@@ -428,19 +646,35 @@ export const getMetadata = {
     ];
 
     return {
-      title: `Steem Blockchain Witnesses: Trusted Block Producers`,
-      description: `Discover the trusted witnesses (block producers) contributing to the security and governance of the Steem blockchain. Learn about their role and contributions.`,
+      title: pageTitle,
+      description: pageDescription,
       keywords,
       alternates: {
-        canonical: "https://www.steempro.com/witnesses",
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [DEFAULT_IMAGE],
       },
     };
   },
   games: () => {
+    const pageTitle = "Mini Games by SteemPro - Play and Earn on Steem";
+    const pageDescription =
+      "Explore a collection of mini games by SteemPro. Play, compete, and earn rewards on the Steem blockchain. Experience decentralized gaming with proof of skill.";
+    const url = "https://www.steempro.com/games";
+
     return {
-      title: "Mini Games by SteemPro - Play and Earn on Steem",
-      description:
-        "Explore a collection of mini games by SteemPro. Play, compete, and earn rewards on the Steem blockchain. Experience decentralized gaming with proof of skill.",
+      title: pageTitle,
+      description: pageDescription,
       keywords: [
         "SteemPro mini games",
         "blockchain games",
@@ -451,15 +685,32 @@ export const getMetadata = {
         "crypto rewards gaming",
       ],
       alternates: {
-        canonical: "https://www.steempro.com/games",
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [DEFAULT_IMAGE],
       },
     };
   },
   steemHeights: () => {
+    const pageTitle =
+      "Steem Heights - The Ultimate Scaling Challenge by SteemPro";
+    const pageDescription =
+      "Test your focus and precision in Steem Heights. Scale the skyline, reach new altitudes, and secure your place on the blockchain leaderboard. Win Steem rewards!";
+    const url = "https://www.steempro.com/games/steem-heights";
+
     return {
-      title: "Steem Heights - The Ultimate Scaling Challenge by SteemPro",
-      description:
-        "Test your focus and precision in Steem Heights. Scale the skyline, reach new altitudes, and secure your place on the blockchain leaderboard. Win Steem rewards!",
+      title: pageTitle,
+      description: pageDescription,
       keywords: [
         "Steem Heights game",
         "scaling challenge",
@@ -470,7 +721,84 @@ export const getMetadata = {
         "stacking blocks game",
       ],
       alternates: {
-        canonical: "https://www.steempro.com/games/steem-heights",
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [DEFAULT_IMAGE],
+      },
+    };
+  },
+  about: () => {
+    const pageTitle = `About SteemPro - Empowering Your Steem Experience`;
+    const pageDescription = `Learn more about SteemPro, the leading platform dedicated to providing valuable insights, resources, and community engagement opportunities for Steem enthusiasts. Discover our mission, vision, and commitment to empowering your journey on the Steem blockchain.`;
+    const url = "https://www.steempro.com/about";
+
+    return {
+      title: pageTitle,
+      description: pageDescription,
+      keywords: [
+        "SteemPro platform",
+        "Steem blockchain insights",
+        "SteemPro community",
+        "Steem resources",
+        "SteemPro mission",
+        "SteemPro vision",
+        "empower Steem experience",
+        "Steem blockchain platform",
+        "SteemPro engagement",
+        "Steem enthusiasts",
+      ].join(", "),
+      alternates: {
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [DEFAULT_IMAGE],
+      },
+    };
+  },
+  privacyPolicy: () => {
+    const pageTitle = "Privacy Policy - SteemPro";
+    const pageDescription =
+      "Learn how SteemPro protects your data, manages your security keys, and maintains your privacy on the Steem blockchain. Your security and privacy are our top priorities.";
+    const url = "https://www.steempro.com/privacy-policy";
+
+    return {
+      title: "Privacy Policy",
+      description: pageDescription,
+      keywords:
+        "privacy policy SteemPro, privacy and policy, key management, security",
+      alternates: {
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [DEFAULT_IMAGE],
       },
     };
   },

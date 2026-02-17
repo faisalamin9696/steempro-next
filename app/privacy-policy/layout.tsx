@@ -4,16 +4,9 @@ import { ShieldUser } from "lucide-react";
 import { Metadata } from "next";
 import React from "react";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy",
-  description:
-    "Learn how SteemPro protects your data and manages your security keys on the Steem blockchain.",
-  keywords:
-    "privacy policy SteemPro, privacy and policy, key management, security",
-  alternates: {
-    canonical: "https://www.steempro.com/privacy-policy",
-  },
-};
+import { getMetadata } from "@/utils/metadata";
+
+export const metadata: Metadata = getMetadata.privacyPolicy();
 
 function layout({ children }: { children: React.ReactNode }) {
   return (

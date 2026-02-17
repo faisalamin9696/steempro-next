@@ -9,13 +9,7 @@ import PageHeader from "@/components/ui/PageHeader";
 import { getMetadata } from "@/utils/metadata";
 import { Metadata } from "next";
 
-const { title, description, keywords, alternates } = getMetadata.witnesses();
-export const metadata: Metadata = {
-  title,
-  description,
-  keywords: keywords.join(", "),
-  alternates,
-};
+export const metadata: Metadata = getMetadata.witnesses();
 
 async function layout({ children }: { children: React.ReactNode }) {
   const session = await auth();

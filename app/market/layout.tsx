@@ -6,14 +6,7 @@ import { CandlestickChart } from "lucide-react";
 import { Metadata } from "next";
 import React from "react";
 
-const { title, description, keywords, alternates } = getMetadata.market();
-
-export const metadata: Metadata = {
-  title,
-  description,
-  keywords: keywords.join(", "),
-  alternates,
-};
+export const metadata: Metadata = getMetadata.market();
 
 function layout({ children }: { children: React.ReactNode }) {
   return (

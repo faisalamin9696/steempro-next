@@ -3,12 +3,7 @@ import { getMetadata } from "@/utils/metadata";
 import { Metadata } from "next";
 import React from "react";
 
-const { title, description, alternates } = getMetadata.proposals();
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates,
-};
+export const metadata: Metadata = getMetadata.proposals();
 
 async function layout({ children }: { children: React.ReactNode }) {
   return <MainWrapper>{children}</MainWrapper>;

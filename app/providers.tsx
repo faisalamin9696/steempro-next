@@ -35,7 +35,11 @@ function Providers({
   }, []);
 
   return (
-    <SessionProvider session={session}>
+    <SessionProvider
+      session={session}
+      refetchInterval={60 * 60} // Refetch every 1 hour to keep session alive
+      refetchOnWindowFocus={true} // Refresh when user comes back to the tab
+    >
       <ScrollToTop />
       <ReduxProvider store={store}>
         <HeroUIProvider navigate={router.push}>
