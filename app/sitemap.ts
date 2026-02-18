@@ -1,78 +1,101 @@
+import { sdsApi } from "@/libs/sds";
 import { MetadataRoute } from "next";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  return [
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const baseUrl = "https://www.steempro.com";
+  const lastModified = new Date();
+
+  // Core static pages
+  const staticPages: MetadataRoute.Sitemap = [
     {
-      url: "https://steempro.com",
-      lastModified: new Date(),
+      url: baseUrl,
+      lastModified,
       changeFrequency: "always",
-      priority: 1,
+      priority: 1.0,
     },
     {
-      url: "https://steempro.com/trending",
-      lastModified: new Date(),
-      changeFrequency: "always",
-      priority: 0.9,
-    },
-    {
-      url: "https://steempro.com/hot",
-      lastModified: new Date(),
+      url: `${baseUrl}/trending`,
+      lastModified,
       changeFrequency: "always",
       priority: 0.9,
     },
     {
-      url: "https://steempro.com/created",
-      lastModified: new Date(),
-      changeFrequency: "always",
-      priority: 0.9,
-    },
-    {
-      url: "https://steempro.com/market",
-      lastModified: new Date(),
+      url: `${baseUrl}/hot`,
+      lastModified,
       changeFrequency: "always",
       priority: 0.8,
     },
     {
-      url: "https://steempro.com/witnesses",
-      lastModified: new Date(),
+      url: `${baseUrl}/created`,
+      lastModified,
       changeFrequency: "always",
       priority: 0.8,
     },
     {
-      url: "https://steempro.com/communities",
-      lastModified: new Date(),
-      changeFrequency: "always",
+      url: `${baseUrl}/market`,
+      lastModified,
+      changeFrequency: "hourly",
       priority: 0.8,
     },
     {
-      url: "https://steempro.com/proposals",
-      lastModified: new Date(),
-      changeFrequency: "always",
-      priority: 0.8,
+      url: `${baseUrl}/witnesses`,
+      lastModified,
+      changeFrequency: "daily",
+      priority: 0.7,
     },
     {
-      url: "https://steempro.com/games",
-      lastModified: new Date(),
+      url: `${baseUrl}/communities`,
+      lastModified,
+      changeFrequency: "daily",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/proposals`,
+      lastModified,
+      changeFrequency: "daily",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/games`,
+      lastModified,
       changeFrequency: "weekly",
-      priority: 0.8,
+      priority: 0.6,
     },
     {
-      url: "https://steempro.com/games/steem-heights",
-      lastModified: new Date(),
+      url: `${baseUrl}/games/steem-heights`,
+      lastModified,
       changeFrequency: "weekly",
-      priority: 0.8,
+      priority: 0.6,
     },
     {
-      url: "https://steempro.com/about",
-      lastModified: new Date(),
+      url: `${baseUrl}/about`,
+      lastModified,
       changeFrequency: "monthly",
       priority: 0.5,
     },
     {
-      url: "https://steempro.com/privacy-policy",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
+      url: `${baseUrl}/privacy-policy`,
+      lastModified,
+      changeFrequency: "yearly",
       priority: 0.3,
     },
   ];
+
+  try {
+    // Fetch top 100 communities to index
+    const communities = await sdsApi.getCommunities(null, 100);
+    const communityPages: MetadataRoute.Sitemap = (communities || []).map(
+      (community) => ({
+        url: `${baseUrl}/trending/hive-${community.id}`,
+        lastModified,
+        changeFrequency: "daily",
+        priority: 0.6,
+      }),
+    );
+
+    return [...staticPages, ...communityPages];
+  } catch (error) {
+    console.error("Failed to fetch communities for sitemap:", error);
+    return staticPages;
+  }
 }

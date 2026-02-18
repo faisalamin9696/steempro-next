@@ -1,8 +1,15 @@
 import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
+  const baseUrl = "https://www.steempro.com";
+
   return {
     rules: [
+      {
+        userAgent: "Googlebot",
+        allow: "/",
+        disallow: ["/api/", "/settings/", "/schedules/", "/submit"],
+      },
       {
         userAgent: "*",
         allow: "/",
@@ -10,12 +17,12 @@ export default function robots(): MetadataRoute.Robots {
         disallow: [
           "/api/",
           "/settings/",
-          "/submit/",
           "/schedules/",
-          "/privacy-policy",
+          "/submit",
+          "/_next/",
+          "/static/",
         ],
       },
-      
       {
         userAgent: [
           "AhrefsBot",
@@ -41,10 +48,15 @@ export default function robots(): MetadataRoute.Robots {
           "Scrapy",
           "YandexBot",
           "YisouSpider",
+          "Images",
+          "Mediapartners-Google",
+          "Baiduspider",
+          "Sogou",
+          "Twitterbot",
         ],
         disallow: "/",
       },
     ],
-    sitemap: "https://steempro.com/sitemap.xml",
+    sitemap: `${baseUrl}/sitemap.xml`,
   };
 }

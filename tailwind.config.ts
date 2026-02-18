@@ -27,6 +27,9 @@ const config: Config = {
         card: "hsl(var(--heroui-content1))",
         border: "hsl(var(--heroui-default-200))",
       },
+      animation: {
+        "spin-slow": "spin 3s linear infinite",
+      },
     },
     screens: {
       "1xl": "1400px",

@@ -20,7 +20,7 @@ import { useAppSelector } from "@/hooks/redux/store";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAccountsContext } from "../auth/AccountsContext";
 
-const ICON_SIZE = 22;
+const ICON_SIZE = 20;
 
 export function MobileNavbar() {
   const { data: session, status } = useSession();
@@ -79,12 +79,12 @@ export function MobileNavbar() {
         key: "notifications",
       },
       {
-        label: "Post",
+        label: "",
         href: "/submit",
         icon: Plus,
         active: pathname === "/submit",
         key: "create",
-        className: "bg-primary text-primary-foreground hover:bg-primary/90",
+        className: "",
       },
       {
         label: "Wallet",
@@ -100,7 +100,7 @@ export function MobileNavbar() {
         key: "wallet",
       },
       {
-        label: "Account",
+        label: !isAuth ? "Login" : "Account",
         href: isAuth ? `/@${username}` : "#",
         onClick: (e: React.MouseEvent) => {
           if (!isAuth) {
@@ -122,11 +122,12 @@ export function MobileNavbar() {
   );
 
   return (
-    <div className="md:hidden fixed bottom-2 left-0 right-0 z-40 px-2">
-      <nav className="flex items-center justify-between p-1.5 gap-2 mx-auto max-w-sm bg-background/70 backdrop-blur-xl border border-default-200/50 shadow-[0_8px_32px_rgba(0,0,0,0.1)] rounded-xl overflow-hidden">
+    <div className="md:hidden fixed bottom-4 left-0 right-0 z-50 px-3 pointer-events-none">
+      <nav className="flex items-center justify-around p-1.5 gap-0.5 mx-auto max-w-[360px] bg-background/85 backdrop-blur-2xl border border-default-200/50 shadow-[0_12px_40px_rgba(0,0,0,0.12)] rounded-xl overflow-visible pointer-events-auto relative">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = item.active;
+          const isCreate = item.key === "create";
 
           return (
             <Link
@@ -137,12 +138,22 @@ export function MobileNavbar() {
                 item.onClick?.(e);
               }}
               className={twMerge(
-                "relative flex-1 flex flex-col items-center justify-center py-1.5 rounded-xl transition-all duration-300",
-                isActive ? "text-primary" : "text-muted hover:text-default-800",
+                "relative flex-1 flex flex-col items-center justify-center py-1.5 transition-all duration-300 rounded-xl",
+                isActive
+                  ? "text-primary"
+                  : "text-default-400 hover:text-default-700",
+                isCreate ? "flex-[0_0_auto] mx-4" : "active:scale-95",
                 item.className,
               )}
             >
-              <div className="relative h-6 w-6 flex items-center justify-center">
+              <motion.div
+                className={twMerge(
+                  "relative flex items-center justify-center transition-all duration-300 rounded-full",
+                  isCreate
+                    ? "w-7 h-7 bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                    : "h-6 w-6",
+                )}
+              >
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div
                     key={
@@ -150,62 +161,69 @@ export function MobileNavbar() {
                         ? showScrollUp
                           ? "up"
                           : "house"
-                        : "static"
+                        : isActive
+                          ? "active"
+                          : "inactive"
                     }
-                    initial={{
-                      scale: 0.6,
-                      opacity: 0,
-                      //   rotate: item.key === "home" ? -30 : 0,
-                    }}
-                    animate={{ scale: 1, opacity: 1, rotate: 0 }}
-                    exit={{
-                      scale: 0.6,
-                      opacity: 0,
-                      //   rotate: item.key === "home" ? 30 : 0,
-                    }}
-                    transition={{ duration: 0.15 }}
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.8, opacity: 0 }}
+                    transition={{ duration: 0.1 }}
+                    className="flex items-center"
                   >
                     {item.badge ? (
-                      <Badge
-                        size="sm"
-                        shape="circle"
-                        placement="top-right"
-                        color="primary"
-                        content={unreadCount > 0 ? "" : undefined}
-                        showOutline={unreadCount > 0}
-                        classNames={{ badge: "-right-1 top-1" }}
-                        className={twMerge(
-                          "z-0",
-                          // unreadCount > 0 &&
-                          //   "border-green-400 animate-pulse border-2"
-                        )}
-                      >
-                        <Icon
-                          size={ICON_SIZE}
-                          strokeWidth={isActive ? 2.5 : 2}
-                        />
-                      </Badge>
+                        <Badge
+                          size="sm"
+                          shape="circle"
+                          placement="top-right"
+                          color="primary"
+                          content={unreadCount > 0 ? "" : undefined}
+                          showOutline={true}
+                          classNames={{
+                            badge: "-right-0.5 top-0.5 min-w-0",
+                          }}
+                        >
+                          <Icon
+                            size={isCreate ? 24 : ICON_SIZE}
+                            strokeWidth={isActive ? 2.5 : 2}
+                            fill={
+                              isActive && !isCreate ? "currentColor" : "none"
+                            }
+                            className={
+                              isActive && !isCreate ? "fill-primary/10" : ""
+                            }
+                          />
+                        </Badge>
                     ) : (
-                      <Icon size={ICON_SIZE} strokeWidth={isActive ? 2.5 : 2} />
+                      <Icon
+                        size={isCreate ? 22 : ICON_SIZE}
+                        strokeWidth={isActive || isCreate ? 2.5 : 2}
+                        fill={isActive && !isCreate ? "currentColor" : "none"}
+                        className={
+                          isActive && !isCreate ? "fill-primary/10" : ""
+                        }
+                      />
                     )}
                   </motion.div>
                 </AnimatePresence>
-              </div>
+              </motion.div>
 
-              {/* <span
-                className={twMerge(
-                  "text-[10px] mt-0.5 font-bold tracking-tight transition-all duration-300",
-                  isActive ? "text-primary" : "opacity-70"
-                )}
-              >
-                {item.label}
-              </span> */}
+              {/* {!isCreate && (
+                <span
+                  className={twMerge(
+                    "text-[9px] font-semibold mt-0.5 tracking-tight transition-all duration-300 uppercase",
+                    isActive ? "text-primary tracking-normal" : "opacity-80",
+                  )}
+                >
+                  {item.label}
+                </span>
+              )} */}
 
-              {isActive && (
+              {isActive && !isCreate && (
                 <motion.div
-                  layoutId="activeTabMobile"
-                  className="absolute inset-0 bg-primary/10 rounded-xl -z-10"
-                  transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
+                  layoutId="activeTabMobileGlow"
+                  className="absolute inset-x-1 inset-y-0.5 bg-primary/10 rounded-2xl -z-10"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.2 }}
                 />
               )}
             </Link>

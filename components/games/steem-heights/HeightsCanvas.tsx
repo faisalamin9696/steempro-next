@@ -210,6 +210,52 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
             </div>
           )}
 
+          {/* Status Overlay Notices */}
+          <AnimatePresence>
+            {(!isLoggedIn || !isSeasonActive) && gameState === "idle" && (
+              <div className="absolute top-20 left-0 right-0 z-30 px-6 pointer-events-none">
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className={`flex items-center gap-3 p-4 rounded-2xl backdrop-blur-md border border-white/5 shadow-2xl ${
+                    !isLoggedIn
+                      ? "bg-amber-500/10 border-amber-500/20"
+                      : "bg-blue-500/10 border-blue-500/20"
+                  }`}
+                >
+                  <div
+                    className={`shrink-0 w-8 h-8 rounded-xl flex items-center justify-center ${
+                      !isLoggedIn
+                        ? "bg-amber-500/20 text-amber-500"
+                        : "bg-blue-500/20 text-blue-500"
+                    }`}
+                  >
+                    {!isLoggedIn ? (
+                      <Gamepad2 size={16} />
+                    ) : (
+                      <RefreshCw size={16} className="animate-spin-slow" />
+                    )}
+                  </div>
+                  <div className="flex flex-col">
+                    <span
+                      className={`text-[10px] font-black uppercase tracking-widest ${
+                        !isLoggedIn ? "text-amber-500" : "text-blue-500"
+                      }`}
+                    >
+                      {!isLoggedIn ? "Test Gameplay" : "Season Break"}
+                    </span>
+                    <p className="text-[10px] text-zinc-400 font-medium leading-tight max-w-[200px]">
+                      {!isLoggedIn
+                        ? "Login now to record your scores and earn rewards. Current altitude will not be saved."
+                        : "The current season has ended. Please wait for the next season to compete and earn rewards!"}
+                    </p>
+                  </div>
+                </motion.div>
+              </div>
+            )}
+          </AnimatePresence>
+
           {/* Background Gradients */}
           <div className="absolute inset-0 bg-linear-to-b from-indigo-500/5 via-transparent to-amber-500/5 pointer-events-none" />
           <div
