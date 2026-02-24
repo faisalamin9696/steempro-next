@@ -32,6 +32,7 @@ import {
 import { useDeviceInfo } from "../redux/useDeviceInfo";
 import { useHeightsShop } from "./useHeightsShop";
 import { useHeightsSound } from "./useHeightsSound";
+import { empty_comment } from "@/constants/templates";
 
 export const getSeasonFromTitle = (title: string) => {
   const match = title.match(/SEASON-(\d+)/i);
@@ -267,6 +268,22 @@ export const useHeights = () => {
         );
         // An active season has a future cashout_time (> 0), while ended seasons have it as 0
         const activeFeed = feeds.find((item: any) => item.cashout_time > 0);
+
+        // test case
+        //         const activeFeed = {...empty_comment(
+        //           "",
+        //           "",
+        //           `Prize Pool: 500 STEEM
+
+        // | Parameter | Value |
+        // | --- | --- |
+        // |  **Season Duration** | 7 Days |
+        // | ️ **Base Altitude Goal** | 500m |
+        // |  **Initial Base Reward** | 100 STEEM |
+        // |  **Max Potential Pool** | 500 STEEM |
+        // |  **Reward Step Size** | 3000m |
+        // |  **Reward Increase %** | 0.5% |`,
+        //         ), title:`🏆 SEASON-3: "Steem Heights"`};
         if (activeFeed) {
           setActiveSeasonPost(activeFeed);
           const seasonNum = getSeasonFromTitle(activeFeed.title);

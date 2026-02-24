@@ -148,13 +148,15 @@ export const GlobalSummitTab = ({
   globalStats,
 }: Props) => {
   const coopConfig = getCoopConfig(seasonPost);
-  const symbol = seasonPost?.pending_payout_value?.split(" ")[1] || "STEEM";
   const totalLeaderboardAltitude = highScores.reduce(
     (acc, cur) => acc + (cur.score || 0),
     0,
   );
 
-  const postPool = getRewardPool(seasonPost)?.reward ?? 0;
+  const rewardPool = getRewardPool(seasonPost);
+  const postPool = rewardPool?.reward ?? 0;
+  const symbol = rewardPool?.symbol || "STEEM";
+
   const communityPool = getCommunityReward(
     totalLeaderboardAltitude,
     coopConfig,
@@ -255,7 +257,7 @@ export const GlobalSummitTab = ({
         </div>
 
         {!isSeasonActive && (
-          <div className="w-full bg-zinc-300/50 dark:bg-zinc-950/50 border border-zinc-400 dark:border-zinc-800 rounded-2xl p-4 flex items-center gap-3 animate-pulse">
+          <div className="w-full bg-zinc-300/50 dark:bg-zinc-950/50 border border-zinc-300 dark:border-zinc-800 rounded-2xl p-4 flex items-center gap-3 animate-pulse">
             <div className="p-2 rounded-full bg-amber-500/10 text-amber-500">
               <Trophy size={16} />
             </div>
