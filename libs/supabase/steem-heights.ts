@@ -138,15 +138,24 @@ export const getHeightsGameStats = async (season?: number) => {
   };
 };
 
-export const getHeightsUserDailyStats = async (username: string) => {
+export const getHeightsUserDailyStats = async (
+  username: string,
+  season?: number,
+) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const { data } = await supabase
+  let query = supabase
     .from("steempro_game_heights")
     .select("score, combos, created_at")
     .eq("player", username)
     .gte("created_at", today.toISOString());
+
+  if (season) {
+    query = query.eq("season", season);
+  }
+
+  const { data } = await query;
 
   if (!data) return { ascent: 0, combos: 0, plays: 0 };
 

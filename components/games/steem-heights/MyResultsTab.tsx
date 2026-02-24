@@ -130,36 +130,34 @@ export const MyResultsTab = ({
   return (
     <div className="space-y-6 pt-2">
       {/* Daily Challenges Section */}
-      <div className="relative overflow-hidden bg-zinc-300/40 dark:bg-zinc-900/40 border border-white/5 rounded-[2.5rem] p-6 sm:p-8">
+      <div className="relative overflow-hidden bg-zinc-300/40 dark:bg-zinc-900/40 border border-white/5 rounded-[2.5rem] p-4 py-6 sm:p-8">
         {/* Background glow */}
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-amber-500/10 blur-[100px] rounded-full pointer-events-none" />
         <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-emerald-500/5 blur-[100px] rounded-full pointer-events-none" />
 
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-          <div className="space-y-1">
+          <div className="space-y-2">
             <h3 className="text-sm font-black uppercase tracking-[0.2em] text-amber-500 flex items-center gap-3">
-              <span className="p-2 bg-amber-500/10 rounded-xl">
-                <Zap size={20} fill="currentColor" />
-              </span>
+              <Zap size={14} fill="currentColor" />
               Daily Challenges
             </h3>
-            <p className="text-xs text-zinc-500 font-bold uppercase tracking-wider ml-11">
+            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">
               Complete tasks to fuel your next ascent
             </p>
           </div>
 
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="group flex items-center gap-4 bg-zinc-300/50 dark:bg-zinc-950/50 border dark:border-white/10 border-black/10 p-2 pr-6 rounded-2xl backdrop-blur-md transition-all hover:border-amber-500/30"
+            className="group flex items-center gap-3 bg-zinc-300/50 dark:bg-zinc-950/50 border dark:border-white/10 border-black/10 p-2 pr-4 rounded-2xl backdrop-blur-md transition-all hover:border-amber-500/30"
           >
-            <div className="p-3 bg-amber-500 rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.3)]">
+            <div className="p-2 bg-amber-500 rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.3)]">
               <Zap size={18} className="text-black" fill="currentColor" />
             </div>
             <div className="flex flex-col">
               <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">
                 Available Energy
               </span>
-              <span className="text-xl font-black tabular-nums">{energy}</span>
+              <span className="text-sm font-black tabular-nums">{energy}</span>
             </div>
           </motion.div>
         </div>

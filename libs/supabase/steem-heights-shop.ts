@@ -28,16 +28,25 @@ export const getUserGameStats = async (
   };
 };
 
-export const getHeightsUserDailyClaims = async (username: string) => {
+export const getHeightsUserDailyClaims = async (
+  username: string,
+  season?: number,
+) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const { data } = await supabase
+  let query = supabase
     .from("steempro_game_heights_shop")
     .select("action")
     .eq("player", username)
     .gte("timestamp", today.toISOString())
     .ilike("action", "Claimed challenge:%");
+
+  if (season) {
+    query = query.eq("season", season);
+  }
+
+  const { data } = await query;
 
   if (!data) return [];
   return data.map((item: any) => item.action);

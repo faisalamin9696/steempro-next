@@ -219,11 +219,14 @@ export const useHeights = () => {
   }, [session?.user?.name, currentSeason]);
 
   const fetchDailyProgress = useCallback(async () => {
-    if (!session?.user?.name) return;
+    if (!session?.user?.name || !currentSeason) return;
     try {
       const [stats, claims] = await Promise.all([
-        heightsDb.getHeightsUserDailyStats(session.user.name),
-        heightsShopDb.getHeightsUserDailyClaims(session.user.name),
+        heightsDb.getHeightsUserDailyStats(session.user.name, currentSeason),
+        heightsShopDb.getHeightsUserDailyClaims(
+          session.user.name,
+          currentSeason,
+        ),
       ]);
 
       const claimedIds = DAILY_CHALLENGES.filter((c) =>
@@ -240,7 +243,7 @@ export const useHeights = () => {
     } catch (error) {
       console.error("Failed to fetch daily progress:", error);
     }
-  }, [session?.user?.name]);
+  }, [session?.user?.name, currentSeason]);
 
   const fetchHighScores = useCallback(async (season: number) => {
     const topScores = await heightsDb.getHeightsHighScores(season);
