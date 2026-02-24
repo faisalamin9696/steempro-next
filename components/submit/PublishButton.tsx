@@ -88,6 +88,7 @@ function PublishButton(props: Props) {
   const [isTagsWarningModalOpen, setIsTagsWarningModalOpen] = useState(false);
   const { authenticateOperation } = useAccountsContext();
   const author = session?.user?.name! || "";
+  const loginData = useAppSelector((s) => s.loginReducer.value);
 
   const postReplies =
     useAppSelector(
@@ -258,6 +259,7 @@ function PublishButton(props: Props) {
           children: 0,
           percent_steem_dollars: payoutType.payout === 100 ? 0 : 10000,
           max_accepted_payout: payoutType.payout === 0 ? 0 : 1000000,
+          author_reputation: loginData.reputation,
         };
 
         const ancestors = collectAncestorLinkIds(postReplies, optimisticReply);

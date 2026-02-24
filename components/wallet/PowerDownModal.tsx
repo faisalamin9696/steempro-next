@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ArrowDownLeft } from "lucide-react";
 import { toast } from "sonner";
 import SModal from "../ui/SModal";
-import {  Checkbox } from "@heroui/checkbox";
+import { Checkbox } from "@heroui/checkbox";
 import { Alert } from "@heroui/alert";
 import { Card } from "@heroui/card";
 import { Button } from "@heroui/button";
@@ -36,7 +36,7 @@ export const PowerDownModal = ({
   const [amount, setAmount] = useState("");
   const { vestsToSteem, steemToVests } = useSteemUtils();
   const availableSp = vestsToSteem(
-    vests_own - vests_out - powerdown + powerdown_done
+    vests_own - vests_out - powerdown + powerdown_done,
   );
   const [confirm, setConfirm] = useState(false);
   const [isPending, setIsPending] = useState(false);
@@ -54,11 +54,8 @@ export const PowerDownModal = ({
   const { data: routes, mutate: mutateRoutes } = useSWR(
     isOpen ? ["withdraw_routes", loginData.name] : null,
     async () => {
-      return await client.call("condenser_api", "get_withdraw_routes", [
-        loginData.name,
-        "all",
-      ]);
-    }
+      return await steemApi.getWithdrawRoutes(loginData.name, "outgoing");
+    },
   );
 
   const handleAddRoute = async () => {
@@ -71,7 +68,7 @@ export const PowerDownModal = ({
         Number(routePercent),
         autoVest,
         key,
-        useKeychain
+        useKeychain,
       );
       toast.success("Route Added", {
         description: `Successfully set withdrawal route to @${routeAccount}`,
@@ -95,7 +92,7 @@ export const PowerDownModal = ({
         0,
         false,
         key,
-        useKeychain
+        useKeychain,
       );
       toast.success("Route Removed", {
         description: `Withdrawal route to @${target} has been removed`,
@@ -114,7 +111,7 @@ export const PowerDownModal = ({
         session?.user?.name!,
         steemToVests(amount),
         key,
-        useKeychain
+        useKeychain,
       );
 
       dispatch(
@@ -123,7 +120,7 @@ export const PowerDownModal = ({
           powerdown: steemToVests(amount),
           next_powerdown: moment().add(7, "days").unix(),
           powerdown_rate: steemToVests(amount) / 4,
-        })
+        }),
       );
 
       toast.success("Power Down Initiated", {

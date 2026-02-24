@@ -84,7 +84,7 @@ export const PerformanceChart = ({ userHistory }: PerformanceChartProps) => {
                 className="flex-1 flex flex-col items-center group relative h-full justify-end"
               >
                 {/* Tooltip */}
-                <div className="absolute bottom-full mb-3 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 pointer-events-none z-50">
+                <div className="absolute bottom-full mb-3 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 pointer-events-none z-40">
                   <div className="bg-zinc-950 border border-white/10 rounded-lg p-2 shadow-2xl min-w-[100px] text-center backdrop-blur-md">
                     <p className="text-[10px] font-semibold text-white uppercase tracking-tighter">
                       {d.attempts} attempts • {d.score}m

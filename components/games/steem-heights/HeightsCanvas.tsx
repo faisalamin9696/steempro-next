@@ -5,21 +5,18 @@ import { Card } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Pause,
-  Play,
-  Info,
-  Heart,
-  ShoppingBag,
-  Star,
-  Zap,
-  Shield,
-  Gamepad2,
-  Crown,
   RefreshCw,
   ArrowUp,
   Volume2,
   VolumeX,
-  Ghost,
+  Gamepad2,
+  Star,
+  Zap,
+  Heart,
+  Shield,
+  Pause,
+  Play,
+  Mountain,
 } from "lucide-react";
 import { useDisclosure } from "@heroui/modal";
 import { HeightsGuideModal } from "./HeightsGuideModal";
@@ -32,8 +29,13 @@ import {
   TIME_LIMIT,
   Skin,
   HighScore,
+  PowerUp,
 } from "./Config";
-import SAvatar from "@/components/ui/SAvatar";
+
+import { GameHUD } from "./elements/GameHUD";
+import { GhostMarkers } from "./elements/GhostMarkers";
+import { GameMenus } from "./elements/GameMenus";
+import { Overlays } from "./elements/Overlays";
 
 interface Props {
   gameState: "idle" | "playing" | "gameover";
@@ -50,6 +52,7 @@ interface Props {
   isSeasonActive: boolean;
   showPerfect: boolean;
   lastImpactTime: number;
+  activePowerUp: PowerUp | null;
   handleAction: () => void;
   setIsMuted: (muted: boolean) => void;
   setIsPaused: (paused: boolean) => void;
@@ -85,6 +88,7 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
       isSeasonActive,
       showPerfect,
       lastImpactTime,
+      activePowerUp,
       handleAction,
       setIsMuted,
       setIsPaused,
@@ -108,7 +112,7 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
     const viewY = Math.max(0, (blocks.length - 10) * BLOCK_HEIGHT);
 
     const renderBlockIcon = (width: number) => {
-      if (width < 30) return null; // Too small for icon
+      if (width < 30) return null;
       const iconSize = Math.min(12, width / 3);
       const commonProps = {
         size: iconSize,
@@ -124,71 +128,39 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
           return <Heart {...commonProps} />;
         case "gold":
           return <Star {...commonProps} />;
+        case "default":
+          return <Mountain {...commonProps} />;
         default:
           return null;
       }
     };
 
     return (
-      <div className="flex flex-col gap-4 w-full max-w-[420px] group select-none">
-        {/* Score Floating Panel */}
-        <div className="px-2 flex justify-between items-end">
-          <div className="flex flex-col">
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] text-zinc-500 font-black uppercase tracking-widest">
-                Current Altitude
-              </span>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onOpen();
-                }}
-                className="text-zinc-500 hover:text-amber-500 transition-colors"
-                title="How to Play"
-              >
-                <Info size={14} />
-              </button>
-            </div>
-            <div className="flex items-end gap-3">
-              <span className="text-4xl font-black italic ">{score}m</span>
-              <div className="flex gap-1 mb-1">
-                {Array.from({ length: lives }).map((_, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]"
-                  >
-                    <Heart size={14} fill="currentColor" />
-                  </motion.div>
-                ))}
-              </div>
-              <Button
-                size="sm"
-                variant="flat"
-                onPress={scrollToLeaderboard}
-                className="lg:hidden h-7 bg-zinc-300/50 dark:bg-zinc-900/50 text-zinc-400 font-bold uppercase text-[9px] tracking-widest px-3 rounded-full border border-white/5 active:scale-95 transition-all"
-              >
-                Leaderboard
-              </Button>
-            </div>
-          </div>
-          {gameState === "playing" && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="flex items-baseline gap-2 text-zinc-500"
+      <div className="flex flex-col gap-2 w-full max-w-full sm:max-w-[450px] group select-none sm:px-1">
+        <GameHUD
+          score={score}
+          lives={lives}
+          activePowerUp={activePowerUp}
+          gameState={gameState}
+          windDrift={windDrift}
+          onOpenGuide={onOpen}
+          scrollToLeaderboard={scrollToLeaderboard}
+        />
+
+        <div className="flex items-center justify-between mb-1 px-1">
+          <div className="flex items-center gap-1">
+            <div
+              className="w-5 h-5 rounded-lg flex items-center justify-center overflow-hidden transition-colors"
+              style={{
+                color: selectedSkin.color,
+              }}
             >
-              <span className="text-xs font-black text-amber-500 font-mono">
-                {windDrift === 0
-                  ? "OFF"
-                  : `${Math.abs(windDrift * 10).toFixed(1)} ${windDrift > 0 ? "→" : "←"}`}
-              </span>
-              <span className="text-[10px] font-black uppercase font-mono">
-                Wind
-              </span>
-            </motion.div>
-          )}
+              <div className="[&_svg]:text-current">{renderBlockIcon(30)}</div>
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">
+              {selectedSkin.name}
+            </span>
+          </div>
         </div>
 
         <Card
@@ -213,7 +185,7 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
           {/* Status Overlay Notices */}
           <AnimatePresence>
             {(!isLoggedIn || !isSeasonActive) && gameState === "idle" && (
-              <div className="absolute top-20 left-0 right-0 z-30 px-6 pointer-events-none">
+              <div className="absolute top-14 left-0 right-0 z-41 px-4 pointer-events-none">
                 <motion.div
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -267,9 +239,9 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
             }}
           />
 
-          {/* Sound Toggle Overlay */}
+          {/* Game Controls */}
           <div
-            className="absolute top-4 right-4 z-20"
+            className="absolute top-2 right-4 z-41 flex flex-col gap-2"
             onMouseDown={(e) => e.stopPropagation()}
           >
             <Button
@@ -281,13 +253,7 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
             >
               {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
             </Button>
-          </div>
 
-          {/* Pause Toggle Overlay */}
-          <div
-            className="absolute top-4 left-4 z-20"
-            onMouseDown={(e) => e.stopPropagation()}
-          >
             {gameState === "playing" && (
               <Button
                 isIconOnly
@@ -307,63 +273,8 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
               transform: `translateY(${(viewY / CANVAS_HEIGHT) * 100}%)`,
             }}
           >
-            {/* Ghost Markers */}
             {gameState === "playing" && (
-              <>
-                {highScores.map((hs, hidx) => {
-                  const isOwn = hs.player === username;
-                  const isTop = hidx === 0;
-
-                  return (
-                    <div
-                      key={`ghost-${hs.player}-${hidx}`}
-                      className="absolute w-full border-t border-dashed border-zinc-500/20 z-0 flex items-center justify-start pointer-events-none"
-                      style={{
-                        bottom: `${((hs.score * BLOCK_HEIGHT) / CANVAS_HEIGHT) * 100}%`,
-                      }}
-                    >
-                      <div
-                        className={`flex items-center gap-2 bg-zinc-950/60 backdrop-blur-xs px-2 py-1 rounded-r-xl border-r border-y ${
-                          isOwn
-                            ? "border-amber-500/50 shadow-[0_0_10px_rgba(245,158,11,0.2)]"
-                            : "border-zinc-500/20"
-                        }`}
-                      >
-                        <div className="relative">
-                          <SAvatar
-                            username={hs.player}
-                            radius="full"
-                            size={20}
-                            className={`border shadow-sm ${
-                              isOwn
-                                ? "border-amber-500/50"
-                                : "border-zinc-700/50"
-                            }`}
-                          />
-
-                          {isTop && (
-                            <div className="absolute self-center -top-2 right-[4px]  text-amber-500 drop-shadow-sm">
-                              <Crown size={10} fill="currentColor" />
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex flex-col">
-                          <span
-                            className={`text-[8px] font-semibold uppercase tracking-widest leading-none ${
-                              isOwn ? "text-amber-500" : "text-zinc-400"
-                            }`}
-                          >
-                            {hs.player} {isOwn && "(YOU)"}
-                          </span>
-                          <span className="text-[8px] font-bold text-zinc-500 mt-0.5">
-                            {hs.score}m
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </>
+              <GhostMarkers highScores={highScores} username={username} />
             )}
 
             {blocks.map((block, i) => (
@@ -429,193 +340,26 @@ export const HeightsCanvas = forwardRef<HTMLDivElement, Props>(
             )}
           </div>
 
-          {/* Perfect Overlay */}
-          <AnimatePresence>
-            {showPerfect && (
-              <motion.div
-                initial={{ opacity: 0, y: 40, scale: 0.8 }}
-                animate={{ opacity: 0.6, y: -200, scale: 1.1 }}
-                exit={{ opacity: 0, y: -250, scale: 1.3 }}
-                className="absolute inset-x-0 bottom-1/2 pointer-events-none  flex items-center justify-center text-center"
-              >
-                <div className="text-amber-500 font-black italic tracking-widest text-5xl drop-shadow-[0_4px_20px_rgba(245,158,11,0.8)]">
-                  PERFECT!
-                </div>
-              </motion.div>
-            )}
+          <Overlays
+            showPerfect={showPerfect}
+            showBonus={showBonus}
+            lastBonus={lastBonus}
+            lastImpactTime={lastImpactTime}
+          />
 
-            {showBonus && (
-              <motion.div
-                initial={{ opacity: 0, y: -20, scale: 0.8 }}
-                animate={{ opacity: 1, y: 20, scale: 1 }}
-                exit={{ opacity: 0, y: -40 }}
-                className="absolute inset-x-0 top-20 pointer-events-none flex flex-col items-center justify-center text-center z-50"
-              >
-                <div className="text-amber-400 font-black italic tracking-tighter text-4xl drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]">
-                  +{lastBonus}m
-                </div>
-                <div className="text-white font-black text-sm uppercase tracking-[0.2em] -mt-1 drop-shadow-md">
-                  COMBO BONUS
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Impact Flash */}
-          <AnimatePresence>
-            <motion.div
-              key={lastImpactTime}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: [0, 0.15, 0] }}
-              transition={{ duration: 0.2 }}
-              className="absolute inset-0 bg-white pointer-events-none z-40"
-            />
-          </AnimatePresence>
-
-          {/* Game Over / Idle Overlays */}
-          <AnimatePresence>
-            {gameState !== "playing" && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-zinc-950/80 backdrop-blur-sm  flex flex-col items-center justify-center p-8 text-center"
-              >
-                {gameState === "idle" ? (
-                  <div className="space-y-8">
-                    <div className="p-4 bg-amber-500/20 rounded-full w-fit mx-auto">
-                      <Gamepad2 size={48} className="text-amber-500" />
-                    </div>
-                    <div className="space-y-2">
-                      <h2 className="text-3xl font-black italic text-white">
-                        READY TO RULE?
-                      </h2>
-                      <p className="text-zinc-500 text-sm font-bold">
-                        Tap anywhere on the box to drop the block.
-                      </p>
-                    </div>
-                    <Button
-                      size="lg"
-                      className="bg-amber-500 text-black font-black px-12 h-14 rounded-2xl shadow-xl hover:scale-105 transition-transform"
-                      onPress={startGame}
-                    >
-                      BEGIN THE CLIMB
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="space-y-8">
-                    <div className="relative">
-                      <Crown size={64} className="text-zinc-800 mx-auto" />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-2xl font-black mt-2 text-white">
-                          {score}
-                        </span>
-                      </div>
-                      <p className="text-zinc-500 font-bold uppercase tracking-widest text-[9px]">
-                        Total Altitude
-                      </p>
-                    </div>
-                    <div className="space-y-4">
-                      <h2 className="text-3xl font-black italic text-white uppercase tracking-tight">
-                        Climb Ended
-                      </h2>
-
-                      {/* Stats Row */}
-                      <div className="flex justify-center gap-4">
-                        <div className="flex flex-col items-center bg-zinc-900/50 p-4 rounded-2xl border border-white/5 w-24">
-                          <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider mb-1">
-                            Combos
-                          </span>
-                          <span className="text-xl font-black italic text-white">
-                            {combos}
-                          </span>
-                        </div>
-                        <div className="flex flex-col items-center bg-zinc-900/50 p-4 rounded-2xl border border-white/5 w-24">
-                          <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider mb-1">
-                            Bonus
-                          </span>
-                          <span className="text-xl font-black italic text-amber-500">
-                            +{totalBonusScore}m
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col items-center gap-1">
-                        {isSavingScore && (
-                          <div className="flex items-center gap-2 text-amber-500 text-[10px] font-bold animate-pulse mt-1">
-                            <RefreshCw size={12} className="animate-spin" />
-                            RECORDING ON BLOCKCHAIN...
-                          </div>
-                        )}
-                        {!isLoggedIn && isSeasonActive && (
-                          <div className="bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-bold px-3 py-1 rounded-full mt-2">
-                            LOGIN TO RECORD SCORE ON BLOCKCHAIN
-                          </div>
-                        )}
-                        {!isSeasonActive && (
-                          <div className="bg-zinc-800/50 border border-white/5 text-zinc-400 text-[10px] font-bold px-3 py-1 rounded-full mt-2">
-                            SEASON INACTIVE • SCORE NOT RECORDED
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-3">
-                      <Button
-                        size="lg"
-                        className="bg-amber-500 text-black font-black w-full h-14 rounded-2xl shadow-xl"
-                        onPress={startGame}
-                        isDisabled={isSavingScore}
-                      >
-                        <RefreshCw size={20} className="mr-2" /> TRY AGAIN
-                      </Button>
-                      <Button
-                        variant="light"
-                        className="text-zinc-500 font-bold"
-                        onPress={() => setGameState("idle")}
-                        isDisabled={isSavingScore}
-                      >
-                        MAIN MENU
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </motion.div>
-            )}
-
-            {isPaused && gameState === "playing" && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-zinc-950/80 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center z-50"
-                onMouseDown={(e) => e.stopPropagation()}
-              >
-                <div className="space-y-8">
-                  <div className="p-4 bg-amber-500/20 rounded-full w-fit mx-auto">
-                    <Pause
-                      size={48}
-                      className="text-amber-500 fill-amber-500"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <h2 className="text-4xl font-black italic text-white">
-                      GAME PAUSED
-                    </h2>
-                    <p className="text-zinc-500 text-sm font-bold uppercase tracking-widest">
-                      Take a breather, Champion.
-                    </p>
-                  </div>
-                  <Button
-                    size="lg"
-                    className="bg-white text-black font-black px-12 h-16 rounded-2xl shadow-xl hover:scale-105 transition-transform"
-                    onPress={() => setIsPaused(false)}
-                  >
-                    <Play size={20} className="mr-2 fill-black" /> RESUME CLIMB
-                  </Button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <GameMenus
+            gameState={gameState}
+            isPaused={isPaused}
+            score={score}
+            combos={combos}
+            totalBonusScore={totalBonusScore}
+            isSavingScore={isSavingScore}
+            isLoggedIn={isLoggedIn}
+            isSeasonActive={isSeasonActive}
+            startGame={startGame}
+            setGameState={setGameState}
+            setIsPaused={setIsPaused}
+          />
         </Card>
 
         <div className="absolute -bottom-8 left-0 right-0 flex justify-center">

@@ -29,7 +29,7 @@ const Controls = ({ src }: { src: string }) => {
   }, [src]);
 
   return (
-    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 p-2 bg-background/60 backdrop-blur-md rounded-2xl border border-white/10 shadow-2xl">
+    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 p-2 bg-background/60 backdrop-blur-md rounded-2xl border border-white/10 shadow-2xl">
       <Tooltip content="Zoom In">
         <Button
           isIconOnly

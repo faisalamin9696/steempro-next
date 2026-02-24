@@ -353,7 +353,7 @@ function ChatModal({ isOpen, onOpenChange, recipient, community }: Props) {
         )}
 
         {newMsgAlert && (
-          <div className="sticky top-0 z-50 flex justify-center w-full mb-4">
+          <div className="sticky top-0 z-40 flex justify-center w-full mb-4">
             <Button
               size="sm"
               color="primary"

@@ -54,8 +54,8 @@ export const SKINS: Skin[] = [
   {
     id: "glacier",
     name: "Glacier Plate",
-    description: "Frozen tiles that dampen movement speed.",
-    price: 10,
+    description: "Frozen tiles that dampen movement speed. (150 Energy)",
+    price: 150,
     color: "#38bdf8",
     ability: "15% Slower Speed",
     perks: { slowFactor: 0.85 },
@@ -63,8 +63,9 @@ export const SKINS: Skin[] = [
   {
     id: "steel",
     name: "Steel Core",
-    description: "Heavy-duty tiles that ignore high-altitude winds.",
-    price: 25,
+    description:
+      "Heavy-duty tiles that ignore high-altitude winds. (300 Energy)",
+    price: 300,
     color: "#94a3b8",
     ability: "No Wind Drift",
     perks: { windResist: true },
@@ -72,8 +73,9 @@ export const SKINS: Skin[] = [
   {
     id: "phoenix",
     name: "Phoenix Wing",
-    description: "Magical essence that saves you from one fatal fall.",
-    price: 50,
+    description:
+      "Magical essence that saves you from one fatal fall. (500 Energy)",
+    price: 500,
     color: "#f87171",
     ability: "1 Extra Life",
     perks: { extraLife: true },
@@ -81,11 +83,104 @@ export const SKINS: Skin[] = [
   {
     id: "gold",
     name: "Midas Touch",
-    description: "Pure gold tiles that increase altitude on perfect drops.",
-    price: 100,
+    description:
+      "Pure gold tiles that increase altitude on perfect drops. (1000 Energy)",
+    price: 1000,
     color: "#fbbf24",
     ability: "+2m Perfect Bonus",
     perks: { bonusAltitude: 2 },
+  },
+];
+
+export interface DailyChallenge {
+  id: string;
+  title: string;
+  description: string;
+  target: number;
+  reward: number;
+  type: "ascent" | "combos" | "plays";
+}
+
+export const DAILY_CHALLENGES: DailyChallenge[] = [
+  {
+    id: "daily_ascent",
+    title: "Sky Walker",
+    description: "Climb total of 500m today",
+    target: 500,
+    reward: 50,
+    type: "ascent",
+  },
+  {
+    id: "daily_ascent_pro",
+    title: "Apex Predator",
+    description: "Climb total of 1000m today",
+    target: 1000,
+    reward: 100,
+    type: "ascent",
+  },
+
+  {
+    id: "daily_combos",
+    title: "Precision Master",
+    description: "Land total 10 combos in a day",
+    target: 10,
+    reward: 75,
+    type: "combos",
+  },
+  {
+    id: "daily_plays",
+    title: "Persistent Climber",
+    description: "Complete 6 games today",
+    target: 6,
+    reward: 30,
+    type: "plays",
+  },
+];
+
+export interface PowerUp {
+  id: string;
+  name: string;
+  description: string;
+  cost: number;
+  type: "wind_shield" | "slow_motion" | "extra_gear";
+  perks: {
+    windResist?: boolean;
+    slowFactor?: number;
+    extraLife?: boolean;
+  };
+  conflicts?: string[];
+}
+
+export const POWERUP_CONFLICT_MESSAGE = (skinName: string) =>
+  `This ability is already active via your ${skinName} skin.`;
+
+export const POWER_UPS: PowerUp[] = [
+  {
+    id: "wind_shield",
+    name: "Wind Shield",
+    description: "Ignore all wind drift for exactly one game.",
+    cost: 40,
+    type: "wind_shield",
+    perks: { windResist: true },
+    conflicts: ["steel"],
+  },
+  {
+    id: "slow_motion",
+    name: "Slow Motion",
+    description: "Movement speed is reduced by 20% for one game.",
+    cost: 50,
+    type: "slow_motion",
+    perks: { slowFactor: 0.8 },
+    conflicts: ["glacier"],
+  },
+  {
+    id: "extra_gear",
+    name: "Extra Gear",
+    description: "Start your next game with one additional life.",
+    cost: 60,
+    type: "extra_gear",
+    perks: { extraLife: true },
+    conflicts: ["phoenix"],
   },
 ];
 

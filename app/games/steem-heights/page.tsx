@@ -21,10 +21,10 @@ const SteemHeightsPage = () => {
       <div className="max-w-6xl ">
         <div className="px-2 mx-auto sm:px-6 lg:px-8">
           {/* Top Section: Info & Game */}
-          <div className="relative flex flex-col justify-center min-h-[calc(100vh-64px)] py-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+          <div className="relative flex flex-col justify-center min-h-[calc(100vh-64px)]">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-center">
               {/* Game Canvas - Order 1 on mobile, 2 on desktop */}
-              <div className="flex flex-col items-center order-1 lg:order-2 h-svh sm:h-auto">
+              <div className="flex flex-col items-center order-1 lg:order-2 h-svh sm:h-screen">
                 <div className="w-full max-w-[450px] relative">
                   <div className="absolute -inset-8 bg-amber-500/5 blur-[100px] rounded-full opacity-50 pointer-events-none" />
                   <HeightsCanvas
@@ -70,6 +70,18 @@ const SteemHeightsPage = () => {
             seasonalHistory={heights.seasonalHistory}
             selectedSkin={heights.selectedSkin}
             setSelectedSkinId={heights.setSelectedSkinId}
+            energy={heights.energy}
+            dailyProgress={heights.dailyProgress}
+            activePowerUp={heights.activePowerUp}
+            claimChallenge={heights.claimChallenge}
+            purchasePowerUp={heights.purchasePowerUp}
+            purchasedSkins={heights.purchasedSkins}
+            purchaseSkin={heights.purchaseSkin}
+            equipSkin={heights.equipSkin}
+            gameState={heights.gameState}
+            syncingChallengeId={heights.syncingChallengeId}
+            syncingPowerUpId={heights.syncingPowerUpId}
+            syncingSkinId={heights.syncingSkinId}
           />
         </div>
       </div>

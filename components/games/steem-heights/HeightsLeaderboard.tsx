@@ -3,7 +3,7 @@
 import { Card } from "@heroui/card";
 import { Trophy, Target, History, Award, ShoppingBag } from "lucide-react";
 import { Tabs, Tab } from "@heroui/tabs";
-import { HighScore, GameStats, Skin } from "./Config";
+import { HighScore, GameStats, Skin, PowerUp } from "./Config";
 import { GlobalSummitTab } from "./GlobalSummitTab";
 import { MyResultsTab } from "./MyResultsTab";
 import { SeasonalHallTab } from "./SeasonalHallTab";
@@ -21,6 +21,26 @@ interface Props {
   username: string;
   selectedSkin: Skin;
   setSelectedSkinId: (id: string) => void;
+  // Energy & Daily System
+  energy: number;
+  dailyProgress: {
+    ascent: number;
+    combos: number;
+    plays: number;
+    lastReset: string;
+    claimed: string[];
+  };
+  activePowerUp: PowerUp | null;
+  claimChallenge: (id: string) => void;
+  purchasePowerUp: (powerUp: PowerUp) => void;
+  // Skin Management
+  purchasedSkins: string[];
+  purchaseSkin: (skin: Skin) => void;
+  equipSkin: (id: string) => void;
+  gameState: "idle" | "playing" | "gameover";
+  syncingChallengeId: string | null;
+  syncingPowerUpId: string | null;
+  syncingSkinId: string | null;
 }
 
 export const HeightsLeaderboard = ({
@@ -35,9 +55,21 @@ export const HeightsLeaderboard = ({
   username,
   selectedSkin,
   setSelectedSkinId,
+  energy,
+  dailyProgress,
+  activePowerUp,
+  claimChallenge,
+  purchasePowerUp,
+  purchasedSkins,
+  purchaseSkin,
+  equipSkin,
+  gameState,
+  syncingChallengeId,
+  syncingPowerUpId,
+  syncingSkinId,
 }: Props) => {
   return (
-    <Card className="w-full max-w-4xl mx-auto bg-zinc-50 dark:bg-zinc-900/50 border-zinc-800  overflow-hidden relative min-h-[400px]">
+    <Card className="w-full  mx-auto bg-zinc-50 dark:bg-zinc-900/50 border-zinc-800  overflow-hidden relative min-h-[400px]">
       <div className="absolute top-0 right-0 p-4 opacity-10">
         <Target size={120} className="text-zinc-500" />
       </div>
@@ -90,6 +122,10 @@ export const HeightsLeaderboard = ({
               seasonPost={seasonPost}
               currentSeason={currentSeason}
               seasonalHistory={seasonalHistory}
+              energy={energy}
+              dailyProgress={dailyProgress}
+              claimChallenge={claimChallenge}
+              syncingChallengeId={syncingChallengeId}
             />
           </Tab>
 
@@ -108,7 +144,7 @@ export const HeightsLeaderboard = ({
             />
           </Tab>
 
-          {/* <Tab
+          <Tab
             key="lab"
             title={
               <div className="flex items-center gap-2">
@@ -119,10 +155,18 @@ export const HeightsLeaderboard = ({
           >
             <SkinShopTab
               selectedSkin={selectedSkin}
-              onSelectSkin={setSelectedSkinId}
+              onSelectSkin={equipSkin}
               username={username}
+              energy={energy}
+              activePowerUp={activePowerUp}
+              onPurchasePowerUp={purchasePowerUp}
+              purchasedSkins={purchasedSkins}
+              onPurchaseSkin={purchaseSkin}
+              gameState={gameState}
+              syncingPowerUpId={syncingPowerUpId}
+              syncingSkinId={syncingSkinId}
             />
-          </Tab> */}
+          </Tab>
         </Tabs>
       </div>
     </Card>

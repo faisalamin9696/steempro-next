@@ -27,6 +27,7 @@ import {
 import { motion } from "framer-motion";
 import { getRewardPool, getCoopConfig } from "./HeightsInfo";
 import { CommunityGoalCard } from "./CommunityGoalCard";
+import { HeightsRaceGraph } from "./HeightsRaceGraph";
 
 interface Props {
   currentSeason: number;
@@ -210,7 +211,7 @@ export const GlobalSummitTab = ({
         </Link>
 
         {/* Global Statistics Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-2xl px-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-2xl">
           {[
             {
               label: "Total Climbers",
@@ -272,9 +273,12 @@ export const GlobalSummitTab = ({
         )}
       </div>
 
+      {/* Race Graph Visualization */}
+      {highScores.length > 0 && <HeightsRaceGraph highScores={highScores} />}
+
       {/* Podium */}
       {highScores.length > 0 && (
-        <div className="flex justify-center items-end gap-2 px-2 pb-8">
+        <div className="flex justify-center items-end gap-2 pb-8">
           {/* 2nd Place */}
           {highScores[1] && (
             <div className="flex flex-col items-center gap-2 w-24">
@@ -425,9 +429,7 @@ export const GlobalSummitTab = ({
       {/* Leaderboard Table */}
       <div className="max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 pr-2">
         <DataTable
-          data={highScores
-            .slice(3)
-            .map((item, i) => ({ ...item, rank: i + 4 }))}
+          data={highScores.map((item, i) => ({ ...item, rank: i + 1 }))}
           columns={[
             {
               key: "rank",

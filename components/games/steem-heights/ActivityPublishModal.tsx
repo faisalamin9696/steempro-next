@@ -19,6 +19,7 @@ import { handleSteemError } from "@/utils/steemApiError";
 import { useAccountsContext } from "@/components/auth/AccountsContext";
 import MarkdownEditor from "@/components/submit/MarkdownEditor";
 import { Constants } from "@/constants";
+import CommunitySelect from "@/components/community/CommunitySelect";
 
 interface Props {
   isOpen: boolean;
@@ -36,6 +37,7 @@ export const ActivityPublishModal = ({
   const [isPublishing, setIsPublishing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const { authenticateOperation } = useAccountsContext();
+  const [selectedCommunity, setSelectedCommunity] = useState<any>();
 
   // Calculate today's stats
   const today = new Date().toDateString();
@@ -90,12 +92,11 @@ Think you can beat my score? Join the climb on Steem Heights!
     setIsPublishing(true);
     const dateStr = new Date().toISOString().split("T")[0];
     const permlink = `steem-heights-activity-${dateStr}`;
-    const jsonMetadata = makeJsonMetadata(extractMetadata(body), [
-      "steemheights",
-      "gaming",
-      "steempro",
-      "play2earn",
-    ]);
+    const tags = ["steemheights", "gaming", "steempro", "play2earn"];
+    if (selectedCommunity) {
+      tags.unshift(selectedCommunity.account);
+    }
+    const jsonMetadata = makeJsonMetadata(extractMetadata(body), tags);
 
     const beneficiaries = [
       { account: Constants.official_account, weight: 1000 },
@@ -118,7 +119,7 @@ Think you can beat my score? Join the climb on Steem Heights!
           body,
           permlink,
           parent_author: "",
-          parent_permlink: "steempro", // Posting to a general tag or community
+          parent_permlink: selectedCommunity?.account || "steempro", // Posting to a general tag or community
           json_metadata: jsonMetadata,
         },
         options,
@@ -227,8 +228,9 @@ Think you can beat my score? Join the climb on Steem Heights!
                       By publishing your journey, you&apos;re not just sharing
                       stats you&apos;re fueling the platform! Together, we give{" "}
                       <span className="text-emerald-500 font-bold">10%</span> to
-                      support <span className="text-foreground">SteemPro</span> and
-                      burn <span className="text-foreground">5%</span> for the{" "}
+                      support <span className="text-foreground">SteemPro</span>{" "}
+                      and burn <span className="text-foreground">5%</span> for
+                      the{" "}
                       <span className="text-emerald-500 font-bold">
                         Steem Ecosystem
                       </span>
@@ -237,6 +239,16 @@ Think you can beat my score? Join the climb on Steem Heights!
                   </div>
 
                   <div className="space-y-4">
+                    <CommunitySelect
+                      community={selectedCommunity}
+                      onSelectCommunity={setSelectedCommunity}
+                      label="Select Community"
+                      classNames={{
+                        base: "max-w-full",
+                        trigger:
+                          "bg-zinc-300/50 dark:bg-zinc-900/50 border-white/5",
+                      }}
+                    />
                     <Input
                       label="Post Title"
                       placeholder="Enter post title"

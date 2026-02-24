@@ -36,7 +36,7 @@ export const ScrollToTopButton = ({
   return (
     <div
       className={twMerge(
-        `fixed bottom-8 right-8 z-50 transition-transform duration-300 ${
+        `fixed bottom-8 right-8 z-40 transition-transform duration-300 ${
           isVisible ? "translate-y-0" : `${translate || "translate-y-20"}`
         }`,
         className,

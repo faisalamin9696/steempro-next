@@ -185,6 +185,8 @@ export const SeasonalHallTab = ({ seasonalWinners, seasonalPosts }: Props) => {
           const coopConfig = post ? getCoopConfig(post) : null;
           const communityPool = getCommunityReward(w.totalAscent, coopConfig);
           const totalReward = communityPool;
+          const maxReward = coopConfig?.maxReward || 0;
+
           const symbol = post
             ? (getRewardPool(post)?.symbol ?? "STEEM")
             : "STEEM";
@@ -263,16 +265,30 @@ export const SeasonalHallTab = ({ seasonalWinners, seasonalPosts }: Props) => {
                     {Math.round(w.avgAltitude || 0)}m Avg
                   </span>
                 </div>
-                {totalReward > 0 && (
-                  <div className="flex items-center gap-1.5 ml-auto">
-                    <span className="text-[8px] font-black text-zinc-500 uppercase tracking-tighter">
-                      Pool:
-                    </span>
-                    <span className="text-[9px] font-black text-emerald-500">
-                      {totalReward.toFixed(2)} {symbol}
-                    </span>
-                  </div>
-                )}
+
+                <span className="flex gap-2 ml-auto">
+                  {totalReward > 0 && (
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[8px] font-black text-zinc-500 uppercase tracking-tighter">
+                        Achieved:
+                      </span>
+                      <span className="text-[9px] font-black text-primary-500">
+                        {totalReward.toFixed(2)} {symbol}
+                      </span>
+                    </div>
+                  )}
+
+                  {maxReward > 0 && (
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[8px] font-black text-zinc-500 uppercase tracking-tighter">
+                        Pool:
+                      </span>
+                      <span className="text-[9px] font-black text-emerald-500">
+                        {maxReward.toFixed(2)} {symbol}
+                      </span>
+                    </div>
+                  )}
+                </span>
               </div>
             </div>
           );

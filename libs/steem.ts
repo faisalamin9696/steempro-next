@@ -418,6 +418,20 @@ class SteemApi {
   }
 
   /**
+   * Get Withdraw Routes
+   *
+   */
+  getWithdrawRoutes = async (
+    username: string,
+    type: "incoming" | "outgoing" | "all",
+  ) => {
+    return await client.call("condenser_api", "get_withdraw_routes", [
+      username,
+      type,
+    ]);
+  };
+
+  /**
    * Publish Post/Comment
    *
    */
@@ -633,6 +647,48 @@ class SteemApi {
           required_auths: [],
           required_posting_auths: [activeAccount],
           id: "steempro_game_heights",
+          json,
+        },
+      ],
+    ];
+
+    return this.broadcast(activeAccount, operations, privateKey, useKeychain);
+  }
+  /**
+   * Record game shop state (energy, skins, etc) on the blockchain
+   */
+  recordGameShopUpdate(
+    player: string,
+    game: string = "steem-heights",
+    season: number = 1,
+    energy: number,
+    skins: string[],
+    powerup: { name: string; updated_at: string },
+    action: string = "",
+    privateKey?: string,
+    useKeychain: boolean = false,
+    broadcaster?: string,
+  ) {
+    const json = JSON.stringify({
+      player,
+      game,
+      season,
+      energy,
+      skins,
+      powerup,
+      action,
+      timestamp: new Date().toISOString(),
+    });
+
+    const activeAccount = broadcaster || player;
+
+    const operations: Operation[] = [
+      [
+        "custom_json",
+        {
+          required_auths: [],
+          required_posting_auths: [activeAccount],
+          id: "steempro_game_heights_shop",
           json,
         },
       ],

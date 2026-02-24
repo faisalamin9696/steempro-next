@@ -14,12 +14,15 @@ import {
   Bold,
   CloudUpload,
   Code,
+  Eye,
   Heading1,
   Heading2,
   Italic,
   Link,
   List,
   ListOrdered,
+  Pencil,
+  PencilLine,
   Quote,
   SquareDashedBottomCode,
 } from "lucide-react";
@@ -520,8 +523,24 @@ const MarkdownEditor = ({
               radius="full"
               isDisabled={props.disabled}
             >
-              <Tab key={"write"} title="Write"></Tab>
-              <Tab key={"preview"} title="Preview"></Tab>
+              <Tab
+                key={"write"}
+                title={
+                  <div className="flex flex-row gap-2">
+                    <PencilLine size={ICON_SIZE} />
+                    Write
+                  </div>
+                }
+              ></Tab>
+              <Tab
+                key={"preview"}
+                title={
+                  <div className="flex flex-row gap-2">
+                    <Eye size={ICON_SIZE} />
+                    Preview
+                  </div>
+                }
+              ></Tab>
             </Tabs>
           </div>
         )}

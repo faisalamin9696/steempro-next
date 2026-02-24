@@ -90,7 +90,7 @@ export const CommunityGoalCard = ({
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-4xl mx-auto px-4"
+        className="w-full"
       >
         <div className="bg-zinc-300/50 dark:bg-zinc-900/50 border border-white/5 rounded-[2.5rem] p-8 relative overflow-hidden group backdrop-blur-xl">
           {/* Animated Background Glow */}
@@ -240,7 +240,7 @@ export const CommunityGoalCard = ({
           {/* Info Tooltip Icon */}
           <div className="absolute bottom-4 right-8 text-zinc-700 hover:text-zinc-500 transition-colors cursor-help group/info">
             <Info size={12} />
-            <div className="absolute bottom-full right-0 mb-2 w-48 p-2 bg-zinc-950 border border-white/10 rounded-lg opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-50 shadow-2xl backdrop-blur-md">
+            <div className="absolute bottom-full right-0 mb-2 w-48 p-2 bg-zinc-950 border border-white/10 rounded-lg opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-40 shadow-2xl backdrop-blur-md">
               <p className="text-[8px] font-bold text-zinc-400 leading-tight">
                 Community rewards are calculated from the total combined
                 altitude of all players. Every {stepSize}m beyond {baseAltitude}
