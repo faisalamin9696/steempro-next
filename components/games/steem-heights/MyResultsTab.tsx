@@ -197,7 +197,7 @@ export const MyResultsTab = ({
                       ? "dark:bg-zinc-950/30 bg-zinc-300/30 border-white/5 opacity-80"
                       : isCompleted
                         ? "bg-primary-500/5 border-primary-500/20 shadow-[0_0_30px_rgba(16,185,129,0.05)]"
-                        : "bg-amber-500/10 border-white/5 hover:border-white/10"
+                        : "bg-amber-100/10 border-amber-500/10 hover:border-amber-500/20"
                   }`}
                 >
                   <div className="flex justify-between items-start">

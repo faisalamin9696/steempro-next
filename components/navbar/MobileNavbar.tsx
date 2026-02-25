@@ -122,7 +122,7 @@ export function MobileNavbar() {
   );
 
   return (
-    <div className="md:hidden fixed bottom-4 left-0 right-0 z-40 px-3 pointer-events-none">
+    <div className="md:hidden fixed bottom-2 left-0 right-0 z-40 px-3 pointer-events-none">
       <nav className="flex items-center justify-around p-1.5 gap-0.5 mx-auto max-w-[360px] bg-background/85 backdrop-blur-2xl border border-default-200/50 shadow-[0_12px_40px_rgba(0,0,0,0.12)] rounded-xl overflow-visible pointer-events-auto relative">
         {navItems.map((item) => {
           const Icon = item.icon;

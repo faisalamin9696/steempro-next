@@ -79,59 +79,6 @@ export const useHeights = () => {
   const [activePowerUp, setActivePowerUp] = useState<PowerUp | null>(null);
   const [purchasedSkins, setPurchasedSkins] = useState<string[]>([]);
 
-  // Persistence Logic
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const userKey = session?.user?.name || "guest";
-    const savedEnergy = localStorage.getItem(`heights_energy_${userKey}`);
-    const savedDaily = localStorage.getItem(`heights_daily_${userKey}`);
-    const savedSkins = localStorage.getItem(`heights_skins_${userKey}`);
-    const today = new Date().toDateString();
-
-    if (savedEnergy) setEnergy(parseInt(savedEnergy));
-    if (savedSkins) setPurchasedSkins(JSON.parse(savedSkins));
-
-    if (savedDaily) {
-      const parsed = JSON.parse(savedDaily);
-      if (parsed.lastReset === today) {
-        setDailyProgress(parsed);
-      } else {
-        setDailyProgress((prev) => ({
-          ...prev,
-          ascent: 0,
-          combos: 0,
-          plays: 0,
-          lastReset: today,
-          claimed: [],
-        }));
-      }
-    }
-  }, [session?.user?.name]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const userKey = session?.user?.name || "guest";
-    localStorage.setItem(`heights_energy_${userKey}`, energy.toString());
-  }, [energy, session?.user?.name]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const userKey = session?.user?.name || "guest";
-    localStorage.setItem(
-      `heights_skins_${userKey}`,
-      JSON.stringify(purchasedSkins),
-    );
-  }, [purchasedSkins, session?.user?.name]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const userKey = session?.user?.name || "guest";
-    localStorage.setItem(
-      `heights_daily_${userKey}`,
-      JSON.stringify(dailyProgress),
-    );
-  }, [dailyProgress, session?.user?.name]);
-
   const personalBest = useMemo(() => {
     if (userHistory.length === 0) return 0;
     return Math.max(...userHistory.map((h) => h.score));
@@ -208,10 +155,20 @@ export const useHeights = () => {
         if (stats.powerup?.name) {
           const powerUp = POWER_UPS.find((p) => p.name === stats.powerup.name);
           if (powerUp) setActivePowerUp(powerUp);
+          else setActivePowerUp(null);
+        } else {
+          setActivePowerUp(null);
         }
         if (stats.equipedSkin) {
           setSelectedSkinId(stats.equipedSkin);
+        } else {
+          setSelectedSkinId("default");
         }
+      } else {
+        setEnergy(0);
+        setPurchasedSkins([]);
+        setActivePowerUp(null);
+        setSelectedSkinId("default");
       }
     } catch (error) {
       console.error("Failed to fetch user game stats:", error);

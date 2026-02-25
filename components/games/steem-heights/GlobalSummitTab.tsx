@@ -273,160 +273,162 @@ export const GlobalSummitTab = ({
             </div>
           </div>
         )}
+
+        {/* Race Graph Visualization */}
+        {highScores.length > 0 && <HeightsRaceGraph highScores={highScores} />}
       </div>
 
-      {/* Race Graph Visualization */}
-      {highScores.length > 0 && <HeightsRaceGraph highScores={highScores} />}
-
-      {/* Podium */}
-      {highScores.length > 0 && (
-        <div className="flex justify-center items-end gap-2 pb-8">
-          {/* 2nd Place */}
-          {highScores[1] && (
-            <div className="flex flex-col items-center gap-2 w-24">
-              <div className="relative group">
-                <div className="absolute -inset-1 bg-linear-to-t from-blue-500/20 to-transparent rounded-full blur opacity-50 group-hover:opacity-100 transition duration-500" />
-                <SAvatar
-                  radius="full"
-                  size="md"
-                  quality="medium"
-                  username={highScores[1].player}
-                  className="border-2 border-blue-500/30 grayscale-[0.5] group-hover:grayscale-0 transition-all"
-                />
-                <div className="absolute -bottom-1 -right-1 bg-zinc-900 border border-blue-500/50 rounded-full p-0.5">
-                  🥈
-                </div>
-              </div>
-              <div className="flex flex-col items-center text-center">
-                <SUsername
-                  className="text-[10px] font-bold text-zinc-400 max-w-[80px] truncate"
-                  username={`@${highScores[1].player}`}
-                />
-                <div className="flex flex-col items-center mt-0.5">
-                  <span className="text-[11px] font-black text-blue-500 leading-none">
-                    {highScores[1].score}m
-                  </span>
-                  <div className="flex flex-col items-center gap-0.5 mt-1">
-                    {rewards.has(highScores[1].player) && (
-                      <span className="text-[9px] font-black bg-blue-500/20 px-1.5 py-0.5 rounded-full border border-blue-500/30 mb-1">
-                        +{rewards.get(highScores[1].player)?.toFixed(3)}{" "}
-                        {symbol}
-                      </span>
-                    )}
-                    <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-tighter leading-none">
-                      {highScores[1].plays} Plays
-                    </span>
-                    {(highScores[1].combos ?? 0) > 0 && (
-                      <span className="text-[8px] font-black text-amber-500/80 uppercase tracking-wider bg-amber-500/5 px-1 rounded-sm border border-amber-500/10">
-                        {highScores[1].combos} Combos
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* 1st Place */}
-          {highScores[0] && (
-            <div className="flex flex-col items-center gap-3 w-28 -mt-6">
-              <div className="relative group">
-                <div className="absolute -inset-2 bg-linear-to-t from-amber-500/30 to-transparent rounded-full blur-md opacity-50 group-hover:opacity-100 transition duration-500" />
-                <SAvatar
-                  radius="full"
-                  size="lg"
-                  quality="medium"
-                  username={highScores[0].player}
-                  className="border-2 border-amber-500 scale-110 shadow-2xl transition-transform group-hover:scale-115"
-                />
-                <div className="absolute -bottom-2 -right-2 bg-zinc-900 border-1 border-amber-500 rounded-full p-2 shadow-lg">
-                  <Trophy
-                    size={14}
-                    className="text-amber-500 fill-amber-500/20"
+      <div className="mt-24">
+        {/* Podium */}
+        {highScores.length > 0 && (
+          <div className="flex justify-center items-end gap-2 pb-8">
+            {/* 2nd Place */}
+            {highScores[1] && (
+              <div className="flex flex-col items-center gap-2 w-24">
+                <div className="relative group">
+                  <div className="absolute -inset-1 bg-linear-to-t from-blue-500/20 to-transparent rounded-full blur opacity-50 group-hover:opacity-100 transition duration-500" />
+                  <SAvatar
+                    radius="full"
+                    size="md"
+                    quality="medium"
+                    username={highScores[1].player}
+                    className="border-2 border-blue-500/30 grayscale-[0.5] group-hover:grayscale-0 transition-all"
                   />
+                  <div className="absolute -bottom-1 -right-1 bg-zinc-900 border border-blue-500/50 rounded-full p-0.5">
+                    🥈
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-col items-center text-center">
-                <SUsername
-                  className="text-xs font-black text-amber-500 tracking-tight max-w-[100px] truncate"
-                  username={`@${highScores[0].player}`}
-                />
-                <div className="flex flex-col items-center mt-0.5">
-                  <span className="text-sm font-black drop-shadow-sm leading-none">
-                    {highScores[0].score}m
-                  </span>
-                  <div className="flex flex-col items-center gap-0.5 mt-1">
-                    {rewards.has(highScores[0].player) && (
-                      <motion.div
-                        initial={{ scale: 0.8 }}
-                        animate={{ scale: 1 }}
-                        className="text-[10px] font-black text-black bg-amber-500 px-2 py-0.5 rounded-full shadow-lg shadow-amber-500/20 mb-1"
-                      >
-                        +{rewards.get(highScores[0].player)?.toFixed(3)}{" "}
-                        {symbol}
-                      </motion.div>
-                    )}
-                    <span className="text-[8px] font-black uppercase tracking-tighter text-amber-500/70 leading-none">
-                      {highScores[0].plays} Plays
+                <div className="flex flex-col items-center text-center">
+                  <SUsername
+                    className="text-[10px] font-bold text-zinc-400 max-w-[80px] truncate"
+                    username={`@${highScores[1].player}`}
+                  />
+                  <div className="flex flex-col items-center mt-0.5">
+                    <span className="text-[11px] font-black text-blue-500 leading-none">
+                      {highScores[1].score}m
                     </span>
-                    {(highScores[0].combos ?? 0) > 0 && (
-                      <span className="text-[8px] font-black text-amber-400 uppercase tracking-wider bg-amber-500/10 px-1.5 py-0.5 rounded-md border border-amber-500/20 shadow-[0_0_8px_rgba(245,158,11,0.1)]">
-                        {highScores[0].combos} Combos
+                    <div className="flex flex-col items-center gap-0.5 mt-1">
+                      {rewards.has(highScores[1].player) && (
+                        <span className="text-[9px] font-black bg-blue-500/20 px-1.5 py-0.5 rounded-full border border-blue-500/30 mb-1">
+                          +{rewards.get(highScores[1].player)?.toFixed(3)}{" "}
+                          {symbol}
+                        </span>
+                      )}
+                      <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-tighter leading-none">
+                        {highScores[1].plays} Plays
                       </span>
-                    )}
+                      {(highScores[1].combos ?? 0) > 0 && (
+                        <span className="text-[8px] font-black text-amber-500/80 uppercase tracking-wider bg-amber-500/5 px-1 rounded-sm border border-amber-500/10">
+                          {highScores[1].combos} Combos
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* 3rd Place */}
-          {highScores[2] && (
-            <div className="flex flex-col items-center gap-2 w-24">
-              <div className="relative group">
-                <div className="absolute -inset-1 bg-linear-to-t from-cyan-500/20 to-transparent rounded-full blur opacity-50 group-hover:opacity-100 transition duration-500" />
-                <SAvatar
-                  radius="full"
-                  size="md"
-                  quality="medium"
-                  username={highScores[2].player}
-                  className="border-2 border-cyan-500/30 grayscale-[0.5] group-hover:grayscale-0 transition-all"
-                />
-                <div className="absolute -bottom-1 -right-1 bg-zinc-900 border border-cyan-500/50 rounded-full p-0.5">
-                  🥉
+            {/* 1st Place */}
+            {highScores[0] && (
+              <div className="flex flex-col items-center gap-3 w-28 -mt-6">
+                <div className="relative group">
+                  <div className="absolute -inset-2 bg-linear-to-t from-amber-500/30 to-transparent rounded-full blur-md opacity-50 group-hover:opacity-100 transition duration-500" />
+                  <SAvatar
+                    radius="full"
+                    size="lg"
+                    quality="medium"
+                    username={highScores[0].player}
+                    className="border-2 border-amber-500 scale-110 shadow-2xl transition-transform group-hover:scale-115"
+                  />
+                  <div className="absolute -bottom-2 -right-2 bg-zinc-900 border-1 border-amber-500 rounded-full p-2 shadow-lg">
+                    <Trophy
+                      size={14}
+                      className="text-amber-500 fill-amber-500/20"
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-col items-center text-center">
-                <SUsername
-                  className="text-[10px] font-bold text-zinc-400 max-w-[80px] truncate"
-                  username={`@${highScores[2].player}`}
-                />
-                <div className="flex flex-col items-center mt-0.5">
-                  <span className="text-[11px] font-black text-cyan-500 leading-none">
-                    {highScores[2].score}m
-                  </span>
-                  <div className="flex flex-wrap items-center gap-0.5 mt-1 justify-center">
-                    {rewards.has(highScores[2].player) && (
-                      <span className="text-[9px] font-black bg-cyan-500/20 px-1.5 py-0.5 rounded-full border border-cyan-500/30 mb-1">
-                        +{rewards.get(highScores[2].player)?.toFixed(3)}{" "}
-                        {symbol}
-                      </span>
-                    )}
-                    <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-tighter leading-none">
-                      {highScores[2].plays} Plays
+                <div className="flex flex-col items-center text-center">
+                  <SUsername
+                    className="text-xs font-black text-amber-500 tracking-tight max-w-[100px] truncate"
+                    username={`@${highScores[0].player}`}
+                  />
+                  <div className="flex flex-col items-center mt-0.5">
+                    <span className="text-sm font-black drop-shadow-sm leading-none">
+                      {highScores[0].score}m
                     </span>
-                    {(highScores[2].combos ?? 0) > 0 && (
-                      <span className="text-[8px] font-black text-amber-500/80 uppercase tracking-wider bg-amber-500/5 px-1 rounded-sm border border-amber-500/10">
-                        {highScores[2].combos} Combos
+                    <div className="flex flex-col items-center gap-0.5 mt-1">
+                      {rewards.has(highScores[0].player) && (
+                        <motion.div
+                          initial={{ scale: 0.8 }}
+                          animate={{ scale: 1 }}
+                          className="text-[10px] font-black text-black bg-amber-500 px-2 py-0.5 rounded-full shadow-lg shadow-amber-500/20 mb-1"
+                        >
+                          +{rewards.get(highScores[0].player)?.toFixed(3)}{" "}
+                          {symbol}
+                        </motion.div>
+                      )}
+                      <span className="text-[8px] font-black uppercase tracking-tighter text-amber-500/70 leading-none">
+                        {highScores[0].plays} Plays
                       </span>
-                    )}
+                      {(highScores[0].combos ?? 0) > 0 && (
+                        <span className="text-[8px] font-black text-amber-400 uppercase tracking-wider bg-amber-500/10 px-1.5 py-0.5 rounded-md border border-amber-500/20 shadow-[0_0_8px_rgba(245,158,11,0.1)]">
+                          {highScores[0].combos} Combos
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
-        </div>
-      )}
+            )}
+
+            {/* 3rd Place */}
+            {highScores[2] && (
+              <div className="flex flex-col items-center gap-2 w-24">
+                <div className="relative group">
+                  <div className="absolute -inset-1 bg-linear-to-t from-cyan-500/20 to-transparent rounded-full blur opacity-50 group-hover:opacity-100 transition duration-500" />
+                  <SAvatar
+                    radius="full"
+                    size="md"
+                    quality="medium"
+                    username={highScores[2].player}
+                    className="border-2 border-cyan-500/30 grayscale-[0.5] group-hover:grayscale-0 transition-all"
+                  />
+                  <div className="absolute -bottom-1 -right-1 bg-zinc-900 border border-cyan-500/50 rounded-full p-0.5">
+                    🥉
+                  </div>
+                </div>
+                <div className="flex flex-col items-center text-center">
+                  <SUsername
+                    className="text-[10px] font-bold text-zinc-400 max-w-[80px] truncate"
+                    username={`@${highScores[2].player}`}
+                  />
+                  <div className="flex flex-col items-center mt-0.5">
+                    <span className="text-[11px] font-black text-cyan-500 leading-none">
+                      {highScores[2].score}m
+                    </span>
+                    <div className="flex flex-wrap items-center gap-0.5 mt-1 justify-center">
+                      {rewards.has(highScores[2].player) && (
+                        <span className="text-[9px] font-black bg-cyan-500/20 px-1.5 py-0.5 rounded-full border border-cyan-500/30 mb-1">
+                          +{rewards.get(highScores[2].player)?.toFixed(3)}{" "}
+                          {symbol}
+                        </span>
+                      )}
+                      <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-tighter leading-none">
+                        {highScores[2].plays} Plays
+                      </span>
+                      {(highScores[2].combos ?? 0) > 0 && (
+                        <span className="text-[8px] font-black text-amber-500/80 uppercase tracking-wider bg-amber-500/5 px-1 rounded-sm border border-amber-500/10">
+                          {highScores[2].combos} Combos
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Leaderboard Table */}
       <div className="max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 pr-2">
