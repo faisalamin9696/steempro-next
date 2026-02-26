@@ -60,7 +60,9 @@ const SteemHeightsPage = () => {
         <div ref={leaderboardRef} className="pt-20 scroll-mt-10">
           <HeightsLeaderboard
             highScores={heights.highScores}
+            userStats={heights.userStats}
             userHistory={heights.userHistory}
+            fetchUserHistory={heights.fetchUserHistory}
             seasonalWinners={heights.seasonalWinners}
             currentSeason={heights.currentSeason}
             isSeasonActive={heights.isSeasonActive}
@@ -79,6 +81,7 @@ const SteemHeightsPage = () => {
             purchaseSkin={heights.purchaseSkin}
             equipSkin={heights.equipSkin}
             gameState={heights.gameState}
+            fetchHeightsUserData={heights.fetchHeightsUserData}
             syncingChallengeId={heights.syncingChallengeId}
             syncingPowerUpId={heights.syncingPowerUpId}
             syncingSkinId={heights.syncingSkinId}

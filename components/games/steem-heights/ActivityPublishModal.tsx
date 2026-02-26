@@ -9,10 +9,9 @@ import {
   ModalFooter,
 } from "@heroui/modal";
 import { Button } from "@heroui/button";
-import { Input, Textarea } from "@heroui/input";
+import { Input } from "@heroui/input";
 import { toast } from "sonner";
 import { steemApi } from "@/libs/steem";
-import { HighScore } from "./Config";
 import { Share2, FileText, Send, CheckCircle2 } from "lucide-react";
 import { extractMetadata, makeJsonMetadata, makeOptions } from "@/utils/editor";
 import { handleSteemError } from "@/utils/steemApiError";
@@ -25,14 +24,14 @@ interface Props {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   username: string;
-  userHistory: HighScore[];
+  userStats: any;
 }
 
 export const ActivityPublishModal = ({
   isOpen,
   onOpenChange,
   username,
-  userHistory,
+  userStats,
 }: Props) => {
   const [isPublishing, setIsPublishing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -40,37 +39,24 @@ export const ActivityPublishModal = ({
   const [selectedCommunity, setSelectedCommunity] = useState<any>();
 
   // Calculate today's stats
+  const totalPlays = userStats?.total_plays || 0;
+  const peakAltitude = userStats?.highest_score || 0;
+  const avgAltitude = Math.round(userStats?.avg_score || 0);
+  const totalCombos = userStats?.total_combos || 0;
+  // totalAltitude can be estimated by avg * plays
+  const totalAltitude = Math.round(avgAltitude * totalPlays);
+
   const today = new Date().toDateString();
-  const todayHistory = userHistory.filter(
-    (h) => new Date(h.created_at || "").toDateString() === today,
-  );
-
-  const totalPlays = todayHistory.length;
-  const peakAltitude =
-    todayHistory.length > 0 ? Math.max(...todayHistory.map((h) => h.score)) : 0;
-  const totalAltitude = todayHistory.reduce(
-    (acc, curr) => acc + (curr.score || 0),
-    0,
-  );
-  const totalCombos = todayHistory.reduce(
-    (acc, curr) => acc + (curr.combos || 0),
-    0,
-  );
-  const avgAltitude =
-    todayHistory.length > 0
-      ? Math.round(totalAltitude / todayHistory.length)
-      : 0;
-
-  const defaultTitle = `My Daily Ascent on Steem Heights - ${today}`;
+  const defaultTitle = `My Seasonal Journey on Steem Heights - ${today}`;
   const defaultBody = `![steem-heights.png](https://cdn.steemitimages.com/DQmTmKQbDgzjQnB4CFCMLemNa1hmo5bBt5C56GR9CtArCYN/steem-heights.png)
 
-# My Daily Ascent on Steem Heights 🏔️
+# My Seasonal Journey on Steem Heights 🏔️
 
-I've been scaling the peaks today! Here's my progress for ${today}:
+I've been scaling the peaks! Here's my consolidated progress:
 
 - 🚀 **Total Sessions**: ${totalPlays}
-- 🏔️ **Peak Altitude**: ${peakAltitude}m
-- ☁️ **Total Altitude**: ${totalAltitude}m
+- 🏔️ **Personal Best**: ${peakAltitude}m
+- ☁️ **Accumulated Height**: ${totalAltitude}m (Est.)
 - 🎯 **Total Combos**: ${totalCombos}
 - 📈 **Average Altitude**: ${avgAltitude}m
 
@@ -194,7 +180,7 @@ Think you can beat my score? Join the climb on Steem Heights!
                     <div className="grid grid-cols-2 gap-4">
                       <div className="flex flex-col">
                         <span className="text-[9px] text-zinc-500 font-bold uppercase">
-                          Today's Plays
+                          Total Sessions
                         </span>
                         <span className="text-lg font-black">{totalPlays}</span>
                       </div>
@@ -208,7 +194,7 @@ Think you can beat my score? Join the climb on Steem Heights!
                       </div>
                       <div className="flex flex-col">
                         <span className="text-[9px] text-zinc-500 font-bold uppercase">
-                          Total Altitude
+                          Estimated Total
                         </span>
                         <span className="text-lg font-black">
                           {totalAltitude}m
@@ -267,12 +253,9 @@ Think you can beat my score? Join the climb on Steem Heights!
                       placeholder="Describe your climb..."
                       value={body}
                       onValueChange={setBody}
-                      readOnly
                       minRows={10}
                       hideSnippets
                       insidePreview
-                      isReadOnly
-                      hideToolbar
                       classNames={{
                         // label: "text-zinc-500 font-bold uppercase text-[9px]",
                         input: "text-zinc-300 font-medium text-sm",

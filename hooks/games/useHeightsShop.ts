@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import {
   PowerUp,
@@ -9,6 +9,7 @@ import {
 } from "@/components/games/steem-heights/Config";
 import { supabase } from "@/libs/supabase/supabase";
 import { authenticateWithEmail } from "@/libs/supabase/database";
+import { checkActionDuplicate } from "@/libs/supabase/steem-heights";
 
 interface UseHeightsShopProps {
   session: any;
@@ -83,33 +84,21 @@ export const useHeightsShop = ({
           timestamp: new Date().toISOString(),
         };
 
-        // 1. Broadcast to Blockchain via API first to get transaction ID
+        // 1. Broadcast to Blockchain + DB via API
         const response = await fetch("/api/game/steem-heights/shop", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+          body: JSON.stringify({
+            ...payload,
+            equiped: equipedSkin,
+            player: session.user.name,
+          }),
         });
 
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.error || "Failed to broadcast shop update");
         }
-
-        const data = await response.json();
-        const tid = data.result?.id;
-
-        // 2. Update Supabase with tid for record keeping
-        const { error: dbError } = await supabase
-          .from("steempro_game_heights_shop")
-          .insert({
-            ...payload,
-            powerup: JSON.stringify(payload.powerup),
-            skins: JSON.stringify(payload.skins),
-            equiped: payload.equiped,
-            tid: tid || "",
-          });
-
-        if (dbError) throw dbError;
       } catch (error: any) {
         console.error("Failed to sync shop state:", error);
         toast.error(error.message || "Failed to sync shop state");
@@ -138,6 +127,20 @@ export const useHeightsShop = ({
         if (session?.user?.name) {
           try {
             setSyncingChallengeId(challengeId);
+
+            // Double check duplicate in DB before proceeding (for multi-device/tab protection)
+            const isDuplicate = await checkActionDuplicate(
+              session.user.name,
+              `Claimed challenge: ${challenge.title}`,
+              currentSeason,
+            );
+
+            if (isDuplicate) {
+              toast.error("Already claimed on another device/tab");
+              // Refresh state to sync UI
+              return;
+            }
+
             const newEnergy = energy + challenge.reward;
 
             await syncShopState(
@@ -241,10 +244,10 @@ export const useHeightsShop = ({
       }
       if (energy >= skin.price) {
         try {
-          const newEnergy = energy - skin.price;
-          const newSkins = [...purchasedSkins, skin.id];
-
           setSyncingSkinId(skin.id);
+          const newEnergy = energy - skin.price;
+          const newSkins = Array.from(new Set([...purchasedSkins, skin.id]));
+
           if (session?.user?.name) {
             await syncShopState(
               `Purchased skin: ${skin.name}`,
@@ -302,10 +305,9 @@ export const useHeightsShop = ({
         return;
       }
 
-      setSelectedSkinId(skinId);
-
       if (session?.user?.name) {
         try {
+          setSyncingSkinId(skinId);
           await syncShopState(
             `Equipped skin: ${skinId}`,
             currentSeason,
@@ -314,9 +316,15 @@ export const useHeightsShop = ({
             activePowerUp,
             skinId,
           );
+          setSelectedSkinId(skinId);
+          toast.success("Skin equipped!");
         } catch (error) {
           // Error already handled
+        } finally {
+          setSyncingSkinId(null);
         }
+      } else {
+        setSelectedSkinId(skinId);
       }
     },
     [

@@ -21,7 +21,7 @@ export const HeightsRaceGraph = ({ highScores }: Props) => {
       {/* Decorative background elements */}
       <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 bg-primary-500/5 blur-[80px] rounded-full pointer-events-none" />
 
-      <div className="relative z-10 flex flex-col gap-8">
+      <div className="relative z-10 flex flex-col gap-10">
         <div className="flex flex-col gap-2">
           <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary-500 flex items-center gap-2">
             <Trophy

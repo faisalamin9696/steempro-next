@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { ScrollShadow } from "@heroui/react";
 import { HighScore } from "./Config";
 import {
@@ -23,7 +23,6 @@ import { useDisclosure } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { ActivityPublishModal } from "./ActivityPublishModal";
 import { motion, AnimatePresence } from "framer-motion";
-import { getSeasonFromTitle } from "@/hooks/games/useHeights";
 import { calculateRewards } from "./GlobalSummitTab";
 import {
   REWARD_MIN_ALTITUDE,
@@ -32,12 +31,12 @@ import {
 } from "./Config";
 import { getRewardPool, getCoopConfig } from "./HeightsInfo";
 import { getCommunityReward } from "./GlobalSummitTab";
-import { PerformanceChart } from "./PerformanceChart";
-
 import { DAILY_CHALLENGES } from "./Config";
-import { Zap, CheckCircle2 } from "lucide-react";
+import { Zap } from "lucide-react";
+import { getSeasonFromTitle } from "@/hooks/games/useHeightsSeason";
 
 interface Props {
+  userStats: any;
   userHistory: HighScore[];
   username: string;
   highScores: HighScore[];
@@ -54,9 +53,12 @@ interface Props {
   };
   claimChallenge: (id: string) => void;
   syncingChallengeId: string | null;
+  fetchHeightsUserData: (season?: number) => Promise<any>;
+  fetchUserHistory: (season?: number) => Promise<HighScore[]>;
 }
 
 export const MyResultsTab = ({
+  userStats,
   userHistory,
   username,
   highScores,
@@ -67,9 +69,15 @@ export const MyResultsTab = ({
   dailyProgress,
   claimChallenge,
   syncingChallengeId,
+  fetchHeightsUserData,
+  fetchUserHistory,
 }: Props) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedSeason, setSelectedSeason] = useState<number>(currentSeason);
+  const [seasonStats, setSeasonStats] = useState<any>(userStats);
+  const [seasonHistoryItems, setSeasonHistoryItems] =
+    useState<HighScore[]>(userHistory);
+  const [isFetching, setIsFetching] = useState(false);
   const isSeasonActive = !!seasonPost;
 
   const availableSeasons = useMemo(() => {
@@ -82,9 +90,42 @@ export const MyResultsTab = ({
     return Array.from(seasons).sort((a, b) => b - a);
   }, [currentSeason, seasonalHistory]);
 
-  const filteredHistory = useMemo(() => {
-    return userHistory.filter((h) => (h as any).season === selectedSeason);
-  }, [userHistory, selectedSeason]);
+  useEffect(() => {
+    if (selectedSeason === currentSeason) {
+      setSeasonStats(userStats);
+      setSeasonHistoryItems(userHistory);
+      return;
+    }
+
+    const fetchOtherSeason = async () => {
+      setIsFetching(true);
+      try {
+        const [stats, history] = await Promise.all([
+          fetchHeightsUserData(selectedSeason),
+          fetchUserHistory(selectedSeason),
+        ]);
+        setSeasonStats(stats);
+        setSeasonHistoryItems(history);
+      } finally {
+        setIsFetching(false);
+      }
+    };
+    fetchOtherSeason();
+  }, [
+    selectedSeason,
+    currentSeason,
+    userStats,
+    userHistory,
+    fetchHeightsUserData,
+    fetchUserHistory,
+  ]);
+
+  const filteredHistory: HighScore[] = [];
+
+  const bestScore = seasonStats?.highest_score || 0;
+  const totalPlays = seasonStats?.total_plays || 0;
+  const totalCombos = seasonStats?.total_combos || 0;
+  const avgAltitude = Math.round(seasonStats?.avg_score || 0);
 
   const coopConfig = getCoopConfig(seasonPost);
   const totalLeaderboardAltitude = highScores.reduce(
@@ -102,24 +143,6 @@ export const MyResultsTab = ({
   const userReward = rewardMap.get(username) || 0;
   const symbol = getRewardPool(seasonPost)?.symbol || "STEEM";
 
-  const bestScore =
-    filteredHistory.length > 0
-      ? Math.max(...filteredHistory.map((h) => h.score))
-      : 0;
-
-  const totalPlays = filteredHistory.length;
-  const totalCombos = filteredHistory.reduce(
-    (acc, curr) => acc + (curr.combos || 0),
-    0,
-  );
-  const avgAltitude =
-    totalPlays > 0
-      ? Math.round(
-          filteredHistory.reduce((acc, curr) => acc + curr.score, 0) /
-            totalPlays,
-        )
-      : 0;
-
   const isQualified =
     bestScore >= REWARD_MIN_ALTITUDE ||
     (bestScore >= 10 && totalPlays >= REWARD_MIN_PLAYS);
@@ -129,200 +152,6 @@ export const MyResultsTab = ({
 
   return (
     <div className="space-y-6 pt-2">
-      {/* Daily Challenges Section */}
-      <div className="relative overflow-hidden bg-zinc-300/40 dark:bg-zinc-900/40 border border-white/5 rounded-[2.5rem] p-4 py-6 sm:p-8">
-        {/* Background glow */}
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-amber-500/10 blur-[100px] rounded-full pointer-events-none" />
-        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-emerald-500/5 blur-[100px] rounded-full pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-          <div className="space-y-2">
-            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-amber-500 flex items-center gap-3">
-              <Zap size={14} fill="currentColor" />
-              Daily Challenges
-            </h3>
-            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">
-              Complete tasks to fuel your next ascent
-            </p>
-          </div>
-
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="group flex items-center gap-3 bg-zinc-300/50 dark:bg-zinc-950/50 border dark:border-white/10 border-black/10 p-2 pr-4 rounded-2xl backdrop-blur-md transition-all hover:border-amber-500/30"
-          >
-            <div className="p-2 bg-amber-500 rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.3)]">
-              <Zap size={18} className="text-black" fill="currentColor" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">
-                Available Energy
-              </span>
-              <span className="text-sm font-black tabular-nums">{energy}</span>
-            </div>
-          </motion.div>
-        </div>
-
-        {isSeasonActive ? (
-          <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 gap-4">
-            {DAILY_CHALLENGES.map((challenge, idx) => {
-              const current =
-                (challenge.type === "ascent"
-                  ? dailyProgress.ascent
-                  : challenge.type === "combos"
-                    ? dailyProgress.combos
-                    : dailyProgress.plays) || 0;
-              const progress = Math.min(
-                100,
-                (current / challenge.target) * 100,
-              );
-              const isCompleted = current >= challenge.target;
-              const isClaimed = dailyProgress.claimed.includes(challenge.id);
-              const isSyncing = syncingChallengeId === challenge.id;
-
-              const Icon =
-                challenge.type === "ascent"
-                  ? Mountain
-                  : challenge.type === "combos"
-                    ? PrecisionIcon
-                    : Gamepad2;
-
-              return (
-                <motion.div
-                  key={challenge.id}
-                  initial={{ opacity: 0.8, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.05 }}
-                  className={`group relative flex flex-col gap-5 p-5 rounded-4xl border transition-all duration-500 ${
-                    isClaimed
-                      ? "dark:bg-zinc-950/30 bg-zinc-300/30 border-white/5 opacity-80"
-                      : isCompleted
-                        ? "bg-primary-500/5 border-primary-500/20 shadow-[0_0_30px_rgba(16,185,129,0.05)]"
-                        : "bg-amber-100/10 border-amber-500/10 hover:border-amber-500/20"
-                  }`}
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-1">
-                      <h4
-                        className={`text-xs font-black uppercase tracking-wider ${isClaimed ? "text-zinc-500" : ""}`}
-                      >
-                        {challenge.title}
-                      </h4>
-                      <p className="text-[10px] text-zinc-500 font-medium leading-snug max-w-[150px]">
-                        {challenge.description}
-                      </p>
-                    </div>
-                    <div
-                      className={`p-2.5 rounded-2xl border transition-all ${
-                        isClaimed
-                          ? "dark:bg-zinc-800/80 bg-zinc-300/30 text-zinc-600 border-transparent"
-                          : isCompleted
-                            ? "bg-primary-500/20 text-primary-500 border-primary-500/30"
-                            : "bg-amber-500/10 text-amber-500 border-amber-500/10"
-                      }`}
-                    >
-                      <Icon
-                        size={18}
-                        className={isClaimed ? "text-success opacity-50" : ""}
-                      />
-                    </div>
-                  </div>
-
-                  <Progress
-                    aria-label="Daily challenge progress"
-                    size="sm"
-                    value={progress}
-                    color={
-                      isClaimed
-                        ? "success"
-                        : isCompleted
-                          ? "primary"
-                          : "warning"
-                    }
-                    classNames={{
-                      base: "space-y-2",
-                      label:
-                        "text-[10px] font-black text-zinc-500 uppercase tracking-widest",
-                      value: "text-xs font-black text-zinc-500 tabular-nums",
-                    }}
-                    label="Task Progress"
-                    valueLabel={
-                      <div className="flex items-baseline gap-1">
-                        {Math.floor(current)}
-                        <span className="text-[10px] text-zinc-600 font-bold">
-                          /
-                        </span>
-                        {challenge.target}
-                      </div>
-                    }
-                    showValueLabel={true}
-                  />
-
-                  <Button
-                    size="md"
-                    onPress={() => claimChallenge(challenge.id)}
-                    isLoading={isSyncing}
-                    isDisabled={
-                      !isCompleted || isClaimed || !!syncingChallengeId
-                    }
-                    className={`h-10 w-full rounded-[1.25rem] font-black uppercase text-[10px] tracking-[0.15em] transition-all duration-300 ${
-                      isClaimed
-                        ? "bg-zinc-800/50 text-zinc-600 border border-white/5 cursor-not-allowed"
-                        : isCompleted
-                          ? "bg-primary-500 text-black shadow-lg shadow-emerald-500/20"
-                          : "bg-zinc-900 text-zinc-500 border border-white/5 hover:border-white/10"
-                    }`}
-                  >
-                    {isClaimed
-                      ? "CLAIMED"
-                      : isSyncing
-                        ? "CLAIMING..."
-                        : isCompleted
-                          ? `CLAIM +${challenge.reward}`
-                          : "IN PROGRESS"}
-                  </Button>
-                </motion.div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-12 px-4 text-center dark:bg-zinc-950/20 bg-zinc-300/30 rounded-4xl border border-white/5">
-            <div className="p-4 bg-zinc-800/30 rounded-3xl mb-4 text-zinc-500">
-              <Zap size={32} />
-            </div>
-            <h4 className="text-sm font-black uppercase tracking-widest text-zinc-400 mb-2">
-              Daily Challenges Inactive
-            </h4>
-            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider max-w-xs leading-relaxed">
-              Challenges and Energy rewards are only available during active
-              seasons. Stay tuned for the next climb!
-            </p>
-          </div>
-        )}
-
-        {/* Season Reset Alert */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative z-10 flex items-center gap-4 bg-amber-500/5 border border-amber-500/10 p-4 rounded-4xl mt-8 overflow-hidden"
-        >
-          <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 blur-3xl rounded-full -mr-12 -mt-12" />
-          <div className="p-2.5 bg-amber-500/10 rounded-2xl text-amber-500 shrink-0">
-            <Info size={20} />
-          </div>
-          <div className="flex flex-col gap-0.5">
-            <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">
-              Season Reset Notice
-            </span>
-            <p className="text-[11px] text-zinc-400 font-medium leading-relaxed">
-              Energy is season-specific. Your balance for{" "}
-              <span className="font-bold">Season {currentSeason}</span> will be
-              reset when the season ends to ensure a fresh start for all
-              competitors.
-            </p>
-          </div>
-        </motion.div>
-      </div>
-
       {/* Personal Stats Summary */}
       <div className="space-y-4 max-w-2xl mx-auto">
         <div className="flex flex-col items-center text-center">
@@ -358,11 +187,11 @@ export const MyResultsTab = ({
             },
           ].map((stat, i) => (
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
               transition={{ delay: i * 0.05 }}
               key={stat.label}
-              className="bg-zinc-300/50 dark:bg-zinc-900/50 border border-white/5 rounded-xl p-3 flex flex-col items-center gap-1"
+              className={`bg-zinc-300/50 dark:bg-zinc-900/50 border border-white/5 rounded-xl p-3 flex flex-col items-center gap-1 transition-opacity ${isFetching ? "opacity-50" : "opacity-100"}`}
             >
               <stat.icon size={12} className={stat.color} />
               <div className="text-sm font-black">{stat.value}</div>
@@ -375,7 +204,8 @@ export const MyResultsTab = ({
       </div>
 
       {/* Score History Chart */}
-      <PerformanceChart userHistory={filteredHistory} />
+      {/* Score History Chart (Hidden due to data consolidation) */}
+      {/* <PerformanceChart userHistory={filteredHistory} /> */}
 
       {/* Reward Status */}
       <motion.div
@@ -442,9 +272,7 @@ export const MyResultsTab = ({
 
       <ScrollShadow className="space-y-3 max-h-[300px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-zinc-800">
         <AnimatePresence mode="popLayout">
-          {filteredHistory.map((hs, i) => {
-            const isLatest =
-              i === 0 && selectedSeason === (userHistory[0] as any)?.season;
+          {seasonHistoryItems.map((hs, i) => {
             const isBest = hs.score === bestScore && bestScore > 0;
 
             return (
@@ -477,17 +305,13 @@ export const MyResultsTab = ({
                       Best
                     </span>
                   )}
-                  {isLatest && (
-                    <span className="text-[9px] font-black uppercase text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-lg border border-amber-500/20">
-                      Latest
-                    </span>
-                  )}
                 </div>
               </motion.div>
             );
           })}
         </AnimatePresence>
-        {filteredHistory.length === 0 && (
+
+        {seasonHistoryItems.length === 0 && (
           <div className="py-12 flex flex-col items-center justify-center opacity-40">
             <Filter size={32} className="text-zinc-500 mb-2" />
             <p className="text-[10px] text-zinc-500 font-black uppercase tracking-widest">
@@ -501,7 +325,7 @@ export const MyResultsTab = ({
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         username={username}
-        userHistory={userHistory}
+        userStats={userStats}
       />
     </div>
   );

@@ -10,6 +10,7 @@ import {
 import { Button } from "@heroui/button";
 import { Zap, Target, Trophy, Clock, Info, MousePointer2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { TIME_LIMIT } from "./Config";
 
 interface Props {
   isOpen: boolean;
@@ -78,7 +79,7 @@ export const HowToPlayModal = ({ isOpen, onOpenChange }: Props) => {
                     color: "text-emerald-500",
                     bg: "bg-emerald-500/10",
                     border: "border-emerald-500/20",
-                  }, 
+                  },
                 ].map((item, i) => (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
@@ -105,15 +106,44 @@ export const HowToPlayModal = ({ isOpen, onOpenChange }: Props) => {
                   <Clock className="text-amber-500" size={20} />
                 </div>
                 <div className="space-y-0.5">
-                  <h4 className="text-[10px] font-black uppercase tracking-widest">
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-zinc-900 dark:text-white">
                     Gravity Pulse
                   </h4>
-                  <p className="text-[11px] font-medium text-zinc-500">
-                    You have 5 seconds to drop each block. Taking too long
-                    triggers an{" "}
+                  <p className="text-[11px] font-medium text-zinc-500 leading-relaxed">
+                    You have{" "}
+                    <span className="text-amber-500 font-bold italic">
+                      {TIME_LIMIT} seconds
+                    </span>{" "}
+                    to drop each block. Taking too long triggers an{" "}
                     <span className="text-red-500 font-bold italic">
                       Automatic Drop!
                     </span>
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-4 bg-amber-500/5 dark:bg-amber-500/5 border border-amber-500/10 rounded-2xl flex items-center gap-4">
+                <div className="w-10 h-10 bg-amber-500/20 rounded-full flex items-center justify-center shrink-0">
+                  <Zap
+                    className="text-amber-500"
+                    size={20}
+                    fill="currentColor"
+                  />
+                </div>
+                <div className="space-y-0.5">
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-zinc-900 dark:text-white">
+                    Daily Rewards
+                  </h4>
+                  <p className="text-[11px] font-medium text-zinc-500 leading-relaxed">
+                    Complete{" "}
+                    <span className="text-amber-500 font-bold">
+                      Daily Challenges
+                    </span>{" "}
+                    to earn{" "}
+                    <span className="text-amber-500 font-bold">Energy</span>.
+                    Use Energy in the Lab to buy{" "}
+                    <span className="text-amber-500 font-bold">Power-Ups</span>{" "}
+                    and <span className="text-amber-500 font-bold">Skins</span>.
                   </p>
                 </div>
               </div>

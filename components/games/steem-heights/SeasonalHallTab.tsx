@@ -32,7 +32,7 @@ import { AvatarGroup, Spinner } from "@heroui/react";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { Constants } from "@/constants";
-import { getSeasonFromTitle } from "@/hooks/games/useHeights";
+import { getSeasonFromTitle } from "@/hooks/games/useHeightsSeason";
 
 interface Props {
   seasonalWinners: any[];
@@ -266,6 +266,22 @@ export const SeasonalHallTab = ({ seasonalWinners, seasonalPosts }: Props) => {
                   </span>
                 </div>
 
+                <div className="flex items-center gap-2">
+                  {w.userBest > 0 && (
+                    <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 px-3 py-1 rounded-full shadow-sm">
+                      <Trophy size={10} className="fill-emerald-500/20" />
+                      <div className="flex flex-col">
+                        <span className="text-[7px] font-black uppercase tracking-widest opacity-70 leading-none mb-0.5">
+                          Personal Best
+                        </span>
+                        <span className="text-[10px] font-black italic leading-none">
+                          {w.userBest}m
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 <span className="flex gap-2 ml-auto">
                   {totalReward > 0 && (
                     <div className="flex items-center gap-1.5">
@@ -456,6 +472,11 @@ export const SeasonalHallTab = ({ seasonalWinners, seasonalPosts }: Props) => {
                                       className="text-xs font-bold text-muted"
                                       username={`@${player}`}
                                     />
+                                    {player === session?.user?.name && (
+                                      <span className="text-[8px] font-black bg-primary-500 text-white px-1 rounded-sm uppercase tracking-widest ml-1">
+                                        YOU
+                                      </span>
+                                    )}
                                     {row.reward > 0 && (
                                       <div className="flex flex-col">
                                         <span className="text-[10px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 w-fit">

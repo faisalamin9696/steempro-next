@@ -1,16 +1,18 @@
 "use client";
 
 import { Card } from "@heroui/card";
-import { Trophy, Target, History, Award, ShoppingBag } from "lucide-react";
+import { Trophy, Target, History, Award, ShoppingBag, Zap } from "lucide-react";
 import { Tabs, Tab } from "@heroui/tabs";
 import { HighScore, GameStats, Skin, PowerUp } from "./Config";
 import { GlobalSummitTab } from "./GlobalSummitTab";
 import { MyResultsTab } from "./MyResultsTab";
+import { DailyChallengesTab } from "./DailyChallengesTab";
 import { SeasonalHallTab } from "./SeasonalHallTab";
 import { SkinShopTab } from "./SkinShopTab";
 
 interface Props {
   highScores: HighScore[];
+  userStats: any;
   userHistory: HighScore[];
   seasonalWinners: any[];
   seasonalHistory: any[];
@@ -41,17 +43,19 @@ interface Props {
   syncingChallengeId: string | null;
   syncingPowerUpId: string | null;
   syncingSkinId: string | null;
+  fetchHeightsUserData: (season?: number) => Promise<any>;
+  fetchUserHistory: (season?: number) => Promise<HighScore[]>;
 }
 
 export const HeightsLeaderboard = ({
   highScores,
+  userStats,
   userHistory,
   seasonalWinners,
   seasonalHistory,
   currentSeason,
   isSeasonActive,
   seasonPost,
-  globalStats,
   username,
   selectedSkin,
   setSelectedSkinId,
@@ -67,6 +71,9 @@ export const HeightsLeaderboard = ({
   syncingChallengeId,
   syncingPowerUpId,
   syncingSkinId,
+  globalStats,
+  fetchHeightsUserData,
+  fetchUserHistory,
 }: Props) => {
   return (
     <Card className="w-full  mx-auto bg-zinc-50 dark:bg-zinc-900/50 border-zinc-800  overflow-hidden relative min-h-[400px]">
@@ -103,6 +110,26 @@ export const HeightsLeaderboard = ({
               highScores={highScores}
               seasonPost={seasonPost}
               globalStats={globalStats}
+              username={username}
+            />
+          </Tab>
+
+          <Tab
+            key="daily"
+            title={
+              <div className="flex items-center gap-2">
+                <Zap size={14} />
+                <span>Daily Challenges</span>
+              </div>
+            }
+          >
+            <DailyChallengesTab
+              energy={energy}
+              dailyProgress={dailyProgress}
+              claimChallenge={claimChallenge}
+              syncingChallengeId={syncingChallengeId}
+              isSeasonActive={isSeasonActive}
+              currentSeason={currentSeason}
             />
           </Tab>
 
@@ -116,6 +143,7 @@ export const HeightsLeaderboard = ({
             }
           >
             <MyResultsTab
+              userStats={userStats}
               userHistory={userHistory}
               username={username}
               highScores={highScores}
@@ -126,6 +154,8 @@ export const HeightsLeaderboard = ({
               dailyProgress={dailyProgress}
               claimChallenge={claimChallenge}
               syncingChallengeId={syncingChallengeId}
+              fetchHeightsUserData={fetchHeightsUserData}
+              fetchUserHistory={fetchUserHistory}
             />
           </Tab>
 

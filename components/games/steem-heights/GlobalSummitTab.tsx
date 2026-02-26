@@ -35,6 +35,7 @@ interface Props {
   highScores: HighScore[];
   seasonPost: any | null;
   globalStats: GameStats;
+  username: string;
 }
 
 export const calculateRewards = (
@@ -146,6 +147,7 @@ export const GlobalSummitTab = ({
   highScores,
   seasonPost,
   globalStats,
+  username,
 }: Props) => {
   const coopConfig = getCoopConfig(seasonPost);
   const totalLeaderboardAltitude = highScores.reduce(
@@ -297,6 +299,11 @@ export const GlobalSummitTab = ({
                   <div className="absolute -bottom-1 -right-1 bg-zinc-900 border border-blue-500/50 rounded-full p-0.5">
                     🥈
                   </div>
+                  {highScores[1].player === username && (
+                    <div className="absolute -top-1 -right-1 bg-primary-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-full shadow-lg z-10">
+                      YOU
+                    </div>
+                  )}
                 </div>
                 <div className="flex flex-col items-center text-center">
                   <SUsername
@@ -346,6 +353,11 @@ export const GlobalSummitTab = ({
                       className="text-amber-500 fill-amber-500/20"
                     />
                   </div>
+                  {highScores[0].player === username && (
+                    <div className="absolute -top-2 -left-2 bg-primary-500 text-white text-[8px] font-black px-2 py-0.5 rounded-full shadow-xl z-10 border-2 border-zinc-950">
+                      YOU
+                    </div>
+                  )}
                 </div>
                 <div className="flex flex-col items-center text-center">
                   <SUsername
@@ -396,6 +408,11 @@ export const GlobalSummitTab = ({
                   <div className="absolute -bottom-1 -right-1 bg-zinc-900 border border-cyan-500/50 rounded-full p-0.5">
                     🥉
                   </div>
+                  {highScores[2].player === username && (
+                    <div className="absolute -top-1 -right-1 bg-primary-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-full shadow-lg z-10">
+                      YOU
+                    </div>
+                  )}
                 </div>
                 <div className="flex flex-col items-center text-center">
                   <SUsername
@@ -460,6 +477,11 @@ export const GlobalSummitTab = ({
                       className="text-xs font-bold text-muted"
                       username={`@${player}`}
                     />
+                    {player === username && (
+                      <span className="text-[8px] font-black bg-primary-500 text-white px-1 rounded-sm uppercase tracking-widest ml-1">
+                        YOU
+                      </span>
+                    )}
                     {rewards.has(row.player) && (
                       <div className="flex flex-col">
                         <span className="text-[10px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
