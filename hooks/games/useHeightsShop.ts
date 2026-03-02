@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { toast } from "sonner";
 import {
   PowerUp,
@@ -10,6 +10,7 @@ import {
 import { supabase } from "@/libs/supabase/supabase";
 import { authenticateWithEmail } from "@/libs/supabase/database";
 import { checkActionDuplicate } from "@/libs/supabase/steem-heights";
+import { generateHMAC } from "@/utils/encryption";
 
 interface UseHeightsShopProps {
   session: any;
@@ -70,6 +71,25 @@ export const useHeightsShop = ({
           await authenticateWithEmail(username + "@steempro.com", username);
         }
 
+        // 1. Generate Secure Session for shop action
+        const sessionResponse = await fetch("/api/game/start", {
+          method: "POST",
+        });
+        const sessionData = await sessionResponse.json();
+
+        if (!sessionData.success) {
+          throw new Error("Failed to initialize secure shop session");
+        }
+
+        const { gameId, challenge } = sessionData;
+
+        // 2. Generate HMAC Signature
+        // Message: player:gameId:challenge:energy:action
+        const signature = generateHMAC(
+          `${username}:${gameId}:${challenge}:${currentEnergy}:${action}`,
+          challenge,
+        );
+
         const payload = {
           player: username,
           game: "steem-heights",
@@ -82,9 +102,11 @@ export const useHeightsShop = ({
           equiped: equipedSkin,
           action,
           timestamp: new Date().toISOString(),
+          gameId,
+          signature,
         };
 
-        // 1. Broadcast to Blockchain + DB via API
+        // 3. Broadcast to Blockchain + DB via API
         const response = await fetch("/api/game/steem-heights/shop", {
           method: "POST",
           headers: { "Content-Type": "application/json" },

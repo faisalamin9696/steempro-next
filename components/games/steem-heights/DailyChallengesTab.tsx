@@ -48,7 +48,7 @@ export const DailyChallengesTab = ({
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <div className="p-1 px-2.5 bg-amber-500/10 border border-amber-500/20 rounded-full">
+              <div className="p-1 px-2.5 bg-amber-500/10 border border-amber-500/20 rounded-full items-center flex flex-col">
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-500">
                   Daily Operations
                 </span>

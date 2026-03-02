@@ -1,16 +1,32 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { HeightsCanvas } from "@/components/games/steem-heights/HeightsCanvas";
 import { HeightsInfo } from "@/components/games/steem-heights/HeightsInfo";
 import { HeightsLeaderboard } from "@/components/games/steem-heights/HeightsLeaderboard";
 import { useHeights } from "@/hooks/games/useHeights";
 import { Button } from "@heroui/button";
 import { ChevronDown } from "lucide-react";
+import disableDevtool from "disable-devtool";
+import { usePathname } from "next/navigation";
 
 const SteemHeightsPage = () => {
   const heights = useHeights();
   const leaderboardRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    disableDevtool({
+      detectors: "all",
+      url: "not_found",
+      clearIntervalWhenDevOpenTrigger: true,
+      disableMenu: false,
+      clearLog: true,
+      ignore: () => {
+        return pathname !== "/games/steem-heights"; // Disable is ignored when you are an administrator
+      },
+    });
+  }, [pathname]);
 
   const scrollToLeaderboard = () => {
     leaderboardRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -32,6 +48,7 @@ const SteemHeightsPage = () => {
                     scrollToLeaderboard={scrollToLeaderboard}
                     highScores={heights.highScores}
                     username={heights.username}
+                    isGeneratingSession={heights.isGeneratingSession}
                   />
                 </div>
               </div>

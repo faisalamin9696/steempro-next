@@ -12,13 +12,71 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { energy, skins, powerup, action, season, player } = body;
+    const {
+      energy,
+      skins,
+      powerup,
+      action,
+      season,
+      player,
+      gameId,
+      signature,
+    } = body;
 
-    // 1. Prevent duplicate claims
-    const { checkActionDuplicate } =
-      await import("@/libs/supabase/steem-heights");
+    // Safety check: ensure the session user matches the requested player
+    if (session.user.name !== player) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    if (!gameId || !signature) {
+      return NextResponse.json(
+        { error: "Secure session required for shop actions" },
+        { status: 400 },
+      );
+    }
+
     const { createClient } = await import("@/libs/supabase/server");
     const supabaseServer = await createClient();
+
+    // 1. Verify Session
+    const { data: sessionData, error: sessionError } = await supabaseServer
+      .from("steempro_game_heights_sessions")
+      .select("*")
+      .eq("game_id", gameId)
+      .eq("player", player)
+      .eq("status", "pending")
+      .single();
+
+    if (sessionError || !sessionData) {
+      return NextResponse.json(
+        { error: "Invalid or expired shop session" },
+        { status: 403 },
+      );
+    }
+
+    // 2. Verify HMAC
+    // Message: player:gameId:challenge:energy:action
+    const { generateHMAC } = await import("@/utils/encryption");
+    const message = `${player}:${gameId}:${sessionData.challenge}:${energy || 0}:${action || ""}`;
+    const expectedSignature = generateHMAC(message, sessionData.challenge);
+
+    if (signature !== expectedSignature) {
+      console.warn(`Invalid shop signature for player ${player}.`);
+      return NextResponse.json(
+        { error: "Invalid secure signature" },
+        { status: 403 },
+      );
+    }
+
+    // 3. Mark session as completed
+    await supabaseServer
+      .from("steempro_game_heights_sessions")
+      .update({ status: "completed" })
+      .eq("game_id", gameId);
+
+    // 4. Prevent duplicate claims
+    const { checkActionDuplicate } =
+      await import("@/libs/supabase/steem-heights");
 
     if (action?.startsWith("Claimed challenge:")) {
       const isDuplicate = await checkActionDuplicate(
@@ -34,11 +92,6 @@ export async function POST(req: NextRequest) {
           { status: 400 },
         );
       }
-    }
-
-    // Safety check: ensure the session user matches the requested player
-    if (session.user.name !== player) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const gameKey = process.env.GAME_KEY;

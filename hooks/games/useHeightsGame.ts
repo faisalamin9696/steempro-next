@@ -20,6 +20,7 @@ import {
 } from "@/components/games/steem-heights/Config";
 import { useDeviceInfo } from "../redux/useDeviceInfo";
 import { useHeightsSound } from "./useHeightsSound";
+import { generateHMAC } from "@/utils/encryption";
 
 interface useHeightsGameProps {
   session: any;
@@ -74,11 +75,43 @@ export const useHeightsGame = ({
   const [lastBonus, setLastBonus] = useState(0);
   const [lives, setLives] = useState(1);
   const [windDrift, setWindDrift] = useState(0);
+  const [isGeneratingSession, setIsGeneratingSession] = useState(false);
+  const [sessionInfo, setSessionInfo] = useState<{
+    gameId: string;
+    challenge: string;
+  } | null>(null);
 
   const requestRef = useRef<number | null>(null);
   const directionRef = useRef<number>(1);
   const currentBlockRef = useRef<Block | null>(null);
   const lastFrameTimeRef = useRef<number>(0);
+
+  // Performance Optimization: Reactive refs for animation loop
+  const gameStateRef = useRef<string>(gameState);
+  const isPausedRef = useRef<boolean>(isPaused);
+  const speedRef = useRef<number>(speed);
+  const scoreRef = useRef<number>(score);
+  const selectedSkinRef = useRef(selectedSkin);
+  const activePowerUpRef = useRef(activePowerUp);
+
+  useEffect(() => {
+    gameStateRef.current = gameState;
+  }, [gameState]);
+  useEffect(() => {
+    isPausedRef.current = isPaused;
+  }, [isPaused]);
+  useEffect(() => {
+    speedRef.current = speed;
+  }, [speed]);
+  useEffect(() => {
+    scoreRef.current = score;
+  }, [score]);
+  useEffect(() => {
+    selectedSkinRef.current = selectedSkin;
+  }, [selectedSkin]);
+  useEffect(() => {
+    activePowerUpRef.current = activePowerUp;
+  }, [activePowerUp]);
 
   const triggerGameOver = useCallback(async () => {
     setGameState("gameover");
@@ -109,10 +142,23 @@ export const useHeightsGame = ({
           }
         }
 
-        const response = await fetch("/api/game/steem-heights", {
+        const signature = sessionInfo
+          ? generateHMAC(
+              `${session?.user?.name}:${sessionInfo.gameId}:${sessionInfo.challenge}:${score}:${combos}`,
+              sessionInfo.challenge,
+            )
+          : "";
+
+        const response = await fetch("/api/game/submit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ score, season: currentSeason, combos }),
+          body: JSON.stringify({
+            score,
+            season: currentSeason,
+            combos,
+            gameId: sessionInfo?.gameId,
+            signature,
+          }),
         });
 
         if (response.ok) {
@@ -126,6 +172,7 @@ export const useHeightsGame = ({
       } finally {
         setIsSavingScore(false);
         fetchData();
+        setSessionInfo(null);
       }
     }
   }, [
@@ -141,9 +188,35 @@ export const useHeightsGame = ({
     selectedSkinId,
     combos,
     fetchData,
+    sessionInfo,
   ]);
 
   const startGame = useCallback(async () => {
+    setSessionInfo(null);
+
+    // Only generate secure session if user is logged in
+    if (session?.user?.name) {
+      setIsGeneratingSession(true);
+      try {
+        const response = await fetch("/api/game/start", { method: "POST" });
+        const data = await response.json();
+        if (data.success) {
+          setSessionInfo({ gameId: data.gameId, challenge: data.challenge });
+        } else {
+          toast.error(data.error || "Failed to generate game session");
+          setGameState("idle");
+          return;
+        }
+      } catch (error) {
+        toast.error("Connectivity error. Please try again.");
+        setGameState("idle");
+        return;
+      } finally {
+        setIsGeneratingSession(false);
+      }
+    }
+
+    // Now that session is secure (if user logged in), initialize and start the game
     const firstBlock = {
       x: (CANVAS_WIDTH - INITIAL_WIDTH) / 2,
       y: CANVAS_HEIGHT - BLOCK_HEIGHT,
@@ -163,7 +236,6 @@ export const useHeightsGame = ({
     setScore(0);
     setSpeed(INITIAL_SPEED);
     setWindDrift(0);
-    setGameState("playing");
     directionRef.current = 1;
     setShowPerfect(false);
     setTimeLeft(TIME_LIMIT);
@@ -174,7 +246,10 @@ export const useHeightsGame = ({
     setShowBonus(false);
     setLastBonus(0);
     lastFrameTimeRef.current = performance.now();
-  }, [selectedSkin]);
+
+    // Final step: trigger loops
+    setGameState("playing");
+  }, [selectedSkin, session?.user?.name]);
 
   useEffect(() => {
     if (gameState !== "playing" || isPaused) return;
@@ -193,8 +268,10 @@ export const useHeightsGame = ({
 
   const update = useCallback(
     (timestamp: number) => {
-      if (gameState !== "playing" || isPaused) {
+      if (gameStateRef.current !== "playing") return;
+      if (isPausedRef.current) {
         lastFrameTimeRef.current = timestamp;
+        requestRef.current = requestAnimationFrame(update);
         return;
       }
 
@@ -202,33 +279,38 @@ export const useHeightsGame = ({
       const dt = timestamp - lastFrameTimeRef.current;
       lastFrameTimeRef.current = timestamp;
 
-      const dtScale = dt / (1000 / 60);
+      const dtScale = Math.min(dt / (1000 / 60), 2); // Cap dtScale to prevent huge jumps
       const current = currentBlockRef.current;
-      if (!current) return;
+      if (!current) {
+        requestRef.current = requestAnimationFrame(update);
+        return;
+      }
+
+      const activePowerUp = activePowerUpRef.current;
+      const selectedSkin = selectedSkinRef.current;
+      const currentScore = scoreRef.current;
 
       const mobileFactor = isMobile ? 0.85 : 1;
       const powerUpSlow = activePowerUp?.perks.slowFactor || 1;
       const effectiveSpeed =
-        speed *
+        speedRef.current *
         (selectedSkin.perks.slowFactor || 1) *
         mobileFactor *
         powerUpSlow;
 
-      if (
-        !selectedSkin.perks.windResist &&
-        !activePowerUp?.perks.windResist &&
-        gameState === "playing"
-      ) {
-        const windIntensity = (score / 100) * 0.2;
-        const drift = Math.sin(timestamp / 2000) * windIntensity;
-        setWindDrift(drift);
+      let currentWindDrift = 0;
+      if (!selectedSkin.perks.windResist && !activePowerUp?.perks.windResist) {
+        const windIntensity = (currentScore / 100) * 0.2;
+        currentWindDrift = Math.sin(timestamp / 2000) * windIntensity;
+        setWindDrift(currentWindDrift);
       } else {
         setWindDrift(0);
       }
 
       let newX =
         current.x +
-        (effectiveSpeed * directionRef.current + windDrift) * dtScale;
+        (effectiveSpeed * directionRef.current + currentWindDrift) * dtScale;
+
       if (newX + current.width > CANVAS_WIDTH) {
         newX = CANVAS_WIDTH - current.width;
         directionRef.current = -1;
@@ -241,28 +323,21 @@ export const useHeightsGame = ({
       currentBlockRef.current = updatedBlock;
       setCurrentBlock(updatedBlock);
 
-      setDebris((prevDebris) =>
-        prevDebris
+      setDebris((prevDebris) => {
+        if (prevDebris.length === 0) return prevDebris;
+        return prevDebris
           .map((d) => ({
             ...d,
             y: d.y + 1 * dtScale,
             rotation: d.rotation + d.velocity * 2 * dtScale,
           }))
-          .filter((d) => d.y < CANVAS_HEIGHT + 100),
-      );
+          .filter((d) => d.y < CANVAS_HEIGHT + 100)
+          .slice(-10); // Performance: Only keep last 10 debris items
+      });
 
       requestRef.current = requestAnimationFrame(update);
     },
-    [
-      gameState,
-      speed,
-      isPaused,
-      selectedSkin,
-      windDrift,
-      score,
-      activePowerUp,
-      isMobile,
-    ],
+    [isMobile], // Minimal dependencies
   );
 
   useEffect(() => {
@@ -285,7 +360,7 @@ export const useHeightsGame = ({
   }, [gameState]);
 
   const handleAction = async () => {
-    if (isPaused || isSavingScore) return;
+    if (isPaused || isSavingScore || isGeneratingSession) return;
     if (gameState === "idle" || (gameState === "gameover" && !isSavingScore)) {
       startGame();
       return;
@@ -423,5 +498,6 @@ export const useHeightsGame = ({
     windDrift,
     handleAction,
     startGame,
+    isGeneratingSession,
   };
 };

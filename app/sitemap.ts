@@ -1,4 +1,3 @@
-import { sdsApi } from "@/libs/sds";
 import { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -81,21 +80,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  try {
-    // Fetch top 100 communities to index
-    const communities = await sdsApi.getCommunities(null, 100);
-    const communityPages: MetadataRoute.Sitemap = (communities || []).map(
-      (community) => ({
-        url: `${baseUrl}/trending/hive-${community.id}`,
-        lastModified,
-        changeFrequency: "daily",
-        priority: 0.6,
-      }),
-    );
-
-    return [...staticPages, ...communityPages];
-  } catch (error) {
-    console.error("Failed to fetch communities for sitemap:", error);
-    return staticPages;
-  }
+  return staticPages;
 }

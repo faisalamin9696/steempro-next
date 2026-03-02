@@ -107,6 +107,7 @@ export const useHeights = () => {
     windDrift,
     handleAction,
     startGame,
+    isGeneratingSession,
   } = useHeightsGame({
     session,
     selectedSkin,
@@ -249,5 +250,6 @@ export const useHeights = () => {
     syncingChallengeId,
     syncingPowerUpId,
     syncingSkinId,
+    isGeneratingSession,
   };
 };
