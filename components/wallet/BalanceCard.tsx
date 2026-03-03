@@ -1,21 +1,21 @@
-import { Card } from "@heroui/card";
+import { Card, CardBody } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Divider } from "@heroui/divider";
+import { Chip } from "@heroui/chip";
 import { Tooltip } from "@heroui/tooltip";
 import {
   ArrowUpRight,
   ArrowDownLeft,
   Zap,
-  TrendingUp,
   ArrowUpFromLine,
   ArrowDownToLine,
   Clock,
   Users,
   CircleDollarSign,
   Info,
-  Ellipsis,
+  Landmark,
+  DollarSign,
 } from "lucide-react";
-import SCard from "../ui/SCard";
 import { SteemIcon } from "../icons/SteemIcon";
 import { useSteemUtils } from "@/hooks/useSteemUtils";
 import { useSession } from "next-auth/react";
@@ -42,370 +42,482 @@ export const BalanceCard = ({
 }: BalanceCardProps) => {
   const { data: session } = useSession();
   const isMe = session?.user?.name === account.name;
-  const { vestsToSteem, globalProps } = useSteemUtils();
+  const { vestsToSteem } = useSteemUtils();
   const { isLoading, steemUsd, sbdUsd, error } = usePriceData();
 
-  // Calculate Estimated Account Value
-  const totalSteemPrice =
-    (account.balance_steem +
-      account.savings_steem +
-      vestsToSteem(account.vests_own)) *
-    steemUsd;
-  const totalSbdPrice = (account.balance_sbd + account.savings_sbd) * sbdUsd;
+  const showUsd = !isLoading && !error && steemUsd > 0;
 
-  const estimatedValue = totalSteemPrice + totalSbdPrice;
+  const ownSP = vestsToSteem(account.vests_own);
+  const inSP = vestsToSteem(account.vests_in);
+  const outSP = vestsToSteem(account.vests_out);
+  const effectiveSP =
+    ownSP - vestsToSteem(account.powerdown_done) - outSP + inSP;
+  const availableSP =
+    ownSP -
+    outSP -
+    vestsToSteem(account.powerdown) +
+    vestsToSteem(account.powerdown_done);
+
+  const steemUsdVal =
+    (account.balance_steem + account.savings_steem + ownSP) * steemUsd;
+  const sbdUsdVal = (account.balance_sbd + account.savings_sbd) * sbdUsd;
+  const totalUsdVal = steemUsdVal + sbdUsdVal;
+
+  const fmt = (n: number, d = 3) =>
+    n.toLocaleString(undefined, {
+      maximumFractionDigits: d,
+      minimumFractionDigits: 0,
+    });
 
   return (
-    <div className="space-y-6">
-      <SCard
-        icon={TrendingUp}
-        iconColor="primary"
-        title="Wallet Balance"
-        titleClass="font-semibold"
-        classNames={{ body: "space-y-6" }}
-        className="card"
-        iconSize="sm"
-        description="Manage your wallet balance"
-        titleEndContent={
-          !isLoading &&
-          !error && (
-            <div className="flex flex-col items-end">
-              <p className="text-xs text-muted">
-                Est. Account Value
-              </p>
-              <p className="text-lg font-bold text-success">
-                $
-                {estimatedValue.toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </p>
-            </div>
-          )
-        }
+    <div className="space-y-4">
+      {/* ── Portfolio Summary Bar ─────────────────────────────────────── */}
+      <Card
+        shadow="none"
+        className="card border border-default-200 dark:border-default-100/40"
       >
-        <div className="grid gap-6">
-          {/* STEEM & SBD Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* STEEM Card */}
-            <div className="rounded-xl bg-default-50 border border-default-100 dark:border-default-50/50">
-              <div className="p-4 flex items-start gap-4">
-                <div className="p-3 bg-primary/10 rounded-xl text-primary">
-                  <SteemIcon className="w-6 h-6" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-1 mb-1">
-                    <p className="text-sm font-medium text-muted">
-                      STEEM
-                    </p>
-                    <Tooltip
-                      content={
-                        <div className="px-1 py-2 max-w-xs">
-                          <div className="text-small font-bold">STEEM</div>
-                          <div className="text-tiny text-default-500">
-                            Tradeable tokens that may be transferred anywhere at
-                            anytime. Steem can be converted to STEEM POWER in a
-                            process called powering up.
-                          </div>
-                        </div>
-                      }
-                    >
-                      <Info
-                        size={14}
-                        className="text-muted cursor-pointer opacity-50 hover:opacity-100"
-                      />
-                    </Tooltip>
-                  </div>
-                  <p className="font-semibold text-lg">
-                    {account.balance_steem.toLocaleString()}
-                  </p>
-                  {account.savings_steem > 0 && (
-                    <div className="mt-2 flex items-center gap-2">
-                      <div className="inline-flex items-center text-xs font-medium text-default-500 bg-default-100 px-2 py-1 rounded-full cursor-help">
-                        <Tooltip content="Balances subject to 3 day withdraw waiting period.">
-                          <span className="flex items-center gap-1">
-                            + {account.savings_steem.toLocaleString()} Savings
-                            <Info size={12} className="opacity-50" />
-                          </span>
-                        </Tooltip>
-                      </div>
-                      {isMe && (
-                        <Button
-                          size="sm"
-                          variant="flat"
-                          color="danger"
-                          className="h-6 min-w-0 px-2 text-xs"
-                          onPress={() => onWithdrawSavings("STEEM")}
-                        >
-                          Withdraw
-                        </Button>
-                      )}
-                    </div>
-                  )}
-                </div>
+        <CardBody className="p-4">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-default-500/30">
+                <DollarSign size={20} className="text-default-600" />
               </div>
-            </div>
-
-            {/* SBD Card */}
-            <div className="rounded-xl bg-default-50 border border-default-100 dark:border-default-50/50">
-              <div className="p-4 flex items-start gap-4">
-                <div className="p-3 bg-success/10 rounded-xl text-success">
-                  <CircleDollarSign className="w-6 h-6" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-1 mb-1">
-                    <p className="text-sm font-medium text-muted">
-                      SBD
-                    </p>
-                    <Tooltip
-                      content={
-                        <div className="px-1 py-2 max-w-xs">
-                          <div className="text-small font-bold">
-                            Steem Dollars (SBD)
-                          </div>
-                          <div className="text-tiny text-default-500">
-                            Tradeable tokens that may be transferred anywhere at
-                            anytime. SBD can be converted to STEEM over 3.5
-                            days. The amount received is based on the median
-                            price feed from witnesses during that period. Final
-                            results may vary due to price changes.
-                          </div>
-                        </div>
-                      }
-                    >
-                      <Info
-                        size={14}
-                        className="text-muted cursor-pointer opacity-50 hover:opacity-100"
-                      />
-                    </Tooltip>
-                  </div>
-                  <p className="font-semibold text-lg">
-                    {account.balance_sbd.toLocaleString()}
-                  </p>
-                  {account.savings_sbd > 0 && (
-                    <div className="mt-2 flex items-center gap-2">
-                      <div className="inline-flex items-center text-xs font-medium text-default-500 bg-default-100 px-2 py-1 rounded-full cursor-help">
-                        <Tooltip content="Balances subject to 3 day withdraw waiting period.">
-                          <span className="flex items-center gap-1">
-                            + {account.savings_sbd.toLocaleString()} Savings
-                            <Info size={12} className="opacity-50" />
-                          </span>
-                        </Tooltip>
-                      </div>
-                      {isMe && (
-                        <Button
-                          size="sm"
-                          variant="flat"
-                          color="danger"
-                          className="h-6 min-w-0 px-2 text-xs"
-                          onPress={() => onWithdrawSavings("SBD")}
-                        >
-                          Withdraw
-                        </Button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Steem Power Section */}
-          <div className="rounded-xl border border-default-200 dark:border-default-100 overflow-hidden space-y-4">
-            {/* Main SP Header */}
-            <div className="flex bg-default-50/50 items-center gap-4 p-5">
-              <div className="p-3 bg-secondary/10 rounded-xl text-secondary">
-                <Zap className="w-6 h-6" fill="currentColor" />
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4 w-full sm:items-center justify-between">
-                <div>
-                  <div className="flex items-center gap-1">
-                    <p className="text-sm font-medium text-muted">
-                      Effective Power
-                    </p>
-                    <Tooltip
-                      content={
-                        <div className="px-1 py-2 max-w-xs">
-                          <div className="text-small font-bold">
-                            STEEM POWER
-                          </div>
-                          <div className="text-tiny text-default-500">
-                            Influence tokens which give you more control over
-                            post payouts and allow you to earn on curation
-                            rewards. Part of {account.name}&apos;s STEEM POWER
-                            is currently delegated. Delegation is donated for
-                            influence or to help new users perform actions on
-                            Steemit. Your delegation amount can fluctuate. STEEM
-                            POWER increases at an APR of approximately 2.61%,
-                            subject to blockchain.
-                          </div>
-                        </div>
-                      }
-                    >
-                      <Info
-                        size={14}
-                        className="text-muted cursor-pointer opacity-50 hover:opacity-100"
-                      />
-                    </Tooltip>
-                  </div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="font-semibold text-lg">
-                      {(
-                        vestsToSteem(account.vests_own) -
-                        vestsToSteem(account.powerdown_done) -
-                        vestsToSteem(account.vests_out) +
-                        vestsToSteem(account.vests_in)
-                      ).toLocaleString()}
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-widest text-default-400">
+                  Portfolio Value
+                </p>
+                {showUsd ? (
+                  <p className="text-2xl font-bold leading-tight">
+                    ${fmt(totalUsdVal, 2)}
+                    <span className="text-xs font-normal text-default-400 ml-1">
+                      USD
                     </span>
-                    <span className="text-sm font-medium text-muted">
-                      SP
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <Divider
-                    className="h-10 hidden sm:block"
-                    orientation="vertical"
-                  />
-
-                  <div className="sm:text-right">
-                    <p className="text-xs text-muted">Own Power</p>
-                    <p className="font-semibold text-lg">
-                      {vestsToSteem(account.vests_own).toLocaleString()}
-                    </p>
-                  </div>
-                </div>
+                  </p>
+                ) : (
+                  <p className="text-2xl font-bold leading-tight text-default-300">
+                    —
+                  </p>
+                )}
               </div>
             </div>
 
-            {/* Delegation Breakdown (Previously separate card) */}
-            <div className="p-4 bg-default-50/20 border-t border-default-200">
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted mb-3">
-                Delegation Details
-              </h4>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5 p-1.5 rounded-md bg-danger/10 text-danger">
-                    <ArrowUpFromLine size={16} />
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted">Outgoing</p>
-                    <p className="text-sm font-semibold">
-                      {vestsToSteem(account.vests_out) > 0
-                        ? `-${vestsToSteem(account.vests_out).toLocaleString()}`
-                        : "-"}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5 p-1.5 rounded-md bg-success/10 text-green-600">
-                    <ArrowDownToLine size={16} />
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted">Incoming</p>
-                    <p className="text-sm font-semibold">
-                      {vestsToSteem(account.vests_in) > 0
-                        ? `+${vestsToSteem(account.vests_in).toLocaleString()}`
-                        : "-"}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5 p-1.5 rounded-md bg-warning/10 text-warning">
-                    <Clock size={16} />
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted">
-                      Expiring (5d)
-                    </p>
-                    <p className="text-sm font-semibold">
-                      {expiringCount > 0
-                        ? `${expiringCount} delegation${
-                            expiringCount !== 1 ? "s" : ""
-                          }`
-                        : "-"}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5 p-1.5 rounded-md bg-primary/10 text-primary">
-                    <SteemIcon size={16} />
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted">Available</p>
-                    <p className="text-sm font-semibold text-primary">
-                      {(
-                        vestsToSteem(account.vests_own) -
-                        vestsToSteem(account.vests_out) -
-                        vestsToSteem(account.powerdown) +
-                        vestsToSteem(account.powerdown_done)
-                      ).toLocaleString()}
-                    </p>
-                  </div>
-                </div>
+            {/* Sparkline-style token distribution pills */}
+            {showUsd && totalUsdVal > 0 && (
+              <div className="flex items-center gap-2 flex-wrap">
+                <TokenPill
+                  label="STEEM"
+                  pct={(steemUsdVal / totalUsdVal) * 100}
+                  color="bg-primary"
+                />
+                <TokenPill
+                  label="SBD"
+                  pct={(sbdUsdVal / totalUsdVal) * 100}
+                  color="bg-success"
+                />
               </div>
-            </div>
-          </div>
-        </div>
-      </SCard>
-
-      {session?.user?.name && (
-        <SCard
-        icon={Ellipsis}
-          title="Quick Actions"
-          iconColor="primary" // Reusing primary color for consistency
-          titleClass="font-semibold"
-          className="card"
-          iconSize="sm"
-        >
-          <div className="flex flex-wrap gap-2">
-            <Button
-              onPress={onTransfer}
-              variant="flat"
-              color="primary"
-              className="flex-1 min-w-[140px]"
-            >
-              <ArrowUpRight className="mr-2" size={18} />
-              Transfer
-            </Button>
-
-            {isMe && (
-              <>
-                <Button
-                  onPress={onPowerUp}
-                  variant="flat"
-                  color="secondary"
-                  className="flex-1 min-w-[140px]"
-                >
-                  <Zap className="mr-2" size={18} />
-                  Power Up
-                </Button>
-
-                <Button
-                  onPress={onPowerDown}
-                  variant="flat"
-                  className="flex-1 min-w-[140px]"
-                  color="warning"
-                >
-                  <ArrowDownLeft className="mr-2" size={18} />
-                  Power Down
-                </Button>
-
-                <Button
-                  onPress={onDelegate}
-                  variant="flat"
-                  className="flex-1 min-w-[140px]"
-                >
-                  <Users className="mr-2" size={18} />
-                  Delegate
-                </Button>
-              </>
             )}
           </div>
-        </SCard>
-      )}
+
+          {/* Distribution bar */}
+          {showUsd && totalUsdVal > 0 && (
+            <div className="mt-3 flex h-1.5 rounded-full overflow-hidden gap-0.5">
+              <div
+                className="bg-primary rounded-full transition-all"
+                style={{ width: `${(steemUsdVal / totalUsdVal) * 100}%` }}
+              />
+              <div
+                className="bg-success rounded-full transition-all"
+                style={{ width: `${(sbdUsdVal / totalUsdVal) * 100}%` }}
+              />
+            </div>
+          )}
+        </CardBody>
+      </Card>
+
+      {/* ── Token Grid ───────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* STEEM */}
+        <TokenCard
+          icon={<SteemIcon className="w-5 h-5" />}
+          iconClass="bg-primary/10 text-primary"
+          label="STEEM"
+          subtitle="Liquid"
+          amount={fmt(account.balance_steem)}
+          usdAmount={
+            showUsd ? `$${fmt(account.balance_steem * steemUsd, 2)}` : null
+          }
+          tooltip="Tradeable token that can be transferred anytime. Convert to STEEM POWER by powering up."
+          savings={
+            account.savings_steem > 0 ? fmt(account.savings_steem) : null
+          }
+          savingsLabel="Savings"
+          savingsTooltip="Subject to 3-day withdrawal waiting period"
+          actions={
+            session?.user?.name ? (
+              <div className="flex gap-2 mt-3 pt-3 border-t border-default-200 dark:border-default-100/20">
+                <Button
+                  size="sm"
+                  variant="flat"
+                  color="primary"
+                  className="flex-1 font-semibold text-xs h-8"
+                  startContent={<ArrowUpRight size={14} />}
+                  onPress={onTransfer}
+                >
+                  Transfer
+                </Button>
+                {isMe && (
+                  <Button
+                    size="sm"
+                    variant="flat"
+                    color="secondary"
+                    className="flex-1 font-semibold text-xs h-8"
+                    startContent={<Zap size={14} />}
+                    onPress={onPowerUp}
+                  >
+                    Power Up
+                  </Button>
+                )}
+              </div>
+            ) : null
+          }
+          onWithdraw={
+            isMe && account.savings_steem > 0
+              ? () => onWithdrawSavings("STEEM")
+              : undefined
+          }
+        />
+
+        {/* SBD */}
+        <TokenCard
+          icon={<CircleDollarSign size={20} />}
+          iconClass="bg-success/10 text-success"
+          label="Steem Dollars"
+          subtitle="SBD"
+          amount={fmt(account.balance_sbd)}
+          usdAmount={
+            showUsd ? `$${fmt(account.balance_sbd * sbdUsd, 2)}` : null
+          }
+          tooltip="Tokens designed to be pegged to $1 USD. Convertible to STEEM over 3.5 days."
+          savings={account.savings_sbd > 0 ? fmt(account.savings_sbd) : null}
+          savingsLabel="Savings"
+          savingsTooltip="Subject to 3-day withdrawal waiting period"
+          actions={
+            session?.user?.name ? (
+              <div className="flex gap-2 mt-3 pt-3 border-t border-default-200 dark:border-default-100/20">
+                <Button
+                  size="sm"
+                  variant="flat"
+                  color="success"
+                  className="flex-1 font-semibold text-xs h-8"
+                  startContent={<ArrowUpRight size={14} />}
+                  onPress={onTransfer}
+                >
+                  Transfer
+                </Button>
+              </div>
+            ) : null
+          }
+          onWithdraw={
+            isMe && account.savings_sbd > 0
+              ? () => onWithdrawSavings("SBD")
+              : undefined
+          }
+        />
+
+        {/* STEEM POWER */}
+        <Card
+          shadow="none"
+          className="card border border-default-200 dark:border-default-100/40 xs:col-span-1 sm:col-span-2"
+        >
+          <CardBody className="p-4 space-y-3">
+            {/* Header */}
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-xl bg-secondary/10 text-secondary shrink-0">
+                <Zap size={20} fill="currentColor" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <p className="text-sm font-semibold">Steem Power</p>
+                  <Tooltip
+                    content={
+                      <div className="px-1 py-2 max-w-xs">
+                        <div className="text-small font-bold">STEEM POWER</div>
+                        <div className="text-tiny text-default-500">
+                          Influence tokens for post payouts and curation
+                          rewards. Earns ~2.61% APR. Cannot be transferred
+                          directly.
+                        </div>
+                      </div>
+                    }
+                  >
+                    <Info
+                      size={13}
+                      className="text-muted cursor-help opacity-60 hover:opacity-100"
+                    />
+                  </Tooltip>
+                </div>
+                <div className="flex items-baseline gap-1.5 mt-0.5">
+                  <span className="text-xl font-bold font-mono">
+                    {fmt(effectiveSP)}
+                  </span>
+                  <span className="text-xs text-secondary font-bold">SP</span>
+                  <span className="text-[11px] text-default-400">
+                    (effective)
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* SP breakdown */}
+            <div className="rounded-lg bg-default-100 dark:bg-default-50/10 p-3 grid grid-cols-2 gap-x-4 gap-y-2.5">
+              <SpRow
+                icon={<Landmark size={13} />}
+                label="Own"
+                value={`${fmt(ownSP, 0)} SP`}
+                colorClass="text-default-600"
+              />
+              <SpRow
+                icon={<ArrowDownToLine size={13} />}
+                label="Delegated In"
+                value={inSP > 0 ? `+${fmt(inSP, 0)} SP` : "—"}
+                colorClass="text-success"
+              />
+              <SpRow
+                icon={<ArrowUpFromLine size={13} />}
+                label="Delegated Out"
+                value={outSP > 0 ? `-${fmt(outSP, 0)} SP` : "—"}
+                colorClass="text-danger"
+              />
+              <SpRow
+                icon={<Zap size={13} />}
+                label="Available"
+                value={`${fmt(availableSP, 0)} SP`}
+                colorClass="text-secondary"
+                bold
+              />
+              {expiringCount > 0 && (
+                <SpRow
+                  icon={<Clock size={13} />}
+                  label="Expiring (5d)"
+                  value={`${expiringCount} deleg.`}
+                  colorClass="text-warning"
+                />
+              )}
+            </div>
+
+            {/* SP actions */}
+            {isMe && (
+              <div className="flex gap-2 pt-1">
+                <Button
+                  size="sm"
+                  variant="flat"
+                  color="secondary"
+                  className="flex-1 font-semibold text-xs h-8"
+                  startContent={<Zap size={14} />}
+                  onPress={onPowerUp}
+                >
+                  Power Up
+                </Button>
+                <Button
+                  size="sm"
+                  variant="flat"
+                  color="warning"
+                  className="flex-1 font-semibold text-xs h-8"
+                  startContent={<ArrowDownLeft size={14} />}
+                  onPress={onPowerDown}
+                >
+                  Power Down
+                </Button>
+                <Button
+                  size="sm"
+                  variant="flat"
+                  className="flex-1 font-semibold text-xs h-8"
+                  startContent={<Users size={14} />}
+                  onPress={onDelegate}
+                >
+                  Delegate
+                </Button>
+              </div>
+            )}
+          </CardBody>
+        </Card>
+      </div>
     </div>
   );
 };
+
+// ─── Sub-components ────────────────────────────────────────────────────────
+
+function TokenPill({
+  label,
+  pct,
+  color,
+}: {
+  label: string;
+  pct: number;
+  color: string;
+}) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <span className={`w-2 h-2 rounded-full ${color} shrink-0`} />
+      <span className="text-[11px] text-default-500 font-medium">
+        {label}{" "}
+        <span className="font-bold text-foreground">{pct.toFixed(2)}%</span>
+      </span>
+    </div>
+  );
+}
+
+interface TokenCardProps {
+  icon: React.ReactNode;
+  iconClass: string;
+  label: string;
+  subtitle: string;
+  amount: string;
+  usdAmount: string | null;
+  tooltip: string;
+  savings: string | null;
+  savingsLabel: string;
+  savingsTooltip: string;
+  actions: React.ReactNode;
+  onWithdraw?: () => void;
+}
+
+function TokenCard({
+  icon,
+  iconClass,
+  label,
+  subtitle,
+  amount,
+  usdAmount,
+  tooltip,
+  savings,
+  savingsLabel,
+  savingsTooltip,
+  actions,
+  onWithdraw,
+}: TokenCardProps) {
+  return (
+    <Card
+      shadow="none"
+      className="card border border-default-200 dark:border-default-100/40"
+    >
+      <CardBody className="p-4 space-y-0">
+        {/* Token header */}
+        <div className="flex items-start gap-3">
+          <div className={`p-2 rounded-xl shrink-0 ${iconClass}`}>{icon}</div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5">
+              <p className="text-sm font-semibold">{label}</p>
+              <Chip
+                size="sm"
+                variant="flat"
+                className="h-5 text-[10px] px-1.5 font-bold"
+              >
+                {subtitle}
+              </Chip>
+              <Tooltip
+                content={
+                  <div className="px-1 py-2 max-w-xs">
+                    <div className="text-small font-bold">{label}</div>
+                    <div className="text-tiny text-default-500">{tooltip}</div>
+                  </div>
+                }
+              >
+                <Info
+                  size={13}
+                  className="text-muted cursor-help opacity-50 hover:opacity-100 ml-auto shrink-0"
+                />
+              </Tooltip>
+            </div>
+            <div className="mt-1 flex items-baseline gap-2">
+              <span className="text-xl font-bold font-mono">{amount}</span>
+              {usdAmount && (
+                <span className="text-xs text-default-400 font-medium">
+                  ≈ {usdAmount}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Savings row — always shown */}
+        <Divider className="my-3 bg-default-100 dark:bg-default-100/20" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            {savings ? (
+              <Tooltip content={savingsTooltip}>
+                <div className="flex items-center gap-1.5 cursor-help">
+                  <Landmark size={13} className="text-default-400" />
+                  <span className="text-xs text-default-500">
+                    {savingsLabel}:
+                    <span className="font-semibold text-foreground ml-1 font-mono">
+                      {savings}
+                    </span>
+                  </span>
+                  <Info size={12} className="text-default-400 opacity-60" />
+                </div>
+              </Tooltip>
+            ) : (
+              <div className="flex items-center gap-1.5">
+                <Landmark size={13} className="text-default-400" />
+                <span className="text-xs text-default-500">
+                  {savingsLabel}:{" "}
+                  <span className="font-medium text-default-400">
+                    — No savings
+                  </span>
+                </span>
+              </div>
+            )}
+          </div>
+          <div className="h-6">
+            {savings && onWithdraw && (
+              <Button
+                size="sm"
+                variant="flat"
+                color="danger"
+                className="h-6 min-w-0 px-2 text-[11px] font-bold"
+                onPress={onWithdraw}
+              >
+                Withdraw
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Context actions */}
+        {actions}
+      </CardBody>
+    </Card>
+  );
+}
+
+function SpRow({
+  icon,
+  label,
+  value,
+  colorClass,
+  bold,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  colorClass: string;
+  bold?: boolean;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center gap-1.5 min-w-0">
+        <span className={`shrink-0 ${colorClass}`}>{icon}</span>
+        <span className="text-[11px] text-default-600 dark:text-default-400 truncate">
+          {label}
+        </span>
+      </div>
+      <span
+        className={`text-[11px] font-mono shrink-0 ${colorClass} ${bold ? "font-bold" : "font-medium"}`}
+      >
+        {value}
+      </span>
+    </div>
+  );
+}

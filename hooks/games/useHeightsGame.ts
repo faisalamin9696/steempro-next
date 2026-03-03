@@ -194,8 +194,8 @@ export const useHeightsGame = ({
   const startGame = useCallback(async () => {
     setSessionInfo(null);
 
-    // Only generate secure session if user is logged in
-    if (session?.user?.name) {
+    // Only generate secure session if user is logged in and active season
+    if (session?.user?.name && currentSeason) {
       setIsGeneratingSession(true);
       try {
         const response = await fetch("/api/game/start", { method: "POST" });

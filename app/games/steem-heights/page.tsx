@@ -15,18 +15,18 @@ const SteemHeightsPage = () => {
   const leaderboardRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
-  useEffect(() => {
-    disableDevtool({
-      detectors: "all",
-      url: "not_found",
-      clearIntervalWhenDevOpenTrigger: true,
-      disableMenu: false,
-      clearLog: true,
-      ignore: () => {
-        return pathname !== "/games/steem-heights"; // Disable is ignored when you are an administrator
-      },
-    });
-  }, [pathname]);
+  // useEffect(() => {
+  //   disableDevtool({
+  //     detectors: "all",
+  //     url: "not_found",
+  //     clearIntervalWhenDevOpenTrigger: true,
+  //     disableMenu: false,
+  //     clearLog: true,
+  //     ignore: () => {
+  //       return pathname !== "/games/steem-heights"; // Disable is ignored when you are an administrator
+  //     },
+  //   });
+  // }, [pathname]);
 
   const scrollToLeaderboard = () => {
     leaderboardRef.current?.scrollIntoView({ behavior: "smooth" });

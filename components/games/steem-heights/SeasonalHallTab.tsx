@@ -10,7 +10,9 @@ import {
   Cloud,
   FileText,
   Clipboard,
+  ExternalLink,
 } from "lucide-react";
+import Link from "next/link";
 import SAvatar from "@/components/ui/SAvatar";
 import SUsername from "@/components/ui/SUsername";
 import { useState, useMemo } from "react";
@@ -514,6 +516,18 @@ export const SeasonalHallTab = ({ seasonalWinners, seasonalPosts }: Props) => {
                                       </span>
                                     </div>
                                   )}
+
+                                  {row.tid && (
+                                      <Link
+                                        href={`/explorer/transaction/${row.tid}`}
+                                        className="flex items-center gap-1 text-[9px] font-black text-primary-500/50 hover:text-primary-500 transition-colors uppercase"
+                                      >
+                                        <span className="truncate max-w-[50px]">
+                                          {row.tid}
+                                        </span>
+                                        <ExternalLink size={8} />
+                                      </Link>
+                                    )}
                                 </div>
                               ),
                             },

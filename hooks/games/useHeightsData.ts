@@ -164,8 +164,7 @@ export const useHeightsData = ({
         );
         if (playerStats) {
           if (!season || season === currentSeason) {
-            setUserStats((prev: any) => ({ ...prev, 
-                ...playerStats }));
+            setUserStats((prev: any) => ({ ...prev, ...playerStats }));
           }
           return playerStats;
         }
@@ -212,8 +211,8 @@ export const useHeightsData = ({
       fetchGameStats();
       fetchHeightsUserData();
       fetchUserHistory();
-      fetchSeasonalWinners();
     }
+    fetchSeasonalWinners();
   }, [
     currentSeason,
     fetchHighScores,

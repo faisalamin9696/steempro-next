@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
       score,
       combos,
       "steem-heights",
-      season || 1,
+      season || 0,
       gameKey,
       false,
       Constants.funds_account,

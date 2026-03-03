@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
       const isDuplicate = await checkActionDuplicate(
         player,
         action,
-        season || 1,
+        season || 0,
         supabaseServer,
       );
 
@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
     const result = await steemApi.recordGameShopUpdate(
       player,
       "steem-heights",
-      season || 1,
+      season || 0,
       energy || 0,
       skins || [],
       powerup || { name: "", updated_at: null },
@@ -123,7 +123,7 @@ export async function POST(req: NextRequest) {
     await supabaseServer.from("steempro_game_heights_shop").insert({
       player,
       game: "steem-heights",
-      season: season || 1,
+      season: season || 0,
       energy: energy || 0,
       skins: Array.isArray(skins) ? JSON.stringify(skins) : skins,
       powerup: typeof powerup === "object" ? JSON.stringify(powerup) : powerup,

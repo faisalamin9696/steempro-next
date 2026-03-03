@@ -20,6 +20,7 @@ import {
   House,
   Info,
   Landmark,
+  Layers,
   Receipt,
   Settings,
   ShieldUser,
@@ -63,6 +64,7 @@ function SDrawerContent() {
     {
       group: "Blockchain",
       items: [
+        { title: "Explorer", href: `/explorer`, icon: Layers },
         { title: "Market", href: `/market`, icon: ChartCandlestick },
         { title: "Witnesses", href: `/witnesses`, icon: Landmark },
         { title: "Proposals", href: `/proposals`, icon: Receipt },
@@ -219,14 +221,14 @@ function SDrawerContent() {
                   </div>
                 </div>
 
-                {(
+                {
                   <LogoutButton
                     size="lg"
                     color="danger"
                     variant="flat"
                     isIconOnly
                   />
-                )}
+                }
               </div>
             </div>
           </div>

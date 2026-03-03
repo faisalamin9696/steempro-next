@@ -206,6 +206,7 @@ export interface HighScore {
   score: number;
   plays?: number;
   combos?: number;
+  tid?: string;
   timestamp: number;
   created_at?: string;
 }

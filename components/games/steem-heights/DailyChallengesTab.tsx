@@ -263,7 +263,7 @@ export const DailyChallengesTab = ({
             })}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-12 px-4 text-center dark:bg-zinc-950/20 bg-zinc-300/30 rounded-4xl border border-white/5">
+          <div className="flex flex-col mt-4 items-center justify-center py-12 px-4 text-center dark:bg-zinc-950/20 bg-zinc-300/30 rounded-4xl border border-white/5">
             <div className="p-4 bg-zinc-800/30 rounded-3xl mb-4 text-zinc-500">
               <Zap size={32} />
             </div>
