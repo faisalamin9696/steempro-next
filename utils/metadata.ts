@@ -264,6 +264,7 @@ export const getMetadata = {
       },
     };
   },
+
   postAsync: async (author: string, permlink: string) => {
     author = author?.toLowerCase();
     permlink = permlink?.toLowerCase();
@@ -785,6 +786,41 @@ export const getMetadata = {
       description: pageDescription,
       keywords:
         "privacy policy SteemPro, privacy and policy, key management, security",
+      alternates: {
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [DEFAULT_IMAGE],
+      },
+    };
+  },
+  explorer: () => {
+    const pageTitle = "Blockchain Explorer - Real-time Steem Data | SteemPro";
+    const pageDescription =
+      "Explore the Steem blockchain in real-time. Browse blocks, lookup accounts, view transactions, and monitor global chain properties with SteemPro's advanced explorer.";
+    const url = "https://www.steempro.com/explorer";
+
+    return {
+      title: pageTitle,
+      description: pageDescription,
+      keywords: [
+        "steem explorer",
+        "blockchain explorer",
+        "steem blocks",
+        "steem transactions",
+        "steem account lookup",
+        "real-time blockchain data",
+        "steem stats",
+      ],
       alternates: {
         canonical: url,
       },

@@ -129,6 +129,7 @@ const CommentsList = ({ root }: CommentsListProps) => {
     setMarkdown("");
     setPayoutType(Constants.reward_types[1]);
     setBeneficiaries([]);
+    draftData.clearDraft();
   }
 
   if (error) {

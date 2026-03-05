@@ -101,12 +101,7 @@ export const WalletHistory = ({ username }: WalletHistoryProps) => {
               <span>{getConfig(row.op[0]).label}</span>
             </div>
             <Link
-              target="_blank"
-              href={`https://steemworld.org/block/${row.block_num}/${
-                row.virtual
-                  ? `virtual/${row.op_index}`
-                  : `${row.block_num}-${row.trans_index}`
-              }`}
+              href={`/explorer/block/${row.block_num}`}
               className="text-xs transition-colors font-mono flex items-center space-x-1 bg-default/50 px-2 py-1 rounded"
             >
               <span>#{row.block_num}</span>

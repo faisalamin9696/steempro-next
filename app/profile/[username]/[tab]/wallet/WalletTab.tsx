@@ -101,6 +101,7 @@ const WalletTab = ({ account }: { account: AccountExt }) => {
               <Tabs
                 defaultSelectedKey="history"
                 className="w-full"
+                variant="underlined"
                 color="secondary"
                 classNames={{
                   panel: "px-0",

@@ -39,13 +39,13 @@ export default function CommentCard({
   const commentRef = useRef<HTMLDivElement>(null);
 
   let { ...draftData } = useDraft(
-    `comment-editor-${comment.author}-${comment.permlink}`
+    `comment-editor-${comment.author}-${comment.permlink}`,
   );
 
   const commentData =
     useAppSelector(
       (state) =>
-        state.commentReducer.values[`${comment.author}/${comment.permlink}`]
+        state.commentReducer.values[`${comment.author}/${comment.permlink}`],
     ) ?? comment;
 
   const [draft, setDraft] = useState(draftData.draft);
@@ -54,7 +54,7 @@ export default function CommentCard({
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [edit, setEdit] = useState(false);
   const [replyText, setReplyText] = useState(
-    edit ? commentData?.body || "" : draft.body
+    edit ? commentData?.body || "" : draft.body,
   );
   const isLowQuality =
     Boolean(commentData.is_muted) || commentData.author_role === "muted";
@@ -82,7 +82,7 @@ export default function CommentCard({
 
   const postReplies = useAppSelector(
     (state) =>
-      state.repliesReducer.values[`${root.author}/${root.permlink}`] ?? []
+      state.repliesReducer.values[`${root.author}/${root.permlink}`] ?? [],
   );
 
   useEffect(() => {
@@ -103,7 +103,7 @@ export default function CommentCard({
     return postReplies.filter(
       (c) =>
         c.parent_author === comment.author &&
-        c.parent_permlink === comment.permlink
+        c.parent_permlink === comment.permlink,
     );
   }, [postReplies, comment.author, comment.permlink]);
 
@@ -127,6 +127,7 @@ export default function CommentCard({
     setReplyText("");
     setShowReplyInput(false);
     if (edit) setEdit(false);
+    draftData.clearDraft();
   }
 
   if (commentData.link_id === 0) {
@@ -183,7 +184,7 @@ export default function CommentCard({
             body={translatedBody || commentData.body}
             className={twMerge(
               "prose-sm! text-default-800!",
-              isLowQuality && "opacity-50 text-warning!"
+              isLowQuality && "opacity-50 text-warning!",
             )}
           />
         )}

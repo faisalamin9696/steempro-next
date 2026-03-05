@@ -197,11 +197,12 @@ const MarkdownEditor = ({
             throw new Error("No URL returned from server");
           }
 
-          // Replace the specific placeholder with the final markdown
+          // Replace the specific placeholder with the final markdown in the LATEST content
+          const latestText = textareaRef.current?.value || currentText;
           const finalMarkdown = `![${file.name}](${uploadResult})\n`;
 
           // Update our local tracking variable and the editor state
-          currentText = currentText.replace(placeholder, finalMarkdown);
+          currentText = latestText.replace(placeholder, finalMarkdown);
           onChange(currentText);
           setProgress(0);
 
@@ -214,8 +215,9 @@ const MarkdownEditor = ({
           const errorMessage = err?.message || "Unknown error";
           uploadErrors.push(`${file.name}: ${errorMessage}`);
 
+          const latestText = textareaRef.current?.value || currentText;
           const errorMarkdown = `![${file.name}](UPLOAD_FAILED)\n`;
-          currentText = currentText.replace(placeholder, errorMarkdown);
+          currentText = latestText.replace(placeholder, errorMarkdown);
           onChange(currentText);
           setProgress(0);
         }

@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -28,7 +26,7 @@ export default function MainWrapper({
     <div
       className={twMerge(
         "flex flex-col w-full mx-auto max-w-7xl px-2 mt-4",
-        rootClassName
+        rootClassName,
       )}
     >
       {top}

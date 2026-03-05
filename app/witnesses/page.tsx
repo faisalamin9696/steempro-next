@@ -35,6 +35,8 @@ import { useAccountsContext } from "@/components/auth/AccountsContext";
 import LoginAlertCard from "@/components/ui/LoginAlertCard";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
+import STabs from "@/components/ui/STabs";
+import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
 
 const WitnessesPage = ({ data }: { data: Witness[] }) => {
   const loginData = useAppSelector((s) => s.loginReducer.value);
@@ -43,6 +45,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [onlyVoted, setOnlyVoted] = useState(false);
   const [activeTab, setActiveTab] = useState("witnesses");
+  const { isMobile } = useDeviceInfo();
   const [proxyInput, setProxyInput] = useState("");
   const [isProxying, setIsProxying] = useState(false);
   const [highlightedWitness, setHighlightedWitness] = useState<string | null>(
@@ -249,7 +252,9 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
                 isOld ? "text-yellow-500" : "text-muted",
               )}
             >
-              <span className="text-sm">{parseFloat(row.reported_price.base)}</span>
+              <span className="text-sm">
+                {parseFloat(row.reported_price.base)}
+              </span>
               {isOld && <span className="text-xs font-mono">{"Outdated"}</span>}
             </span>
           </div>
@@ -333,150 +338,161 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
         />
       )}
 
-      <Tabs
+      <STabs
         aria-label="Witness Options"
         selectedKey={activeTab}
         onSelectionChange={(key) => setActiveTab(key as string)}
         color="primary"
+        items={[
+          {
+            id: "witnesses",
+            title: "Witnesses",
+            icon: <ShieldCheck size={18} />,
+            content: (
+              <div className="flex flex-col gap-6">
+                {loginData?.name && (
+                  <Checkbox
+                    isSelected={onlyVoted}
+                    onValueChange={setOnlyVoted}
+                    className="self-end"
+                    classNames={{
+                      label: "text-small text-muted font-medium",
+                    }}
+                  >
+                    Show only witnesses I've voted for{" "}
+                    {`(${loginData.witness_votes?.length}/30)`}
+                  </Checkbox>
+                )}
+
+                <Card className="card">
+                  <CardBody>
+                    <DataTable
+                      data={filteredWitnesses}
+                      columns={columns}
+                      searchPlaceholder="Search witnesses by name..."
+                      emptyMessage="No witnesses found"
+                      rowIdKey="name"
+                      highlightId={highlightedWitness || undefined}
+                    />
+                  </CardBody>
+                </Card>
+              </div>
+            ),
+          },
+          {
+            id: "proxy",
+            title: "Proxy",
+            icon: <UserCheck size={18} />,
+            content: (
+              <div className="pt-4">
+                {!loginData.name ? (
+                  <LoginAlertCard text="view proxy settings" />
+                ) : (
+                  <Card className="card">
+                    <CardBody className="gap-6 p-6">
+                      <div>
+                        <h3 className="text-lg font-bold mb-1">
+                          Set Voting Proxy
+                        </h3>
+                        <p className="text-sm text-muted">
+                          Choosing a proxy allows another user to vote for
+                          witnesses on your behalf. This handles your full
+                          witness voting power.
+                        </p>
+                      </div>
+
+                      <div className="flex flex-col gap-4">
+                        <SInput
+                          label="Proxy Username"
+                          placeholder="e.g. steempro.com"
+                          labelPlacement="outside"
+                          value={
+                            hasProxy
+                              ? (loginData.proxy ?? proxyInput)
+                              : proxyInput
+                          }
+                          onValueChange={setProxyInput}
+                          startContent={<span className="text-muted">@</span>}
+                          isClearable
+                          isDisabled={isProxying || hasProxy}
+                        />
+
+                        <div className="flex gap-3">
+                          <Button
+                            color="primary"
+                            className="flex-1"
+                            isLoading={isProxying}
+                            isDisabled={
+                              !proxyInput ||
+                              proxyInput === loginData?.name ||
+                              hasProxy
+                            }
+                            onPress={() => handleSetProxy(proxyInput)}
+                          >
+                            Set Proxy
+                          </Button>
+                          {hasProxy && (
+                            <Button
+                              color="danger"
+                              variant="flat"
+                              isLoading={isProxying}
+                              onPress={() => handleSetProxy("")}
+                            >
+                              Clear Proxy
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+
+                      {hasProxy && (
+                        <div className="p-4 bg-primary/5 border border-primary/10 rounded-xl flex items-center gap-3">
+                          <SAvatar username={loginData.proxy} size="sm" />
+                          <div>
+                            <p className="text-xs text-muted">Current Proxy</p>
+                            <SUsername
+                              username={loginData.proxy}
+                              className="font-bold"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </CardBody>
+                  </Card>
+                )}
+              </div>
+            ),
+          },
+          ...(userWitness
+            ? [
+                {
+                  id: "my-witness",
+                  title: "My Witness",
+                  icon: <Activity size={18} />,
+                  content: (
+                    <MyWitnessTab
+                      witness={userWitness}
+                      username={loginData.name}
+                    />
+                  ),
+                },
+              ]
+            : []),
+        ]}
         classNames={{
           panel: "px-0",
-          tabWrapper: "p-0",
+          tabList: "p-0",
         }}
-      >
-        <Tab
-          key="witnesses"
-          title={
-            <div className="flex items-center space-x-2">
-              <ShieldCheck size={18} />
-              <span>Witnesses</span>
-            </div>
-          }
-        >
-          <div className="flex flex-col gap-6">
-            {loginData?.name && (
-              <Checkbox
-                isSelected={onlyVoted}
-                onValueChange={setOnlyVoted}
-                className="self-end"
-                classNames={{
-                  label: "text-small text-muted font-medium",
-                }}
-              >
-                Show only witnesses I've voted for{" "}
-                {`(${loginData.witness_votes?.length}/30)`}
-              </Checkbox>
-            )}
-
-            <Card className="card">
-              <CardBody>
-                <DataTable
-                  data={filteredWitnesses}
-                  columns={columns}
-                  searchPlaceholder="Search witnesses by name..."
-                  emptyMessage="No witnesses found"
-                  rowIdKey="name"
-                  highlightId={highlightedWitness || undefined}
-                />
-              </CardBody>
-            </Card>
+        tabTitle={(tab) => (
+          <div className="flex items-center space-x-2">
+            {tab.icon}
+            {!isMobile || activeTab === tab.id ? (
+              <span>{tab.title}</span>
+            ) : null}{" "}
           </div>
-        </Tab>
-        <Tab
-          key="proxy"
-          title={
-            <div className="flex items-center space-x-2">
-              <UserCheck size={18} />
-              <span>Proxy</span>
-            </div>
-          }
-        >
-          <div className="pt-4">
-            {!loginData.name ? (
-              <LoginAlertCard text="view proxy settings" />
-            ) : (
-              <Card className="card">
-                <CardBody className="gap-6 p-6">
-                  <div>
-                    <h3 className="text-lg font-bold mb-1">Set Voting Proxy</h3>
-                    <p className="text-sm text-muted">
-                      Choosing a proxy allows another user to vote for witnesses
-                      on your behalf. This handles your full witness voting
-                      power.
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col gap-4">
-                    <SInput
-                      label="Proxy Username"
-                      placeholder="e.g. steempro.com"
-                      labelPlacement="outside"
-                      value={
-                        hasProxy ? (loginData.proxy ?? proxyInput) : proxyInput
-                      }
-                      onValueChange={setProxyInput}
-                      startContent={<span className="text-muted">@</span>}
-                      isClearable
-                      isDisabled={isProxying || hasProxy}
-                    />
-
-                    <div className="flex gap-3">
-                      <Button
-                        color="primary"
-                        className="flex-1"
-                        isLoading={isProxying}
-                        isDisabled={
-                          !proxyInput ||
-                          proxyInput === loginData?.name ||
-                          hasProxy
-                        }
-                        onPress={() => handleSetProxy(proxyInput)}
-                      >
-                        Set Proxy
-                      </Button>
-                      {hasProxy && (
-                        <Button
-                          color="danger"
-                          variant="flat"
-                          isLoading={isProxying}
-                          onPress={() => handleSetProxy("")}
-                        >
-                          Clear Proxy
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-
-                  {hasProxy && (
-                    <div className="p-4 bg-primary/5 border border-primary/10 rounded-xl flex items-center gap-3">
-                      <SAvatar username={loginData.proxy} size="sm" />
-                      <div>
-                        <p className="text-xs text-muted">Current Proxy</p>
-                        <SUsername
-                          username={loginData.proxy}
-                          className="font-bold"
-                        />
-                      </div>
-                    </div>
-                  )}
-                </CardBody>
-              </Card>
-            )}
-          </div>
-        </Tab>
-        {userWitness && (
-          <Tab
-            key="my-witness"
-            title={
-              <div className="flex items-center space-x-2">
-                <Activity size={18} />
-                <span>My Witness</span>
-              </div>
-            }
-          >
-            <MyWitnessTab witness={userWitness} username={loginData.name} />
-          </Tab>
         )}
-      </Tabs>
+      >
+        {(tab) => tab.content}
+      </STabs>
 
       {detailsOpen && selectedWitness && (
         <WitnessDetailsModal

@@ -2,8 +2,10 @@ import { Tab, Tabs, TabsProps } from "@heroui/tabs";
 import React from "react";
 import { twMerge } from "tailwind-merge";
 
-interface Props<T extends { id: string | number }>
-  extends Omit<TabsProps<T>, "children"> {
+interface Props<T extends { id: string | number }> extends Omit<
+  TabsProps<T>,
+  "children"
+> {
   children: (item: T) => React.ReactNode;
   tabTitle: (item: T) => React.ReactNode;
   tabHref?: (item: T) => string;
@@ -21,11 +23,11 @@ function STabs<T extends { id: string | number }>(props: Props<T>) {
         panel: twMerge("px-0 py-2", rest.classNames?.panel),
         tabList: twMerge(
           props.variant === "bordered" && "border border-border",
-          rest.classNames?.tabList
+          rest.classNames?.tabList,
         ),
       }}
     >
-      {(item: T) => (
+      {props.items?.map((item: T) => (
         <Tab
           key={item.id}
           href={tabHref ? tabHref(item) : undefined}
@@ -33,7 +35,7 @@ function STabs<T extends { id: string | number }>(props: Props<T>) {
         >
           {children(item)}
         </Tab>
-      )}
+      ))}
     </Tabs>
   );
 }

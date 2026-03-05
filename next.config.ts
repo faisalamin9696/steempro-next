@@ -140,6 +140,12 @@ const nextConfig: NextConfig = {
         source: "/GAMES/STEEM-HEIGHTS",
         destination: "/games/steem-heights",
       },
+
+      // explorer page uppercase handle
+      {
+        source: "/EXPLORER",
+        destination: "/explorer",
+      },
     ];
   },
 

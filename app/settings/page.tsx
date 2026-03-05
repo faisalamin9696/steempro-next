@@ -7,13 +7,16 @@ import GeneralSettings from "@/components/settings/GeneralSettings";
 import ProfileSettings from "@/components/settings/ProfileSettings";
 import SecuritySettings from "@/components/settings/SecuritySettings";
 import { useSession } from "next-auth/react";
+import STabs from "@/components/ui/STabs";
+import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("general");
   const { data: session } = useSession();
+  const { isMobile } = useDeviceInfo();
 
   return (
-    <Tabs
+    <STabs
       aria-label="Settings Options"
       color="primary"
       classNames={{
@@ -21,47 +24,48 @@ export default function SettingsPage() {
       }}
       selectedKey={activeTab}
       onSelectionChange={(key) => setActiveTab(key as string)}
+      items={[
+        {
+          id: "general",
+          title: "General",
+          icon: <Settings size={18} />,
+          content: (
+            <div className="animate-in fade-in slide-in-from-bottom-2 duration-400 ">
+              <GeneralSettings />
+            </div>
+          ),
+        },
+        {
+          id: "profile",
+          title: "Profile",
+          icon: <UserCircle size={18} />,
+          content: (
+            <div className="animate-in fade-in slide-in-from-bottom-2 duration-400">
+              <ProfileSettings />
+            </div>
+          ),
+        },
+        {
+          id: "security",
+          title: "Security",
+          icon: <Shield size={18} />,
+          content: (
+            <div className="animate-in fade-in slide-in-from-bottom-2 duration-400">
+              <SecuritySettings />
+            </div>
+          ),
+        },
+      ]}
+      tabTitle={(tab) => (
+        <div className="flex items-center space-x-2">
+          {tab.icon}
+          {!isMobile || activeTab === tab.id ? (
+            <span>{tab.title}</span>
+          ) : null}{" "}
+        </div>
+      )}
     >
-      <Tab
-        key="general"
-        title={
-          <div className="flex items-center space-x-2">
-            <Settings size={18} />
-            <span>General</span>
-          </div>
-        }
-      >
-        <div className="animate-in fade-in slide-in-from-bottom-2 duration-400 ">
-          <GeneralSettings />
-        </div>
-      </Tab>
-      <Tab
-        key="profile"
-        title={
-          <div className="flex items-center space-x-2">
-            <UserCircle size={18} />
-            <span>Profile</span>
-          </div>
-        }
-      >
-        <div className="animate-in fade-in slide-in-from-bottom-2 duration-400">
-          <ProfileSettings />
-        </div>
-      </Tab>
-
-      <Tab
-        key="security"
-        title={
-          <div className="flex items-center space-x-2">
-            <Shield size={18} />
-            <span>Security</span>
-          </div>
-        }
-      >
-        <div className="animate-in fade-in slide-in-from-bottom-2 duration-400">
-          <SecuritySettings />
-        </div>
-      </Tab>
-    </Tabs>
+      {(tab) => tab.content}
+    </STabs>
   );
 }
