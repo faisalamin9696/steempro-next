@@ -4,7 +4,6 @@ import { sdsApi } from "@/libs/sds";
 import { getAppDetails } from "@/utils/app";
 import { validateHost } from "@/utils/helper";
 import { parsePostMeta } from "@/utils/user";
-import { checkBotId } from "botid/server";
 import { NextRequest, NextResponse } from "next/server";
 import moment from "moment";
 
@@ -159,9 +158,8 @@ export async function POST(req: NextRequest) {
   try {
     const session = await auth();
     const username = session?.user?.name;
-    const verification = await checkBotId();
 
-    if (verification.isBot || !validateHost(req.headers.get("host"))) {
+    if (!validateHost(req.headers.get("host"))) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 

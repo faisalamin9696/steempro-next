@@ -5,7 +5,6 @@ import AppLayout from "./AppLayout";
 import { Suspense } from "react";
 import LoadingCard from "@/components/ui/LoadingCard";
 import { ThemeProvider } from "next-themes";
-import { BotIdClient } from "botid/client";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -72,49 +71,6 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <BotIdClient
-          protect={[
-            {
-              path: "/api/boost/request-permission",
-              method: "POST",
-            },
-            {
-              path: "/api/boost",
-              method: "POST",
-            },
-            {
-              path: "/api/translate",
-              method: "POST",
-            },
-            {
-              path: "/api/price",
-              method: "POST",
-            },
-            {
-              path: "/api/chat",
-              method: "POST",
-            },
-            {
-              path: "/api/track",
-              method: "POST",
-            },
-            {
-              path: "/api/auth/*",
-              method: "POST",
-            },
-            {
-              path: "/schedules",
-              method: "POST",
-            },
-            {
-              path: "/submit",
-              method: "POST",
-            },
-          ]}
-        />
-      </head>
-
       <body
         className={`*:${geistSans.variable} ${geistMono.variable}`}
         suppressHydrationWarning={true}

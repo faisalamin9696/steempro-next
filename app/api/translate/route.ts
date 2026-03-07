@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { rateLimiter } from "@/libs/rate-limit";
 import { translate } from "google-translate-api-x";
-import { checkBotId } from "botid/server";
 import { validateHost } from "@/utils/helper";
 
 export async function POST(req: NextRequest) {
   try {
-    const verification = await checkBotId();
-
-    if (verification.isBot || !validateHost(req.headers.get("host"))) {
+    if (!validateHost(req.headers.get("host"))) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
     const { text, targetLang, sourceLang = "auto" } = await req.json();

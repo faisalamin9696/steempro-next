@@ -1,7 +1,6 @@
 import { auth } from "@/auth";
 import { Constants } from "@/constants";
 import { validateHost } from "@/utils/helper";
-import { checkBotId } from "botid/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -9,9 +8,7 @@ export async function POST(req: NextRequest) {
     const session = await auth();
     const username = session?.user?.name;
 
-    const verification = await checkBotId();
-
-    if (verification.isBot || !validateHost(req.headers.get("host"))) {
+    if (!validateHost(req.headers.get("host"))) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
