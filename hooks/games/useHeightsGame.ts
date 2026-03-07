@@ -249,7 +249,7 @@ export const useHeightsGame = ({
 
     // Final step: trigger loops
     setGameState("playing");
-  }, [selectedSkin, session?.user?.name]);
+  }, [selectedSkin, session?.user?.name, currentSeason]);
 
   useEffect(() => {
     if (gameState !== "playing" || isPaused) return;
