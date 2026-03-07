@@ -3,9 +3,6 @@ import MainWrapper from "@/components/wrappers/MainWrapper";
 import { supabase } from "@/libs/supabase/supabase";
 import { getMetadata } from "@/utils/metadata";
 import { Metadata } from "next";
-
-import StructuredData from "@/components/seo/StructuredData";
-
 import { proxifyImageUrl } from "@/utils/proxifyUrl";
 
 async function getData() {
@@ -48,7 +45,6 @@ async function layout({
       {firstImage && (
         <link rel="preload" href={firstImage} as="image" fetchPriority="high" />
       )}
-      {category === "trending" && <StructuredData data={organizationLd} />}
       {children}
     </MainWrapper>
   );

@@ -88,19 +88,6 @@ export const getMetadata = {
       },
     };
   },
-  profileStructuredData: (username: string, account: AccountExt) => {
-    const { name, about } =
-      JSON.parse(account.posting_json_metadata || "{}")?.profile ?? {};
-    return {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      name: name || username,
-      alternateName: username,
-      description: about,
-      image: getResizedAvatar(username, "large"),
-      url: `https://www.steempro.com/@${username}`,
-    };
-  },
   profileSync: (username: string, tab: string, account: AccountExt) => {
     username = username?.toLowerCase();
     tab = tab?.toLowerCase();
@@ -313,30 +300,6 @@ export const getMetadata = {
         title: pageTitle,
         description: pageDescription,
         images: [thumbnail || DEFAULT_IMAGE],
-      },
-    };
-  },
-  postStructuredData: (post: Post) => {
-    return {
-      "@context": "https://schema.org",
-      "@type": "BlogPosting",
-      headline: post.title,
-      description: extractBodySummary(post.body, 160),
-      image: getThumbnail(post.json_images, "640x480"),
-      author: {
-        "@type": "Person",
-        name: post.author,
-        url: `https://www.steempro.com/@${post.author}`,
-      },
-      datePublished: new Date(post.created * 1000).toISOString(),
-      dateModified: new Date(post.last_update * 1000).toISOString(),
-      publisher: {
-        "@type": "Organization",
-        name: "SteemPro",
-        logo: {
-          "@type": "ImageObject",
-          url: "https://www.steempro.com/favicon.ico",
-        },
       },
     };
   },

@@ -7,7 +7,6 @@ import { Suspense } from "react";
 import PostPage from "./page";
 import { getMetadata } from "@/utils/metadata";
 import { Metadata } from "next";
-import StructuredData from "@/components/seo/StructuredData";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -21,11 +20,9 @@ async function layout({ children, params }: LayoutProps) {
     sdsApi.getAccountExt(author, session?.user?.name),
     sdsApi.getPost(author, permlink, session?.user?.name),
   ]);
-  const jsonLd = getMetadata.postStructuredData(post);
 
   return (
     <Suspense fallback={<Loader />}>
-      <StructuredData data={jsonLd} />
       <MainWrapper
         endClass="w-[320px] min-w-[320px] hidden lg:block"
         end={<ProfileCard account={account} className="card" />}
