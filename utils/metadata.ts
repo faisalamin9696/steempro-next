@@ -45,6 +45,9 @@ export const getMetadata = {
     tab = tab?.toLowerCase() || "blog";
 
     const result = await sdsApi.getAccountExt(username);
+    if (!result) {
+      return getMetadata.profileSync(username, tab, {} as any);
+    }
     const { name, about } =
       JSON.parse(result.posting_json_metadata || "{}")?.profile ?? {};
     const capTab = tab.charAt(0).toUpperCase() + tab.slice(1);
@@ -95,7 +98,7 @@ export const getMetadata = {
       tab = "blog";
     }
     const { name, about, website } =
-      JSON.parse(account.posting_json_metadata || "{}")?.profile ?? {};
+      JSON.parse(account?.posting_json_metadata || "{}")?.profile ?? {};
     const capCat = tab.charAt(0).toUpperCase() + tab.slice(1);
     const pageTitle = !!name
       ? `${name} (@${username}) - ${capCat} on the Decentralized Web`
@@ -256,6 +259,30 @@ export const getMetadata = {
     author = author?.toLowerCase();
     permlink = permlink?.toLowerCase();
     const result = await sdsApi.getPost(author, permlink);
+    if (!result || result.link_id === 0) {
+      const pageTitle = author ? `@${author}'s post` : "Post Not Found";
+      return {
+        title: pageTitle,
+        description: DEFAULT_DESCRIPTION,
+        keywords: [],
+        thumbnail: DEFAULT_IMAGE,
+        alternates: {
+          canonical: `https://www.steempro.com/@${author}/${permlink}`,
+        },
+        openGraph: {
+          title: pageTitle,
+          description: DEFAULT_DESCRIPTION,
+          url: `https://www.steempro.com/@${author}/${permlink}`,
+          images: [DEFAULT_IMAGE],
+        },
+        twitter: {
+          card: "summary_large_image",
+          title: pageTitle,
+          description: DEFAULT_DESCRIPTION,
+          images: [DEFAULT_IMAGE],
+        },
+      };
+    }
     const isReply = result?.depth > 0;
 
     const thumbnail = isReply
@@ -263,9 +290,9 @@ export const getMetadata = {
       : getThumbnail(result.json_images, "640x480");
     const pageTitle = isReply ? `RE: ${result?.root_title}` : result?.title;
     const pageDescription =
-      extractBodySummary(result?.body, 250, isReply) +
-        " by " +
-        result?.author || DEFAULT_DESCRIPTION;
+      (extractBodySummary(result?.body, 250, isReply) || "Untitled post") +
+      " by " +
+      (result?.author || "unknown");
     const url = `https://www.steempro.com/@${author}/${permlink}`;
 
     const keywords = [

@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, memo } from "react";
+import { forwardRef, memo, useCallback } from "react";
 import { Card } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -36,6 +36,7 @@ import { GameHUD } from "./elements/GameHUD";
 import { GhostMarkers } from "./elements/GhostMarkers";
 import { GameMenus } from "./elements/GameMenus";
 import { Overlays } from "./elements/Overlays";
+import { BlockStack } from "./elements/BlockStack";
 
 interface Props {
   gameState: "idle" | "playing" | "gameover";
@@ -52,6 +53,7 @@ interface Props {
   isSeasonActive: boolean;
   showPerfect: boolean;
   lastImpactTime: number;
+  lastImpactPos: { x: number; y: number } | null;
   activePowerUp: PowerUp | null;
   handleAction: () => void;
   setIsMuted: (muted: boolean) => void;
@@ -90,6 +92,7 @@ export const HeightsCanvas = memo(
         isSeasonActive,
         showPerfect,
         lastImpactTime,
+        lastImpactPos,
         activePowerUp,
         handleAction,
         setIsMuted,
@@ -114,35 +117,39 @@ export const HeightsCanvas = memo(
       const { isOpen, onOpen, onOpenChange } = useDisclosure();
       const viewY = Math.max(0, (blocks.length - 10) * BLOCK_HEIGHT);
 
-      const renderBlockIcon = (width: number) => {
-        if (width < 30) return null;
-        const iconSize = Math.min(12, width / 3);
-        const commonProps = {
-          size: iconSize,
-          className: "text-white/80 drop-shadow-sm",
-        };
+      const renderBlockIcon = useCallback(
+        (width: number) => {
+          if (width < 30) return null;
+          const iconSize = Math.min(12, width / 3);
+          const commonProps = {
+            size: iconSize,
+            className: "text-white/80 drop-shadow-sm",
+          };
 
-        switch (selectedSkin?.id) {
-          case "glacier":
-            return <Zap {...commonProps} />;
-          case "steel":
-            return <Shield {...commonProps} />;
-          case "phoenix":
-            return <Heart {...commonProps} />;
-          case "gold":
-            return <Star {...commonProps} />;
-          case "default":
-            return <Mountain {...commonProps} />;
-          default:
-            return null;
-        }
-      };
+          switch (selectedSkin?.id) {
+            case "glacier":
+              return <Zap {...commonProps} />;
+            case "steel":
+              return <Shield {...commonProps} />;
+            case "phoenix":
+              return <Heart {...commonProps} />;
+            case "gold":
+              return <Star {...commonProps} />;
+            case "default":
+              return <Mountain {...commonProps} />;
+            default:
+              return null;
+          }
+        },
+        [selectedSkin?.id],
+      );
 
       return (
-        <div className="flex flex-col gap-2 w-full max-w-full sm:max-w-[450px] group select-none sm:px-1">
+        <div className="flex flex-col gap-1 sm:gap-2 w-full max-w-full sm:max-w-[450px] group select-none sm:px-1">
           <GameHUD
             score={score}
             lives={lives}
+            timeLeft={timeLeft}
             activePowerUp={activePowerUp}
             gameState={gameState}
             windDrift={windDrift}
@@ -175,7 +182,7 @@ export const HeightsCanvas = memo(
           >
             {/* Countdown Progress Bar */}
             {gameState === "playing" && (
-              <div className="absolute top-0 left-0 w-full h-1 bg-zinc-900">
+              <div className="absolute top-0 left-0 w-full h-1 bg-zinc-900 z-41">
                 <motion.div
                   className="h-full shadow-[0_0_10px_rgba(245,158,11,0.5)]"
                   animate={{
@@ -244,19 +251,55 @@ export const HeightsCanvas = memo(
               }}
             />
 
+            {/* Deeper Parallax Layer (Distant Mountains / Nebulae) */}
+            <div
+              className="absolute inset-x-0 -top-[200%] -bottom-[200%] opacity-10 pointer-events-none"
+              style={{
+                backgroundImage:
+                  "radial-gradient(ellipse at 50% 100%, #3b82f6 0%, transparent 70%)",
+                backgroundSize: "100% 100%",
+                transform: `translate3d(0, ${(viewY / CANVAS_HEIGHT) * 15}%, 0)`,
+                filter: "blur(40px)",
+              }}
+            />
+
+            {/* Mid-range Parallax Layer (Deep Stars) */}
+            <div
+              className="absolute inset-x-0 -top-full -bottom-full opacity-15 pointer-events-none"
+              style={{
+                backgroundImage:
+                  "radial-gradient(circle at 1px 1px, white 0.5px, transparent 0)",
+                backgroundSize: "64px 64px",
+                transform: `translate3d(0, ${(viewY / CANVAS_HEIGHT) * 35}%, 0)`,
+              }}
+            />
+
             {/* Game Controls */}
             <div
-              className="absolute top-2 right-4 z-41 flex flex-col gap-2"
+              className="absolute top-3 right-4 z-41 flex flex-row gap-2"
               onMouseDown={(e) => e.stopPropagation()}
             >
               <Button
                 isIconOnly
                 size="sm"
                 variant="flat"
-                className="bg-zinc-900/80 backdrop-blur-md text-zinc-400 border border-white/5 hover:bg-zinc-800 transition-colors"
+                className="w-8 h-8 bg-zinc-900/40 backdrop-blur-xl text-zinc-400 border border-white/5 hover:bg-zinc-800/60 hover:text-white hover:border-white/10 transition-all duration-300 rounded-xl shadow-lg active:scale-95"
                 onPress={() => setIsMuted(!isMuted)}
               >
-                {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                <div className="relative">
+                  {isMuted ? (
+                    <VolumeX size={18} className="drop-shadow-sm" />
+                  ) : (
+                    <Volume2 size={18} className="drop-shadow-sm" />
+                  )}
+                  {!isMuted && (
+                    <motion.div
+                      animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="absolute inset-0 bg-white/20 rounded-full"
+                    />
+                  )}
+                </div>
               </Button>
 
               {gameState === "playing" && (
@@ -264,69 +307,62 @@ export const HeightsCanvas = memo(
                   isIconOnly
                   size="sm"
                   variant="flat"
-                  className="bg-zinc-900/80 backdrop-blur-md text-zinc-400 border border-white/5 hover:bg-zinc-800 transition-colors"
+                  className="w-8 h-8 bg-zinc-900/40 backdrop-blur-xl text-zinc-400 border border-white/5 hover:bg-zinc-800/60 hover:text-white hover:border-white/10 transition-all duration-300 rounded-xl shadow-lg active:scale-95"
                   onPress={() => setIsPaused(!isPaused)}
                 >
-                  {isPaused ? <Play size={16} /> : <Pause size={16} />}
+                  <div className="relative">
+                    {isPaused ? (
+                      <Play
+                        size={18}
+                        className="drop-shadow-sm fill-current ml-0.5"
+                      />
+                    ) : (
+                      <Pause
+                        size={18}
+                        className="drop-shadow-sm fill-current"
+                      />
+                    )}
+                  </div>
                 </Button>
               )}
             </div>
 
             <div
-              className="absolute w-full h-full bottom-0 transition-transform duration-500 ease-out"
+              className="absolute w-full h-full bottom-0 transition-transform duration-500 ease-out will-change-transform"
               style={{
-                transform: `translateY(${(viewY / CANVAS_HEIGHT) * 100}%)`,
+                transform: `translate3d(0, ${(viewY / CANVAS_HEIGHT) * 100}%, 0)`,
               }}
             >
               {gameState === "playing" && (
                 <GhostMarkers highScores={highScores} username={username} />
               )}
 
-              {blocks.map((block, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute rounded-sm shadow-sm border-t border-white/20 z-1 flex items-center justify-center overflow-hidden"
-                  style={{
-                    left: `${(block.x / CANVAS_WIDTH) * 100}%`,
-                    bottom: `${((CANVAS_HEIGHT - block.y - BLOCK_HEIGHT) / CANVAS_HEIGHT) * 100}%`,
-                    width: `${(block.width / CANVAS_WIDTH) * 100}%`,
-                    height: `${((BLOCK_HEIGHT - 1) / CANVAS_HEIGHT) * 100}%`,
-                    backgroundColor: block.color,
-                  }}
-                >
-                  <div className="absolute inset-0 bg-black/20" />
-                  {block.grow && (
-                    <motion.div
-                      className="absolute inset-0 bg-white"
-                      initial={{ opacity: 0.6 }}
-                      animate={{ opacity: 0 }}
-                      transition={{ duration: 0.4 }}
-                    />
-                  )}
-                  <div className="absolute inset-0 bg-linear-to-br from-white/10 to-transparent pointer-events-none" />
-                  {renderBlockIcon(block.width)}
-                </motion.div>
-              ))}
+              {/* Impact Shockwaves */}
+              <AnimatePresence mode="popLayout">
+                {lastImpactPos && (
+                  <motion.div
+                    key={lastImpactTime}
+                    initial={{ scale: 0.5, opacity: 0.8 }}
+                    animate={{ scale: 3.5, opacity: 0 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    className="absolute pointer-events-none border-2 border-white/40 rounded-full z-20"
+                    style={{
+                      left: `${(lastImpactPos.x / CANVAS_WIDTH) * 100}%`,
+                      bottom: `${((CANVAS_HEIGHT - lastImpactPos.y - BLOCK_HEIGHT) / CANVAS_HEIGHT) * 100}%`,
+                      width: "60px",
+                      height: "60px",
+                      marginLeft: "-30px", // Center the shockwave
+                      marginBottom: "-30px",
+                    }}
+                  />
+                )}
+              </AnimatePresence>
 
-              {debris.map((d, i) => (
-                <div
-                  key={`debris-${i}`}
-                  className="absolute rounded-sm shadow-lg border-t border-white/20 z-0"
-                  style={{
-                    left: `${(d.x / CANVAS_WIDTH) * 100}%`,
-                    bottom: `${((CANVAS_HEIGHT - d.y - BLOCK_HEIGHT) / CANVAS_HEIGHT) * 100}%`,
-                    width: `${(d.width / CANVAS_WIDTH) * 100}%`,
-                    height: `${((BLOCK_HEIGHT - 1) / CANVAS_HEIGHT) * 100}%`,
-                    backgroundColor: d.color,
-                    transform: `rotate(${d.rotation}deg)`,
-                    opacity: 0.8,
-                  }}
-                />
-              ))}
+              <BlockStack blocks={blocks} renderBlockIcon={renderBlockIcon} />
 
               {currentBlock && gameState === "playing" && (
                 <motion.div
-                  className="absolute rounded-sm shadow-xl border-t border-white/40 z-10 flex items-center justify-center overflow-hidden"
+                  className="absolute rounded-sm shadow-xl border-t border-white/40 z-10 flex items-center justify-center overflow-hidden will-change-transform"
                   style={{
                     left: `${(currentBlock.x / CANVAS_WIDTH) * 100}%`,
                     bottom: `${((CANVAS_HEIGHT - currentBlock.y - BLOCK_HEIGHT) / CANVAS_HEIGHT) * 100}%`,
@@ -343,7 +379,23 @@ export const HeightsCanvas = memo(
                   {renderBlockIcon(currentBlock.width)}
                 </motion.div>
               )}
+
+              {debris.map((d, i) => (
+                <div
+                  key={`debris-${i}`}
+                  className="absolute rounded-sm shadow-sm border-t border-white/10 z-5 opacity-60 will-change-transform"
+                  style={{
+                    left: `${(d.x / CANVAS_WIDTH) * 100}%`,
+                    bottom: `${((CANVAS_HEIGHT - d.y - BLOCK_HEIGHT) / CANVAS_HEIGHT) * 100}%`,
+                    width: `${(d.width / CANVAS_WIDTH) * 100}%`,
+                    height: `${((BLOCK_HEIGHT - 1) / CANVAS_HEIGHT) * 100}%`,
+                    backgroundColor: d.color,
+                    transform: `rotate(${d.rotation}deg)`,
+                  }}
+                />
+              ))}
             </div>
+  
 
             <Overlays
               showPerfect={showPerfect}

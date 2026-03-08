@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, memo } from "react";
 import { ScrollShadow } from "@heroui/react";
 import { HighScore } from "./Config";
 import {
@@ -11,14 +11,7 @@ import {
   Share2,
   Award,
   Filter,
-  BarChart2,
-  Mountain,
-  Gamepad2,
-  Target as PrecisionIcon,
-  RefreshCw,
-  Info,
 } from "lucide-react";
-import { Progress } from "@heroui/progress";
 import { useDisclosure } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { ActivityPublishModal } from "./ActivityPublishModal";
@@ -31,8 +24,6 @@ import {
 } from "./Config";
 import { getRewardPool, getCoopConfig } from "./HeightsInfo";
 import { getCommunityReward } from "./GlobalSummitTab";
-import { DAILY_CHALLENGES } from "./Config";
-import { Zap } from "lucide-react";
 import { getSeasonFromTitle } from "@/hooks/games/useHeightsSeason";
 
 interface Props {
@@ -57,21 +48,22 @@ interface Props {
   fetchUserHistory: (season?: number) => Promise<HighScore[]>;
 }
 
-export const MyResultsTab = ({
-  userStats,
-  userHistory,
-  username,
-  highScores,
-  seasonPost,
-  currentSeason,
-  seasonalHistory,
-  energy,
-  dailyProgress,
-  claimChallenge,
-  syncingChallengeId,
-  fetchHeightsUserData,
-  fetchUserHistory,
-}: Props) => {
+export const MyResultsTab = memo(
+  ({
+    userStats,
+    userHistory,
+    username,
+    highScores,
+    seasonPost,
+    currentSeason,
+    seasonalHistory,
+    energy,
+    dailyProgress,
+    claimChallenge,
+    syncingChallengeId,
+    fetchHeightsUserData,
+    fetchUserHistory,
+  }: Props) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedSeason, setSelectedSeason] = useState<number>(currentSeason);
   const [seasonStats, setSeasonStats] = useState<any>(userStats);
@@ -329,4 +321,4 @@ export const MyResultsTab = ({
       />
     </div>
   );
-};
+});

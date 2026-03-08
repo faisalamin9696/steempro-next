@@ -21,13 +21,15 @@ export const GhostMarkers = memo(
           return (
             <div
               key={`ghost-${hs.player}-${hidx}`}
-              className="absolute w-full border-t border-dashed border-zinc-500/20 z-0 flex items-center justify-start pointer-events-none"
+              className="absolute w-full border-t border-dashed border-zinc-500/20 z-0 flex items-center justify-start pointer-events-none will-change-transform"
               style={{
-                bottom: `${((hs.score * BLOCK_HEIGHT) / CANVAS_HEIGHT) * 100}%`,
+                transform: `translate3d(0, ${-((hs.score * BLOCK_HEIGHT) / CANVAS_HEIGHT) * CANVAS_HEIGHT}px, 0)`,
+                left: 0,
+                bottom: 0,
               }}
             >
               <div
-                className={`flex items-center gap-2 bg-zinc-950/60 backdrop-blur-xs px-2 py-1 rounded-r-xl border-r border-y ${
+                className={`flex items-center gap-2 bg-zinc-950/80 px-2 py-1 rounded-r-xl border-r border-y ${
                   isOwn
                     ? "border-amber-500/50 shadow-[0_0_10px_rgba(245,158,11,0.2)]"
                     : "border-zinc-500/20"

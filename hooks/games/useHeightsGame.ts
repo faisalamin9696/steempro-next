@@ -67,6 +67,10 @@ export const useHeightsGame = ({
   const [isSavingScore, setIsSavingScore] = useState(false);
   const [showPerfect, setShowPerfect] = useState(false);
   const [lastImpactTime, setLastImpactTime] = useState(0);
+  const [lastImpactPos, setLastImpactPos] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
   const [timeLeft, setTimeLeft] = useState(TIME_LIMIT);
   const [isPaused, setIsPaused] = useState(false);
   const [combos, setCombos] = useState(0);
@@ -142,21 +146,30 @@ export const useHeightsGame = ({
           }
         }
 
-        const signature = sessionInfo
-          ? generateHMAC(
-              `${session?.user?.name}:${sessionInfo.gameId}:${sessionInfo.challenge}:${score}:${combos}`,
-              sessionInfo.challenge,
-            )
-          : "";
+        if (!sessionInfo?.gameId || !sessionInfo?.challenge) {
+          console.error("Missing session info for score submission");
+          // Optionally notify the user or handle as a session error
+          return;
+        }
+
+        const signature = generateHMAC(
+          `${session?.user?.name}:${sessionInfo.gameId}:${sessionInfo.challenge}:${score}:${combos || 0}`,
+          sessionInfo.challenge,
+        );
+
+        if (!signature) {
+          console.error("Failed to generate signature");
+          return;
+        }
 
         const response = await fetch("/api/game/submit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            score,
-            season: currentSeason,
-            combos,
-            gameId: sessionInfo?.gameId,
+            score: Number(score),
+            season: Number(currentSeason || 0),
+            combos: Number(combos || 0),
+            gameId: sessionInfo.gameId,
             signature,
           }),
         });
@@ -195,20 +208,24 @@ export const useHeightsGame = ({
     setSessionInfo(null);
 
     // Only generate secure session if user is logged in and active season
-    if (session?.user?.name && currentSeason) {
+    if (session?.user?.name) {
       setIsGeneratingSession(true);
       try {
         const response = await fetch("/api/game/start", { method: "POST" });
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to initialize session");
+        }
         const data = await response.json();
-        if (data.success) {
+        if (data.success && data.gameId && data.challenge) {
           setSessionInfo({ gameId: data.gameId, challenge: data.challenge });
         } else {
-          toast.error(data.error || "Failed to generate game session");
+          toast.error("Invalid session data received");
           setGameState("idle");
           return;
         }
-      } catch (error) {
-        toast.error("Connectivity error. Please try again.");
+      } catch (error: any) {
+        toast.error(error.message || "Connectivity error. Please try again.");
         setGameState("idle");
         return;
       } finally {
@@ -332,7 +349,7 @@ export const useHeightsGame = ({
             rotation: d.rotation + d.velocity * 2 * dtScale,
           }))
           .filter((d) => d.y < CANVAS_HEIGHT + 100)
-          .slice(-10); // Performance: Only keep last 10 debris items
+          .slice(-10);
       });
 
       requestRef.current = requestAnimationFrame(update);
@@ -427,6 +444,10 @@ export const useHeightsGame = ({
       }
     }
 
+    // Set impact position for visual effects
+    setLastImpactPos({ x: leftEdge + newWidth / 2, y: current.y });
+    setLastImpactTime(Date.now());
+
     if (newWidth <= 0) {
       if (lives > 1) {
         setLives((l) => l - 1);
@@ -486,6 +507,7 @@ export const useHeightsGame = ({
     isSavingScore,
     showPerfect,
     lastImpactTime,
+    lastImpactPos,
     timeLeft,
     isPaused,
     setIsPaused,

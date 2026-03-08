@@ -4,8 +4,9 @@ import { htmlDecode } from "./htmlDecode";
 export function extractBodySummary(
   body: string,
   length = 140,
-  strip_quotes = false
+  strip_quotes = false,
 ): string {
+  if (!body) return "";
   let desc = body;
 
   // Remove block quotes

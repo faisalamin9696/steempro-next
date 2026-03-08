@@ -22,7 +22,7 @@ export const Overlays = memo(
               exit={{ opacity: 0, y: -250, scale: 1.3 }}
               className="absolute inset-x-0 bottom-1/2 pointer-events-none  flex items-center justify-center text-center z-40"
             >
-              <div className="text-amber-500 font-black italic tracking-widest text-5xl drop-shadow-[0_4px_20px_rgba(245,158,11,0.8)]">
+              <div className="text-amber-400 font-black italic tracking-widest text-4xl drop-shadow-[0_4px_20px_rgba(245,158,11,0.8)]">
                 PERFECT!
               </div>
             </motion.div>
