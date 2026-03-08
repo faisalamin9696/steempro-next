@@ -1,7 +1,10 @@
+"use client";
+
 import { steemApi } from "@/libs/steem";
 import { handleSteemError } from "@/utils/steemApiError";
 import { Button, ButtonProps } from "@heroui/button";
 import { UserMinus, UserPlus } from "lucide-react";
+
 import { useState } from "react";
 import { useAccountsContext } from "../auth/AccountsContext";
 import { useSession } from "next-auth/react";

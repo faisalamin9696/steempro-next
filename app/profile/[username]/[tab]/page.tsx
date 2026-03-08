@@ -20,27 +20,40 @@ import { FeedList } from "@/components/FeedList";
 
 const ICON_SIZE = 20;
 
-function ProfilePage({ account }: { account: AccountExt }) {
+import { sdsApi } from "@/libs/sds";
+
+function ProfilePage({ account: initAccount }: { account?: AccountExt }) {
   const { username, tab } = useParams() as { username: string; tab: string };
+  const [account, setAccount] = useState<AccountExt | undefined>(initAccount);
   const initialTab = tab ?? "blog";
   const loginData = useAppSelector((s) => s.loginReducer.value);
   const otherProfileData = useAppSelector(
-    (s) => s.profileReducer.values[account.name],
+    (s) => s.profileReducer.values[account?.name || ""],
   );
+
   const [selectedKey, setSelectedKey] = useState(initialTab);
   const { data: session } = useSession();
   const { useSmaller } = useDeviceInfo();
   const isMobile = useSmaller("sm");
-  const isMe = session?.user?.name === account.name;
+
+  useEffect(() => {
+    if (!account && username) {
+      sdsApi.getAccountExt(username, session?.user?.name).then(setAccount);
+    }
+  }, [username, account, session]);
+
+  const isMe = session?.user?.name === account?.name;
   const profileData = isMe ? loginData : (otherProfileData ?? account);
   const { layout, className } = useFeedLayout();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (isMe) {
-      dispatch(addLoginHandler(account));
-    } else {
-      dispatch(addProfileHandler(account));
+    if (account) {
+      if (isMe) {
+        dispatch(addLoginHandler(account));
+      } else {
+        dispatch(addProfileHandler(account));
+      }
     }
   }, [account, isMe]);
 
@@ -101,7 +114,10 @@ function ProfilePage({ account }: { account: AccountExt }) {
             color="primary"
           >
             {(tab) => (
-              <FeedList apiPath={tab.api} observer={session?.user?.name} />
+              <FeedList
+                apiPath={tab.api || ""}
+                observer={session?.user?.name || ""}
+              />
             )}
           </STabs>
         ),
@@ -116,17 +132,19 @@ function ProfilePage({ account }: { account: AccountExt }) {
         id: "communities",
         title: "Communities",
         icon: <Users size={ICON_SIZE} />,
-        children: <CommunitiesTab account={profileData} />,
+        children: profileData ? <CommunitiesTab account={profileData} /> : null,
       },
       {
         id: "wallet",
         title: "Wallet",
         icon: <Wallet size={ICON_SIZE} />,
-        children: <WalletTab account={profileData} />,
+        children: profileData ? <WalletTab account={profileData} /> : null,
       },
     ],
     [apiParams, isMobile, profileData],
   );
+
+  if (!profileData) return null;
 
   const normalizedTab = ["posts", "friends", "comments", "replies"].includes(
     tab,
@@ -177,7 +195,10 @@ function ProfilePage({ account }: { account: AccountExt }) {
           tab?.children ? (
             tab.children
           ) : (
-            <FeedList apiPath={tab.api} observer={session?.user?.name} />
+            <FeedList
+              apiPath={tab.api || ""}
+              observer={session?.user?.name || ""}
+            />
           )
         }
       </STabs>

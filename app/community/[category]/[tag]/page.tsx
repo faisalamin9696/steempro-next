@@ -17,26 +17,62 @@ import HomeCarousal from "@/components/carousal/HomeCarousal";
 
 const ICON_SIZE = 20;
 
+import { sdsApi } from "@/libs/sds";
+import moment from "moment";
+import { getThumbnail } from "@/utils/image";
+
 function CommunityPage({
-  community,
-  account,
-  pinnedPost,
+  community: initCommunity,
+  account: initAccount,
+  pinnedPost: initPinnedPost,
 }: {
-  community: Community;
-  account: AccountExt;
-  pinnedPost: PromotedPost[];
+  community?: Community;
+  account?: AccountExt;
+  pinnedPost?: PromotedPost[];
 }) {
   const { category, tag } = useParams() as { category: string; tag: string };
+  const [community, setCommunity] = useState<Community | undefined>(
+    initCommunity,
+  );
+  const [account, setAccount] = useState<AccountExt | undefined>(initAccount);
+  const [pinnedPost, setPinnedPost] = useState<PromotedPost[]>(
+    initPinnedPost || [],
+  );
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    if (!initCommunity && tag) {
+      const commAccount = `hive-${tag}`;
+      Promise.all([
+        sdsApi.getAccountExt(commAccount, session?.user?.name),
+        sdsApi.getCommunity(commAccount, session?.user?.name),
+        sdsApi.getCommunityPinnedPosts(commAccount, session?.user?.name),
+      ]).then(([acc, comm, pinned]) => {
+        setAccount(acc);
+        setCommunity(comm);
+        setPinnedPost(
+          (pinned ?? [])?.map((item) => ({
+            author: item.author,
+            permlink: item.permlink,
+            title: item.title,
+            thumbnail: getThumbnail(item.json_images, "640x0")!,
+            id: item.link_id.toString(),
+            created_at: moment.unix(item.created).toISOString(),
+          })),
+        );
+      });
+    }
+  }, [tag, initCommunity, session]);
+
   const initialTab = category ?? "trending";
   const [selectedKey, setSelectedKey] = useState(initialTab);
-  const { data: session } = useSession();
   const { useSmaller } = useDeviceInfo();
   const isMobile = useSmaller("sm");
   const dispatch = useAppDispatch();
 
   const communityData =
     useAppSelector(
-      (state) => state.communityReducer.values[community.account],
+      (state) => state.communityReducer.values[community?.account || ""],
     ) ?? community;
 
   useEffect(() => {
@@ -50,7 +86,7 @@ function CommunityPage({
     updateMetadata({ title, description });
   };
 
-  const apiParams = `/${community.account}`;
+  const apiParams = `/${community?.account || ""}`;
 
   const communityTabs = useMemo(
     () => [
@@ -78,11 +114,15 @@ function CommunityPage({
         id: "log",
         title: "Activities",
         icon: <Logs size={ICON_SIZE} />,
-        children: <CommuntiyLog account={community.account} />,
+        children: community?.account ? (
+          <CommuntiyLog account={community.account} />
+        ) : null,
       },
     ],
-    [apiParams, isMobile],
+    [apiParams, isMobile, community?.account],
   );
+
+  if (!community || !account) return null;
 
   return (
     <div className="flex flex-col gap-2">
@@ -132,7 +172,10 @@ function CommunityPage({
           tab.children ? (
             tab.children
           ) : (
-            <FeedList apiPath={tab.api} observer={session?.user?.name} />
+            <FeedList
+              apiPath={tab.api || ""}
+              observer={session?.user?.name || ""}
+            />
           )
         }
       </STabs>

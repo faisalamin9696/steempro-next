@@ -1,3 +1,5 @@
+"use client";
+
 import { getResizedAvatar } from "@/utils/image";
 import { Avatar, AvatarProps } from "@heroui/avatar";
 import Link from "next/link";

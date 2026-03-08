@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { Button, ButtonProps } from "@heroui/button";
 import { PencilLine, Share } from "lucide-react";

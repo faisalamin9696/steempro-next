@@ -29,7 +29,7 @@ export const GameHUD = memo(
     scrollToLeaderboard,
   }: GameHUDProps) => {
     return (
-      <div className="px-3 py-2 sm:px-4 sm:py-3 bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-2xl sm:rounded-3xl mb-1 sm:mb-2 flex justify-between items-center shadow-2xl">
+      <div className="px-3 py-2 sm:px-4 sm:py-3 bg-zinc-200 dark:bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-2xl sm:rounded-3xl mb-1 sm:mb-2 flex justify-between items-center shadow-2xl">
         <div className="flex items-center gap-3 sm:gap-6">
           {/* Main Score Display */}
           <div className="flex flex-col">
@@ -49,7 +49,7 @@ export const GameHUD = memo(
               </button>
             </div>
             <div className="flex items-baseline gap-0.5 sm:gap-1">
-              <span className="text-xl sm:text-3xl font-black italic tracking-tighter text-white drop-shadow-sm">
+              <span className="text-xl sm:text-3xl font-black italic tracking-tighter drop-shadow-sm">
                 {score}
               </span>
               <span className="text-xs sm:text-sm font-black italic text-zinc-500">
@@ -59,7 +59,7 @@ export const GameHUD = memo(
           </div>
 
           {/* Stats Divider - Hidden on very small screens if compact */}
-          <div className="hidden sm:block w-px h-8 bg-white/5" />
+          <div className="hidden sm:block w-px h-8 dark:bg-white/5 bg-black/5" />
 
           {/* Hearts & Powerups */}
           <div className="flex flex-col gap-1 sm:gap-1.5">
@@ -140,7 +140,7 @@ export const GameHUD = memo(
                   className={`w-1 sm:h-1.5 sm:w-1.5 h-1 rounded-full ${windDrift === 0 ? "bg-zinc-700" : "bg-amber-500 animate-pulse"}`}
                 />
               </div>
-              <span className="text-xs sm:text-sm font-black text-white tabular-nums">
+              <span className="text-xs sm:text-sm font-black tabular-nums">
                 {windDrift === 0
                   ? "--"
                   : `${Math.abs(windDrift * 10).toFixed(1)} ${windDrift > 0 ? "→" : "←"}`}
@@ -152,7 +152,7 @@ export const GameHUD = memo(
             size="sm"
             variant="flat"
             onPress={scrollToLeaderboard}
-            className="lg:hidden h-7 sm:h-9 px-3 sm:px-4 bg-white/5 hover:bg-white/10 text-white font-black uppercase text-[8px] sm:text-[10px] tracking-widest rounded-xl sm:rounded-2xl border border-white/5 active:scale-95 transition-all"
+            className="lg:hidden h-7 sm:h-9 px-3 sm:px-4 bg-black/10 dark:bg-white/5 hover:bg-white/10 font-black uppercase text-[8px] sm:text-[10px] tracking-widest rounded-xl sm:rounded-2xl border border-white/5 active:scale-95 transition-all"
           >
             Rankings
           </Button>

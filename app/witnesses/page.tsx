@@ -38,7 +38,12 @@ import { twMerge } from "tailwind-merge";
 import STabs from "@/components/ui/STabs";
 import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
 
-const WitnessesPage = ({ data }: { data: Witness[] }) => {
+import { sdsApi } from "@/libs/sds";
+import { useSession } from "next-auth/react";
+
+const WitnessesPage = ({ data: initData }: { data?: Witness[] }) => {
+  const [data, setData] = useState<Witness[]>(initData || []);
+  const { data: session } = useSession();
   const loginData = useAppSelector((s) => s.loginReducer.value);
   const [votingFor, setVotingFor] = useState<string | null>(null);
   const [selectedWitness, setSelectedWitness] = useState<Witness | null>(null);
@@ -53,6 +58,13 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
   );
   const dispatch = useAppDispatch();
   const { authenticateOperation } = useAccountsContext();
+
+  useEffect(() => {
+    if (!data || data.length === 0) {
+      sdsApi.getWitnessesByRank(session?.user?.name || null, 200).then(setData);
+    }
+  }, [initData, session?.user?.name]);
+
   const hasProxy = !!loginData?.proxy;
 
   useEffect(() => {
@@ -69,12 +81,14 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
       return () => window.removeEventListener("hashchange", handleHashChange);
     }
   }, []);
+
   const userWitness = useMemo(() => {
-    if (!loginData.name) return null;
+    if (!loginData.name || !data) return null;
     return data.find((w) => w.name === loginData.name);
   }, [data, loginData.name]);
 
   const filteredWitnesses = useMemo(() => {
+    if (!data) return [];
     let result = [...data];
     if (onlyVoted) {
       result = result.filter((w) => w.observer_votes_witness === 1);
@@ -90,6 +104,8 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
 
     return result;
   }, [data, onlyVoted, highlightedWitness]);
+
+  if (!data || data.length === 0) return null;
 
   const handleViewDetails = (witness: Witness) => {
     setSelectedWitness(witness);
@@ -115,8 +131,8 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
         `Successfully ${approve ? "voted for" : "unvoted"} ${witnessName}`,
       );
       const updatedList = approve
-        ? loginData.witness_votes.concat(witnessName)
-        : loginData.witness_votes.filter((w) => w !== witnessName);
+        ? (loginData?.witness_votes || []).concat(witnessName)
+        : (loginData?.witness_votes || []).filter((w) => w !== witnessName);
       dispatch(
         addLoginHandler({
           ...loginData,
@@ -266,7 +282,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
       key: "name",
       header: "Action",
       render: (value, row) => {
-        const issVoted = loginData.witness_votes.includes(value);
+        const issVoted = loginData?.witness_votes?.includes(value) ?? false;
         return (
           <div className="flex items-center gap-2">
             <Button
@@ -320,7 +336,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
             <div className="flex items-center gap-2 mt-1">
               <span>You are currently proxying your votes to</span>
               <SUsername
-                username={loginData.proxy}
+                username={loginData?.proxy || ""}
                 className="font-bold underline"
               />
               <Button
@@ -471,7 +487,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
                   content: (
                     <MyWitnessTab
                       witness={userWitness}
-                      username={loginData.name}
+                      username={loginData?.name || ""}
                     />
                   ),
                 },
