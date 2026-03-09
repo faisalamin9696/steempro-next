@@ -3,13 +3,10 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactCompiler: true,
   cacheComponents: true,
-  // turbopack: {
-  //   root: join(__dirname, ".."),
-  // },
   experimental: {
     turbopackFileSystemCacheForDev: true,
-    cssChunking: true, // default
   },
+  productionBrowserSourceMaps: true,
   transpilePackages: ["lottie-react", "lottie-web", "lucide-react", "next"],
   images: {
     qualities: [25, 50, 75],
@@ -142,20 +139,6 @@ const nextConfig: NextConfig = {
       {
         source: "/EXPLORER",
         destination: "/explorer",
-      },
-    ];
-  },
-
-  async headers() {
-    return [
-      {
-        source: "/:path*\\.(svg|jpg|jpeg|png|gif|ico|json|webp|woff2)",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
       },
     ];
   },

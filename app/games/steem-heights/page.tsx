@@ -41,7 +41,7 @@ const SteemHeightsPage = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-center">
               {/* Game Canvas - Order 1 on mobile, 2 on desktop */}
               <div className="flex flex-col items-center order-1 lg:order-2 h-svh sm:h-screen">
-                <div className="w-full max-w-[450px] relative">
+                <div className="w-full max-w-112.5 relative">
                   <div className="absolute -inset-8 bg-amber-500/5 blur-[100px] rounded-full opacity-50 pointer-events-none" />
                   <HeightsCanvas
                     {...heights}

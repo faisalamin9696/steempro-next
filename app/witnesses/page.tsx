@@ -480,7 +480,6 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
         ]}
         classNames={{
           panel: "px-0",
-          tabList: "p-0",
         }}
         tabTitle={(tab) => (
           <div className="flex items-center space-x-2">

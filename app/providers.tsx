@@ -17,7 +17,6 @@ import ScrollToTop from "@/components/ui/ScrollToTop";
 import LoadingCard from "@/components/ui/LoadingCard";
 import { ScrollToTopButton } from "@/components/ScrollToTopButton";
 import { Toaster } from "sonner";
-import { TempsAnalyticsProvider } from "@temps-sdk/react-analytics";
 
 function Providers({
   children,
@@ -36,7 +35,6 @@ function Providers({
   }, []);
 
   return (
-    <TempsAnalyticsProvider basePath="/api/_temps">
       <SessionProvider
         session={session}
         refetchInterval={60 * 60} // Refetch every 1 hour to keep session alive
@@ -85,7 +83,6 @@ function Providers({
           />
         </Suspense>
       </SessionProvider>
-    </TempsAnalyticsProvider>
   );
 }
 

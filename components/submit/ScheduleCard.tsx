@@ -123,7 +123,7 @@ export default function ScheduleCard({ schedule, onRefresh }: Props) {
   };
 
   return (
-    <Card className="post-card w-full shadow-sm">
+    <Card className="post-card w-full">
       <CardBody className="gap-3">
         <div className="flex flex-col gap-2">
           <div className="flex flex-row  gap-2 items-center">

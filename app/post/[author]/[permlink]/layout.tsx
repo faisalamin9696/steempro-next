@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import PostPage from "./page";
 import { getMetadata } from "@/utils/metadata";
 import { Metadata } from "next";
+import PostLoading from "@/components/ui/PostLoader";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -22,7 +23,7 @@ async function layout({ children, params }: LayoutProps) {
   ]);
 
   return (
-    <Suspense fallback={<Loader />}>
+    <Suspense fallback={<PostLoading />}>
       <MainWrapper
         endClass="w-[320px] min-w-[320px] hidden lg:block"
         end={<ProfileCard account={account} className="card" />}
