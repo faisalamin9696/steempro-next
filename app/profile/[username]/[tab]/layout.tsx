@@ -22,7 +22,13 @@ async function layout({
   const account = await sdsApi.getAccountExt(username, session?.user?.name);
 
   return (
-    <Suspense fallback={<ProfileHeaderSkeleton />}>
+    <Suspense
+      fallback={
+        <MainWrapper>
+          <ProfileHeaderSkeleton />
+        </MainWrapper>
+      }
+    >
       <MainWrapper
         endClass="w-[320px] min-w-[320px] 1md:hidden! lg:block!"
         end={<ProfileCard account={account} className="card" />}

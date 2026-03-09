@@ -5,7 +5,6 @@ import AppLayout from "./AppLayout";
 import { Suspense } from "react";
 import LoadingCard from "@/components/ui/LoadingCard";
 import { ThemeProvider } from "next-themes";
-import { TempsAnalyticsProvider } from "@temps-sdk/react-analytics";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -76,17 +75,15 @@ export default async function RootLayout({
         className={`*:${geistSans.variable} ${geistMono.variable}`}
         suppressHydrationWarning={true}
       >
-        <TempsAnalyticsProvider basePath="/api/_temps">
-          <ThemeProvider
-            attribute="class"
-            disableTransitionOnChange
-            defaultTheme="dark"
-          >
-            <Suspense fallback={<LoadingCard />}>
-              <AppLayout>{children}</AppLayout>
-            </Suspense>
-          </ThemeProvider>
-        </TempsAnalyticsProvider>
+        <ThemeProvider
+          attribute="class"
+          disableTransitionOnChange
+          defaultTheme="dark"
+        >
+          <Suspense fallback={<LoadingCard />}>
+            <AppLayout>{children}</AppLayout>
+          </Suspense>
+        </ThemeProvider>
       </body>
     </html>
   );

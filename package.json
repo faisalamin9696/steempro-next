@@ -16,7 +16,6 @@
     "@steempro/dsteem": "^1.0.6",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.93.1",
-    "@temps-sdk/react-analytics": "^0.0.3",
     "axios": "^1.13.2",
     "babel-plugin-react-compiler": "^1.0.0",
     "class-variance-authority": "^0.7.1",
