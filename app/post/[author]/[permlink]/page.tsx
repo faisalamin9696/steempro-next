@@ -19,56 +19,43 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
 import { CircleSlash2 } from "lucide-react";
-import { useSession } from "next-auth/react";
-
-import { sdsApi } from "@/libs/sds";
 
 export default function PostPage({
   initAuthor,
   initPermlink,
-  data: initData,
+  data,
 }: {
   initAuthor?: string;
   initPermlink?: string;
-  data?: Post;
+  data: Post;
 }) {
-  let { author: paramAuthor, permlink: paramPermlink } = useParams() as {
+  let { author, permlink } = useParams() as {
     author: string;
     permlink: string;
   };
-  const [data, setData] = useState<Post | undefined>(initData);
   const dispatch = useAppDispatch();
 
-  const author = initAuthor || paramAuthor;
-  const permlink = initPermlink || paramPermlink;
-
-  const { data: session } = useSession();
-
-  useEffect(() => {
-    if (!data && author && permlink) {
-      sdsApi.getPost(author, permlink, session?.user?.name).then(setData);
-    }
-  }, [author, permlink, data, session]);
-
+  if (initAuthor && initPermlink) {
+    author = initAuthor;
+    permlink = initPermlink;
+  }
   const [edit, setEdit] = useState(false);
 
   const commentData =
     useAppSelector(
       (state) =>
-        state.commentReducer.values[
-          `${data?.author || author}/${data?.permlink || permlink}`
-        ],
+        state.commentReducer.values[`${data?.author}/${data?.permlink}`],
     ) ?? data;
   const [translatedBody, setTranslatedBody] = useState<string | null>(null);
   const [translatedTitle, setTranslatedTitle] = useState<string | null>(null);
   const [isTranslated, setIsTranslated] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState<string>();
-  const isMuted = Boolean(commentData?.is_muted);
+  const isMuted = Boolean(commentData.is_muted);
   const handleViewTrack = useCallback(async () => {
     if (
-      !commentData?.author ||
-      !commentData?.permlink ||
-      commentData?.link_id === 0
+      !commentData.author ||
+      !commentData.permlink ||
+      commentData.link_id === 0
     )
       return;
     try {
@@ -76,7 +63,7 @@ export default function PostPage({
     } catch (error) {
       // ignore error
     }
-  }, [commentData?.author, commentData?.permlink, commentData?.link_id]);
+  }, [commentData.author, commentData.permlink, commentData.link_id]);
 
   useEffect(() => {
     if (data) {
@@ -86,11 +73,11 @@ export default function PostPage({
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if ((commentData?.depth ?? 0) > 0) return;
+      if (commentData.depth ?? 0 > 0) return;
       handleViewTrack();
     }, 30000); // 30 seconds to count view
     return () => clearTimeout(timer);
-  }, [handleViewTrack, commentData?.depth]);
+  }, [handleViewTrack]);
 
   useEffect(() => {
     const hash = window.location.hash?.slice(1);
@@ -107,7 +94,7 @@ export default function PostPage({
     setCurrentLanguage(language);
 
     // Also translate the title if it exists
-    if (commentData?.title) {
+    if (commentData.title) {
       try {
         const { translateText } = await import("@/utils/translate");
         const titleResult = await translateText(
@@ -129,9 +116,7 @@ export default function PostPage({
     setCurrentLanguage(undefined);
   };
 
-  if (!data) return null;
-
-  if (commentData?.link_id === 0) {
+  if (commentData.link_id === 0) {
     return (
       <div className="flex flex-col items-center">
         <Alert

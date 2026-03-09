@@ -9,20 +9,13 @@ import { Input } from "@heroui/input";
 import { Search } from "lucide-react";
 import { useAppSelector } from "@/hooks/redux/store";
 
-import { sdsApi } from "@/libs/sds";
-import { useSession } from "next-auth/react";
-import { useEffect } from "react";
-
 function CommunitiesPage({
-  data: initData,
+  data,
   account,
 }: {
-  data?: Community[];
+  data: Community[];
   account?: string;
 }) {
-  const [data, setData] = useState<Community[]>(initData || []);
-  const { data: session } = useSession();
-
   const loginData = useAppSelector((s) => s.loginReducer.value);
   const [search, setSearch] = useState("");
   const [onlySubscribed, setOnlySubscribed] = useState(false);
@@ -33,14 +26,6 @@ function CommunitiesPage({
     }
     return data;
   }, [data, onlySubscribed]);
-
-  useEffect(() => {
-    if ((!initData || initData.length === 0) && !account) {
-      sdsApi.getCommunities(session?.user?.name, 500).then(setData);
-    }
-  }, [initData, account, session]);
-
-  if (!data || data.length === 0) return null;
 
   const filterCommunities = (community: Community, term: string) => {
     const query = term.toLowerCase();

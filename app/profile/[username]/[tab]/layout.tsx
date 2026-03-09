@@ -1,5 +1,6 @@
 import MainWrapper from "@/components/wrappers/MainWrapper";
 import { sdsApi } from "@/libs/sds";
+import ProfilePage from "./page";
 import { Suspense } from "react";
 import ProfileHeaderSkeleton from "@/components/skeleton/ProfileHeaderSkeleton";
 import ProfileCard from "@/components/profile/ProfileCard";
@@ -27,7 +28,7 @@ async function layout({
         end={<ProfileCard account={account} className="card" />}
       >
         <ProfileHeader key={"profile-header"} account={account} />
-        {children}
+        <ProfilePage key={"profile"} account={account} />
       </MainWrapper>
     </Suspense>
   );
