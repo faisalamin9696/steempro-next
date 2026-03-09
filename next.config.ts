@@ -11,8 +11,6 @@ const nextConfig: NextConfig = {
     cssChunking: true, // default
   },
   transpilePackages: ["lottie-react", "lottie-web", "lucide-react", "next"],
-  productionBrowserSourceMaps: true,
-
   images: {
     qualities: [25, 50, 75],
     unoptimized: true,
