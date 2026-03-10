@@ -12,19 +12,24 @@ const nextConfig: NextConfig = {
     qualities: [25, 50, 75],
     unoptimized: false,
     remotePatterns: [
+      // {
+      //   protocol: "https",
+      //   hostname: "cdn.steemitimages.com",
+      //   port: "",
+      // },
+      // {
+      //   protocol: "https",
+      //   hostname: "steemitimages.com",
+      //   port: "",
+      // },
+      // {
+      //   protocol: "https",
+      //   hostname: "images.steempro.com",
+      //   port: "",
+      // },
       {
         protocol: "https",
-        hostname: "cdn.steemitimages.com",
-        port: "",
-      },
-      {
-        protocol: "https",
-        hostname: "steemitimages.com",
-        port: "",
-      },
-      {
-        protocol: "https",
-        hostname: "images.steempro.com",
+        hostname: "*",
         port: "",
       },
     ],
@@ -142,7 +147,6 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  
 };
 
 export default nextConfig;
