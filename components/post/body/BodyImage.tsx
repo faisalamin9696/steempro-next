@@ -108,7 +108,7 @@ function BodyImage({
           as={NextImage}
           src={src}
           alt={alt}
-          width={640}
+          width={0}
           height={0}
           isZoomed
           className={twMerge(

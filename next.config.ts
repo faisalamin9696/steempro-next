@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
   transpilePackages: ["lottie-react", "lottie-web", "lucide-react", "next"],
   images: {
     qualities: [25, 50, 75],
-    unoptimized: false,
+    unoptimized: true,
     remotePatterns: [
       // {
       //   protocol: "https",
