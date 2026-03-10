@@ -17,6 +17,7 @@ import ScrollToTop from "@/components/ui/ScrollToTop";
 import LoadingCard from "@/components/ui/LoadingCard";
 import { ScrollToTopButton } from "@/components/ScrollToTopButton";
 import { Toaster } from "sonner";
+import { TempsAnalyticsProvider } from "@temps-sdk/react-analytics";
 
 function Providers({
   children,
@@ -35,25 +36,28 @@ function Providers({
   }, []);
 
   return (
-      <SessionProvider
-        session={session}
-        refetchInterval={60 * 60} // Refetch every 1 hour to keep session alive
-        refetchOnWindowFocus={true} // Refresh when user comes back to the tab
-      >
-        <ScrollToTop />
-        <ReduxProvider store={store}>
-          <HeroUIProvider navigate={router.push}>
-            <SWRConfig
-              value={{
-                refreshInterval: 10 * 60 * 1000,
-                revalidateOnFocus: false,
-                errorRetryCount: 3,
-                shouldRetryOnError: true,
-                dedupingInterval: 10000,
-                loadingTimeout: 20000,
-              }}
-            >
-              <AccountsProvider>
+    <SessionProvider
+      session={session}
+      refetchInterval={60 * 60} // Refetch every 1 hour to keep session alive
+      refetchOnWindowFocus={true} // Refresh when user comes back to the tab
+    >
+      <ScrollToTop />
+      <ReduxProvider store={store}>
+        <HeroUIProvider navigate={router.push}>
+          <SWRConfig
+            value={{
+              refreshInterval: 10 * 60 * 1000,
+              revalidateOnFocus: false,
+              errorRetryCount: 3,
+              shouldRetryOnError: true,
+              dedupingInterval: 10000,
+              loadingTimeout: 20000,
+            }}
+          >
+            <AccountsProvider>
+              <TempsAnalyticsProvider
+                enableSessionRecording={process.env.NODE_ENV === "production"}
+              >
                 <AppWrapper globals={globals}>
                   <div className="flex flex-col">
                     <SNavbar />
@@ -70,19 +74,20 @@ function Providers({
                     <Toaster richColors closeButton />
                   </div>
                 </AppWrapper>
-              </AccountsProvider>
-            </SWRConfig>
-          </HeroUIProvider>
-        </ReduxProvider>
-        <Suspense fallback={null}>
-          <Next13ProgressBar
-            height="4px"
-            color="#ED4D5E"
-            options={{ showSpinner: false }}
-            showOnShallow
-          />
-        </Suspense>
-      </SessionProvider>
+              </TempsAnalyticsProvider>
+            </AccountsProvider>
+          </SWRConfig>
+        </HeroUIProvider>
+      </ReduxProvider>
+      <Suspense fallback={null}>
+        <Next13ProgressBar
+          height="4px"
+          color="#ED4D5E"
+          options={{ showSpinner: false }}
+          showOnShallow
+        />
+      </Suspense>
+    </SessionProvider>
   );
 }
 

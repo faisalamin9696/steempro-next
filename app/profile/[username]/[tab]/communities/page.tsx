@@ -1,6 +1,6 @@
 "use client";
 
-import CommunitiesPage from "@/app/communities/page";
+import CommunitiesPage from "@/app/communities/(site)/CommunitiesPage";
 import LoadingStatus from "@/components/LoadingStatus";
 import { sdsApi } from "@/libs/sds";
 import useSWR from "swr";

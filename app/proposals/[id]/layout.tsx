@@ -1,35 +1,10 @@
 import React, { Suspense } from "react";
-import ProposalPage from "./page";
-import { sdsApi } from "@/libs/sds";
-import MainWrapper from "@/components/wrappers/MainWrapper";
-import LoadingCard from "@/components/ui/LoadingCard";
-import { auth } from "@/auth";
 import { getMetadata } from "@/utils/metadata";
 import { Metadata } from "next";
+import LoadingStatus from "@/components/LoadingStatus";
 
-async function layout({
-  children,
-  params,
-}: {
-  children: React.ReactNode;
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const session = await auth();
-  const proposal = await sdsApi.getProposal(parseInt(id));
-  const post = await sdsApi.getPost(
-    proposal.creator,
-    proposal.permlink,
-    session?.user?.name
-  );
-
-  return (
-    <Suspense fallback={<LoadingCard />}>
-      <MainWrapper>
-        <ProposalPage data={proposal} post={post} />
-      </MainWrapper>
-    </Suspense>
-  );
+async function layout({ children }: { children: React.ReactNode }) {
+  return <Suspense fallback={<LoadingStatus />}>{children}</Suspense>;
 }
 
 export default layout;

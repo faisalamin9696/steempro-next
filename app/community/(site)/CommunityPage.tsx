@@ -1,30 +1,24 @@
 "use client";
 
-import CommunityCard from "@/components/community/CommunityCard";
 import CommuntiyLog from "@/components/community/CommuntiyLog";
 import STabs from "@/components/ui/STabs";
 import { addCommunityHandler } from "@/hooks/redux/reducers/CommunityReducer";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
 import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
 import { getMetadata, updateMetadata } from "@/utils/metadata";
-import { Accordion, AccordionItem } from "@heroui/accordion";
 import { TrendingUp, Sparkles, ClockPlus, Logs } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import { Key, useEffect, useMemo, useState } from "react";
 import { FeedList } from "@/components/FeedList";
-import HomeCarousal from "@/components/carousal/HomeCarousal";
 
 const ICON_SIZE = 20;
 
 import { sdsApi } from "@/libs/sds";
-import moment from "moment";
-import { getThumbnail } from "@/utils/image";
 
 function CommunityPage({
   community: initCommunity,
   account: initAccount,
-  pinnedPost: initPinnedPost,
 }: {
   community?: Community;
   account?: AccountExt;
@@ -35,9 +29,7 @@ function CommunityPage({
     initCommunity,
   );
   const [account, setAccount] = useState<AccountExt | undefined>(initAccount);
-  const [pinnedPost, setPinnedPost] = useState<PromotedPost[]>(
-    initPinnedPost || [],
-  );
+
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -46,20 +38,9 @@ function CommunityPage({
       Promise.all([
         sdsApi.getAccountExt(commAccount, session?.user?.name),
         sdsApi.getCommunity(commAccount, session?.user?.name),
-        sdsApi.getCommunityPinnedPosts(commAccount, session?.user?.name),
-      ]).then(([acc, comm, pinned]) => {
+      ]).then(([acc, comm]) => {
         setAccount(acc);
         setCommunity(comm);
-        setPinnedPost(
-          (pinned ?? [])?.map((item) => ({
-            author: item.author,
-            permlink: item.permlink,
-            title: item.title,
-            thumbnail: getThumbnail(item.json_images, "640x0")!,
-            id: item.link_id.toString(),
-            created_at: moment.unix(item.created).toISOString(),
-          })),
-        );
       });
     }
   }, [tag, initCommunity, session]);
@@ -126,38 +107,13 @@ function CommunityPage({
 
   return (
     <div className="flex flex-col gap-2">
-      <Accordion
-        isCompact
-        variant="bordered"
-        className="border-1 block lg:hidden"
-        itemClasses={{
-          title: "text-muted",
-          indicator: "text-foreground text-muted",
-        }}
-      >
-        <AccordionItem key="profile" aria-label="Profile details" title="About">
-          <CommunityCard
-            community={communityData}
-            account={account}
-            classNames={{
-              base: "shadow-none! border-none! bg-transparent",
-              body: "pt-0!",
-            }}
-          />
-        </AccordionItem>
-      </Accordion>
-      {pinnedPost?.length > 0 && (
-        <div className="mt-3">
-          <HomeCarousal data={pinnedPost} showPagination />
-        </div>
-      )}
       <STabs
         key={`tabs-community-${session?.user?.name || "anonymous"}`}
         variant="bordered"
         selectedKey={selectedKey}
         onSelectionChange={handleSelectionChange}
         items={communityTabs}
-        className={pinnedPost.length > 0 ? "" : "md:mt-3"}
+        className={"md:mt-3"}
         tabHref={(tab) => `/${tab.id}/${community.account}`}
         tabTitle={(tab) => (
           <div className="flex items-center space-x-2">

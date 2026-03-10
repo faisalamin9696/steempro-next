@@ -1,3 +1,5 @@
+"use client";
+
 import { sdsApi } from "@/libs/sds";
 import { useEffect, useState, useCallback, useRef } from "react";
 import PostCard from "./post/PostCard";

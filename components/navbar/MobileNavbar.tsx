@@ -52,7 +52,7 @@ export function MobileNavbar() {
     () => [
       {
         label: "Home",
-        href: showScrollUp ? "#" : "/",
+        href: showScrollUp ? "" : "/",
         icon: showScrollUp ? ChevronsUp : House,
         onClick: showScrollUp ? scrollToTop : undefined,
         active:
@@ -66,7 +66,7 @@ export function MobileNavbar() {
       },
       {
         label: "Activity",
-        href: isAuth ? `/@${username}/notifications` : "#",
+        href: isAuth ? `/@${username}/notifications` : "",
         onClick: (e: React.MouseEvent) => {
           if (!isAuth) {
             e.preventDefault();
@@ -88,7 +88,7 @@ export function MobileNavbar() {
       },
       {
         label: "Wallet",
-        href: isAuth ? `/@${username}/wallet` : "#",
+        href: isAuth ? `/@${username}/wallet` : "",
         onClick: (e: React.MouseEvent) => {
           if (!isAuth) {
             e.preventDefault();
@@ -101,7 +101,7 @@ export function MobileNavbar() {
       },
       {
         label: !isAuth ? "Login" : "Account",
-        href: isAuth ? `/@${username}` : "#",
+        href: isAuth ? `/@${username}` : "",
         onClick: (e: React.MouseEvent) => {
           if (!isAuth) {
             e.preventDefault();
@@ -134,7 +134,7 @@ export function MobileNavbar() {
               key={item.key}
               href={item.href}
               onClick={(e) => {
-                if (item.href === "#") e.preventDefault();
+                if (item.href === "") e.preventDefault();
                 item.onClick?.(e);
               }}
               className={twMerge(

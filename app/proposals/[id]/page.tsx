@@ -1,60 +1,22 @@
-"use client";
+import { auth } from "@/auth";
+import MainWrapper from "@/components/wrappers/MainWrapper";
+import { sdsApi } from "@/libs/sds";
+import ProposalPage from "./(site)/ProposalPage";
 
-import PostPage from "@/app/post/[author]/[permlink]/page";
-import ProposalDetailModal from "@/components/proposals/ProposalDetailModal";
-import ProposalItem from "@/components/proposals/ProposalItem";
-import { useAppSelector } from "@/hooks/redux/store";
-import { useMemo, useState } from "react";
-
-function ProposalPage({ data, post }: { data: Proposal; post: Post }) {
-  const [selected, setSelected] = useState<Proposal | null>(null);
-  const [isProposalDetails, setIsProposalDetails] = useState(false);
-  const proposalsData = useAppSelector(
-    (state) => state.proposalsReducer.values
+async function page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const session = await auth();
+  const proposal = await sdsApi.getProposal(parseInt(id));
+  const post = await sdsApi.getPost(
+    proposal.creator,
+    proposal.permlink,
+    session?.user?.name,
   );
-  const proposalData = useMemo(() => {
-    const rawData = proposalsData?.find((item) => item.id === data.id) || data;
-    if (!rawData) return null;
-
-    const proposal = { ...rawData };
-    const now = new Date();
-    const start = new Date(proposal.start_date);
-    const end = new Date(proposal.end_date);
-
-    if (start < now && end >= now) {
-      proposal.status = "active";
-    } else if (end < now) {
-      proposal.status = "expired";
-    } else {
-      proposal.status = "upcoming";
-    }
-    return proposal;
-  }, [proposalsData, data]);
-
-  if (!proposalData || proposalData?.status === "removed") return null;
-
   return (
-    <div className="flex flex-col gap-4">
-      <ProposalItem
-        proposal={proposalData}
-        onView={() => {
-          setSelected(proposalData);
-          setIsProposalDetails(true);
-        }}
-      />
-
-      <div className="w-full relative">
-        <PostPage data={post} key={`${post.author}-${post.permlink}`} />
-      </div>
-      {isProposalDetails && (
-        <ProposalDetailModal
-          proposal={selected}
-          isOpen={isProposalDetails}
-          onClose={setIsProposalDetails}
-        />
-      )}
-    </div>
+    <MainWrapper>
+      <ProposalPage data={proposal} post={post} />
+    </MainWrapper>
   );
 }
 
-export default ProposalPage;
+export default page;

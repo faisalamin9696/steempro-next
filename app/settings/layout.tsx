@@ -3,7 +3,6 @@ import MainWrapper from "@/components/wrappers/MainWrapper";
 import { getMetadata } from "@/utils/metadata";
 import { Settings } from "lucide-react";
 import { Metadata } from "next";
-import React from "react";
 
 export const metadata: Metadata = getMetadata.settings();
 

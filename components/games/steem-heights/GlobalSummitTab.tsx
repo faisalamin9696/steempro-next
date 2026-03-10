@@ -187,7 +187,7 @@ export const GlobalSummitTab = memo(
         <div className="flex flex-col items-center gap-6">
           <Link
             href={
-              seasonPost ? `/@${seasonPost.author}/${seasonPost.permlink}` : "#"
+              seasonPost ? `/@${seasonPost.author}/${seasonPost.permlink}` : ""
             }
             className="px-4 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center gap-2 hover:bg-amber-500/20 transition-all group/season"
           >

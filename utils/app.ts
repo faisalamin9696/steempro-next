@@ -9,7 +9,7 @@ export function getAppDetails(appStr: string | undefined): {
   website: string;
 } {
   if (!appStr || typeof appStr !== "string") {
-    return { name: "Steem", icon: "/globe.svg", website: "#" };
+    return { name: "Steem", icon: "/globe.svg", website: "" };
   }
 
   // Extract the app name before any '/' (e.g., 'steempro/0.2' -> 'steempro')
@@ -106,6 +106,6 @@ export function getAppDetails(appStr: string | undefined): {
   return {
     name,
     icon: `/globe.svg`,
-    website: "#",
+    website: "",
   };
 }

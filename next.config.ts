@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
   transpilePackages: ["lottie-react", "lottie-web", "lucide-react", "next"],
   images: {
     qualities: [25, 50, 75],
-    unoptimized: true,
+    unoptimized: false,
     remotePatterns: [
       {
         protocol: "https",
@@ -61,7 +61,7 @@ const nextConfig: NextConfig = {
       {
         source:
           "/:category(created|trending|hot|payout|about|pinned|roles|log|popular)/hive-:tag",
-        destination: "/community/:category/:tag",
+        destination: "/community/:tag/:category",
       },
 
       // tag mapping
@@ -142,6 +142,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  
 };
 
 export default nextConfig;

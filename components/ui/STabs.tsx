@@ -1,3 +1,5 @@
+"use client";
+
 import { Tab, Tabs, TabsProps } from "@heroui/tabs";
 import React from "react";
 import { twMerge } from "tailwind-merge";

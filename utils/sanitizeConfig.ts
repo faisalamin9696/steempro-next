@@ -208,7 +208,7 @@ export default ({
 
     a: (tagName: string, attribs: Attributes): { tagName: string; attribs: Attributes } => {
       let { href } = attribs;
-      if (!href) href = "#";
+      if (!href) href = "";
       href = replaceOldDomains(href as string);
 
       href = (href as string).trim();

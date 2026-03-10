@@ -1,4 +1,7 @@
-import xmldom from "xmldom";
+import {
+  DOMParser as DOMParserClass,
+  XMLSerializer as XMLSerializerClass,
+} from "@xmldom/xmldom";
 import { getDoubleSize, proxifyImageUrl } from "./proxifyUrl";
 import { validateAccountName } from "@/utils/chainValidation";
 import linksRe, {
@@ -23,10 +26,10 @@ export const getPhishingWarningMessage = () =>
 export const getExternalLinkWarningMessage = () => "Open external link";
 
 const noop = () => {};
-const DOMParser = new xmldom.DOMParser({
+const DOMParser = new DOMParserClass({
   errorHandler: { warning: noop, error: noop },
 });
-const XMLSerializer = new xmldom.XMLSerializer();
+const XMLSerializer = new XMLSerializerClass();
 
 export default function (
   html,
@@ -39,7 +42,7 @@ export default function (
   state.images = new Set();
   state.links = new Set();
   try {
-    const doc = DOMParser.parseFromString(preprocessHtml(html), "text/html");
+    const doc = DOMParser.parseFromString(preprocessHtml(html));
 
     traverse(doc, state);
 
@@ -87,7 +90,8 @@ function traverse(node, state, depth = 0) {
     if (tag === "img") img(state, child);
     else if (tag === "iframe") iframe(state, child);
     else if (tag === "a") link(state, child);
-    else if (child.nodeName === "#text") detectImageLinksOrLinkify(child, state);
+    else if (child.nodeName === "#text")
+      detectImageLinksOrLinkify(child, state);
     else if (tag === "p") handleDir(state, child);
 
     traverse(child, state, depth + 1);
@@ -107,7 +111,7 @@ function link(state, child) {
 
       // Unlink potential phishing attempts
       if (
-        (url.indexOf("#") !== 0 && // Allow in-page links
+        (url.indexOf("") !== 0 && // Allow in-page links
           child.textContent.match(/(www\.)?steemit\.com/i) &&
           !url.match(/https?:\/\/(.*@)?(www\.)?steemit\.com/i)) ||
         Phishing.looksPhishy(url)
@@ -160,7 +164,8 @@ function iframe(state, child) {
   }
 
   child.parentNode.replaceChild(
-    DOMParser.parseFromString(`<div class="iframeWrapper">${html}</div>`),
+    DOMParser.parseFromString(`<div class="iframeWrapper">${html}</div>`)
+      .documentElement,
     child,
   );
   const styleAttr = document.createAttribute("style");
@@ -205,14 +210,14 @@ function proxifyImages(doc, state) {
       if (state.lightbox && process.env.BROWSER) {
         const parentNode = node.parentNode;
         parentNode.appendChild(
-          DOMParser.parseFromString(`<a href="${getDoubleSize(
-            proxifyImageUrl(url, "640x0", true)!,
-          )}">
+          DOMParser.parseFromString(
+            `<a href="${getDoubleSize(proxifyImageUrl(url, "640x0", true)!)}">
                     <img
                         src="${proxifiedImageUrl}"
                         alt="${alt}"
                     />
-                </a>`),
+                </a>`,
+          ).documentElement,
         );
         parentNode.removeChild(node);
       } else {
@@ -274,7 +279,14 @@ function linkifyNode(child: any, state: any) {
     if (mutate && content !== data) {
       const href = child?.nodeValue?.trim();
 
-      let newChild = DOMParser.parseFromString(`<span>${content}</span>`);
+      let newChild: any = DOMParser.parseFromString(
+        `<span>${content}</span>`,
+      ).documentElement;
+
+      if (!href) {
+        child.parentNode.replaceChild(newChild, child);
+        return newChild;
+      }
 
       const postMatch = href.match(POST_REGEX);
       if (postMatch && WHITE_LIST.includes(postMatch[1].replace(/www./, ""))) {
@@ -283,7 +295,7 @@ function linkifyNode(child: any, state: any) {
         const permlink = postMatch[4];
         newChild = DOMParser.parseFromString(
           `<span><a href="/${tag}/@${author}/${permlink}">@${author}/${permlink}</a></span>`,
-        );
+        ).documentElement;
       }
 
       // If profile mention url
@@ -297,7 +309,7 @@ function linkifyNode(child: any, state: any) {
         if (author.indexOf("/") === -1) {
           newChild = DOMParser.parseFromString(
             `<span><a href="/@${author}">@${author}</a></span>`,
-          );
+          ).documentElement;
         }
       }
 
@@ -318,7 +330,7 @@ function linkifyNode(child: any, state: any) {
           const href = `/@${author}/${section}`;
           newChild = DOMParser.parseFromString(
             `<span><a href="${href}">@${author}/${section}</a></span>`,
-          );
+          ).documentElement;
         }
       }
       child.parentNode.replaceChild(newChild, child);

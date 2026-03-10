@@ -1,9 +1,6 @@
-import { auth } from "@/auth";
 import MainWrapper from "@/components/wrappers/MainWrapper";
-import { sdsApi } from "@/libs/sds";
 import { CheckCircle, Landmark, XCircle } from "lucide-react";
 import React, { Suspense } from "react";
-import WitnessesPage from "./page";
 import LoadingStatus from "@/components/LoadingStatus";
 import PageHeader from "@/components/ui/PageHeader";
 import { getMetadata } from "@/utils/metadata";
@@ -12,9 +9,6 @@ import { Metadata } from "next";
 export const metadata: Metadata = getMetadata.witnesses();
 
 async function layout({ children }: { children: React.ReactNode }) {
-  const session = await auth();
-  const data = await sdsApi.getWitnessesByRank(session?.user?.name, 200);
-
   return (
     <MainWrapper className="flex flex-col gap-6">
       <div className="flex flex-col items-start gap-4">
@@ -32,9 +26,7 @@ async function layout({ children }: { children: React.ReactNode }) {
         </div>
       </div>
 
-      <Suspense fallback={<LoadingStatus />}>
-        <WitnessesPage data={data} />
-      </Suspense>
+      <Suspense fallback={<LoadingStatus />}>{children}</Suspense>
     </MainWrapper>
   );
 }

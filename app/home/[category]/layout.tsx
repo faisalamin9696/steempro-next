@@ -11,30 +11,11 @@ async function getData() {
   return data;
 }
 
-async function layout({
-  children,
-  params,
-}: {
-  children: React.ReactNode;
-  params: Promise<{ category: string }>;
-}) {
-  const { category } = await params;
+async function layout({ children }: { children: React.ReactNode }) {
   const data = (await getData())?.data as PromotedPost[];
   const firstImage = data?.[0]?.thumbnail
     ? proxifyImageUrl(data[0].thumbnail, "640x0")
     : null;
-
-  const organizationLd = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "SteemPro",
-    url: "https://www.steempro.com",
-    logo: "https://www.steempro.com/favicon.ico",
-    sameAs: [
-      "https://github.com/faisalamin9696/steempro-next",
-      "https://discord.gg/SXpWY8FGCB",
-    ],
-  };
 
   return (
     <MainWrapper
