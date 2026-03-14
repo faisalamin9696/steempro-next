@@ -17,7 +17,6 @@ import ScrollToTop from "@/components/ui/ScrollToTop";
 import LoadingCard from "@/components/ui/LoadingCard";
 import { ScrollToTopButton } from "@/components/ScrollToTopButton";
 import { Toaster } from "sonner";
-import { TempsAnalyticsProvider } from "@temps-sdk/react-analytics";
 
 function Providers({
   children,
@@ -55,26 +54,22 @@ function Providers({
             }}
           >
             <AccountsProvider>
-              <TempsAnalyticsProvider
-                enableSessionRecording={process.env.NODE_ENV === "production"}
-              >
-                <AppWrapper globals={globals}>
-                  <div className="flex flex-col">
-                    <SNavbar />
-                    <MobileNavbar />
-                    <div className="flex flex-row justify-start">
-                      <aside className="w-72 hidden sticky top-16 h-[calc(100vh-4rem)] shrink-0 xl:block border-e border-black/5 dark:border-white/5">
-                        <SDrawerContent />
-                      </aside>
-                      <span className="px-0.5 w-full pb-20 md:pb-0">
-                        {isMounted ? children : <LoadingCard />}
-                      </span>
-                    </div>
-                    <ScrollToTopButton />
-                    <Toaster richColors closeButton />
+              <AppWrapper globals={globals}>
+                <div className="flex flex-col">
+                  <SNavbar />
+                  <MobileNavbar />
+                  <div className="flex flex-row justify-start">
+                    <aside className="w-72 hidden sticky top-16 h-[calc(100vh-4rem)] shrink-0 xl:block border-e border-black/5 dark:border-white/5">
+                      <SDrawerContent />
+                    </aside>
+                    <span className="px-0.5 w-full pb-20 md:pb-0">
+                      {isMounted ? children : <LoadingCard />}
+                    </span>
                   </div>
-                </AppWrapper>
-              </TempsAnalyticsProvider>
+                  <ScrollToTopButton />
+                  <Toaster richColors closeButton />
+                </div>
+              </AppWrapper>
             </AccountsProvider>
           </SWRConfig>
         </HeroUIProvider>
