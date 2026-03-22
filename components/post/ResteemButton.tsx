@@ -9,6 +9,7 @@ import { useSession } from "next-auth/react";
 import SPopover from "../ui/SPopover";
 import { useAccountsContext } from "../auth/AccountsContext";
 import { Spinner } from "@heroui/spinner";
+import { useTranslations } from "next-intl";
 
 const ICON_SIZE = 20;
 
@@ -18,6 +19,7 @@ interface Props extends ButtonProps {
 }
 function ResteemButton(props: Props) {
   const { comment, labelClass } = props;
+  const t = useTranslations("Post");
   const dispatch = useAppDispatch();
   const { data: session } = useSession();
   const { authenticateOperation } = useAccountsContext();
@@ -25,7 +27,7 @@ function ResteemButton(props: Props) {
   async function onRsteemPress(closePopover: () => void) {
     closePopover();
     if (comment.observer_resteem) {
-      toast.success("You have already resteemed this post!");
+      toast.success(t("resteemedAlready"));
       return;
     }
 
@@ -50,7 +52,7 @@ function ResteemButton(props: Props) {
           })
         );
 
-        toast.success("Resteem successfully!");
+        toast.success(t("resteemSuccess"));
       });
     } catch (error) {
       dispatch(addCommentHandler({ ...comment, status: "idle" }));
@@ -59,8 +61,8 @@ function ResteemButton(props: Props) {
   return (
     <SPopover
       shouldBlockScroll={false}
-      title="Confirmation"
-      description="Resteem this post?"
+      title={t("resteemConfirmation")}
+      description={t("resteemQuestion")}
       className=""
       trigger={
         <Button isDisabled={comment.status === "resteeming"} {...props}>
@@ -81,7 +83,7 @@ function ResteemButton(props: Props) {
       {(onClose) => (
         <div className="flex flex-row gap-2 self-end">
           <Button variant="flat" onPress={onClose}>
-            Cancel
+            {t("cancel")}
           </Button>
 
           <Button color="primary" onPress={() => onRsteemPress(onClose)}>

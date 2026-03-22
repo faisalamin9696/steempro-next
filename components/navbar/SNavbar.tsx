@@ -11,7 +11,7 @@ import { useAppSelector } from "@/hooks/redux/store";
 import SAvatar from "../ui/SAvatar";
 import SDrawer from "./SDrawer";
 import SPopover from "../ui/SPopover";
-import {  Chip } from "@heroui/chip";
+import { Chip } from "@heroui/chip";
 import { Spinner } from "@heroui/spinner";
 import LogoutButton from "../ui/LogoutButton";
 import { useAccountsContext } from "../auth/AccountsContext";
@@ -29,6 +29,7 @@ import {
 import ManageAccountsButton from "../auth/ManageAccountsButton";
 import { useState } from "react";
 import SearchModal from "../search/SearchModal";
+import { useTranslations } from "next-intl";
 
 export async function refreshData(username?: string | null) {
   mutate("globals");
@@ -39,6 +40,7 @@ export async function refreshData(username?: string | null) {
 }
 
 function SNavbar() {
+  const t = useTranslations("Navbar");
   const { data: session, status } = useSession();
   const isAuth = status === "authenticated";
   const [isSearchModal, setIsSearchModal] = useState(false);
@@ -92,7 +94,7 @@ function SNavbar() {
             onClick={() => setIsSearchModal(true)}
           >
             <Search size={18} className="group-hover:text-foreground" />
-            <span className="text-sm">Search...</span>
+            <span className="text-sm">{t("search")}</span>
           </div>
 
           <Button
@@ -116,7 +118,7 @@ function SNavbar() {
               className="font-medium shadow-primary/20"
               startContent={<Plus size={18} />}
             >
-              Create
+              {t("create")}
             </Button>
           </div>
 
@@ -163,7 +165,7 @@ function SNavbar() {
               isDisabled={status === "loading"}
               onPress={manageAccounts}
             >
-              Login
+              {useTranslations("Auth")("login")}
             </Button>
           ) : (
             <SPopover
@@ -219,7 +221,7 @@ function SNavbar() {
                     </div>
 
                     <Button
-                      title="Refresh"
+                      title={t("refresh")}
                       variant="flat"
                       isIconOnly
                       radius="full"
@@ -243,7 +245,7 @@ function SNavbar() {
                       onPress={onClose}
                       startContent={<User size={18} className="text-muted" />}
                     >
-                      Profile
+                      {t("profile")}
                     </Button>
 
                     <Button
@@ -254,7 +256,7 @@ function SNavbar() {
                       onPress={onClose}
                       startContent={<Wallet size={18} className="text-muted" />}
                     >
-                      Wallet
+                      {t("wallet")}
                     </Button>
 
                     <ManageAccountsButton

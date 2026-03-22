@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Info, Heart, Shield, Zap } from "lucide-react";
 import { Button } from "@heroui/button";
 import { PowerUp } from "../Config";
+import { useTranslations } from "next-intl";
 
 interface GameHUDProps {
   score: number;
@@ -28,6 +29,8 @@ export const GameHUD = memo(
     onOpenGuide,
     scrollToLeaderboard,
   }: GameHUDProps) => {
+    const t = useTranslations("Games.steemHeights");
+
     return (
       <div className="px-3 py-2 sm:px-4 sm:py-3 bg-zinc-200 dark:bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-2xl sm:rounded-3xl mb-1 sm:mb-2 flex justify-between items-center shadow-2xl">
         <div className="flex items-center gap-3 sm:gap-6">
@@ -35,7 +38,7 @@ export const GameHUD = memo(
           <div className="flex flex-col">
             <div className="flex items-center gap-1.5 mb-0.5">
               <span className="text-[8px] sm:text-[9px] text-zinc-500 font-black uppercase tracking-widest sm:tracking-[0.2em]">
-                ALTITUDE
+                {t("canvas.altitude")}
               </span>
               <button
                 onClick={(e) => {
@@ -43,7 +46,7 @@ export const GameHUD = memo(
                   onOpenGuide();
                 }}
                 className="text-zinc-600 hover:text-amber-500 transition-colors"
-                title="How to Play"
+                title={t("canvas.howToPlay")}
               >
                 <Info size={10} className="sm:w-3 sm:h-3" />
               </button>
@@ -116,7 +119,7 @@ export const GameHUD = memo(
                     )}
                   </div>
                   <span className="text-[7px] sm:text-[8px] font-black text-amber-500/80 uppercase tracking-widest whitespace-nowrap">
-                    {activePowerUp.name}
+                    {t(`leaderboard.lab.items.powerups.${activePowerUp.id}.name`)}
                   </span>
                 </motion.div>
               )}
@@ -134,7 +137,7 @@ export const GameHUD = memo(
             >
               <div className="flex items-center gap-1 sm:gap-1.5 mb-0.5">
                 <span className="text-[8px] sm:text-[9px] text-zinc-500 font-black uppercase tracking-widest sm:tracking-[0.2em]">
-                  WIND
+                  {t("canvas.wind")}
                 </span>
                 <div
                   className={`w-1 sm:h-1.5 sm:w-1.5 h-1 rounded-full ${windDrift === 0 ? "bg-zinc-700" : "bg-amber-500 animate-pulse"}`}
@@ -154,7 +157,7 @@ export const GameHUD = memo(
             onPress={scrollToLeaderboard}
             className="lg:hidden h-7 sm:h-9 px-3 sm:px-4 bg-black/10 dark:bg-white/5 hover:bg-white/10 font-black uppercase text-[8px] sm:text-[10px] tracking-widest rounded-xl sm:rounded-2xl border border-white/5 active:scale-95 transition-all"
           >
-            Rankings
+            {t("canvas.rankings")}
           </Button>
         </div>
       </div>

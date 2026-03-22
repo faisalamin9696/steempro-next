@@ -28,6 +28,7 @@ import GrantAuthorityModal from "../ui/GrantAuthorityModal";
 import { AsyncUtils } from "@/utils/async.utils";
 import { addSchedule } from "@/libs/supabase/schedule";
 import UnfinishedTagsModal from "./UnfinishedTagsModal";
+import { useTranslations } from "next-intl";
 
 interface BaseProps extends Omit<ButtonProps, "title"> {
   buttonTitle?: string;
@@ -60,6 +61,7 @@ interface NormalPostProps extends BaseProps {
 type Props = RootPostProps | NormalPostProps;
 
 function PublishButton(props: Props) {
+  const t = useTranslations("Submit");
   const {
     onPending,
     buttonTitle,
@@ -100,12 +102,12 @@ function PublishButton(props: Props) {
 
   const validate = () => {
     if (!isReply && !title.trim()) {
-      toast.info("Title can not be empty");
+      toast.info(t("validation.titleEmpty"));
       return false;
     }
 
     if (!body.trim()) {
-      toast.info("Post can not be empty");
+      toast.info(t("validation.postEmpty"));
       return false;
     }
 
@@ -120,7 +122,7 @@ function PublishButton(props: Props) {
     );
 
     if (!isReply && !normalizedTags.length && !community?.account) {
-      toast.info("Add a tag or select community");
+      toast.info(t("validation.tagEmpty"));
       return false;
     }
 
@@ -300,7 +302,7 @@ function PublishButton(props: Props) {
 
   async function handleSchedule(force = false, overrideTags?: string[]) {
     if (!session?.user?.name) {
-      toast.error("Error", { description: "Login required" });
+      toast.error("Error", { description: t("error.loginRequired") });
       return;
     }
     setIsPending(true);
@@ -355,7 +357,7 @@ function PublishButton(props: Props) {
         useKeychain,
       );
       await AsyncUtils.sleep(3);
-      toast.success("Permission granted successfully!");
+      toast.success(t("authority.granted"));
       setIsGrantModalOpen(false);
       // After granting, try to schedule again
       await handleSchedule(true);
@@ -374,7 +376,7 @@ function PublishButton(props: Props) {
         {...buttonProps}
         startContent={isPending ? undefined : props.startContent}
       >
-        {buttonTitle ?? (scheduleTime ? "Schedule" : "Publish")}
+        {buttonTitle ?? (scheduleTime ? t("scheduled") : t("publish"))}
       </Button>
 
       <GrantAuthorityModal

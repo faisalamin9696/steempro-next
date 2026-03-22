@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useDisclosure } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { Code2 } from "lucide-react";
@@ -7,6 +8,7 @@ import Link from "next/link";
 import SModal from "../ui/SModal";
 
 export const DeveloperTemplateModal = () => {
+  const t = useTranslations("Games.developerTemplate");
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const CONFIG_GITHUB_URL =
     "https://github.com/faisalamin9696/steempro-next/tree/master/components/games/Config.ts";
@@ -34,7 +36,7 @@ export const DeveloperTemplateModal = () => {
         onPress={onOpen}
         className="rounded-full border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all font-black uppercase text-[10px] tracking-widest px-8"
       >
-        View Template
+        {t("viewTemplate")}
       </Button>
       <SModal
         isOpen={isOpen}
@@ -49,7 +51,7 @@ export const DeveloperTemplateModal = () => {
           <div className="flex flex-row gap-2 items-center">
             <Code2 className="text-amber-500" />
             <span className="font-black italic uppercase tracking-tight">
-              Developer Integration Template
+              {t("title")}
             </span>
           </div>
         )}
@@ -60,7 +62,7 @@ export const DeveloperTemplateModal = () => {
               onPress={onOpenChange}
               className="rounded-full font-bold uppercase text-[10px] tracking-widest text-zinc-500"
             >
-              Close
+              {t("close")}
             </Button>
             <Button
               as={Link}
@@ -68,7 +70,7 @@ export const DeveloperTemplateModal = () => {
               target="_blank"
               className="bg-foreground text-background font-black uppercase text-[10px] tracking-widest rounded-full px-6"
             >
-              Get Started
+              {t("getStarted")}
             </Button>
           </div>
         )}
@@ -76,8 +78,7 @@ export const DeveloperTemplateModal = () => {
         {() => (
           <div className="space-y-4">
             <p className="text-muted text-sm">
-              Add your game to the ecosystem by following this data structure.
-              Submit your PR or contact the team to get listed.
+              {t("description")}
             </p>
             <pre className="bg-zinc-900 p-4 rounded-xl border border-zinc-800 overflow-x-auto text-[10px] text-amber-500 font-mono">
               {codeString}
@@ -85,18 +86,18 @@ export const DeveloperTemplateModal = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="p-3 bg-zinc-300 dark:bg-zinc-900/50 rounded-lg border border-zinc-800/50">
                 <span className="block text-[10px] font-black uppercase mb-1">
-                  Thumbnail
+                  {t("thumbnail")}
                 </span>
                 <span className="text-zinc-500 text-[9px]">
-                  Recommended: 800x1200px (Portrait)
+                  {t("thumbnailRecommended")}
                 </span>
               </div>
               <div className="p-3 bg-zinc-300 dark:bg-zinc-900/50 rounded-lg border border-zinc-800/50">
                 <span className="block text-[10px] font-black uppercase mb-1">
-                  Integration
+                  {t("integration")}
                 </span>
                 <span className="text-zinc-500 text-[9px]">
-                  Level 1 (Link) or Level 2 (Hosted)
+                  {t("integrationLevels")}
                 </span>
               </div>
             </div>

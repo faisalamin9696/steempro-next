@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { useAppDispatch } from "@/hooks/redux/store";
 import { addLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { addProfileHandler } from "@/hooks/redux/reducers/ProfileReducer";
+import { useTranslations } from "next-intl";
 
 interface FollowButtonProps extends ButtonProps {
   account: AccountExt;
@@ -25,10 +26,11 @@ function FollowButton({
   account,
   ...rest
 }: FollowButtonProps) {
+  const t = useTranslations("Profile");
   const isFollowed = Boolean(account.observer_follows_author);
   const shouldFollow = !account.observer_follows_author;
   const color = isFollowed ? "warning" : "primary";
-  const title = isFollowed ? "Unfollow" : "Follow";
+  const title = isFollowed ? t("unfollow") : t("follow");
   const [isPending, setIsPending] = useState(false);
   const { authenticateOperation } = useAccountsContext();
   const { data: session } = useSession();
@@ -47,7 +49,7 @@ function FollowButton({
         useKeychain,
       );
       toast.success(
-        isFollowed ? "Unfollowed successfully" : "Followed successfully",
+        isFollowed ? t("unfollowSuccess") : t("followSuccess"),
       );
       const updatedData = {
         ...account,

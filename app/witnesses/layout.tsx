@@ -6,16 +6,20 @@ import PageHeader from "@/components/ui/PageHeader";
 import { getMetadata } from "@/utils/metadata";
 import { Metadata } from "next";
 
+import { getTranslations } from "next-intl/server";
+
 export const metadata: Metadata = getMetadata.witnesses();
 
 async function layout({ children }: { children: React.ReactNode }) {
+  const t = await getTranslations("Witnesses");
+
   return (
     <MainWrapper className="flex flex-col gap-6">
       <div className="flex flex-col items-start gap-4">
         <PageHeader
           icon={Landmark}
-          title="Witnesses"
-          description="Vote for witnesses who maintain Steem nodes and secure the blockchain. You can vote for up to 30 witnesses."
+          title={t("title")}
+          description={t("description")}
         />
 
         <div className="flex items-center gap-2 text-sm text-muted self-end">

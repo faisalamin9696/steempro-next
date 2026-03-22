@@ -4,6 +4,7 @@ import { memo } from "react";
 import { Card } from "@heroui/card";
 import { Trophy, Target, History, Award, ShoppingBag, Zap } from "lucide-react";
 import { Tabs, Tab } from "@heroui/tabs";
+import { useTranslations } from "next-intl";
 import { HighScore, GameStats, Skin, PowerUp } from "./Config";
 import { GlobalSummitTab } from "./GlobalSummitTab";
 import { MyResultsTab } from "./MyResultsTab";
@@ -46,6 +47,9 @@ interface Props {
   syncingSkinId: string | null;
   fetchHeightsUserData: (season?: number) => Promise<any>;
   fetchUserHistory: (season?: number) => Promise<HighScore[]>;
+  eligibilityMap: {
+    [key: string]: { sp: number; rep: number; eligible: boolean };
+  };
 }
 
 export const HeightsLeaderboard = memo(
@@ -76,9 +80,12 @@ export const HeightsLeaderboard = memo(
     globalStats,
     fetchHeightsUserData,
     fetchUserHistory,
+    eligibilityMap,
   }: Props) => {
+    const t = useTranslations("Games.steemHeights.leaderboard.tabs");
+
     return (
-      <Card className="w-full  mx-auto bg-zinc-50 dark:bg-zinc-900/50 border-zinc-800  overflow-hidden relative min-h-[400px]">
+      <Card className="w-full mx-auto bg-zinc-50 dark:bg-zinc-900/50 border-zinc-800 overflow-hidden relative min-h-[400px]">
         <div className="absolute top-0 right-0 p-4 opacity-10">
           <Target size={120} className="text-zinc-500" />
         </div>
@@ -102,7 +109,7 @@ export const HeightsLeaderboard = memo(
               title={
                 <div className="flex items-center gap-2">
                   <Trophy size={14} />
-                  <span>Global Summit</span>
+                  <span>{t("global")}</span>
                 </div>
               }
             >
@@ -113,6 +120,7 @@ export const HeightsLeaderboard = memo(
                 seasonPost={seasonPost}
                 globalStats={globalStats}
                 username={username}
+                eligibilityMap={eligibilityMap}
               />
             </Tab>
 
@@ -121,7 +129,7 @@ export const HeightsLeaderboard = memo(
               title={
                 <div className="flex items-center gap-2">
                   <Zap size={14} />
-                  <span>Daily Challenges</span>
+                  <span>{t("daily")}</span>
                 </div>
               }
             >
@@ -140,7 +148,7 @@ export const HeightsLeaderboard = memo(
               title={
                 <div className="flex items-center gap-2">
                   <History size={14} />
-                  <span>My Results</span>
+                  <span>{t("history")}</span>
                 </div>
               }
             >
@@ -158,6 +166,7 @@ export const HeightsLeaderboard = memo(
                 syncingChallengeId={syncingChallengeId}
                 fetchHeightsUserData={fetchHeightsUserData}
                 fetchUserHistory={fetchUserHistory}
+                eligibilityMap={eligibilityMap}
               />
             </Tab>
 
@@ -166,13 +175,14 @@ export const HeightsLeaderboard = memo(
               title={
                 <div className="flex items-center gap-2">
                   <Award size={14} />
-                  <span>Seasonal Hall</span>
+                  <span>{t("winners")}</span>
                 </div>
               }
             >
               <SeasonalHallTab
                 seasonalWinners={seasonalWinners}
                 seasonalPosts={seasonalHistory}
+                eligibilityMap={eligibilityMap}
               />
             </Tab>
 
@@ -181,7 +191,7 @@ export const HeightsLeaderboard = memo(
               title={
                 <div className="flex items-center gap-2">
                   <ShoppingBag size={14} />
-                  <span>Customization Lab</span>
+                  <span>{t("lab")}</span>
                 </div>
               }
             >

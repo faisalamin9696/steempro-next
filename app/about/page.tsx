@@ -20,8 +20,38 @@ import Link from "next/link";
 import Image from "next/image";
 import { DiscordIcon } from "@/components/icons/DiscordIcon";
 import { GithubIcon } from "@/components/icons/GithubIcon";
+import { useTranslations } from "next-intl";
 
 export default function AboutPage() {
+  const t = useTranslations("About");
+
+  const features = [
+    {
+      icon: Globe,
+      title: t("features.feature1Title"),
+      desc: t("features.feature1Desc"),
+      color: "sky",
+    },
+    {
+      icon: Zap,
+      title: t("features.feature2Title"),
+      desc: t("features.feature2Desc"),
+      color: "amber",
+    },
+    {
+      icon: Shield,
+      title: t("features.feature3Title"),
+      desc: t("features.feature3Desc"),
+      color: "emerald",
+    },
+    {
+      icon: Users,
+      title: t("features.feature4Title"),
+      desc: t("features.feature4Desc"),
+      color: "rose",
+    },
+  ];
+
   return (
     <div className="space-y-12 pb-4 px-4 animate-in fade-in transition-all duration-500">
       {/* Hero Section */}
@@ -33,15 +63,13 @@ export default function AboutPage() {
             size="sm"
             className="px-3 py-1 font-semibold uppercase tracking-wider"
           >
-            Empowering Your Voice
+            {t("hero.subtitle")}
           </Chip>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent italic">
             SteemPro
           </h1>
           <p className="text-lg md:text-xl text-muted leading-relaxed">
-            Experience a social network empowered by the Steem blockchain.
-            Explore trending discussions and share your unique perspective on a
-            truly decentralized platform.
+            {t("hero.description")}
           </p>
           <div className="flex flex-wrap gap-4">
             <Button
@@ -51,7 +79,7 @@ export default function AboutPage() {
               size="lg"
               endContent={<ArrowRight size={18} />}
             >
-              Get Started
+              {t("hero.getStarted")}
             </Button>
             <Button
               as={Link}
@@ -61,7 +89,7 @@ export default function AboutPage() {
               size="lg"
               startContent={<GithubIcon size={18} />}
             >
-              View Github
+              {t("hero.viewGithub")}
             </Button>
           </div>
         </div>
@@ -80,27 +108,24 @@ export default function AboutPage() {
         <div className="space-y-6">
           <h2 className="text-3xl font-bold flex items-center gap-3">
             <TrendingUp size={32} className="text-primary" />
-            Our Mission
+            {t("mission.title")}
           </h2>
           <p className="text-lg text-muted leading-relaxed">
-            SteemPro aims to bridge the gap between complex blockchain
-            technology and everyday social interaction. We believe in providing
-            a seamless, fast, and secure interface for users to interact with
-            the Steem ecosystem.
+            {t("mission.description")}
           </p>
           <div className="grid grid-cols-2 gap-4">
             <Card className="bg-success/10 border-success/15">
               <CardBody className="p-4 space-y-2">
                 <Shield size={24} className="text-success" />
-                <h3 className="font-bold">Secure</h3>
-                <p className="text-xs text-muted">Blockchain-level security</p>
+                <h3 className="font-bold">{t("mission.secureTitle")}</h3>
+                <p className="text-xs text-muted">{t("mission.secureDesc")}</p>
               </CardBody>
             </Card>
             <Card className="bg-primary/10 border-primary/15">
               <CardBody className="p-4 space-y-2">
                 <Zap size={24} className="text-primary" />
-                <h3 className="font-bold">Fast</h3>
-                <p className="text-xs text-muted">Optimized performance</p>
+                <h3 className="font-bold">{t("mission.fastTitle")}</h3>
+                <p className="text-xs text-muted">{t("mission.fastDesc")}</p>
               </CardBody>
             </Card>
           </div>
@@ -123,38 +148,11 @@ export default function AboutPage() {
       {/* Features Grid */}
       <section className="space-y-8">
         <div className="text-center max-w-2xl mx-auto space-y-4">
-          <h2 className="text-3xl font-bold italic">Powerful Features</h2>
-          <p className="text-muted">
-            Designed for both newcomers and blockchain enthusiasts.
-          </p>
+          <h2 className="text-3xl font-bold italic">{t("features.title")}</h2>
+          <p className="text-muted">{t("features.subtitle")}</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[
-            {
-              icon: Globe,
-              title: "Global Reach",
-              desc: "Connect with users worldwide on a censorship-resistant network.",
-              color: "sky",
-            },
-            {
-              icon: Zap,
-              title: "SDS Powered",
-              desc: "Lightning fast data fetching powered by Steem Data Service.",
-              color: "amber",
-            },
-            {
-              icon: Shield,
-              title: "Decentralized",
-              desc: "You own your account, your keys, and your content.",
-              color: "emerald",
-            },
-            {
-              icon: Users,
-              title: "Community Driven",
-              desc: "Built for the community, by the community.",
-              color: "rose",
-            },
-          ].map((feature, i) => (
+          {features.map((feature, i) => (
             <Card
               key={i}
               className="hover:translate-y-[-4px] transition-transform duration-300"
@@ -176,8 +174,8 @@ export default function AboutPage() {
       {/* Team Section */}
       <section className="space-y-8">
         <div className="text-center max-w-2xl mx-auto space-y-4">
-          <h2 className="text-3xl font-bold italic">The Team</h2>
-          <p className="text-muted">Meet the minds behind SteemPro.</p>
+          <h2 className="text-3xl font-bold italic">{t("team.title")}</h2>
+          <p className="text-muted">{t("team.subtitle")}</p>
         </div>
         <div className="flex flex-wrap justify-center items-center gap-8">
           {Constants.team.map((member, i) => (
@@ -214,11 +212,10 @@ export default function AboutPage() {
       {/* Footer/Contact CTA */}
       <section className="rounded-3xl bg-foreground text-background p-8 md:p-16 text-center space-y-8">
         <h2 className="text-3xl md:text-5xl font-bold">
-          Join the Future of Social Media
+          {t("cta.title")}
         </h2>
         <p className="text-background/70 max-w-xl mx-auto text-lg leading-relaxed italic">
-          Be part of a decentralized world where your content is yours and your
-          voice matters.
+          {t("cta.description")}
         </p>
         <div className="flex flex-wrap justify-center gap-6 pt-4">
           <Button
@@ -230,7 +227,7 @@ export default function AboutPage() {
             className="bg-background/10 hover:bg-background/20 text-background font-bold"
             startContent={<DiscordIcon size={20} />}
           >
-            Discord
+            {t("cta.discord")}
           </Button>
           <Button
             as={Link}
@@ -240,7 +237,7 @@ export default function AboutPage() {
             className="bg-background/10 hover:bg-background/20 text-background font-bold"
             startContent={<Mail size={20} />}
           >
-            Email Us
+            {t("cta.email")}
           </Button>
         </div>
       </section>

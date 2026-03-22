@@ -20,6 +20,7 @@ import { useState } from "react";
 import SAvatar from "../ui/SAvatar";
 import SUsername from "../ui/SUsername";
 import { Chip } from "@heroui/chip";
+import { useTranslations } from "next-intl";
 
 const ICON_SIZE = 20;
 
@@ -29,6 +30,7 @@ interface Props extends CardProps {
   account: AccountExt;
 }
 function CommunityCard({ community, account, headerClass, ...props }: Props) {
+  const t = useTranslations("Community");
   const { data: session } = useSession();
   const { account: name, title, about, rank, created } = community || {};
   const isMe = session?.user?.name === name;
@@ -69,14 +71,14 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
 
         <ItemRow icon={<Calendar size={ICON_SIZE} />}>
           <p className="text-sm">
-            <span className="text-muted">Created</span>{" "}
+            <span className="text-muted">{t("created")}</span>{" "}
             {moment.unix(created).format("MMM DD, YYYY")}
           </p>
         </ItemRow>
 
         <ItemRow icon={<DollarSign size={ICON_SIZE} />}>
           <p className="text-sm">
-            <span className="text-muted">Pending Reward</span>{" "}
+            <span className="text-muted">{t("pendingReward")}</span>{" "}
             {community.sum_pending?.toLocaleString()}
           </p>
         </ItemRow>
@@ -86,9 +88,9 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
         {/* Stats Grid */}
         <StatsGrid
           items={[
-            { label: "Rank", value: community.rank },
+            { label: t("rank"), value: community.rank },
             {
-              label: "Members",
+              label: t("members"),
               value: community.count_subs,
               onClick: () => {
                 setShowUsersModal({ isOpen: true, isLeaders: false });
@@ -98,7 +100,7 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
             {
               label: (
                 <span className="flex flex-row gap-1 items-center">
-                  <span className="h-2 w-2 bg-success rounded-full" /> Active
+                  <span className="h-2 w-2 bg-success rounded-full" /> {t("active")}
                 </span>
               ),
               value: community.count_authors,
@@ -108,7 +110,7 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
 
         {/* Leadership */}
         {leaderShip?.length && (
-          <Section title="Leadership">
+          <Section title={t("leadership")}>
             <AvatarGroup
               isBordered
               radius="md"
@@ -120,7 +122,7 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
                   }
                   className="text-small ms-2 font-medium hover:underline cursor-pointer"
                 >
-                  +{count} more
+                  +{count} {t("more")}
                 </p>
               )}
             >
@@ -133,7 +135,7 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
           </Section>
         )}
 
-        <Section title="Rules">
+        <Section title={t("rules")}>
           <MarkdownViewer
             className=" prose-li:mt-0! max-h-40 prose-sm!"
             body={`- ${community.flag_text
@@ -150,7 +152,7 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
             {
               key: "account",
               searchable: true,
-              header: "User",
+              header: t("user"),
               render: (acc, row) => (
                 <div className="flex flex-row gap-2 items-center">
                   <SAvatar size="sm" username={acc} />
@@ -164,7 +166,7 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
             },
             {
               key: "role",
-              header: "Role",
+              header: t("role"),
               render: (role) => (
                 <Chip
                   size="sm"
@@ -186,7 +188,7 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
           onOpenChange={(isOpen) => setShowUsersModal({ isOpen })}
           fetchType={showUsersModal?.isLeaders ? undefined : "subscribers"}
           username={community.account}
-          title={showUsersModal?.isLeaders ? "Leaders" : "Members"}
+          title={showUsersModal?.isLeaders ? t("leaders") : t("members")}
         />
       )}
     </Card>

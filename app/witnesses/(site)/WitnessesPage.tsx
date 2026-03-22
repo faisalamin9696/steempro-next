@@ -36,8 +36,10 @@ import moment from "moment";
 import { twMerge } from "tailwind-merge";
 import STabs from "@/components/ui/STabs";
 import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
+import { useTranslations } from "next-intl";
 
 const WitnessesPage = ({ data }: { data: Witness[] }) => {
+  const t = useTranslations("Witnesses");
   const loginData = useAppSelector((s) => s.loginReducer.value);
   const [votingFor, setVotingFor] = useState<string | null>(null);
   const [selectedWitness, setSelectedWitness] = useState<Witness | null>(null);
@@ -97,7 +99,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
 
   const handleVote = async (witnessName: string, approve: boolean) => {
     if (hasProxy) {
-      toast.error("You cannot vote for witnesses while a proxy is active");
+      toast.error(t("cannotVoteProxy"));
       return;
     }
     setVotingFor(witnessName);
@@ -111,7 +113,9 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
         useKeychain,
       );
       toast.success(
-        `Successfully ${approve ? "voted for" : "unvoted"} ${witnessName}`,
+        approve
+          ? t("voteSuccess", { name: witnessName })
+          : t("unvoteSuccess", { name: witnessName }),
       );
       const updatedList = approve
         ? loginData.witness_votes.concat(witnessName)
@@ -137,8 +141,8 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
       await steemApi.setProxy(loginData.name, proxyName, key, useKeychain);
       toast.success(
         proxyName
-          ? `Successfully set proxy to ${proxyName}`
-          : "Successfully removed proxy",
+          ? t("proxy.setSuccess", { name: proxyName })
+          : t("proxy.removeSuccess"),
       );
       dispatch(addLoginHandler({ ...loginData, proxy: proxyName }));
       setProxyInput("");
@@ -161,7 +165,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
     },
     {
       key: "name",
-      header: "Witness",
+      header: t("columns.witness"),
       sortable: true,
       searchable: true,
       render: (value, row) => (
@@ -197,7 +201,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
 
     {
       key: "received_votes",
-      header: "Votes",
+      header: t("columns.votes"),
       sortable: true,
       className: "min-w-[140px]",
       render: (value) => (
@@ -209,7 +213,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
 
     {
       key: "missed_blocks",
-      header: "Missed",
+      header: t("columns.missed"),
       sortable: true,
       className: "w-24",
       render: (value, row) => (
@@ -234,7 +238,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
 
     {
       key: "last_price_report",
-      header: "Feed",
+      header: t("columns.feed"),
       sortable: true,
       render: (value, row) => {
         const isOld = moment
@@ -254,7 +258,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
               <span className="text-sm">
                 {parseFloat(row.reported_price.base)}
               </span>
-              {isOld && <span className="text-xs font-mono">{"Outdated"}</span>}
+              {isOld && <span className="text-xs font-mono">{t("outdated")}</span>}
             </span>
           </div>
         );
@@ -263,7 +267,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
 
     {
       key: "name",
-      header: "Action",
+      header: t("columns.action"),
       render: (value, row) => {
         const issVoted = loginData.witness_votes.includes(value);
         return (
@@ -272,7 +276,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
               size="sm"
               variant="ghost"
               onPress={() => handleViewDetails(row)}
-              title="View details"
+              title={t("viewDetails")}
               isIconOnly
               className="border-1"
             >
@@ -294,7 +298,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
               isLoading={votingFor === value}
             >
               {votingFor !== value && <Vote className="mr-1" size={20} />}
-              {issVoted ? "Unvote" : "Vote"}
+              {issVoted ? t("unvote") : t("vote")}
             </Button>
           </div>
         );
@@ -314,10 +318,10 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
               <ShieldCheck />
             </div>
           }
-          title="Proxy Active"
+          title={t("proxyActive")}
           description={
             <div className="flex items-center gap-2 mt-1">
-              <span>You are currently proxying your votes to</span>
+              <span>{t("proxyActiveDesc")}</span>
               <SUsername
                 username={loginData.proxy}
                 className="font-bold underline"
@@ -345,7 +349,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
         items={[
           {
             id: "witnesses",
-            title: "Witnesses",
+            title: t("tabs.witnesses"),
             icon: <ShieldCheck size={18} />,
             content: (
               <div className="flex flex-col gap-6">
@@ -358,7 +362,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
                       label: "text-small text-muted font-medium",
                     }}
                   >
-                    Show only witnesses I've voted for{" "}
+                    {t("showOnlyVoted")}{" "}
                     {`(${loginData.witness_votes?.length}/30)`}
                   </Checkbox>
                 )}
@@ -368,8 +372,8 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
                     <DataTable
                       data={filteredWitnesses}
                       columns={columns}
-                      searchPlaceholder="Search witnesses by name..."
-                      emptyMessage="No witnesses found"
+                      searchPlaceholder={t("searchPlaceholder")}
+                      emptyMessage={t("noWitnesses")}
                       rowIdKey="name"
                       highlightId={highlightedWitness || undefined}
                     />
@@ -380,7 +384,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
           },
           {
             id: "proxy",
-            title: "Proxy",
+            title: t("tabs.proxy"),
             icon: <UserCheck size={18} />,
             content: (
               <div className="pt-4">
@@ -391,19 +395,17 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
                     <CardBody className="gap-6 p-6">
                       <div>
                         <h3 className="text-lg font-bold mb-1">
-                          Set Voting Proxy
+                          {t("proxy.title")}
                         </h3>
                         <p className="text-sm text-muted">
-                          Choosing a proxy allows another user to vote for
-                          witnesses on your behalf. This handles your full
-                          witness voting power.
+                          {t("proxy.description")}
                         </p>
                       </div>
 
                       <div className="flex flex-col gap-4">
                         <SInput
-                          label="Proxy Username"
-                          placeholder="e.g. steempro.com"
+                          label={t("proxy.usernameLabel")}
+                          placeholder={t("proxy.usernamePlaceholder")}
                           labelPlacement="outside"
                           value={
                             hasProxy
@@ -428,7 +430,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
                             }
                             onPress={() => handleSetProxy(proxyInput)}
                           >
-                            Set Proxy
+                            {t("proxy.setProxy")}
                           </Button>
                           {hasProxy && (
                             <Button
@@ -437,7 +439,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
                               isLoading={isProxying}
                               onPress={() => handleSetProxy("")}
                             >
-                              Clear Proxy
+                              {t("proxy.clearProxy")}
                             </Button>
                           )}
                         </div>
@@ -447,7 +449,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
                         <div className="p-4 bg-primary/5 border border-primary/10 rounded-xl flex items-center gap-3">
                           <SAvatar username={loginData.proxy} size="sm" />
                           <div>
-                            <p className="text-xs text-muted">Current Proxy</p>
+                            <p className="text-xs text-muted">{t("proxy.currentProxy")}</p>
                             <SUsername
                               username={loginData.proxy}
                               className="font-bold"
@@ -465,7 +467,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
             ? [
                 {
                   id: "my-witness",
-                  title: "My Witness",
+                  title: t("tabs.myWitness"),
                   icon: <Activity size={18} />,
                   content: (
                     <MyWitnessTab

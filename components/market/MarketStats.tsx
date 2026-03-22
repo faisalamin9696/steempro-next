@@ -1,5 +1,6 @@
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { twMerge } from "tailwind-merge";
+import { useTranslations } from "next-intl";
 
 const MarketStats = ({
   ticker,
@@ -8,6 +9,7 @@ const MarketStats = ({
   ticker: MarketTicker | undefined;
   volume: any | undefined;
 }) => {
+  const t = useTranslations("Market.stats");
   if (!ticker) return null;
 
   const isPositive = ticker.percent_change >= 0;
@@ -16,13 +18,13 @@ const MarketStats = ({
     <div className="card grid grid-cols-2 lg:grid-cols-6 gap-4 p-4 rounded-2xl border border-divider shadow-sm">
       <div className="flex flex-col gap-1">
         <span className="text-tiny text-default-500 uppercase font-bold tracking-tight">
-          Last Price
+          {t("lastPrice")}
         </span>
         <div className="flex items-center gap-2">
           <span
             className={twMerge(
               "text-xl font-black",
-              isPositive ? "text-success" : "text-danger"
+              isPositive ? "text-success" : "text-danger",
             )}
           >
             {ticker.latest.toFixed(6)}
@@ -36,12 +38,12 @@ const MarketStats = ({
       </div>
       <div className="flex flex-col gap-1">
         <span className="text-tiny text-default-500 uppercase font-bold tracking-tight">
-          24h Change
+          {t("change24h")}
         </span>
         <span
           className={twMerge(
             "text-lg font-bold",
-            isPositive ? "text-success" : "text-danger"
+            isPositive ? "text-success" : "text-danger",
           )}
         >
           {ticker.percent_change.toFixed(2)}%
@@ -49,33 +51,31 @@ const MarketStats = ({
       </div>
       <div className="flex flex-col gap-1">
         <span className="text-tiny text-default-500 uppercase font-bold tracking-tight">
-          24h High
+          {t("high24h")}
         </span>
         <span className="text-lg font-bold text-success">
           {ticker.latest > 0
             ? (
-                ticker.latest *
-                (1 + Math.abs(ticker.percent_change / 100))
+                ticker.latest * (1 + Math.abs(ticker.percent_change / 100))
               ).toFixed(6)
             : "--"}
         </span>
       </div>
       <div className="flex flex-col gap-1">
         <span className="text-tiny text-default-500 uppercase font-bold tracking-tight">
-          24h Low
+          {t("low24h")}
         </span>
         <span className="text-lg font-bold text-danger">
           {ticker.latest > 0
             ? (
-                ticker.latest *
-                (1 - Math.abs(ticker.percent_change / 100))
+                ticker.latest * (1 - Math.abs(ticker.percent_change / 100))
               ).toFixed(6)
             : "--"}
         </span>
       </div>
       <div className="flex flex-col gap-1">
         <span className="text-tiny text-default-500 uppercase font-bold tracking-tight">
-          24h Volume (STEEM)
+          {t("volumeSteem")}
         </span>
         <span className="text-lg font-bold">
           {ticker.steem_volume.toLocaleString()}
@@ -83,7 +83,7 @@ const MarketStats = ({
       </div>
       <div className="flex flex-col gap-1">
         <span className="text-tiny text-default-500 uppercase font-bold tracking-tight">
-          24h Volume (SBD)
+          {t("volumeSbd")}
         </span>
         <span className="text-lg font-bold">
           {ticker.sbd_volume.toLocaleString()}

@@ -13,6 +13,8 @@ interface TagsInputProps extends Omit<InputProps, "onChange"> {
   onInputValueChange: (value: string) => void;
 }
 
+import { useTranslations } from "next-intl";
+
 const TagsInput = ({
   tags,
   onChange,
@@ -20,6 +22,7 @@ const TagsInput = ({
   onInputValueChange,
   ...props
 }: TagsInputProps) => {
+  const t = useTranslations("Submit");
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [isCopied, setIsCopied] = useState(false);
 
@@ -79,10 +82,10 @@ const TagsInput = ({
     try {
       await navigator.clipboard.writeText(tags.join(" "));
       setIsCopied(true);
-      toast.success("Tags copied to clipboard");
+      toast.success(t("tags.copied"));
       setTimeout(() => setIsCopied(false), 2000);
     } catch (err) {
-      toast.error("Failed to copy tags");
+      toast.error(t("tags.copyError"));
     }
   };
 
@@ -114,7 +117,7 @@ const TagsInput = ({
           value={inputValue}
           onValueChange={onInputValueChange}
           onKeyDown={handleKeyDown}
-          placeholder="Add tags (press Enter or comma)"
+          placeholder={t("tags.placeholder")}
           classNames={{ inputWrapper: "border border-border" }}
           className="flex-1 min-w-[200px]"
           autoCapitalize="none"
@@ -124,7 +127,7 @@ const TagsInput = ({
 
       <div className="flex items-center px-1 gap-2">
         <p className="text-xs text-muted">
-          {tags.length}/8 tags • Drag to reorder
+          {t.rich("tags.countInfo", { count: tags.length })}
         </p>
         {tags.length > 0 && (
           <div className="flex gap-2">
@@ -135,7 +138,7 @@ const TagsInput = ({
               radius="sm"
               onPress={handleCopyTags}
               className="text-muted hover:text-primary min-w-0 h-6 w-6"
-              title="Copy all tags"
+              title={t("tags.copyAll")}
             >
               {isCopied ? <Check size={14} /> : <Copy size={14} />}
             </Button>
@@ -146,7 +149,7 @@ const TagsInput = ({
               radius="sm"
               onPress={() => onChange([])}
               className="text-muted hover:text-danger min-w-0 h-6 w-6"
-              title="Clear all tags"
+              title={t("tags.clearAll")}
             >
               <Trash2 size={14} />
             </Button>

@@ -8,14 +8,20 @@ import {
   Image as ImageIcon,
   ShieldAlert,
   Palette,
+  Languages,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
 import { updateSettingsHandler } from "@/hooks/redux/reducers/SettingsReducer";
 import { Constants } from "@/constants";
 import { useTheme } from "next-themes";
 import SCard from "../ui/SCard";
+import { useTranslations, useLocale } from "next-intl";
+import { locales, localeNames } from "@/i18n/config";
+import { setUserLocale } from "@/utils/actions/locale";
 
 const GeneralSettings = () => {
+  const t = useTranslations();
+  const locale = useLocale();
   const dispatch = useAppDispatch();
   const settings = useAppSelector((state) => state.settingsReducer.value);
   if (!settings) return null;
@@ -23,7 +29,7 @@ const GeneralSettings = () => {
 
   const handleUpdate = (updatedFields: Partial<Setting>) => {
     dispatch(updateSettingsHandler(updatedFields));
-    window?.location?.reload();
+    // window?.location?.reload();
   };
 
   return (
@@ -32,17 +38,19 @@ const GeneralSettings = () => {
       <SCard
         className="card"
         icon={Network}
-        title="Network & RPC"
+        title={t("General.network.title")}
         iconSize="sm"
         iconColor="primary"
-        description="Configure your connection to the Steem blockchain"
+        description={t("General.network.description")}
       >
         <div className="space-y-4">
           <div className="flex flex-row justify-between items-center bg-default-100 p-3 rounded-xl border border-default-200 max-w-md">
             <div className="flex flex-col gap-0.5">
-              <p className="text-sm font-semibold">Automatic Selection</p>
+              <p className="text-sm font-semibold">
+                {t("General.network.autoSelection")}
+              </p>
               <p className="text-xs text-default-600">
-                Automatically select the best available node
+                {t("General.network.autoSelectionDesc")}
               </p>
             </div>
             <Switch
@@ -55,8 +63,8 @@ const GeneralSettings = () => {
           </div>
 
           <Select
-            label="RPC Node"
-            placeholder="Select an RPC server"
+            label={t("General.network.rpcNode")}
+            placeholder={t("General.network.placeholder")}
             selectedKeys={settings.auto_rpc ? ["auto"] : [settings.rpc]}
             onSelectionChange={(keys) => {
               const rpc = Array.from(keys)[0] as string;
@@ -69,12 +77,12 @@ const GeneralSettings = () => {
             className="max-w-md"
             variant="faded"
             classNames={{ description: "text-muted mt-1" }}
-            description="High-performance nodes provide a smoother experience"
+            description={t("General.network.rpcNodeDesc")}
             size="sm"
           >
             {["auto", ...Constants.rpc_servers].map((rpc) => (
               <SelectItem key={rpc}>
-                {rpc === "auto" ? "Auto (Failover)" : rpc}
+                {rpc === "auto" ? t("General.network.autoFailover") : rpc}
               </SelectItem>
             ))}
           </Select>
@@ -85,16 +93,16 @@ const GeneralSettings = () => {
       <SCard
         className="card"
         icon={ImageIcon}
-        title="Media & Content"
+        title={t("General.media.title")}
         iconSize="sm"
         iconColor="warning"
-        description="Manage image hosting and content visibility"
+        description={t("General.media.description")}
       >
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Select
-              label="Image Server"
-              placeholder="Select image hosting"
+              label={t("General.media.imageServer")}
+              placeholder={t("General.media.imageServerPlaceholder")}
               selectedKeys={[settings.image_server]}
               onSelectionChange={(keys) => {
                 const image_server = Array.from(keys)[0] as string;
@@ -110,8 +118,8 @@ const GeneralSettings = () => {
             </Select>
 
             <Select
-              label="NSFW Content"
-              placeholder="Set your preference"
+              label={t("General.media.nsfwLabel")}
+              placeholder={t("General.media.nsfwPlaceholder")}
               selectedKeys={[settings.nsfw]}
               onSelectionChange={(keys) => {
                 const nsfw = Array.from(keys)[0] as NSFW;
@@ -122,9 +130,54 @@ const GeneralSettings = () => {
               startContent={<ShieldAlert size={18} className="text-warning" />}
               size="sm"
             >
-              <SelectItem key="Always show">Always show</SelectItem>
-              <SelectItem key="Always hide">Always hide</SelectItem>
-              <SelectItem key="Always warn">Always warn</SelectItem>
+              <SelectItem key="Always show">
+                {t("General.media.nsfwAlwaysShow")}
+              </SelectItem>
+              <SelectItem key="Always hide">
+                {t("General.media.nsfwAlwaysHide")}
+              </SelectItem>
+              <SelectItem key="Always warn">
+                {t("General.media.nsfwAlwaysWarn")}
+              </SelectItem>
+            </Select>
+          </div>
+        </div>
+      </SCard>
+
+      {/* Language */}
+      <SCard
+        className="card"
+        icon={Languages}
+        title={t("General.language.title")}
+        iconSize="sm"
+        iconColor="secondary"
+        description={t("General.language.description")}
+      >
+        <div className="space-y-4">
+          <div className="flex flex-row justify-between items-center bg-default-100 p-3 rounded-xl border border-default-200 max-w-md">
+            <div className="flex flex-col gap-0.5">
+              <p className="text-sm font-semibold">
+                {t("General.language.select")}
+              </p>
+            </div>
+            <Select
+              size="sm"
+              selectedKeys={[locale]}
+              onSelectionChange={async (keys) => {
+                const newLocale = Array.from(keys)[0] as any;
+                if (newLocale) {
+                  await setUserLocale(newLocale);
+                  window.location.reload();
+                }
+              }}
+              className="w-[150px]"
+              variant="faded"
+            >
+              {locales.map((loc) => (
+                <SelectItem key={loc}>
+                  {localeNames[loc as keyof typeof localeNames]}
+                </SelectItem>
+              ))}
             </Select>
           </div>
         </div>
@@ -134,17 +187,21 @@ const GeneralSettings = () => {
       <SCard
         className="card"
         icon={Palette}
-        title="Interface Preferences"
+        title={t("General.interface.title")}
         iconSize="sm"
         iconColor="secondary"
-        description="Customize your viewing experience"
+        description={t("General.interface.description")}
       >
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             <div className="flex flex-row justify-between items-center bg-default-100 p-3 rounded-xl border border-default-200">
               <div className="flex flex-col gap-0.5">
-                <p className="text-sm font-semibold">Theme</p>
-                <p className="text-xs text-default-600">Set your theme</p>
+                <p className="text-sm font-semibold">
+                  {t("General.interface.theme")}
+                </p>
+                <p className="text-xs text-default-600">
+                  {t("General.interface.themeDesc")}
+                </p>
               </div>
               <Select
                 size="sm"
@@ -162,16 +219,26 @@ const GeneralSettings = () => {
                   description: "text-muted mt-1",
                 }}
               >
-                <SelectItem key="system">System</SelectItem>
-                <SelectItem key="light">Light</SelectItem>
-                <SelectItem key="dark">Dark</SelectItem>
+                <SelectItem key="system">
+                  {t("General.interface.themeSystem")}
+                </SelectItem>
+                <SelectItem key="light">
+                  {t("General.interface.themeLight")}
+                </SelectItem>
+                <SelectItem key="dark">
+                  {t("General.interface.themeDark")}
+                </SelectItem>
               </Select>
             </div>
 
             <div className="flex flex-row justify-between items-center bg-default-100 p-3 rounded-xl border border-default-200">
               <div className="flex flex-col gap-0.5">
-                <p className="text-sm font-semibold">Feed Style</p>
-                <p className="text-xs text-default-600">Display mode</p>
+                <p className="text-sm font-semibold">
+                  {t("General.interface.feedStyle")}
+                </p>
+                <p className="text-xs text-default-600">
+                  {t("General.interface.feedStyleDesc")}
+                </p>
               </div>
               <Select
                 size="sm"
@@ -186,16 +253,26 @@ const GeneralSettings = () => {
                   description: "text-muted mt-1",
                 }}
               >
-                <SelectItem key="list">List</SelectItem>
-                <SelectItem key="blogs">Blog</SelectItem>
-                <SelectItem key="grid">Grid</SelectItem>
+                <SelectItem key="list">
+                  {t("General.interface.feedStyleList")}
+                </SelectItem>
+                <SelectItem key="blogs">
+                  {t("General.interface.feedStyleBlog")}
+                </SelectItem>
+                <SelectItem key="grid">
+                  {t("General.interface.feedStyleGrid")}
+                </SelectItem>
               </Select>
             </div>
 
             <div className="flex flex-row justify-between items-center bg-default-100 p-3 rounded-xl border border-default-200">
               <div className="flex flex-col gap-0.5">
-                <p className="text-sm font-semibold">Remember Vote</p>
-                <p className="text-xs text-default-600">Use last weight</p>
+                <p className="text-sm font-semibold">
+                  {t("General.interface.vote")}
+                </p>
+                <p className="text-xs text-default-600">
+                  {t("General.interface.voteDesc")}
+                </p>
               </div>
               <Switch
                 isSelected={settings.vote.remember}
@@ -211,7 +288,9 @@ const GeneralSettings = () => {
             {!settings.vote.remember && (
               <div className="flex flex-col gap-1 bg-default-100 p-3 rounded-xl border border-default-200">
                 <div className="flex justify-between items-center">
-                  <p className="text-sm font-semibold">Default Vote %</p>
+                  <p className="text-sm font-semibold">
+                    {t("General.interface.defaultVote")}
+                  </p>
                   <span className="text-primary text-sm font-bold">
                     {settings.vote.value}%
                   </span>

@@ -17,6 +17,7 @@ import MarkdownEditor from "./MarkdownEditor";
 import SModal from "../ui/SModal";
 import LoginAlertCard from "../ui/LoginAlertCard";
 import { getSnippets, updateSnippet, addSnippet, deleteSnippet } from "@/libs/supabase/snippets";
+import { useTranslations } from "next-intl";
 
 interface Props {
   isOpen: boolean;
@@ -27,7 +28,6 @@ interface Props {
 const MARKDOWN_TEMPLATES = [
   {
     id: "table",
-    title: "Table",
     body: `| Header 1 | Header 2 | Header 3 |
 |----------|----------|----------|
 | Cell 1   | Cell 2   | Cell 3   |
@@ -35,7 +35,6 @@ const MARKDOWN_TEMPLATES = [
   },
   {
     id: "code-block",
-    title: "Code Block",
     body: `\`\`\`javascript
 function example() {
   console.log("Hello World");
@@ -44,7 +43,6 @@ function example() {
   },
   {
     id: "collapsible",
-    title: "Collapsible Section",
     body: `<details>
 <summary>Click to expand</summary>
 
@@ -54,25 +52,21 @@ Your content here...
   },
   {
     id: "divider",
-    title: "Divider",
     body: `---`,
   },
   {
     id: "task-list",
-    title: "Task List",
     body: `- Task 1
 - Task 2
 - Completed task`,
   },
   {
     id: "blockquote",
-    title: "Blockquote",
     body: `> This is a blockquote
 > It can span multiple lines`,
   },
   {
     id: "image-grid",
-    title: "Image Grid (2 columns)",
     body: `<div class="pull-left">
 
 ![image-1.jpg](https://steemitimages.com/640x0/https://cdn.steemitimages.com/DQmdgm8o8njXdFpdDgF5kuTXjJuAhSg6uPfHgTZu3RkirBE/image%20preview.001.png)
@@ -88,7 +82,6 @@ Your content here...
   },
   {
     id: "centered-text",
-    title: "Centered Text",
     body: `<center>
 
 Your centered content here
@@ -102,6 +95,7 @@ export default function SnippetsModal({
   onOpenChange,
   onInsert,
 }: Props) {
+  const t = useTranslations("Submit.snippets");
   const { data: session } = useSession();
   const username = session?.user?.name;
   const [selectedTab, setSelectedTab] = useState<"snippets" | "templates">(
@@ -140,14 +134,14 @@ export default function SnippetsModal({
           title: newTitle,
           body: newBody,
         });
-        toast.success("Snippet updated");
+        toast.success(t("updated"));
       } else {
         await addSnippet({
           username: username!,
           title: newTitle,
           body: newBody,
         });
-        toast.success("Snippet created");
+        toast.success(t("created"));
       }
       setNewTitle("");
       setNewBody("");
@@ -165,7 +159,7 @@ export default function SnippetsModal({
     setIsPending(true);
     try {
       await deleteSnippet(id);
-      toast.success("Snippet deleted");
+      toast.success(t("deleted"));
       refreshSnippets();
     } catch (error: any) {
       toast.error(error.message);
@@ -196,8 +190,8 @@ export default function SnippetsModal({
       onOpenChange={onOpenChange}
       size="xl"
       scrollBehavior="inside"
-      title={"Snippets & Templates"}
-      description="Insert snippets and templates into your post"
+      title={t("title")}
+      description={t("description")}
     >
       {(onClose) => (
         <>
@@ -209,25 +203,25 @@ export default function SnippetsModal({
               panel:'p-0'
             }}
           >
-            <Tab key="snippets" title="My Snippets">
+            <Tab key="snippets" title={t("mySnippets")}>
               <div className="flex flex-col gap-4 py-4">
                 {!username ? (
-                  <LoginAlertCard text="manage snippets" />
+                  <LoginAlertCard text={t("manageSnippets")} />
                 ) : isCreating ? (
                   <Card>
                     <CardBody className="gap-3">
                       <Input
-                        label="Title"
+                        label={t("titleLabel")}
                         value={newTitle}
                         onValueChange={setNewTitle}
-                        placeholder="Enter snippet title"
+                        placeholder={t("titlePlaceholder")}
                         maxLength={200}
                       />
 
                       <MarkdownEditor
                         value={newBody}
                         onChange={setNewBody}
-                        placeholder="Enter snippet content"
+                        placeholder={t("contentPlaceholder")}
                         authors={[]}
                         hideSnippets
                         rows={6}
@@ -244,14 +238,14 @@ export default function SnippetsModal({
                         }}
                         isDisabled={isPending}
                       >
-                        Cancel
+                        {t("cancel")}
                       </Button>
                       <Button
                         color="primary"
                         onPress={handleSaveSnippet}
                         isLoading={isPending}
                       >
-                        {editingSnippet ? "Update" : "Create"}
+                        {editingSnippet ? t("update") : t("create")}
                       </Button>
                     </CardFooter>
                   </Card>
@@ -263,7 +257,7 @@ export default function SnippetsModal({
                       onPress={() => setIsCreating(true)}
                       className="self-start"
                     >
-                      New Snippet
+                      {t("new")}
                     </Button>
 
                     {error ? (
@@ -295,7 +289,7 @@ export default function SnippetsModal({
                                   </Button>
 
                                   <SPopover
-                                    title="Delete Snippet"
+                                    title={t("deleteTitle")}
                                     trigger={
                                       <Button
                                         size="sm"
@@ -307,7 +301,7 @@ export default function SnippetsModal({
                                         <Trash2 size={16} />
                                       </Button>
                                     }
-                                    description="Do you really want to delete this snippet?"
+                                    description={t("deleteDesc")}
                                   >
                                     {(onClose) => (
                                       <div className="flex gap-2 self-end">
@@ -315,7 +309,7 @@ export default function SnippetsModal({
                                           variant="flat"
                                           onPress={onClose}
                                         >
-                                          Cancel
+                                          {t("cancel")}
                                         </Button>
 
                                         <Button
@@ -325,7 +319,7 @@ export default function SnippetsModal({
                                             handleDeleteSnippet(snippet.id);
                                           }}
                                         >
-                                          Delete
+                                          {t("delete")}
                                         </Button>
                                       </div>
                                     )}
@@ -344,12 +338,12 @@ export default function SnippetsModal({
                                 startContent={<FileText size={16} />}
                                 onPress={() => handleInsert(snippet.body)}
                               >
-                                Insert
+                                {t("insert")}
                               </Button>
                             </CardFooter>
                           </Card>
                         )}
-                        noDataMessage="No snippets found. Create your first snippet!"
+                        noDataMessage={t("noSnippets")}
                         enableClientPagination
                         clientItemsPerPage={20}
                       />
@@ -359,7 +353,7 @@ export default function SnippetsModal({
               </div>
             </Tab>
 
-            <Tab key="templates" title="Templates">
+            <Tab key="templates" title={t("templates")}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 py-4">
                 {MARKDOWN_TEMPLATES.map((template) => (
                   <Card
@@ -367,7 +361,7 @@ export default function SnippetsModal({
                     className="w-full hover:bg-content2/50"
                   >
                     <CardBody className="gap-2">
-                      <h3 className="font-semibold">{template.title}</h3>
+                      <h3 className="font-semibold">{t(`templateList.${template.id}`)}</h3>
                       <pre className="text-xs bg-default-100 p-2 rounded overflow-x-auto">
                         {template.body}
                       </pre>
@@ -380,7 +374,7 @@ export default function SnippetsModal({
                         startContent={<FileText size={16} />}
                         onPress={() => handleInsert(template.body)}
                       >
-                        Insert
+                        {t("insert")}
                       </Button>
                     </CardFooter>
                   </Card>

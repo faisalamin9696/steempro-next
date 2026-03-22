@@ -20,8 +20,10 @@ import { Plus } from "lucide-react";
 import { Button } from "@heroui/button";
 import Link from "next/link";
 import { WithdrawSavingsModal } from "@/components/wallet/WithdrawSavingsModal";
+import { useTranslations } from "next-intl";
 
 const WalletTab = ({ account }: { account: AccountExt }) => {
+  const t = useTranslations("Profile");
   const [showTransferModal, setShowTransferModal] = useState(false);
   const [showPowerUpModal, setShowPowerUpModal] = useState(false);
   const [showPowerDownModal, setShowPowerDownModal] = useState(false);
@@ -107,25 +109,25 @@ const WalletTab = ({ account }: { account: AccountExt }) => {
                   panel: "px-0",
                 }}
               >
-                <Tab key={"history"} title="Transaction History">
+                <Tab key={"history"} title={t("wallet.transactionHistory")}>
                   <WalletHistory username={account.name} />
                 </Tab>
 
-                <Tab key={"delegations"} title="Delegations">
+                <Tab key={"delegations"} title={t("wallet.delegations")}>
                   <Delegations account={account} />
                 </Tab>
 
                 {isMe && (
-                  <Tab key={"orders"} title="Orders">
+                  <Tab key={"orders"} title={t("wallet.orders")}>
                     <SCard
-                      title={`Orders (${openOrders?.length})`}
+                      title={`${t("wallet.orders")} (${openOrders?.length})`}
                       icon={Plus}
                       iconClass="p-2 rounded-lg bg-primary/10 border border-primary/20"
                       titleClass="font-semibold"
                       classNames={{ body: "gap-4" }}
                       className="card"
                       iconSize="sm"
-                      description={"Your open orders"}
+                      description={t("wallet.openOrders")}
                       titleEndContent={
                         <Button
                           size="sm"
@@ -135,7 +137,7 @@ const WalletTab = ({ account }: { account: AccountExt }) => {
                           href="/market"
                         >
                           <Plus />
-                          New Order
+                          {t("wallet.newOrder")}
                         </Button>
                       }
                     >

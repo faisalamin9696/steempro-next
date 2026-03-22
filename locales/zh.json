@@ -1,0 +1,1334 @@
+{
+  "General": {
+    "network": {
+      "title": "网络与 RPC",
+      "description": "配置您与 Steem 区块链的连接",
+      "autoSelection": "自动选择",
+      "autoSelectionDesc": "自动选择最佳可用节点",
+      "rpcNode": "RPC 节点",
+      "placeholder": "选择 RPC 服务器",
+      "rpcNodeDesc": "高性能节点可提供更流畅的体验",
+      "autoFailover": "自动（故障切换）"
+    },
+    "media": {
+      "title": "媒体与内容",
+      "description": "管理图片托管和内容显示设置",
+      "imageServer": "图片服务器",
+      "imageServerPlaceholder": "选择图片托管",
+      "nsfwLabel": "NSFW 内容",
+      "nsfwPlaceholder": "设置您的偏好",
+      "nsfwAlwaysShow": "始终显示",
+      "nsfwAlwaysHide": "始终隐藏",
+      "nsfwAlwaysWarn": "始终警告"
+    },
+    "language": {
+      "title": "语言",
+      "description": "选择您偏好的应用语言",
+      "select": "选择语言"
+    },
+    "interface": {
+      "title": "界面偏好",
+      "description": "自定义您的浏览体验",
+      "theme": "主题",
+      "themeDesc": "设置您的主题",
+      "themeSystem": "跟随系统",
+      "themeLight": "浅色",
+      "themeDark": "深色",
+      "feedStyle": "信息流样式",
+      "feedStyleDesc": "显示模式",
+      "feedStyleList": "列表",
+      "feedStyleBlog": "博客",
+      "feedStyleGrid": "网格",
+      "vote": "记住投票",
+      "voteDesc": "使用上次的权重",
+      "defaultVote": "默认投票 %"
+    }
+  },
+  "Common": {
+    "home": "首页",
+    "settings": "设置",
+    "profile": "个人资料",
+    "loginTo": "请登录以{action}。",
+    "security": "安全",
+    "about": "关于",
+    "logout": "退出登录",
+    "login": "登录",
+    "keychain": "Keychain",
+    "privateKey": "私钥"
+  },
+  "Home": {
+    "tabs": {
+      "trending": "热门",
+      "popular": "流行",
+      "recent": "最新",
+      "hot": "火热",
+      "payout": "待发放"
+    }
+  },
+  "Communities": {
+    "title": "社区",
+    "headerDesc": "探索并加入 Steem 上充满活力的社区。管理您的订阅，关注您最感兴趣的内容。",
+    "searchPlaceholder": "按标题或账户搜索...",
+    "showOnlySubscribed": "仅显示已订阅的社区",
+    "noDescription": "暂无描述",
+    "subscribers": "订阅者",
+    "subscribe": "订阅",
+    "leave": "退出",
+    "leftSuccess": "已退出社区",
+    "subscribeSuccess": "订阅成功"
+  },
+  "Community": {
+    "created": "创建时间",
+    "pendingReward": "待发放奖励",
+    "rank": "排名",
+    "members": "成员",
+    "active": "活跃",
+    "leadership": "管理团队",
+    "rules": "规则",
+    "about": "关于",
+    "more": "更多",
+    "user": "用户",
+    "role": "角色",
+    "activities": "动态"
+  },
+  "About": {
+    "hero": {
+      "subtitle": "赋能您的声音",
+      "description": "体验由 Steem 区块链驱动的社交网络。探索热门讨论，在真正去中心化的平台上分享您独特的见解。",
+      "getStarted": "立即开始",
+      "viewGithub": "查看 Github"
+    },
+    "mission": {
+      "title": "我们的使命",
+      "description": "SteemPro 致力于弥合复杂的区块链技术与日常社交互动之间的差距。我们相信，应为用户提供流畅、快速、安全的界面来与 Steem 生态系统进行交互。",
+      "secureTitle": "安全",
+      "secureDesc": "区块链级别的安全保障",
+      "fastTitle": "快速",
+      "fastDesc": "经过优化的高性能体验"
+    },
+    "features": {
+      "title": "强大功能",
+      "subtitle": "专为区块链新手和资深爱好者设计。",
+      "feature1Title": "全球连接",
+      "feature1Desc": "在抗审查网络上与全球用户建立联系。",
+      "feature2Title": "SDS 驱动",
+      "feature2Desc": "由 Steem Data Service 提供闪电般的数据获取速度。",
+      "feature3Title": "去中心化",
+      "feature3Desc": "您的账户、您的密钥、您的内容，完全归您所有。",
+      "feature4Title": "社区驱动",
+      "feature4Desc": "由社区构建，为社区服务。"
+    },
+    "team": {
+      "title": "团队介绍",
+      "subtitle": "认识 SteemPro 背后的团队。"
+    },
+    "cta": {
+      "title": "加入社交媒体的未来",
+      "description": "成为去中心化世界的一份子——在这里，您的内容属于您，您的声音至关重要。",
+      "discord": "Discord",
+      "email": "联系我们"
+    }
+  },
+  "Explorer": {
+    "title": "区块链浏览器",
+    "description": "Steem 区块链实时数据、区块、交易及链上统计",
+    "tabs": {
+      "overview": "概览",
+      "blocks": "区块",
+      "transactions": "交易",
+      "accounts": "账户"
+    },
+    "recentBlocks": "最新区块"
+  },
+  "Market": {
+    "title": "市场",
+    "description": "立即进行 STEEM 与 SBD 的交易",
+    "stats": {
+      "lastPrice": "最新价格",
+      "change24h": "24小时涨跌",
+      "high24h": "24小时最高",
+      "low24h": "24小时最低",
+      "volumeSteem": "24小时成交量 (STEEM)",
+      "volumeSbd": "24小时成交量 (SBD)"
+    },
+    "chart": {
+      "pair24h": "STEEM/SBD - 24小时"
+    },
+    "tabs": {
+      "orderBook": "订单簿",
+      "openOrders": "未成交订单",
+      "tradeHistory": "成交记录"
+    },
+    "orderBook": {
+      "priceSbd": "价格 (SBD)",
+      "steem": "STEEM",
+      "sbd": "SBD"
+    },
+    "openOrders": {
+      "noOrders": "暂无未成交订单",
+      "type": "类型",
+      "price": "价格",
+      "steem": "STEEM",
+      "sbd": "SBD",
+      "action": "操作",
+      "orderCancelled": "订单已取消",
+      "failedToCancel": "取消订单失败"
+    },
+    "history": {
+      "date": "时间",
+      "price": "价格",
+      "steem": "STEEM"
+    },
+    "trade": {
+      "buy": "买入",
+      "sell": "卖出",
+      "buySteem": "买入 STEEM",
+      "sellSteem": "卖出 STEEM",
+      "available": "可用",
+      "price": "价格",
+      "amount": "数量",
+      "total": "总计",
+      "createOrder": "创建订单",
+      "orderCreated": "订单创建成功",
+      "failedToCreate": "创建订单失败"
+    },
+    "info": {
+      "title": "交易信息",
+      "marketFee": "市场手续费",
+      "orderType": "订单类型",
+      "limitDefault": "限价单（默认）",
+      "pair": "交易对"
+    }
+  },
+  "Games": {
+    "title": "游戏",
+    "landing": {
+      "gamingZone": "SteemPro 游戏区",
+      "heroTitle": "畅玩。竞技。<earn>赚取。</earn>",
+      "heroDescription": "欢迎来到终极区块链游戏平台。磨练您的技能，征服排行榜，在 Steem 生态系统中赢取奖励。",
+      "allGames": "全部游戏",
+      "noGamesFound": "未找到游戏",
+      "noGamesDescription": "我们正在为此类别开发新游戏，敬请期待！",
+      "resetFilter": "重置筛选",
+      "ecosystemFavorites": "生态热门游戏",
+      "communityTitles": "社区 {titles}",
+      "communityTitlesHighlight": "精选",
+      "communityDescription": "探索由 Steem 社区和合作工作室开发的精彩游戏。",
+      "yourGameHere": "想上架您的游戏？",
+      "buildYourOwn": "开发您自己的游戏，在 SteemPro 游戏区展示。",
+      "fairPlay": "公平竞技与奖励",
+      "immutableScores": "不可篡改的 {scores}",
+      "immutableScoresHighlight": "记录",
+      "fairPlayDescription": "所有最高分和游戏成就均直接记录在 Steem 区块链上，确保透明度、不可篡改性和技能证明。顶级玩家有资格获得 SteemPro 社区精选奖励。",
+      "transparent": "透明",
+      "verifiedOnChain": "链上验证",
+      "rewarding": "丰厚回报",
+      "communityDriven": "社区驱动"
+    },
+    "card": {
+      "native": "原生",
+      "hot": "热门",
+      "chain": "链",
+      "enterGame": "进入游戏",
+      "studio": "工作室",
+      "difficulty": "难度",
+      "rewards": "奖励",
+      "launchWebsite": "打开网站"
+    },
+    "developerTemplate": {
+      "viewTemplate": "查看模板",
+      "title": "开发者接入模板",
+      "close": "关闭",
+      "getStarted": "开始",
+      "description": "按照此数据结构将您的游戏添加到生态系统中。提交 PR 或联系团队以完成上架。",
+      "thumbnail": "缩略图",
+      "thumbnailRecommended": "推荐尺寸：800x1200px（竖向）",
+      "integration": "接入方式",
+      "integrationLevels": "Level 1（链接）或 Level 2（托管）"
+    },
+    "steemHeights": {
+      "title": "Steem Heights",
+      "info": {
+        "skillCompetition": "技术竞技",
+        "noActiveSeason": "暂无进行中的赛季",
+        "season": "第 {season} 赛季",
+        "seasonEnded": "赛季已结束",
+        "pool": "{amount} {symbol} 奖金池",
+        "description": "以坚定的专注力触碰天际。精准地堆叠每一个方块，挑战记录高度。在这场攀登中，专注力是您最强大的武器。",
+        "handbook": "攀登者手册",
+        "viewLeaderboard": "查看排行榜"
+      },
+      "leaderboard": {
+        "tabs": {
+          "global": "全球巅峰",
+          "daily": "每日挑战",
+          "history": "我的记录",
+          "winners": "赛季名人堂",
+          "lab": "定制实验室"
+        },
+        "global": {
+          "summit": "第 {season} 赛季巅峰",
+          "hall": "全球巅峰名人堂",
+          "totalClimbers": "参与玩家总数",
+          "active24h": "活跃（24小时）",
+          "totalAscent": "累计攀登高度",
+          "avgAltitude": "平均高度",
+          "intermission": "赛季休整期",
+          "concluded": "第 {season} 赛季攀登已结束，最终高度记录已锁定。",
+          "preparing": "当前暂无进行中的攀登活动，我们正在筹备下一个赛季，请保持专注！",
+          "beFirst": "成为第一个攀登高峰的人！",
+          "noMore": "此范围内没有更多攀登者。",
+          "unqualifiedClimbers": "不合格的攀登者",
+          "onlyQualified": "仅合格者",
+          "table": {
+            "player": "玩家",
+            "performance": "表现"
+          },
+          "plays": "对局",
+          "combos": "连击",
+          "you": "我",
+          "race": {
+            "title": "巅峰竞速",
+            "subtitle": "前 8 名攀登者"
+          },
+          "goal": {
+            "title": "社区全球目标",
+            "currentPool": "当前赛季奖励池",
+            "maxCapability": "最大可达",
+            "invite": "邀请好友",
+            "totalProgress": "总体进度",
+            "targeting": "目标：{altitude}m",
+            "boost": "+{reward} {symbol} 加成",
+            "baseStart": "起始基准：{altitude}m",
+            "maxGoal": "最高目标：{altitude}m",
+            "milestones": "奖励里程碑",
+            "tooltip": "社区奖励根据所有玩家的累计总高度计算。超过 {baseAltitude}m 后，每 {stepSize}m 将为奖励池增加 {boost} {symbol}。",
+            "modal": {
+              "title": "邀请<climbers>攀登者</climbers>",
+              "subtitle": "帮助社区突破目标",
+              "markdown": "邀请 Markdown",
+              "info": "复制此 Markdown 并粘贴到您的下一篇帖子或评论中，邀请朋友加入。大家的累计高度越高，所有人的奖励也就越丰厚！",
+              "close": "关闭"
+            }
+          }
+        },
+        "daily": {
+          "operations": "每日任务",
+          "tactical": "战术{challenges}",
+          "description": "每天突破极限，为实验室积累能量储备。",
+          "challenges": {
+            "daily_ascent": {
+              "title": "大本营",
+              "description": "今日累计攀登 200m"
+            },
+            "daily_ascent_pro": {
+              "title": "巅峰猎手",
+              "description": "今日累计攀登 1000m"
+            },
+            "daily_combos": {
+              "title": "精准大师",
+              "description": "当日累计完成 10 次连击"
+            },
+            "daily_plays": {
+              "title": "坚韧攀登者",
+              "description": "今日完成 6 局游戏"
+            }
+          },
+          "energyReserves": "能量储备",
+          "nrg": "nrg",
+          "claimed": "已领取",
+          "ready": "可领取",
+          "progress": "进度",
+          "reward": "奖励",
+          "missionCompleted": "任务完成",
+          "processing": "处理中...",
+          "claimReward": "领取奖励",
+          "inProgress": "进行中",
+          "inactive": "每日挑战未开放",
+          "inactiveDescription": "挑战和能量奖励仅在活跃赛季期间可用，请等待下一个赛季开启！",
+          "resetNotice": "赛季重置提示",
+          "resetDescription": "能量为赛季专属。第 {season} 赛季结束时，您的余额将重置，确保所有竞争者重新起跑。"
+        },
+        "history": {
+          "summary": "个人数据汇总",
+          "totalPlays": "总对局数",
+          "bestAltitude": "最佳高度",
+          "avgAltitude": "平均高度",
+          "totalCombos": "总连击数",
+          "estReward": "预计赛季奖励",
+          "keepClimbing": "继续攀登！达到 {minAlt}m 高度或以 10m+ 高度完成 {minPlays} 局即可获得资格。",
+          "breakIntoTop": "您已获得资格！现在进入前 {ranking} 名，即可获得奖励池的份额。",
+          "qualified": "您已获得资格，正在获取奖励！",
+          "records": "个人记录",
+          "publish": {
+            "title": "分享您的旅程",
+            "subtitle": "将您的每日活动发布到 Steem",
+            "successTitle": "发布成功！",
+            "successDesc": "您的攀登旅程已永久记录在 Steem 区块链上，干得漂亮！",
+            "statsTitle": "数据预览",
+            "totalPlays": "总场次",
+            "peakAltitude": "最高高度",
+            "estTotal": "预计总计",
+            "supportTitle": "支持攀登事业",
+            "supportDesc": "发布您的旅程不仅是分享数据，更是在支持平台发展！我们共同将 <pro>10%</pro> 用于支持 <steempro>SteemPro</steempro>，燃烧 <burn>5%</burn> 回馈 <eco>Steem 生态系统</eco>。您的攀登助力所有人共同成长！",
+            "selectCommunity": "选择社区",
+            "postTitle": "帖子标题",
+            "postContent": "帖子内容（Markdown）",
+            "descPlaceholder": "描述您的攀登历程...",
+            "publishBtn": "发布到 Steem",
+            "btnLabel": "发布活动",
+            "defaultTitle": "我在 Steem Heights 的赛季旅程 - {date}",
+            "defaultBody": "![steem-heights.png](https://cdn.steemitimages.com/DQmTmKQbDgzjQnB4CFCMLemNa1hmo5bBt5C56GR9CtArCYN/steem-heights.png)\n\n# 我在 Steem Heights 的赛季旅程 🏔️\n\n我一直在挑战高峰！以下是我的阶段性成绩：\n\n- 🚀 **总场次**：{plays}\n- 🏔️ **个人最佳**：{peak}m\n- ☁️ **累计高度**：{altitude}m（估）\n- 🎯 **总连击数**：{combos}\n- 📈 **平均高度**：{avg}m\n\n你能超越我的成绩吗？快来加入 Steem Heights 的攀登之旅！\n\n[玩 Steem Heights](https://www.steempro.com/games/steem-heights)\n\n#steemheights #gaming #steempro #play2earn",
+            "close": "关闭",
+            "cancel": "取消"
+          },
+          "altitude": "高度",
+          "combos": "连击",
+          "best": "最佳",
+          "noRecords": "第 {season} 赛季暂无记录"
+        },
+        "winners": {
+          "transactionReport": "交易报告已复制到剪贴板！",
+          "markdownReport": "Markdown 报告已复制到剪贴板！",
+          "hallOfChampions": "冠军名人堂",
+          "more": "+{count} 位",
+          "champion": "冠军",
+          "climbers": "攀登者",
+          "ascent": "攀登高度",
+          "avg": "平均",
+          "personalBest": "个人最佳",
+          "achieved": "已达成",
+          "pool": "奖金池",
+          "hallAwaits": "名人堂正在等待第一位英雄……",
+          "archives": "历史档案",
+          "performanceData": "赛季表现数据",
+          "txReport": "TX 报告",
+          "mdReport": "MD 报告",
+          "fetching": "正在加载历史记录...",
+          "allParticipants": "全部参赛者及排名",
+          "table": {
+            "player": "玩家",
+            "performance": "表现"
+          }
+        },
+        "lab": {
+          "disabled": "攀登进行中，商店暂时关闭",
+          "conflictToast": "无法装备 {skin}：与当前激活的 {powerUp} 道具冲突。",
+          "loginToast": "请登录后购买皮肤。",
+          "powerups": "道具商店",
+          "powerupsSub": "消耗能量购买单局增益道具",
+          "conflictMsg": "此能力已通过您的 {skin} 皮肤激活。",
+          "ready": "可用",
+          "skinConflict": "皮肤冲突",
+          "activate": "激活",
+          "insufficient": "能量不足",
+          "skins": "赛季皮肤",
+          "skinsSub": "为方块装备独特外观与能力",
+          "active": "已激活",
+          "ability": "核心能力",
+          "cost": "解锁费用",
+          "owned": "已拥有",
+          "energy": "能量",
+          "equipped": "已装备",
+          "select": "选择",
+          "purchase": "购买",
+          "footnote": "* 皮肤与道具为赛季专属福利，旨在提升您的攀登体验。",
+          "footnoteNote": "注意：",
+          "footnoteSub": "临时道具仅在一局游戏中有效。",
+          "items": {
+            "skins": {
+              "default": {
+                "name": "经典攀登者",
+                "description": "每位登山者的标准装备。",
+                "ability": "无"
+              },
+              "glacier": {
+                "name": "冰川板块",
+                "description": "冰冻方块，降低移动速度。（150 能量）",
+                "ability": "速度降低 15%"
+              },
+              "steel": {
+                "name": "钢铁核心",
+                "description": "坚固方块，可无视高空气流干扰。（300 能量）",
+                "ability": "无风力偏移"
+              },
+              "phoenix": {
+                "name": "凤凰之翼",
+                "description": "神奇力量，可承受一次致命坠落。（500 能量）",
+                "ability": "额外 1 条命"
+              },
+              "gold": {
+                "name": "点金之触",
+                "description": "纯金方块，完美落地时额外增加高度。（1000 能量）",
+                "ability": "完美落地 +2m 加成"
+              }
+            },
+            "powerups": {
+              "wind_shield": {
+                "name": "风盾",
+                "description": "单局游戏内完全无视风力偏移。"
+              },
+              "slow_motion": {
+                "name": "慢动作",
+                "description": "单局游戏内移动速度降低 20%。"
+              },
+              "extra_gear": {
+                "name": "额外装备",
+                "description": "下一局游戏开始时额外获得一条命。"
+              }
+            }
+          }
+        },
+        "howToPlay": {
+          "title": "掌握<climb>攀登</climb>技巧",
+          "subtitle": "必备生存指南",
+          "controls": {
+            "dropControl": {
+              "title": "落块控制",
+              "desc": "点击屏幕任意位置即可放下移动中的方块，时机就是一切。"
+            },
+            "precision": {
+              "title": "精准切割",
+              "desc": "方块必须落在基座上，悬空部分会被立即切除！"
+            },
+            "perfect": {
+              "title": "完美连击",
+              "desc": "精准对齐方块可获得 PERFECT 判定，增加连击数并降低风阻。"
+            },
+            "bonus": {
+              "title": "高度加成",
+              "desc": "每次成功连击都能获得丰厚的高度奖励！"
+            }
+          },
+          "gravityPulse": "重力脉冲",
+          "gravityDesc": "您有 <time>{timeVal} 秒</time>时间放下每个方块，拖延太久将触发<autoDrop>自动落块！</autoDrop>",
+          "dailyRewards": "每日奖励",
+          "dailyDesc": "完成<challenges>每日挑战</challenges>赚取<energy>能量</energy>，在实验室用能量购买<powerups>道具</powerups>和<skins>皮肤</skins>。",
+          "close": "开始攀登"
+        }
+      },
+      "canvas": {
+        "testGameplay": "测试游戏",
+        "seasonBreak": "赛季休整",
+        "loginToRecord": "立即登录以记录您的成绩并获取奖励，当前高度将不会被保存。",
+        "seasonEnded": "当前赛季已结束，请等待下一赛季开始竞技并赢取奖励！",
+        "altitude": "高度",
+        "howToPlay": "游戏说明",
+        "wind": "风力",
+        "rankings": "排名",
+        "ready": "准备好称霸了吗？",
+        "tapToDrop": "点击方块区域任意位置即可放下方块。",
+        "begin": "开始攀登",
+        "totalAltitude": "累计高度",
+        "climbEnded": "攀登结束",
+        "recording": "正在记录至区块链...",
+        "loginToRecordScore": "登录后将成绩记录至区块链",
+        "seasonInactive": "赛季未开放 · 成绩未记录",
+        "tryAgain": "再试一次",
+        "mainMenu": "主菜单",
+        "paused": "已暂停",
+        "takeBreather": "稍作休息，冠军。",
+        "resume": "继续",
+        "preparing": "准备攀登中",
+        "generating": "正在生成安全会话",
+        "perfect": "完美！",
+        "comboBonus": "连击加成",
+        "combos": "连击",
+        "bonus": "加成",
+        "you": "我"
+      }
+    }
+  },
+  "Post": {
+    "notFound": "帖子不存在",
+    "notFoundDescription": "您查找的帖子不存在或已被删除。",
+    "muted": "此帖子已被屏蔽",
+    "mutedDescription": "此帖子已被社区管理员屏蔽。",
+    "viewingSingleComment": "您正在查看以下内容的单条评论线程：",
+    "viewFullContext": "查看完整上下文",
+    "viewDirectParent": "查看直接父评论",
+    "in": "在",
+    "edited": "（已编辑）",
+    "postedVia": "通过 {app} 发布",
+    "voteRemoved": "投票已撤销",
+    "votedSuccessfully": "投票成功！",
+    "upvote": "点赞",
+    "downvote": "踩",
+    "comments": "评论",
+    "writeReply": "写回复",
+    "replyPlaceholder": "在此输入您的评论... 使用 @ 提及用户",
+    "reply": "回复",
+    "update": "更新",
+    "cancel": "取消",
+    "loadingComments": "正在加载评论...",
+    "newest": "最新",
+    "sortPayout": "待发放",
+    "upvotes": "点赞数",
+    "beFirstComment": "成为第一个评论的人！",
+    "loadingMore": "加载更多...",
+    "updateReply": "更新回复...",
+    "replyTo": "回复 @{author}...",
+    "openFullThread": "查看完整讨论",
+    "somethingWentWrong": "出现了一些问题！",
+    "resteemedAlready": "您已经 resteem 过此帖子！",
+    "resteemSuccess": "Resteem 成功！",
+    "resteemConfirmation": "确认操作",
+    "resteemQuestion": "确定要 resteem 此帖子吗？",
+    "payoutDetails": "待发放详情",
+    "payoutBreakdown": {
+      "authorDeclined": "作者已拒绝领取奖励",
+      "pending": "待发放奖励明细",
+      "settled": "已结算奖励明细",
+      "declinedTitle": "待发放已拒绝",
+      "declinedDescription": "此帖子的作者选择拒绝领取所有奖励。",
+      "failed": "加载待发放详情失败",
+      "status": "状态",
+      "pendingLabel": "待发放",
+      "paidLabel": "已发放",
+      "nextCashout": "下次 cashout",
+      "totalPayout": "总待发放",
+      "expectedSbd": "预计 SBD",
+      "expectedSteem": "预计 STEEM",
+      "expectedSp": "预计 SP",
+      "authorTotal": "作者合计",
+      "curatorsTotal": "策展人合计",
+      "beneficiaries": "受益人"
+    }
+  },
+  "Profile": {
+    "tabs": {
+      "blog": "博客",
+      "posts": "帖子",
+      "friends": "关注",
+      "comments": "评论",
+      "replies": "回复",
+      "notifications": "通知",
+      "communities": "社区",
+      "wallet": "钱包"
+    },
+    "about": "个人简介",
+    "joined": "加入时间",
+    "followers": "粉丝",
+    "following": "关注",
+    "posts": "帖子",
+    "comments": "评论",
+    "active": "活跃",
+    "vp": "VP",
+    "vpTitle": "投票权重",
+    "rc": "RC",
+    "rcTitle": "资源积分",
+    "vote": "投票",
+    "voteTitle": "投票价值",
+    "witnessProxy": "Witness 代理",
+    "witnessVotes": "Witness 投票",
+    "more": "+{count} 位",
+    "editProfile": "编辑资料",
+    "follow": "关注",
+    "unfollow": "取消关注",
+    "followSuccess": "关注成功",
+    "unfollowSuccess": "已取消关注",
+    "notifications": {
+      "title": "通知",
+      "unread": "{count} 条未读",
+      "allCaughtUp": "全部已读",
+      "markAllRead": "全部标为已读",
+      "filterAndSort": "筛选与排序",
+      "allTypes": "全部类型",
+      "newest": "最新",
+      "oldest": "最早",
+      "searchPlaceholder": "按用户或活动搜索...",
+      "loading": "正在加载通知...",
+      "empty": "暂无通知",
+      "today": "今天",
+      "yesterday": "昨天",
+      "typeLabels": {
+        "vote": "投票",
+        "reply": "回复",
+        "mention": "提及",
+        "follow": "关注",
+        "resteem": "Resteem"
+      }
+    },
+    "wallet": {
+      "transactionHistory": "交易记录",
+      "delegations": "委托",
+      "orders": "订单",
+      "openOrders": "您的未成交订单",
+      "newOrder": "新建订单"
+    },
+    "settings": {
+      "loginAlert": "查看个人资料设置",
+      "basicInfo": {
+        "title": "基本信息",
+        "description": "向其他用户展示的公开资料",
+        "displayName": "显示名称",
+        "displayNamePlaceholder": "例如：张三",
+        "about": "个人简介",
+        "aboutPlaceholder": "向社区介绍一下自己",
+        "location": "所在地",
+        "locationPlaceholder": "例如：上海，中国",
+        "website": "个人网站",
+        "websitePlaceholder": "https://example.com"
+      },
+      "visual": {
+        "title": "视觉身份",
+        "description": "自定义您的头像和封面图片",
+        "preview": "预览",
+        "profileImage": "头像",
+        "profileImageDesc": "推荐使用正方形图片",
+        "coverImage": "封面图片",
+        "coverImageDesc": "推荐尺寸 1200x300",
+        "uploading": "正在上传{type}...",
+        "avatar": "头像",
+        "cover": "封面"
+      },
+      "actions": {
+        "save": "保存资料"
+      },
+      "messages": {
+        "uploadSuccess": "图片上传成功！",
+        "uploadFailed": "上传失败",
+        "updateSuccess": "个人资料已更新至区块链！"
+      }
+    }
+  },
+  "Witnesses": {
+    "title": "见证人",
+    "description": "为维护 Steem 节点并确保区块链安全的见证人投票。您最多可以投票给 30 位见证人。",
+    "tabs": {
+      "witnesses": "Witness",
+      "proxy": "代理",
+      "myWitness": "我的 Witness"
+    },
+    "columns": {
+      "rank": "#",
+      "witness": "Witness",
+      "votes": "票数",
+      "missed": "丢块",
+      "feed": "喂价",
+      "action": "操作"
+    },
+    "vote": "投票",
+    "unvote": "撤票",
+    "viewDetails": "查看详情",
+    "outdated": "版本过旧",
+    "searchPlaceholder": "按名称搜索 Witness...",
+    "noWitnesses": "未找到 Witness",
+    "showOnlyVoted": "仅显示我已投票的 Witness",
+    "proxyActive": "代理已激活",
+    "proxyActiveDesc": "您当前正在将投票权代理给",
+    "cannotVoteProxy": "代理激活期间无法直接为 Witness 投票",
+    "voteSuccess": "已成功投票给 {name}",
+    "unvoteSuccess": "已成功撤销对 {name} 的投票",
+    "proxy": {
+      "title": "设置投票代理",
+      "description": "设置代理后，另一位用户将代您为 Witness 投票，并管理您的全部 Witness 投票权重。",
+      "usernameLabel": "代理用户名",
+      "usernamePlaceholder": "例如：steempro.com",
+      "setProxy": "设置代理",
+      "clearProxy": "清除代理",
+      "currentProxy": "当前代理",
+      "setSuccess": "代理已成功设置为 {name}",
+      "removeSuccess": "代理已成功移除"
+    },
+    "myWitness": {
+      "title": "Witness 设置",
+      "description": "管理您的 Witness 节点属性和状态。",
+      "enable": "启用 Witness",
+      "disable": "禁用 Witness",
+      "urlLabel": "Witness URL",
+      "signingKeyLabel": "区块签名密钥",
+      "signingKeyDesc": "用于签署区块的公钥。",
+      "creationFeeLabel": "账户创建费",
+      "interestRateLabel": "SBD 利率",
+      "blockSizeLabel": "最大区块大小",
+      "securityTitle": "签名密钥安全",
+      "securityDesc": "更改签名密钥需要 active 权限。在更新公共签名密钥之前，请确保您的 Witness 节点上已有对应的私钥，否则您的节点将会丢块。",
+      "updateProps": "更新 Witness 属性",
+      "updateSuccess": "Witness 属性已成功更新"
+    },
+    "details": {
+      "information": "信息",
+      "voters": "投票者",
+      "basicInfo": "基本信息",
+      "owner": "所有者",
+      "rank": "排名",
+      "votes": "票数",
+      "viewVoters": "查看投票者",
+      "totalMissedBlocks": "总丢块数",
+      "lastConfirmedBlock": "最后确认区块",
+      "runningVersion": "当前版本",
+      "url": "网址",
+      "visitWebsite": "访问网站",
+      "signingKey": "签名密钥",
+      "witnessProperties": "Witness 属性",
+      "accountCreationFee": "账户创建费",
+      "maximumBlockSize": "最大区块大小",
+      "sbdInterestRate": "SBD 利率",
+      "sbdExchangeRate": "SBD 汇率",
+      "base": "基础价",
+      "quote": "报价",
+      "lastUpdate": "最后更新",
+      "additionalDetails": "更多详情",
+      "created": "创建时间",
+      "lastWork": "最后工作",
+      "hardforkTimeVote": "硬分叉时间投票",
+      "active": "活跃",
+      "disabled": "已禁用",
+      "totalVoters": "投票者总数",
+      "totalSupport": "总支持量 (SP)",
+      "noVotes": "此 Witness 暂无投票记录",
+      "voter": "投票者",
+      "ownSp": "自有 SP",
+      "proxiedSp": "代理 SP",
+      "copied": "{label} 已复制到剪贴板"
+    }
+  },
+  "Proposals": {
+    "title": "提案",
+    "description": "通过 Steem 提案系统（SPS）资助社区驱动的创意。为改善生态系统、造福网络的提案投票。",
+    "funded": "已资助",
+    "threshold": "资助门槛",
+    "pending": "待定",
+    "notFunded": "未获资助",
+    "search": "搜索提案...",
+    "item": {
+      "by": "发起人",
+      "to": "至",
+      "id": "ID",
+      "days": "天",
+      "sbdDay": "SBD/天"
+    },
+    "details": {
+      "information": "信息",
+      "voters": "投票者",
+      "votes": "票",
+      "creator": "创建者",
+      "receiver": "接收者",
+      "duration": "持续时间",
+      "start": "开始：",
+      "end": "结束：",
+      "dailyPay": "每日拨付",
+      "permlink": "Permlink",
+      "totalVoters": "投票者总数",
+      "totalSupport": "总支持量 (SP)",
+      "effective": "生效时间：",
+      "noVotes": "此提案暂无投票记录"
+    },
+    "votersTable": {
+      "voter": "投票者",
+      "ownSp": "自有 SP",
+      "proxiedSp": "代理 SP",
+      "share": "份额",
+      "proxyToActive": "代理至 @{user}",
+      "proxyToInactive": "代理至 @{user}（该用户未投票）"
+    },
+    "actions": {
+      "voteTitle": "为提案 #{id} 投票？",
+      "unvoteTitle": "撤销对提案 #{id} 的投票？",
+      "voteDesc": "确定要为此提案投票吗？",
+      "unvoteDesc": "确定要撤销对此提案的投票吗？",
+      "removeTitle": "删除提案 #{id}？",
+      "removeDesc": "确定要删除此提案吗？",
+      "vote": "投票",
+      "unvote": "撤票",
+      "cancel": "取消",
+      "remove": "删除",
+      "votedSuccess": "提案投票成功",
+      "unvotedSuccess": "已成功撤销提案投票",
+      "removedSuccess": "提案已删除"
+    }
+  },
+  "Tools": {
+    "title": "SteemPro 工具",
+    "description": "为 Steem 区块链用户、社区和策展人提供的强大基本工具集。",
+    "list": {
+      "batchTransfer": {
+        "title": "批量转账",
+        "description": "一次性高效地向多个账户发送 Steem 或 SBD。"
+      },
+      "batchVoting": {
+        "title": "批量投票",
+        "description": "同时对多个帖子进行投票，以最大化您的策展收益。"
+      },
+      "communityReport": {
+        "title": "社区报告",
+        "description": "为您的社区生成详细的统计数据和报告。"
+      },
+      "authorReport": {
+        "title": "作者统计报告",
+        "description": "分析作者的帖子表现、收益和互动。"
+      },
+      "accountCreation": {
+        "title": "创建账户",
+        "description": "使用您的账户创建令牌申请并创建新的 Steem 账户。"
+      },
+      "snippetsTemplates": {
+        "title": "片段和模板",
+        "description": "在您的帖子中插入片段和模板"
+      }
+    }
+  },
+  "Submit": {
+    "communityPlaceholder": "选择社区",
+    "noCommunity": "暂无可用社区",
+    "titlePlaceholder": "输入帖子标题...",
+    "preview": "预览",
+    "readingTime": "{words} 字，约 {text}",
+    "saveDraft": "保存草稿",
+    "cancel": "取消",
+    "update": "更新",
+    "publish": "发布",
+    "scheduled": "定时发布",
+    "confirm": "确认",
+    "clear": "清除",
+    "confirmTitle": "确认",
+    "confirmDesc": "您确定要重置所有数据吗？",
+    "saved": "已保存",
+    "draftUpdated": "草稿已更新",
+    "updated": "已更新",
+    "published": "已发布",
+    "scheduledSuccess": "帖子定时发布设置成功！",
+    "editor": {
+      "placeholder": "写下您的故事...",
+      "markdown": "Markdown",
+      "preview": "预览",
+      "uploading": "上传中...",
+      "uploadSuccess": "上传成功",
+      "uploadError": "上传失败",
+      "dragDrop": "拖放文件以上传",
+      "write": "编写"
+    },
+    "tags": {
+      "placeholder": "添加标签（按 Enter 或逗号确认）",
+      "help": "用空格分隔标签。",
+      "copied": "标签已复制到剪贴板",
+      "copyError": "复制标签失败",
+      "countInfo": "{count}/8 个标签 · 拖动可调整顺序",
+      "copyAll": "复制全部标签",
+      "clearAll": "清除全部标签"
+    },
+    "beneficiaries": {
+      "title": "管理受益人",
+      "description": "设置与其他用户共享奖励。总比例不得超过 100%。",
+      "add": "添加账户",
+      "account": "账户",
+      "weight": "比例 (%)",
+      "total": "总比例：{weight}%",
+      "favorites": "常用受益人",
+      "usernamePlaceholder": "输入用户名...",
+      "allocation": "分配：{percent}%",
+      "totalAllocation": "总分配比例：",
+      "save": "保存更改",
+      "updated": "受益人已更新",
+      "alreadyAdded": "此用户已在您的受益人列表中",
+      "alreadyAddedShort": "此用户已添加",
+      "limitExceeded": "总比例不得超过 100%"
+    },
+    "payout": {
+      "title": "待发放类型",
+      "description": "选择您希望如何接收帖子奖励。",
+      "decline": "拒绝待发放",
+      "half": "50% SBD / 50% SP",
+      "full": "100% Steem Power",
+      "declinedShort": "不领取",
+      "fiftyFiftyShort": "50%/50%",
+      "oneHundredShort": "100% SP"
+    },
+    "schedule": {
+      "title": "定时发布",
+      "description": "选择日期和时间，届时将自动发布您的帖子。"
+    },
+    "validation": {
+      "titleEmpty": "标题不能为空",
+      "postEmpty": "帖子内容不能为空",
+      "tagEmpty": "请添加标签或选择社区"
+    },
+    "error": {
+      "loginRequired": "需要登录"
+    },
+    "authority": {
+      "granted": "权限授予成功！"
+    },
+    "actions": {
+      "cancel": "取消"
+    },
+    "snippets": {
+      "title": "片段和模板",
+      "description": "在您的帖子中插入片段和模板",
+      "mySnippets": "我的片段",
+      "templates": "模板",
+      "new": "新片段",
+      "create": "创建",
+      "update": "更新",
+      "delete": "删除",
+      "insert": "插入",
+      "cancel": "取消",
+      "titleLabel": "标题",
+      "titlePlaceholder": "输入片段标题",
+      "contentPlaceholder": "输入片段内容",
+      "deleteTitle": "删除片段",
+      "deleteDesc": "您确定要删除此片段吗？",
+      "noSnippets": "未找到片段。创建您的第一个片段！",
+      "manageSnippets": "管理片段",
+      "created": "片段已创建",
+      "updated": "片段已更新",
+      "deleted": "片段已删除",
+      "required": "标题和正文是必填项",
+      "templateList": {
+        "table": "表格",
+        "code-block": "代码块",
+        "collapsible": "可折叠部分",
+        "divider": "分隔线",
+        "task-list": "任务列表",
+        "blockquote": "块引用",
+        "image-grid": "图片网格（2列）",
+        "centered-text": "居中文本"
+      }
+    }
+  },
+  "BatchTransfer": {
+    "title": "批量转账",
+    "description": "一次性高效地向多个账户发送 Steem 或 SBD。",
+    "currency": "货币",
+    "bulkImport": "批量导入",
+    "addRow": "添加行",
+    "addAnotherRow": "添加另一行",
+    "clearAll": "全部清除",
+    "confirmTitle": "确认",
+    "confirmDesc": "您确定要重置所有数据吗？",
+    "bulkInfo": "在此粘贴您的列表。您可以在下方自定义分隔符。",
+    "lineSeparator": "行分隔符",
+    "newLine": "换行符 (\\n)",
+    "semicolon": "分号 (;)",
+    "comma": "逗号 (,)",
+    "custom": "自定义",
+    "customPlaceholder": "例如: |",
+    "bulkPlaceholder": "steememator 10.000 每月奖励\\nalice 5.000 比赛获胜者",
+    "cancel": "取消",
+    "parseList": "解析列表",
+    "recipient": "收款人",
+    "amount": "金额",
+    "memo": "备注",
+    "memoOptional": "备注 (可选)",
+    "action": "操作",
+    "username": "用户名",
+    "summary": "摘要",
+    "recipients": "收款人数",
+    "totalAmount": "总金额",
+    "yourBalance": "您的余额",
+    "insufficientBalance": "余额不足",
+    "sendButton": "发送批量转账",
+    "error": {
+      "loginFirst": "请先登录",
+      "invalidSeparator": "请提供有效的自定义行分隔符。",
+      "parseError": "无法解析任何有效的转账。请检查格式。"
+    },
+    "success": {
+      "imported": "成功导入 {count} 笔转账",
+      "broadcast": "批量转账成功！",
+      "sent": "已向 {count} 位用户发送了 {total} {currency}。"
+    }
+  },
+  "BatchVoting": {
+    "title": "批量点赞",
+    "description": "同时对多个帖子点赞，以最大化您的策展收益。",
+    "globalWeight": "全局权重",
+    "postList": "帖子列表",
+    "bulkImport": "批量导入",
+    "addPost": "添加帖子",
+    "addAnotherPost": "添加另一个帖子",
+    "clearAll": "全部清除",
+    "confirmTitle": "确认",
+    "confirmDesc": "您确定要重置所有数据吗？",
+    "bulkInfo": "在此处粘贴帖子 URL。格式：每行 {url} 或 {url_weight}。",
+    "lineSeparator": "行分隔符",
+    "newLine": "换行 (\\n)",
+    "semicolon": "分号 (;)",
+    "comma": "逗号 (,)",
+    "custom": "自定义",
+    "customPlaceholder": "例如：|",
+    "bulkPlaceholder": "https://www.steempro.com/@author/permlink\\nhttps://www.steempro.com/@author/permlink2 75",
+    "cancel": "取消",
+    "parseList": "解析列表",
+    "table": {
+      "url": "Steem 帖子 URL 或 @作者/永久链接",
+      "weight": "权重",
+      "status": "状态",
+      "action": "操作"
+    },
+    "urlPlaceholder": "https://...",
+    "global": "全局",
+    "status": {
+      "pending": "等待中",
+      "voting": "点赞中...",
+      "success": "成功",
+      "failed": "失败"
+    },
+    "action": {
+      "remove": "删除行"
+    },
+    "progress": {
+      "title": "进度",
+      "totalPosts": "帖子总数",
+      "estTime": "预计时间",
+      "min": "分钟",
+      "sec": "秒",
+      "done": "已完成",
+      "err": "错误",
+      "preparing": "准备点赞...",
+      "votingOn": "正在点赞 @{author} 的帖子...",
+      "waiting": "等待 3.5 秒（区块链限制）..."
+    },
+    "controls": {
+      "start": "开始点赞",
+      "pause": "暂停",
+      "resume": "继续",
+      "stop": "停止"
+    },
+    "error": {
+      "invalidSeparator": "请提供有效的自定义行分隔符。",
+      "parseError": "无法解析任何有效的帖子 URL。请检查格式。",
+      "loginFirst": "请先登录",
+      "invalidUrl": "URL 格式无效",
+      "invalidFormat": "部分帖子格式无效，无法处理。",
+      "votingStopped": "批量点赞已停止。",
+      "errorVoted": "对 @{author} 的帖子点赞时出错：{error}"
+    },
+    "success": {
+      "imported": "成功导入 {count} 个帖子",
+      "voted": "已点赞 @{author} 的帖子",
+      "completed": "批量点赞已完成！"
+    }
+  },
+  "CommunityReport": {
+    "title": "社区报告",
+    "description": "为任何 Steem 社区生成统计分析和 Markdown 报告。",
+    "parameters": "报告参数",
+    "communityId": "社区 ID",
+    "placeholder": "例如：hive-145160",
+    "startDate": "开始日期",
+    "endDate": "结束日期",
+    "generate": "生成报告",
+    "analyzing": "正在分析区块链...",
+    "emptyState": "输入社区标签和日期范围以分析区块链数据并生成全面的 Markdown 报告。",
+    "scanning": "正在扫描区块链...",
+    "stats": {
+      "posts": "帖子",
+      "authors": "作者",
+      "payouts": "收益",
+      "upvotes": "点赞"
+    },
+    "markdown": {
+      "title": "Markdown 输出",
+      "copy": "复制 Markdown",
+      "reportTitle": "社区活动报告",
+      "community": "社区",
+      "dateRange": "日期范围",
+      "summary": "快速摘要",
+      "metric": "指标",
+      "value": "数值",
+      "totalPosts": "帖子总数",
+      "uniqueAuthors": "独立作者数",
+      "generatedPayouts": "已产生收益",
+      "totalUpvotes": "点赞总数",
+      "commentsReplies": "评论与回复",
+      "topAuthors": "最活跃作者",
+      "topAuthorsDesc": "我们最投入的社区成员！",
+      "fullList": "完整活跃作者列表",
+      "index": "#",
+      "author": "作者",
+      "repliesRcvd": "收到评论",
+      "footer": "报告通过 [SteemPro Tools]({url}) 生成。"
+    },
+    "table": {
+      "title": "活跃成员列表",
+      "search": "搜索活跃成员...",
+      "author": "作者",
+      "posts": "帖子",
+      "replies": "收到回复"
+    },
+    "error": {
+      "invalidCommunity": "请输入有效的社区 ID（例如：hive-145160）",
+      "fetchFailed": "获取社区数据失败"
+    },
+    "success": {
+      "analyzed": "已分析 {count} 篇帖子以生成报告",
+      "copied": "Markdown 已复制到剪贴板！"
+    }
+  },
+  "AuthorStatistic": {
+    "title": "作者统计报告",
+    "description": "分析任何作者的发帖表现、收益和随时间变化的参与度。",
+    "parameters": "报告参数",
+    "username": "用户名",
+    "placeholder": "例如：steempro.com",
+    "startDate": "开始日期",
+    "endDate": "结束日期",
+    "generate": "生成报告",
+    "analyzing": "扫描区块链...",
+    "emptyState": "输入作者的用户名和日期范围，以分析其近期的发帖表现并生成详细报告。",
+    "scanning": "扫描区块链...",
+    "stats": {
+      "posts": "帖子",
+      "payouts": "收益",
+      "upvotes": "点赞",
+      "replies": "回复"
+    },
+    "markdown": {
+      "title": "Markdown 输出",
+      "copy": "复制 Markdown",
+      "reportTitle": "作者统计报告: @{author}",
+      "dateRange": "日期范围",
+      "summary": "快速摘要",
+      "metric": "指标",
+      "value": "数值",
+      "totalPosts": "总帖子数",
+      "totalPayout": "总生成收益",
+      "avgPayout": "每篇帖子平均收益",
+      "totalUpvotes": "获得的点赞总数",
+      "totalComments": "获得的评论和回复总数",
+      "performanceLog": "帖子表现日志",
+      "date": "日期",
+      "postTitle": "标题",
+      "community": "社区",
+      "votes": "票数",
+      "replies": "回复",
+      "payout": "收益",
+      "footer": "报告通过 [SteemPro Tools]({url}) 生成。"
+    },
+    "table": {
+      "title": "帖子表现日志",
+      "search": "按标题或社区搜索...",
+      "date": "日期",
+      "postTitle": "标题",
+      "community": "社区",
+      "payout": "收益",
+      "votes": "票数",
+      "replies": "回复"
+    },
+    "error": {
+      "invalidUsername": "请输入有效的 Steem 用户名",
+      "fetchFailed": "获取作者数据失败"
+    },
+    "success": {
+      "analyzed": "已分析 @{author} 的 {count} 篇帖子",
+      "copied": "Markdown 已复制到剪贴板！"
+    }
+  },
+  "AccountCreation": {
+    "title": "账号创建",
+    "description": "使用您的账号创建令牌领取并创建新的 Steem 账号。",
+    "comingSoon": "敬请期待",
+    "featureDescription": "账号创建工具可帮助您顺畅地使用创建令牌。我们目前正在开发此功能。请稍后查看！"
+  },
+  "Schedules": {
+    "title": "定时发布",
+    "description": "管理您的定时帖子",
+    "loginAlert": "查看您的定时帖子",
+    "status": {
+      "pending": "待发布",
+      "published": "已发布",
+      "failed": "发布失败"
+    },
+    "actions": {
+      "draft": "存为草稿",
+      "draftDelete": "存草稿并删除",
+      "delete": "删除",
+      "cancel": "取消",
+      "deleteTitle": "删除定时任务",
+      "deleteDesc": "确定要删除此定时任务吗？"
+    },
+    "messages": {
+      "deleted": "定时帖子已删除",
+      "drafted": "帖子已存为草稿",
+      "draftedDesc": "您可以在发布页面找到它。",
+      "draftFailed": "存草稿失败：{error}",
+      "timeDiffError": "时间差至少需要 5 分钟",
+      "updated": "定时任务已更新"
+    }
+  },
+  "Settings": {
+    "title": "设置",
+    "tabs": {
+      "general": "通用",
+      "profile": "个人资料",
+      "security": "安全"
+    }
+  },
+  "SecuritySettings": {
+    "loginAlert": "查看安全设置",
+    "publicKeys": {
+      "title": "公钥",
+      "description": "以下是您在 Steem 区块链上的公钥，可公开分享。",
+      "posting": "Posting 公钥",
+      "active": "Active 公钥",
+      "owner": "Owner 公钥",
+      "memo": "Memo 公钥",
+      "copied": "{label} 已复制到剪贴板"
+    },
+    "recovery": {
+      "title": "账户恢复",
+      "description": "恢复账户可在您的账户被盗时协助您找回账户。",
+      "current": "当前恢复账户",
+      "change": "更改",
+      "note": "注意：更改恢复账户是一项安全操作，需要 30 天才能生效。您需要使用 OWNER 密钥授权此更改。"
+    }
+  },
+  "Auth": {
+    "title": "认证",
+    "description": "管理无限数量的账户，并点击一下即可切换。",
+    "connectedAccounts": "已连接账户",
+    "accountsConnected": "已连接 {count} 个账户",
+    "addAccount": "添加账户",
+    "login": "登录",
+    "keychain": "Keychain",
+    "privateKey": "私钥",
+    "success": "成功",
+    "loginSuccess": "登录成功",
+    "manageAccounts": "管理账户"
+  },
+  "Navbar": {
+    "discover": "发现",
+    "home": "首页",
+    "explore": "探索",
+    "communities": "社区",
+    "games": "游戏",
+    "blockchain": "区块链",
+    "explorer": "区块浏览器",
+    "market": "市场",
+    "witnesses": "见证人",
+    "proposals": "提案",
+    "schedules": "日程",
+    "tools": "工具",
+    "app": "应用",
+    "settings": "设置",
+    "privacy": "隐私",
+    "about": "关于",
+    "manage": "管理",
+    "search": "搜索...",
+    "create": "创建",
+    "refresh": "刷新",
+    "profile": "个人中心",
+    "wallet": "钱包"
+  },
+  "Search": {
+    "placeholder": "Search blockchain content...",
+    "filterByAuthor": "Filter by author...",
+    "refineResults": "Refine results",
+    "accounts": "Accounts",
+    "posts": "Posts",
+    "comments": "Comments",
+    "fetching": "DATA FETCHING...",
+    "noAccountsFound": "No accounts found with this name prefix.",
+    "noPostsFound": "Try searching globally or with a different author filter.",
+    "noCommentsFound": "No textual matches found in recent discussions.",
+    "discoverSteem": "Discover Steem",
+    "discoverDescription": "Search for profiles, deep-dive into posts or filter by specific authors.",
+    "trySearch": "try \"{query}\"",
+    "reputation": "Reputation",
+    "profileLabel": "Profile",
+    "postLabel": "Post",
+    "commentLabel": "Comment"
+  }
+}

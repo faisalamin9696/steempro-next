@@ -20,7 +20,7 @@ export function getAppDetails(appStr: string | undefined): {
       steempro: {
         name: "SteemPro",
         icon: "/favicon.ico",
-        website: "https://steempro.com",
+        website: "https://www.steempro.com",
       },
       steemit: {
         name: "Steemit",

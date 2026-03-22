@@ -1097,6 +1097,22 @@ class SteemApi {
   }
 
   /**
+   * Batch Transfer asset
+   */
+  batchTransfer(
+    from: string,
+    transfers: { to: string; amount: string; memo: string }[],
+    privateKey?: string,
+    useKeychain: boolean = false,
+  ) {
+    const operations: Operation[] = transfers.map((t) => [
+      "transfer",
+      { from, to: t.to, amount: t.amount, memo: t.memo },
+    ]);
+    return this.broadcast(from, operations, privateKey, useKeychain);
+  }
+
+  /**
    * Withdraw from savings
    * @param from
    * @param to

@@ -35,76 +35,80 @@ import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { Constants } from "@/constants";
 import { getSeasonFromTitle } from "@/hooks/games/useHeightsSeason";
+import { useTranslations } from "next-intl";
 
 interface Props {
   seasonalWinners: any[];
   seasonalPosts: Feed[];
+  eligibilityMap: Record<string, any>;
 }
 
 export const SeasonalHallTab = memo(
-  ({ seasonalWinners, seasonalPosts }: Props) => {
-    const { data: session } = useSession();
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
-    const [selectedSeason, setSelectedSeason] = useState<number | null>(null);
-    const [seasonData, setSeasonData] = useState<HighScore[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
-
-    const isModerator = useMemo(() => {
-      return Constants.team.some((t) => t.name === session?.user?.name);
-    }, [session]);
-
-    const selectedSeasonPost = useMemo(() => {
-      if (!selectedSeason) return null;
-      return seasonalPosts.find((p) => {
-        const season = getSeasonFromTitle(p.title);
-        return season === selectedSeason;
-      });
-    }, [selectedSeason, seasonalPosts]);
-
-    const filteredWinners = useMemo(() => {
-      return seasonalWinners.filter((w) =>
-        seasonalPosts.some((p) => getSeasonFromTitle(p.title) === w.season),
-      );
-    }, [seasonalWinners, seasonalPosts]);
-
-    const handleFetchSeasonDetails = async (season: number) => {
-      setSelectedSeason(season);
-      setIsLoading(true);
-      onOpen();
-      try {
-        const scores = await heightsDb.getHeightsHighScores(season);
-        setSeasonData(scores);
-      } catch (error) {
-        console.error("Failed to fetch season details:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    const processedData = useMemo(() => {
-      if (!selectedSeasonPost || seasonData.length === 0) return [];
-
-      const coopConfig = getCoopConfig(selectedSeasonPost);
-      const totalAltitude = seasonData.reduce(
-        (acc, cur) => acc + (cur.score || 0),
-        0,
-      );
-      const postPool = getRewardPool(selectedSeasonPost)?.reward ?? 0;
-      const communityPool = getCommunityReward(totalAltitude, coopConfig);
-      const activePool = Math.max(postPool, communityPool);
-
-      const { rewardMap } = calculateRewards(
-        seasonData,
-        selectedSeasonPost,
-        communityPool,
-      );
-
-      return seasonData.map((item, i) => ({
-        ...item,
-        rank: i + 1,
-        reward: rewardMap.get(item.player) || 0,
-      }));
-    }, [selectedSeasonPost, seasonData]);
+    ({ seasonalWinners, seasonalPosts, eligibilityMap }: Props) => {
+      const { data: session } = useSession();
+      const { isOpen, onOpen, onOpenChange } = useDisclosure();
+      const [selectedSeason, setSelectedSeason] = useState<number | null>(null);
+      const [seasonData, setSeasonData] = useState<HighScore[]>([]);
+      const [isLoading, setIsLoading] = useState(false);
+      const t = useTranslations("Games.steemHeights.leaderboard.winners");
+  
+      const isModerator = useMemo(() => {
+        return Constants.team.some((t) => t.name === session?.user?.name);
+      }, [session]);
+  
+      const selectedSeasonPost = useMemo(() => {
+        if (!selectedSeason) return null;
+        return seasonalPosts.find((p) => {
+          const season = getSeasonFromTitle(p.title);
+          return season === selectedSeason;
+        });
+      }, [selectedSeason, seasonalPosts]);
+  
+      const filteredWinners = useMemo(() => {
+        return seasonalWinners.filter((w) =>
+          seasonalPosts.some((p) => getSeasonFromTitle(p.title) === w.season),
+        );
+      }, [seasonalWinners, seasonalPosts]);
+  
+      const handleFetchSeasonDetails = async (season: number) => {
+        setSelectedSeason(season);
+        setIsLoading(true);
+        onOpen();
+        try {
+          const scores = await heightsDb.getHeightsHighScores(season);
+          setSeasonData(scores);
+        } catch (error) {
+          console.error("Failed to fetch season details:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+  
+      const processedData = useMemo(() => {
+        if (!selectedSeasonPost || seasonData.length === 0) return [];
+  
+        const coopConfig = getCoopConfig(selectedSeasonPost);
+        const totalAltitude = seasonData.reduce(
+          (acc, cur) => acc + (cur.score || 0),
+          0,
+        );
+        const postPool = getRewardPool(selectedSeasonPost)?.reward ?? 0;
+        const communityPool = getCommunityReward(totalAltitude, coopConfig);
+        const activePool = Math.max(postPool, communityPool);
+  
+        const { rewardMap } = calculateRewards(
+          seasonData,
+          selectedSeasonPost,
+          communityPool,
+          eligibilityMap,
+        );
+  
+        return seasonData.map((item, i) => ({
+          ...item,
+          rank: i + 1,
+          reward: rewardMap.get(item.player) || 0,
+        }));
+      }, [selectedSeasonPost, seasonData, eligibilityMap]);
 
     const topThree = useMemo(() => processedData.slice(0, 3), [processedData]);
     const others = useMemo(() => processedData.slice(3), [processedData]);
@@ -119,7 +123,7 @@ export const SeasonalHallTab = memo(
         .join("\n");
 
       navigator.clipboard.writeText(report);
-      toast.success("Transaction report copied to clipboard!");
+      toast.success(t("transactionReport"));
     };
 
     const copyMarkdownReport = () => {
@@ -141,7 +145,7 @@ export const SeasonalHallTab = memo(
       md += `\n**Stay tuned for the next season... the cloud line is just the beginning!** 🚀`;
 
       navigator.clipboard.writeText(md);
-      toast.success("Markdown report copied to clipboard!");
+      toast.success(t("markdownReport"));
     };
 
     const symbol = getRewardPool(selectedSeasonPost)?.symbol || "STEEM";
@@ -154,14 +158,14 @@ export const SeasonalHallTab = memo(
             <Trophy size={60} className="text-amber-500" />
           </div>
           <div className="text-[9px] font-black uppercase text-amber-500 tracking-[0.3em] mb-3">
-            Hall of Champions
+            {t("hallOfChampions")}
           </div>
           <div className="flex -space-x-2">
             <AvatarGroup
               max={5}
               renderCount={(count) => (
                 <p className="text-xs text-muted ms-2 font-medium hover:underline cursor-pointer">
-                  +{count} more
+                  {t("more", { count })}
                 </p>
               )}
             >
@@ -223,7 +227,7 @@ export const SeasonalHallTab = memo(
                         username={`@${w.player}`}
                       />
                       <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-tighter leading-none">
-                        Champion
+                        {t("champion")}
                       </span>
                     </div>
                   </div>
@@ -253,19 +257,19 @@ export const SeasonalHallTab = memo(
                   <div className="flex items-center gap-1.5">
                     <Users size={10} className="text-zinc-500" />
                     <span className="text-[9px] font-bold text-zinc-400 capitalize">
-                      {w.totalClimbers} Climbers
+                      {w.totalClimbers} {t("climbers")}
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Cloud size={10} className="text-zinc-500" />
                     <span className="text-[9px] font-bold text-zinc-400 capitalize">
-                      {w.totalAscent?.toLocaleString()}m Ascent
+                      {w.totalAscent?.toLocaleString()}m {t("ascent")}
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Target size={10} className="text-zinc-500" />
                     <span className="text-[9px] font-bold text-zinc-400 capitalize">
-                      {Math.round(w.avgAltitude || 0)}m Avg
+                      {Math.round(w.avgAltitude || 0)}m {t("avg")}
                     </span>
                   </div>
 
@@ -275,7 +279,7 @@ export const SeasonalHallTab = memo(
                         <Trophy size={10} className="fill-emerald-500/20" />
                         <div className="flex flex-col">
                           <span className="text-[7px] font-black uppercase tracking-widest opacity-70 leading-none mb-0.5">
-                            Personal Best
+                            {t("personalBest")}
                           </span>
                           <span className="text-[10px] font-black italic leading-none">
                             {w.userBest}m
@@ -289,7 +293,7 @@ export const SeasonalHallTab = memo(
                     {totalReward > 0 && (
                       <div className="flex items-center gap-1.5">
                         <span className="text-[8px] font-black text-zinc-500 uppercase tracking-tighter">
-                          Achieved:
+                          {t("achieved")}:
                         </span>
                         <span className="text-[9px] font-black text-primary-500">
                           {totalReward.toFixed(2)} {symbol}
@@ -300,7 +304,7 @@ export const SeasonalHallTab = memo(
                     {maxReward > 0 && (
                       <div className="flex items-center gap-1.5">
                         <span className="text-[8px] font-black text-zinc-500 uppercase tracking-tighter">
-                          Pool:
+                          {t("pool")}:
                         </span>
                         <span className="text-[9px] font-black text-emerald-500">
                           {maxReward.toFixed(2)} {symbol}
@@ -316,7 +320,7 @@ export const SeasonalHallTab = memo(
             <div className="py-8 flex flex-col items-center justify-center opacity-40">
               <Award size={32} className="text-zinc-500 mb-2" />
               <p className="text-[10px] text-zinc-500 font-black uppercase tracking-widest">
-                The hall awaits its first hero...
+                {t("hallAwaits")}
               </p>
             </div>
           )}
@@ -340,12 +344,13 @@ export const SeasonalHallTab = memo(
                     </div>
                     <div>
                       <h2 className="text-2xl font-black italic uppercase tracking-tight text-zinc-900 dark:text-white">
-                        Season{" "}
-                        <span className="text-amber-500">{selectedSeason}</span>{" "}
-                        Archives
+                        {t.rich("archives", {
+                          season: selectedSeason ?? 0,
+                          span: (chunks) => <span className="text-amber-500">{chunks}</span>,
+                        })}
                       </h2>
                       <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.3em]">
-                        Seasonal Performance Data
+                        {t("performanceData")}
                       </p>
                     </div>
                   </div>
@@ -359,7 +364,7 @@ export const SeasonalHallTab = memo(
                         onPress={copyTransactionReport}
                         startContent={<FileText size={12} />}
                       >
-                        TX Report
+                        {t("txReport")}
                       </Button>
                       <Button
                         size="sm"
@@ -368,7 +373,7 @@ export const SeasonalHallTab = memo(
                         onPress={copyMarkdownReport}
                         startContent={<Clipboard size={12} />}
                       >
-                        MD Report
+                        {t("mdReport")}
                       </Button>
                     </div>
                   )}
@@ -378,7 +383,7 @@ export const SeasonalHallTab = memo(
                     <div className="flex flex-col items-center justify-center py-20 gap-4">
                       <Spinner size="lg" color="warning" />
                       <p className="text-[10px] font-black uppercase tracking-[0.4em] text-amber-500">
-                        Fetching History...
+                        {t("fetching")}
                       </p>
                     </div>
                   ) : (
@@ -436,7 +441,7 @@ export const SeasonalHallTab = memo(
                         <div className="flex items-center gap-2">
                           <Users size={16} className="text-zinc-500" />
                           <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">
-                            All Participants & Rankings
+                            {t("allParticipants")}
                           </h3>
                         </div>
                         <div className="bg-zinc-300/50 dark:bg-zinc-900/50 border border-white/5 rounded-3xl overflow-hidden p-2">
@@ -459,7 +464,7 @@ export const SeasonalHallTab = memo(
                               },
                               {
                                 key: "player",
-                                header: "Player",
+                                header: t("table.player"),
                                 sortable: true,
                                 searchable: true,
                                 className: "px-2 py-2",
@@ -493,7 +498,7 @@ export const SeasonalHallTab = memo(
                               },
                               {
                                 key: "score",
-                                header: "Performance",
+                                header: t("table.performance"),
                                 sortable: true,
                                 className: "px-2 py-2",
                                 render: (score, row) => (

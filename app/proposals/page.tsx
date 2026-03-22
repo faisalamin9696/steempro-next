@@ -19,8 +19,10 @@ import { sdsApi } from "@/libs/sds";
 import ErrorCard from "@/components/ui/ErrorCard";
 import LoadingStatus from "@/components/LoadingStatus";
 import PageHeader from "@/components/ui/PageHeader";
+import { useTranslations } from "next-intl";
 
 const ProposalsPage = () => {
+  const t = useTranslations("Proposals");
   const { data, isLoading, error } = useSWR(`proposals-list`, () =>
     sdsApi.getProposals()
   );
@@ -54,22 +56,22 @@ const ProposalsPage = () => {
       <div className="flex flex-col items-start gap-4">
         <PageHeader
           icon={Receipt}
-          title="Proposals"
-          description="Fund community-driven ideas through the Steem Proposal System (SPS). Vote on initiatives that improve the ecosystem and benefit the network."
+          title={t("title")}
+          description={t("description")}
         />
 
         <div className="flex items-center self-end gap-2 text-sm text-muted">
           <CheckCircle className="h-4 w-4 text-success" />
-          <span>Funded</span>
+          <span>{t("funded")}</span>
           <DollarSign className="h-4 w-4 text-warning ml-2" />
-          <span>Threshold</span>
+          <span>{t("threshold")}</span>
           <ClockFading className="h-4 w-4 text-primary ml-2" />
-          <span>Pending</span>
+          <span>{t("pending")}</span>
         </div>
       </div>
 
       <Input
-        placeholder="Search proposals..."
+        placeholder={t("search")}
         startContent={<Search size={18} className="text-muted-foreground" />}
         value={searchTerm}
         onValueChange={setSearchTerm}

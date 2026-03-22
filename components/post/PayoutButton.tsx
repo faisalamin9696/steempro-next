@@ -9,6 +9,7 @@ import useSWR from "swr";
 import { sdsApi } from "@/libs/sds";
 import { Spinner } from "@heroui/spinner";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 const ICON_SIZE = 20;
 
@@ -19,6 +20,7 @@ interface Props extends ButtonProps {
 
 function PayoutButton(props: Props) {
   const { comment, labelClass } = props;
+  const t = useTranslations("Post");
   const { PayoutIcon, isDeclined: footerIsDeclined } =
     useCommentFooterData(comment);
   const [isOpen, setIsOpen] = useState(false);
@@ -42,13 +44,13 @@ function PayoutButton(props: Props) {
     <SPopover
       isOpen={isOpen}
       onOpenChange={setIsOpen}
-      title="Payout Details"
+      title={t("payoutDetails")}
       description={
         isDeclined
-          ? "Author declined rewards"
+          ? t("payoutBreakdown.authorDeclined")
           : postData?.cashout_time
-          ? "Pending rewards breakdown"
-          : "Settled rewards breakdown"
+          ? t("payoutBreakdown.pending")
+          : t("payoutBreakdown.settled")
       }
       trigger={
         <Button {...props} onPress={() => setIsOpen(!isOpen)}>
@@ -67,9 +69,9 @@ function PayoutButton(props: Props) {
             <div className="w-10 h-10 rounded-full bg-danger/10 flex items-center justify-center">
               <PayoutIcon size={24} className="text-danger" />
             </div>
-            <div className="text-danger font-bold text-sm">Payout Declined</div>
+            <div className="text-danger font-bold text-sm">{t("payoutBreakdown.declinedTitle")}</div>
             <p className="text-xs text-muted leading-relaxed">
-              The author of this post has chosen to decline all rewards.
+              {t("payoutBreakdown.declinedDescription")}
             </p>
           </div>
         ) : isLoading ? (
@@ -78,7 +80,7 @@ function PayoutButton(props: Props) {
           </div>
         ) : !postData || error ? (
           <div className="text-xs text-danger p-2 italic text-center">
-            Failed to load payout details
+            {t("payoutBreakdown.failed")}
           </div>
         ) : (
           <PayoutDetailContent data={postData} />
@@ -89,6 +91,7 @@ function PayoutButton(props: Props) {
 }
 
 function PayoutDetailContent({ data }: { data: Post }) {
+  const t = useTranslations("Post");
   const isPending = data.cashout_time > 0;
 
   const pendingPayout = data.pending_payout_value;
@@ -125,7 +128,7 @@ function PayoutDetailContent({ data }: { data: Post }) {
       {/* status and time */}
       <div className="flex flex-col gap-1 pb-2 border-b border-divider">
         <div className="flex justify-between items-center text-sm">
-          <span className="text-muted font-medium">Status</span>
+          <span className="text-muted font-medium">{t("payoutBreakdown.status")}</span>
           <span
             className={twMerge(
               "text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full font-bold",
@@ -134,12 +137,12 @@ function PayoutDetailContent({ data }: { data: Post }) {
                 : "bg-success/10 text-success"
             )}
           >
-            {isPending ? "Pending" : "Paid"}
+            {isPending ? t("payoutBreakdown.pendingLabel") : t("payoutBreakdown.paidLabel")}
           </span>
         </div>
         {isPending && data.cashout_time && (
           <div className="flex justify-between items-center text-[11px] text-muted italic">
-            <span>Next cashout</span>
+            <span>{t("payoutBreakdown.nextCashout")}</span>
             <span title={moment.unix(data.cashout_time).toLocaleString()}>
               {moment.unix(data.cashout_time).fromNow()}
             </span>
@@ -150,7 +153,7 @@ function PayoutDetailContent({ data }: { data: Post }) {
       {/* Breakdown */}
       <div className="flex flex-col gap-2.5">
         <div className="flex justify-between items-center text-sm font-bold border-b border-divider/50 pb-1.5">
-          <span>Total Payout</span>
+          <span>{t("payoutBreakdown.totalPayout")}</span>
           <span className="text-primary">${totalPayout.toFixed(3)}</span>
         </div>
 
@@ -159,7 +162,7 @@ function PayoutDetailContent({ data }: { data: Post }) {
             <>
               {pendingPayoutPrintedSbd > 0 && (
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-muted">Expected SBD</span>
+                  <span className="text-muted">{t("payoutBreakdown.expectedSbd")}</span>
                   <span className="font-semibold">
                     {pendingPayoutPrintedSbd.toFixed(3)} SBD
                   </span>
@@ -167,14 +170,14 @@ function PayoutDetailContent({ data }: { data: Post }) {
               )}
               {pendingPayoutPrintedSteem > 0 && (
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-muted">Expected STEEM</span>
+                  <span className="text-muted">{t("payoutBreakdown.expectedSteem")}</span>
                   <span className="font-semibold">
                     {pendingPayoutPrintedSteem.toFixed(3)} STEEM
                   </span>
                 </div>
               )}
               <div className="flex justify-between items-center text-xs">
-                <span className="text-muted">Expected SP</span>
+                <span className="text-muted">{t("payoutBreakdown.expectedSp")}</span>
                 <span className="font-semibold">
                   {pendingPayoutSp.toFixed(3)} SP
                 </span>
@@ -183,13 +186,13 @@ function PayoutDetailContent({ data }: { data: Post }) {
           ) : (
             <>
               <div className="flex justify-between items-center text-xs">
-                <span className="text-muted">Author Total</span>
+                <span className="text-muted">{t("payoutBreakdown.authorTotal")}</span>
                 <span className="font-semibold">
                   ${authorPayout.toFixed(3)}
                 </span>
               </div>
               <div className="flex justify-between items-center text-xs">
-                <span className="text-muted">Curators Total</span>
+                <span className="text-muted">{t("payoutBreakdown.curatorsTotal")}</span>
                 <span className="font-semibold">
                   ${curatorPayout.toFixed(3)}
                 </span>
@@ -203,7 +206,7 @@ function PayoutDetailContent({ data }: { data: Post }) {
       {beneficiariesList.length > 0 && (
         <div className="flex flex-col gap-2 pt-2 border-t border-divider">
           <span className="text-[10px] font-bold text-default-500 uppercase tracking-widest pl-1">
-            Beneficiaries
+            {t("payoutBreakdown.beneficiaries")}
           </span>
           <div className="flex flex-col gap-2 max-h-[160px] overflow-y-auto pr-1">
             {beneficiariesList.map((bene) => (

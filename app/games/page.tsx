@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Card, CardBody } from "@heroui/card";
 import { Image } from "@heroui/image";
@@ -24,6 +25,7 @@ import {
 } from "@/components/games/Config";
 
 export default function GamesLandingPage() {
+  const t = useTranslations("Games.landing");
   const [activeCategory, setActiveCategory] = useState("All Games");
 
   const filteredGames = OFFICIAL_GAMES.filter((game) => {
@@ -41,7 +43,7 @@ export default function GamesLandingPage() {
             animate={{ opacity: 1, y: 0 }}
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-bold uppercase tracking-widest"
           >
-            <Gamepad2 size={16} /> SteemPro Gaming Zone
+            <Gamepad2 size={16} /> {t("gamingZone")}
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -49,7 +51,9 @@ export default function GamesLandingPage() {
             transition={{ delay: 0.1 }}
             className="text-5xl md:text-7xl font-black italic tracking-tighter bg-clip-text text-transparent bg-linear-to-b from-white to-zinc-600 leading-tight"
           >
-            PLAY. COMPETE. <span className="text-amber-500">EARN.</span>
+            {t.rich("heroTitle", {
+              earn: (chunks) => <span className="text-amber-500">{chunks}</span>,
+            })}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -57,9 +61,7 @@ export default function GamesLandingPage() {
             transition={{ delay: 0.2 }}
             className="text-zinc-500 text-base md:text-lg font-medium leading-relaxed"
           >
-            Welcome to the ultimate blockchain gaming destination. Test your
-            skills, climb the leaderboards, and win rewards in the Steem
-            ecosystem.
+            {t("heroDescription")}
           </motion.p>
         </div>
 
@@ -82,7 +84,7 @@ export default function GamesLandingPage() {
                     : "text-zinc-500 border border-muted/50 hover:border-zinc-600"
                 }`}
               >
-                {cat}
+                {cat === "All Games" ? t("allGames") : cat}
               </Button>
             </motion.div>
           ))}
@@ -92,7 +94,7 @@ export default function GamesLandingPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[450px]">
           <AnimatePresence mode="popLayout">
             {filteredGames.length > 0 ? (
-              filteredGames.map((game, index) => (
+              filteredGames.map((game) => (
                 <motion.div
                   key={game.id}
                   layout
@@ -113,11 +115,10 @@ export default function GamesLandingPage() {
                 <Gamepad2 size={48} className="text-zinc-800" />
                 <div className="space-y-1">
                   <h3 className="text-xl font-bold text-zinc-400 uppercase tracking-tighter italic">
-                    No Games Found
+                    {t("noGamesFound")}
                   </h3>
                   <p className="text-zinc-600 text-sm max-w-xs">
-                    We're currently developing new titles for this category.
-                    Stay tuned!
+                    {t("noGamesDescription")}
                   </p>
                 </div>
                 <Button
@@ -126,7 +127,7 @@ export default function GamesLandingPage() {
                   onPress={() => setActiveCategory("All Games")}
                   className="rounded-full border-zinc-800 text-zinc-500"
                 >
-                  Reset Filter
+                  {t("resetFilter")}
                 </Button>
               </motion.div>
             )}
@@ -138,15 +139,16 @@ export default function GamesLandingPage() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="space-y-2">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-widest">
-                <ExternalLink size={12} /> Ecosystem Favorites
+                <ExternalLink size={12} /> {t("ecosystemFavorites")}
               </div>
-              <h2 className="text-3xl md:text-5xl font-black italic tracking-tighter">
-                COMMUNITY <span className="text-zinc-400 dark:text-zinc-600">TITLES</span>
+              <h2 className="text-3xl md:text-5xl font-black italic tracking-tighter text-white uppercase">
+                {t.rich("communityTitles", {
+                  titles: (chunks) => <span className="text-zinc-400 dark:text-zinc-600">{chunks}</span>,
+                })}
               </h2>
             </div>
             <p className="text-zinc-500 text-sm max-w-sm font-medium">
-              Explore amazing games developed by the Steem community and partner
-              studios.
+              {t("communityDescription")}
             </p>
           </div>
 
@@ -166,10 +168,10 @@ export default function GamesLandingPage() {
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-xl font-black italic uppercase tracking-tight">
-                    Your Game Here?
+                    {t("yourGameHere")}
                   </h3>
                   <p className="text-zinc-500 text-xs font-medium">
-                    Build your own game and showcase it on SteemPro Gaming Zone.
+                    {t("buildYourOwn")}
                   </p>
                 </div>
                 <DeveloperTemplateModal />
@@ -183,32 +185,31 @@ export default function GamesLandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-widest">
-                <Info size={12} /> Fair Play & Rewards
+                <Info size={12} /> {t("fairPlay")}
               </div>
-              <h3 className="text-3xl font-black italic tracking-tighter text-zinc-300">
-                IMMUTABLE <span className="text-zinc-600">SCORES</span>
+              <h3 className="text-3xl font-black italic tracking-tighter text-zinc-300 uppercase">
+                {t.rich("immutableScores", {
+                  scores: (chunks) => <span className="text-zinc-600">{chunks}</span>,
+                })}
               </h3>
               <p className="text-zinc-500 text-sm font-medium leading-relaxed">
-                All high scores and game achievements are recorded directly on
-                the Steem blockchain. This ensures transparency, immutability,
-                and proof of skill. Top performers are eligible for curated
-                rewards from the SteemPro community.
+                {t("fairPlayDescription")}
               </p>
               <div className="flex flex-wrap gap-4">
                 <div className="flex-1 p-4 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 space-y-2 group hover:bg-zinc-900 hover:border-zinc-700 transition-all">
                   <div className="text-amber-500 font-black text-xl italic tracking-tighter leading-none group-hover:scale-105 transition-transform">
-                    TRANSPARENT
+                    {t("transparent")}
                   </div>
                   <div className="text-zinc-600 text-[10px] font-bold uppercase tracking-widest">
-                    Verified on Chain
+                    {t("verifiedOnChain")}
                   </div>
                 </div>
                 <div className="flex-1 p-4 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 space-y-2 group hover:bg-zinc-900 hover:border-zinc-700 transition-all">
                   <div className="text-amber-500 font-black text-xl italic tracking-tighter leading-none group-hover:scale-105 transition-transform">
-                    REWARDING
+                    {t("rewarding")}
                   </div>
                   <div className="text-zinc-600 text-[10px] font-bold uppercase tracking-widest">
-                    Community Driven
+                    {t("communityDriven")}
                   </div>
                 </div>
               </div>

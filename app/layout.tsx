@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Noto_Nastaliq_Urdu } from "next/font/google";
 import "./globals.css";
 import AppLayout from "./AppLayout";
 import { Suspense } from "react";
@@ -14,6 +14,11 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const notoNastaliqUrdu = Noto_Nastaliq_Urdu({
+  variable: "--font-noto-nastaliq-urdu",
+  subsets: ["arabic"],
 });
 
 export const viewport: Viewport = {
@@ -70,9 +75,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html suppressHydrationWarning>
       <body
-        className={`*:${geistSans.variable} ${geistMono.variable}`}
+        className={`*:${geistSans.variable} ${geistMono.variable} ${notoNastaliqUrdu.variable}`}
         suppressHydrationWarning={true}
       >
         <ThemeProvider

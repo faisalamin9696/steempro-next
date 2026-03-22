@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useAccountsContext } from "../auth/AccountsContext";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
 import { addLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
+import { useTranslations } from "next-intl";
 
 const TradeForm = ({
   type,
@@ -21,6 +22,7 @@ const TradeForm = ({
   balances: { steem: number; sbd: number };
   onSuccess: () => void;
 }) => {
+  const t = useTranslations("Market.trade");
   const [price, setPrice] = useState("");
   const [amount, setAmount] = useState("");
   const [isPending, setIsPending] = useState(false);
@@ -73,7 +75,7 @@ const TradeForm = ({
         useKeychain,
       );
 
-      toast.success(`Order created successfully`);
+      toast.success(t("orderCreated"));
       setAmount("");
       dispatch(
         addLoginHandler({
@@ -85,7 +87,7 @@ const TradeForm = ({
       );
       onSuccess();
     } catch (e: any) {
-      toast.error(e.message || "Failed to create order");
+      toast.error(e.message || t("failedToCreate"));
     } finally {
       setIsPending(false);
     }
@@ -98,7 +100,7 @@ const TradeForm = ({
     <div className="flex flex-col gap-4 p-2">
       <div className="flex justify-between items-center px-1">
         <span className="text-tiny font-bold text-default-500 uppercase">
-          Available
+          {t("available")}
         </span>
         <span
           className="text-xs font-semibold cursor-pointer hover:text-primary transition-colors"
@@ -113,7 +115,7 @@ const TradeForm = ({
       </div>
 
       <Input
-        label="Price"
+        label={t("price")}
         placeholder="0.000000"
         value={price}
         onValueChange={setPrice}
@@ -123,7 +125,7 @@ const TradeForm = ({
       />
 
       <Input
-        label="Amount"
+        label={t("amount")}
         placeholder="0.000"
         value={amount}
         onValueChange={setAmount}
@@ -136,7 +138,7 @@ const TradeForm = ({
 
       <div className="flex flex-col gap-1 px-1">
         <span className="text-tiny text-default-500 uppercase font-bold tracking-tight">
-          Total
+          {t("total")}
         </span>
         <span className="text-lg font-bold">
           {total} <span className="text-muted">SBD</span>
@@ -151,7 +153,7 @@ const TradeForm = ({
         isLoading={isPending}
         onPress={handleTrade}
       >
-        {type === "buy" ? "Buy STEEM" : "Sell STEEM"}
+        {type === "buy" ? t("buySteem") : t("sellSteem")}
       </Button>
     </div>
   );

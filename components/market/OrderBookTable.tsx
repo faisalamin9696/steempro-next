@@ -1,4 +1,5 @@
 import { Spinner } from "@heroui/spinner";
+import { useTranslations } from "next-intl";
 
 const OrderBookTable = ({
   book,
@@ -7,6 +8,7 @@ const OrderBookTable = ({
   book: OrderBook | undefined;
   onPriceClick: (price: number) => void;
 }) => {
+  const t = useTranslations("Market.orderBook");
   if (!book)
     return (
       <div className="h-full flex items-center justify-center">
@@ -19,9 +21,9 @@ const OrderBookTable = ({
       {/* ASKS (Sells) - Red */}
       <div className="flex flex-col gap-2 h-full">
         <div className="flex justify-between px-2 text-tiny font-bold uppercase text-default-500">
-          <span>Price (SBD)</span>
-          <span>STEEM</span>
-          <span>SBD</span>
+          <span>{t("priceSbd")}</span>
+          <span>{t("steem")}</span>
+          <span>{t("sbd")}</span>
         </div>
         <div className="flex-1 overflow-y-auto scrollbar-hide">
           {book.asks.slice(0, 30).map((ask, i) => (
@@ -50,9 +52,9 @@ const OrderBookTable = ({
       {/* BIDS (Buys) - Green */}
       <div className="flex flex-col gap-2 h-full">
         <div className="flex justify-between px-2 text-tiny font-bold uppercase text-default-500">
-          <span>Price (SBD)</span>
-          <span>STEEM</span>
-          <span>SBD</span>
+          <span>{t("priceSbd")}</span>
+          <span>{t("steem")}</span>
+          <span>{t("sbd")}</span>
         </div>
         <div className="flex-1 overflow-y-auto scrollbar-hide">
           {book.bids.slice(0, 30).map((bid, i) => (

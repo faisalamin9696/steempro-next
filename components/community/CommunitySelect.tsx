@@ -8,6 +8,7 @@ import { useSubscriberCommunities } from "@/hooks/useSubscriberCommunities";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import SAvatar from "../ui/SAvatar";
+import { useTranslations } from "next-intl";
 
 interface Props extends Omit<SelectProps, "children"> {
   initialCommunity?: Community;
@@ -16,6 +17,7 @@ interface Props extends Omit<SelectProps, "children"> {
 }
 
 function CommunitySelect({ community, onSelectCommunity, ...props }: Props) {
+  const t = useTranslations("Submit");
   const { data: session } = useSession();
   const [initialCommunity, setInitialCommunity] = useState(
     props.initialCommunity,
@@ -45,14 +47,14 @@ function CommunitySelect({ community, onSelectCommunity, ...props }: Props) {
       isMultiline={true}
       {...props}
       items={communitites}
-      placeholder="Select Community"
+      placeholder={t("communityPlaceholder")}
       isLoading={isLoading}
       onClear={() => {
         onSelectCommunity(undefined);
         setInitialCommunity(undefined);
       }}
       listboxProps={{
-        emptyContent: "No community available",
+        emptyContent: t("noCommunity"),
       }}
       renderValue={(items) => {
         return items.map((item) => (

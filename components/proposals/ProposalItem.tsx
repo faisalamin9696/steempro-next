@@ -10,12 +10,15 @@ import { useAppSelector } from "@/hooks/redux/store";
 import { useSteemUtils } from "@/hooks/useSteemUtils";
 import SUsername from "../ui/SUsername";
 
+import { useTranslations } from "next-intl";
+
 interface Props {
   proposal: Proposal;
   onView: () => void;
 }
 
 export default function ProposalItem({ proposal, onView }: Props) {
+  const t = useTranslations("Proposals");
   const { vestsToSteem } = useSteemUtils();
 
   const proposalsData = useAppSelector(
@@ -53,7 +56,7 @@ export default function ProposalItem({ proposal, onView }: Props) {
                   className="border-1"
                   color={getDailyPayColor(proposal.daily_pay)}
                 >
-                  {daily_pay.toLocaleString()} SBD/day
+                  {daily_pay.toLocaleString()} {t("item.sbdDay")}
                 </Chip>
               </div>
               <div className="flex flex-wrap items-center gap-2 text-sm text-muted mb-2">
@@ -86,7 +89,9 @@ export default function ProposalItem({ proposal, onView }: Props) {
                   className="transition-colors hover:text-blue-500 font-semibold text-sm"
                   href={`/proposals/${proposal.id}`}
                 >
-                  <p>ID #{proposal.id}</p>
+                  <p>
+                    {t("item.id")} #{proposal.id}
+                  </p>
                 </Link>
               </div>
 
@@ -96,7 +101,7 @@ export default function ProposalItem({ proposal, onView }: Props) {
                   {moment(proposal.end_date).format("MMM DD, YYYY")}{" "}
                 </p>
                 <p className="text-xs ">
-                  ({durationInDays} days){" "}
+                  ({durationInDays} {t("item.days")}){" "}
                   <span className="text-blue-500 uppercase">
                     {totalPayout.toLocaleString()}
                   </span>{" "}
@@ -104,7 +109,7 @@ export default function ProposalItem({ proposal, onView }: Props) {
                 </p>
               </div>
             </div>
-            {getProposalStatusIcon(proposal, returnProposal)}
+            <StatusIcon proposal={proposal} returnProposal={returnProposal} />
           </div>
 
           <div className="flex flex-row flex-wrap items-center justify-between gap-3">
@@ -124,6 +129,34 @@ export default function ProposalItem({ proposal, onView }: Props) {
     </Card>
   );
 }
+
+export const StatusIcon = ({
+  proposal,
+  returnProposal,
+}: {
+  proposal: Proposal;
+  returnProposal?: Proposal;
+}) => {
+  const t = useTranslations("Proposals");
+  const badge = getFundingBadge(proposal, returnProposal);
+  const statusColor =
+    badge === "Funded"
+      ? "text-success"
+      : badge === "Not Funded"
+        ? "text-primary"
+        : "text-warning";
+
+  const icon =
+    badge === "Funded" ? (
+      <CheckCircle size={16} className={statusColor} />
+    ) : badge === "Not Funded" ? (
+      <ClockFading size={16} className={statusColor} />
+    ) : (
+      <DollarSign size={16} className={statusColor} />
+    );
+
+  return icon;
+};
 
 export const isProposalFunded = (
   proposal: Proposal,
@@ -162,24 +195,4 @@ export const getFundingBadge = (
     default:
       return "Funding Threshold";
   }
-};
-
-export const getProposalStatusIcon = (
-  proposal: Proposal,
-  returnProposal?: Proposal,
-) => {
-  const statusLabel = getFundingBadge(proposal, returnProposal);
-  const statusColor =
-    statusLabel === "Funded"
-      ? "text-success"
-      : statusLabel === "Not Funded"
-        ? "text-primary"
-        : "text-warning";
-  return statusLabel === "Funded" ? (
-    <CheckCircle size={16} className={statusColor} />
-  ) : statusLabel === "Not Funded" ? (
-    <ClockFading size={16} className={statusColor} />
-  ) : (
-    <DollarSign size={16} className={statusColor} />
-  );
 };

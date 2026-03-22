@@ -8,6 +8,7 @@ import { useState } from "react";
 import RecoveryUpdateModal from "../wallet/RecoveryUpdateModal";
 import SCard from "../ui/SCard";
 import LoginAlertCard from "../ui/LoginAlertCard";
+import { useTranslations } from "next-intl";
 
 interface KeyRowProps {
   label: string;
@@ -15,12 +16,13 @@ interface KeyRowProps {
 }
 
 const KeyRow = ({ label, value }: KeyRowProps) => {
+  const t = useTranslations("SecuritySettings");
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(value);
     setCopied(true);
-    toast.success(`${label} copied to clipboard`);
+    toast.success(t("publicKeys.copied", { label }));
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -51,11 +53,12 @@ const KeyRow = ({ label, value }: KeyRowProps) => {
 };
 
 export default function SecuritySettings() {
+  const t = useTranslations("SecuritySettings");
   const loginData = useAppSelector((s) => s.loginReducer.value);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (!loginData.name) {
-    return <LoginAlertCard text="view security settings" />;
+    return <LoginAlertCard text={t("loginAlert")} />;
   }
 
   const postingKey = loginData.posting_key_auths?.[0]?.[0] || "";
@@ -66,34 +69,34 @@ export default function SecuritySettings() {
   return (
     <div className="space-y-6">
       <SCard
-        title="Public Keys"
+        title={t("publicKeys.title")}
         icon={Key}
         className="card"
         iconColor="primary"
         iconSize="sm"
-        description="These are your public keys on the Steem blockchain. You can share these keys publicly."
+        description={t("publicKeys.description")}
       >
         <div className="flex flex-col divide-y divide-divider">
-          <KeyRow label="Posting Public Key" value={postingKey} />
-          <KeyRow label="Active Public Key" value={activeKey} />
-          <KeyRow label="Owner Public Key" value={ownerKey} />
-          <KeyRow label="Memo Public Key" value={memoKey} />
+          <KeyRow label={t("publicKeys.posting")} value={postingKey} />
+          <KeyRow label={t("publicKeys.active")} value={activeKey} />
+          <KeyRow label={t("publicKeys.owner")} value={ownerKey} />
+          <KeyRow label={t("publicKeys.memo")} value={memoKey} />
         </div>
       </SCard>
 
       <SCard
-        title="Account Recovery"
+        title={t("recovery.title")}
         icon={ShieldCheck}
         className="card"
         iconColor="success"
         iconSize="sm"
-        description="The recovery account can help you recover your account if it's compromised."
+        description={t("recovery.description")}
       >
         <div className="space-y-4">
           <div className="flex justify-between items-center p-3 card rounded-xl">
             <div>
               <p className="text-xs text-muted uppercase font-semibold">
-                Current Recovery Account
+                {t("recovery.current")}
               </p>
               <p className="font-semibold text-lg text-primary">
                 @{loginData.recovery_account}
@@ -104,14 +107,14 @@ export default function SecuritySettings() {
               variant="flat"
               onPress={() => setIsModalOpen(true)}
             >
-              Change
+              {t("recovery.change")}
             </Button>
           </div>
 
           <p className="text-sm text-muted">
-            <b>Note:</b> Changing your recovery account is a secure operation
-            that takes 30 days to complete. You will need your <b>OWNER</b> key
-            to authorize this change.
+            {t.rich("recovery.note", {
+              b: (chunks) => <b>{chunks}</b>,
+            })}
           </p>
         </div>
       </SCard>

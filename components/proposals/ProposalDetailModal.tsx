@@ -19,7 +19,10 @@ import {
   useProposalVoters,
   ProposalVoterData,
 } from "@/hooks/useProposals";
-import { getFundingBadge, getProposalStatusIcon } from "./ProposalItem";
+import {
+  getFundingBadge,
+  StatusIcon,
+} from "./ProposalItem";
 import { useAppSelector } from "@/hooks/redux/store";
 import { Tab, Tabs } from "@heroui/tabs";
 import { Chip } from "@heroui/chip";
@@ -28,6 +31,7 @@ import LoadingStatus from "../LoadingStatus";
 import { ColumnDef, DataTable } from "../ui/data-table";
 import { twMerge } from "tailwind-merge";
 import { useSteemUtils } from "@/hooks/useSteemUtils";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 const ProposalDetailModal = ({
@@ -39,6 +43,7 @@ const ProposalDetailModal = ({
   isOpen: boolean;
   onClose: (v: boolean) => void;
 }) => {
+  const t = useTranslations("Proposals");
   const { vestsToSteem } = useSteemUtils();
   const proposalsData = useAppSelector(
     (state) => state.proposalsReducer.values,
@@ -51,6 +56,7 @@ const ProposalDetailModal = ({
     isLoading: isVotesLoading,
     totalVotes,
     effective,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     notEffective,
   } = useProposalVoters(isOpen && proposal ? proposal.id : undefined);
 
@@ -61,7 +67,7 @@ const ProposalDetailModal = ({
   const columns: ColumnDef<ProposalVoterData>[] = [
     {
       key: "name",
-      header: "Voter",
+      header: t("votersTable.voter"),
       searchable: true,
       render: (value, row) => {
         const isInvalidProxy =
@@ -70,9 +76,9 @@ const ProposalDetailModal = ({
           row.proxy && votesData.some((v) => v.name === row.proxy);
 
         const title = isInvalidProxy
-          ? `proxy to @${row.proxy} who didn't vote`
+          ? t("votersTable.proxyToInactive", { user: row.proxy })
           : isValidProxy
-            ? `Proxy to @${row.proxy}`
+            ? t("votersTable.proxyToActive", { user: row.proxy })
             : undefined;
 
         return (
@@ -95,7 +101,7 @@ const ProposalDetailModal = ({
     },
     {
       key: "vests_own",
-      header: "Own SP",
+      header: t("votersTable.ownSp"),
       sortable: true,
       render: (value) => (
         <span className="font-mono text-xs">
@@ -105,7 +111,7 @@ const ProposalDetailModal = ({
     },
     {
       key: "proxied_votes",
-      header: "Proxied SP",
+      header: t("votersTable.proxiedSp"),
       sortable: true,
       render: (value) => (
         <span className="font-mono text-xs">
@@ -115,7 +121,7 @@ const ProposalDetailModal = ({
     },
     {
       key: "share",
-      header: "Share",
+      header: t("votersTable.share"),
       sortable: true,
       render: (value) => (
         <span className="font-mono text-xs">{value.toFixed(2)}%</span>
@@ -145,16 +151,17 @@ const ProposalDetailModal = ({
                   content: "flex flex-row gap-1 items-center px-1",
                 }}
               >
-                {getProposalStatusIcon(proposal, returnProposal)}
-
-                {badge}
+                <div className="flex flex-row gap-1 items-center">
+                  <StatusIcon proposal={proposal} returnProposal={returnProposal} />
+                  <span>{t(badge === "Funded" ? "funded" : badge === "Not Funded" ? "notFunded" : "threshold")}</span>
+                </div>
               </Chip>
             </div>
             <Link
               href={`/proposals/${proposal.id}`}
               className="text-sm text-muted hover:text-blue-500 transition-colors"
             >
-              ID #{proposal.id}
+              {t("item.id")} #{proposal.id}
             </Link>
           </div>
         </div>
@@ -166,7 +173,7 @@ const ProposalDetailModal = ({
       {() => (
         <div className="flex flex-col h-full">
           <Tabs
-            aria-label="Witness Details Tabs"
+            aria-label="Proposal Details Tabs"
             selectedKey={activeTab}
             onSelectionChange={(key) => setActiveTab(key as string)}
             color="primary"
@@ -179,7 +186,7 @@ const ProposalDetailModal = ({
               title={
                 <div className="flex items-center gap-2">
                   <Info size={16} />
-                  <span>Information</span>
+                  <span>{t("details.information")}</span>
                 </div>
               }
             >
@@ -190,7 +197,7 @@ const ProposalDetailModal = ({
                     <Vote className="text-primary" size={18} />
                     <span className="font-medium">
                       {formatProposalVotes(vestsToSteem(proposal.total_votes))}{" "}
-                      votes
+                      {t("details.votes")}
                     </span>
                   </div>
                 </div>
@@ -200,7 +207,7 @@ const ProposalDetailModal = ({
                   <div className="bg-content2/50 rounded-lg p-4 border border-border/50">
                     <div className="flex items-center gap-2 text-xs text-muted mb-2">
                       <User className="h-3.5 w-3.5" />
-                      Creator
+                      {t("details.creator")}
                     </div>
                     <div className="flex items-center gap-2">
                       <SAvatar size={30} username={proposal.creator} />
@@ -214,7 +221,7 @@ const ProposalDetailModal = ({
                   <div className="bg-content2/50 rounded-lg p-4 border border-border/50">
                     <div className="flex items-center gap-2 text-xs text-muted mb-2">
                       <User className="h-3.5 w-3.5" />
-                      Receiver
+                      {t("details.receiver")}
                     </div>
                     <div className="flex items-center gap-2">
                       <SAvatar size={30} username={proposal.receiver} />
@@ -230,17 +237,17 @@ const ProposalDetailModal = ({
                 <div className="bg-content2/50 rounded-lg p-4 border border-border/50">
                   <div className="flex items-center gap-2 text-xs text-muted mb-2">
                     <Calendar className="h-3.5 w-3.5" />
-                    Duration
+                    {t("details.duration")}
                   </div>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="text-muted">Start: </span>
+                      <span className="text-muted">{t("details.start")} </span>
                       <span className="font-medium">
                         {moment(proposal.start_date).format("MMM d, yyyy")}
                       </span>
                     </div>
                     <div>
-                      <span className="text-muted">End: </span>
+                      <span className="text-muted">{t("details.end")} </span>
                       <span className="font-medium">
                         {moment(proposal.end_date).format("MMM d, yyyy")}
                       </span>
@@ -252,7 +259,7 @@ const ProposalDetailModal = ({
                 <div className="bg-content2/50 rounded-lg p-4 border border-border/50">
                   <div className="flex items-center gap-2 text-xs text-muted mb-2">
                     <DollarSign className="h-3.5 w-3.5" />
-                    Daily Pay
+                    {t("details.dailyPay")}
                   </div>
                   <span className="text-lg font-bold text-emerald-500">
                     {proposal.daily_pay}
@@ -263,7 +270,7 @@ const ProposalDetailModal = ({
                 <div className="bg-content2/50 rounded-lg p-4 border border-border/50">
                   <div className="flex items-center gap-2 text-xs text-muted mb-2">
                     <Link2 className="h-3.5 w-3.5" />
-                    Permlink
+                    {t("details.permlink")}
                   </div>
 
                   <PostLink
@@ -279,7 +286,7 @@ const ProposalDetailModal = ({
               title={
                 <div className="flex items-center gap-2">
                   <Users size={16} />
-                  <span>Voters</span>
+                  <span>{t("details.voters")}</span>
                 </div>
               }
             >
@@ -296,13 +303,13 @@ const ProposalDetailModal = ({
                       </div>
                       <div>
                         <p className="text-xs text-muted font-medium">
-                          Total Voters
+                          {t("details.totalVoters")}
                         </p>
                         <p className="text-lg font-bold">
                           {votesData?.length.toLocaleString() || 0}
                         </p>
                         <p className="text-xs text-muted">
-                          Effective: {effective.count.toLocaleString()}
+                          {t("details.effective")} {effective.count.toLocaleString()}
                         </p>
                       </div>
                     </div>
@@ -313,14 +320,14 @@ const ProposalDetailModal = ({
                       </div>
                       <div className="flex-1">
                         <p className="text-xs text-muted font-medium">
-                          Total Support (SP)
+                          {t("details.totalSupport")}
                         </p>
                         <p className="text-lg font-bold">
                           {totalVotes.toLocaleString()}
                         </p>
 
                         <p className="text-xs text-muted">
-                          Effective: {effective.votes.toLocaleString()}
+                          {t("details.effective")} {effective.votes.toLocaleString()}
                         </p>
                       </div>
                     </div>
@@ -330,7 +337,7 @@ const ProposalDetailModal = ({
                     data={votesData || []}
                     columns={columns}
                     className="rounded-xl overflow-hidden"
-                    emptyMessage="No votes found for this proposal"
+                    emptyMessage={t("details.noVotes")}
                   />
                 </div>
               )}

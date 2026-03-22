@@ -11,6 +11,8 @@ import { useAccountsContext } from "../auth/AccountsContext";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
 import { addProposalsHandler } from "@/hooks/redux/reducers/ProposalsReducer";
 
+import { useTranslations } from "next-intl";
+
 function ProposalActions({
   proposal,
   onView,
@@ -18,6 +20,7 @@ function ProposalActions({
   proposal: Proposal;
   onView: () => void;
 }) {
+  const t = useTranslations("Proposals");
   const { data: session } = useSession();
   const { authenticateOperation } = useAccountsContext();
   const [isPending, setIsPending] = useState(false);
@@ -41,7 +44,7 @@ function ProposalActions({
           { ...proposal, status: "removed" },
         ])
       );
-      toast.success("Proposal Removed");
+      toast.success(t("actions.removedSuccess"));
     }).finally(() => {
       setIsRemoving(false);
     });
@@ -66,9 +69,9 @@ function ProposalActions({
         ])
       );
       toast.success(
-        approve
-          ? "Proposal unvoted successfully"
-          : "Proposal voted successfully"
+        t(approve
+          ? "actions.unvotedSuccess"
+          : "actions.votedSuccess")
       );
     }).finally(() => {
       setIsPending(false);
@@ -95,8 +98,8 @@ function ProposalActions({
 
       {proposal.creator === session?.user?.name && (
         <SPopover
-          title={`Remove proposal #${proposal.id}?`}
-          description="Do you want to remove this proposal?"
+          title={t("actions.removeTitle", { id: proposal.id })}
+          description={t("actions.removeDesc")}
           trigger={
             <Button
               isLoading={isRemoving}
@@ -111,7 +114,7 @@ function ProposalActions({
         >
           {(onClose) => (
             <div className="flex flex-row gap-2 self-end">
-              <Button onPress={onClose}>Cancel</Button>
+              <Button onPress={onClose}>{t("actions.cancel")}</Button>
               <Button
                 color="danger"
                 onPress={() => {
@@ -119,7 +122,7 @@ function ProposalActions({
                   handleRemove(proposal);
                 }}
               >
-                Remove
+                {t("actions.remove")}
               </Button>
             </div>
           )}

@@ -10,6 +10,7 @@ import TranslateButton from "../TranslateButton";
 import { Image } from "@heroui/image";
 import { parsePostMeta } from "@/utils/user";
 import { getAppDetails } from "@/utils/app";
+import { useTranslations } from "next-intl";
 
 interface Props {
   comment: Feed | Post;
@@ -33,6 +34,7 @@ function PostHeader({
   isTranslated = false,
   currentLanguage,
 }: Props) {
+  const t = useTranslations("Post");
   const {
     author,
     author_reputation,
@@ -114,7 +116,7 @@ function PostHeader({
 
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <span className="flex flex-row gap-2">
-            <span className="text-muted">in</span>
+            <span className="text-muted">{"in"}</span>
             <Link
               href={`/trending/${category}`}
               className="font-semibold hover:underline text-default-900"
@@ -136,7 +138,7 @@ function PostHeader({
               title={moment.unix(last_update).toLocaleString()}
               className="text-muted"
             >
-              (edited)
+              {t("edited")}
             </p>
           )}
 

@@ -29,7 +29,7 @@ export function formatProposalVotes(votes: string | number): string {
 }
 
 export function getProposalStatus(
-  proposal: Proposal
+  proposal: Proposal,
 ): "upcoming" | "expired" | "active" {
   if (
     new Date(proposal.start_date) < new Date() &&
@@ -68,13 +68,13 @@ export function useProposalVoters(proposalId?: number) {
         let proposalVoters = await sdsApi.getProposalVotes(
           proposalId,
           lastVoter,
-          1000
+          1000,
         );
 
         if (!proposalVoters || proposalVoters.length === 0) break;
 
         allVoters = allVoters.concat(
-          proposalVoters.map((voter) => voter.voter)
+          proposalVoters.map((voter) => voter.voter),
         );
 
         if (proposalVoters.length < 1000) break;
@@ -91,7 +91,7 @@ export function useProposalVoters(proposalId?: number) {
         let batch = allVoters.slice(i, i + 750);
         if (batch.length === 0) continue;
 
-        let accounts = await sdsApi.getAccountsExt(batch, "null", [
+        let accounts = await sdsApi.getAccountsExt(batch, null, [
           "name",
           "proxy",
           "vests_own",
@@ -111,7 +111,7 @@ export function useProposalVoters(proposalId?: number) {
           vestsToSteem(
             (parseFloat(row.proxied_vsf_votes?.[0] ?? "0") +
               parseFloat(row.proxied_vsf_votes?.[1] ?? "0")) /
-              1000000
+              1000000,
           )
         );
       }
@@ -127,7 +127,7 @@ export function useProposalVoters(proposalId?: number) {
           }
           return acc;
         },
-        { effVotes: 0, effvoteCount: 0 }
+        { effVotes: 0, effvoteCount: 0 },
       );
 
       const { nonEffVotes, nonEffvoteCount } = allAccounts.reduce(
@@ -138,14 +138,14 @@ export function useProposalVoters(proposalId?: number) {
           }
           return acc;
         },
-        { nonEffVotes: 0, nonEffvoteCount: 0 }
+        { nonEffVotes: 0, nonEffvoteCount: 0 },
       );
 
       let allVoterDetails: ProposalVoterData[] = allAccounts.map((account) => {
         const total_proxied = vestsToSteem(
           (parseFloat(account.proxied_vsf_votes?.[0] ?? "0") +
             parseFloat(account.proxied_vsf_votes?.[1] ?? "0")) /
-            1000000
+            1000000,
         );
 
         const total_votes_sp = nonEffVotes + effVotes;
@@ -166,7 +166,7 @@ export function useProposalVoters(proposalId?: number) {
         notEffective: { votes: nonEffVotes, count: nonEffvoteCount },
         totalVotes: effVotes + nonEffVotes,
       };
-    }
+    },
   );
 
   return {

@@ -11,6 +11,7 @@ import { Plus, Star, X } from "lucide-react";
 import { Card } from "@heroui/card";
 import { validateAccountName } from "@/utils/chainValidation";
 import { normalizeUsername } from "@/utils/editor";
+import { useTranslations } from "next-intl";
 
 interface BeneficiariesModalProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ const BeneficiariesModal = ({
   beneficiaries,
   onChange,
 }: BeneficiariesModalProps) => {
+  const t = useTranslations("Submit");
   const [localBeneficiaries, setLocalBeneficiaries] =
     useState<Beneficiary[]>(beneficiaries);
   const [newUsername, setNewUsername] = useState("");
@@ -61,14 +63,14 @@ const BeneficiariesModal = ({
   const addFromFavorites = (favorite: Beneficiary) => {
     if (localBeneficiaries.some((b) => b.account === favorite.account)) {
       toast.error("Error", {
-        description: "This user is already in your beneficiaries list",
+        description: t("beneficiaries.alreadyAdded"),
       });
       return;
     }
 
     if (totalPercentage >= 100) {
       toast.error("Error", {
-        description: "Total percentage cannot exceed 100%",
+        description: t("beneficiaries.limitExceeded"),
       });
       return;
     }
@@ -95,13 +97,13 @@ const BeneficiariesModal = ({
     }
 
     if (localBeneficiaries.some((b) => b.account === username)) {
-      toast.error("Error", { description: "This user is already added" });
+      toast.error("Error", { description: t("beneficiaries.alreadyAddedShort") });
       return;
     }
 
     if (totalPercentage >= 100) {
       toast.error("Error", {
-        description: "Total percentage cannot exceed 100%",
+        description: t("beneficiaries.limitExceeded"),
       });
       return;
     }
@@ -126,7 +128,7 @@ const BeneficiariesModal = ({
   const handleSave = () => {
     if (totalPercentage > 100) {
       toast.error("Error", {
-        description: "Total percentage cannot exceed 100%",
+        description: t("beneficiaries.limitExceeded"),
       });
       return;
     }
@@ -134,7 +136,7 @@ const BeneficiariesModal = ({
     onChange(localBeneficiaries);
     onOpenChange(false);
     toast.success("Updated", {
-      description: "Beneficiaries updated successfully",
+      description: t("beneficiaries.updated"),
     });
   };
 
@@ -148,18 +150,16 @@ const BeneficiariesModal = ({
     <SModal
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      title={"Manage Beneficiaries"}
-      description={
-        "Set up reward sharing with other users. Total must not exceed 100%."
-      }
+      title={t("beneficiaries.title")}
+      description={t("beneficiaries.description")}
       footer={() => {
         return (
           <>
             <Button variant="bordered" onPress={handleCancel}>
-              Cancel
+              {t("actions.cancel")}
             </Button>
             <Button color="primary" onPress={handleSave}>
-              Save Changes
+              {t("beneficiaries.save")}
             </Button>
           </>
         );
@@ -169,7 +169,7 @@ const BeneficiariesModal = ({
         <div className="space-y-4 ">
           {favorites.length > 0 && (
             <div className="space-y-2">
-              <p className="text-sm opacity-disabled">Favorite Beneficiaries</p>
+              <p className="text-sm opacity-disabled">{t("beneficiaries.favorites")}</p>
               <div className="flex flex-wrap gap-1.5">
                 {favorites.map((favorite) => (
                   <Button
@@ -196,7 +196,7 @@ const BeneficiariesModal = ({
 
           <div className="flex items-center gap-2">
             <Input
-              placeholder="Enter username..."
+              placeholder={t("beneficiaries.usernamePlaceholder")}
               value={newUsername}
               onChange={(e) => setNewUsername(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleAdd()}
@@ -245,7 +245,7 @@ const BeneficiariesModal = ({
                             className="text-sm font-bold truncate"
                           />
                           <span className="text-xs text-default-700 font-medium">
-                            Allocation: {beneficiary.weight / 100}%
+                            {t.rich("beneficiaries.allocation", { percent: beneficiary.weight / 100 })}
                           </span>
                         </div>
                       </div>
@@ -280,7 +280,7 @@ const BeneficiariesModal = ({
           {localBeneficiaries.length > 0 && (
             <div className="flex justify-between items-center px-3 py-2 bg-primary/5 rounded-lg border border-primary/10">
               <span className="text-sm font-semibold opacity-80">
-                Total Allocation:
+                {t("beneficiaries.totalAllocation")}
               </span>
               <span
                 className={`text-sm font-black ${

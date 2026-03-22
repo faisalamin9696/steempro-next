@@ -9,11 +9,13 @@ import { Button } from "@heroui/button";
 import { ChevronDown } from "lucide-react";
 import disableDevtool from "disable-devtool";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 const SteemHeightsPage = () => {
   const heights = useHeights();
   const leaderboardRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const t = useTranslations("Games.steemHeights");
 
   useEffect(() => {
     disableDevtool({
@@ -66,7 +68,7 @@ const SteemHeightsPage = () => {
                   startContent={<ChevronDown size={16} />}
                   className="hidden lg:flex rounded-full border-zinc-800 text-zinc-500 hover:text-amber-500 hover:border-amber-500/50 font-bold uppercase text-[10px] tracking-widest transition-all"
                 >
-                  View Leaderboard
+                  {t("info.viewLeaderboard")}
                 </Button>
               </div>
             </div>
@@ -102,6 +104,7 @@ const SteemHeightsPage = () => {
             syncingChallengeId={heights.syncingChallengeId}
             syncingPowerUpId={heights.syncingPowerUpId}
             syncingSkinId={heights.syncingSkinId}
+            eligibilityMap={heights.eligibilityMap}
           />
         </div>
       </div>

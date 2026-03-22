@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useDisclosure } from "@heroui/modal";
 import { HeightsGuideModal } from "./HeightsGuideModal";
+import { useTranslations } from "next-intl";
 import {
   Block,
   Debris,
@@ -114,6 +115,7 @@ export const HeightsCanvas = memo(
       },
       ref,
     ) => {
+      const t = useTranslations("Games.steemHeights");
       const { isOpen, onOpen, onOpenChange } = useDisclosure();
       const viewY = Math.max(0, (blocks.length - 10) * BLOCK_HEIGHT);
 
@@ -170,7 +172,7 @@ export const HeightsCanvas = memo(
                 </div>
               </div>
               <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">
-                {selectedSkin.name}
+                {t(`leaderboard.lab.items.skins.${selectedSkin.id}.name`)}
               </span>
             </div>
           </div>
@@ -227,12 +229,12 @@ export const HeightsCanvas = memo(
                           !isLoggedIn ? "text-amber-500" : "text-blue-500"
                         }`}
                       >
-                        {!isLoggedIn ? "Test Gameplay" : "Season Break"}
+                        {!isLoggedIn ? t("canvas.testGameplay") : t("canvas.seasonBreak")}
                       </span>
                       <p className="text-[10px] text-zinc-400 font-medium leading-tight max-w-[200px]">
                         {!isLoggedIn
-                          ? "Login now to record your scores and earn rewards. Current altitude will not be saved."
-                          : "The current season has ended. Please wait for the next season to compete and earn rewards!"}
+                          ? t("canvas.loginToRecord")
+                          : t("canvas.seasonEnded")}
                       </p>
                     </div>
                   </motion.div>
@@ -395,7 +397,7 @@ export const HeightsCanvas = memo(
                 />
               ))}
             </div>
-  
+
 
             <Overlays
               showPerfect={showPerfect}

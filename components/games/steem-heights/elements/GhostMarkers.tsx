@@ -4,6 +4,7 @@ import { memo } from "react";
 import { Crown } from "lucide-react";
 import SAvatar from "@/components/ui/SAvatar";
 import { HighScore, BLOCK_HEIGHT, CANVAS_HEIGHT } from "../Config";
+import { useTranslations } from "next-intl";
 
 interface GhostMarkersProps {
   highScores: HighScore[];
@@ -12,6 +13,8 @@ interface GhostMarkersProps {
 
 export const GhostMarkers = memo(
   ({ highScores, username }: GhostMarkersProps) => {
+    const t = useTranslations("Games.steemHeights.canvas");
+
     return (
       <>
         {highScores.map((hs, hidx) => {
@@ -57,7 +60,7 @@ export const GhostMarkers = memo(
                       isOwn ? "text-amber-500" : "text-zinc-400"
                     }`}
                   >
-                    {hs.player} {isOwn && "(YOU)"}
+                    {hs.player} {isOwn && `(${t("you")})`}
                   </span>
                   <span className="text-[8px] font-bold text-zinc-500 mt-0.5">
                     {hs.score}m

@@ -10,15 +10,17 @@ import ExplorerRecentBlocks from "@/components/explorer/ExplorerRecentBlocks";
 import ExplorerAccountLookup from "@/components/explorer/ExplorerAccountLookup";
 import STabs from "@/components/ui/STabs";
 import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
+import { useTranslations } from "next-intl";
 
 export default function ExplorerPage() {
+  const t = useTranslations("Explorer");
   const [selectedKey, setSelectedKey] = useState("overview");
   const { isMobile } = useDeviceInfo();
 
   const explorerTabs = [
     {
       id: "overview",
-      title: "Overview",
+      title: t("tabs.overview"),
       icon: <Activity size={16} />,
       content: (
         <div className="space-y-8">
@@ -28,7 +30,7 @@ export default function ExplorerPage() {
               <div className="p-2 rounded-lg bg-primary/10 text-primary border border-primary/20">
                 <Box size={18} />
               </div>
-              <h2 className="font-bold text-lg">Recent Blocks</h2>
+              <h2 className="font-bold text-lg">{t("recentBlocks")}</h2>
             </div>
             <ExplorerRecentBlocks />
           </div>
@@ -37,19 +39,19 @@ export default function ExplorerPage() {
     },
     {
       id: "blocks",
-      title: "Blocks",
+      title: t("tabs.blocks"),
       icon: <Box size={16} />,
       content: <ExplorerBlockView />,
     },
     {
       id: "transactions",
-      title: "Transactions",
+      title: t("tabs.transactions"),
       icon: <ArrowRightLeft size={16} />,
       content: <ExplorerTransactionViewer />,
     },
     {
       id: "accounts",
-      title: "Accounts",
+      title: t("tabs.accounts"),
       icon: <User size={16} />,
       content: <ExplorerAccountLookup />,
     },
@@ -59,8 +61,8 @@ export default function ExplorerPage() {
     <div className="space-y-6 pb-20">
       {/* Page Header */}
       <PageHeader
-        title="Blockchain Explorer"
-        description="Real-time Steem blockchain data, blocks, transactions & chain stats"
+        title={t("title")}
+        description={t("description")}
         icon={Layers}
         color="primary"
       />

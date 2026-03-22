@@ -4,6 +4,7 @@ import { memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@heroui/button";
 import { Gamepad2, Crown, RefreshCw, Pause, Play } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface GameMenusProps {
   gameState: "idle" | "playing" | "gameover";
@@ -35,6 +36,8 @@ export const GameMenus = memo(
     setIsPaused,
     isGeneratingSession,
   }: GameMenusProps) => {
+    const t = useTranslations("Games.steemHeights.canvas");
+
     return (
       <AnimatePresence>
         {gameState !== "playing" && (
@@ -54,10 +57,10 @@ export const GameMenus = memo(
                 </div>
                 <div className="space-y-1 sm:space-y-2">
                   <h2 className="text-2xl sm:text-3xl font-black italic text-white uppercase tracking-tight">
-                    READY TO RULE?
+                    {t("ready")}
                   </h2>
                   <p className="text-zinc-500 text-xs sm:text-sm font-bold">
-                    Tap anywhere on the box to drop the block.
+                    {t("tapToDrop")}
                   </p>
                 </div>
                 <Button
@@ -65,7 +68,7 @@ export const GameMenus = memo(
                   className="bg-amber-500 text-black font-black px-8 sm:px-12 h-12 sm:h-14 rounded-2xl shadow-xl hover:scale-105 transition-transform text-sm sm:text-base"
                   onPress={startGame}
                 >
-                  BEGIN THE CLIMB
+                  {t("begin")}
                 </Button>
               </div>
             ) : (
@@ -81,18 +84,18 @@ export const GameMenus = memo(
                     </span>
                   </div>
                   <p className="text-zinc-500 font-bold uppercase tracking-widest text-[8px] sm:text-[9px]">
-                    Total Altitude
+                    {t("totalAltitude")}
                   </p>
                 </div>
                 <div className="space-y-3 sm:space-y-4">
                   <h2 className="text-2xl sm:text-3xl font-black italic text-white uppercase tracking-tight">
-                    Climb Ended
+                    {t("climbEnded")}
                   </h2>
 
                   <div className="flex justify-center gap-2 sm:gap-4">
                     <div className="flex flex-col items-center bg-zinc-900/50 p-3 sm:p-4 rounded-2xl border border-white/5 w-20 sm:w-24">
                       <span className="text-[8px] sm:text-[9px] text-zinc-500 font-bold uppercase tracking-wider mb-0.5 sm:mb-1">
-                        Combos
+                        {t("combos")}
                       </span>
                       <span className="text-lg sm:text-xl font-black italic text-white">
                         {combos}
@@ -100,7 +103,7 @@ export const GameMenus = memo(
                     </div>
                     <div className="flex flex-col items-center bg-zinc-900/50 p-3 sm:p-4 rounded-2xl border border-white/5 w-20 sm:w-24">
                       <span className="text-[8px] sm:text-[9px] text-zinc-500 font-bold uppercase tracking-wider mb-0.5 sm:mb-1">
-                        Bonus
+                        {t("bonus")}
                       </span>
                       <span className="text-lg sm:text-xl font-black italic text-amber-500">
                         +{totalBonusScore}m
@@ -115,17 +118,17 @@ export const GameMenus = memo(
                           size={10}
                           className="animate-spin sm:w-3 sm:h-3"
                         />
-                        RECORDING ON BLOCKCHAIN...
+                        {t("recording")}
                       </div>
                     )}
                     {!isLoggedIn && isSeasonActive && (
                       <div className="bg-red-500/10 border border-red-500/20 text-red-500 text-[8px] sm:text-[10px] font-bold px-2 sm:px-3 py-1 rounded-full mt-1 sm:mt-2">
-                        LOGIN TO RECORD SCORE ON BLOCKCHAIN
+                        {t("loginToRecordScore")}
                       </div>
                     )}
                     {!isSeasonActive && (
                       <div className="bg-zinc-800/50 border border-white/5 text-zinc-400 text-[8px] sm:text-[10px] font-bold px-2 sm:px-3 py-1 rounded-full mt-1 sm:mt-2">
-                        SEASON INACTIVE • SCORE NOT RECORDED
+                        {t("seasonInactive")}
                       </div>
                     )}
                   </div>
@@ -137,8 +140,7 @@ export const GameMenus = memo(
                     onPress={startGame}
                     isDisabled={isSavingScore}
                   >
-                    <RefreshCw size={18} className="mr-2 sm:w-5 sm:h-5" /> TRY
-                    AGAIN
+                    <RefreshCw size={18} className="mr-2 sm:w-5 sm:h-5" /> {t("tryAgain")}
                   </Button>
                   <Button
                     variant="light"
@@ -146,7 +148,7 @@ export const GameMenus = memo(
                     onPress={() => setGameState("idle")}
                     isDisabled={isSavingScore}
                   >
-                    MAIN MENU
+                    {t("mainMenu")}
                   </Button>
                 </div>
               </div>
@@ -171,10 +173,10 @@ export const GameMenus = memo(
               </div>
               <div className="space-y-1 sm:space-y-2">
                 <h2 className="text-3xl sm:text-4xl font-black italic text-white uppercase tracking-tight">
-                  PAUSED
+                  {t("paused")}
                 </h2>
                 <p className="text-zinc-500 text-xs sm:text-sm font-bold uppercase tracking-widest px-4">
-                  Take a breather, Champion.
+                  {t("takeBreather")}
                 </p>
               </div>
               <Button
@@ -183,7 +185,7 @@ export const GameMenus = memo(
                 onPress={() => setIsPaused(false)}
               >
                 <Play size={18} className="mr-2 fill-black sm:w-5 sm:h-5" />{" "}
-                RESUME
+                {t("resume")}
               </Button>
             </div>
           </motion.div>
@@ -208,11 +210,11 @@ export const GameMenus = memo(
               </div>
               <div className="space-y-2">
                 <h2 className="text-2xl font-black italic text-white uppercase tracking-tight">
-                  Preparing Ascent
+                  {t("preparing")}
                 </h2>
                 <div className="flex items-center justify-center gap-2 text-zinc-500 text-[10px] font-bold tracking-widest uppercase">
                   <span className="w-1 h-1 bg-amber-500 rounded-full animate-ping" />
-                  Generating Secure Session
+                  {t("generating")}
                 </div>
               </div>
             </div>

@@ -1,6 +1,7 @@
 import { Button, ButtonProps } from "@heroui/button";
 import { useAccountsContext } from "../auth/AccountsContext";
 import { LogOut } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface Props extends Omit<ButtonProps, "onPress"> {
   onPress?: () => void;
@@ -8,6 +9,7 @@ interface Props extends Omit<ButtonProps, "onPress"> {
 }
 
 function LogoutButton({ onPress, iconSize = 20, ...props }: Props) {
+  const t = useTranslations("Common");
   const { manageLogout } = useAccountsContext();
 
   return (
@@ -22,7 +24,7 @@ function LogoutButton({ onPress, iconSize = 20, ...props }: Props) {
       className="text-default-900 hover:text-danger"
       {...props}
     >
-      {!props.isIconOnly && "Logout"}
+      {!props.isIconOnly && t("logout")}
     </Button>
   );
 }

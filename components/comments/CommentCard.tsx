@@ -13,6 +13,7 @@ import CommentHeader from "./CommentHeader";
 import CommentFooter from "./CommentFooter";
 import { useDraft } from "@/hooks/useDraft";
 import { twMerge } from "tailwind-merge";
+import { useTranslations } from "next-intl";
 
 interface CommentCardProps {
   comment: Post;
@@ -36,6 +37,7 @@ export default function CommentCard({
   depth = 0,
   root,
 }: CommentCardProps) {
+  const t = useTranslations("Post");
   const commentRef = useRef<HTMLDivElement>(null);
 
   let { ...draftData } = useDraft(
@@ -183,7 +185,7 @@ export default function CommentCard({
           <MarkdownViewer
             body={translatedBody || commentData.body}
             className={twMerge(
-              "prose-sm! text-default-800!",
+              "prose-sm! text-default-800! prose-td:p-2! prose-th:p-2!",
               isLowQuality && "opacity-50 text-warning!",
             )}
           />
@@ -217,7 +219,7 @@ export default function CommentCard({
                 if (!edit) draftData.setBody(body);
               }}
               placeholder={
-                edit ? `Update reply...` : `Reply to @${comment.author}...`
+                edit ? t("updateReply") : t("replyTo", { author: comment.author })
               }
               body={root.body + commentData.body}
               autoFocus
@@ -244,7 +246,7 @@ export default function CommentCard({
                 variant="solid"
                 size="sm"
                 color="primary"
-                buttonTitle={edit ? "Update" : "Reply"}
+                buttonTitle={edit ? t("update") : t("reply")}
                 startContent={<Send size={14} />}
                 isDisabled={!replyText.trim() || isPending}
                 root={root}
@@ -261,7 +263,7 @@ export default function CommentCard({
                 className="border-1"
                 isDisabled={isPending}
               >
-                <X size={14} /> Cancel
+                <X size={14} /> {t("cancel")}
               </Button>
             </div>
           </div>
@@ -273,7 +275,7 @@ export default function CommentCard({
             href={`/@${comment.author}/${comment.permlink}`}
             className="text-xs flex items-center gap-1 text-primary hover:underline mt-2"
           >
-            <ExternalLink size={12} /> Open full thread
+            <ExternalLink size={12} /> {t("openFullThread")}
           </Link>
         )}
 

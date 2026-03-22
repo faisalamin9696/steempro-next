@@ -19,6 +19,7 @@ import { useAccountsContext } from "@/components/auth/AccountsContext";
 import MarkdownEditor from "@/components/submit/MarkdownEditor";
 import { Constants } from "@/constants";
 import CommunitySelect from "@/components/community/CommunitySelect";
+import { useTranslations } from "next-intl";
 
 interface Props {
   isOpen: boolean;
@@ -33,6 +34,7 @@ export const ActivityPublishModal = ({
   username,
   userStats,
 }: Props) => {
+  const t = useTranslations("Games.steemHeights.leaderboard.history.publish");
   const [isPublishing, setIsPublishing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const { authenticateOperation } = useAccountsContext();
@@ -112,7 +114,7 @@ Think you can beat my score? Join the climb on Steem Heights!
         key,
         useKeychain,
       );
-      toast.success("Activity published successfully!");
+      toast.success(t("successTitle"));
 
       setIsSuccess(true);
     }).finally(() => {
@@ -139,10 +141,10 @@ Think you can beat my score? Join the climb on Steem Heights!
                 </div>
                 <div>
                   <h2 className="text-xl font-black italic uppercase tracking-tight">
-                    Share Your Journey
+                    {t("title")}
                   </h2>
                   <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-wider">
-                    Publish your daily activity to Steem
+                    {t("subtitle")}
                   </p>
                 </div>
               </div>
@@ -153,10 +155,9 @@ Think you can beat my score? Join the climb on Steem Heights!
                   <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mb-2">
                     <CheckCircle2 size={40} className="text-emerald-500" />
                   </div>
-                  <h3 className="text-xl font-bold">Published!</h3>
+                  <h3 className="text-xl font-bold">{t("successTitle")}</h3>
                   <p className="text-muted text-sm max-w-sm">
-                    Your climb has been immortalized on the Steem blockchain.
-                    Great job!
+                    {t("successDesc")}
                   </p>
                   <Button
                     className="mt-4 bg-zinc-900 text-white font-black uppercase tracking-widest text-[10px]"
@@ -165,7 +166,7 @@ Think you can beat my score? Join the climb on Steem Heights!
                       onClose();
                     }}
                   >
-                    Close
+                    {t("close")}
                   </Button>
                 </div>
               ) : (
@@ -174,19 +175,19 @@ Think you can beat my score? Join the climb on Steem Heights!
                     <div className="flex items-center gap-2 text-emerald-500 mb-2">
                       <FileText size={14} />
                       <span className="text-[10px] font-black uppercase tracking-widest">
-                        Preview Stats
+                        {t("statsTitle")}
                       </span>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="flex flex-col">
                         <span className="text-[9px] text-zinc-500 font-bold uppercase">
-                          Total Sessions
+                          {t("totalPlays")}
                         </span>
                         <span className="text-lg font-black">{totalPlays}</span>
                       </div>
                       <div className="flex flex-col">
                         <span className="text-[9px] text-zinc-500 font-bold uppercase">
-                          Peak Altitude
+                          {t("peakAltitude")}
                         </span>
                         <span className="text-lg font-black">
                           {peakAltitude}m
@@ -194,7 +195,7 @@ Think you can beat my score? Join the climb on Steem Heights!
                       </div>
                       <div className="flex flex-col">
                         <span className="text-[9px] text-zinc-500 font-bold uppercase">
-                          Estimated Total
+                          {t("estTotal")}
                         </span>
                         <span className="text-lg font-black">
                           {totalAltitude}m
@@ -207,20 +208,16 @@ Think you can beat my score? Join the climb on Steem Heights!
                     <div className="flex items-center gap-2 text-emerald-500">
                       <CheckCircle2 size={16} />
                       <span className="text-[10px] font-black uppercase tracking-widest">
-                        Supporting the Climb
+                        {t("supportTitle")}
                       </span>
                     </div>
                     <p className="text-[11px] text-zinc-400 font-medium leading-relaxed">
-                      By publishing your journey, you&apos;re not just sharing
-                      stats you&apos;re fueling the platform! Together, we give{" "}
-                      <span className="text-emerald-500 font-bold">10%</span> to
-                      support <span className="text-foreground">SteemPro</span>{" "}
-                      and burn <span className="text-foreground">5%</span> for
-                      the{" "}
-                      <span className="text-emerald-500 font-bold">
-                        Steem Ecosystem
-                      </span>
-                      . Your ascent helps everyone grow!
+                      {t.rich("supportDesc", {
+                        pro: (chunks) => <span className="text-emerald-500 font-bold">{chunks}</span>,
+                        steempro: (chunks) => <span className="text-foreground">{chunks}</span>,
+                        burn: (chunks) => <span className="text-foreground">{chunks}</span>,
+                        eco: (chunks) => <span className="text-emerald-500 font-bold">{chunks}</span>,
+                      })}
                     </p>
                   </div>
 
@@ -228,7 +225,7 @@ Think you can beat my score? Join the climb on Steem Heights!
                     <CommunitySelect
                       community={selectedCommunity}
                       onSelectCommunity={setSelectedCommunity}
-                      label="Select Community"
+                      label={t("selectCommunity")}
                       classNames={{
                         base: "max-w-full",
                         trigger:
@@ -236,8 +233,8 @@ Think you can beat my score? Join the climb on Steem Heights!
                       }}
                     />
                     <Input
-                      label="Post Title"
-                      placeholder="Enter post title"
+                      label={t("postTitle")}
+                      placeholder={t("postTitle")}
                       value={title}
                       onValueChange={setTitle}
                       readOnly
@@ -249,8 +246,8 @@ Think you can beat my score? Join the climb on Steem Heights!
                       }}
                     />
                     <MarkdownEditor
-                      label="Post Content (Markdown)"
-                      placeholder="Describe your climb..."
+                      label={t("postContent")}
+                      placeholder={t("descPlaceholder")}
                       value={body}
                       onValueChange={setBody}
                       minRows={10}
@@ -276,7 +273,7 @@ Think you can beat my score? Join the climb on Steem Heights!
                   className="text-zinc-500 font-black uppercase tracking-widest text-[10px]"
                   onPress={onClose}
                 >
-                  Cancel
+                  {t("cancel")}
                 </Button>
                 <Button
                   isLoading={isPublishing}
@@ -284,7 +281,7 @@ Think you can beat my score? Join the climb on Steem Heights!
                   startContent={!isPublishing && <Send size={14} />}
                   onPress={handlePublish}
                 >
-                  Publish to Steem
+                  {t("publishBtn")}
                 </Button>
               </ModalFooter>
             )}

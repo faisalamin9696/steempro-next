@@ -13,6 +13,8 @@ import { getOrderAmount, getOrderPrice } from "@/app/market/page";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
 import { addLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 
+import { useTranslations } from "next-intl";
+
 const OpenOrdersTable = ({
   orders,
   onUpdate,
@@ -20,6 +22,8 @@ const OpenOrdersTable = ({
   orders: OpenOrder[] | undefined;
   onUpdate: () => void;
 }) => {
+  const t = useTranslations("Market.openOrders");
+  const tTrade = useTranslations("Market.trade");
   const { data: session } = useSession();
   const [cancelling, setCancelling] = useState<number | null>(null);
   const { authenticateOperation } = useAccountsContext();
@@ -38,7 +42,7 @@ const OpenOrdersTable = ({
         key,
         useKeychain,
       );
-      toast.success("Order cancelled");
+      toast.success(t("orderCancelled"));
       const isBuying = order.sell_price.base.includes("SBD");
       dispatch(
         addLoginHandler({
@@ -52,7 +56,7 @@ const OpenOrdersTable = ({
       );
       onUpdate();
     } catch (e: any) {
-      toast.error(e.message || "Failed to cancel order");
+      toast.error(e.message || t("failedToCancel"));
     } finally {
       setCancelling(null);
     }
@@ -66,13 +70,13 @@ const OpenOrdersTable = ({
     );
   if (orders.length === 0)
     return (
-      <div className="p-12 text-center text-muted text-sm">No open orders</div>
+      <div className="p-12 text-center text-muted text-sm">{t("noOrders")}</div>
     );
 
   const orderColumns: ColumnDef<OpenOrder>[] = [
     {
       key: "orderid",
-      header: "Type",
+      header: t("type"),
       className: "w-[160px]",
       render: (_info, order) => {
         const isBuying = order.sell_price.base.includes("SBD");
@@ -84,7 +88,7 @@ const OpenOrdersTable = ({
               size="sm"
               color={isBuying ? "success" : "danger"}
             >
-              {isBuying ? "Buy" : "Sell"}
+              {isBuying ? tTrade("buy") : tTrade("sell")}
             </Chip>
             <p className="text-xs text-muted">
               {moment.unix(order.created).format("DD MMM HH:mm")}
@@ -95,28 +99,28 @@ const OpenOrdersTable = ({
     },
     {
       key: "real_price",
-      header: "Price",
+      header: t("price"),
       render: (_info, order) => {
         return getOrderPrice(order);
       },
     },
     {
       key: "for_sale",
-      header: "STEEM",
+      header: t("steem"),
       render: (_info, order) => {
         return getOrderAmount(order).steem_amount;
       },
     },
     {
       key: "sell_price",
-      header: "SBD",
+      header: t("sbd"),
       render: (_info, order) => {
         return getOrderAmount(order).sbd_amount;
       },
     },
     {
       key: "actions",
-      header: "Action",
+      header: t("action"),
       render: (_value, order) => (
         <Button
           isIconOnly

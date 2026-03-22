@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Button } from "@heroui/button";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { DAILY_CHALLENGES } from "./Config";
 
 interface Props {
@@ -39,6 +40,8 @@ export const DailyChallengesTab = memo(
     isSeasonActive,
     currentSeason,
   }: Props) => {
+    const t = useTranslations("Games.steemHeights.leaderboard.daily");
+
     return (
       <div className="space-y-6 pt-2">
         {/* Header Stat Card */}
@@ -52,16 +55,17 @@ export const DailyChallengesTab = memo(
               <div className="flex items-center gap-2">
                 <div className="p-1 px-2.5 bg-amber-500/10 border border-amber-500/20 rounded-full items-center flex flex-col">
                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-500">
-                    Daily Operations
+                    {t("operations")}
                   </span>
                 </div>
               </div>
               <h3 className="text-2xl font-black italic uppercase tracking-tighter text-zinc-900 dark:text-white">
-                Tactical <span className="text-amber-500">Challenges</span>
+                {t.rich("tactical", {
+                  challenges: (chunks) => <span className="text-amber-500">{chunks}</span>,
+                })}
               </h3>
               <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider max-w-xs leading-relaxed italic">
-                Push your limits daily to accumulate energy reserves for the
-                laboratory.
+                {t("description")}
               </p>
             </div>
 
@@ -75,14 +79,14 @@ export const DailyChallengesTab = memo(
               </div>
               <div className="relative flex flex-col">
                 <span className="text-[9px] font-black text-amber-500 uppercase tracking-[0.2em]">
-                  Energy Reserves
+                  {t("energyReserves")}
                 </span>
                 <div className="flex items-baseline gap-1">
                   <span className="text-2xl font-black tabular-nums tracking-tighter">
                     {energy}
                   </span>
                   <span className="text-[10px] font-black text-zinc-600 uppercase">
-                    nrg
+                    {t("nrg")}
                   </span>
                 </div>
               </div>
@@ -136,7 +140,7 @@ export const DailyChallengesTab = memo(
                             className="text-emerald-500"
                           />
                           <span className="text-[8px] font-black uppercase text-emerald-500 tracking-widest">
-                            Claimed
+                            {t("claimed")}
                           </span>
                         </div>
                       </div>
@@ -151,7 +155,7 @@ export const DailyChallengesTab = memo(
                         <div className="flex items-center gap-1.5 px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded-full">
                           <Sparkles size={10} className="text-amber-500" />
                           <span className="text-[8px] font-black uppercase text-amber-500 tracking-widest">
-                            Ready
+                            {t("ready")}
                           </span>
                         </div>
                       </motion.div>
@@ -174,10 +178,10 @@ export const DailyChallengesTab = memo(
                         <h4
                           className={`text-base font-black italic uppercase tracking-tighter ${isClaimed ? "text-zinc-600" : "text-zinc-900 dark:text-white"}`}
                         >
-                          {challenge.title}
+                          {t(`challenges.${challenge.id}.title`)}
                         </h4>
                         <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider leading-relaxed italic">
-                          {challenge.description}
+                          {t(`challenges.${challenge.id}.description`)}
                         </p>
                       </div>
                     </div>
@@ -186,7 +190,7 @@ export const DailyChallengesTab = memo(
                       <div className="flex justify-between items-end">
                         <div className="flex flex-col">
                           <span className="text-[8px] font-black text-zinc-500 uppercase tracking-[0.2em] mb-0.5">
-                            Progress
+                            {t("progress")}
                           </span>
                           <div className="flex items-baseline gap-1">
                             <span
@@ -202,7 +206,7 @@ export const DailyChallengesTab = memo(
 
                         <div className="flex flex-col items-end">
                           <span className="text-[8px] font-black text-zinc-500 uppercase tracking-[0.2em] mb-0.5">
-                            Reward
+                            {t("reward")}
                           </span>
                           <div
                             className={`flex items-center gap-1 p-0.5 px-2.5 rounded-full border ${isClaimed ? "bg-zinc-800/20 border-white/5 text-zinc-700" : "bg-amber-500/10 border-amber-500/20 text-amber-500"}`}
@@ -248,15 +252,15 @@ export const DailyChallengesTab = memo(
                     >
                       <span className="relative z-10 flex items-center justify-center gap-2">
                         {isClaimed ? (
-                          "MISSION COMPLETED"
+                          t("missionCompleted")
                         ) : isSyncing ? (
-                          "PROCESSING..."
+                          t("processing")
                         ) : isCompleted ? (
                           <>
-                            CLAIM REWARD <ArrowRight size={14} />
+                            {t("claimReward")} <ArrowRight size={14} />
                           </>
                         ) : (
-                          "IN PROGRESS"
+                          t("inProgress")
                         )}
                       </span>
                       {!isClaimed && isCompleted && (
@@ -273,11 +277,10 @@ export const DailyChallengesTab = memo(
                 <Zap size={32} />
               </div>
               <h4 className="text-sm font-black uppercase tracking-widest text-zinc-400 mb-2">
-                Daily Challenges Inactive
+                {t("inactive")}
               </h4>
               <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider max-w-xs leading-relaxed">
-                Challenges and Energy rewards are only available during active
-                seasons. Stay tuned for the next climb!
+                {t("inactiveDescription")}
               </p>
             </div>
           )}
@@ -294,13 +297,13 @@ export const DailyChallengesTab = memo(
             </div>
             <div className="flex flex-col gap-0.5">
               <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">
-                Season Reset Notice
+                {t("resetNotice")}
               </span>
               <p className="text-[11px] text-zinc-400 font-medium leading-relaxed">
-                Energy is season-specific. Your balance for{" "}
-                <span className="font-bold">Season {currentSeason}</span> will
-                be reset when the season ends to ensure a fresh start for all
-                competitors.
+                {t.rich("resetDescription", {
+                  season: currentSeason,
+                  span: (chunks) => <span className="font-bold">{chunks}</span>,
+                })}
               </p>
             </div>
           </motion.div>

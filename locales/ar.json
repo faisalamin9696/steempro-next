@@ -1,0 +1,1334 @@
+{
+  "General": {
+    "network": {
+      "title": "الشبكة و RPC",
+      "description": "إعداد اتصالك بشبكة Steem",
+      "autoSelection": "اختيار تلقائي",
+      "autoSelectionDesc": "اختيار أفضل عقدة متاحة تلقائيًا",
+      "rpcNode": "عقدة RPC",
+      "placeholder": "اختر خادم RPC",
+      "rpcNodeDesc": "العقد عالية الأداء توفر تجربة أفضل",
+      "autoFailover": "تلقائي (تحويل عند الفشل)"
+    },
+    "media": {
+      "title": "الوسائط والمحتوى",
+      "description": "إدارة استضافة الصور وإعدادات عرض المحتوى",
+      "imageServer": "خادم الصور",
+      "imageServerPlaceholder": "اختر استضافة الصور",
+      "nsfwLabel": "محتوى NSFW",
+      "nsfwPlaceholder": "حدد تفضيلك",
+      "nsfwAlwaysShow": "إظهار دائمًا",
+      "nsfwAlwaysHide": "إخفاء دائمًا",
+      "nsfwAlwaysWarn": "تحذير دائمًا"
+    },
+    "language": {
+      "title": "اللغة",
+      "description": "اختر لغة التطبيق المفضلة لديك",
+      "select": "اختر اللغة"
+    },
+    "interface": {
+      "title": "تفضيلات الواجهة",
+      "description": "خصّص تجربة العرض الخاصة بك",
+      "theme": "المظهر",
+      "themeDesc": "حدد مظهرك",
+      "themeSystem": "النظام",
+      "themeLight": "فاتح",
+      "themeDark": "داكن",
+      "feedStyle": "نمط الخلاصة",
+      "feedStyleDesc": "وضع العرض",
+      "feedStyleList": "قائمة",
+      "feedStyleBlog": "مدونة",
+      "feedStyleGrid": "شبكة",
+      "vote": "تذكر التصويت",
+      "voteDesc": "استخدام آخر وزن",
+      "defaultVote": "نسبة التصويت الافتراضية %"
+    }
+  },
+  "Common": {
+    "home": "الرئيسية",
+    "settings": "الإعدادات",
+    "profile": "الملف الشخصي",
+    "loginTo": "يرجى تسجيل الدخول إلى {action}.",
+    "security": "الأمان",
+    "about": "حول",
+    "logout": "تسجيل الخروج",
+    "login": "تسجيل الدخول",
+    "keychain": "Keychain",
+    "privateKey": "المفتاح الخاص"
+  },
+  "Home": {
+    "tabs": {
+      "trending": "الأكثر رواجًا",
+      "popular": "الأكثر شعبية",
+      "recent": "الأحدث",
+      "hot": "الساخن",
+      "payout": "الدفع"
+    }
+  },
+  "Communities": {
+    "title": "المجتمعات",
+    "headerDesc": "استكشف المجتمعات النشطة على Steem وانضم إليها. أدر اشتراكاتك وتابع ما يهمك.",
+    "searchPlaceholder": "ابحث بالعنوان أو الحساب...",
+    "showOnlySubscribed": "عرض المجتمعات المشترك بها فقط",
+    "noDescription": "لا يوجد وصف متاح",
+    "subscribers": "المشتركون",
+    "subscribe": "اشتراك",
+    "leave": "مغادرة",
+    "leftSuccess": "تمت مغادرة المجتمع",
+    "subscribeSuccess": "تم الاشتراك بنجاح"
+  },
+  "Community": {
+    "created": "تاريخ الإنشاء",
+    "pendingReward": "المكافأة المعلقة",
+    "rank": "الترتيب",
+    "members": "الأعضاء",
+    "active": "نشط",
+    "leadership": "القيادة",
+    "rules": "القواعد",
+    "about": "حول",
+    "more": "المزيد",
+    "user": "المستخدم",
+    "role": "الدور",
+    "activities": "الأنشطة"
+  },
+  "About": {
+    "hero": {
+      "subtitle": "نُمكّن صوتك",
+      "description": "اكتشف شبكة اجتماعية مدعومة بشبكة Steem. استعرض النقاشات الرائجة وشارك وجهة نظرك على منصة لامركزية حقيقية.",
+      "getStarted": "ابدأ الآن",
+      "viewGithub": "عرض Github"
+    },
+    "mission": {
+      "title": "مهمتنا",
+      "description": "تهدف SteemPro إلى سد الفجوة بين تقنية البلوك تشين المعقدة والتفاعل الاجتماعي اليومي. نؤمن بتوفير واجهة سلسة وسريعة وآمنة للتفاعل مع منظومة Steem.",
+      "secureTitle": "آمن",
+      "secureDesc": "أمان على مستوى البلوك تشين",
+      "fastTitle": "سريع",
+      "fastDesc": "أداء محسّن"
+    },
+    "features": {
+      "title": "ميزات قوية",
+      "subtitle": "مصمم للمبتدئين وعشاق البلوك تشين على حدٍّ سواء.",
+      "feature1Title": "وصول عالمي",
+      "feature1Desc": "تواصل مع مستخدمين حول العالم على شبكة مقاومة للرقابة.",
+      "feature2Title": "مدعوم بـ SDS",
+      "feature2Desc": "جلب بيانات فائق السرعة مدعوم بـ Steem Data Service.",
+      "feature3Title": "لامركزي",
+      "feature3Desc": "حسابك ومفاتيحك ومحتواك ملكك أنت.",
+      "feature4Title": "مدفوع بالمجتمع",
+      "feature4Desc": "مبني للمجتمع، من قِبَل المجتمع."
+    },
+    "team": {
+      "title": "الفريق",
+      "subtitle": "تعرف على العقول التي تقف وراء SteemPro."
+    },
+    "cta": {
+      "title": "انضم إلى مستقبل التواصل الاجتماعي",
+      "description": "كن جزءًا من عالم لامركزي حيث محتواك ملكك وصوتك له قيمة.",
+      "discord": "Discord",
+      "email": "راسلنا"
+    }
+  },
+  "Explorer": {
+    "title": "مستكشف البلوك تشين",
+    "description": "بيانات شبكة Steem في الوقت الفعلي، الكتل والمعاملات وإحصاءات السلسلة",
+    "tabs": {
+      "overview": "نظرة عامة",
+      "blocks": "الكتل",
+      "transactions": "المعاملات",
+      "accounts": "الحسابات"
+    },
+    "recentBlocks": "أحدث الكتل"
+  },
+  "Market": {
+    "title": "السوق",
+    "description": "تداول STEEM مع SBD على الفور",
+    "stats": {
+      "lastPrice": "آخر سعر",
+      "change24h": "التغير خلال 24 ساعة",
+      "high24h": "أعلى سعر خلال 24 ساعة",
+      "low24h": "أدنى سعر خلال 24 ساعة",
+      "volumeSteem": "حجم التداول 24 ساعة (STEEM)",
+      "volumeSbd": "حجم التداول 24 ساعة (SBD)"
+    },
+    "chart": {
+      "pair24h": "STEEM/SBD - 24 ساعة"
+    },
+    "tabs": {
+      "orderBook": "سجل الأوامر",
+      "openOrders": "الأوامر المفتوحة",
+      "tradeHistory": "سجل التداول"
+    },
+    "orderBook": {
+      "priceSbd": "السعر (SBD)",
+      "steem": "STEEM",
+      "sbd": "SBD"
+    },
+    "openOrders": {
+      "noOrders": "لا توجد أوامر مفتوحة",
+      "type": "النوع",
+      "price": "السعر",
+      "steem": "STEEM",
+      "sbd": "SBD",
+      "action": "إجراء",
+      "orderCancelled": "تم إلغاء الأمر",
+      "failedToCancel": "فشل إلغاء الأمر"
+    },
+    "history": {
+      "date": "التاريخ",
+      "price": "السعر",
+      "steem": "STEEM"
+    },
+    "trade": {
+      "buy": "شراء",
+      "sell": "بيع",
+      "buySteem": "شراء STEEM",
+      "sellSteem": "بيع STEEM",
+      "available": "المتاح",
+      "price": "السعر",
+      "amount": "الكمية",
+      "total": "الإجمالي",
+      "createOrder": "إنشاء أمر",
+      "orderCreated": "تم إنشاء الأمر بنجاح",
+      "failedToCreate": "فشل إنشاء الأمر"
+    },
+    "info": {
+      "title": "معلومات التداول",
+      "marketFee": "رسوم السوق",
+      "orderType": "نوع الأمر",
+      "limitDefault": "محدود (افتراضي)",
+      "pair": "الزوج"
+    }
+  },
+  "Games": {
+    "title": "الألعاب",
+    "landing": {
+      "gamingZone": "منطقة الألعاب SteemPro",
+      "heroTitle": "العب. نافس. <earn>اكسب.</earn>",
+      "heroDescription": "مرحبًا بك في الوجهة الأولى لألعاب البلوك تشين. اختبر مهاراتك، وتسلق قوائم المتصدرين، واربح مكافآت في منظومة Steem.",
+      "allGames": "جميع الألعاب",
+      "noGamesFound": "لا توجد ألعاب",
+      "noGamesDescription": "نعمل حاليًا على تطوير عناوين جديدة لهذه الفئة. ترقب!",
+      "resetFilter": "إعادة ضبط الفلتر",
+      "ecosystemFavorites": "المفضلة في المنظومة",
+      "communityTitles": "عناوين {titles}",
+      "communityTitlesHighlight": "المجتمع",
+      "communityDescription": "استكشف ألعابًا رائعة طورها مجتمع Steem واستوديوهات الشركاء.",
+      "yourGameHere": "لعبتك هنا؟",
+      "buildYourOwn": "أنشئ لعبتك الخاصة واعرضها في منطقة ألعاب SteemPro.",
+      "fairPlay": "لعب نزيه ومكافآت",
+      "immutableScores": "نتائج {scores}",
+      "immutableScoresHighlight": "غير قابلة للتغيير",
+      "fairPlayDescription": "تُسجَّل جميع أعلى النتائج والإنجازات مباشرةً على شبكة Steem مما يضمن الشفافية والثبات وإثبات المهارة. يحق للمتصدرين الحصول على مكافآت منتقاة من مجتمع SteemPro.",
+      "transparent": "شفاف",
+      "verifiedOnChain": "موثق على السلسلة",
+      "rewarding": "مجزٍ",
+      "communityDriven": "مدفوع بالمجتمع"
+    },
+    "card": {
+      "native": "أصلي",
+      "hot": "رائج",
+      "chain": "السلسلة",
+      "enterGame": "ادخل اللعبة",
+      "studio": "الاستوديو",
+      "difficulty": "الصعوبة",
+      "rewards": "المكافآت",
+      "launchWebsite": "فتح الموقع"
+    },
+    "developerTemplate": {
+      "viewTemplate": "عرض القالب",
+      "title": "قالب تكامل المطور",
+      "close": "إغلاق",
+      "getStarted": "ابدأ",
+      "description": "أضف لعبتك إلى المنظومة باتباع هذا الهيكل. أرسل طلبك أو تواصل مع الفريق للإدراج.",
+      "thumbnail": "صورة مصغرة",
+      "thumbnailRecommended": "موصى به: 800x1200 بكسل (عمودي)",
+      "integration": "التكامل",
+      "integrationLevels": "المستوى 1 (رابط) أو المستوى 2 (مستضاف)"
+    },
+    "steemHeights": {
+      "title": "Steem Heights",
+      "info": {
+        "skillCompetition": "منافسة المهارة",
+        "noActiveSeason": "لا يوجد موسم نشط",
+        "season": "الموسم {season}",
+        "seasonEnded": "انتهى الموسم",
+        "pool": "مجموع {amount} {symbol}",
+        "description": "تسلق الأفق بتركيز لا يتزعزع. ضع كل كتلة بدقة جراحية للوصول إلى ارتفاعات قياسية. في هذا التسلق، التركيز هو قوتك الأعظم.",
+        "handbook": "دليل المتسلق",
+        "viewLeaderboard": "عرض لوحة المتصدرين"
+      },
+      "leaderboard": {
+        "tabs": {
+          "global": "القمة العالمية",
+          "daily": "التحديات اليومية",
+          "history": "نتائجي",
+          "winners": "قاعة الموسم",
+          "lab": "مختبر التخصيص"
+        },
+        "global": {
+          "summit": "قمة الموسم {season}",
+          "hall": "قاعة القمة العالمية",
+          "totalClimbers": "إجمالي المتسلقين",
+          "active24h": "نشط (24 ساعة)",
+          "totalAscent": "إجمالي التسلق",
+          "avgAltitude": "متوسط الارتفاع",
+          "intermission": "استراحة الموسم",
+          "concluded": "انتهى تسلق الموسم {season}. تم تثبيت سجلات الارتفاع النهائية.",
+          "preparing": "لا يوجد تسلق نشط حاليًا. نحن نستعد للارتفاع التالي، أبقِ تركيزك!",
+          "beFirst": "كن أول من يتسلق المرتفعات!",
+          "noMore": "لا يوجد المزيد من المتسلقين في هذا النطاق.",
+          "unqualifiedClimbers": "متسلقون غير مؤهلين",
+          "onlyQualified": "المؤهلون فقط",
+          "table": {
+            "player": "اللاعب",
+            "performance": "الأداء"
+          },
+          "plays": "الجولات",
+          "combos": "الكومبو",
+          "you": "أنت",
+          "race": {
+            "title": "سباق القمة",
+            "subtitle": "أفضل 8 متسلقين"
+          },
+          "goal": {
+            "title": "الهدف العالمي للمجتمع",
+            "currentPool": "مجموع المكافآت الموسمية الحالي",
+            "maxCapability": "أقصى طاقة",
+            "invite": "دعوة أصدقاء",
+            "totalProgress": "إجمالي التقدم",
+            "targeting": "الهدف {altitude}م",
+            "boost": "مكافأة +{reward} {symbol}",
+            "baseStart": "البداية: {altitude}م",
+            "maxGoal": "الهدف الأقصى: {altitude}م",
+            "milestones": "مراحل المكافآت",
+            "tooltip": "تُحسب مكافآت المجتمع من إجمالي ارتفاع جميع اللاعبين. كل {stepSize}م تتجاوز {baseAltitude}م تضيف {boost} {symbol} إلى المجموع.",
+            "modal": {
+              "title": "دعوة <climbers>متسلقين</climbers>",
+              "subtitle": "ساعد في تحقيق هدف المجتمع",
+              "markdown": "نص الدعوة",
+              "info": "انسخ هذا النص والصقه في منشورك أو تعليقك التالي لدعوة أصدقائك. كلما زاد الارتفاع المجمع، كانت المكافآت أكبر للجميع!",
+              "close": "إغلاق"
+            }
+          }
+        },
+        "daily": {
+          "operations": "العمليات اليومية",
+          "tactical": "تحديات {challenges} تكتيكية",
+          "description": "تجاوز حدودك يوميًا لتجمع احتياطيات الطاقة للمختبر.",
+          "challenges": {
+            "daily_ascent": {
+              "title": "المعسكر الأساسي",
+              "description": "تسلق 200م إجمالاً اليوم"
+            },
+            "daily_ascent_pro": {
+              "title": "المتصيد الأعلى",
+              "description": "تسلق 1000م إجمالاً اليوم"
+            },
+            "daily_combos": {
+              "title": "سيد الدقة",
+              "description": "حقق 10 كومبو إجمالاً في اليوم"
+            },
+            "daily_plays": {
+              "title": "المتسلق المثابر",
+              "description": "أتمم 6 جولات اليوم"
+            }
+          },
+          "energyReserves": "احتياطيات الطاقة",
+          "nrg": "nrg",
+          "claimed": "مُستلَم",
+          "ready": "جاهز",
+          "progress": "التقدم",
+          "reward": "المكافأة",
+          "missionCompleted": "اكتملت المهمة",
+          "processing": "جارٍ المعالجة...",
+          "claimReward": "استلام المكافأة",
+          "inProgress": "جارٍ",
+          "inactive": "التحديات اليومية غير نشطة",
+          "inactiveDescription": "التحديات ومكافآت الطاقة متاحة فقط خلال المواسم النشطة. ترقب الموسم القادم!",
+          "resetNotice": "تنبيه إعادة ضبط الموسم",
+          "resetDescription": "الطاقة مرتبطة بكل موسم. سيُعاد ضبط رصيدك للموسم {season} عند انتهائه لضمان بداية عادلة للجميع."
+        },
+        "history": {
+          "summary": "ملخص الإحصاءات الشخصية",
+          "totalPlays": "إجمالي الجولات",
+          "bestAltitude": "أفضل ارتفاع",
+          "avgAltitude": "متوسط الارتفاع",
+          "totalCombos": "إجمالي الكومبو",
+          "estReward": "المكافأة الموسمية المتوقعة",
+          "keepClimbing": "واصل التسلق! ابلغ {minAlt}م أو {minPlays} جولة بارتفاع 10م+ للتأهل.",
+          "breakIntoTop": "أنت مؤهل! حاول الدخول إلى أفضل {ranking} للحصول على حصتك من المجموع.",
+          "qualified": "أنت مؤهل وتكسب!",
+          "records": "أرقام شخصية",
+          "publish": {
+            "title": "شارك رحلتك",
+            "subtitle": "انشر نشاطك اليومي على Steem",
+            "successTitle": "تم النشر!",
+            "successDesc": "خُلِّد تسلقك على شبكة Steem للأبد. أحسنت!",
+            "statsTitle": "معاينة الإحصاءات",
+            "totalPlays": "إجمالي الجلسات",
+            "peakAltitude": "أعلى ارتفاع",
+            "estTotal": "الإجمالي المتوقع",
+            "supportTitle": "دعم التسلق",
+            "supportDesc": "بنشر رحلتك لا تشارك الإحصاءات فحسب، بل تُغذّي المنصة! معًا ندفع <pro>10%</pro> لدعم <steempro>SteemPro</steempro> ونحرق <burn>5%</burn> لصالح <eco>منظومة Steem</eco>. تسلقك يفيد الجميع!",
+            "selectCommunity": "اختر المجتمع",
+            "postTitle": "عنوان المنشور",
+            "postContent": "محتوى المنشور (Markdown)",
+            "descPlaceholder": "صف تسلقك...",
+            "publishBtn": "نشر على Steem",
+            "btnLabel": "نشر النشاط",
+            "defaultTitle": "رحلتي الموسمية على Steem Heights - {date}",
+            "defaultBody": "![steem-heights.png](https://cdn.steemitimages.com/DQmTmKQbDgzjQnB4CFCMLemNa1hmo5bBt5C56GR9CtArCYN/steem-heights.png)\n\n# رحلتي الموسمية على Steem Heights 🏔️\n\nلقد كنت أتسلق القمم! إليك تقدمي المجمّع:\n\n- 🚀 **إجمالي الجلسات**: {plays}\n- 🏔️ **أفضل نتيجة شخصية**: {peak}م\n- ☁️ **الارتفاع المتراكم**: {altitude}م (تقديري)\n- 🎯 **إجمالي الكومبو**: {combos}\n- 📈 **متوسط الارتفاع**: {avg}م\n\nهل تستطيع التفوق على نتيجتي؟ انضم إلى التسلق على Steem Heights!\n\n[العب Steem Heights](https://www.steempro.com/games/steem-heights)\n\n#steemheights #gaming #steempro #play2earn",
+            "close": "إغلاق",
+            "cancel": "إلغاء"
+          },
+          "altitude": "الارتفاع",
+          "combos": "الكومبو",
+          "best": "الأفضل",
+          "noRecords": "لا توجد سجلات للموسم {season}"
+        },
+        "winners": {
+          "transactionReport": "تم نسخ تقرير المعاملة إلى الحافظة!",
+          "markdownReport": "تم نسخ تقرير Markdown إلى الحافظة!",
+          "hallOfChampions": "قاعة الأبطال",
+          "more": "+ {count} أكثر",
+          "champion": "البطل",
+          "climbers": "المتسلقون",
+          "ascent": "التسلق",
+          "avg": "المتوسط",
+          "personalBest": "أفضل شخصي",
+          "achieved": "تم التحقيق",
+          "pool": "المجموع",
+          "hallAwaits": "القاعة تنتظر بطلها الأول...",
+          "archives": "الأرشيف",
+          "performanceData": "بيانات الأداء الموسمية",
+          "txReport": "تقرير TX",
+          "mdReport": "تقرير MD",
+          "fetching": "جارٍ تحميل السجل...",
+          "allParticipants": "جميع المشاركين والترتيبات",
+          "table": {
+            "player": "اللاعب",
+            "performance": "الأداء"
+          }
+        },
+        "lab": {
+          "disabled": "المتجر مغلق أثناء التسلق النشط",
+          "conflictToast": "لا يمكن تجهيز {skin}: يتعارض مع {powerUp} النشط لديك.",
+          "loginToast": "سجّل دخولك لشراء المظاهر.",
+          "powerups": "متجر Power-Up",
+          "powerupsSub": "أنفق الطاقة على مكافآت جولة واحدة",
+          "conflictMsg": "هذه القدرة مفعّلة بالفعل عبر مظهر {skin}.",
+          "ready": "جاهز",
+          "skinConflict": "تعارض المظهر",
+          "activate": "تفعيل",
+          "insufficient": "غير كافٍ",
+          "skins": "مظاهر الموسم",
+          "skinsSub": "جهّز الكتل بأنماط وقدرات فريدة",
+          "active": "نشط",
+          "ability": "القدرة الأساسية",
+          "cost": "تكلفة الفتح",
+          "owned": "مملوك",
+          "energy": "الطاقة",
+          "equipped": "مجهّز",
+          "select": "اختر",
+          "purchase": "شراء",
+          "footnote": "* المظاهر والـ Power-Ups مزايا موسمية لتحسين تجربة التسلق.",
+          "footnoteNote": "ملاحظة:",
+          "footnoteSub": "الـ Power-Ups المؤقتة تدوم جلسة لعب واحدة فقط.",
+          "items": {
+            "skins": {
+              "default": {
+                "name": "المتسلق الكلاسيكي",
+                "description": "المعدات الأساسية لكل متسلق.",
+                "ability": "لا شيء"
+              },
+              "glacier": {
+                "name": "لوح الجليد",
+                "description": "بلاطات متجمدة تُبطئ حركة السرعة. (150 طاقة)",
+                "ability": "سرعة أبطأ بـ 15%"
+              },
+              "steel": {
+                "name": "القلب الفولاذي",
+                "description": "بلاطات ثقيلة تتجاهل رياح الارتفاعات. (300 طاقة)",
+                "ability": "لا انجراف بالرياح"
+              },
+              "phoenix": {
+                "name": "جناح العنقاء",
+                "description": "جوهر سحري ينقذك من سقطة قاتلة واحدة. (500 طاقة)",
+                "ability": "حياة إضافية"
+              },
+              "gold": {
+                "name": "لمسة ميداس",
+                "description": "بلاطات ذهبية خالصة تزيد الارتفاع عند الإسقاط المثالي. (1000 طاقة)",
+                "ability": "مكافأة +2م عند الإتقان"
+              }
+            },
+            "powerups": {
+              "wind_shield": {
+                "name": "درع الرياح",
+                "description": "تجاهل كل انجراف الرياح لجولة واحدة."
+              },
+              "slow_motion": {
+                "name": "الحركة البطيئة",
+                "description": "تُخفَّض السرعة بنسبة 20% لجولة واحدة."
+              },
+              "extra_gear": {
+                "name": "معدات إضافية",
+                "description": "ابدأ جولتك القادمة بحياة إضافية."
+              }
+            }
+          }
+        },
+        "howToPlay": {
+          "title": "أتقن <climb>التسلق</climb>",
+          "subtitle": "دليل البقاء الأساسي",
+          "controls": {
+            "dropControl": {
+              "title": "التحكم بالإسقاط",
+              "desc": "اضغط في أي مكان لإسقاط الكتلة المتحركة. التوقيت هو كل شيء."
+            },
+            "precision": {
+              "title": "القطع الدقيق",
+              "desc": "يجب أن تهبط الكتل على الأساس. الأجزاء المتجاوزة تُقطع فورًا!"
+            },
+            "perfect": {
+              "title": "سلسلة الإتقان",
+              "desc": "محاذاة الكتل بدقة تمنحك نتيجة PERFECT. تزيد الكومبو وتقلل مقاومة الرياح."
+            },
+            "bonus": {
+              "title": "مكافأة الارتفاع",
+              "desc": "كل كومبو ناجح يمنحك مكافأة ارتفاع ضخمة!"
+            }
+          },
+          "gravityPulse": "نبضة الجاذبية",
+          "gravityDesc": "لديك <time>{timeVal} ثوانٍ</time> لإسقاط كل كتلة. التأخر يُطلق <autoDrop>إسقاطًا تلقائيًا!</autoDrop>",
+          "dailyRewards": "المكافآت اليومية",
+          "dailyDesc": "أتمم <challenges>التحديات اليومية</challenges> لكسب <energy>الطاقة</energy>. أنفق الطاقة في المختبر لشراء <powerups>Power-Ups</powerups> و<skins>المظاهر</skins>.",
+          "close": "ابدأ تسلقك"
+        }
+      },
+      "canvas": {
+        "testGameplay": "تجربة اللعب",
+        "seasonBreak": "استراحة الموسم",
+        "loginToRecord": "سجّل دخولك الآن لتسجيل نتائجك وكسب المكافآت. لن يُحفظ الارتفاع الحالي.",
+        "seasonEnded": "انتهى الموسم الحالي. انتظر الموسم القادم للمنافسة وكسب المكافآت!",
+        "altitude": "الارتفاع",
+        "howToPlay": "كيفية اللعب",
+        "wind": "الرياح",
+        "rankings": "الترتيبات",
+        "ready": "مستعد للتحكم؟",
+        "tapToDrop": "اضغط في أي مكان على الصندوق لإسقاط الكتلة.",
+        "begin": "ابدأ التسلق",
+        "totalAltitude": "إجمالي الارتفاع",
+        "climbEnded": "انتهى التسلق",
+        "recording": "جارٍ التسجيل على البلوك تشين...",
+        "loginToRecordScore": "سجّل دخولك لتسجيل نتيجتك على البلوك تشين",
+        "seasonInactive": "الموسم غير نشط • لم تُسجَّل النتيجة",
+        "tryAgain": "حاول مجددًا",
+        "mainMenu": "القائمة الرئيسية",
+        "paused": "متوقف مؤقتًا",
+        "takeBreather": "خذ استراحة يا بطل.",
+        "resume": "استئناف",
+        "preparing": "تجهيز التسلق",
+        "generating": "إنشاء جلسة آمنة",
+        "perfect": "مثالي!",
+        "comboBonus": "مكافأة الكومبو",
+        "combos": "الكومبو",
+        "bonus": "مكافأة",
+        "you": "أنت"
+      }
+    }
+  },
+  "Post": {
+    "notFound": "المنشور غير موجود",
+    "notFoundDescription": "المنشور الذي تبحث عنه غير موجود أو تم حذفه.",
+    "muted": "هذا المنشور مكتوم",
+    "mutedDescription": "تم كتم هذا المنشور من قِبَل مشرف المجتمع.",
+    "viewingSingleComment": "أنت تشاهد تعليقًا مفردًا من:",
+    "viewFullContext": "عرض السياق الكامل",
+    "viewDirectParent": "عرض التعليق الأصلي المباشر",
+    "in": "في",
+    "edited": "(تم التعديل)",
+    "postedVia": "نُشر عبر {app}",
+    "voteRemoved": "تم إزالة التصويت",
+    "votedSuccessfully": "تم التصويت بنجاح!",
+    "upvote": "تصويت إيجابي",
+    "downvote": "تصويت سلبي",
+    "comments": "التعليقات",
+    "writeReply": "اكتب ردًا",
+    "replyPlaceholder": "اكتب تعليقك هنا... استخدم @ للإشارة إلى المستخدمين",
+    "reply": "رد",
+    "update": "تحديث",
+    "cancel": "إلغاء",
+    "loadingComments": "جارٍ تحميل التعليقات...",
+    "newest": "الأحدث",
+    "sortPayout": "الدفع",
+    "upvotes": "التصويتات الإيجابية",
+    "beFirstComment": "كن أول من يعلّق!",
+    "loadingMore": "جارٍ تحميل المزيد...",
+    "updateReply": "تحديث الرد...",
+    "replyTo": "الرد على @{author}...",
+    "openFullThread": "فتح المحادثة كاملة",
+    "somethingWentWrong": "حدث خطأ ما!",
+    "resteemedAlready": "لقد قمت بـ resteem هذا المنشور مسبقًا!",
+    "resteemSuccess": "تم الـ Resteem بنجاح!",
+    "resteemConfirmation": "تأكيد",
+    "resteemQuestion": "هل تريد إعادة نشر هذا المنشور؟",
+    "payoutDetails": "تفاصيل الدفع",
+    "payoutBreakdown": {
+      "authorDeclined": "رفض الكاتب المكافآت",
+      "pending": "تفاصيل المكافآت المعلقة",
+      "settled": "تفاصيل المكافآت المسوّاة",
+      "declinedTitle": "تم رفض الدفع",
+      "declinedDescription": "اختار كاتب هذا المنشور رفض جميع المكافآت.",
+      "failed": "فشل تحميل تفاصيل الدفع",
+      "status": "الحالة",
+      "pendingLabel": "معلق",
+      "paidLabel": "مدفوع",
+      "nextCashout": "Cashout التالي",
+      "totalPayout": "إجمالي الدفع",
+      "expectedSbd": "SBD المتوقع",
+      "expectedSteem": "STEEM المتوقع",
+      "expectedSp": "SP المتوقع",
+      "authorTotal": "إجمالي الكاتب",
+      "curatorsTotal": "إجمالي المنتقين",
+      "beneficiaries": "المستفيدون"
+    }
+  },
+  "Profile": {
+    "tabs": {
+      "blog": "المدونة",
+      "posts": "المنشورات",
+      "friends": "الأصدقاء",
+      "comments": "التعليقات",
+      "replies": "الردود",
+      "notifications": "الإشعارات",
+      "communities": "المجتمعات",
+      "wallet": "المحفظة"
+    },
+    "about": "حول",
+    "joined": "تاريخ الانضمام",
+    "followers": "المتابعون",
+    "following": "يتابع",
+    "posts": "المنشورات",
+    "comments": "التعليقات",
+    "active": "نشط",
+    "vp": "VP",
+    "vpTitle": "قوة التصويت",
+    "rc": "RC",
+    "rcTitle": "رصيد الموارد",
+    "vote": "التصويت",
+    "voteTitle": "قيمة التصويت",
+    "witnessProxy": "Witness Proxy",
+    "witnessVotes": "أصوات Witness",
+    "more": "+{count} أكثر",
+    "editProfile": "تعديل الملف الشخصي",
+    "follow": "متابعة",
+    "unfollow": "إلغاء المتابعة",
+    "followSuccess": "تمت المتابعة بنجاح",
+    "unfollowSuccess": "تم إلغاء المتابعة بنجاح",
+    "notifications": {
+      "title": "الإشعارات",
+      "unread": "{count} غير مقروء",
+      "allCaughtUp": "قرأت كل شيء",
+      "markAllRead": "تحديد الكل كمقروء",
+      "filterAndSort": "تصفية وترتيب",
+      "allTypes": "جميع الأنواع",
+      "newest": "الأحدث",
+      "oldest": "الأقدم",
+      "searchPlaceholder": "ابحث بالمستخدم أو النشاط...",
+      "loading": "جارٍ تحميل الإشعارات...",
+      "empty": "لا توجد إشعارات",
+      "today": "اليوم",
+      "yesterday": "أمس",
+      "typeLabels": {
+        "vote": "تصويت",
+        "reply": "رد",
+        "mention": "إشارة",
+        "follow": "متابعة",
+        "resteem": "Resteem"
+      }
+    },
+    "wallet": {
+      "transactionHistory": "سجل المعاملات",
+      "delegations": "التفويضات",
+      "orders": "الأوامر",
+      "openOrders": "أوامرك المفتوحة",
+      "newOrder": "أمر جديد"
+    },
+    "settings": {
+      "loginAlert": "عرض إعدادات الملف الشخصي",
+      "basicInfo": {
+        "title": "المعلومات الأساسية",
+        "description": "تفاصيل الملف الشخصي العامة التي تظهر للمستخدمين الآخرين",
+        "displayName": "الاسم المعروض",
+        "displayNamePlaceholder": "مثال: فيصل أمين",
+        "about": "نبذة عنك",
+        "aboutPlaceholder": "أخبر المجتمع عن نفسك",
+        "location": "الموقع",
+        "locationPlaceholder": "مثال: الرياض، السعودية",
+        "website": "الموقع الإلكتروني",
+        "websitePlaceholder": "https://example.com"
+      },
+      "visual": {
+        "title": "الهوية البصرية",
+        "description": "خصّص صورة ملفك الشخصي وصورة الغلاف",
+        "preview": "معاينة",
+        "profileImage": "صورة الملف الشخصي",
+        "profileImageDesc": "يُنصح بصورة مربعة",
+        "coverImage": "صورة الغلاف",
+        "coverImageDesc": "يُنصح بـ 1200x300",
+        "uploading": "جارٍ رفع {type}...",
+        "avatar": "الصورة الرمزية",
+        "cover": "الغلاف"
+      },
+      "actions": {
+        "save": "حفظ الملف الشخصي"
+      },
+      "messages": {
+        "uploadSuccess": "تم رفع الصورة بنجاح!",
+        "uploadFailed": "فشل الرفع",
+        "updateSuccess": "تم تحديث الملف الشخصي على البلوك تشين!"
+      }
+    }
+  },
+  "Witnesses": {
+    "title": "الشهود",
+    "description": "صوّت للشهود الذين يديرون عقد Steem ويؤمنون البلوكشين. يمكنك التصويت لما يصل إلى 30 شاهدًا.",
+    "tabs": {
+      "witnesses": "الشهود",
+      "proxy": "الوكيل",
+      "myWitness": "شاهدي"
+    },
+    "columns": {
+      "rank": "#",
+      "witness": "الشاهد",
+      "votes": "الأصوات",
+      "missed": "الكتل الفائتة",
+      "feed": "التغذية",
+      "action": "إجراء"
+    },
+    "vote": "تصويت",
+    "unvote": "سحب التصويت",
+    "viewDetails": "عرض التفاصيل",
+    "outdated": "قديم",
+    "searchPlaceholder": "ابحث عن الشهود بالاسم...",
+    "noWitnesses": "لم يُعثر على شهود",
+    "showOnlyVoted": "عرض الشهود الذين صوتت لهم فقط",
+    "proxyActive": "الوكيل نشط",
+    "proxyActiveDesc": "أنت تُوكّل أصواتك حاليًا إلى",
+    "cannotVoteProxy": "لا يمكنك التصويت للشهود وأنت تستخدم وكيلًا",
+    "voteSuccess": "تم التصويت لـ {name} بنجاح",
+    "unvoteSuccess": "تم سحب التصويت عن {name} بنجاح",
+    "proxy": {
+      "title": "تعيين وكيل التصويت",
+      "description": "اختيار وكيل يتيح لمستخدم آخر التصويت للشهود نيابةً عنك بكامل قوة تصويتك.",
+      "usernameLabel": "اسم مستخدم الوكيل",
+      "usernamePlaceholder": "مثال: steempro.com",
+      "setProxy": "تعيين الوكيل",
+      "clearProxy": "إزالة الوكيل",
+      "currentProxy": "الوكيل الحالي",
+      "setSuccess": "تم تعيين الوكيل إلى {name} بنجاح",
+      "removeSuccess": "تمت إزالة الوكيل بنجاح"
+    },
+    "myWitness": {
+      "title": "إعدادات الشاهد",
+      "description": "إدارة خصائص عقدة الشاهد وحالتها.",
+      "enable": "تفعيل الشاهد",
+      "disable": "تعطيل الشاهد",
+      "urlLabel": "رابط الشاهد URL",
+      "signingKeyLabel": "مفتاح توقيع الكتل",
+      "signingKeyDesc": "المفتاح العام المستخدم لتوقيع الكتل.",
+      "creationFeeLabel": "رسوم إنشاء الحساب",
+      "interestRateLabel": "معدل فائدة SBD",
+      "blockSizeLabel": "الحجم الأقصى للكتلة",
+      "securityTitle": "أمان مفتاح التوقيع",
+      "securityDesc": "تغيير مفتاح التوقيع يستلزم صلاحية active. تأكد من وجود المفتاح الخاص المقابل على عقدة الشاهد قبل تحديث المفتاح العام، وإلا ستفوتك الكتل.",
+      "updateProps": "تحديث خصائص الشاهد",
+      "updateSuccess": "تم تحديث خصائص الشاهد بنجاح"
+    },
+    "details": {
+      "information": "المعلومات",
+      "voters": "الناخبون",
+      "basicInfo": "المعلومات الأساسية",
+      "owner": "المالك",
+      "rank": "الترتيب",
+      "votes": "الأصوات",
+      "viewVoters": "عرض الناخبين",
+      "totalMissedBlocks": "إجمالي الكتل الفائتة",
+      "lastConfirmedBlock": "آخر كتلة مؤكدة",
+      "runningVersion": "الإصدار الحالي",
+      "url": "الرابط",
+      "visitWebsite": "زيارة الموقع",
+      "signingKey": "مفتاح التوقيع",
+      "witnessProperties": "خصائص الشاهد",
+      "accountCreationFee": "رسوم إنشاء الحساب",
+      "maximumBlockSize": "الحجم الأقصى للكتلة",
+      "sbdInterestRate": "معدل فائدة SBD",
+      "sbdExchangeRate": "سعر صرف SBD",
+      "base": "الأساس",
+      "quote": "الاقتباس",
+      "lastUpdate": "آخر تحديث",
+      "additionalDetails": "تفاصيل إضافية",
+      "created": "تاريخ الإنشاء",
+      "lastWork": "آخر عمل",
+      "hardforkTimeVote": "تصويت وقت Hardfork",
+      "active": "نشط",
+      "disabled": "معطل",
+      "totalVoters": "إجمالي الناخبين",
+      "totalSupport": "إجمالي الدعم (SP)",
+      "noVotes": "لا توجد أصوات لهذا الشاهد",
+      "voter": "الناخب",
+      "ownSp": "SP الخاص",
+      "proxiedSp": "SP الموكَّل",
+      "copied": "تم نسخ {label} إلى الحافظة"
+    }
+  },
+  "Proposals": {
+    "title": "المقترحات",
+    "description": "موّل الأفكار المجتمعية عبر نظام مقترحات Steem (SPS). صوّت على المبادرات التي تُحسّن المنظومة وتفيد الشبكة.",
+    "funded": "ممول",
+    "threshold": "عتبة التمويل",
+    "pending": "معلق",
+    "notFunded": "غير ممول",
+    "search": "ابحث عن المقترحات...",
+    "item": {
+      "by": "بقلم",
+      "to": "إلى",
+      "id": "المعرف",
+      "days": "أيام",
+      "sbdDay": "SBD/يوم"
+    },
+    "details": {
+      "information": "المعلومات",
+      "voters": "الناخبون",
+      "votes": "أصوات",
+      "creator": "المنشئ",
+      "receiver": "المستلم",
+      "duration": "المدة",
+      "start": "البداية:",
+      "end": "النهاية:",
+      "dailyPay": "الدفع اليومي",
+      "permlink": "Permlink",
+      "totalVoters": "إجمالي الناخبين",
+      "totalSupport": "إجمالي الدعم (SP)",
+      "effective": "ساري المفعول:",
+      "noVotes": "لا توجد أصوات لهذا المقترح"
+    },
+    "votersTable": {
+      "voter": "الناخب",
+      "ownSp": "SP الخاص",
+      "proxiedSp": "SP الموكَّل",
+      "share": "الحصة",
+      "proxyToActive": "توكيل إلى @{user}",
+      "proxyToInactive": "توكيل إلى @{user} الذي لم يصوّت"
+    },
+    "actions": {
+      "voteTitle": "التصويت للمقترح #{id}؟",
+      "unvoteTitle": "سحب التصويت عن المقترح #{id}؟",
+      "voteDesc": "هل تريد التصويت لهذا المقترح؟",
+      "unvoteDesc": "هل تريد سحب تصويتك عن هذا المقترح؟",
+      "removeTitle": "حذف المقترح #{id}؟",
+      "removeDesc": "هل تريد حذف هذا المقترح؟",
+      "vote": "تصويت",
+      "unvote": "سحب التصويت",
+      "cancel": "إلغاء",
+      "remove": "حذف",
+      "votedSuccess": "تم التصويت للمقترح بنجاح",
+      "unvotedSuccess": "تم سحب التصويت عن المقترح بنجاح",
+      "removedSuccess": "تم حذف المقترح"
+    }
+  },
+  "Tools": {
+    "title": "أدوات SteemPro",
+    "description": "مجموعة قوية من الأدوات الأساسية لمستخدمي ومجتمعات ومنسقي بلوكشين Steem.",
+    "list": {
+      "batchTransfer": {
+        "title": "تحويل جماعي",
+        "description": "أرسل Steem أو SBD إلى حسابات متعددة في وقت واحد بكفاءة."
+      },
+      "batchVoting": {
+        "title": "تصويت جماعي",
+        "description": "صوّت على منشورات متعددة في وقت واحد لزيادة تقييمك."
+      },
+      "communityReport": {
+        "title": "تقرير المجتمع",
+        "description": "أنشئ إحصائيات وتقارير مفصلة لمجتمعاتك."
+      },
+      "authorReport": {
+        "title": "تقرير إحصائيات المؤلف",
+        "description": "تحليل أداء منشورات المؤلف وعمليات الدفع والتفاعل."
+      },
+      "accountCreation": {
+        "title": "إنشاء حساب",
+        "description": "اطلب وأنشئ حسابات Steem جديدة باستخدام رموز إنشاء الحساب الخاصة بك."
+      },
+      "snippetsTemplates": {
+        "title": "القوالب والمقتطفات",
+        "description": "أدخل المقتطفات والقوالب في منشورك"
+      }
+    }
+  },
+  "Submit": {
+    "communityPlaceholder": "اختر المجتمع",
+    "noCommunity": "لا يوجد مجتمع متاح",
+    "titlePlaceholder": "أدخل عنوان منشورك...",
+    "preview": "معاينة",
+    "readingTime": "{words} كلمة، ~{text}",
+    "saveDraft": "حفظ المسودة",
+    "cancel": "إلغاء",
+    "update": "تحديث",
+    "publish": "نشر",
+    "scheduled": "جدولة",
+    "confirm": "تأكيد",
+    "clear": "مسح",
+    "confirmTitle": "تأكيد",
+    "confirmDesc": "هل تريد حقاً إعادة تعيين جميع البيانات؟",
+    "saved": "محفوظ",
+    "draftUpdated": "تم تحديث المسودة",
+    "updated": "تم التحديث",
+    "published": "تم النشر",
+    "scheduledSuccess": "تمت جدولة المنشور بنجاح!",
+    "editor": {
+      "placeholder": "اكتب قصتك...",
+      "markdown": "Markdown",
+      "preview": "معاينة",
+      "uploading": "جارٍ الرفع...",
+      "uploadSuccess": "تم الرفع بنجاح",
+      "uploadError": "فشل الرفع",
+      "dragDrop": "اسحب وأفلت للرفع",
+      "write": "اكتب"
+    },
+    "tags": {
+      "placeholder": "أضف وسوم (اضغط Enter أو فاصلة)",
+      "help": "افصل الوسوم بمسافات.",
+      "copied": "تم نسخ الوسوم إلى الحافظة",
+      "copyError": "فشل نسخ الوسوم",
+      "countInfo": "{count}/8 وسوم • اسحب لإعادة الترتيب",
+      "copyAll": "نسخ كل الوسوم",
+      "clearAll": "مسح كل الوسوم"
+    },
+    "beneficiaries": {
+      "title": "إدارة المستفيدين",
+      "description": "إعداد مشاركة المكافآت مع مستخدمين آخرين. يجب ألا يتجاوز الإجمالي 100%.",
+      "add": "إضافة حساب",
+      "account": "الحساب",
+      "weight": "النسبة (%)",
+      "total": "إجمالي النسبة: {weight}%",
+      "favorites": "المستفيدون المفضلون",
+      "usernamePlaceholder": "أدخل اسم المستخدم...",
+      "allocation": "التخصيص: {percent}%",
+      "totalAllocation": "إجمالي التخصيص:",
+      "save": "حفظ التغييرات",
+      "updated": "تم تحديث المستفيدين بنجاح",
+      "alreadyAdded": "هذا المستخدم موجود بالفعل في قائمتك",
+      "alreadyAddedShort": "هذا المستخدم مضاف مسبقًا",
+      "limitExceeded": "لا يمكن أن تتجاوز النسبة الإجمالية 100%"
+    },
+    "payout": {
+      "title": "نوع الدفع",
+      "description": "اختر كيف تريد استلام مكافآت منشورك.",
+      "decline": "رفض الدفع",
+      "half": "50% SBD / 50% SP",
+      "full": "100% Steem Power",
+      "declinedShort": "مرفوض",
+      "fiftyFiftyShort": "50%/50%",
+      "oneHundredShort": "100% SP"
+    },
+    "schedule": {
+      "title": "جدولة المنشور",
+      "description": "اختر تاريخًا ووقتًا لنشر منشورك تلقائيًا."
+    },
+    "validation": {
+      "titleEmpty": "العنوان لا يمكن أن يكون فارغًا",
+      "postEmpty": "المنشور لا يمكن أن يكون فارغًا",
+      "tagEmpty": "أضف وسمًا أو اختر مجتمعًا"
+    },
+    "error": {
+      "loginRequired": "تسجيل الدخول مطلوب"
+    },
+    "authority": {
+      "granted": "تم منح الإذن بنجاح!"
+    },
+    "actions": {
+      "cancel": "إلغاء"
+    },
+    "snippets": {
+      "title": "القوالب والمقتطفات",
+      "description": "أدخل المقتطفات والقوالب في منشورك",
+      "mySnippets": "مقتطفاتي",
+      "templates": "القوالب",
+      "new": "مقتطف جديد",
+      "create": "إنشاء",
+      "update": "تحديث",
+      "delete": "حذف",
+      "insert": "إدراج",
+      "cancel": "إلغاء",
+      "titleLabel": "العنوان",
+      "titlePlaceholder": "أدخل عنوان المقتطف",
+      "contentPlaceholder": "أدخل محتوى المقتطف",
+      "deleteTitle": "حذف المقتطف",
+      "deleteDesc": "هل تريد حقاً حذف هذا المقتطف؟",
+      "noSnippets": "لم يتم العثور على مقتطفات. أنشئ مقتطفك الأول!",
+      "manageSnippets": "إدارة المقتطفات",
+      "created": "تم إنشاء المقتطف",
+      "updated": "تم تحديث المقتطف",
+      "deleted": "تم حذف المقتطف",
+      "required": "العنوان والمحتوى مطلوبان",
+      "templateList": {
+        "table": "جدول",
+        "code-block": "كتلة برمجية",
+        "collapsible": "قسم قابل للطي",
+        "divider": "فاصل",
+        "task-list": "قائمة مهام",
+        "blockquote": "اقتباس",
+        "image-grid": "شبكة صور (عمودين)",
+        "centered-text": "نص موسط"
+      }
+    }
+  },
+  "BatchTransfer": {
+    "title": "تحويل جماعي",
+    "description": "أرسل Steem أو SBD إلى حسابات متعددة في وقت واحد بكفاءة.",
+    "currency": "العملة",
+    "bulkImport": "استيراد جماعي",
+    "addRow": "إضافة صف",
+    "addAnotherRow": "إضافة صف آخر",
+    "clearAll": "مسح الكل",
+    "confirmTitle": "تأكيد",
+    "confirmDesc": "هل تريد حقاً إعادة تعيين جميع البيانات؟",
+    "bulkInfo": "الصق قائمتك هنا. يمكنك تخصيص الفواصل أدناه.",
+    "lineSeparator": "فاصل الأسطر",
+    "newLine": "سطر جديد (\\n)",
+    "semicolon": "فاصلة منقوطة (;)",
+    "comma": "فاصلة (,)",
+    "custom": "مخصص",
+    "customPlaceholder": "مثال: |",
+    "bulkPlaceholder": "steememator 10.000 جائزة شهرية\\nalice 5.000 فائز بالمسابقة",
+    "cancel": "إلغاء",
+    "parseList": "تحليل القائمة",
+    "recipient": "المستلم",
+    "amount": "المبلغ",
+    "memo": "مذكرة",
+    "memoOptional": "مذكرة (اختياري)",
+    "action": "إجراء",
+    "username": "اسم المستخدم",
+    "summary": "ملخص",
+    "recipients": "المستلمون",
+    "totalAmount": "المبلغ الإجمالي",
+    "yourBalance": "رصيدك",
+    "insufficientBalance": "رصيد غير كافٍ",
+    "sendButton": "إرسال تحويل جماعي",
+    "error": {
+      "loginFirst": "يرجى تسجيل الدخول أولاً",
+      "invalidSeparator": "يرجى تقديم فاصل أسطر مخصص صالح.",
+      "parseError": "تعذر تحليل أي تحويلات صالحة. تحقق من الصيغة."
+    },
+    "success": {
+      "imported": "تم استيراد {count} عملية تحويل بنجاح",
+      "broadcast": "نجحت عملية التحويل الجماعي!",
+      "sent": "تم إرسال {total} {currency} إلى {count} مستخدمين."
+    }
+  },
+  "BatchVoting": {
+    "title": "تصويت جماعي",
+    "description": "صوّت على منشورات متعددة في وقت واحد لزيادة مكافآت التقييم الخاصة بك.",
+    "globalWeight": "الوزن العالمي",
+    "postList": "قائمة المنشورات",
+    "bulkImport": "استيراد جماعي",
+    "addPost": "إضافة منشور",
+    "addAnotherPost": "إضافة منشور آخر",
+    "clearAll": "مسح الكل",
+    "confirmTitle": "تأكيد",
+    "confirmDesc": "هل تريد حقاً إعادة تعيين جميع البيانات؟",
+    "bulkInfo": "الصق روابط المنشورات هنا. الصيغة: {url} أو {url_weight} لكل سطر.",
+    "lineSeparator": "فاصل الأسطر",
+    "newLine": "سطر جديد (\\n)",
+    "semicolon": "فاصلة منقوطة (;)",
+    "comma": "فاصلة (,)",
+    "custom": "مخصص",
+    "customPlaceholder": "مثال: |",
+    "bulkPlaceholder": "https://www.steempro.com/@author/permlink\\nhttps://www.steempro.com/@author/permlink2 75",
+    "cancel": "إلغاء",
+    "parseList": "تحليل القائمة",
+    "table": {
+      "url": "رابط منشور Steem أو @المؤلف/الرابط_الدائم",
+      "weight": "الوزن",
+      "status": "الحالة",
+      "action": "إجراء"
+    },
+    "urlPlaceholder": "https://...",
+    "global": "عالمي",
+    "status": {
+      "pending": "قيد الانتظار",
+      "voting": "جاري التصويت...",
+      "success": "ناجح",
+      "failed": "فشل"
+    },
+    "action": {
+      "remove": "إزالة الصف"
+    },
+    "progress": {
+      "title": "التقدم",
+      "totalPosts": "إجمالي المنشورات",
+      "estTime": "الوقت المتوقع",
+      "min": "دقيقة",
+      "sec": "ثانية",
+      "done": "تم",
+      "err": "خطأ",
+      "preparing": "جارٍ التحضير للتصويت...",
+      "votingOn": "جارٍ التصويت على منشور @{author}...",
+      "waiting": "انتظار 3.5 ثانية (حد البلوكشين)..."
+    },
+    "controls": {
+      "start": "بدء التصويت",
+      "pause": "إيقاف مؤقت",
+      "resume": "استئناف",
+      "stop": "إيقاف"
+    },
+    "error": {
+      "invalidSeparator": "يرجى تقديم فاصل أسطر مخصص صالح.",
+      "parseError": "تعذر تحليل أي روابط منشورات صالحة. تحقق من الصيغة.",
+      "loginFirst": "يرجى تسجيل الدخول أولاً",
+      "invalidUrl": "صيغة الرابط غير صالحة",
+      "invalidFormat": "تحتوي بعض المنشورات على صيغ غير صالحة ولا يمكن معالجتها.",
+      "votingStopped": "تم إيقاف التصويت الجماعي.",
+      "errorVoted": "خطأ أثناء التصويت على منشور @{author}: {error}"
+    },
+    "success": {
+      "imported": "تم استيراد {count} منشور بنجاح",
+      "voted": "تم التصويت على منشور @{author}",
+      "completed": "اكتمل التصويت الجماعي!"
+    }
+  },
+  "CommunityReport": {
+    "title": "تقرير المجتمع",
+    "description": "أنشئ تحليلات إحصائية وتقارير مارك داون لأي مجتمع على Steem.",
+    "parameters": "معايير التقرير",
+    "communityId": "معرف المجتمع",
+    "placeholder": "مثال: hive-145160",
+    "startDate": "تاريخ البدء",
+    "endDate": "تاريخ الانتهاء",
+    "generate": "إنشاء التقرير",
+    "analyzing": "جاري تحليل البلوكشين...",
+    "emptyState": "أدخل وسم المجتمع ونطاق التاريخ لتحليل بيانات البلوكشين وإنشاء تقرير مارك داون شامل.",
+    "scanning": "جاري مسح البلوكشين...",
+    "stats": {
+      "posts": "المنشورات",
+      "authors": "المؤلفون",
+      "payouts": "المكافآت",
+      "upvotes": "التصويت"
+    },
+    "markdown": {
+      "title": "مخرج مارك داون",
+      "copy": "نسخ مارك داون",
+      "reportTitle": "تقرير نشاط المجتمع",
+      "community": "المجتمع",
+      "dateRange": "نطاق التاريخ",
+      "summary": "ملخص سريع",
+      "metric": "المقياس",
+      "value": "القيمة",
+      "totalPosts": "إجمالي المنشورات",
+      "uniqueAuthors": "المؤلفون الفريدون",
+      "generatedPayouts": "المكافآت المتولدة",
+      "totalUpvotes": "إجمالي التصويتات",
+      "commentsReplies": "التعليقات والردود",
+      "topAuthors": "أبرز المؤلفين النشطين",
+      "topAuthorsDesc": "أعضاء مجتمعنا الأكثر تفاعلاً!",
+      "fullList": "قائمة المؤلفين النشطين كاملة",
+      "index": "#",
+      "author": "المؤلف",
+      "repliesRcvd": "التعليقات المستلمة",
+      "footer": "تم إنشاء التقرير عبر [SteemPro Tools]({url})."
+    },
+    "table": {
+      "title": "قائمة الأعضاء النشطين",
+      "search": "البحث عن أعضاء نشطين...",
+      "author": "المؤلف",
+      "posts": "المنشورات",
+      "replies": "الردود المستلمة"
+    },
+    "error": {
+      "invalidCommunity": "يرجى إدخال معرف مجتمع صالح (مثال: hive-145160)",
+      "fetchFailed": "فشل جلب بيانات المجتمع"
+    },
+    "success": {
+      "analyzed": "تم تحليل {count} منشور لإنشاء التقرير",
+      "copied": "تم نسخ المارك داون إلى الحافظة!"
+    }
+  },
+  "AuthorStatistic": {
+    "title": "تقرير إحصائيات المؤلف",
+    "description": "تحليل أداء منشورات أي مؤلف ومكافآته وتفاعله بمرور الوقت.",
+    "parameters": "بارامترات التقرير",
+    "username": "اسم المستخدم",
+    "placeholder": "مثال: steempro.com",
+    "startDate": "تاريخ البدء",
+    "endDate": "تاريخ الانتهاء",
+    "generate": "إنشاء التقرير",
+    "analyzing": "مسح الـ Blockchain...",
+    "emptyState": "أدخل اسم مستخدم المؤلف ونطاق التاريخ لتحليل أداء منشوراته الأخيرة وإنشاء تقرير مفصل.",
+    "scanning": "مسح الـ Blockchain...",
+    "stats": {
+      "posts": "المنشورات",
+      "payouts": "المكافآτες",
+      "upvotes": "التصويتات",
+      "replies": "الردود"
+    },
+    "markdown": {
+      "title": "مخرج المارك داون",
+      "copy": "نسخ المارك داون",
+      "reportTitle": "تقرير إحصائيات المؤلف: @{author}",
+      "dateRange": "نطاق التاريخ",
+      "summary": "ملخص سريع",
+      "metric": "المقياس",
+      "value": "القيمة",
+      "totalPosts": "إجمالي المنشورات",
+      "totalPayout": "إجمالي المكافآت المولدة",
+      "avgPayout": "متوسط المكافأة / منشور",
+      "totalUpvotes": "إجمالي التصويتات المستلمة",
+      "totalComments": "إجمالي التعليقات والردود المستلمة",
+      "performanceLog": "سجل أداء المنشورات",
+      "date": "التاريخ",
+      "postTitle": "العنوان",
+      "community": "المجتمع",
+      "votes": "الأصوات",
+      "replies": "الردود",
+      "payout": "المكافأة",
+      "footer": "تم إنشاء التقرير عبر [SteemPro Tools]({url})."
+    },
+    "table": {
+      "title": "سجل أداء المنشورات",
+      "search": "بحث بالعنوان أو المجتمع...",
+      "date": "التاريخ",
+      "postTitle": "العنوان",
+      "community": "المجتمع",
+      "payout": "المكافأة",
+      "votes": "الأصوات",
+      "replies": "الردود"
+    },
+    "error": {
+      "invalidUsername": "يرجى إدخال اسم مستخدم Steem صالح",
+      "fetchFailed": "فشل جلب بيانات المؤلف"
+    },
+    "success": {
+      "analyzed": "تم تحليل {count} منشور للمؤلف @{author}",
+      "copied": "تم نسخ المارك داون إلى الحافظة!"
+    }
+  },
+  "AccountCreation": {
+    "title": "إنشاء حساب",
+    "description": "قم بالمطالبة بحسابات Steem جديدة وإنشائها باستخدام رموز إنشاء الحساب الخاصة بك.",
+    "comingSoon": "قريباً",
+    "featureDescription": "تساعدك أداة إنشاء الحساب على استخدام رموز الإنشاء الخاصة بك بسلاسة. نحن نقوم حاليًا ببناء هذه الميزة. تحقق مرة أخرى قريبًا!"
+  },
+  "Schedules": {
+    "title": "الجداول الزمنية",
+    "description": "إدارة منشوراتك المجدولة",
+    "loginAlert": "عرض منشوراتك المجدولة",
+    "status": {
+      "pending": "معلق",
+      "published": "منشور",
+      "failed": "فشل"
+    },
+    "actions": {
+      "draft": "مسودة",
+      "draftDelete": "حفظ كمسودة وحذف",
+      "delete": "حذف",
+      "cancel": "إلغاء",
+      "deleteTitle": "حذف الجدولة",
+      "deleteDesc": "هل تريد فعلًا حذف هذه الجدولة؟"
+    },
+    "messages": {
+      "deleted": "تم حذف المنشور المجدول",
+      "drafted": "تم حفظ المنشور كمسودة",
+      "draftedDesc": "يمكنك إيجاده في صفحة النشر.",
+      "draftFailed": "فشل حفظ المسودة: {error}",
+      "timeDiffError": "يجب أن يكون الفارق الزمني 5 دقائق على الأقل",
+      "updated": "تم تحديث الجدولة"
+    }
+  },
+  "Settings": {
+    "title": "الإعدادات",
+    "tabs": {
+      "general": "عام",
+      "profile": "الملف الشخصي",
+      "security": "الأمان"
+    }
+  },
+  "SecuritySettings": {
+    "loginAlert": "عرض إعدادات الأمان",
+    "publicKeys": {
+      "title": "المفاتيح العامة",
+      "description": "هذه مفاتيحك العامة على شبكة Steem. يمكنك مشاركة هذه المفاتيح علنًا.",
+      "posting": "مفتاح Posting العام",
+      "active": "مفتاح Active العام",
+      "owner": "مفتاح Owner العام",
+      "memo": "مفتاح Memo العام",
+      "copied": "تم نسخ {label} إلى الحافظة"
+    },
+    "recovery": {
+      "title": "استرداد الحساب",
+      "description": "حساب الاسترداد يمكنه مساعدتك في استعادة حسابك في حال تعرّضه للاختراق.",
+      "current": "حساب الاسترداد الحالي",
+      "change": "تغيير",
+      "note": "ملاحظة: تغيير حساب الاسترداد عملية آمنة تستغرق 30 يومًا. ستحتاج إلى مفتاح OWNER لتفويض هذا التغيير."
+    }
+  },
+  "Auth": {
+    "title": "المصادقة",
+    "description": "إدارة حسابات غير محدودة والتبديل بينها بنقرة واحدة.",
+    "connectedAccounts": "الحسابات المتصلة",
+    "accountsConnected": "تم توصيل {count} حسابات",
+    "addAccount": "إضافة حساب",
+    "login": "تسجيل الدخول",
+    "keychain": "Keychain",
+    "privateKey": "المفتاح الخاص",
+    "success": "نجاح",
+    "loginSuccess": "تم تسجيل الدخول بنجاح",
+    "manageAccounts": "إدارة الحسابات"
+  },
+  "Navbar": {
+    "discover": "اكتشف",
+    "home": "الرئيسية",
+    "explore": "استكشف",
+    "communities": "المجتمعات",
+    "games": "الألعاب",
+    "blockchain": "بلوك تشين",
+    "explorer": "المستكشف",
+    "market": "السوق",
+    "witnesses": "الشهود",
+    "proposals": "المقترحات",
+    "schedules": "الجداول",
+    "tools": "الأدوات",
+    "app": "التطبيق",
+    "settings": "الإعدادات",
+    "privacy": "الخصوصية",
+    "about": "حول",
+    "manage": "إدارة",
+    "search": "بحث...",
+    "create": "إنشاء",
+    "refresh": "تحديث",
+    "profile": "الملف الشخصي",
+    "wallet": "المحفظة"
+  },
+  "Search": {
+    "placeholder": "Search blockchain content...",
+    "filterByAuthor": "Filter by author...",
+    "refineResults": "Refine results",
+    "accounts": "Accounts",
+    "posts": "Posts",
+    "comments": "Comments",
+    "fetching": "DATA FETCHING...",
+    "noAccountsFound": "No accounts found with this name prefix.",
+    "noPostsFound": "Try searching globally or with a different author filter.",
+    "noCommentsFound": "No textual matches found in recent discussions.",
+    "discoverSteem": "Discover Steem",
+    "discoverDescription": "Search for profiles, deep-dive into posts or filter by specific authors.",
+    "trySearch": "try \"{query}\"",
+    "reputation": "Reputation",
+    "profileLabel": "Profile",
+    "postLabel": "Post",
+    "commentLabel": "Comment"
+  }
+}

@@ -181,6 +181,14 @@
   background-color: #0f172a;
 }
 
+.markdown-body tbody tr:nth-child(even) {
+  background-color: #e2f0fd;
+}
+
+.dark .markdown-body tbody tr:nth-child(even) {
+  background-color: #2d3b5c;
+}
+
 .markdown-body tbody tr:hover {
   background-color: #f1f5f9;
 }

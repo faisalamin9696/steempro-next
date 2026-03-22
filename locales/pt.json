@@ -1,0 +1,1334 @@
+{
+  "General": {
+    "network": {
+      "title": "Rede e RPC",
+      "description": "Configure sua conexão com a blockchain Steem",
+      "autoSelection": "Seleção automática",
+      "autoSelectionDesc": "Selecionar automaticamente o melhor nó disponível",
+      "rpcNode": "Nó RPC",
+      "placeholder": "Selecione um servidor RPC",
+      "rpcNodeDesc": "Nós de alto desempenho proporcionam uma experiência mais fluida",
+      "autoFailover": "Automático (failover)"
+    },
+    "media": {
+      "title": "Mídia e conteúdo",
+      "description": "Gerencie hospedagem de imagens e visibilidade do conteúdo",
+      "imageServer": "Servidor de imagens",
+      "imageServerPlaceholder": "Selecione a hospedagem de imagens",
+      "nsfwLabel": "Conteúdo NSFW",
+      "nsfwPlaceholder": "Defina sua preferência",
+      "nsfwAlwaysShow": "Sempre mostrar",
+      "nsfwAlwaysHide": "Sempre ocultar",
+      "nsfwAlwaysWarn": "Sempre avisar"
+    },
+    "language": {
+      "title": "Idioma",
+      "description": "Selecione o idioma preferido do aplicativo",
+      "select": "Escolher idioma"
+    },
+    "interface": {
+      "title": "Preferências de interface",
+      "description": "Personalize sua experiência de visualização",
+      "theme": "Tema",
+      "themeDesc": "Defina seu tema",
+      "themeSystem": "Sistema",
+      "themeLight": "Claro",
+      "themeDark": "Escuro",
+      "feedStyle": "Estilo do feed",
+      "feedStyleDesc": "Modo de exibição",
+      "feedStyleList": "Lista",
+      "feedStyleBlog": "Blog",
+      "feedStyleGrid": "Grade",
+      "vote": "Lembrar voto",
+      "voteDesc": "Usar o último peso",
+      "defaultVote": "Voto padrão %"
+    }
+  },
+  "Common": {
+    "home": "Início",
+    "settings": "Configurações",
+    "profile": "Perfil",
+    "loginTo": "Por favor, faça o login para {action}.",
+    "security": "Segurança",
+    "about": "Sobre",
+    "logout": "Sair",
+    "login": "Entrar",
+    "keychain": "Keychain",
+    "privateKey": "Chave Privada"
+  },
+  "Home": {
+    "tabs": {
+      "trending": "Em alta",
+      "popular": "Popular",
+      "recent": "Recente",
+      "hot": "Quente",
+      "payout": "Pagamento"
+    }
+  },
+  "Communities": {
+    "title": "Comunidades",
+    "headerDesc": "Explore e participe de comunidades vibrantes no Steem. Gerencie suas assinaturas e fique por dentro do que mais importa para você.",
+    "searchPlaceholder": "Pesquisar por título ou conta...",
+    "showOnlySubscribed": "Mostrar apenas comunidades assinadas",
+    "noDescription": "Sem descrição disponível",
+    "subscribers": "Assinantes",
+    "subscribe": "Assinar",
+    "leave": "Sair",
+    "leftSuccess": "Você saiu da comunidade",
+    "subscribeSuccess": "Assinatura realizada com sucesso"
+  },
+  "Community": {
+    "created": "Criado em",
+    "pendingReward": "Recompensa pendente",
+    "rank": "Posição",
+    "members": "Membros",
+    "active": "Ativo",
+    "leadership": "Liderança",
+    "rules": "Regras",
+    "about": "Sobre",
+    "more": "mais",
+    "user": "Usuário",
+    "role": "Função",
+    "activities": "Atividades"
+  },
+  "About": {
+    "hero": {
+      "subtitle": "Potencializando sua voz",
+      "description": "Experimente uma rede social impulsionada pela blockchain Steem. Explore discussões em alta e compartilhe sua perspectiva única em uma plataforma verdadeiramente descentralizada.",
+      "getStarted": "Começar",
+      "viewGithub": "Ver no Github"
+    },
+    "mission": {
+      "title": "Nossa missão",
+      "description": "O SteemPro tem como objetivo aproximar a complexa tecnologia blockchain da interação social do dia a dia. Acreditamos em oferecer uma interface fluida, rápida e segura para interagir com o ecossistema Steem.",
+      "secureTitle": "Seguro",
+      "secureDesc": "Segurança em nível de blockchain",
+      "fastTitle": "Rápido",
+      "fastDesc": "Desempenho otimizado"
+    },
+    "features": {
+      "title": "Recursos poderosos",
+      "subtitle": "Desenvolvido tanto para iniciantes quanto para entusiastas de blockchain.",
+      "feature1Title": "Alcance global",
+      "feature1Desc": "Conecte-se com usuários do mundo todo em uma rede resistente à censura.",
+      "feature2Title": "Movido pelo SDS",
+      "feature2Desc": "Busca de dados ultrarrápida alimentada pelo Steem Data Service.",
+      "feature3Title": "Descentralizado",
+      "feature3Desc": "Sua conta, suas chaves e seu conteúdo são seus.",
+      "feature4Title": "Movido pela comunidade",
+      "feature4Desc": "Criado para a comunidade, pela comunidade."
+    },
+    "team": {
+      "title": "A equipe",
+      "subtitle": "Conheça as mentes por trás do SteemPro."
+    },
+    "cta": {
+      "title": "Junte-se ao futuro das redes sociais",
+      "description": "Faça parte de um mundo descentralizado onde seu conteúdo é seu e sua voz importa.",
+      "discord": "Discord",
+      "email": "Fale conosco"
+    }
+  },
+  "Explorer": {
+    "title": "Explorador de blockchain",
+    "description": "Dados em tempo real da blockchain Steem, blocos, transações e estatísticas da rede",
+    "tabs": {
+      "overview": "Visão geral",
+      "blocks": "Blocos",
+      "transactions": "Transações",
+      "accounts": "Contas"
+    },
+    "recentBlocks": "Blocos recentes"
+  },
+  "Market": {
+    "title": "Mercado",
+    "description": "Negocie STEEM com SBD instantaneamente",
+    "stats": {
+      "lastPrice": "Último preço",
+      "change24h": "Variação em 24h",
+      "high24h": "Máxima em 24h",
+      "low24h": "Mínima em 24h",
+      "volumeSteem": "Volume em 24h (STEEM)",
+      "volumeSbd": "Volume em 24h (SBD)"
+    },
+    "chart": {
+      "pair24h": "STEEM/SBD - 24H"
+    },
+    "tabs": {
+      "orderBook": "Livro de ordens",
+      "openOrders": "Ordens abertas",
+      "tradeHistory": "Histórico de negociações"
+    },
+    "orderBook": {
+      "priceSbd": "Preço (SBD)",
+      "steem": "STEEM",
+      "sbd": "SBD"
+    },
+    "openOrders": {
+      "noOrders": "Nenhuma ordem em aberto",
+      "type": "Tipo",
+      "price": "Preço",
+      "steem": "STEEM",
+      "sbd": "SBD",
+      "action": "Ação",
+      "orderCancelled": "Ordem cancelada",
+      "failedToCancel": "Falha ao cancelar a ordem"
+    },
+    "history": {
+      "date": "Data",
+      "price": "Preço",
+      "steem": "STEEM"
+    },
+    "trade": {
+      "buy": "Comprar",
+      "sell": "Vender",
+      "buySteem": "Comprar STEEM",
+      "sellSteem": "Vender STEEM",
+      "available": "Disponível",
+      "price": "Preço",
+      "amount": "Quantidade",
+      "total": "Total",
+      "createOrder": "Criar ordem",
+      "orderCreated": "Ordem criada com sucesso",
+      "failedToCreate": "Falha ao criar a ordem"
+    },
+    "info": {
+      "title": "Informações de negociação",
+      "marketFee": "Taxa de mercado",
+      "orderType": "Tipo de ordem",
+      "limitDefault": "Limite (padrão)",
+      "pair": "Par"
+    }
+  },
+  "Games": {
+    "title": "Jogos",
+    "landing": {
+      "gamingZone": "Zona de jogos SteemPro",
+      "heroTitle": "JOGUE. COMPITA. <earn>GANHE.</earn>",
+      "heroDescription": "Bem-vindo ao destino definitivo de jogos em blockchain. Teste suas habilidades, suba no ranking e conquiste recompensas no ecossistema Steem.",
+      "allGames": "Todos os jogos",
+      "noGamesFound": "Nenhum jogo encontrado",
+      "noGamesDescription": "Estamos desenvolvendo novos títulos para esta categoria. Fique ligado!",
+      "resetFilter": "Redefinir filtro",
+      "ecosystemFavorites": "Favoritos do ecossistema",
+      "communityTitles": "{titles} DA COMUNIDADE",
+      "communityTitlesHighlight": "TÍTULOS",
+      "communityDescription": "Explore jogos incríveis desenvolvidos pela comunidade Steem e estúdios parceiros.",
+      "yourGameHere": "Seu jogo aqui?",
+      "buildYourOwn": "Crie seu próprio jogo e mostre-o na Zona de Jogos SteemPro.",
+      "fairPlay": "Jogo justo e recompensas",
+      "immutableScores": "PONTUAÇÕES {scores}",
+      "immutableScoresHighlight": "IMUTÁVEIS",
+      "fairPlayDescription": "Todas as maiores pontuações e conquistas são registradas diretamente na blockchain Steem, garantindo transparência, imutabilidade e prova de habilidade. Os melhores jogadores são elegíveis para recompensas curadas pela comunidade SteemPro.",
+      "transparent": "TRANSPARENTE",
+      "verifiedOnChain": "Verificado na rede",
+      "rewarding": "RECOMPENSADOR",
+      "communityDriven": "Movido pela comunidade"
+    },
+    "card": {
+      "native": "NATIVO",
+      "hot": "QUENTE",
+      "chain": "Rede",
+      "enterGame": "Entrar no jogo",
+      "studio": "Estúdio",
+      "difficulty": "Dificuldade",
+      "rewards": "Recompensas",
+      "launchWebsite": "Abrir site"
+    },
+    "developerTemplate": {
+      "viewTemplate": "Ver template",
+      "title": "Template de integração para desenvolvedores",
+      "close": "Fechar",
+      "getStarted": "Começar",
+      "description": "Adicione seu jogo ao ecossistema seguindo esta estrutura de dados. Envie seu PR ou entre em contato com a equipe para ser listado.",
+      "thumbnail": "Miniatura",
+      "thumbnailRecommended": "Recomendado: 800x1200px (retrato)",
+      "integration": "Integração",
+      "integrationLevels": "Nível 1 (link) ou Nível 2 (hospedado)"
+    },
+    "steemHeights": {
+      "title": "Steem Heights",
+      "info": {
+        "skillCompetition": "Competição de habilidade",
+        "noActiveSeason": "Nenhuma temporada ativa",
+        "season": "Temporada {season}",
+        "seasonEnded": "Temporada encerrada",
+        "pool": "Prêmio de {amount} {symbol}",
+        "description": "Escale o horizonte com foco inabalável. Posicione cada bloco com precisão cirúrgica para alcançar altitudes recordes. Nessa escalada, o foco é seu maior poder.",
+        "handbook": "Manual do escalador",
+        "viewLeaderboard": "Ver classificação"
+      },
+      "leaderboard": {
+        "tabs": {
+          "global": "Cume global",
+          "daily": "Desafios diários",
+          "history": "Meus resultados",
+          "winners": "Hall da temporada",
+          "lab": "Laboratório de personalização"
+        },
+        "global": {
+          "summit": "Cume da temporada {season}",
+          "hall": "Hall do cume global",
+          "totalClimbers": "Total de escaladores",
+          "active24h": "Ativos (24h)",
+          "totalAscent": "Ascensão total",
+          "avgAltitude": "Altitude média",
+          "intermission": "Intervalo de temporada",
+          "concluded": "A escalada da temporada {season} foi concluída. Os recordes de altitude finais estão bloqueados.",
+          "preparing": "Nenhuma escalada ativa no momento. Estamos preparando o próximo grande desafio, mantenha o foco!",
+          "beFirst": "Seja o primeiro a escalar as alturas!",
+          "noMore": "Não há mais escaladores nesta faixa.",
+          "unqualifiedClimbers": "Escaladores não qualificados",
+          "onlyQualified": "Apenas qualificados",
+          "table": {
+            "player": "Jogador",
+            "performance": "Desempenho"
+          },
+          "plays": "Partidas",
+          "combos": "Combos",
+          "you": "VOCÊ",
+          "race": {
+            "title": "Corrida ao cume",
+            "subtitle": "Top 8 escaladores"
+          },
+          "goal": {
+            "title": "Meta global da comunidade",
+            "currentPool": "Prêmio bônus atual da temporada",
+            "maxCapability": "Capacidade máxima",
+            "invite": "Convidar amigos",
+            "totalProgress": "Progresso total",
+            "targeting": "Meta: {altitude}m",
+            "boost": "Bônus +{reward} {symbol}",
+            "baseStart": "Base inicial: {altitude}m",
+            "maxGoal": "Meta máxima: {altitude}m",
+            "milestones": "Marcos de recompensa",
+            "tooltip": "As recompensas da comunidade são calculadas com base na altitude total combinada de todos os jogadores. A cada {stepSize}m além de {baseAltitude}m, {boost} {symbol} é adicionado ao prêmio.",
+            "modal": {
+              "title": "Convidar <climbers>escaladores</climbers>",
+              "subtitle": "Ajude a superar a meta da comunidade",
+              "markdown": "Markdown de convite",
+              "info": "Copie este markdown e cole na sua próxima publicação ou comentário para convidar amigos. Quanto maior a altitude coletiva, maiores as recompensas para todos!",
+              "close": "Fechar"
+            }
+          }
+        },
+        "daily": {
+          "operations": "Operações diárias",
+          "tactical": "{challenges} táticos",
+          "description": "Supere seus limites diariamente para acumular reservas de energia para o laboratório.",
+          "challenges": {
+            "daily_ascent": {
+              "title": "Acampamento base",
+              "description": "Escale um total de 200m hoje"
+            },
+            "daily_ascent_pro": {
+              "title": "Caçador de cumes",
+              "description": "Escale um total de 1000m hoje"
+            },
+            "daily_combos": {
+              "title": "Mestre da precisão",
+              "description": "Realize um total de 10 combos em um dia"
+            },
+            "daily_plays": {
+              "title": "Escalador persistente",
+              "description": "Complete 6 partidas hoje"
+            }
+          },
+          "energyReserves": "Reservas de energia",
+          "nrg": "nrg",
+          "claimed": "Coletado",
+          "ready": "Pronto",
+          "progress": "Progresso",
+          "reward": "Recompensa",
+          "missionCompleted": "MISSÃO CONCLUÍDA",
+          "processing": "PROCESSANDO...",
+          "claimReward": "COLETAR RECOMPENSA",
+          "inProgress": "EM ANDAMENTO",
+          "inactive": "Desafios diários inativos",
+          "inactiveDescription": "Os desafios e recompensas de energia estão disponíveis apenas durante temporadas ativas. Aguarde a próxima escalada!",
+          "resetNotice": "Aviso de reinicialização de temporada",
+          "resetDescription": "A energia é específica de cada temporada. Seu saldo da temporada {season} será reiniciado ao final para garantir um começo justo a todos os competidores."
+        },
+        "history": {
+          "summary": "Resumo de estatísticas pessoais",
+          "totalPlays": "Total de partidas",
+          "bestAltitude": "Melhor altitude",
+          "avgAltitude": "Altitude média",
+          "totalCombos": "Total de combos",
+          "estReward": "Recompensa estimada da temporada",
+          "keepClimbing": "Continue escalando! Alcance {minAlt}m de altitude OU {minPlays} partidas com altitude de 10m+ para se qualificar.",
+          "breakIntoTop": "Você está qualificado! Agora entre no top {ranking} para garantir sua parte do prêmio.",
+          "qualified": "Você está qualificado e ganhando!",
+          "records": "Recordes pessoais",
+          "publish": {
+            "title": "Compartilhe sua jornada",
+            "subtitle": "Publique sua atividade diária no Steem",
+            "successTitle": "Publicado!",
+            "successDesc": "Sua escalada foi imortalizada na blockchain Steem. Ótimo trabalho!",
+            "statsTitle": "Prévia das estatísticas",
+            "totalPlays": "Total de sessões",
+            "peakAltitude": "Altitude máxima",
+            "estTotal": "Total estimado",
+            "supportTitle": "Apoiando a escalada",
+            "supportDesc": "Ao publicar sua jornada, você não está apenas compartilhando estatísticas — está fortalecendo a plataforma! Juntos, destinamos <pro>10%</pro> ao suporte do <steempro>SteemPro</steempro> e queimamos <burn>5%</burn> para o <eco>ecossistema Steem</eco>. Sua ascensão faz todos crescerem!",
+            "selectCommunity": "Selecionar comunidade",
+            "postTitle": "Título da publicação",
+            "postContent": "Conteúdo da publicação (Markdown)",
+            "descPlaceholder": "Descreva sua escalada...",
+            "publishBtn": "Publicar no Steem",
+            "btnLabel": "Publicar atividade",
+            "defaultTitle": "Minha jornada de temporada no Steem Heights - {date}",
+            "defaultBody": "![steem-heights.png](https://cdn.steemitimages.com/DQmTmKQbDgzjQnB4CFCMLemNa1hmo5bBt5C56GR9CtArCYN/steem-heights.png)\n\n# Minha jornada de temporada no Steem Heights 🏔️\n\nEstou escalando os picos! Confira meu progresso consolidado:\n\n- 🚀 **Total de sessões**: {plays}\n- 🏔️ **Melhor marca pessoal**: {peak}m\n- ☁️ **Altitude acumulada**: {altitude}m (Est.)\n- 🎯 **Total de combos**: {combos}\n- 📈 **Altitude média**: {avg}m\n\nVocê consegue superar minha pontuação? Junte-se à escalada no Steem Heights!\n\n[Jogar Steem Heights](https://www.steempro.com/games/steem-heights)\n\n#steemheights #gaming #steempro #play2earn",
+            "close": "Fechar",
+            "cancel": "Cancelar"
+          },
+          "altitude": "Altitude",
+          "combos": "Combos",
+          "best": "Melhor",
+          "noRecords": "Nenhum registro para a temporada {season}"
+        },
+        "winners": {
+          "transactionReport": "Relatório de transação copiado para a área de transferência!",
+          "markdownReport": "Relatório Markdown copiado para a área de transferência!",
+          "hallOfChampions": "Hall dos campeões",
+          "more": "+ {count} mais",
+          "champion": "Campeão",
+          "climbers": "Escaladores",
+          "ascent": "Ascensão",
+          "avg": "Média",
+          "personalBest": "Melhor marca pessoal",
+          "achieved": "Alcançado",
+          "pool": "Prêmio",
+          "hallAwaits": "O hall aguarda seu primeiro herói...",
+          "archives": "Arquivos",
+          "performanceData": "Dados de desempenho da temporada",
+          "txReport": "Relatório TX",
+          "mdReport": "Relatório MD",
+          "fetching": "Carregando histórico...",
+          "allParticipants": "Todos os participantes e classificações",
+          "table": {
+            "player": "Jogador",
+            "performance": "Desempenho"
+          }
+        },
+        "lab": {
+          "disabled": "Loja desativada durante escalada ativa",
+          "conflictToast": "Não é possível equipar {skin}: entra em conflito com seu power-up ativo {powerUp}.",
+          "loginToast": "Faça login para comprar skins.",
+          "powerups": "Loja de Power-Ups",
+          "powerupsSub": "Gaste energia em melhorias para uma partida",
+          "conflictMsg": "Esta habilidade já está ativa através da sua skin {skin}.",
+          "ready": "PRONTO",
+          "skinConflict": "CONFLITO DE SKIN",
+          "activate": "ATIVAR",
+          "insufficient": "INSUFICIENTE",
+          "skins": "Skins de temporada",
+          "skinsSub": "Vista seus blocos com estilos e habilidades únicos",
+          "active": "ATIVO",
+          "ability": "Habilidade principal",
+          "cost": "Custo de desbloqueio",
+          "owned": "POSSUÍDO",
+          "energy": "ENERGIA",
+          "equipped": "EQUIPADO",
+          "select": "SELECIONAR",
+          "purchase": "COMPRAR",
+          "footnote": "* Skins e Power-Ups são benefícios de temporada para aprimorar sua escalada.",
+          "footnoteNote": "Nota:",
+          "footnoteSub": "Power-Ups temporários duram apenas uma sessão de jogo.",
+          "items": {
+            "skins": {
+              "default": {
+                "name": "Escalador clássico",
+                "description": "O equipamento padrão de todo alpinista.",
+                "ability": "Nenhuma"
+              },
+              "glacier": {
+                "name": "Placa glacial",
+                "description": "Blocos congelados que reduzem a velocidade de movimento. (150 energia)",
+                "ability": "15% mais lento"
+              },
+              "steel": {
+                "name": "Núcleo de aço",
+                "description": "Blocos resistentes que ignoram os ventos de grande altitude. (300 energia)",
+                "ability": "Sem deriva pelo vento"
+              },
+              "phoenix": {
+                "name": "Asa de fênix",
+                "description": "Essência mágica que te salva de uma queda fatal. (500 energia)",
+                "ability": "1 vida extra"
+              },
+              "gold": {
+                "name": "Toque de Midas",
+                "description": "Blocos de ouro puro que aumentam a altitude em quedas perfeitas. (1000 energia)",
+                "ability": "+2m de bônus em queda perfeita"
+              }
+            },
+            "powerups": {
+              "wind_shield": {
+                "name": "Escudo de vento",
+                "description": "Ignore toda deriva pelo vento durante uma partida."
+              },
+              "slow_motion": {
+                "name": "Câmera lenta",
+                "description": "A velocidade de movimento é reduzida em 20% durante uma partida."
+              },
+              "extra_gear": {
+                "name": "Equipamento extra",
+                "description": "Comece sua próxima partida com uma vida adicional."
+              }
+            }
+          }
+        },
+        "howToPlay": {
+          "title": "Domine a <climb>escalada</climb>",
+          "subtitle": "Guia essencial de sobrevivência",
+          "controls": {
+            "dropControl": {
+              "title": "Controle de queda",
+              "desc": "Toque em qualquer lugar para soltar o bloco em movimento. O timing é tudo."
+            },
+            "precision": {
+              "title": "Corte de precisão",
+              "desc": "Os blocos devem pousar sobre a base. As partes que ultrapassam são cortadas instantaneamente!"
+            },
+            "perfect": {
+              "title": "Sequência perfeita",
+              "desc": "Alinhar os blocos exatamente dá uma pontuação PERFECT. Aumenta os combos e reduz a resistência do vento."
+            },
+            "bonus": {
+              "title": "Bônus de altitude",
+              "desc": "Cada combo bem-sucedido concede um enorme bônus de altitude!"
+            }
+          },
+          "gravityPulse": "Pulso de gravidade",
+          "gravityDesc": "Você tem <time>{timeVal} segundos</time> para soltar cada bloco. Demorar demais aciona uma <autoDrop>queda automática!</autoDrop>",
+          "dailyRewards": "Recompensas diárias",
+          "dailyDesc": "Complete <challenges>desafios diários</challenges> para ganhar <energy>energia</energy>. Use energia no laboratório para comprar <powerups>power-ups</powerups> e <skins>skins</skins>.",
+          "close": "Iniciar sua ascensão"
+        }
+      },
+      "canvas": {
+        "testGameplay": "Testar gameplay",
+        "seasonBreak": "Intervalo de temporada",
+        "loginToRecord": "Faça login agora para registrar suas pontuações e ganhar recompensas. A altitude atual não será salva.",
+        "seasonEnded": "A temporada atual foi encerrada. Aguarde a próxima temporada para competir e ganhar recompensas!",
+        "altitude": "ALTITUDE",
+        "howToPlay": "Como jogar",
+        "wind": "VENTO",
+        "rankings": "Classificações",
+        "ready": "PRONTO PARA DOMINAR?",
+        "tapToDrop": "Toque em qualquer parte da caixa para soltar o bloco.",
+        "begin": "INICIAR A ESCALADA",
+        "totalAltitude": "Altitude total",
+        "climbEnded": "Escalada encerrada",
+        "recording": "REGISTRANDO NA BLOCKCHAIN...",
+        "loginToRecordScore": "FAÇA LOGIN PARA REGISTRAR SUA PONTUAÇÃO NA BLOCKCHAIN",
+        "seasonInactive": "TEMPORADA INATIVA • PONTUAÇÃO NÃO REGISTRADA",
+        "tryAgain": "TENTAR NOVAMENTE",
+        "mainMenu": "MENU PRINCIPAL",
+        "paused": "PAUSADO",
+        "takeBreather": "Respire fundo, campeão.",
+        "resume": "CONTINUAR",
+        "preparing": "Preparando ascensão",
+        "generating": "Gerando sessão segura",
+        "perfect": "PERFEITO!",
+        "comboBonus": "BÔNUS DE COMBO",
+        "combos": "Combos",
+        "bonus": "Bônus",
+        "you": "VOCÊ"
+      }
+    }
+  },
+  "Post": {
+    "notFound": "Publicação não encontrada",
+    "notFoundDescription": "A publicação que você está procurando não existe ou foi excluída.",
+    "muted": "Esta publicação está silenciada",
+    "mutedDescription": "Esta publicação foi silenciada por um moderador da comunidade.",
+    "viewingSingleComment": "Você está vendo o tópico de um único comentário de:",
+    "viewFullContext": "Ver o contexto completo",
+    "viewDirectParent": "Ver o comentário pai direto",
+    "in": "em",
+    "edited": "(editado)",
+    "postedVia": "Publicado via {app}",
+    "voteRemoved": "Voto removido",
+    "votedSuccessfully": "Voto registrado com sucesso!",
+    "upvote": "Upvote",
+    "downvote": "Downvote",
+    "comments": "Comentários",
+    "writeReply": "Escrever uma resposta",
+    "replyPlaceholder": "Escreva seu comentário aqui... Use @ para mencionar usuários",
+    "reply": "Responder",
+    "update": "Atualizar",
+    "cancel": "Cancelar",
+    "loadingComments": "Carregando comentários...",
+    "newest": "Mais recentes",
+    "sortPayout": "Pagamento",
+    "upvotes": "Upvotes",
+    "beFirstComment": "Seja o primeiro a comentar!",
+    "loadingMore": "Carregando mais...",
+    "updateReply": "Atualizar resposta...",
+    "replyTo": "Responder a @{author}...",
+    "openFullThread": "Abrir tópico completo",
+    "somethingWentWrong": "Algo deu errado!",
+    "resteemedAlready": "Você já fez resteem desta publicação!",
+    "resteemSuccess": "Resteem realizado com sucesso!",
+    "resteemConfirmation": "Confirmação",
+    "resteemQuestion": "Fazer resteem desta publicação?",
+    "payoutDetails": "Detalhes do Pagamento",
+    "payoutBreakdown": {
+      "authorDeclined": "O autor recusou as recompensas",
+      "pending": "Detalhamento das recompensas pendentes",
+      "settled": "Detalhamento das recompensas liquidadas",
+      "declinedTitle": "Pagamento recusado",
+      "declinedDescription": "O autor desta publicação optou por recusar todas as recompensas.",
+      "failed": "Falha ao carregar os detalhes do Pagamento",
+      "status": "Status",
+      "pendingLabel": "Pendente",
+      "paidLabel": "Pago",
+      "nextCashout": "Próximo cashout",
+      "totalPayout": "Pagamento total",
+      "expectedSbd": "SBD esperado",
+      "expectedSteem": "STEEM esperado",
+      "expectedSp": "SP esperado",
+      "authorTotal": "Total do autor",
+      "curatorsTotal": "Total dos curadores",
+      "beneficiaries": "Beneficiários"
+    }
+  },
+  "Profile": {
+    "tabs": {
+      "blog": "Blog",
+      "posts": "Publicações",
+      "friends": "Amigos",
+      "comments": "Comentários",
+      "replies": "Respostas",
+      "notifications": "Notificações",
+      "communities": "Comunidades",
+      "wallet": "Carteira"
+    },
+    "about": "Sobre",
+    "joined": "Entrou em",
+    "followers": "Seguidores",
+    "following": "Seguindo",
+    "posts": "Publicações",
+    "comments": "Comentários",
+    "active": "Ativo",
+    "vp": "VP",
+    "vpTitle": "Poder de voto",
+    "rc": "RC",
+    "rcTitle": "Créditos de recurso",
+    "vote": "Voto",
+    "voteTitle": "Valor do voto",
+    "witnessProxy": "Proxy de Witness",
+    "witnessVotes": "Votos de Witness",
+    "more": "+{count} mais",
+    "editProfile": "Editar perfil",
+    "follow": "Seguir",
+    "unfollow": "Deixar de seguir",
+    "followSuccess": "Seguindo com sucesso",
+    "unfollowSuccess": "Você deixou de seguir",
+    "notifications": {
+      "title": "Notificações",
+      "unread": "{count} não lidas",
+      "allCaughtUp": "Tudo em dia",
+      "markAllRead": "Marcar tudo como lido",
+      "filterAndSort": "Filtrar e ordenar",
+      "allTypes": "Todos os tipos",
+      "newest": "Mais recentes",
+      "oldest": "Mais antigas",
+      "searchPlaceholder": "Pesquisar por usuário ou atividade...",
+      "loading": "Carregando notificações...",
+      "empty": "Nenhuma notificação encontrada",
+      "today": "Hoje",
+      "yesterday": "Ontem",
+      "typeLabels": {
+        "vote": "Voto",
+        "reply": "Resposta",
+        "mention": "Menção",
+        "follow": "Seguidor",
+        "resteem": "Resteem"
+      }
+    },
+    "wallet": {
+      "transactionHistory": "Histórico de transações",
+      "delegations": "Delegações",
+      "orders": "Ordens",
+      "openOrders": "Suas ordens abertas",
+      "newOrder": "Nova ordem"
+    },
+    "settings": {
+      "loginAlert": "ver as configurações do perfil",
+      "basicInfo": {
+        "title": "Informações básicas",
+        "description": "Dados públicos do perfil exibidos para outros usuários",
+        "displayName": "Nome de exibição",
+        "displayNamePlaceholder": "Ex.: Faisal Amin",
+        "about": "Sobre",
+        "aboutPlaceholder": "Conte à comunidade sobre você",
+        "location": "Localização",
+        "locationPlaceholder": "Ex.: São Paulo, Brasil",
+        "website": "Site",
+        "websitePlaceholder": "https://exemplo.com"
+      },
+      "visual": {
+        "title": "Identidade visual",
+        "description": "Personalize seu avatar e imagens de capa",
+        "preview": "Pré-visualização",
+        "profileImage": "Foto de perfil",
+        "profileImageDesc": "Imagem quadrada recomendada",
+        "coverImage": "Imagem de capa",
+        "coverImageDesc": "1200x300 recomendado",
+        "uploading": "Enviando {type}...",
+        "avatar": "avatar",
+        "cover": "capa"
+      },
+      "actions": {
+        "save": "Salvar perfil"
+      },
+      "messages": {
+        "uploadSuccess": "Imagem enviada com sucesso!",
+        "uploadFailed": "Falha no envio",
+        "updateSuccess": "Perfil atualizado na blockchain!"
+      }
+    }
+  },
+  "Witnesses": {
+    "title": "Testemunhas",
+    "description": "Vote em testemunhas que mantêm os nós do Steem e protegem a blockchain. Você pode votar em até 30 testemunhas.",
+    "tabs": {
+      "witnesses": "Witnesses",
+      "proxy": "Proxy",
+      "myWitness": "Meu Witness"
+    },
+    "columns": {
+      "rank": "#",
+      "witness": "Witness",
+      "votes": "Votos",
+      "missed": "Perdidos",
+      "feed": "Feed",
+      "action": "Ação"
+    },
+    "vote": "Votar",
+    "unvote": "Remover voto",
+    "viewDetails": "Ver detalhes",
+    "outdated": "Desatualizado",
+    "searchPlaceholder": "Pesquisar witnesses por nome...",
+    "noWitnesses": "Nenhum witness encontrado",
+    "showOnlyVoted": "Mostrar apenas witnesses em que votei",
+    "proxyActive": "Proxy ativo",
+    "proxyActiveDesc": "Você está atualmente delegando seus votos para",
+    "cannotVoteProxy": "Você não pode votar em witnesses enquanto um proxy estiver ativo",
+    "voteSuccess": "Voto em {name} registrado com sucesso",
+    "unvoteSuccess": "Voto em {name} removido com sucesso",
+    "proxy": {
+      "title": "Definir proxy de votação",
+      "description": "Escolher um proxy permite que outro usuário vote em witnesses em seu nome, gerenciando todo o seu poder de voto.",
+      "usernameLabel": "Nome de usuário do proxy",
+      "usernamePlaceholder": "Ex.: steempro.com",
+      "setProxy": "Definir proxy",
+      "clearProxy": "Remover proxy",
+      "currentProxy": "Proxy atual",
+      "setSuccess": "Proxy definido para {name} com sucesso",
+      "removeSuccess": "Proxy removido com sucesso"
+    },
+    "myWitness": {
+      "title": "Configurações de Witness",
+      "description": "Gerencie as propriedades e o status do seu nó Witness.",
+      "enable": "Ativar Witness",
+      "disable": "Desativar Witness",
+      "urlLabel": "URL do Witness",
+      "signingKeyLabel": "Chave de assinatura de blocos",
+      "signingKeyDesc": "A chave pública usada para assinar blocos.",
+      "creationFeeLabel": "Taxa de criação de conta",
+      "interestRateLabel": "Taxa de juros do SBD",
+      "blockSizeLabel": "Tamanho máximo de bloco",
+      "securityTitle": "Segurança da chave de assinatura",
+      "securityDesc": "Alterar sua chave de assinatura requer autoridade active. Certifique-se de ter a chave privada correspondente no seu nó Witness antes de atualizar a chave pública de assinatura, caso contrário seu nó perderá blocos.",
+      "updateProps": "Atualizar propriedades do Witness",
+      "updateSuccess": "Propriedades do Witness atualizadas com sucesso"
+    },
+    "details": {
+      "information": "Informações",
+      "voters": "Votantes",
+      "basicInfo": "Informações básicas",
+      "owner": "Proprietário",
+      "rank": "Posição",
+      "votes": "Votos",
+      "viewVoters": "Ver votantes",
+      "totalMissedBlocks": "Total de blocos perdidos",
+      "lastConfirmedBlock": "Último bloco confirmado",
+      "runningVersion": "Versão em execução",
+      "url": "URL",
+      "visitWebsite": "Visitar site",
+      "signingKey": "Chave de assinatura",
+      "witnessProperties": "Propriedades do Witness",
+      "accountCreationFee": "Taxa de criação de conta",
+      "maximumBlockSize": "Tamanho máximo de bloco",
+      "sbdInterestRate": "Taxa de juros do SBD",
+      "sbdExchangeRate": "Taxa de câmbio do SBD",
+      "base": "Base",
+      "quote": "Cotação",
+      "lastUpdate": "Última atualização",
+      "additionalDetails": "Detalhes adicionais",
+      "created": "Criado em",
+      "lastWork": "Último trabalho",
+      "hardforkTimeVote": "Voto de tempo do Hardfork",
+      "active": "Ativo",
+      "disabled": "Desativado",
+      "totalVoters": "Total de votantes",
+      "totalSupport": "Suporte total (SP)",
+      "noVotes": "Nenhum voto encontrado para este Witness",
+      "voter": "Votante",
+      "ownSp": "SP próprio",
+      "proxiedSp": "SP delegado",
+      "copied": "{label} copiado para a área de transferência"
+    }
+  },
+  "Proposals": {
+    "title": "Propostas",
+    "description": "Financie ideias impulsionadas pela comunidade por meio do Sistema de Propostas Steem (SPS). Vote em iniciativas que melhorem o ecossistema e beneficiem a rede.",
+    "funded": "Financiado",
+    "threshold": "Limite de financiamento",
+    "pending": "Pendente",
+    "notFunded": "Não financiado",
+    "search": "Pesquisar propostas...",
+    "item": {
+      "by": "por",
+      "to": "até",
+      "id": "ID",
+      "days": "dias",
+      "sbdDay": "SBD/dia"
+    },
+    "details": {
+      "information": "Informações",
+      "voters": "Votantes",
+      "votes": "votos",
+      "creator": "Criador",
+      "receiver": "Destinatário",
+      "duration": "Duração",
+      "start": "Início:",
+      "end": "Fim:",
+      "dailyPay": "Pagamento diário",
+      "permlink": "Permlink",
+      "totalVoters": "Total de votantes",
+      "totalSupport": "Suporte total (SP)",
+      "effective": "Efetivo:",
+      "noVotes": "Nenhum voto encontrado para esta proposta"
+    },
+    "votersTable": {
+      "voter": "Votante",
+      "ownSp": "SP próprio",
+      "proxiedSp": "SP delegado",
+      "share": "Parcela",
+      "proxyToActive": "Proxy para @{user}",
+      "proxyToInactive": "proxy para @{user} que não votou"
+    },
+    "actions": {
+      "voteTitle": "Votar na proposta #{id}?",
+      "unvoteTitle": "Remover voto da proposta #{id}?",
+      "voteDesc": "Deseja votar nesta proposta?",
+      "unvoteDesc": "Deseja remover seu voto desta proposta?",
+      "removeTitle": "Remover proposta #{id}?",
+      "removeDesc": "Deseja remover esta proposta?",
+      "vote": "Votar",
+      "unvote": "Remover voto",
+      "cancel": "Cancelar",
+      "remove": "Remover",
+      "votedSuccess": "Proposta votada com sucesso",
+      "unvotedSuccess": "Voto da proposta removido com sucesso",
+      "removedSuccess": "Proposta removida"
+    }
+  },
+  "Tools": {
+    "title": "Ferramentas SteemPro",
+    "description": "Uma poderosa coleção de ferramentas essenciais para usuários, comunidades e curadores da blockchain Steem.",
+    "list": {
+      "batchTransfer": {
+        "title": "Transferência em Lote",
+        "description": "Envie Steem ou SBD para múltiplas contas de uma só vez de forma eficiente."
+      },
+      "batchVoting": {
+        "title": "Votação em Lote",
+        "description": "Vote em múltiplas publicações simultaneamente para maximizar sua curadoria."
+      },
+      "communityReport": {
+        "title": "Relatório da Comunidade",
+        "description": "Gere estatísticas e relatórios detalhados para suas comunidades."
+      },
+      "authorReport": {
+        "title": "Relatório de Estatísticas do Autor",
+        "description": "Analise o desempenho das publicações, pagamentos e engajamento de um autor."
+      },
+      "accountCreation": {
+        "title": "Criação de Conta",
+        "description": "Reivindique e crie novas contas Steem usando seus tokens de criação de conta."
+      },
+      "snippetsTemplates": {
+        "title": "Trechos e Modelos",
+        "description": "Insira trechos e modelos na sua postagem"
+      }
+    }
+  },
+  "Submit": {
+    "communityPlaceholder": "Selecionar comunidade",
+    "noCommunity": "Nenhuma comunidade disponível",
+    "titlePlaceholder": "Digite o título da sua publicação...",
+    "preview": "Pré-visualização",
+    "readingTime": "{words} palavras, ~{text}",
+    "saveDraft": "Salvar rascunho",
+    "cancel": "Cancelar",
+    "update": "Atualizar",
+    "publish": "Publicar",
+    "scheduled": "Agendar",
+    "confirm": "Confirmar",
+    "clear": "Limpar",
+    "confirmTitle": "Confirmação",
+    "confirmDesc": "Você realmente deseja redefinir todos os dados?",
+    "saved": "Salvo",
+    "draftUpdated": "Rascunho atualizado",
+    "updated": "Atualizado",
+    "published": "Publicado",
+    "scheduledSuccess": "Publicação agendada com sucesso!",
+    "editor": {
+      "placeholder": "Escreva sua história...",
+      "markdown": "Markdown",
+      "preview": "Pré-visualização",
+      "uploading": "Enviando...",
+      "uploadSuccess": "Enviado com sucesso",
+      "uploadError": "Falha no envio",
+      "dragDrop": "Arraste e solte para enviar",
+      "write": "Escrever"
+    },
+    "tags": {
+      "placeholder": "Adicionar tags (pressione Enter ou vírgula)",
+      "help": "Separe as tags com espaços.",
+      "copied": "Tags copiadas para a área de transferência",
+      "copyError": "Falha ao copiar tags",
+      "countInfo": "{count}/8 tags • Arraste para reordenar",
+      "copyAll": "Copiar todas as tags",
+      "clearAll": "Limpar todas as tags"
+    },
+    "beneficiaries": {
+      "title": "Gerenciar beneficiários",
+      "description": "Configure o compartilhamento de recompensas com outros usuários. O total não pode exceder 100%.",
+      "add": "Adicionar conta",
+      "account": "Conta",
+      "weight": "Percentual (%)",
+      "total": "Peso total: {weight}%",
+      "favorites": "Beneficiários favoritos",
+      "usernamePlaceholder": "Digite o nome de usuário...",
+      "allocation": "Alocação: {percent}%",
+      "totalAllocation": "Alocação total:",
+      "save": "Salvar alterações",
+      "updated": "Beneficiários atualizados com sucesso",
+      "alreadyAdded": "Este usuário já está na sua lista de beneficiários",
+      "alreadyAddedShort": "Este usuário já foi adicionado",
+      "limitExceeded": "O percentual total não pode exceder 100%"
+    },
+    "payout": {
+      "title": "Tipo de Pagamento",
+      "description": "Escolha como deseja receber as recompensas da sua publicação.",
+      "decline": "Recusar Pagamento",
+      "half": "50% SBD / 50% SP",
+      "full": "100% Steem Power",
+      "declinedShort": "Recusado",
+      "fiftyFiftyShort": "50%/50%",
+      "oneHundredShort": "100% SP"
+    },
+    "schedule": {
+      "title": "Agendar publicação",
+      "description": "Selecione uma data e hora para publicar automaticamente."
+    },
+    "validation": {
+      "titleEmpty": "O título não pode estar vazio",
+      "postEmpty": "A publicação não pode estar vazia",
+      "tagEmpty": "Adicione uma tag ou selecione uma comunidade"
+    },
+    "error": {
+      "loginRequired": "É necessário fazer login"
+    },
+    "authority": {
+      "granted": "Permissão concedida com sucesso!"
+    },
+    "actions": {
+      "cancel": "Cancelar"
+    },
+    "snippets": {
+      "title": "Trechos e Modelos",
+      "description": "Insira trechos e modelos na sua postagem",
+      "mySnippets": "Meus Trechos",
+      "templates": "Modelos",
+      "new": "Novo Trecho",
+      "create": "Criar",
+      "update": "Atualizar",
+      "delete": "Excluir",
+      "insert": "Inserir",
+      "cancel": "Cancelar",
+      "titleLabel": "Título",
+      "titlePlaceholder": "Digite o título do trecho",
+      "contentPlaceholder": "Digite o conteúdo do trecho",
+      "deleteTitle": "Excluir Trecho",
+      "deleteDesc": "Você realmente quer excluir este trecho?",
+      "noSnippets": "Nenhum trecho encontrado. Crie seu primeiro trecho!",
+      "manageSnippets": "gerenciar trechos",
+      "created": "Trecho criado",
+      "updated": "Trecho atualizado",
+      "deleted": "Trecho excluído",
+      "required": "Título e corpo são obrigatórios",
+      "templateList": {
+        "table": "Tabela",
+        "code-block": "Bloco de Código",
+        "collapsible": "Seção Expansível",
+        "divider": "Divisor",
+        "task-list": "Lista de Tarefas",
+        "blockquote": "Citação",
+        "image-grid": "Grade de Imagens (2 colunas)",
+        "centered-text": "Texto Centratizado"
+      }
+    }
+  },
+  "BatchTransfer": {
+    "title": "Transferência em Lote",
+    "description": "Envie Steem ou SBD para múltiplas contas de uma só vez de forma eficiente.",
+    "currency": "Moeda",
+    "bulkImport": "Importação em Massa",
+    "addRow": "Adicionar Linha",
+    "addAnotherRow": "Adicionar Outra Linha",
+    "clearAll": "Limpar Tudo",
+    "confirmTitle": "Confirmação",
+    "confirmDesc": "Você realmente deseja redefinir todos os dados?",
+    "bulkInfo": "Cole sua lista aqui. Você pode personalizar os separadores abaixo.",
+    "lineSeparator": "Separador de Linha",
+    "newLine": "Nova Linha (\\n)",
+    "semicolon": "Ponto e vírgula (;)",
+    "comma": "Vírgula (,)",
+    "custom": "Personalizado",
+    "customPlaceholder": "ex: |",
+    "bulkPlaceholder": "usuario 10.000 Premio mensal\\nalice 5.000 Vencedora do concurso",
+    "cancel": "Cancelar",
+    "parseList": "Analisar Lista",
+    "recipient": "Destinatário",
+    "amount": "Quantidade",
+    "memo": "Memo",
+    "memoOptional": "Memo (opcional)",
+    "action": "Ação",
+    "username": "Nome de usuário",
+    "summary": "Resumo",
+    "recipients": "Destinatários",
+    "totalAmount": "Quantidade Total",
+    "yourBalance": "Seu Saldo",
+    "insufficientBalance": "Saldo insuficiente",
+    "sendButton": "Enviar transferência em lote",
+    "error": {
+      "loginFirst": "Por favor, faça login primeiro",
+      "invalidSeparator": "Por favor, forneça um separador de linha personalizado válido.",
+      "parseError": "Não foi possível analisar nenhuma transferência válida. Verifique o formato."
+    },
+    "success": {
+      "imported": "Sucesso: {count} transferências importadas",
+      "broadcast": "Transferência em Lote Bem-sucedida!",
+      "sent": "Enviado {total} {currency} para {count} usuários."
+    }
+  },
+  "BatchVoting": {
+    "title": "Votação em Lote",
+    "description": "Vote em múltiplas publicações simultaneamente para maximizar sua curadoria.",
+    "globalWeight": "Peso Global",
+    "postList": "Lista de Postagens",
+    "bulkImport": "Importação em Massa",
+    "addPost": "Adicionar Postagem",
+    "addAnotherPost": "Adicionar Outra Postagem",
+    "clearAll": "Limpar Tudo",
+    "confirmTitle": "Confirmação",
+    "confirmDesc": "Você realmente deseja redefinir todos os dados?",
+    "bulkInfo": "Cole as URLs das postagens aqui. Formato: {url} ou {url_weight} por linha.",
+    "lineSeparator": "Separador de Linha",
+    "newLine": "Nova Linha (\\n)",
+    "semicolon": "Ponto e vírgula (;)",
+    "comma": "Vírgula (,)",
+    "custom": "Personalizado",
+    "customPlaceholder": "ex: |",
+    "bulkPlaceholder": "https://www.steempro.com/@author/permlink\\nhttps://www.steempro.com/@author/permlink2 75",
+    "cancel": "Cancelar",
+    "parseList": "Analisar Lista",
+    "table": {
+      "url": "URL da Postagem Steem ou @autor/permlink",
+      "weight": "Peso",
+      "status": "Estado",
+      "action": "Ação"
+    },
+    "urlPlaceholder": "https://...",
+    "global": "Global",
+    "status": {
+      "pending": "Pendente",
+      "voting": "Votando...",
+      "success": "Sucesso",
+      "failed": "Falhou"
+    },
+    "action": {
+      "remove": "Remover Linha"
+    },
+    "progress": {
+      "title": "Progresso",
+      "totalPosts": "Total de Postagens",
+      "estTime": "Tempo Est.",
+      "min": "min",
+      "sec": "seg",
+      "done": "concluído",
+      "err": "erro",
+      "preparing": "Preparando para votar...",
+      "votingOn": "Votando na postagem de @{author}...",
+      "waiting": "Aguardando 3.5s (Limite da Blockchain)..."
+    },
+    "controls": {
+      "start": "Iniciar Votação",
+      "pause": "Pausar",
+      "resume": "Retomar",
+      "stop": "Parar"
+    },
+    "error": {
+      "invalidSeparator": "Por favor, forneça un separador de linha personalizado válido.",
+      "parseError": "Não foi possível analisar nenhuma URL de postagem válida. Verifique o formato.",
+      "loginFirst": "Por favor, faça login primeiro",
+      "invalidUrl": "Formato de URL inválido",
+      "invalidFormat": "Algumas postagens têm formatos inválidos e não podem ser processadas.",
+      "votingStopped": "Votação em lote parada.",
+      "errorVoted": "Erro ao votar na postagem de @{author}: {error}"
+    },
+    "success": {
+      "imported": "{count} postagens importadas com sucesso",
+      "voted": "Votou na postagem de @{author}",
+      "completed": "Votação em lote concluída!"
+    }
+  },
+  "CommunityReport": {
+    "title": "Relatório da Comunidade",
+    "description": "Gere análises estatísticas e relatórios em markdown para qualquer comunidade Steem.",
+    "parameters": "Parâmetros do Relatório",
+    "communityId": "ID da Comunidade",
+    "placeholder": "ex: hive-145160",
+    "startDate": "Data de Início",
+    "endDate": "Data de Término",
+    "generate": "Gerar Relatório",
+    "analyzing": "Analisando a Blockchain...",
+    "emptyState": "Insira uma tag de comunidade e um intervalo de datas para analisar os dados da blockchain e gerar um relatório completo em markdown.",
+    "scanning": "Escaneando a blockchain...",
+    "stats": {
+      "posts": "Postagens",
+      "authors": "Autores",
+      "payouts": "Pagamentos",
+      "upvotes": "Votos"
+    },
+    "markdown": {
+      "title": "Saída em Markdown",
+      "copy": "Copiar Markdown",
+      "reportTitle": "Relatório de Atividade da Comunidade",
+      "community": "Comunidade",
+      "dateRange": "Intervalo de Datas",
+      "summary": "Resumo Rápido",
+      "metric": "Métrica",
+      "value": "Valor",
+      "totalPosts": "Total de Postagens",
+      "uniqueAuthors": "Autores Únicos",
+      "generatedPayouts": "Pagamentos Gerados",
+      "totalUpvotes": "Total de Votos",
+      "commentsReplies": "Comentários e Respostas",
+      "topAuthors": "Principais Autores Ativos",
+      "topAuthorsDesc": "Nossos membros mais engajados!",
+      "fullList": "Lista Completa de Autores Ativos",
+      "index": "#",
+      "author": "Autor",
+      "repliesRcvd": "Comentários Recebidos",
+      "footer": "Relatório gerado via [SteemPro Tools]({url})."
+    },
+    "table": {
+      "title": "Lista de Membros Ativos",
+      "search": "Pesquisar membros ativos...",
+      "author": "Autor",
+      "posts": "Postagens",
+      "replies": "Respostas Recebidas"
+    },
+    "error": {
+      "invalidCommunity": "Insira um ID de Comunidade válido (ex: hive-145160)",
+      "fetchFailed": "Falha ao buscar dados da comunidade"
+    },
+    "success": {
+      "analyzed": "Analisadas {count} postagens para gerar o relatório",
+      "copied": "Markdown copiado para a área de transferência!"
+    }
+  },
+  "AuthorStatistic": {
+    "title": "Relatório de Estatísticas do Autor",
+    "description": "Analise o desempenho dos posts, pagamentos e engajamento de qualquer autor ao longo do tempo.",
+    "parameters": "Parâmetros do Relatório",
+    "username": "Nome de usuário",
+    "placeholder": "ex: steempro.com",
+    "startDate": "Data de início",
+    "endDate": "Data de término",
+    "generate": "Gerar Relatório",
+    "analyzing": "Escaneando Blockchain...",
+    "emptyState": "Digite o nome de usuário de um autor e o intervalo de datas para analisar o desempenho recente dos seus posts e gerar um relatório detalhado.",
+    "scanning": "Escaneando blockchain...",
+    "stats": {
+      "posts": "Posts",
+      "payouts": "Pagamentos",
+      "upvotes": "Upvotes",
+      "replies": "Respostas"
+    },
+    "markdown": {
+      "title": "Saída Markdown",
+      "copy": "Copiar Markdown",
+      "reportTitle": "Relatório de Estatísticas do Autor: @{author}",
+      "dateRange": "Intervalo de Datas",
+      "summary": "Resumo Rápido",
+      "metric": "Métrica",
+      "value": "Valor",
+      "totalPosts": "Total de Posts",
+      "totalPayout": "Total de Pagamentos Gerados",
+      "avgPayout": "Média de Pagamento / Post",
+      "totalUpvotes": "Total de Upvotes Recebidos",
+      "totalComments": "Comentários e Respostas Recebidos",
+      "performanceLog": "Log de Desempenho de Posts",
+      "date": "Data",
+      "postTitle": "Título",
+      "community": "Comunidade",
+      "votes": "Votos",
+      "replies": "Respostas",
+      "payout": "Pagamento",
+      "footer": "Relatório gerado via [SteemPro Tools]({url})."
+    },
+    "table": {
+      "title": "Log de Desempenho de Posts",
+      "search": "Pesquisar por título ou comunidade...",
+      "date": "Data",
+      "postTitle": "Título",
+      "community": "Comunidade",
+      "payout": "Pagamento",
+      "votes": "Votos",
+      "replies": "Respostas"
+    },
+    "error": {
+      "invalidUsername": "Por favor, insira um nome de usuário Steem válido",
+      "fetchFailed": "Falha ao buscar dados do autor"
+    },
+    "success": {
+      "analyzed": "Analisados {count} posts de @{author}",
+      "copied": "Markdown copiado para a área de transferência!"
+    }
+  },
+  "AccountCreation": {
+    "title": "Criação de Conta",
+    "description": "Resgate e crie novas contas Steem usando seus tokens de criação de conta.",
+    "comingSoon": "Em breve",
+    "featureDescription": "A ferramenta de Criação de Conta ajuda você a gastar seus tokens de criação de forma integrada. No momento, estamos desenvolvendo esta funcionalidade. Volte em breve!"
+  },
+  "Schedules": {
+    "title": "Agendamentos",
+    "description": "Gerencie suas publicações agendadas",
+    "loginAlert": "ver suas publicações agendadas",
+    "status": {
+      "pending": "Pendente",
+      "published": "Publicado",
+      "failed": "Falhou"
+    },
+    "actions": {
+      "draft": "Rascunho",
+      "draftDelete": "Salvar como rascunho e excluir",
+      "delete": "Excluir",
+      "cancel": "Cancelar",
+      "deleteTitle": "Excluir agendamento",
+      "deleteDesc": "Deseja realmente excluir este agendamento?"
+    },
+    "messages": {
+      "deleted": "Publicação agendada excluída",
+      "drafted": "Publicação salva como rascunho",
+      "draftedDesc": "Você pode encontrá-la na página de publicação.",
+      "draftFailed": "Falha ao salvar rascunho: {error}",
+      "timeDiffError": "A diferença de tempo deve ser de pelo menos 5 minutos",
+      "updated": "Agendamento atualizado"
+    }
+  },
+  "Settings": {
+    "title": "Configurações",
+    "tabs": {
+      "general": "Geral",
+      "profile": "Perfil",
+      "security": "Segurança"
+    }
+  },
+  "SecuritySettings": {
+    "loginAlert": "ver as configurações de segurança",
+    "publicKeys": {
+      "title": "Chaves públicas",
+      "description": "Estas são suas chaves públicas na blockchain Steem. Você pode compartilhá-las publicamente.",
+      "posting": "Chave pública de Posting",
+      "active": "Chave pública de Active",
+      "owner": "Chave pública de Owner",
+      "memo": "Chave pública de Memo",
+      "copied": "{label} copiado para a área de transferência"
+    },
+    "recovery": {
+      "title": "Recuperação de conta",
+      "description": "A conta de recuperação pode ajudá-lo a recuperar sua conta em caso de comprometimento.",
+      "current": "Conta de recuperação atual",
+      "change": "Alterar",
+      "note": "Nota: Alterar sua conta de recuperação é uma operação segura que leva 30 dias para ser concluída. Você precisará da sua chave OWNER para autorizar esta alteração."
+    }
+  },
+  "Auth": {
+    "title": "Autenticação",
+    "description": "Gerencie contas ilimitadas e alterne entre elas com um clique.",
+    "connectedAccounts": "Contas Conectadas",
+    "accountsConnected": "{count} contas conectadas",
+    "addAccount": "Adicionar Conta",
+    "login": "Entrar",
+    "keychain": "Keychain",
+    "privateKey": "Chave Privada",
+    "success": "Sucesso",
+    "loginSuccess": "Sessão iniciada com sucesso",
+    "manageAccounts": "Gerenciar Contas"
+  },
+  "Navbar": {
+    "discover": "Descobrir",
+    "home": "Início",
+    "explore": "Explorar",
+    "communities": "Comunidades",
+    "games": "Jogos",
+    "blockchain": "Blockchain",
+    "explorer": "Explorador",
+    "market": "Mercado",
+    "witnesses": "Testemunhas",
+    "proposals": "Propostas",
+    "schedules": "Agendamentos",
+    "tools": "Ferramentas",
+    "app": "App",
+    "settings": "Configurações",
+    "privacy": "Privacidade",
+    "about": "Sobre",
+    "manage": "Gerenciar",
+    "search": "Pesquisar...",
+    "create": "Criar",
+    "refresh": "Atualizar",
+    "profile": "Perfil",
+    "wallet": "Carteira"
+  },
+  "Search": {
+    "placeholder": "Search blockchain content...",
+    "filterByAuthor": "Filter by author...",
+    "refineResults": "Refine results",
+    "accounts": "Accounts",
+    "posts": "Posts",
+    "comments": "Comments",
+    "fetching": "DATA FETCHING...",
+    "noAccountsFound": "No accounts found with this name prefix.",
+    "noPostsFound": "Try searching globally or with a different author filter.",
+    "noCommentsFound": "No textual matches found in recent discussions.",
+    "discoverSteem": "Discover Steem",
+    "discoverDescription": "Search for profiles, deep-dive into posts or filter by specific authors.",
+    "trySearch": "try \"{query}\"",
+    "reputation": "Reputation",
+    "profileLabel": "Profile",
+    "postLabel": "Post",
+    "commentLabel": "Comment"
+  }
+}

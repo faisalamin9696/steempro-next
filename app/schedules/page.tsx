@@ -8,8 +8,10 @@ import { Card } from "@heroui/card";
 import { Skeleton } from "@heroui/skeleton";
 import LoginAlertCard from "@/components/ui/LoginAlertCard";
 import { getSchedules } from "@/libs/supabase/schedule";
+import { useTranslations } from "next-intl";
 
 function SchedulePage() {
+  const t = useTranslations("Schedules");
   const { data: session } = useSession();
   const username = session?.user?.name;
 
@@ -23,7 +25,7 @@ function SchedulePage() {
   );
 
   if (!username) {
-    return <LoginAlertCard text="view your scheduled posts" />;
+    return <LoginAlertCard text={t("loginAlert")} />;
   }
 
   const ScheduleSkeleton = () => (

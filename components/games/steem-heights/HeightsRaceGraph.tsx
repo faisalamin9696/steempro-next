@@ -5,12 +5,14 @@ import SAvatar from "@/components/ui/SAvatar";
 import SUsername from "@/components/ui/SUsername";
 import { HighScore } from "./Config";
 import { Trophy } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface Props {
   highScores: HighScore[];
 }
 
 export const HeightsRaceGraph = ({ highScores }: Props) => {
+  const t = useTranslations("Games.steemHeights.leaderboard.global.race");
   // Take top 8 for the vertical race graph to ensure they fit side-by-side
   const topClimbers = highScores.slice(0, 8);
   const maxScore =
@@ -29,10 +31,10 @@ export const HeightsRaceGraph = ({ highScores }: Props) => {
               className="text-primary-500"
               fill="currentColor"
             />
-            Summit Race
+            {t("title")}
           </h3>
           <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest leading-none">
-            Top 8 Climbers
+            {t("subtitle")}
           </p>
         </div>
 

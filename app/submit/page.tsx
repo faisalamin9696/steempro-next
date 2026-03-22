@@ -22,6 +22,8 @@ import { readingTime } from "@/utils/reading-time-estimator";
 import CommunitySelect from "@/components/community/CommunitySelect";
 import ScheduleButton from "@/components/submit/ScheduleButton";
 
+import { useTranslations } from "next-intl";
+
 const ICON_SIZE = 22;
 function SubmitPage({
   isEdit,
@@ -32,6 +34,7 @@ function SubmitPage({
   root?: Post;
   handleCancelEdit?: () => void;
 }) {
+  const t = useTranslations("Submit");
   let { ...draftData } = useDraft("post-editor");
   const [draft, setDraft] = useState(draftData.draft);
   const [scheduleTime, setScheduleTime] = useState<ZonedDateTime | null>();
@@ -124,7 +127,7 @@ function SubmitPage({
                 setTitle(title);
                 if (!isEdit) draftData.setTitle(title);
               }}
-              placeholder="Enter your post title..."
+              placeholder={t("titlePlaceholder")}
               className="text-lg"
               classNames={{
                 label: "text-muted",
@@ -208,7 +211,7 @@ function SubmitPage({
               {isEdit && (
                 <>
                   <Button variant="bordered" onPress={handleCancelEdit}>
-                    Cancel
+                    {t("cancel")}
                   </Button>
 
                   <Button
@@ -228,10 +231,10 @@ function SubmitPage({
                           root &&
                           empty_community(root?.category, root?.community),
                       });
-                      toast.success("Saved", { description: "Draft updated" });
+                      toast.success(t("saved"), { description: t("draftUpdated") });
                     }}
                   >
-                    Save Draft
+                    {t("saveDraft")}
                   </Button>
                 </>
               )}
@@ -251,15 +254,15 @@ function SubmitPage({
                 onPublished={(isSchedule) => {
                   if (isEdit) {
                     handleCancelEdit?.();
-                    toast.success("Updated");
+                    toast.success(t("updated"));
                   } else {
                     if (isSchedule) {
-                      toast.success("Post scheduled successfully!");
-                    } else toast.success("Published");
+                      toast.success(t("scheduledSuccess"));
+                    } else toast.success(t("published"));
                     clearForm();
                   }
                 }}
-                buttonTitle={isEdit ? "Update" : undefined}
+                buttonTitle={isEdit ? t("update") : undefined}
                 comment={root as Post}
                 root={root as Post}
                 isEdit={isEdit}
@@ -286,10 +289,15 @@ function SubmitPage({
       </div>
       {!isEdit && (
         <div className="flex flex-col w-full lg:max-w-[65ch] gap-2 self-start">
-          <p className="text-base font-semibold text-muted">Preview</p>
+          <p className="text-base font-semibold text-muted">{t("preview")}</p>
           <div className="flex flex-col bg-default-100 p-4 rounded-xl gap-4">
             <div className="flex flex-row gap-2 justify-end">
-              <p className="text-muted">{`${rpm.words} words, ~${rpm.text}`}</p>
+              <p className="text-muted">
+                {t.rich("readingTime", {
+                  words: rpm.words,
+                  text: rpm.text,
+                })}
+              </p>
             </div>
             <div className="flex flex-col items-center w-full">
               <MarkdownViewer body={markdown} className="w-full" />

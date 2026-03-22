@@ -17,8 +17,17 @@ import OpenOrdersTable from "@/components/market/OpenOrdersTable";
 import TradeHistoryTable from "@/components/market/TradeHistoryTable";
 import TradeForm from "@/components/market/TradeForm";
 import { useAppSelector } from "@/hooks/redux/store";
+import STabs from "@/components/ui/STabs";
+import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
+import { useTranslations } from "next-intl";
 
 export default function MarketPage() {
+  const tStats = useTranslations("Market.stats");
+  const tChart = useTranslations("Market.chart");
+  const tTabs = useTranslations("Market.tabs");
+  const tInfo = useTranslations("Market.info");
+  const tTrade = useTranslations("Market.trade");
+
   const { data: session } = useSession();
   const [selectedPrice, setSelectedPrice] = useState<number | undefined>();
   const [selectedTab, setSelectedTab] = useState("buy");
@@ -91,7 +100,7 @@ export default function MarketPage() {
               <div className="absolute top-4 left-6 flex items-center gap-2 z-10 pointer-events-none">
                 <TrendingUp size={18} className="text-primary" />
                 <span className="font-bold text-sm tracking-tight opacity-70">
-                  STEEM/SBD - 24H
+                  {tChart("pair24h")}
                 </span>
               </div>
               <MarketCandleChart data={marketHistory} />
@@ -112,7 +121,7 @@ export default function MarketPage() {
                   title={
                     <div className="flex items-center gap-2">
                       <ClipboardList size={18} />
-                      <span>Order Book</span>
+                      <span>{tTabs("orderBook")}</span>
                     </div>
                   }
                 >
@@ -128,7 +137,7 @@ export default function MarketPage() {
                   title={
                     <div className="flex items-center gap-2">
                       <Plus size={18} />
-                      <span>Open Orders</span>
+                      <span>{tTabs("openOrders")}</span>
                       {openOrders && openOrders.length > 0 && (
                         <Chip
                           size="sm"
@@ -154,7 +163,7 @@ export default function MarketPage() {
                   title={
                     <div className="flex items-center gap-2">
                       <History size={18} />
-                      <span>Trade History</span>
+                      <span>{tTabs("tradeHistory")}</span>
                     </div>
                   }
                 >
@@ -173,7 +182,7 @@ export default function MarketPage() {
           <Card className="card border border-divider bg-content1">
             <CardBody className="p-4 flex flex-col gap-3">
               <h3 className="text-sm font-bold uppercase text-default-500 tracking-wider">
-                Create Order
+                {tTrade("createOrder")}
               </h3>
               <Divider />
               <Tabs
@@ -187,7 +196,7 @@ export default function MarketPage() {
                   panel: "p-0",
                 }}
               >
-                <Tab key="buy" title="Buy">
+                <Tab key="buy" title={tTrade("buy")}>
                   <TradeForm
                     type="buy"
                     ticker={ticker}
@@ -196,7 +205,7 @@ export default function MarketPage() {
                     onSuccess={refreshAll}
                   />
                 </Tab>
-                <Tab key="sell" title="Sell">
+                <Tab key="sell" title={tTrade("sell")}>
                   <TradeForm
                     type="sell"
                     ticker={ticker}
@@ -212,20 +221,20 @@ export default function MarketPage() {
           <Card className="shadow-sm border border-divider bg-content1/50">
             <CardBody className="p-4 flex flex-col gap-3">
               <h3 className="text-sm font-bold uppercase text-default-500 tracking-wider">
-                Trading Info
+                {tInfo("title")}
               </h3>
               <Divider />
               <ul className="text-xs space-y-3 opacity-80">
                 <li className="flex justify-between">
-                  <span>Market Fee</span>
+                  <span>{tInfo("marketFee")}</span>
                   <span className="font-bold text-success">0.00%</span>
                 </li>
                 <li className="flex justify-between">
-                  <span>Order Type</span>
-                  <span className="font-bold">LImit (Default)</span>
+                  <span>{tInfo("orderType")}</span>
+                  <span className="font-bold">{tInfo("limitDefault")}</span>
                 </li>
                 <li className="flex justify-between">
-                  <span>Pair</span>
+                  <span>{tInfo("pair")}</span>
                   <span className="font-bold">STEEM / SBD</span>
                 </li>
               </ul>

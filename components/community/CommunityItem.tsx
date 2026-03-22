@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import Link from "next/link";
 import SubscribeButton from "./SubscribeButton";
+import { useTranslations } from "next-intl";
 
 interface Props {
   community: Community;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export default function CommunityItem({ community, account }: Props) {
+  const t = useTranslations("Communities");
   const { data: session } = useSession();
   const [isSubscribed, setIsSubscribed] = useState(
     Boolean(community.observer_subscribed),
@@ -35,7 +37,7 @@ export default function CommunityItem({ community, account }: Props) {
           <p className="text-xs text-muted truncate opacity-80">
             {community.about ||
               community.description ||
-              "No description available"}
+              t("noDescription")}
           </p>
 
           <div className="flex items-center gap-3 mt-1.5">
@@ -44,7 +46,7 @@ export default function CommunityItem({ community, account }: Props) {
               <span className="font-semibold">
                 {community.count_subs.toLocaleString()}
               </span>
-              <span className="opacity-70">Subscribers</span>
+              <span className="opacity-70">{t("subscribers")}</span>
             </div>
 
             <div className="flex items-center gap-1 text-[10px] sm:text-xs text-muted">

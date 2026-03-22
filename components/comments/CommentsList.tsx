@@ -22,6 +22,7 @@ import { Clock, TrendingUp, ThumbsUp } from "lucide-react";
 import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
 import { useDraft } from "@/hooks/useDraft";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 
 interface CommentsListProps {
   root: Post;
@@ -32,6 +33,7 @@ const ITEMS_PER_PAGE = 10;
 const pageCache = new Map<string, number>();
 
 const CommentsList = ({ root }: CommentsListProps) => {
+  const t = useTranslations("Post");
   let { ...draftData } = useDraft(
     `comment-editor-${root.author}-${root.permlink}`,
   );
@@ -133,7 +135,7 @@ const CommentsList = ({ root }: CommentsListProps) => {
   }
 
   if (error) {
-    return <p>Something went wrong!</p>;
+    return <p>{t("somethingWentWrong")}</p>;
   }
   // Early return for initial load
   if (isLoading && visibleItems.length === 0) {
@@ -149,7 +151,7 @@ const CommentsList = ({ root }: CommentsListProps) => {
         fullWidth
       >
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Write a Reply</h3>
+          <h3 className="text-lg font-semibold">{t("writeReply")}</h3>
 
           <div className="flex flex-col mt-2 gap-4 animate-appearance-in ">
             <MarkdownEditor
@@ -160,7 +162,7 @@ const CommentsList = ({ root }: CommentsListProps) => {
                 setMarkdown(body);
                 draftData.setBody(body);
               }}
-              placeholder="Write your comment here... Use @ to mention users"
+              placeholder={t("replyPlaceholder")}
               body={root.body}
               disabled={isPending}
               authors={
@@ -208,7 +210,7 @@ const CommentsList = ({ root }: CommentsListProps) => {
                 beneficiaries={beneficiaries}
                 payoutType={payoutType}
                 isDisabled={!markdown.trim() || isPending}
-                buttonTitle="Reply"
+                buttonTitle={t("reply")}
                 startContent={<Send size={16} />}
                 comment={root}
                 root={root}
@@ -224,13 +226,13 @@ const CommentsList = ({ root }: CommentsListProps) => {
       {error ? (
         <p>Something went wrong!</p>
       ) : isLoading && visibleItems.length === 0 ? (
-        <LoadingStatus message="Loading comments..." />
+        <LoadingStatus message={t("loadingComments")} />
       ) : (
         <div className="p-3 w-full bg-foreground/5 dark:bg-background/50 rounded-xl">
           <div className="flex flex-row items-center flex-wrap justify-between gap-2 pb-4">
             <div className="flex flex-row items-center gap-2">
               <MessageCircleMore size={24} className="text-primary" />
-              <p className="text-xl font-semibold">Comments</p>
+              <p className="text-xl font-semibold">{t("comments")}</p>
             </div>
 
             <Select
@@ -243,30 +245,30 @@ const CommentsList = ({ root }: CommentsListProps) => {
             >
               <SelectItem
                 key="newest"
-                textValue="Newest"
+                textValue={t("newest")}
                 startContent={<Clock size={16} />}
               >
-                Newest
+                {t("newest")}
               </SelectItem>
               <SelectItem
                 key="payout"
-                textValue="Payout"
+                textValue={t("sortPayout")}
                 startContent={<TrendingUp size={16} />}
               >
-                Payout
+                {t("sortPayout")}
               </SelectItem>
               <SelectItem
                 key="upvotes"
-                textValue="Upvotes"
+                textValue={t("upvotes")}
                 startContent={<ThumbsUp size={16} />}
               >
-                Upvotes
+                {t("upvotes")}
               </SelectItem>
             </Select>
           </div>
 
           {!postReplies || postReplies?.length === 0 ? (
-            <EmptyList message="Be the first to comment!" />
+            <EmptyList message={t("beFirstComment")} />
           ) : (
             <div className="infinite-list p-2">
               <div className="flex flex-col gap-6">
@@ -280,7 +282,7 @@ const CommentsList = ({ root }: CommentsListProps) => {
               {canLoadMore && (
                 <div className="flex items-center gap-4 py-4 justify-center">
                   <Spinner ref={infiniteRef} size="sm" />
-                  <span className="text-sm text-muted">Loading more...</span>
+                  <span className="text-sm text-muted">{t("loadingMore")}</span>
                 </div>
               )}
             </div>

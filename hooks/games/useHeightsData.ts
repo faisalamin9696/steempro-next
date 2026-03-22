@@ -10,6 +10,9 @@ import {
   PowerUp,
 } from "@/components/games/steem-heights/Config";
 import { useSession } from "next-auth/react";
+import { sdsApi } from "@/libs/sds";
+import { condenserApi } from "@/libs/consenser";
+import { useAppSelector } from "../redux/store";
 
 interface useHeightsDataProps {
   currentSeason: number;
@@ -39,6 +42,10 @@ export const useHeightsData = ({
     totalPlays: 0,
     totalAltitude: 0,
   });
+  const [eligibilityMap, setEligibilityMap] = useState<{
+    [key: string]: { sp: number; rep: number; eligible: boolean };
+  }>({});
+  const globalData = useAppSelector((s) => s.globalPropsReducer.value);
 
   const personalBest = useMemo(() => {
     return userStats?.highest_score || 0;
@@ -53,7 +60,40 @@ export const useHeightsData = ({
     if (!season) return;
     const topScores = await heightsDb.getHeightsHighScores(season);
     setHighScores(topScores);
-  }, []);
+
+    if (topScores.length > 0) {
+      try {
+        const players = topScores.slice(0, 100).map((s) => s.player);
+        const [accounts] = await Promise.all([
+          sdsApi.getAccountsExt(players, null, [
+            "name",
+            "reputation",
+            "vests_own",
+          ]),
+        ]);
+
+        const resultMap: {
+          [key: string]: { sp: number; rep: number; eligible: boolean };
+        } = {};
+        accounts.forEach((acc) => {
+          const sp = condenserApi.vestsToSteem(
+            acc.vests_own,  
+            globalData.total_vesting_shares,
+            globalData.total_vesting_fund_steem,
+          );
+          const rep = acc.reputation;
+          resultMap[acc.name] = {
+            sp,
+            rep,
+            eligible: rep > 40 && sp >= 50,
+          };
+        });
+        setEligibilityMap(resultMap);
+      } catch (error) {
+        console.error("Failed to fetch eligibility data:", error);
+      }
+    }
+  }, [globalData]);
 
   const fetchSeasonalWinners = useCallback(async () => {
     const winners = await heightsDb.getHeightsSeasonalWinners(
@@ -238,5 +278,6 @@ export const useHeightsData = ({
     fetchPlayerStats,
     fetchUserHistory,
     fetchSeasonalWinners,
+    eligibilityMap,
   };
 };

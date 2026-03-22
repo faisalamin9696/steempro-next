@@ -2,6 +2,7 @@
 
 import CommunityCard from "@/components/community/CommunityCard";
 import { Accordion, AccordionItem } from "@heroui/react";
+import { useTranslations } from "next-intl";
 
 function CommunityAboutSection({
   community,
@@ -10,6 +11,7 @@ function CommunityAboutSection({
   community: Community;
   account: AccountExt;
 }) {
+  const t = useTranslations("Community");
   return (
     <Accordion
       isCompact
@@ -20,7 +22,7 @@ function CommunityAboutSection({
         indicator: "text-foreground text-muted",
       }}
     >
-      <AccordionItem key="profile" aria-label="Profile details" title="About">
+      <AccordionItem key="profile" aria-label="Profile details" title={t("about")}>
         <CommunityCard
           community={community}
           account={account}

@@ -22,6 +22,7 @@ import {
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 import { ScrollShadow } from "@heroui/react";
+import { useTranslations } from "next-intl";
 
 interface Props {
   selectedSkin: Skin;
@@ -53,6 +54,7 @@ export const SkinShopTab = React.memo(
   }: Props) => {
     const isPlaying = gameState === "playing";
     const isAnySyncing = !!syncingPowerUpId || !!syncingSkinId;
+    const t = useTranslations("Games.steemHeights.leaderboard.lab");
 
     const handleAction = (skin: Skin) => {
       if (isPlaying) return;
@@ -60,7 +62,10 @@ export const SkinShopTab = React.memo(
       // Check if this skin conflicts with the currently active power-up
       if (activePowerUp?.conflicts?.includes(skin.id)) {
         toast.error(
-          `Cannot equip ${skin.name}: It conflicts with your active ${activePowerUp.name} power-up.`,
+          t("conflictToast", {
+            skin: t(`items.skins.${skin.id}.name`),
+            powerUp: t(`items.powerups.${activePowerUp.id}.name`),
+          }),
         );
         return;
       }
@@ -71,7 +76,7 @@ export const SkinShopTab = React.memo(
         onSelectSkin(skin.id);
       } else {
         if (!username) {
-          toast.error("Please login to purchase skins.");
+          toast.error(t("loginToast"));
           return;
         }
         onPurchaseSkin(skin);
@@ -103,7 +108,7 @@ export const SkinShopTab = React.memo(
           <div className="bg-amber-500/10 border border-amber-500/20 p-3 rounded-2xl flex items-center justify-center gap-2">
             <Zap size={14} className="text-amber-500 animate-pulse" />
             <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">
-              Shop Disabled During Active Climb
+              {t("disabled")}
             </span>
           </div>
         )}
@@ -114,10 +119,10 @@ export const SkinShopTab = React.memo(
             <div className="flex flex-col">
               <h3 className="text-sm font-black uppercase tracking-[0.2em] text-zinc-400 flex items-center gap-2">
                 <Zap size={14} className="text-amber-500" fill="currentColor" />
-                Power-Up Store
+                {t("powerups")}
               </h3>
               <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-1">
-                Spend energy on single-game buffs
+                {t("powerupsSub")}
               </p>
             </div>
             <motion.div
@@ -128,7 +133,6 @@ export const SkinShopTab = React.memo(
               <Zap size={14} className="text-amber-500" fill="currentColor" />
               <span className="text-xs font-black text-amber-500 tracking-tight">
                 {energy}
-                {/* <span className="text-[8px] opacity-60 ml-0.5">⚡</span> */}
               </span>
             </motion.div>
           </div>
@@ -207,7 +211,7 @@ export const SkinShopTab = React.memo(
                               : " group-hover:text-amber-500",
                         )}
                       >
-                        {pu.name}
+                        {t(`items.powerups.${pu.id}.name`)}
                       </h4>
                       <p
                         className={twMerge(
@@ -216,8 +220,10 @@ export const SkinShopTab = React.memo(
                         )}
                       >
                         {hasConflict
-                          ? POWERUP_CONFLICT_MESSAGE(selectedSkin.name)
-                          : pu.description}
+                          ? t("conflictMsg", {
+                              skin: t(`items.skins.${selectedSkin.id}.name`),
+                            })
+                          : t(`items.powerups.${pu.id}.description`)}
                       </p>
                     </div>
 
@@ -246,14 +252,14 @@ export const SkinShopTab = React.memo(
                       {isActive ? (
                         <span className="flex items-center gap-2">
                           <CheckCircle2 size={12} />
-                          READY
+                          {t("ready")}
                         </span>
                       ) : hasConflict ? (
-                        "SKIN CONFLICT"
+                        t("skinConflict")
                       ) : canAfford ? (
-                        "ACTIVATE"
+                        t("activate")
                       ) : (
-                        "INSUFFICIENT"
+                        t("insufficient")
                       )}
                     </Button>
 
@@ -280,10 +286,10 @@ export const SkinShopTab = React.memo(
           <div className="flex flex-col">
             <h3 className="text-sm font-black uppercase tracking-[0.2em] text-zinc-400 flex items-center gap-2">
               <ShoppingBag size={14} className="text-primary" />
-              Seasonal Skins
+              {t("skins")}
             </h3>
             <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-1">
-              Equip blocks with unique styles & abilities
+              {t("skinsSub")}
             </p>
           </div>
         </div>
@@ -312,7 +318,7 @@ export const SkinShopTab = React.memo(
                 {isSelected && (
                   <div className="absolute top-0 right-0 overflow-hidden w-24 h-24 pointer-events-none z-20">
                     <div className="absolute top-4 -right-8 bg-amber-500 text-black text-[8px] font-black uppercase tracking-tighter py-1.5 px-10 rotate-45 shadow-lg border-b border-black/10">
-                      ACTIVE
+                      {t("active")}
                     </div>
                   </div>
                 )}
@@ -338,7 +344,7 @@ export const SkinShopTab = React.memo(
 
                   <div className="flex flex-col items-end">
                     <span className="text-[8px] font-black text-zinc-500 uppercase tracking-[0.2em] mb-1.5">
-                      Core Ability
+                      {t("ability")}
                     </span>
                     <span
                       className={`px-3 py-1.5 rounded-xl text-[10px] font-black italic border transition-colors ${
@@ -347,7 +353,7 @@ export const SkinShopTab = React.memo(
                           : "bg-zinc-500/10 border-zinc-500/20 text-zinc-500 dark:text-zinc-400 group-hover:border-zinc-500/40"
                       }`}
                     >
-                      {skin.ability}
+                      {t(`items.skins.${skin.id}.ability`)}
                     </span>
                   </div>
                 </div>
@@ -359,25 +365,25 @@ export const SkinShopTab = React.memo(
                       isSelected ? "text-white" : "",
                     )}
                   >
-                    {skin.name}
+                    {t(`items.skins.${skin.id}.name`)}
                   </h4>
                   <p className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">
-                    {skin.description}
+                    {t(`items.skins.${skin.id}.description`)}
                   </p>
                 </div>
 
                 <div className="flex items-center justify-between mt-auto pt-5 border-t border-black/5 dark:border-white/5">
                   <div className="flex flex-col">
                     <span className="text-[8px] font-black text-zinc-400 dark:text-zinc-600 uppercase tracking-[0.2em] leading-none mb-2">
-                      Unlock Cost
+                      {t("cost")}
                     </span>
                     <div className="flex items-baseline gap-1.5">
                       <span className="text-xl font-black tracking-tighter">
-                        {isOwned ? "OWNED" : skin.price}
+                        {isOwned ? t("owned") : skin.price}
                       </span>
                       {!isOwned && skin.price > 0 && (
                         <span className="text-[10px] font-black text-zinc-400 uppercase">
-                          ENERGY
+                          {t("energy")}
                         </span>
                       )}
                     </div>
@@ -403,7 +409,7 @@ export const SkinShopTab = React.memo(
                             : "bg-zinc-800 text-zinc-600 cursor-not-allowed"
                     }`}
                   >
-                    {isSelected ? "EQUIPPED" : isOwned ? "SELECT" : "PURCHASE"}
+                    {isSelected ? t("equipped") : isOwned ? t("select") : t("purchase")}
                   </Button>
                 </div>
               </motion.div>
@@ -413,13 +419,12 @@ export const SkinShopTab = React.memo(
 
         <div className="p-4 bg-zinc-300/50 dark:bg-zinc-900/50 border border-white/5 rounded-2xl">
           <p className="text-[9px] text-zinc-500 font-medium text-center italic leading-relaxed">
-            * Skins and Power-ups are seasonal perks designed to enhance your
-            climb.
+            {t("footnote")}
             <br />
             <span className="text-amber-500/80 font-bold uppercase tracking-tighter">
-              Note:
+              {t("footnoteNote")}
             </span>{" "}
-            Temporary power-ups last for one game session only.
+            {t("footnoteSub")}
           </p>
         </div>
       </div>

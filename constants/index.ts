@@ -3,7 +3,7 @@ export const Constants = {
   funds_account: "steempro.funds",
   official_community: "hive-160125",
 
-  site_url: "https://steempro.com",
+  site_url: "https://www.steempro.com",
   sds_url: "https://sds0.steemworld.org",
   steemit_url: "https://steemit.com",
   signup_link: "https://signup.steemit.com/",

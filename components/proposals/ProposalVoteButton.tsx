@@ -5,6 +5,7 @@ import { sdsApi } from "@/libs/sds";
 import SPopover from "../ui/SPopover";
 import { Button } from "@heroui/button";
 import { Vote } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function ProposalVoteButton({
   proposal,
@@ -15,6 +16,7 @@ export default function ProposalVoteButton({
   handleVote: (proposal: Proposal, approve: boolean) => void;
   isPending: boolean;
 }) {
+  const t = useTranslations("Proposals");
   const { data: session } = useSession();
   const [isVoted, setIsVoted] = useState(false);
 
@@ -34,30 +36,24 @@ export default function ProposalVoteButton({
 
   return (
     <SPopover
-      title={
-        isVoted
-          ? `Unvote proposal #${proposal.id}?`
-          : `Vote proposal #${proposal.id}?`
-      }
-      description={`Do you want to ${
-        isVoted ? "unvote" : "vote"
-      } this proposal?`}
+      title={t(isVoted ? "actions.unvoteTitle" : "actions.voteTitle", { id: proposal.id })}
+      description={t(isVoted ? "actions.unvoteDesc" : "actions.voteDesc")}
       trigger={
         <Button
           variant="flat"
           size="sm"
           color={isVoted ? "danger" : "primary"}
-          startContent={!isPending && <Vote />}
+          startContent={!isPending && <Vote size={18} />}
           isLoading={isPending}
         >
-          {isVoted ? "Unvote" : "Vote"}
+          {t(isVoted ? "actions.unvote" : "actions.vote")}
         </Button>
       }
     >
       {(onClose) => (
         <div className="flex flex-row gap-2 self-end">
           <Button variant="flat" onPress={onClose}>
-            Cancel
+            {t("actions.cancel")}
           </Button>
           <Button
             color={isVoted ? "danger" : "primary"}
@@ -66,7 +62,7 @@ export default function ProposalVoteButton({
               handleVote(proposal, !isVoted);
             }}
           >
-            {isVoted ? "Unvote" : "Vote"}
+            {t(isVoted ? "actions.unvote" : "actions.vote")}
           </Button>
         </div>
       )}

@@ -19,6 +19,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
 import { CircleSlash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function PostPage({
   initAuthor,
@@ -29,6 +30,7 @@ export default function PostPage({
   initPermlink?: string;
   data: Post;
 }) {
+  const t = useTranslations("Post");
   let { author, permlink } = useParams() as {
     author: string;
     permlink: string;
@@ -121,8 +123,8 @@ export default function PostPage({
       <div className="flex flex-col items-center">
         <Alert
           className="max-w-lg"
-          title="Post not found"
-          description="The post you are looking for does not exist or has been deleted."
+          title={t("notFound")}
+          description={t("notFoundDescription")}
           color="danger"
           variant="faded"
         />
@@ -147,8 +149,8 @@ export default function PostPage({
               <Alert
                 color="warning"
                 variant="faded"
-                title="This post is muted"
-                description="This post has been muted by a community moderator."
+                title={t("muted")}
+                description={t("mutedDescription")}
                 icon={
                   <div>
                     <CircleSlash2 size={24} />
@@ -162,7 +164,7 @@ export default function PostPage({
               <Card className="card flex flex-col gap-3 px-4 py-2 rounded-lg w-full">
                 <div className="flex flex-col gap-1">
                   <p className="text-sm text-muted">
-                    You are viewing a single comment’s thread from:
+                    {t("viewingSingleComment")}
                   </p>
 
                   <span className="text-lg font-semibold">
@@ -176,13 +178,13 @@ export default function PostPage({
 
                 <div className="flex flex-col gap-1 text-sm">
                   <ThreadLink
-                    label="View the full context"
+                    label={t("viewFullContext")}
                     href={`/@${commentData.root_author}/${commentData.root_permlink}`}
                   />
 
                   {(commentData.depth ?? 0) >= 2 && (
                     <ThreadLink
-                      label="View the direct parent"
+                      label={t("viewDirectParent")}
                       href={`/@${commentData.parent_author}/${commentData.parent_permlink}`}
                     />
                   )}

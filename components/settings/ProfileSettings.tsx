@@ -27,13 +27,16 @@ import SCard from "../ui/SCard";
 import LoginAlertCard from "../ui/LoginAlertCard";
 import { resetCachedAvatarUrl } from "@/utils/avatarCache";
 
+import { useTranslations } from "next-intl";
+
 const ProfileSettings = ({ className }: { className?: string }) => {
+  const t = useTranslations("Profile.settings");
   const { data: session } = useSession();
   const dispatch = useAppDispatch();
   const loginData = useAppSelector((state) => state.loginReducer.value);
 
   if (!loginData.name) {
-    return <LoginAlertCard text="view profile settings" />;
+    return <LoginAlertCard text={t("loginAlert")} />;
   }
 
   const { authenticateOperation } = useAccountsContext();
@@ -83,7 +86,9 @@ const ProfileSettings = ({ className }: { className?: string }) => {
     if (!file || !session?.user?.name) return;
 
     const toastId = toast.loading(
-      `Uploading ${type === "profile_image" ? "avatar" : "cover"}...`,
+      t("visual.uploading", {
+        type: type === "profile_image" ? t("visual.avatar") : t("visual.cover"),
+      }),
     );
 
     try {
@@ -112,12 +117,12 @@ const ProfileSettings = ({ className }: { className?: string }) => {
 
       if (uploadResult) {
         handleChange(type, uploadResult);
-        toast.success("Image uploaded successfully!", { id: toastId });
+        toast.success(t("messages.uploadSuccess"), { id: toastId });
       } else {
         throw new Error("Upload failed");
       }
     } catch (error: any) {
-      toast.error(error?.message || "Upload failed", { id: toastId });
+      toast.error(error?.message || t("messages.uploadFailed"), { id: toastId });
     } finally {
       setUploadProgress((prev) => ({
         ...prev,
@@ -147,7 +152,7 @@ const ProfileSettings = ({ className }: { className?: string }) => {
         updatedAccount.posting_json_metadata = JSON.stringify(metadata);
 
         dispatch(addLoginHandler(updatedAccount));
-        toast.success("Profile updated on the blockchain!");
+        toast.success(t("messages.updateSuccess"));
         resetCachedAvatarUrl(session?.user?.name!, formData.profile_image);
       });
     } catch (error) {
@@ -162,24 +167,24 @@ const ProfileSettings = ({ className }: { className?: string }) => {
       {/* Basic Info */}
       <SCard
         className="card"
-        title="Basic Information"
+        title={t("basicInfo.title")}
         icon={User}
         iconColor="primary"
-        description="Public profile details displayed to other users"
+        description={t("basicInfo.description")}
         iconSize="sm"
       >
         <div className="space-y-4">
           <Input
-            label="Display Name"
-            placeholder="e.g. Faisal Amin"
+            label={t("basicInfo.displayName")}
+            placeholder={t("basicInfo.displayNamePlaceholder")}
             value={formData.name}
             onValueChange={(val) => handleChange("name", val)}
             variant="faded"
             startContent={<User size={18} className="text-default-400" />}
           />
           <Textarea
-            label="About"
-            placeholder="Tell the community about yourself"
+            label={t("basicInfo.about")}
+            placeholder={t("basicInfo.aboutPlaceholder")}
             value={formData.about}
             onValueChange={(val) => handleChange("about", val)}
             variant="faded"
@@ -188,16 +193,16 @@ const ProfileSettings = ({ className }: { className?: string }) => {
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Input
-              label="Location"
-              placeholder="e.g. New York, USA"
+              label={t("basicInfo.location")}
+              placeholder={t("basicInfo.locationPlaceholder")}
               value={formData.location}
               onValueChange={(val) => handleChange("location", val)}
               variant="faded"
               startContent={<MapPin size={18} className="text-default-400" />}
             />
             <Input
-              label="Website"
-              placeholder="https://example.com"
+              label={t("basicInfo.website")}
+              placeholder={t("basicInfo.websitePlaceholder")}
               value={formData.website}
               onValueChange={(val) => handleChange("website", val)}
               variant="faded"
@@ -211,10 +216,10 @@ const ProfileSettings = ({ className }: { className?: string }) => {
       <SCard
         className="card"
         icon={ImageIcon}
-        title="Visual Identity"
+        title={t("visual.title")}
         iconSize="sm"
         iconColor="secondary"
-        description="Customize your avatar and cover images"
+        description={t("visual.description")}
       >
         <div className="flex flex-col sm:flex-row gap-4 items-center sm:items-start space-y-4">
           <div className="flex flex-col items-center gap-2 shrink-0">
@@ -225,17 +230,17 @@ const ProfileSettings = ({ className }: { className?: string }) => {
               radius="md"
             />
             <p className="text-[10px] text-default-500 uppercase font-black tracking-widest">
-              Preview
+              {t("visual.preview")}
             </p>
           </div>
           <div className="flex-1 w-full space-y-3">
             <Input
-              label="Profile Image"
+              label={t("visual.profileImage")}
               placeholder="https://..."
               value={formData.profile_image}
               onValueChange={(val) => handleChange("profile_image", val)}
               variant="faded"
-              description="Square recommended"
+              description={t("visual.profileImageDesc")}
               classNames={{ description: "text-muted text-[10px]" }}
               endContent={
                 <ImageUploadButton
@@ -250,12 +255,12 @@ const ProfileSettings = ({ className }: { className?: string }) => {
               }
             />
             <Input
-              label="Cover Image"
+              label={t("visual.coverImage")}
               placeholder="https://..."
               value={formData.cover_image ?? ""}
               onValueChange={(val) => handleChange("cover_image", val)}
               variant="faded"
-              description="1200x300 recommended"
+              description={t("visual.coverImageDesc")}
               classNames={{ description: "text-muted text-[10px]" }}
               endContent={
                 <ImageUploadButton
@@ -282,7 +287,7 @@ const ProfileSettings = ({ className }: { className?: string }) => {
           onPress={handleSave}
           isLoading={isLoading}
         >
-          Save Profile
+          {t("actions.save")}
         </Button>
       </div>
     </div>

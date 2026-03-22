@@ -1,0 +1,1334 @@
+{
+  "General": {
+    "network": {
+      "title": " RPC نیٹ ورک اور",
+      "description": "Steem blockchain سے اپنا کنکشن ترتیب دیں",
+      "autoSelection": "خودکار انتخاب",
+      "autoSelectionDesc": "بہترین دستیاب نوڈ خود بخود منتخب کریں",
+      "rpcNode": "RPC نوڈ",
+      "placeholder": "RPC سرور منتخب کریں",
+      "rpcNodeDesc": "ہائی پرفارمنس نوڈز بہتر تجربہ فراہم کرتے ہیں",
+      "autoFailover": "خودکار (Failover)"
+    },
+    "media": {
+      "title": "میڈیا اور مواد",
+      "description": "تصویر ہوسٹنگ اور مواد کی ترجیحات منظم کریں",
+      "imageServer": "تصویر سرور",
+      "imageServerPlaceholder": "تصویر ہوسٹنگ منتخب کریں",
+      "nsfwLabel": "NSFW مواد",
+      "nsfwPlaceholder": "اپنی ترجیح مقرر کریں",
+      "nsfwAlwaysShow": "ہمیشہ دکھائیں",
+      "nsfwAlwaysHide": "ہمیشہ چھپائیں",
+      "nsfwAlwaysWarn": "ہمیشہ خبردار کریں"
+    },
+    "language": {
+      "title": "زبان",
+      "description": "اپنی پسندیدہ زبان منتخب کریں",
+      "select": "زبان چنیں"
+    },
+    "interface": {
+      "title": "انٹرفیس ترجیحات",
+      "description": "اپنا دیکھنے کا تجربہ اپنی مرضی کے مطابق بنائیں",
+      "theme": "تھیم",
+      "themeDesc": "اپنا تھیم مقرر کریں",
+      "themeSystem": "سسٹم",
+      "themeLight": "روشن",
+      "themeDark": "تاریک",
+      "feedStyle": "فیڈ کا انداز",
+      "feedStyleDesc": "ڈسپلے موڈ",
+      "feedStyleList": "فہرست",
+      "feedStyleBlog": "بلاگ",
+      "feedStyleGrid": "گرڈ",
+      "vote": "ووٹ یاد رکھیں",
+      "voteDesc": "آخری وزن استعمال کریں",
+      "defaultVote": "ڈیفالٹ ووٹ %"
+    }
+  },
+  "Common": {
+    "home": "ہوم",
+    "settings": "ترتیبات",
+    "profile": "پروفائل",
+    "loginTo": "{action} کے لیے براہ کرم لاگ ان کریں۔",
+    "security": "سیکیورٹی",
+    "about": "ہمارے بارے میں",
+    "logout": "لاگ آؤٹ",
+    "login": "لاگ ان",
+    "keychain": "کیچین",
+    "privateKey": "نجی کلیدی"
+  },
+  "Home": {
+    "tabs": {
+      "trending": "ٹرینڈنگ",
+      "popular": "مقبول",
+      "recent": "حالیہ",
+      "hot": "گرم",
+      "payout": "ادائیگی"
+    }
+  },
+  "Communities": {
+    "title": "کمیونٹیز",
+    "headerDesc": "Steem پر متحرک کمیونٹیز دریافت کریں اور ان میں شامل ہوں۔ اپنی سبسکرپشنز منظم کریں اور جو آپ کے لیے اہم ہو اس سے باخبر رہیں۔",
+    "searchPlaceholder": "عنوان یا اکاؤنٹ سے تلاش کریں...",
+    "showOnlySubscribed": "صرف سبسکرائب کردہ کمیونٹیز دکھائیں",
+    "noDescription": "کوئی تفصیل دستیاب نہیں",
+    "subscribers": "سبسکرائبرز",
+    "subscribe": "سبسکرائب کریں",
+    "leave": "چھوڑیں",
+    "leftSuccess": "کمیونٹی چھوڑ دی",
+    "subscribeSuccess": "کامیابی سے سبسکرائب ہو گئے"
+  },
+  "Community": {
+    "created": "بنایا گیا",
+    "pendingReward": "زیر التوا انعام",
+    "rank": "درجہ",
+    "members": "اراکین",
+    "active": "فعال",
+    "leadership": "قیادت",
+    "rules": "قواعد",
+    "about": "بارے میں",
+    "more": "مزید",
+    "user": "صارف",
+    "role": "کردار",
+    "activities": "سرگرمیاں"
+  },
+  "About": {
+    "hero": {
+      "subtitle": "آپ کی آواز کو طاقت دیں",
+      "description": "Steem blockchain کی طاقت سے چلنے والا سوشل نیٹ ورک تجربہ کریں۔ ٹرینڈنگ گفتگو دریافت کریں اور ایک حقیقی وکندریقرت پلیٹ فارم پر اپنا منفرد نقطہ نظر شیئر کریں۔",
+      "getStarted": "شروع کریں",
+      "viewGithub": "Github دیکھیں"
+    },
+    "mission": {
+      "title": "ہمارا مقصد",
+      "description": "SteemPro کا مقصد پیچیدہ blockchain ٹیکنالوجی اور روزمرہ سماجی تعامل کے درمیان فاصلہ ختم کرنا ہے۔ ہم یقین رکھتے ہیں کہ صارفین کو Steem ماحولیاتی نظام کے ساتھ بات چیت کرنے کے لیے ایک ہموار، تیز اور محفوظ انٹرفیس فراہم کیا جائے۔",
+      "secureTitle": "محفوظ",
+      "secureDesc": "Blockchain سطح کی سیکیورٹی",
+      "fastTitle": "تیز",
+      "fastDesc": "بہتر پرفارمنس"
+    },
+    "features": {
+      "title": "طاقتور خصوصیات",
+      "subtitle": "نئے آنے والوں اور blockchain کے شائقین دونوں کے لیے ڈیزائن کیا گیا۔",
+      "feature1Title": "عالمی رسائی",
+      "feature1Desc": "سنسرشپ سے پاک نیٹ ورک پر دنیا بھر کے صارفین سے جڑیں۔",
+      "feature2Title": "SDS سے چلتا ہے",
+      "feature2Desc": "Steem Data Service سے چلنے والی انتہائی تیز ڈیٹا لوڈنگ۔",
+      "feature3Title": "وکندریقرت",
+      "feature3Desc": "آپ کا اکاؤنٹ، آپ کی چابیاں، اور آپ کا مواد آپ کا ہے۔",
+      "feature4Title": "کمیونٹی کی تعمیر",
+      "feature4Desc": "کمیونٹی کے لیے، کمیونٹی کے ذریعے بنایا گیا۔"
+    },
+    "team": {
+      "title": "ٹیم",
+      "subtitle": "SteemPro کے پیچھے کے ذہنوں سے ملیں۔"
+    },
+    "cta": {
+      "title": "سوشل میڈیا کے مستقبل میں شامل ہوں",
+      "description": "ایک وکندریقرت دنیا کا حصہ بنیں جہاں آپ کا مواد آپ کا ہے اور آپ کی آواز اہمیت رکھتی ہے۔",
+      "discord": "Discord",
+      "email": "ای میل کریں"
+    }
+  },
+  "Explorer": {
+    "title": "Blockchain ایکسپلورر",
+    "description": "Steem blockchain کا ریئل ٹائم ڈیٹا، بلاکس، ٹرانزیکشنز اور چین کے اعداد و شمار",
+    "tabs": {
+      "overview": "جائزہ",
+      "blocks": "بلاکس",
+      "transactions": "ٹرانزیکشنز",
+      "accounts": "اکاؤنٹس"
+    },
+    "recentBlocks": "حالیہ بلاکس"
+  },
+  "Market": {
+    "title": "مارکیٹ",
+    "description": "STEEM کو SBD کے ساتھ فوری طور پر ٹریڈ کریں",
+    "stats": {
+      "lastPrice": "آخری قیمت",
+      "change24h": "24 گھنٹے کی تبدیلی",
+      "high24h": "24 گھنٹے کی بلند ترین",
+      "low24h": "24 گھنٹے کی کم ترین",
+      "volumeSteem": "24 گھنٹے کا حجم (STEEM)",
+      "volumeSbd": "24 گھنٹے کا حجم (SBD)"
+    },
+    "chart": {
+      "pair24h": "STEEM/SBD - 24 گھنٹے"
+    },
+    "tabs": {
+      "orderBook": "آرڈر بک",
+      "openOrders": "کھلے آرڈرز",
+      "tradeHistory": "تجارت کی تاریخ"
+    },
+    "orderBook": {
+      "priceSbd": "قیمت (SBD)",
+      "steem": "STEEM",
+      "sbd": "SBD"
+    },
+    "openOrders": {
+      "noOrders": "کوئی کھلا آرڈر نہیں",
+      "type": "قسم",
+      "price": "قیمت",
+      "steem": "STEEM",
+      "sbd": "SBD",
+      "action": "عمل",
+      "orderCancelled": "آرڈر منسوخ کر دیا گیا",
+      "failedToCancel": "آرڈر منسوخ کرنے میں ناکامی"
+    },
+    "history": {
+      "date": "تاریخ",
+      "price": "قیمت",
+      "steem": "STEEM"
+    },
+    "trade": {
+      "buy": "خریدیں",
+      "sell": "بیچیں",
+      "buySteem": "STEEM خریدیں",
+      "sellSteem": "STEEM بیچیں",
+      "available": "دستیاب",
+      "price": "قیمت",
+      "amount": "مقدار",
+      "total": "کل",
+      "createOrder": "آرڈر بنائیں",
+      "orderCreated": "آرڈر کامیابی سے بنا دیا گیا",
+      "failedToCreate": "آرڈر بنانے میں ناکامی"
+    },
+    "info": {
+      "title": "تجارتی معلومات",
+      "marketFee": "مارکیٹ فیس",
+      "orderType": "آرڈر کی قسم",
+      "limitDefault": "Limit (ڈیفالٹ)",
+      "pair": "جوڑا"
+    }
+  },
+  "Games": {
+    "title": "گیمز",
+    "landing": {
+      "gamingZone": "SteemPro گیمنگ زون",
+      "heroTitle": "کھیلیں۔ مقابلہ کریں۔ <earn>کمائیں۔</earn>",
+      "heroDescription": "blockchain گیمنگ کی بہترین منزل میں خوش آمدید۔ اپنی صلاحیتوں کو آزمائیں، لیڈربورڈ پر چڑھیں، اور Steem ماحولیاتی نظام میں انعامات جیتیں۔",
+      "allGames": "تمام گیمز",
+      "noGamesFound": "کوئی گیم نہیں ملی",
+      "noGamesDescription": "ہم اس زمرے کے لیے نئے عنوانات تیار کر رہے ہیں۔ نظر رکھیں!",
+      "resetFilter": "فلٹر ری سیٹ کریں",
+      "ecosystemFavorites": "ماحولیاتی نظام کے پسندیدہ",
+      "communityTitles": "کمیونٹی {titles}",
+      "communityTitlesHighlight": "عنوانات",
+      "communityDescription": "Steem کمیونٹی اور پارٹنر اسٹوڈیوز کی تیار کردہ شاندار گیمز دریافت کریں۔",
+      "yourGameHere": "آپ کی گیم یہاں؟",
+      "buildYourOwn": "اپنی گیم بنائیں اور اسے SteemPro گیمنگ زون پر دکھائیں۔",
+      "fairPlay": "منصفانہ کھیل اور انعامات",
+      "immutableScores": "ناقابلِ تبدیل {scores}",
+      "immutableScoresHighlight": "اسکورز",
+      "fairPlayDescription": "تمام ہائی اسکورز اور گیم کی کامیابیاں براہ راست Steem blockchain پر درج ہوتی ہیں۔ یہ شفافیت، ناقابلِ تبدیلی اور مہارت کا ثبوت یقینی بناتا ہے۔ اعلیٰ کارکردگی دکھانے والے SteemPro کمیونٹی کے منتخب انعامات کے اہل ہیں۔",
+      "transparent": "شفاف",
+      "verifiedOnChain": "چین پر تصدیق شدہ",
+      "rewarding": "انعام بخش",
+      "communityDriven": "کمیونٹی کی طرف سے چلایا گیا"
+    },
+    "card": {
+      "native": "نیٹو",
+      "hot": "گرم",
+      "chain": "چین",
+      "enterGame": "گیم میں داخل ہوں",
+      "studio": "اسٹوڈیو",
+      "difficulty": "مشکل",
+      "rewards": "انعامات",
+      "launchWebsite": "ویب سائٹ کھولیں"
+    },
+    "developerTemplate": {
+      "viewTemplate": "ٹیمپلیٹ دیکھیں",
+      "title": "ڈویلپر انٹیگریشن ٹیمپلیٹ",
+      "close": "بند کریں",
+      "getStarted": "شروع کریں",
+      "description": "اس ڈیٹا ڈھانچے کی پیروی کرکے اپنی گیم ماحولیاتی نظام میں شامل کریں۔ لسٹ ہونے کے لیے اپنی PR جمع کریں یا ٹیم سے رابطہ کریں۔",
+      "thumbnail": "تھمب نیل",
+      "thumbnailRecommended": "تجویز کردہ: 800x1200px (پورٹریٹ)",
+      "integration": "انٹیگریشن",
+      "integrationLevels": "لیول 1 (لنک) یا لیول 2 (ہوسٹڈ)"
+    },
+    "steemHeights": {
+      "title": "Steem Heights",
+      "info": {
+        "skillCompetition": "ہنر کا مقابلہ",
+        "noActiveSeason": "کوئی فعال سیزن نہیں",
+        "season": "سیزن {season}",
+        "seasonEnded": "سیزن ختم ہو گیا",
+        "pool": "{amount} {symbol} پول",
+        "description": "مکمل توجہ کے ساتھ افق تک چڑھیں۔ ریکارڈ توڑ بلندیوں تک پہنچنے کے لیے ہر بلاک کو درستگی سے سیدھ کریں۔ اس چڑھائی میں، توجہ آپ کی سب سے بڑی طاقت ہے۔",
+        "handbook": "کلائمبر کی ہینڈبک",
+        "viewLeaderboard": "لیڈربورڈ دیکھیں"
+      },
+      "leaderboard": {
+        "tabs": {
+          "global": "عالمی چوٹی",
+          "daily": "روزانہ چیلنجز",
+          "history": "میرے نتائج",
+          "winners": "سیزنل ہال",
+          "lab": "کسٹمائزیشن لیب"
+        },
+        "global": {
+          "summit": "سیزن {season} کی چوٹی",
+          "hall": "عالمی سمٹ ہال",
+          "totalClimbers": "کل کلائمبرز",
+          "active24h": "فعال (24 گھنٹے)",
+          "totalAscent": "کل چڑھائی",
+          "avgAltitude": "اوسط بلندی",
+          "intermission": "سیزن وقفہ",
+          "concluded": "سیزن {season} کی چڑھائی مکمل ہو گئی۔ حتمی بلندی کے ریکارڈ اب مقفل ہیں۔",
+          "preparing": "ابھی کوئی فعال چڑھائی نہیں چل رہی۔ ہم اگلی بڑی بلندی کی تیاری کر رہے ہیں، اپنی توجہ تیار رکھیں!",
+          "beFirst": "اونچائیوں کو سر کرنے والے پہلے بنیں!",
+          "noMore": "اس رینج میں مزید کوہ پیما نہیں ہیں۔",
+          "unqualifiedClimbers": "نااہل کوہ پیما",
+          "onlyQualified": "صرف اہل",
+          "table": {
+            "player": "کھلاڑی",
+            "performance": "کارکردگی"
+          },
+          "plays": "کھیل",
+          "combos": "کومبوز",
+          "you": "آپ",
+          "race": {
+            "title": "سمٹ ریس",
+            "subtitle": "سرفہرست 8 کلائمبرز"
+          },
+          "goal": {
+            "title": "کمیونٹی کا مشترکہ ہدف",
+            "currentPool": "موجودہ سیزنل بونس پول",
+            "maxCapability": "زیادہ سے زیادہ صلاحیت",
+            "invite": "دوستوں کو مدعو کریں",
+            "totalProgress": "کل پیشرفت",
+            "targeting": "{altitude}m کا ہدف",
+            "boost": "+{reward} {symbol} بوسٹ",
+            "baseStart": "بیس آغاز: {altitude}m",
+            "maxGoal": "زیادہ سے زیادہ ہدف: {altitude}m",
+            "milestones": "انعامی سنگِ میل",
+            "tooltip": "کمیونٹی انعامات تمام کھلاڑیوں کی مجموعی بلندی سے حساب کیے جاتے ہیں۔ {baseAltitude}m سے آگے ہر {stepSize}m پول میں {boost} {symbol} کا اضافہ کرتا ہے۔",
+            "modal": {
+              "title": "<climbers>کلائمبرز</climbers> کو مدعو کریں",
+              "subtitle": "کمیونٹی ہدف توڑنے میں مدد کریں",
+              "markdown": "دعوتی Markdown",
+              "info": "یہ markdown کاپی کریں اور دوستوں کو مدعو کرنے کے لیے اپنی اگلی پوسٹ یا تبصرے میں چسپاں کریں۔ زیادہ مجموعی بلندی کا مطلب سب کے لیے بڑے انعامات!",
+              "close": "بند کریں"
+            }
+          }
+        },
+        "daily": {
+          "operations": "روزانہ آپریشنز",
+          "tactical": "حکمت عملی کے {challenges}",
+          "description": "لیبارٹری کے لیے توانائی کے ذخائر جمع کرنے کے لیے روزانہ اپنی حدود کو آزمائیں۔",
+          "challenges": {
+            "daily_ascent": {
+              "title": "بیس کیمپ",
+              "description": "آج 200m کل چڑھیں"
+            },
+            "daily_ascent_pro": {
+              "title": "ایپیکس پریڈیٹر",
+              "description": "آج 1000m کل چڑھیں"
+            },
+            "daily_combos": {
+              "title": "درستگی کا ماہر",
+              "description": "ایک دن میں کل 10 کومبو لگائیں"
+            },
+            "daily_plays": {
+              "title": "ثابت قدم کلائمبر",
+              "description": "آج 6 گیمز مکمل کریں"
+            }
+          },
+          "energyReserves": "توانائی کے ذخائر",
+          "nrg": "nrg",
+          "claimed": "حاصل کر لیا",
+          "ready": "تیار",
+          "progress": "پیشرفت",
+          "reward": "انعام",
+          "missionCompleted": "مشن مکمل",
+          "processing": "پروسیسنگ...",
+          "claimReward": "انعام حاصل کریں",
+          "inProgress": "جاری ہے",
+          "inactive": "روزانہ چیلنجز غیر فعال ہیں",
+          "inactiveDescription": "چیلنجز اور توانائی کے انعامات صرف فعال سیزن کے دوران دستیاب ہوتے ہیں۔ اگلی چڑھائی کا انتظار کریں!",
+          "resetNotice": "سیزن ری سیٹ نوٹس",
+          "resetDescription": "توانائی سیزن کے ساتھ مخصوص ہے۔ سیزن {season} کا آپ کا بیلنس سیزن ختم ہونے پر ری سیٹ ہو جائے گا تاکہ تمام مقابلہ کاروں کے لیے تازہ آغاز یقینی ہو۔"
+        },
+        "history": {
+          "summary": "ذاتی اعداد و شمار کا خلاصہ",
+          "totalPlays": "کل کھیل",
+          "bestAltitude": "بہترین بلندی",
+          "avgAltitude": "اوسط بلندی",
+          "totalCombos": "کل کومبوز",
+          "estReward": "سیزنل انعام کا تخمینہ",
+          "keepClimbing": "چڑھتے رہیں! اہل ہونے کے لیے {minAlt}m بلندی حاصل کریں یا 10m+ بلندی کے ساتھ {minPlays} کھیل کھیلیں۔",
+          "breakIntoTop": "آپ اہل ہیں! اب پول میں اپنا حصہ یقینی بنانے کے لیے سرفہرست {ranking} میں آئیں۔",
+          "qualified": "آپ اہل ہیں اور کما رہے ہیں!",
+          "records": "ذاتی ریکارڈز",
+          "publish": {
+            "title": "اپنا سفر شیئر کریں",
+            "subtitle": "اپنی روزانہ کی سرگرمی Steem پر شائع کریں",
+            "successTitle": "شائع ہو گیا!",
+            "successDesc": "آپ کی چڑھائی Steem blockchain پر ہمیشہ کے لیے محفوظ ہو گئی۔ شاباش!",
+            "statsTitle": "پیش نظارہ اعداد و شمار",
+            "totalPlays": "کل سیشنز",
+            "peakAltitude": "بلند ترین بلندی",
+            "estTotal": "تخمینی کل",
+            "supportTitle": "چڑھائی کو سہارا دینا",
+            "supportDesc": "اپنا سفر شائع کرکے آپ نہ صرف اعداد و شمار شیئر کر رہے ہیں بلکہ پلیٹ فارم کو ایندھن دے رہے ہیں! مل کر، ہم <steempro>SteemPro</steempro> کی مدد کے لیے <pro>10%</pro> دیتے ہیں اور <eco>Steem Ecosystem</eco> کے لیے <burn>5%</burn> جلاتے ہیں۔ آپ کی چڑھائی سب کی ترقی میں مدد کرتی ہے!",
+            "selectCommunity": "کمیونٹی منتخب کریں",
+            "postTitle": "پوسٹ کا عنوان",
+            "postContent": "پوسٹ کا مواد (Markdown)",
+            "descPlaceholder": "اپنی چڑھائی بیان کریں...",
+            "publishBtn": "Steem پر شائع کریں",
+            "btnLabel": "سرگرمی شائع کریں",
+            "defaultTitle": "Steem Heights پر میرا سیزنل سفر - {date}",
+            "defaultBody": "![steem-heights.png](https://cdn.steemitimages.com/DQmTmKQbDgzjQnB4CFCMLemNa1hmo5bBt5C56GR9CtArCYN/steem-heights.png)\n\n# Steem Heights پر میرا سیزنل سفر 🏔️\n\nمیں چوٹیوں پر چڑھ رہا ہوں! یہ ہے میری مجموعی پیشرفت:\n\n- 🚀 **کل سیشنز**: {plays}\n- 🏔️ **ذاتی بہترین**: {peak}m\n- ☁️ **مجموعی بلندی**: {altitude}m (تخمینی)\n- 🎯 **کل کومبوز**: {combos}\n- 📈 **اوسط بلندی**: {avg}m\n\nکیا آپ میرا اسکور پیٹ سکتے ہیں؟ Steem Heights پر چڑھائی میں شامل ہوں!\n\n[Steem Heights کھیلیں](https://www.steempro.com/games/steem-heights)\n\n#steemheights #gaming #steempro #play2earn",
+            "close": "بند کریں",
+            "cancel": "منسوخ کریں"
+          },
+          "altitude": "بلندی",
+          "combos": "کومبوز",
+          "best": "بہترین",
+          "noRecords": "سیزن {season} کے لیے کوئی ریکارڈ نہیں"
+        },
+        "winners": {
+          "transactionReport": "ٹرانزیکشن رپورٹ کلپ بورڈ میں کاپی ہو گئی!",
+          "markdownReport": "Markdown رپورٹ کلپ بورڈ میں کاپی ہو گئی!",
+          "hallOfChampions": "چیمپیئنز کا ہال",
+          "more": "+ {count} مزید",
+          "champion": "چیمپیئن",
+          "climbers": "کلائمبرز",
+          "ascent": "چڑھائی",
+          "avg": "اوسط",
+          "personalBest": "ذاتی بہترین",
+          "achieved": "حاصل کیا",
+          "pool": "پول",
+          "hallAwaits": "ہال اپنے پہلے ہیرو کا انتظار کر رہا ہے...",
+          "archives": "آرکائیوز",
+          "performanceData": "سیزنل کارکردگی کا ڈیٹا",
+          "txReport": "TX رپورٹ",
+          "mdReport": "MD رپورٹ",
+          "fetching": "تاریخ لوڈ ہو رہی ہے...",
+          "allParticipants": "تمام شرکاء اور درجہ بندی",
+          "table": {
+            "player": "کھلاڑی",
+            "performance": "کارکردگی"
+          }
+        },
+        "lab": {
+          "disabled": "فعال چڑھائی کے دوران شاپ بند ہے",
+          "conflictToast": "{skin} لگانا ممکن نہیں: یہ آپ کے فعال {powerUp} پاور-اپ سے ٹکراتا ہے۔",
+          "loginToast": "سکنز خریدنے کے لیے لاگ ان کریں۔",
+          "powerups": "پاور-اپ اسٹور",
+          "powerupsSub": "ایک گیم کے بفس کے لیے توانائی خرچ کریں",
+          "conflictMsg": "یہ صلاحیت آپ کی {skin} سکن کے ذریعے پہلے سے فعال ہے۔",
+          "ready": "تیار",
+          "skinConflict": "سکن ٹکراؤ",
+          "activate": "فعال کریں",
+          "insufficient": "ناکافی",
+          "skins": "سیزنل سکنز",
+          "skinsSub": "منفرد طرز اور صلاحیتوں کے ساتھ بلاکس لگائیں",
+          "active": "فعال",
+          "ability": "بنیادی صلاحیت",
+          "cost": "انلاک لاگت",
+          "owned": "ملکیت",
+          "energy": "توانائی",
+          "equipped": "لگایا ہوا",
+          "select": "منتخب کریں",
+          "purchase": "خریدیں",
+          "footnote": "* سکنز اور پاور-اپس سیزنل مراعات ہیں جو آپ کی چڑھائی کو بہتر بناتی ہیں۔",
+          "footnoteNote": "نوٹ:",
+          "footnoteSub": "عارضی پاور-اپس صرف ایک گیم سیشن کے لیے ہوتے ہیں۔",
+          "items": {
+            "skins": {
+              "default": {
+                "name": "کلاسک کلائمبر",
+                "description": "ہر کوہ پیما کے لیے معیاری سازوسامان۔",
+                "ability": "کوئی نہیں"
+              },
+              "glacier": {
+                "name": "گلیشیر پلیٹ",
+                "description": "منجمد ٹائلز جو حرکت کی رفتار کم کرتی ہیں۔ (150 توانائی)",
+                "ability": "15% سست رفتار"
+              },
+              "steel": {
+                "name": "اسٹیل کور",
+                "description": "مضبوط ٹائلز جو زیادہ بلندی پر ہواؤں کو نظرانداز کرتی ہیں۔ (300 توانائی)",
+                "ability": "ہوا کا بہاؤ نہیں"
+              },
+              "phoenix": {
+                "name": "فینکس ونگ",
+                "description": "جادوئی طاقت جو آپ کو ایک مہلک گرنے سے بچاتی ہے۔ (500 توانائی)",
+                "ability": "1 اضافی زندگی"
+              },
+              "gold": {
+                "name": "مائیڈاس ٹچ",
+                "description": "خالص سونے کی ٹائلز جو کامل ڈراپ پر بلندی بڑھاتی ہیں۔ (1000 توانائی)",
+                "ability": "+2m کامل بونس"
+              }
+            },
+            "powerups": {
+              "wind_shield": {
+                "name": "ونڈ شیلڈ",
+                "description": "ٹھیک ایک گیم کے لیے تمام ہوا کے بہاؤ کو نظرانداز کریں۔"
+              },
+              "slow_motion": {
+                "name": "سلو موشن",
+                "description": "ایک گیم کے لیے حرکت کی رفتار 20% کم ہو جاتی ہے۔"
+              },
+              "extra_gear": {
+                "name": "اضافی گیئر",
+                "description": "اپنی اگلی گیم ایک اضافی زندگی کے ساتھ شروع کریں۔"
+              }
+            }
+          }
+        },
+        "howToPlay": {
+          "title": "<climb>چڑھائی</climb> میں مہارت حاصل کریں",
+          "subtitle": "ضروری بقا کی گائیڈ",
+          "controls": {
+            "dropControl": {
+              "title": "ڈراپ کنٹرول",
+              "desc": "حرکت کرتے بلاک کو گرانے کے لیے کہیں بھی TAP کریں۔ وقت سب سے اہم ہے۔"
+            },
+            "precision": {
+              "title": "درست کاٹنا",
+              "desc": "بلاکس کو بنیاد پر اترنا ضروری ہے۔ باہر نکلے حصے فوری کاٹ دیے جاتے ہیں!"
+            },
+            "perfect": {
+              "title": "کامل سلسلہ",
+              "desc": "بلاکس کو بالکل سیدھ میں رکھنا PERFECT اسکور دیتا ہے۔ کومبوز بڑھتے ہیں اور ہوا کی مزاحمت کم ہوتی ہے۔"
+            },
+            "bonus": {
+              "title": "بلندی بونس",
+              "desc": "ہر کامیاب کومبو ایک بڑا بلندی بونس دیتا ہے!"
+            }
+          },
+          "gravityPulse": "گریویٹی پلس",
+          "gravityDesc": "آپ کے پاس ہر بلاک گرانے کے لیے <time>{timeVal} سیکنڈ</time> ہیں۔ زیادہ دیر لینے پر <autoDrop>خودکار ڈراپ!</autoDrop> ہو جاتا ہے",
+          "dailyRewards": "روزانہ انعامات",
+          "dailyDesc": "<energy>توانائی</energy> کمانے کے لیے <challenges>روزانہ چیلنجز</challenges> مکمل کریں۔ لیب میں توانائی استعمال کرکے <powerups>پاور-اپس</powerups> اور <skins>سکنز</skins> خریدیں۔",
+          "close": "اپنی چڑھائی شروع کریں"
+        }
+      },
+      "canvas": {
+        "testGameplay": "گیم پلے آزمائیں",
+        "seasonBreak": "سیزن وقفہ",
+        "loginToRecord": "اپنے اسکور ریکارڈ کرنے اور انعامات کمانے کے لیے ابھی لاگ ان کریں۔ موجودہ بلندی محفوظ نہیں ہوگی۔",
+        "seasonEnded": "موجودہ سیزن ختم ہو گیا ہے۔ مقابلہ کرنے اور انعامات کمانے کے لیے اگلے سیزن کا انتظار کریں!",
+        "altitude": "بلندی",
+        "howToPlay": "کیسے کھیلیں",
+        "wind": "ہوا",
+        "rankings": "درجہ بندی",
+        "ready": "حکمرانی کے لیے تیار؟",
+        "tapToDrop": "بلاک گرانے کے لیے باکس پر کہیں بھی ٹیپ کریں۔",
+        "begin": "چڑھائی شروع کریں",
+        "totalAltitude": "کل بلندی",
+        "climbEnded": "چڑھائی ختم ہوئی",
+        "recording": "BLOCKCHAIN پر ریکارڈ ہو رہا ہے...",
+        "loginToRecordScore": "BLOCKCHAIN پر اسکور ریکارڈ کرنے کے لیے لاگ ان کریں",
+        "seasonInactive": "سیزن غیر فعال • اسکور ریکارڈ نہیں ہوا",
+        "tryAgain": "دوبارہ کوشش کریں",
+        "mainMenu": "مرکزی مینو",
+        "paused": "روکا گیا",
+        "takeBreather": "تھوڑا آرام کریں، چیمپیئن۔",
+        "resume": "جاری رکھیں",
+        "preparing": "چڑھائی کی تیاری",
+        "generating": "محفوظ سیشن بنایا جا رہا ہے",
+        "perfect": "کامل!",
+        "comboBonus": "کومبو بونس",
+        "combos": "کومبوز",
+        "bonus": "بونس",
+        "you": "آپ"
+      }
+    }
+  },
+  "Post": {
+    "notFound": "پوسٹ نہیں ملی",
+    "notFoundDescription": "جو پوسٹ آپ ڈھونڈ رہے ہیں وہ موجود نہیں یا حذف ہو چکی ہے۔",
+    "muted": "یہ پوسٹ خاموش کر دی گئی ہے",
+    "mutedDescription": "یہ پوسٹ کمیونٹی موڈریٹر نے خاموش کر دی ہے۔",
+    "viewingSingleComment": "آپ ایک تبصرے کا سلسلہ دیکھ رہے ہیں:",
+    "viewFullContext": "مکمل سیاق و سباق دیکھیں",
+    "viewDirectParent": "براہ راست والدین دیکھیں",
+    "in": "میں",
+    "edited": "(ترمیم شدہ)",
+    "postedVia": "{app} کے ذریعے پوسٹ کیا",
+    "voteRemoved": "ووٹ ہٹا دیا گیا",
+    "votedSuccessfully": "کامیابی سے ووٹ دیا!",
+    "upvote": "اوپر ووٹ",
+    "downvote": "نیچے ووٹ",
+    "comments": "تبصرے",
+    "writeReply": "جواب لکھیں",
+    "replyPlaceholder": "یہاں اپنا تبصرہ لکھیں... صارفین کا ذکر کرنے کے لیے @ استعمال کریں",
+    "reply": "جواب دیں",
+    "update": "اپ ڈیٹ کریں",
+    "cancel": "منسوخ کریں",
+    "loadingComments": "تبصرے لوڈ ہو رہے ہیں...",
+    "newest": "تازہ ترین",
+    "sortPayout": "ادائیگی",
+    "upvotes": "اوپر ووٹس",
+    "beFirstComment": "پہلا تبصرہ کریں!",
+    "loadingMore": "مزید لوڈ ہو رہا ہے...",
+    "updateReply": "جواب اپ ڈیٹ کریں...",
+    "replyTo": "@{author} کو جواب دیں...",
+    "openFullThread": "مکمل سلسلہ کھولیں",
+    "somethingWentWrong": "کچھ غلط ہو گیا!",
+    "resteemedAlready": "آپ یہ پوسٹ پہلے ہی resteem کر چکے ہیں!",
+    "resteemSuccess": "کامیابی سے resteem ہو گیا!",
+    "resteemConfirmation": "تصدیق",
+    "resteemQuestion": "یہ پوسٹ resteem کریں؟",
+    "payoutDetails": "ادائیگی کی تفصیلات",
+    "payoutBreakdown": {
+      "authorDeclined": "مصنف نے انعامات سے انکار کیا",
+      "pending": "زیر التوا انعامات کی تفصیل",
+      "settled": "طے شدہ انعامات کی تفصیل",
+      "declinedTitle": "ادائیگی سے انکار",
+      "declinedDescription": "اس پوسٹ کے مصنف نے تمام انعامات سے انکار کرنے کا انتخاب کیا ہے۔",
+      "failed": "ادائیگی کی تفصیلات لوڈ کرنے میں ناکامی",
+      "status": "حیثیت",
+      "pendingLabel": "زیر التوا",
+      "paidLabel": "ادا شدہ",
+      "nextCashout": "اگلی ادائیگی",
+      "totalPayout": "کل ادائیگی",
+      "expectedSbd": "متوقع SBD",
+      "expectedSteem": "متوقع STEEM",
+      "expectedSp": "متوقع SP",
+      "authorTotal": "مصنف کا کل",
+      "curatorsTotal": "کیوریٹرز کا کل",
+      "beneficiaries": "مستفیدین"
+    }
+  },
+  "Profile": {
+    "tabs": {
+      "blog": "بلاگ",
+      "posts": "پوسٹس",
+      "friends": "دوست",
+      "comments": "تبصرے",
+      "replies": "جوابات",
+      "notifications": "اطلاعات",
+      "communities": "کمیونٹیز",
+      "wallet": "والیٹ"
+    },
+    "about": "بارے میں",
+    "joined": "شامل ہوئے",
+    "followers": "فالورز",
+    "following": "فالو کر رہے ہیں",
+    "posts": "پوسٹس",
+    "comments": "تبصرے",
+    "active": "فعال",
+    "vp": "VP",
+    "vpTitle": "ووٹنگ پاور",
+    "rc": "RC",
+    "rcTitle": "ریسورس کریڈٹس",
+    "vote": "ووٹ",
+    "voteTitle": "ووٹ کی قدر",
+    "witnessProxy": "Witness پراکسی",
+    "witnessVotes": "Witness ووٹس",
+    "more": "+{count} مزید",
+    "editProfile": "پروفائل ترمیم کریں",
+    "follow": "فالو کریں",
+    "unfollow": "ان فالو کریں",
+    "followSuccess": "کامیابی سے فالو کر لیا",
+    "unfollowSuccess": "کامیابی سے ان فالو کر لیا",
+    "notifications": {
+      "title": "اطلاعات",
+      "unread": "{count} غیر پڑھی",
+      "allCaughtUp": "سب پڑھ لیا",
+      "markAllRead": "سب پڑھا نشان کریں",
+      "filterAndSort": "فلٹر اور ترتیب",
+      "allTypes": "تمام اقسام",
+      "newest": "تازہ ترین",
+      "oldest": "قدیم ترین",
+      "searchPlaceholder": "صارف یا سرگرمی سے تلاش کریں...",
+      "loading": "اطلاعات لوڈ ہو رہی ہیں...",
+      "empty": "کوئی اطلاع نہیں ملی",
+      "today": "آج",
+      "yesterday": "کل",
+      "typeLabels": {
+        "vote": "ووٹ",
+        "reply": "جواب",
+        "mention": "ذکر",
+        "follow": "فالو",
+        "resteem": "Resteem"
+      }
+    },
+    "wallet": {
+      "transactionHistory": "ٹرانزیکشن کی تاریخ",
+      "delegations": "Delegations",
+      "orders": "آرڈرز",
+      "openOrders": "آپ کے کھلے آرڈرز",
+      "newOrder": "نیا آرڈر"
+    },
+    "settings": {
+      "loginAlert": "پروفائل کی ترتیبات دیکھیں",
+      "basicInfo": {
+        "title": "بنیادی معلومات",
+        "description": "عوامی پروفائل کی تفصیلات جو دوسرے صارفین دیکھ سکتے ہیں",
+        "displayName": "ڈسپلے نام",
+        "displayNamePlaceholder": "مثلاً فیصل امین",
+        "about": "بارے میں",
+        "aboutPlaceholder": "کمیونٹی کو اپنے بارے میں بتائیں",
+        "location": "مقام",
+        "locationPlaceholder": "مثلاً کراچی، پاکستان",
+        "website": "ویب سائٹ",
+        "websitePlaceholder": "https://example.com"
+      },
+      "visual": {
+        "title": "بصری شناخت",
+        "description": "اپنا اوتار اور کور کی تصاویر اپنی مرضی کے مطابق بنائیں",
+        "preview": "پیش نظارہ",
+        "profileImage": "پروفائل تصویر",
+        "profileImageDesc": "مربع تصویر تجویز کردہ",
+        "coverImage": "کور تصویر",
+        "coverImageDesc": "1200x300 تجویز کردہ",
+        "uploading": "{type} اپلوڈ ہو رہا ہے...",
+        "avatar": "اوتار",
+        "cover": "کور"
+      },
+      "actions": {
+        "save": "پروفائل محفوظ کریں"
+      },
+      "messages": {
+        "uploadSuccess": "تصویر کامیابی سے اپلوڈ ہو گئی!",
+        "uploadFailed": "اپلوڈ ناکام ہو گیا",
+        "updateSuccess": "پروفائل blockchain پر اپ ڈیٹ ہو گیا!"
+      }
+    }
+  },
+  "Witnesses": {
+    "title": "گواہ (Witnesses)",
+    "description": "ان گواہ (witnesses) کو ووٹ دیں جو Steem نوڈز کی دیکھ بھال کرتے ہیں اور بلاک چین کو محفوظ بناتے ہیں۔ آپ 30 گواہوں تک ووٹ دے سکتے ہیں۔",
+    "tabs": {
+      "witnesses": "Witnesses",
+      "proxy": "Proxy",
+      "myWitness": "میرا Witness"
+    },
+    "columns": {
+      "rank": "#",
+      "witness": "Witness",
+      "votes": "ووٹس",
+      "missed": "چھوٹے",
+      "feed": "فیڈ",
+      "action": "عمل"
+    },
+    "vote": "ووٹ دیں",
+    "unvote": "ووٹ واپس لیں",
+    "viewDetails": "تفصیلات دیکھیں",
+    "outdated": "پرانا",
+    "searchPlaceholder": "نام سے witnesses تلاش کریں...",
+    "noWitnesses": "کوئی witness نہیں ملا",
+    "showOnlyVoted": "صرف وہ witnesses دکھائیں جنہیں میں نے ووٹ دیا",
+    "proxyActive": "Proxy فعال ہے",
+    "proxyActiveDesc": "آپ فی الحال اپنے ووٹس یہاں بھیج رہے ہیں",
+    "cannotVoteProxy": "جب proxy فعال ہو تو witnesses کو ووٹ نہیں دے سکتے",
+    "voteSuccess": "{name} کو کامیابی سے ووٹ دے دیا",
+    "unvoteSuccess": "{name} کا ووٹ کامیابی سے واپس لے لیا",
+    "proxy": {
+      "title": "ووٹنگ Proxy مقرر کریں",
+      "description": "Proxy چننے سے دوسرا صارف آپ کی جانب سے witnesses کو ووٹ دے سکتا ہے۔ یہ آپ کی پوری ووٹنگ طاقت سنبھالتا ہے۔",
+      "usernameLabel": "Proxy صارف نام",
+      "usernamePlaceholder": "مثلاً steempro.com",
+      "setProxy": "Proxy مقرر کریں",
+      "clearProxy": "Proxy ہٹائیں",
+      "currentProxy": "موجودہ Proxy",
+      "setSuccess": "کامیابی سے {name} کو proxy مقرر کیا",
+      "removeSuccess": "Proxy کامیابی سے ہٹا دیا"
+    },
+    "myWitness": {
+      "title": "Witness کی ترتیبات",
+      "description": "اپنے witness نوڈ کی خصوصیات اور حیثیت منظم کریں۔",
+      "enable": "Witness فعال کریں",
+      "disable": "Witness غیر فعال کریں",
+      "urlLabel": "Witness URL",
+      "signingKeyLabel": "بلاک سائننگ کی",
+      "signingKeyDesc": "بلاکس پر دستخط کرنے کے لیے استعمال ہونے والی پبلک کی۔",
+      "creationFeeLabel": "اکاؤنٹ بنانے کی فیس",
+      "interestRateLabel": "SBD سود کی شرح",
+      "blockSizeLabel": "زیادہ سے زیادہ بلاک سائز",
+      "securityTitle": "سائننگ کی کی سیکیورٹی",
+      "securityDesc": "سائننگ کی تبدیل کرنے کے لیے active authority درکار ہے۔ پبلک سائننگ کی اپ ڈیٹ کرنے سے پہلے یقینی بنائیں کہ آپ کے witness نوڈ پر متعلقہ پرائیویٹ کی موجود ہے، ورنہ آپ کا نوڈ بلاکس مِس کرے گا۔",
+      "updateProps": "Witness کی خصوصیات اپ ڈیٹ کریں",
+      "updateSuccess": "Witness کی خصوصیات کامیابی سے اپ ڈیٹ ہو گئیں"
+    },
+    "details": {
+      "information": "معلومات",
+      "voters": "ووٹرز",
+      "basicInfo": "بنیادی معلومات",
+      "owner": "مالک",
+      "rank": "درجہ",
+      "votes": "ووٹس",
+      "viewVoters": "ووٹرز دیکھیں",
+      "totalMissedBlocks": "کل مِسڈ بلاکس",
+      "lastConfirmedBlock": "آخری تصدیق شدہ بلاک",
+      "runningVersion": "چلنے والا ورژن",
+      "url": "URL",
+      "visitWebsite": "ویب سائٹ دیکھیں",
+      "signingKey": "سائننگ کی",
+      "witnessProperties": "Witness کی خصوصیات",
+      "accountCreationFee": "اکاؤنٹ بنانے کی فیس",
+      "maximumBlockSize": "زیادہ سے زیادہ بلاک سائز",
+      "sbdInterestRate": "SBD سود کی شرح",
+      "sbdExchangeRate": "SBD ایکسچینج ریٹ",
+      "base": "بیس",
+      "quote": "قوٹ",
+      "lastUpdate": "آخری اپ ڈیٹ",
+      "additionalDetails": "اضافی تفصیلات",
+      "created": "بنایا گیا",
+      "lastWork": "آخری کام",
+      "hardforkTimeVote": "Hardfork ٹائم ووٹ",
+      "active": "فعال",
+      "disabled": "غیر فعال",
+      "totalVoters": "کل ووٹرز",
+      "totalSupport": "کل حمایت (SP)",
+      "noVotes": "اس witness کے لیے کوئی ووٹ نہیں ملا",
+      "voter": "ووٹر",
+      "ownSp": "اپنا SP",
+      "proxiedSp": "Proxied SP",
+      "copied": "{label} کلپ بورڈ میں کاپی ہو گیا"
+    }
+  },
+  "Proposals": {
+    "title": "تجاویز",
+    "description": "Steem Proposal System (SPS) کے ذریعے کمیونٹی کے خیالات کی مالی مدد کریں۔ ان اقدامات پر ووٹ دیں جو ماحولیاتی نظام کو بہتر بنائیں اور نیٹ ورک کو فائدہ پہنچائیں۔",
+    "funded": "مالی امداد یافتہ",
+    "threshold": "مالی امداد کی حد",
+    "pending": "زیر التوا",
+    "notFunded": "مالی امداد نہیں",
+    "search": "تجاویز تلاش کریں...",
+    "item": {
+      "by": "از",
+      "to": "تک",
+      "id": "ID",
+      "days": "دن",
+      "sbdDay": "SBD/دن"
+    },
+    "details": {
+      "information": "معلومات",
+      "voters": "ووٹرز",
+      "votes": "ووٹس",
+      "creator": "بنانے والا",
+      "receiver": "وصول کنندہ",
+      "duration": "مدت",
+      "start": "آغاز:",
+      "end": "اختتام:",
+      "dailyPay": "روزانہ ادائیگی",
+      "permlink": "Permlink",
+      "totalVoters": "کل ووٹرز",
+      "totalSupport": "کل حمایت (SP)",
+      "effective": "مؤثر:",
+      "noVotes": "اس تجویز کے لیے کوئی ووٹ نہیں ملا"
+    },
+    "votersTable": {
+      "voter": "ووٹر",
+      "ownSp": "اپنا SP",
+      "proxiedSp": "Proxied SP",
+      "share": "حصہ",
+      "proxyToActive": "@{user} کو proxy جس نے ووٹ دیا",
+      "proxyToInactive": "@{user} کو proxy جس نے ووٹ نہیں دیا"
+    },
+    "actions": {
+      "voteTitle": "تجویز #{id} کو ووٹ دیں؟",
+      "unvoteTitle": "تجویز #{id} کا ووٹ واپس لیں؟",
+      "voteDesc": "کیا آپ اس تجویز کو ووٹ دینا چاہتے ہیں؟",
+      "unvoteDesc": "کیا آپ اس تجویز کا ووٹ واپس لینا چاہتے ہیں؟",
+      "removeTitle": "تجویز #{id} ہٹائیں؟",
+      "removeDesc": "کیا آپ یہ تجویز ہٹانا چاہتے ہیں؟",
+      "vote": "ووٹ دیں",
+      "unvote": "ووٹ واپس لیں",
+      "cancel": "منسوخ کریں",
+      "remove": "ہٹائیں",
+      "votedSuccess": "تجویز کو کامیابی سے ووٹ دے دیا",
+      "unvotedSuccess": "تجویز کا ووٹ کامیابی سے واپس لے لیا",
+      "removedSuccess": "تجویز ہٹا دی گئی"
+    }
+  },
+  "Tools": {
+    "title": "SteemPro ٹولز",
+    "description": "اسٹیم بلاک چین صارفین، کمیونٹیز اور کیوریٹرز کے لیے ضروری ٹولز کا ایک طاقتور مجموعہ۔",
+    "list": {
+      "batchTransfer": {
+        "title": "بیچ ٹرانسفر",
+        "description": "ایک ہی وقت میں متعدد اکاؤنٹس میں Steem یا SBD مؤثر طریقے سے بھیجیں۔"
+      },
+      "batchVoting": {
+        "title": "بیچ ووٹنگ",
+        "description": "اپنی کیوریشن کو زیادہ سے زیادہ کرنے کے لیے بیک وقت متعدد پوسٹس پر ووٹ دیں۔"
+      },
+      "communityReport": {
+        "title": "کمیونٹی رپورٹ",
+        "description": "اپنی کمیونٹیز کے لیے تفصیلی اعداد و شمار اور رپورٹس تیار کریں۔"
+      },
+      "authorReport": {
+        "title": "مصنف کے اعداد و شمار کی رپورٹ",
+        "description": "مصنف کی پوسٹ کی کارکردگی، ادائیگیوں اور مشغولیت کا تجزیہ کریں۔"
+      },
+      "accountCreation": {
+        "title": "اکاؤنٹ کی تخلیق",
+        "description": "اپنے اکاؤنٹ کی تخلیق کے ٹوکنز کا استعمال کرتے ہوئے نئے Steem اکاؤنٹس کلیم کریں اور بنائیں۔"
+      },
+      "snippetsTemplates": {
+        "title": "اسنیپٹس اور ٹیمپلیٹس",
+        "description": "اپنی پوسٹ میں اسنیپٹس اور ٹیمپلیٹس داخل کریں"
+      }
+    }
+  },
+  "Submit": {
+    "communityPlaceholder": "کمیونٹی منتخب کریں",
+    "noCommunity": "کوئی کمیونٹی دستیاب نہیں",
+    "titlePlaceholder": "اپنی پوسٹ کا عنوان درج کریں...",
+    "preview": "پیش نظارہ",
+    "readingTime": "{words} الفاظ، تقریباً {text}",
+    "saveDraft": "ڈرافٹ محفوظ کریں",
+    "cancel": "منسوخ کریں",
+    "update": "اپ ڈیٹ کریں",
+    "publish": "شائع کریں",
+    "scheduled": "شیڈول کریں",
+    "confirm": "تصدیق کریں",
+    "clear": "صاف کریں",
+    "confirmTitle": "تصدیق",
+    "confirmDesc": "کیا آپ واقعی تمام ڈیٹا کو دوبارہ ترتیب دینا چاہتے ہیں؟",
+    "saved": "محفوظ",
+    "draftUpdated": "ڈرافٹ اپ ڈیٹ ہو گیا",
+    "updated": "اپ ڈیٹ ہو گیا",
+    "published": "شائع ہو گیا",
+    "scheduledSuccess": "پوسٹ کامیابی سے شیڈول ہو گئی!",
+    "editor": {
+      "placeholder": "اپنی کہانی لکھیں...",
+      "markdown": "Markdown",
+      "preview": "پیش نظارہ",
+      "uploading": "اپلوڈ ہو رہا ہے...",
+      "uploadSuccess": "کامیابی سے اپلوڈ ہو گیا",
+      "uploadError": "اپلوڈ ناکام ہو گیا",
+      "dragDrop": "اپلوڈ کرنے کے لیے کھینچ کر چھوڑیں",
+      "write": "لکھیں"
+    },
+    "tags": {
+      "placeholder": "ٹیگز شامل کریں (Enter یا comma دبائیں)",
+      "help": "ٹیگز کو خالی جگہ سے الگ کریں۔",
+      "copied": "ٹیگز کلپ بورڈ میں کاپی ہو گئے",
+      "copyError": "ٹیگز کاپی کرنے میں ناکامی",
+      "countInfo": "{count}/8 ٹیگز • ترتیب بدلنے کے لیے کھینچیں",
+      "copyAll": "تمام ٹیگز کاپی کریں",
+      "clearAll": "تمام ٹیگز صاف کریں"
+    },
+    "beneficiaries": {
+      "title": "مستفیدین منظم کریں",
+      "description": "دوسرے صارفین کے ساتھ انعامات کی تقسیم مقرر کریں۔ کل 100% سے زیادہ نہیں ہونا چاہیے۔",
+      "add": "اکاؤنٹ شامل کریں",
+      "account": "اکاؤنٹ",
+      "weight": "وزن (%)",
+      "total": "کل وزن: {weight}%",
+      "favorites": "پسندیدہ مستفیدین",
+      "usernamePlaceholder": "صارف نام درج کریں...",
+      "allocation": "مختص: {percent}%",
+      "totalAllocation": "کل مختص:",
+      "save": "تبدیلیاں محفوظ کریں",
+      "updated": "مستفیدین کامیابی سے اپ ڈیٹ ہو گئے",
+      "alreadyAdded": "یہ صارف پہلے سے آپ کے مستفیدین کی فہرست میں ہے",
+      "alreadyAddedShort": "یہ صارف پہلے سے شامل ہے",
+      "limitExceeded": "کل فیصد 100% سے زیادہ نہیں ہو سکتا"
+    },
+    "payout": {
+      "title": "ادائیگی کی قسم",
+      "description": "منتخب کریں کہ آپ اپنی پوسٹ کے انعامات کیسے وصول کرنا چاہتے ہیں۔",
+      "decline": "ادائیگی سے انکار",
+      "half": "50% SBD / 50% SP",
+      "full": "100% Steem Power",
+      "declinedShort": "انکار کر دیا",
+      "fiftyFiftyShort": "50%/50%",
+      "oneHundredShort": "100% SP"
+    },
+    "schedule": {
+      "title": "پوسٹ شیڈول کریں",
+      "description": "اپنی پوسٹ خودکار شائع کرنے کے لیے تاریخ اور وقت منتخب کریں۔"
+    },
+    "validation": {
+      "titleEmpty": "عنوان خالی نہیں ہو سکتا",
+      "postEmpty": "پوسٹ خالی نہیں ہو سکتی",
+      "tagEmpty": "ایک ٹیگ شامل کریں یا کمیونٹی منتخب کریں"
+    },
+    "error": {
+      "loginRequired": "لاگ ان ضروری ہے"
+    },
+    "authority": {
+      "granted": "اجازت کامیابی سے دے دی گئی!"
+    },
+    "actions": {
+      "cancel": "منسوخ کریں"
+    },
+    "snippets": {
+      "title": "اسنیپٹس اور ٹیمپلیٹس",
+      "description": "اپنی پوسٹ میں اسنیپٹس اور ٹیمپلیٹس داخل کریں",
+      "mySnippets": "میرے اسنیپٹس",
+      "templates": "ٹیمپلیٹس",
+      "new": "نیا اسنیپٹ",
+      "create": "تخلیق کریں",
+      "update": "اپ ڈیٹ کریں",
+      "delete": "حذف کریں",
+      "insert": "داخل کریں",
+      "cancel": "منسوخ کریں",
+      "titleLabel": "عنوان",
+      "titlePlaceholder": "اسنیپٹ کا عنوان درج کریں",
+      "contentPlaceholder": "اسنیپٹ کا مواد درج کریں",
+      "deleteTitle": "اسنیپٹ حذف کریں",
+      "deleteDesc": "کیا آپ واقعی اس اسنیپٹ کو حذف کرنا چاہتے ہیں؟",
+      "noSnippets": "کوئی اسنیپٹ نہیں ملا۔ اپنا پہلا اسنیپٹ بنائیں!",
+      "manageSnippets": "اسنیپٹس کا انتظام کریں",
+      "created": "اسنیپٹ تخلیق ہو گیا",
+      "updated": "اسنیپٹ اپ ڈیٹ ہو گیا",
+      "deleted": "اسنیپٹ حذف ہو گیا",
+      "required": "عنوان اور متن ضروری ہیں",
+      "templateList": {
+        "table": "ٹیبل",
+        "code-block": "کوڈ بلاک",
+        "collapsible": "کولاپسیبل سیکشن",
+        "divider": "تقسیم کار",
+        "task-list": "کام کی فہرست",
+        "blockquote": "بلاک کوٹ",
+        "image-grid": "امیج گرڈ (2 کالم)",
+        "centered-text": "وسطی متن"
+      }
+    }
+  },
+  "BatchTransfer": {
+    "title": "بیچ ٹرانسفر",
+    "description": "ایک ہی وقت میں متعدد اکاؤنٹس میں Steem یا SBD مؤثر طریقے سے بھیجیں۔",
+    "currency": "کرنسی",
+    "bulkImport": "بلک امپورٹ",
+    "addRow": "قطار شامل کریں",
+    "addAnotherRow": "دوسری قطار شامل کریں",
+    "clearAll": "سب صاف کریں",
+    "confirmTitle": "تصدیق",
+    "confirmDesc": "کیا آپ واقعی تمام ڈیٹا کو دوبارہ ترتیب دینا چاہتے ہیں؟",
+    "bulkInfo": "اپنی فہرست یہاں پیسٹ کریں۔ آپ نیچے الگ کرنے والے (separators) کو حسب ضرورت بنا سکتے ہیں۔",
+    "lineSeparator": "لائن الگ کرنے والا",
+    "newLine": "نئی لائن (\\n)",
+    "semicolon": "سیمی کولن (;)",
+    "comma": "کوما (,)",
+    "custom": "حسب ضرورت (Custom)",
+    "customPlaceholder": "مثلاً: |",
+    "bulkPlaceholder": "steememator 10.000 ماہانہ انعام\\nalice 5.000 مقابلہ جیتنے والا",
+    "cancel": "منسوخ کریں",
+    "parseList": "فہرست کا تجزیہ کریں",
+    "recipient": "وصول کنندہ",
+    "amount": "رقم",
+    "memo": "میمو",
+    "memoOptional": "میمو (اختیاری)",
+    "action": "عمل (Action)",
+    "username": "صارف نام",
+    "summary": "خلاصہ",
+    "recipients": "وصول کنندگان",
+    "totalAmount": "کل رقم",
+    "yourBalance": "آپ کا بیلنس",
+    "insufficientBalance": "ناکافی بیلنس",
+    "sendButton": "بیچ ٹرانسفر بھیجیں",
+    "error": {
+      "loginFirst": "براہ کرم پہلے لاگ ان کریں",
+      "invalidSeparator": "براہ کرم ایک درست کسٹم لائن الگ کرنے والا فراہم کریں۔",
+      "parseError": "کسی بھی درست ٹرانسفر کا تجزیہ نہیں کیا جا سکا۔ فارمیٹ چیک کریں۔"
+    },
+    "success": {
+      "imported": "{count} ٹرانسفرز کامیابی کے ساتھ امپورٹ ہو گئے۔",
+      "broadcast": "بیچ ٹرانسفر کامیاب رہا!",
+      "sent": "{count} صارفین کو {total} {currency} بھیج دیا گیا۔"
+    }
+  },
+  "BatchVoting": {
+    "title": "بیچ ووٹنگ",
+    "description": "اپنی کیوریشن کو زیادہ سے زیادہ بنانے کے لیے بیک وقت متعدد پوسٹس پر ووٹ دیں۔",
+    "globalWeight": "گلوبل ویٹ (Weight)",
+    "postList": "پوسٹ لسٹ",
+    "bulkImport": "بلک امپورٹ",
+    "addPost": "پوسٹ شامل کریں",
+    "addAnotherPost": "دوسری پوسٹ شامل کریں",
+    "clearAll": "سب صاف کریں",
+    "confirmTitle": "تصدیق",
+    "confirmDesc": "کیا آپ واقعی تمام ڈیٹا کو دوبارہ ترتیب دینا چاہتے ہیں؟",
+    "bulkInfo": "پوسٹ کے یو آر ایل (URLs) یہاں پیسٹ کریں۔ فارمیٹ: ہر لائن پر {url} یا {url_weight}۔",
+    "lineSeparator": "لائن الگ کرنے والا",
+    "newLine": "نئی لائن (\\n)",
+    "semicolon": "سیمی کولن (;)",
+    "comma": "کوما (,)",
+    "custom": "حسب ضرورت",
+    "customPlaceholder": "مثلاً: |",
+    "bulkPlaceholder": "https://www.steempro.com/@author/permlink\\nhttps://www.steempro.com/@author/permlink2 75",
+    "cancel": "منسوخ کریں",
+    "parseList": "فہرست کا تجزیہ کریں",
+    "table": {
+      "url": "Steem پوسٹ یو آر ایل یا @author/permlink",
+      "weight": "ویٹ (Weight)",
+      "status": "حالت (Status)",
+      "action": "عمل"
+    },
+    "urlPlaceholder": "https://...",
+    "global": "گلوبل",
+    "status": {
+      "pending": "زیر التواء (Pending)",
+      "voting": "ووٹنگ ہو رہی ہے...",
+      "success": "کامیاب",
+      "failed": "ناکام"
+    },
+    "action": {
+      "remove": "قطار ختم کریں"
+    },
+    "progress": {
+      "title": "پیش رفت (Progress)",
+      "totalPosts": "کل پوسٹس",
+      "estTime": "متوقع وقت",
+      "min": "منٹ",
+      "sec": "سیکنڈ",
+      "done": "مکمل",
+      "err": "غلطی",
+      "preparing": "ووٹنگ کی تیاری ہو رہی ہے...",
+      "votingOn": "@{author} کی پوسٹ پر ووٹ دیا جا رہا ہے...",
+      "waiting": "3.5 سیکنڈ انتظار (بلاک چین کی حد)..."
+    },
+    "controls": {
+      "start": "ووٹنگ شروع کریں",
+      "pause": "روکیں (Pause)",
+      "resume": "دوبارہ شروع کریں",
+      "stop": "ختم کریں"
+    },
+    "error": {
+      "invalidSeparator": "براہ کرم ایک درست کسٹم لائن الگ کرنے والا فراہم کریں۔",
+      "parseError": "کسی بھی درست پوسٹ یو آر ایل کا تجزیہ نہیں کیا جا سکا۔ فارمیٹ چیک کریں۔",
+      "loginFirst": "براہ کرم پہلے لاگ ان کریں",
+      "invalidUrl": "یو آر ایل کا فارمیٹ درست نہیں ہے",
+      "invalidFormat": "کچھ پوسٹس کے فارمیٹ غلط ہیں اور ان پر کارروائی نہیں کی جا سکتی۔",
+      "votingStopped": "بیچ ووٹنگ روک دی گئی ہے۔",
+      "errorVoted": "@{author} کی پوسٹ پر ووٹ دینے میں غلطی: {error}"
+    },
+    "success": {
+      "imported": "کامیابی کے ساتھ {count} پوسٹس امپورٹ ہو گئیں۔",
+      "voted": "@{author} کی پوسٹ پر ووٹ دے دیا گیا",
+      "completed": "بیچ ووٹنگ مکمل ہو گئی!"
+    }
+  },
+  "CommunityReport": {
+    "title": "کمیونٹی رپورٹ",
+    "description": "کسی بھی اسٹیم کمیونٹی کے لیے شماریاتی تجزیہ اور مارک ڈاؤن رپورٹ تیار کریں۔",
+    "parameters": "رپورٹ کے پیرامیٹرز",
+    "communityId": "کمیونٹی آئی ڈی",
+    "placeholder": "مثلاً: hive-145160",
+    "startDate": "شروع ہونے کی تاریخ",
+    "endDate": "ختم ہونے کی تاریخ",
+    "generate": "رپورٹ تیار کریں",
+    "analyzing": "بلاک چین کا تجزیہ ہو رہا ہے...",
+    "emptyState": "بلاک چین ڈیٹا کا تجزیہ کرنے اور ایک جامع مارک ڈاؤن رپورٹ تیار کرنے کے لیے کمیونٹی ٹیگ اور تاریخ کی حد درج کریں۔",
+    "scanning": "بلاک چین اسکین ہو رہا ہے...",
+    "stats": {
+      "posts": "پوسٹس",
+      "authors": "مصنفین",
+      "payouts": "ادائیگیاں (Payouts)",
+      "upvotes": "ووٹ"
+    },
+    "markdown": {
+      "title": "مارک ڈاؤن آؤٹ پٹ",
+      "copy": "مارک ڈاؤن کاپی کریں",
+      "reportTitle": "کمیونٹی کی سرگرمی کی رپورٹ",
+      "community": "کمیونٹی",
+      "dateRange": "تاریخ کی حد",
+      "summary": "فوری خلاصہ",
+      "metric": "میٹرک",
+      "value": "قیمت",
+      "totalPosts": "کل پوسٹس",
+      "uniqueAuthors": "منفرد مصنفین",
+      "generatedPayouts": "تیار کردہ ادائیگیاں",
+      "totalUpvotes": "کل ووٹ",
+      "commentsReplies": "تبصرے اور جوابات",
+      "topAuthors": "سب سے زیادہ فعال مصنفین",
+      "topAuthorsDesc": "ہمارے سب سے زیادہ فعال کمیونٹی ممبران!",
+      "fullList": "فعال مصنفین کی مکمل فہرست",
+      "index": "#",
+      "author": "مصنف",
+      "repliesRcvd": "موصولہ تبصرے",
+      "footer": "رپورٹ [SteemPro Tools]({url}) کے ذریعے تیار کی گئی۔"
+    },
+    "table": {
+      "title": "فعال ممبران کی فہرست",
+      "search": "فعال ممبران تلاش کریں...",
+      "author": "مصنف",
+      "posts": "پوسٹس",
+      "replies": "موصولہ جوابات"
+    },
+    "error": {
+      "invalidCommunity": "براہ کرم ایک درست کمیونٹی آئی ڈی درج کریں (مثلاً: hive-145160)",
+      "fetchFailed": "کمیونٹی ڈیٹا حاصل کرنے میں ناکامی"
+    },
+    "success": {
+      "analyzed": "رپورٹ تیار کرنے کے لیے {count} پوسٹس کا تجزیہ کیا گیا",
+      "copied": "مارک ڈاؤن کلپ بورڈ پر کاپی ہو گیا!"
+    }
+  },
+  "AuthorStatistic": {
+    "title": "مصنف کی شماریاتی رپورٹ",
+    "description": "وقت کے ساتھ ساتھ کسی بھی مصنف کی پوسٹ کی کارکردگی، ادائیگیوں اور مشغولیت کا تجزیہ کریں۔",
+    "parameters": "رپورٹ کے پیرامیٹرز",
+    "username": "صارف کا نام",
+    "placeholder": "مثلاً steempro.com",
+    "startDate": "شروع کی تاریخ",
+    "endDate": "ختم ہونے کی تاریخ",
+    "generate": "رپورٹ تیار کریں",
+    "analyzing": "بلاک چین اسکیننگ...",
+    "emptyState": "کسی مصنف کا صارف نام اور تاریخ کی حد درج کریں تاکہ ان کی حالیہ پوسٹ کی کارکردگی کا تجزیہ کیا جا سکے اور تفصیلی رپورٹ تیار کی جا سکے۔",
+    "scanning": "بلاک چین اسکیننگ...",
+    "stats": {
+      "posts": "پوسٹس",
+      "payouts": "ادائیگیاں",
+      "upvotes": "اپ ووٹ",
+      "replies": "جوابات"
+    },
+    "markdown": {
+      "title": "مارک ڈاؤن آؤٹ پٹ",
+      "copy": "مارک ڈاؤن کاپی کریں",
+      "reportTitle": "مصنف کی شماریاتی رپورٹ: @{author}",
+      "dateRange": "تاریخ کی حد",
+      "summary": "فوری خلاصہ",
+      "metric": "میٹرک",
+      "value": "قیمت",
+      "totalPosts": "کل پوسٹس",
+      "totalPayout": "کل پیدا کردہ ادائیگیاں",
+      "avgPayout": "اوسط ادائیگی / پوسٹ",
+      "totalUpvotes": "موصول ہونے والے کل اپ ووٹ",
+      "totalComments": "موصول ہونے والے تبصرے اور جوابات",
+      "performanceLog": "پوسٹ کی کارکردگی کا لاگ",
+      "date": "تاریخ",
+      "postTitle": "عنوان",
+      "community": "کمیونٹی",
+      "votes": "ووٹ",
+      "replies": "جوابات",
+      "payout": "ادائیگی",
+      "footer": "رپورٹ [SteemPro Tools]({url}) کے ذریعے تیار کی گئی۔"
+    },
+    "table": {
+      "title": "پوسٹ کی کارکردگی کا لاگ",
+      "search": "عنوان یا کمیونٹی کے ذریعے تلاش کریں...",
+      "date": "تاریخ",
+      "postTitle": "عنوان",
+      "community": "کمیونٹی",
+      "payout": "ادائیگی",
+      "votes": "ووٹ",
+      "replies": "جوابات"
+    },
+    "error": {
+      "invalidUsername": "براہ کرم ایک درست Steem صارف نام درج کریں",
+      "fetchFailed": "مصنف کا ڈیٹا حاصل کرنے میں ناکامی"
+    },
+    "success": {
+      "analyzed": "@{author} کی {count} پوسٹس کا تجزیہ کیا گیا",
+      "copied": "مارک ڈاؤن کلپ بورڈ پر کاپی ہو گیا!"
+    }
+  },
+  "AccountCreation": {
+    "title": "اکاؤنٹ کی تخلیق",
+    "description": "اپنے اکاؤنٹ کی تخلیق کے ٹوکنز کا استعمال کرتے ہوئے نئے Steem اکاؤنٹس کلیم کریں اور بنائیں۔",
+    "comingSoon": "جلد آرہا ہے",
+    "featureDescription": "اکاؤنٹ تخلیق ٹول آپ کو اپنے تخلیق ٹوکنز کو بغیر کسی رکاوٹ کے خرچ کرنے میں مدد کرتا ہے۔ ہم فی الحال اس فیچر پر کام کر رہے ہیں۔ جلد ہی دوبارہ چیک کریں!"
+  },
+  "Schedules": {
+    "title": "شیڈول",
+    "description": "اپنی شیڈول پوسٹس کا انتظام کریں",
+    "loginAlert": "اپنی شیڈول پوسٹس دیکھیں",
+    "status": {
+      "pending": "زیر التواء",
+      "published": "شائع شدہ",
+      "failed": "ناکام"
+    },
+    "actions": {
+      "draft": "ڈرافٹ",
+      "draftDelete": "ڈرافٹ اور حذف",
+      "delete": "حذف کریں",
+      "cancel": "منسوخ کریں",
+      "deleteTitle": "شیڈول حذف کریں",
+      "deleteDesc": "کیا آپ واقعی یہ شیڈول حذف کرنا چاہتے ہیں؟"
+    },
+    "messages": {
+      "deleted": "شیڈول پوسٹ حذف ہو گئی",
+      "drafted": "پوسٹ ڈرافٹ ہو گئی",
+      "draftedDesc": "آپ اسے submit صفحے پر پا سکتے ہیں۔",
+      "draftFailed": "ڈرافٹ ناکام: {error}",
+      "timeDiffError": "وقت کا فرق کم از کم 5 منٹ ہونا چاہیے",
+      "updated": "شیڈول اپ ڈیٹ ہو گیا"
+    }
+  },
+  "Settings": {
+    "title": "ترتیبات",
+    "tabs": {
+      "general": "عام",
+      "profile": "پروفائل",
+      "security": "سیکیورٹی"
+    }
+  },
+  "SecuritySettings": {
+    "loginAlert": "سیکیورٹی کی ترتیبات دیکھیں",
+    "publicKeys": {
+      "title": "پبلک کیز",
+      "description": "یہ Steem blockchain پر آپ کی پبلک کیز ہیں۔ آپ انہیں عوامی طور پر شیئر کر سکتے ہیں۔",
+      "posting": "Posting پبلک کی",
+      "active": "Active پبلک کی",
+      "owner": "Owner پبلک کی",
+      "memo": "Memo پبلک کی",
+      "copied": "{label} کلپ بورڈ میں کاپی ہو گیا"
+    },
+    "recovery": {
+      "title": "اکاؤنٹ کی بازیابی",
+      "description": "بازیابی اکاؤنٹ آپ کے اکاؤنٹ کے متاثر ہونے پر اسے بحال کرنے میں مدد کر سکتا ہے۔",
+      "current": "موجودہ بازیابی اکاؤنٹ",
+      "change": "تبدیل کریں",
+      "note": "نوٹ: بازیابی اکاؤنٹ تبدیل کرنا ایک محفوظ عمل ہے جسے مکمل ہونے میں 30 دن لگتے ہیں۔ اس تبدیلی کی اجازت دینے کے لیے آپ کو اپنی OWNER key کی ضرورت ہوگی۔"
+    }
+  },
+  "Auth": {
+    "title": "تصدیق",
+    "description": "لا محدود اکاؤنٹس کا نظم کریں اور ایک کلک سے ان کے درمیان سوئچ کریں۔",
+    "connectedAccounts": "منسلک اکاؤنٹس",
+    "accountsConnected": "{count} اکاؤنٹس منسلک ہیں",
+    "addAccount": "اکاؤنٹ شامل کریں",
+    "login": "لاگ ان",
+    "keychain": "کیچین",
+    "privateKey": "نجی کلیدی",
+    "success": "کامیابی",
+    "loginSuccess": "کامیابی سے لاگ ان ہو گیا",
+    "manageAccounts": "اکاؤنٹس کا نظم کریں"
+  },
+  "Navbar": {
+    "discover": "دریافت کریں",
+    "home": "ہوم",
+    "explore": "تلاش",
+    "communities": "کمیونٹیز",
+    "games": "کھیل",
+    "blockchain": "بلاک چین",
+    "explorer": "ایکسپلورر",
+    "market": "مارکیٹ",
+    "witnesses": "گواہ",
+    "proposals": "تجاویز",
+    "schedules": "شیڈول",
+    "tools": "ٹولز",
+    "app": "ایپ",
+    "settings": "ترتیبات",
+    "privacy": "رازداری",
+    "about": "ہمارے بارے میں",
+    "manage": "انتظام کریں",
+    "search": "تلاش کریں...",
+    "create": "تخلیق کریں",
+    "refresh": "ریفریش",
+    "profile": "پروفائل",
+    "wallet": "والٹ"
+  },
+  "Search": {
+    "placeholder": "Search blockchain content...",
+    "filterByAuthor": "Filter by author...",
+    "refineResults": "Refine results",
+    "accounts": "Accounts",
+    "posts": "Posts",
+    "comments": "Comments",
+    "fetching": "DATA FETCHING...",
+    "noAccountsFound": "No accounts found with this name prefix.",
+    "noPostsFound": "Try searching globally or with a different author filter.",
+    "noCommentsFound": "No textual matches found in recent discussions.",
+    "discoverSteem": "Discover Steem",
+    "discoverDescription": "Search for profiles, deep-dive into posts or filter by specific authors.",
+    "trySearch": "try \"{query}\"",
+    "reputation": "Reputation",
+    "profileLabel": "Profile",
+    "postLabel": "Post",
+    "commentLabel": "Comment"
+  }
+}

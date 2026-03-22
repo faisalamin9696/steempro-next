@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Card, CardHeader, CardBody } from "@heroui/card";
 import { Image } from "@heroui/image";
 import { Button } from "@heroui/button";
@@ -13,6 +14,8 @@ interface GameCardProps {
 }
 
 export const OfficialGameCard = ({ game }: GameCardProps) => {
+  const t = useTranslations("Games.card");
+
   return (
     <Card
       isFooterBlurred
@@ -27,12 +30,12 @@ export const OfficialGameCard = ({ game }: GameCardProps) => {
               size="sm"
               className="font-black uppercase text-[9px] bg-black/40 backdrop-blur-md border-white/10 text-white"
             >
-              NATIVE
+              {t("native")}
             </Chip>
           </div>
           {game.featured && (
             <div className="bg-amber-500 text-black text-[9px] font-black px-2 py-0.5 rounded italic shadow-2xl -skew-x-12">
-              HOT
+              {t("hot")}
             </div>
           )}
         </div>
@@ -73,7 +76,7 @@ export const OfficialGameCard = ({ game }: GameCardProps) => {
             <div className="flex items-center gap-1.5 bg-amber-500/10 px-2.5 py-1 rounded-md border border-amber-500/20">
               <Database size={12} className="text-amber-500" />
               <span className="text-[10px] font-black uppercase text-amber-500/80">
-                Chain
+                {t("chain")}
               </span>
             </div>
           )}
@@ -85,7 +88,7 @@ export const OfficialGameCard = ({ game }: GameCardProps) => {
           className="w-full bg-white text-black hover:bg-amber-500 hover:text-black font-black uppercase text-[10px] tracking-widest transition-all h-10 rounded-lg"
           endContent={<Play size={14} fill="currentColor" />}
         >
-          Enter Game
+          {t("enterGame")}
         </Button>
       </CardBody>
     </Card>
@@ -93,6 +96,8 @@ export const OfficialGameCard = ({ game }: GameCardProps) => {
 };
 
 export const ThirdPartyGameCard = ({ game }: GameCardProps) => {
+  const t = useTranslations("Games.card");
+
   return (
     <Card
       isFooterBlurred
@@ -116,7 +121,7 @@ export const ThirdPartyGameCard = ({ game }: GameCardProps) => {
                 classNames={{ content: "flex flex-row items-center gap-1" }}
                 className="text-[9px] font-black uppercase backdrop-blur-md"
               >
-                <Database size={10} /> Chain
+                <Database size={10} /> {t("chain")}
               </Chip>
             )}
           </div>
@@ -152,7 +157,7 @@ export const ThirdPartyGameCard = ({ game }: GameCardProps) => {
             </h2>
             {game.developer && (
               <span className="text-[10px] font-black uppercase tracking-widest text-amber-500/60">
-                Studio: {game.developer.name}
+                {t("studio")}: {game.developer.name}
               </span>
             )}
           </div>
@@ -164,7 +169,7 @@ export const ThirdPartyGameCard = ({ game }: GameCardProps) => {
         <div className="flex gap-3">
           <div className="flex-1 p-2 rounded-xl bg-white/5 border border-white/5 text-center backdrop-blur-sm">
             <span className="block text-[8px] font-black text-zinc-600 uppercase tracking-widest">
-              Difficulty
+              {t("difficulty")}
             </span>
             <span className="text-[10px] font-bold text-zinc-400">
               {game.difficulty}
@@ -172,7 +177,7 @@ export const ThirdPartyGameCard = ({ game }: GameCardProps) => {
           </div>
           <div className="flex-1 p-2 rounded-xl bg-white/5 border border-white/5 text-center backdrop-blur-sm">
             <span className="block text-[8px] font-black text-zinc-600 uppercase tracking-widest">
-              Rewards
+              {t("rewards")}
             </span>
             <span className="text-[10px] font-bold text-zinc-400">
               {game.stats.rewards}
@@ -186,7 +191,7 @@ export const ThirdPartyGameCard = ({ game }: GameCardProps) => {
           target={game.href.startsWith("http") ? "_blank" : "_self"}
           className="w-full bg-white text-black hover:bg-amber-500 hover:text-black font-black uppercase text-[10px] tracking-widest transition-all h-11 rounded-xl"
         >
-          Launch Website
+          {t("launchWebsite")}
         </Button>
       </CardBody>
     </Card>

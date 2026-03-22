@@ -1,6 +1,7 @@
 import { Chip } from "@heroui/chip";
 import moment from "moment";
 import { ColumnDef, DataTable } from "../ui/data-table";
+import { useTranslations } from "next-intl";
 
 const TradeHistoryTable = ({
   history,
@@ -9,10 +10,13 @@ const TradeHistoryTable = ({
   history: MarketTrade[];
   onPriceClick: (price: number) => void;
 }) => {
+  const t = useTranslations("Market.history");
+  const tTrade = useTranslations("Market.trade");
+
   const historyColumns: ColumnDef<MarketTrade>[] = [
     {
       key: "data",
-      header: "Date",
+      header: t("date"),
       render: (_info, order) => {
         const isBuying = order.current_pays.includes("SBD");
         return (
@@ -23,7 +27,7 @@ const TradeHistoryTable = ({
               size="sm"
               color={isBuying ? "success" : "danger"}
             >
-              {isBuying ? "Buy" : "Sell"}
+              {isBuying ? tTrade("buy") : tTrade("sell")}
             </Chip>
             <p className="text-xs text-muted">
               {moment.unix(order.date).format("DD MMM HH:mm")}
@@ -35,7 +39,7 @@ const TradeHistoryTable = ({
 
     {
       key: "price",
-      header: "Price",
+      header: t("price"),
       className: "text-mono",
       render: (_info, trade) => {
         const isSell = trade.current_pays.includes("STEEM");
@@ -47,7 +51,7 @@ const TradeHistoryTable = ({
     },
     {
       key: "steem",
-      header: "STEEM",
+      header: t("steem"),
       render: (_info, trade) => {
         return trade.current_pays.split(" ")[0];
       },

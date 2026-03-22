@@ -33,6 +33,7 @@ import { empty_comment, empty_community } from "@/constants/templates";
 import SPopover from "../ui/SPopover";
 import PostBody from "../post/PostBody";
 import { deleteSchedule, updateSchedule } from "@/libs/supabase/schedule";
+import { useTranslations } from "next-intl";
 
 interface Props {
   schedule: Schedule;
@@ -40,6 +41,7 @@ interface Props {
 }
 
 export default function ScheduleCard({ schedule, onRefresh }: Props) {
+  const t = useTranslations("Schedules");
   const [isRescheduling, setIsRescheduling] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -54,7 +56,7 @@ export default function ScheduleCard({ schedule, onRefresh }: Props) {
     setIsDeleting(true);
     try {
       await deleteSchedule(schedule.id!);
-      toast.success("Scheduled post deleted");
+      toast.success(t("messages.deleted"));
       onRefresh();
     } catch (error: any) {
       toast.error(error.message);
@@ -81,8 +83,8 @@ export default function ScheduleCard({ schedule, onRefresh }: Props) {
       };
 
       saveDraftToStorage("post-editor", draftData);
-      toast.success("Post drafted", {
-        description: "You can find it in the submit page.",
+      toast.success(t("messages.drafted"), {
+        description: t("messages.draftedDesc"),
       });
 
       if (shouldDelete) {
@@ -93,7 +95,7 @@ export default function ScheduleCard({ schedule, onRefresh }: Props) {
           });
       }
     } catch (error: any) {
-      toast.error("Failed to draft: " + error.message);
+      toast.error(t("messages.draftFailed", { error: error.message }));
     }
   };
 
@@ -103,7 +105,7 @@ export default function ScheduleCard({ schedule, onRefresh }: Props) {
     const oldMoment = moment(schedule.time);
 
     if (Math.abs(newMoment.diff(oldMoment, "minutes")) < 5) {
-      toast.error("Time difference must be at least 5 minutes");
+      toast.error(t("messages.timeDiffError"));
       return;
     }
 
@@ -112,7 +114,7 @@ export default function ScheduleCard({ schedule, onRefresh }: Props) {
       await updateSchedule(schedule.id!, {
         time: newTime.toAbsoluteString(),
       });
-      toast.success("Schedule updated");
+      toast.success(t("messages.updated"));
       setIsRescheduling(false);
       onRefresh();
     } catch (error: any) {
@@ -162,10 +164,10 @@ export default function ScheduleCard({ schedule, onRefresh }: Props) {
               }
             >
               {schedule.status === 0
-                ? "Pending"
+                ? t("status.pending")
                 : schedule.status === 1
-                ? "Published"
-                : "Failed"}
+                ? t("status.published")
+                : t("status.failed")}
             </Chip>
             {targetUrl && schedule.status === 1 && (
               <Chip
@@ -207,7 +209,7 @@ export default function ScheduleCard({ schedule, onRefresh }: Props) {
             onPress={() => handleDraft(false)}
             isDisabled={isPending}
           >
-            Draft
+            {t("actions.draft")}
           </Button>
           <Button
             size="sm"
@@ -218,7 +220,7 @@ export default function ScheduleCard({ schedule, onRefresh }: Props) {
             isLoading={isDrafting}
             isDisabled={isPending}
           >
-            Draft & Delete
+            {t("actions.draftDelete")}
           </Button>
         </div>
 
@@ -237,8 +239,8 @@ export default function ScheduleCard({ schedule, onRefresh }: Props) {
             </Button>
           )}
           <SPopover
-            title="Delete Schedule"
-            description="Do you really want to delete this schedule?"
+            title={t("actions.deleteTitle")}
+            description={t("actions.deleteDesc")}
             trigger={
               <Button
                 size="sm"
@@ -256,7 +258,7 @@ export default function ScheduleCard({ schedule, onRefresh }: Props) {
             {(onClose) => (
               <div className="flex gap-2 self-end">
                 <Button variant="flat" onPress={onClose}>
-                  Cancel
+                  {t("actions.cancel")}
                 </Button>
 
                 <Button
@@ -266,7 +268,7 @@ export default function ScheduleCard({ schedule, onRefresh }: Props) {
                     handleDelete();
                   }}
                 >
-                  Delete
+                  {t("actions.delete")}
                 </Button>
               </div>
             )}

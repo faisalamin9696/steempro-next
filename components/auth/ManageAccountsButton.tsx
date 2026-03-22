@@ -1,7 +1,8 @@
 import { Button, ButtonProps } from "@heroui/button";
 import { useAccountsContext } from "../auth/AccountsContext";
-import { UserCog, Users } from "lucide-react";
+import { UserCog } from "lucide-react";
 import { twMerge } from "tailwind-merge";
+import { useTranslations } from "next-intl";
 
 interface Props extends Omit<ButtonProps, "title" | "onPress"> {
   title?: string | React.ReactNode;
@@ -16,11 +17,13 @@ function ManageAccountsButton({
   iconClass,
   ...rest
 }: Props) {
+  const t = useTranslations("Auth");
   const { manageAccounts } = useAccountsContext();
+  const label = title ?? t("manageAccounts");
   return (
     <>
       <Button
-        title="Manage Accounts"
+        title={typeof label === "string" ? label : undefined}
         startContent={
           <UserCog
             className={twMerge("shrink-0", iconClass)}
@@ -33,7 +36,7 @@ function ManageAccountsButton({
           onPress?.();
         }}
       >
-        {title ?? "Manage Accounts"}
+        {label}
       </Button>
     </>
   );

@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import { Key, useEffect, useMemo, useState } from "react";
 import { FeedList } from "@/components/FeedList";
+import { useTranslations } from "next-intl";
 
 const ICON_SIZE = 20;
 
@@ -24,6 +25,8 @@ function CommunityPage({
   account?: AccountExt;
   pinnedPost?: PromotedPost[];
 }) {
+  const th = useTranslations("Home.tabs");
+  const tc = useTranslations("Community");
   const { category, tag } = useParams() as { category: string; tag: string };
   const [community, setCommunity] = useState<Community | undefined>(
     initCommunity,
@@ -67,43 +70,43 @@ function CommunityPage({
     updateMetadata({ title, description });
   };
 
-  const apiParams = `/${community?.account || ""}`;
+  const apiParams = `/${communityData?.account || ""}`;
 
   const communityTabs = useMemo(
     () => [
       {
         id: "trending",
-        title: "Trending",
+        title: th("trending"),
         api: "getActiveCommunityPostsByTrending" + apiParams,
         icon: <TrendingUp size={ICON_SIZE} />,
       },
 
       {
         id: "popular",
-        title: "Popular",
+        title: th("popular"),
         api: "getActiveCommunityPostsByInteraction" + apiParams,
         icon: <Sparkles size={ICON_SIZE} />,
       },
       {
         id: "created",
-        title: "Recent",
+        title: th("recent"),
         api: "getCommunityPostsByCreated" + apiParams,
         icon: <ClockPlus size={ICON_SIZE} />,
       },
 
       {
         id: "log",
-        title: "Activities",
+        title: tc("activities"),
         icon: <Logs size={ICON_SIZE} />,
-        children: community?.account ? (
-          <CommuntiyLog account={community.account} />
+        children: communityData?.account ? (
+          <CommuntiyLog account={communityData.account} />
         ) : null,
       },
     ],
-    [apiParams, isMobile, community?.account],
+    [apiParams, isMobile, communityData?.account, th, tc],
   );
 
-  if (!community || !account) return null;
+  if (!communityData || !account) return null;
 
   return (
     <div className="flex flex-col gap-2">
@@ -114,7 +117,7 @@ function CommunityPage({
         onSelectionChange={handleSelectionChange}
         items={communityTabs}
         className={"md:mt-3"}
-        tabHref={(tab) => `/${tab.id}/${community.account}`}
+        tabHref={(tab) => `/${tab.id}/${communityData.account}`}
         tabTitle={(tab) => (
           <div className="flex items-center space-x-2">
             {tab.icon}

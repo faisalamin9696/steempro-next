@@ -1,0 +1,1334 @@
+{
+  "General": {
+    "network": {
+      "title": "네트워크 및 RPC",
+      "description": "Steem 블록체인 연결을 설정하세요",
+      "autoSelection": "자동 선택",
+      "autoSelectionDesc": "최적의 노드를 자동으로 선택합니다",
+      "rpcNode": "RPC 노드",
+      "placeholder": "RPC 서버를 선택하세요",
+      "rpcNodeDesc": "고성능 노드를 사용하면 더 원활한 경험을 제공합니다",
+      "autoFailover": "자동 (장애 조치)"
+    },
+    "media": {
+      "title": "미디어 및 콘텐츠",
+      "description": "이미지 호스팅 및 콘텐츠 표시 설정을 관리하세요",
+      "imageServer": "이미지 서버",
+      "imageServerPlaceholder": "이미지 호스팅을 선택하세요",
+      "nsfwLabel": "NSFW 콘텐츠",
+      "nsfwPlaceholder": "설정을 선택하세요",
+      "nsfwAlwaysShow": "항상 표시",
+      "nsfwAlwaysHide": "항상 숨기기",
+      "nsfwAlwaysWarn": "항상 경고"
+    },
+    "language": {
+      "title": "언어",
+      "description": "사용할 언어를 선택하세요",
+      "select": "언어 선택"
+    },
+    "interface": {
+      "title": "인터페이스 설정",
+      "description": "화면 표시 방식을 원하는 대로 조정하세요",
+      "theme": "테마",
+      "themeDesc": "테마를 설정하세요",
+      "themeSystem": "시스템",
+      "themeLight": "라이트",
+      "themeDark": "다크",
+      "feedStyle": "피드 스타일",
+      "feedStyleDesc": "표시 방식",
+      "feedStyleList": "목록",
+      "feedStyleBlog": "블로그",
+      "feedStyleGrid": "그리드",
+      "vote": "투표 기억",
+      "voteDesc": "마지막 가중치 사용",
+      "defaultVote": "기본 투표 %"
+    }
+  },
+  "Common": {
+    "home": "홈",
+    "settings": "설정",
+    "profile": "프로필",
+    "loginTo": "{action}하려면 로그인하세요.",
+    "security": "보안",
+    "about": "소개",
+    "logout": "로그아웃",
+    "login": "로그인",
+    "keychain": "키체인",
+    "privateKey": "개인 키"
+  },
+  "Home": {
+    "tabs": {
+      "trending": "트렌딩",
+      "popular": "인기",
+      "recent": "최신",
+      "hot": "핫",
+      "payout": "보상"
+    }
+  },
+  "Communities": {
+    "title": "커뮤니티",
+    "headerDesc": "Steem의 다양한 커뮤니티를 탐색하고 참여해 보세요. 구독을 관리하고 관심 있는 콘텐츠를 놓치지 마세요.",
+    "searchPlaceholder": "제목 또는 계정으로 검색...",
+    "showOnlySubscribed": "구독 중인 커뮤니티만 보기",
+    "noDescription": "설명이 없습니다",
+    "subscribers": "구독자",
+    "subscribe": "구독",
+    "leave": "탈퇴",
+    "leftSuccess": "커뮤니티를 떠났습니다",
+    "subscribeSuccess": "구독이 완료되었습니다"
+  },
+  "Community": {
+    "created": "생성일",
+    "pendingReward": "미지급 보상",
+    "rank": "순위",
+    "members": "멤버",
+    "active": "활성",
+    "leadership": "운영진",
+    "rules": "규칙",
+    "about": "소개",
+    "more": "더보기",
+    "user": "사용자",
+    "role": "역할",
+    "activities": "활동"
+  },
+  "About": {
+    "hero": {
+      "subtitle": "당신의 목소리를 강화하다",
+      "description": "Steem 블록체인으로 구동되는 소셜 네트워크를 경험하세요. 트렌딩 토론을 탐색하고 진정한 탈중앙화 플랫폼에서 당신만의 시각을 공유하세요.",
+      "getStarted": "시작하기",
+      "viewGithub": "Github 보기"
+    },
+    "mission": {
+      "title": "우리의 미션",
+      "description": "SteemPro는 복잡한 블록체인 기술과 일상적인 소셜 인터랙션 사이의 간극을 좁히는 것을 목표로 합니다. 우리는 Steem 생태계와 상호작용할 수 있는 직관적이고 빠르며 안전한 인터페이스를 제공하고자 합니다.",
+      "secureTitle": "안전",
+      "secureDesc": "블록체인 수준의 보안",
+      "fastTitle": "빠름",
+      "fastDesc": "최적화된 성능"
+    },
+    "features": {
+      "title": "강력한 기능",
+      "subtitle": "블록체인 입문자부터 전문가까지 모두를 위해 설계되었습니다.",
+      "feature1Title": "글로벌 연결",
+      "feature1Desc": "검열에 저항하는 네트워크에서 전 세계 사용자들과 소통하세요.",
+      "feature2Title": "SDS 기반",
+      "feature2Desc": "Steem Data Service로 구동되는 초고속 데이터 처리.",
+      "feature3Title": "탈중앙화",
+      "feature3Desc": "계정, 키, 콘텐츠 모두 온전히 내 것입니다.",
+      "feature4Title": "커뮤니티 주도",
+      "feature4Desc": "커뮤니티를 위해, 커뮤니티가 만든 플랫폼."
+    },
+    "team": {
+      "title": "팀 소개",
+      "subtitle": "SteemPro를 만든 사람들을 만나보세요."
+    },
+    "cta": {
+      "title": "소셜 미디어의 미래에 합류하세요",
+      "description": "내 콘텐츠가 진정 내 것이 되고, 내 목소리가 힘을 갖는 탈중앙화 세계의 일원이 되세요.",
+      "discord": "Discord",
+      "email": "이메일 문의"
+    }
+  },
+  "Explorer": {
+    "title": "블록체인 탐색기",
+    "description": "Steem 블록체인 실시간 데이터, 블록, 트랜잭션 및 체인 통계",
+    "tabs": {
+      "overview": "개요",
+      "blocks": "블록",
+      "transactions": "트랜잭션",
+      "accounts": "계정"
+    },
+    "recentBlocks": "최근 블록"
+  },
+  "Market": {
+    "title": "마켓",
+    "description": "STEEM을 SBD로 즉시 거래하세요",
+    "stats": {
+      "lastPrice": "최근 가격",
+      "change24h": "24시간 변동",
+      "high24h": "24시간 최고",
+      "low24h": "24시간 최저",
+      "volumeSteem": "24시간 거래량 (STEEM)",
+      "volumeSbd": "24시간 거래량 (SBD)"
+    },
+    "chart": {
+      "pair24h": "STEEM/SBD - 24H"
+    },
+    "tabs": {
+      "orderBook": "오더북",
+      "openOrders": "미체결 주문",
+      "tradeHistory": "거래 내역"
+    },
+    "orderBook": {
+      "priceSbd": "가격 (SBD)",
+      "steem": "STEEM",
+      "sbd": "SBD"
+    },
+    "openOrders": {
+      "noOrders": "미체결 주문이 없습니다",
+      "type": "유형",
+      "price": "가격",
+      "steem": "STEEM",
+      "sbd": "SBD",
+      "action": "작업",
+      "orderCancelled": "주문이 취소되었습니다",
+      "failedToCancel": "주문 취소에 실패했습니다"
+    },
+    "history": {
+      "date": "날짜",
+      "price": "가격",
+      "steem": "STEEM"
+    },
+    "trade": {
+      "buy": "구매",
+      "sell": "판매",
+      "buySteem": "STEEM 구매",
+      "sellSteem": "STEEM 판매",
+      "available": "사용 가능",
+      "price": "가격",
+      "amount": "수량",
+      "total": "합계",
+      "createOrder": "주문 생성",
+      "orderCreated": "주문이 완료되었습니다",
+      "failedToCreate": "주문 생성에 실패했습니다"
+    },
+    "info": {
+      "title": "거래 정보",
+      "marketFee": "거래 수수료",
+      "orderType": "주문 유형",
+      "limitDefault": "지정가 (기본값)",
+      "pair": "거래쌍"
+    }
+  },
+  "Games": {
+    "title": "게임",
+    "landing": {
+      "gamingZone": "SteemPro 게이밍 존",
+      "heroTitle": "플레이. 경쟁. <earn>획득.</earn>",
+      "heroDescription": "궁극의 블록체인 게임 플랫폼에 오신 것을 환영합니다. 실력을 겨루고, 리더보드를 정복하고, Steem 생태계에서 보상을 획득하세요.",
+      "allGames": "전체 게임",
+      "noGamesFound": "게임을 찾을 수 없습니다",
+      "noGamesDescription": "현재 이 카테고리의 새 게임을 개발 중입니다. 기대해 주세요!",
+      "resetFilter": "필터 초기화",
+      "ecosystemFavorites": "생태계 인기 게임",
+      "communityTitles": "커뮤니티 {titles}",
+      "communityTitlesHighlight": "타이틀",
+      "communityDescription": "Steem 커뮤니티와 파트너 스튜디오가 개발한 멋진 게임들을 만나보세요.",
+      "yourGameHere": "당신의 게임을 여기에?",
+      "buildYourOwn": "직접 게임을 만들고 SteemPro 게이밍 존에 선보이세요.",
+      "fairPlay": "공정한 플레이 및 보상",
+      "immutableScores": "불변의 {scores}",
+      "immutableScoresHighlight": "기록",
+      "fairPlayDescription": "모든 최고 점수와 게임 업적은 Steem 블록체인에 직접 기록됩니다. 이는 투명성, 불변성, 실력 증명을 보장합니다. 상위 플레이어는 SteemPro 커뮤니티의 선별 보상을 받을 수 있습니다.",
+      "transparent": "투명한",
+      "verifiedOnChain": "체인 검증",
+      "rewarding": "보람 있는",
+      "communityDriven": "커뮤니티 주도"
+    },
+    "card": {
+      "native": "네이티브",
+      "hot": "핫",
+      "chain": "체인",
+      "enterGame": "게임 시작",
+      "studio": "스튜디오",
+      "difficulty": "난이도",
+      "rewards": "보상",
+      "launchWebsite": "웹사이트 열기"
+    },
+    "developerTemplate": {
+      "viewTemplate": "템플릿 보기",
+      "title": "개발자 연동 템플릿",
+      "close": "닫기",
+      "getStarted": "시작하기",
+      "description": "이 데이터 구조를 따라 게임을 생태계에 등록하세요. PR을 제출하거나 팀에 연락하면 목록에 추가됩니다.",
+      "thumbnail": "썸네일",
+      "thumbnailRecommended": "권장 크기: 800x1200px (세로)",
+      "integration": "연동",
+      "integrationLevels": "레벨 1 (링크) 또는 레벨 2 (호스팅)"
+    },
+    "steemHeights": {
+      "title": "Steem Heights",
+      "info": {
+        "skillCompetition": "실력 경쟁",
+        "noActiveSeason": "진행 중인 시즌 없음",
+        "season": "시즌 {season}",
+        "seasonEnded": "시즌 종료",
+        "pool": "{amount} {symbol} 상금 풀",
+        "description": "흔들리지 않는 집중력으로 하늘을 향해 올라가세요. 기록적인 높이에 도달하기 위해 각 블록을 정밀하게 쌓아 올리세요. 이 등반에서 집중력이 가장 강력한 무기입니다.",
+        "handbook": "클라이머 핸드북",
+        "viewLeaderboard": "리더보드 보기"
+      },
+      "leaderboard": {
+        "tabs": {
+          "global": "글로벌 정상",
+          "daily": "일일 챌린지",
+          "history": "내 기록",
+          "winners": "시즌 명예의 전당",
+          "lab": "커스터마이즈 랩"
+        },
+        "global": {
+          "summit": "시즌 {season} 정상",
+          "hall": "글로벌 정상 명예의 전당",
+          "totalClimbers": "전체 클라이머",
+          "active24h": "활성 (24시간)",
+          "totalAscent": "누적 등반 높이",
+          "avgAltitude": "평균 고도",
+          "intermission": "시즌 휴식기",
+          "concluded": "시즌 {season} 등반이 종료되었습니다. 최종 고도 기록이 확정되었습니다.",
+          "preparing": "현재 진행 중인 등반이 없습니다. 다음 시즌을 준비 중입니다. 집중력을 유지하세요!",
+          "beFirst": "가장 먼저 높은 곳을 정복하세요!",
+          "noMore": "이 범위에는 더 이상 등반가가 없습니다.",
+          "unqualifiedClimbers": "부적격 등반가",
+          "onlyQualified": "적격자만",
+          "table": {
+            "player": "플레이어",
+            "performance": "성과"
+          },
+          "plays": "플레이",
+          "combos": "콤보",
+          "you": "나",
+          "race": {
+            "title": "정상 레이스",
+            "subtitle": "상위 8명의 클라이머"
+          },
+          "goal": {
+            "title": "커뮤니티 글로벌 목표",
+            "currentPool": "현재 시즌 보너스 풀",
+            "maxCapability": "최대 달성 가능",
+            "invite": "친구 초대",
+            "totalProgress": "전체 진행률",
+            "targeting": "목표: {altitude}m",
+            "boost": "+{reward} {symbol} 보너스",
+            "baseStart": "시작 기준: {altitude}m",
+            "maxGoal": "최대 목표: {altitude}m",
+            "milestones": "보상 마일스톤",
+            "tooltip": "커뮤니티 보상은 모든 플레이어의 누적 고도 합계로 계산됩니다. {baseAltitude}m를 초과하는 {stepSize}m마다 {boost} {symbol}이 풀에 추가됩니다.",
+            "modal": {
+              "title": "<climbers>클라이머</climbers> 초대하기",
+              "subtitle": "커뮤니티 목표 달성에 함께하세요",
+              "markdown": "초대 마크다운",
+              "info": "이 마크다운을 복사해서 다음 게시물이나 댓글에 붙여넣어 친구들을 초대하세요. 더 높은 누적 고도가 모두에게 더 큰 보상을 가져다줍니다!",
+              "close": "닫기"
+            }
+          }
+        },
+        "daily": {
+          "operations": "일일 임무",
+          "tactical": "전략적 {challenges}",
+          "description": "매일 한계를 넘어 랩에서 사용할 에너지를 축적하세요.",
+          "challenges": {
+            "daily_ascent": {
+              "title": "베이스 캠프",
+              "description": "오늘 총 200m 등반하기"
+            },
+            "daily_ascent_pro": {
+              "title": "정상 사냥꾼",
+              "description": "오늘 총 1000m 등반하기"
+            },
+            "daily_combos": {
+              "title": "정밀도의 달인",
+              "description": "하루에 총 콤보 10회 달성"
+            },
+            "daily_plays": {
+              "title": "끈질긴 클라이머",
+              "description": "오늘 게임 6판 완료"
+            }
+          },
+          "energyReserves": "에너지 보유량",
+          "nrg": "nrg",
+          "claimed": "수령 완료",
+          "ready": "준비됨",
+          "progress": "진행률",
+          "reward": "보상",
+          "missionCompleted": "임무 완료",
+          "processing": "처리 중...",
+          "claimReward": "보상 받기",
+          "inProgress": "진행 중",
+          "inactive": "일일 챌린지 비활성",
+          "inactiveDescription": "챌린지와 에너지 보상은 활성 시즌 중에만 이용 가능합니다. 다음 등반을 기다려 주세요!",
+          "resetNotice": "시즌 리셋 안내",
+          "resetDescription": "에너지는 시즌별로 관리됩니다. 모든 경쟁자에게 공평한 시작을 보장하기 위해 시즌 {season} 종료 시 잔액이 초기화됩니다."
+        },
+        "history": {
+          "summary": "개인 기록 요약",
+          "totalPlays": "총 플레이 횟수",
+          "bestAltitude": "최고 고도",
+          "avgAltitude": "평균 고도",
+          "totalCombos": "총 콤보",
+          "estReward": "예상 시즌 보상",
+          "keepClimbing": "계속 올라가세요! {minAlt}m 달성 또는 10m+ 고도로 {minPlays}판 플레이 시 자격이 부여됩니다.",
+          "breakIntoTop": "자격 충족! 이제 상위 {ranking}에 들어 보상 풀의 몫을 확보하세요.",
+          "qualified": "자격을 갖추고 보상을 받고 있습니다!",
+          "records": "개인 최고 기록",
+          "publish": {
+            "title": "여정을 공유하세요",
+            "subtitle": "일일 활동을 Steem에 게시하세요",
+            "successTitle": "게시 완료!",
+            "successDesc": "당신의 등반이 Steem 블록체인에 영원히 기록되었습니다. 정말 잘 했어요!",
+            "statsTitle": "기록 미리보기",
+            "totalPlays": "총 세션",
+            "peakAltitude": "최고 고도",
+            "estTotal": "예상 합계",
+            "supportTitle": "등반 후원",
+            "supportDesc": "여정을 게시하면 기록을 공유하는 것 이상으로 플랫폼을 지원하게 됩니다! 함께 <pro>10%</pro>를 <steempro>SteemPro</steempro> 지원에, <burn>5%</burn>를 <eco>Steem 생태계</eco>를 위해 소각합니다. 당신의 등반이 모두를 성장시킵니다!",
+            "selectCommunity": "커뮤니티 선택",
+            "postTitle": "게시물 제목",
+            "postContent": "게시물 내용 (마크다운)",
+            "descPlaceholder": "등반 경험을 기록하세요...",
+            "publishBtn": "Steem에 게시",
+            "btnLabel": "활동 게시",
+            "defaultTitle": "Steem Heights 시즌 여정 - {date}",
+            "defaultBody": "![steem-heights.png](https://cdn.steemitimages.com/DQmTmKQbDgzjQnB4CFCMLemNa1hmo5bBt5C56GR9CtArCYN/steem-heights.png)\n\n# Steem Heights 시즌 여정 🏔️\n\n정상을 향해 달리고 있습니다! 제 누적 기록을 공유합니다:\n\n- 🚀 **총 세션**: {plays}\n- 🏔️ **개인 최고**: {peak}m\n- ☁️ **누적 고도**: {altitude}m (예상)\n- 🎯 **총 콤보**: {combos}\n- 📈 **평균 고도**: {avg}m\n\n제 점수를 꺾을 수 있으신가요? Steem Heights에서 함께 올라가요!\n\n[Steem Heights 플레이](https://www.steempro.com/games/steem-heights)\n\n#steemheights #gaming #steempro #play2earn",
+            "close": "닫기",
+            "cancel": "취소"
+          },
+          "altitude": "고도",
+          "combos": "콤보",
+          "best": "최고",
+          "noRecords": "시즌 {season} 기록 없음"
+        },
+        "winners": {
+          "transactionReport": "트랜잭션 보고서가 클립보드에 복사되었습니다!",
+          "markdownReport": "마크다운 보고서가 클립보드에 복사되었습니다!",
+          "hallOfChampions": "챔피언 명예의 전당",
+          "more": "+ {count}명 더",
+          "champion": "챔피언",
+          "climbers": "클라이머",
+          "ascent": "등반",
+          "avg": "평균",
+          "personalBest": "개인 최고",
+          "achieved": "달성",
+          "pool": "상금 풀",
+          "hallAwaits": "전당이 첫 번째 영웅을 기다리고 있습니다...",
+          "archives": "기록 보관소",
+          "performanceData": "시즌 성과 데이터",
+          "txReport": "TX 보고서",
+          "mdReport": "MD 보고서",
+          "fetching": "기록 불러오는 중...",
+          "allParticipants": "전체 참가자 및 순위",
+          "table": {
+            "player": "플레이어",
+            "performance": "성과"
+          }
+        },
+        "lab": {
+          "disabled": "등반 진행 중에는 상점을 이용할 수 없습니다",
+          "conflictToast": "{skin} 장착 불가: 현재 활성화된 {powerUp} 파워업과 충돌합니다.",
+          "loginToast": "스킨을 구매하려면 로그인하세요.",
+          "powerups": "파워업 상점",
+          "powerupsSub": "에너지를 사용해 한 판용 버프를 구매하세요",
+          "conflictMsg": "이 능력은 이미 {skin} 스킨을 통해 활성화되어 있습니다.",
+          "ready": "준비됨",
+          "skinConflict": "스킨 충돌",
+          "activate": "활성화",
+          "insufficient": "에너지 부족",
+          "skins": "시즌 스킨",
+          "skinsSub": "독특한 스타일과 능력으로 블록을 꾸미세요",
+          "active": "활성",
+          "ability": "핵심 능력",
+          "cost": "해금 비용",
+          "owned": "보유 중",
+          "energy": "에너지",
+          "equipped": "장착 중",
+          "select": "선택",
+          "purchase": "구매",
+          "footnote": "* 스킨과 파워업은 등반 경험을 향상시키는 시즌 한정 혜택입니다.",
+          "footnoteNote": "참고:",
+          "footnoteSub": "임시 파워업은 한 게임 세션 동안만 유효합니다.",
+          "items": {
+            "skins": {
+              "default": {
+                "name": "클래식 클라이머",
+                "description": "모든 등반가의 기본 장비.",
+                "ability": "없음"
+              },
+              "glacier": {
+                "name": "빙하 플레이트",
+                "description": "이동 속도를 낮추는 얼어붙은 블록. (150 에너지)",
+                "ability": "속도 15% 감소"
+              },
+              "steel": {
+                "name": "스틸 코어",
+                "description": "고고도 바람의 영향을 무시하는 견고한 블록. (300 에너지)",
+                "ability": "바람 이동 없음"
+              },
+              "phoenix": {
+                "name": "피닉스 윙",
+                "description": "치명적인 추락에서 한 번 살아남는 마법의 힘. (500 에너지)",
+                "ability": "목숨 1개 추가"
+              },
+              "gold": {
+                "name": "미다스 터치",
+                "description": "완벽한 낙하 시 고도가 올라가는 순금 블록. (1000 에너지)",
+                "ability": "+2m 퍼펙트 보너스"
+              }
+            },
+            "powerups": {
+              "wind_shield": {
+                "name": "바람 방패",
+                "description": "한 게임 동안 바람의 영향을 완전히 무시합니다."
+              },
+              "slow_motion": {
+                "name": "슬로우 모션",
+                "description": "한 게임 동안 이동 속도가 20% 감소합니다."
+              },
+              "extra_gear": {
+                "name": "여분 장비",
+                "description": "다음 게임을 목숨 1개 추가로 시작합니다."
+              }
+            }
+          }
+        },
+        "howToPlay": {
+          "title": "<climb>등반</climb> 마스터 가이드",
+          "subtitle": "필수 생존 가이드",
+          "controls": {
+            "dropControl": {
+              "title": "낙하 조작",
+              "desc": "화면 어디서나 탭하면 이동 중인 블록이 떨어집니다. 타이밍이 전부입니다."
+            },
+            "precision": {
+              "title": "정밀 절단",
+              "desc": "블록은 반드시 기초 위에 착지해야 합니다. 튀어나온 부분은 즉시 잘려나갑니다!"
+            },
+            "perfect": {
+              "title": "퍼펙트 스트릭",
+              "desc": "블록을 정확히 맞추면 PERFECT 판정을 받습니다. 콤보가 쌓이고 바람 저항이 줄어듭니다."
+            },
+            "bonus": {
+              "title": "고도 보너스",
+              "desc": "콤보를 성공할 때마다 막대한 고도 보너스를 획득합니다!"
+            }
+          },
+          "gravityPulse": "중력 펄스",
+          "gravityDesc": "블록을 낙하시킬 시간은 <time>{timeVal}초</time>입니다. 너무 늦으면 <autoDrop>자동 낙하!</autoDrop>가 발동됩니다.",
+          "dailyRewards": "일일 보상",
+          "dailyDesc": "<challenges>일일 챌린지</challenges>를 완료해 <energy>에너지</energy>를 획득하세요. 랩에서 에너지를 사용해 <powerups>파워업</powerups>과 <skins>스킨</skins>을 구매하세요.",
+          "close": "등반 시작"
+        }
+      },
+      "canvas": {
+        "testGameplay": "게임플레이 테스트",
+        "seasonBreak": "시즌 휴식기",
+        "loginToRecord": "점수를 기록하고 보상을 받으려면 지금 로그인하세요. 현재 고도는 저장되지 않습니다.",
+        "seasonEnded": "현재 시즌이 종료되었습니다. 다음 시즌에 경쟁하고 보상을 받으세요!",
+        "altitude": "고도",
+        "howToPlay": "게임 방법",
+        "wind": "바람",
+        "rankings": "랭킹",
+        "ready": "정복할 준비가 됐나요?",
+        "tapToDrop": "박스 위 아무 곳이나 탭해서 블록을 떨어트리세요.",
+        "begin": "등반 시작",
+        "totalAltitude": "총 고도",
+        "climbEnded": "등반 종료",
+        "recording": "블록체인에 기록 중...",
+        "loginToRecordScore": "블록체인에 기록하려면 로그인하세요",
+        "seasonInactive": "시즌 비활성 • 점수 미기록",
+        "tryAgain": "다시 시도",
+        "mainMenu": "메인 메뉴",
+        "paused": "일시 정지",
+        "takeBreather": "잠시 숨 고르세요, 챔피언.",
+        "resume": "계속",
+        "preparing": "등반 준비 중",
+        "generating": "보안 세션 생성 중",
+        "perfect": "퍼펙트!",
+        "comboBonus": "콤보 보너스",
+        "combos": "콤보",
+        "bonus": "보너스",
+        "you": "나"
+      }
+    }
+  },
+  "Post": {
+    "notFound": "게시물을 찾을 수 없습니다",
+    "notFoundDescription": "찾으시는 게시물이 존재하지 않거나 삭제되었습니다.",
+    "muted": "이 게시물은 숨겨졌습니다",
+    "mutedDescription": "커뮤니티 관리자에 의해 숨겨진 게시물입니다.",
+    "viewingSingleComment": "다음 게시물의 댓글 스레드를 보고 있습니다:",
+    "viewFullContext": "전체 맥락 보기",
+    "viewDirectParent": "상위 댓글 보기",
+    "in": "in",
+    "edited": "(수정됨)",
+    "postedVia": "{app}을 통해 게시됨",
+    "voteRemoved": "투표가 취소되었습니다",
+    "votedSuccessfully": "투표가 완료되었습니다!",
+    "upvote": "업보트",
+    "downvote": "다운보트",
+    "comments": "댓글",
+    "writeReply": "답글 작성",
+    "replyPlaceholder": "댓글을 입력하세요... @를 사용해 사용자를 언급할 수 있습니다",
+    "reply": "답글",
+    "update": "수정",
+    "cancel": "취소",
+    "loadingComments": "댓글 불러오는 중...",
+    "newest": "최신순",
+    "sortPayout": "보상",
+    "upvotes": "업보트",
+    "beFirstComment": "첫 번째 댓글을 남겨보세요!",
+    "loadingMore": "더 불러오는 중...",
+    "updateReply": "답글 수정...",
+    "replyTo": "@{author}에게 답글...",
+    "openFullThread": "전체 스레드 보기",
+    "somethingWentWrong": "오류가 발생했습니다!",
+    "resteemedAlready": "이미 resteem한 게시물입니다!",
+    "resteemSuccess": "Resteem이 완료되었습니다!",
+    "resteemConfirmation": "확인",
+    "resteemQuestion": "이 게시물을 resteem하시겠습니까?",
+    "payoutDetails": "보상 상세",
+    "payoutBreakdown": {
+      "authorDeclined": "작성자가 보상을 거절했습니다",
+      "pending": "미지급 보상 내역",
+      "settled": "지급 완료 보상 내역",
+      "declinedTitle": "보상 거절됨",
+      "declinedDescription": "이 게시물의 작성자가 모든 보상을 받지 않기로 선택했습니다.",
+      "failed": "보상 정보를 불러오지 못했습니다",
+      "status": "상태",
+      "pendingLabel": "대기 중",
+      "paidLabel": "지급 완료",
+      "nextCashout": "다음 cashout",
+      "totalPayout": "총 보상",
+      "expectedSbd": "예상 SBD",
+      "expectedSteem": "예상 STEEM",
+      "expectedSp": "예상 SP",
+      "authorTotal": "작성자 합계",
+      "curatorsTotal": "큐레이터 합계",
+      "beneficiaries": "수혜자"
+    }
+  },
+  "Profile": {
+    "tabs": {
+      "blog": "블로그",
+      "posts": "게시물",
+      "friends": "친구",
+      "comments": "댓글",
+      "replies": "답글",
+      "notifications": "알림",
+      "communities": "커뮤니티",
+      "wallet": "지갑"
+    },
+    "about": "소개",
+    "joined": "가입일",
+    "followers": "팔로워",
+    "following": "팔로잉",
+    "posts": "게시물",
+    "comments": "댓글",
+    "active": "활성",
+    "vp": "VP",
+    "vpTitle": "투표 파워",
+    "rc": "RC",
+    "rcTitle": "리소스 크레딧",
+    "vote": "투표",
+    "voteTitle": "투표 가치",
+    "witnessProxy": "Witness 프록시",
+    "witnessVotes": "Witness 투표",
+    "more": "+{count}명 더",
+    "editProfile": "프로필 수정",
+    "follow": "팔로우",
+    "unfollow": "언팔로우",
+    "followSuccess": "팔로우 완료",
+    "unfollowSuccess": "언팔로우 완료",
+    "notifications": {
+      "title": "알림",
+      "unread": "{count}개 읽지 않음",
+      "allCaughtUp": "모두 확인했습니다",
+      "markAllRead": "전체 읽음 표시",
+      "filterAndSort": "필터 및 정렬",
+      "allTypes": "전체 유형",
+      "newest": "최신순",
+      "oldest": "오래된순",
+      "searchPlaceholder": "사용자 또는 활동으로 검색...",
+      "loading": "알림 불러오는 중...",
+      "empty": "알림이 없습니다",
+      "today": "오늘",
+      "yesterday": "어제",
+      "typeLabels": {
+        "vote": "투표",
+        "reply": "답글",
+        "mention": "멘션",
+        "follow": "팔로우",
+        "resteem": "Resteem"
+      }
+    },
+    "wallet": {
+      "transactionHistory": "거래 내역",
+      "delegations": "위임",
+      "orders": "주문",
+      "openOrders": "미체결 주문",
+      "newOrder": "새 주문"
+    },
+    "settings": {
+      "loginAlert": "프로필 설정 보기",
+      "basicInfo": {
+        "title": "기본 정보",
+        "description": "다른 사용자에게 표시되는 공개 프로필 정보",
+        "displayName": "표시 이름",
+        "displayNamePlaceholder": "예: 홍길동",
+        "about": "자기소개",
+        "aboutPlaceholder": "커뮤니티에 자신을 소개하세요",
+        "location": "위치",
+        "locationPlaceholder": "예: 서울, 대한민국",
+        "website": "웹사이트",
+        "websitePlaceholder": "https://example.com"
+      },
+      "visual": {
+        "title": "시각적 정체성",
+        "description": "프로필 사진과 커버 이미지를 설정하세요",
+        "preview": "미리보기",
+        "profileImage": "프로필 사진",
+        "profileImageDesc": "정사각형 이미지 권장",
+        "coverImage": "커버 이미지",
+        "coverImageDesc": "1200x300 권장",
+        "uploading": "{type} 업로드 중...",
+        "avatar": "프로필 사진",
+        "cover": "커버"
+      },
+      "actions": {
+        "save": "프로필 저장"
+      },
+      "messages": {
+        "uploadSuccess": "이미지가 업로드되었습니다!",
+        "uploadFailed": "업로드에 실패했습니다",
+        "updateSuccess": "프로필이 블록체인에 업데이트되었습니다!"
+      }
+    }
+  },
+  "Witnesses": {
+    "title": "증인",
+    "description": "스팀 노드를 유지하고 블록체인을 보호하는 증인에게 투표하세요. 최대 30명의 증인에게 투표할 수 있습니다.",
+    "tabs": {
+      "witnesses": "Witness",
+      "proxy": "프록시",
+      "myWitness": "내 Witness"
+    },
+    "columns": {
+      "rank": "#",
+      "witness": "Witness",
+      "votes": "투표",
+      "missed": "미생성",
+      "feed": "피드",
+      "action": "작업"
+    },
+    "vote": "투표",
+    "unvote": "투표 취소",
+    "viewDetails": "상세 보기",
+    "outdated": "구버전",
+    "searchPlaceholder": "이름으로 Witness 검색...",
+    "noWitnesses": "Witness를 찾을 수 없습니다",
+    "showOnlyVoted": "내가 투표한 Witness만 보기",
+    "proxyActive": "프록시 활성",
+    "proxyActiveDesc": "현재 다음 계정에 투표를 위임하고 있습니다",
+    "cannotVoteProxy": "프록시가 활성 상태일 때는 Witness에 투표할 수 없습니다",
+    "voteSuccess": "{name}에 대한 투표가 완료되었습니다",
+    "unvoteSuccess": "{name}에 대한 투표가 취소되었습니다",
+    "proxy": {
+      "title": "투표 프록시 설정",
+      "description": "프록시를 설정하면 다른 사용자가 대신 Witness에 투표합니다. 전체 Witness 투표 파워가 위임됩니다.",
+      "usernameLabel": "프록시 사용자명",
+      "usernamePlaceholder": "예: steempro.com",
+      "setProxy": "프록시 설정",
+      "clearProxy": "프록시 해제",
+      "currentProxy": "현재 프록시",
+      "setSuccess": "프록시가 {name}으로 설정되었습니다",
+      "removeSuccess": "프록시가 해제되었습니다"
+    },
+    "myWitness": {
+      "title": "Witness 설정",
+      "description": "Witness 노드의 속성과 상태를 관리하세요.",
+      "enable": "Witness 활성화",
+      "disable": "Witness 비활성화",
+      "urlLabel": "Witness URL",
+      "signingKeyLabel": "블록 서명 키",
+      "signingKeyDesc": "블록 서명에 사용하는 공개 키입니다.",
+      "creationFeeLabel": "계정 생성 수수료",
+      "interestRateLabel": "SBD 이자율",
+      "blockSizeLabel": "최대 블록 크기",
+      "securityTitle": "서명 키 보안",
+      "securityDesc": "서명 키 변경에는 active 권한이 필요합니다. 공개 서명 키를 업데이트하기 전에 Witness 노드에 해당 개인 키가 있는지 반드시 확인하세요. 그렇지 않으면 블록 생성을 놓칩니다.",
+      "updateProps": "Witness 속성 업데이트",
+      "updateSuccess": "Witness 속성이 업데이트되었습니다"
+    },
+    "details": {
+      "information": "정보",
+      "voters": "투표자",
+      "basicInfo": "기본 정보",
+      "owner": "소유자",
+      "rank": "순위",
+      "votes": "투표",
+      "viewVoters": "투표자 보기",
+      "totalMissedBlocks": "누적 미생성 블록",
+      "lastConfirmedBlock": "마지막 확인 블록",
+      "runningVersion": "실행 버전",
+      "url": "URL",
+      "visitWebsite": "웹사이트 방문",
+      "signingKey": "서명 키",
+      "witnessProperties": "Witness 속성",
+      "accountCreationFee": "계정 생성 수수료",
+      "maximumBlockSize": "최대 블록 크기",
+      "sbdInterestRate": "SBD 이자율",
+      "sbdExchangeRate": "SBD 환율",
+      "base": "기준",
+      "quote": "상대",
+      "lastUpdate": "마지막 업데이트",
+      "additionalDetails": "추가 정보",
+      "created": "생성일",
+      "lastWork": "마지막 작업",
+      "hardforkTimeVote": "Hardfork 시간 투표",
+      "active": "활성",
+      "disabled": "비활성",
+      "totalVoters": "전체 투표자",
+      "totalSupport": "총 지지 (SP)",
+      "noVotes": "이 Witness에 대한 투표가 없습니다",
+      "voter": "투표자",
+      "ownSp": "보유 SP",
+      "proxiedSp": "위임 SP",
+      "copied": "{label}이(가) 클립보드에 복사되었습니다"
+    }
+  },
+  "Proposals": {
+    "title": "제안",
+    "description": "Steem Proposal System (SPS)을 통해 커뮤니티 주도 아이디어를 지원하세요. 생태계를 개선하고 네트워크에 도움이 되는 이니셔티브에 투표하세요.",
+    "funded": "펀딩됨",
+    "threshold": "펀딩 기준",
+    "pending": "대기 중",
+    "notFunded": "미펀딩",
+    "search": "제안 검색...",
+    "item": {
+      "by": "작성자",
+      "to": "수신자",
+      "id": "ID",
+      "days": "일",
+      "sbdDay": "SBD/일"
+    },
+    "details": {
+      "information": "정보",
+      "voters": "투표자",
+      "votes": "투표",
+      "creator": "작성자",
+      "receiver": "수신자",
+      "duration": "기간",
+      "start": "시작:",
+      "end": "종료:",
+      "dailyPay": "일일 지급",
+      "permlink": "Permlink",
+      "totalVoters": "전체 투표자",
+      "totalSupport": "총 지지 (SP)",
+      "effective": "유효:",
+      "noVotes": "이 제안에 대한 투표가 없습니다"
+    },
+    "votersTable": {
+      "voter": "투표자",
+      "ownSp": "보유 SP",
+      "proxiedSp": "위임 SP",
+      "share": "비율",
+      "proxyToActive": "@{user}에 프록시",
+      "proxyToInactive": "@{user}에 프록시 (미투표자)"
+    },
+    "actions": {
+      "voteTitle": "제안 #{id}에 투표하시겠습니까?",
+      "unvoteTitle": "제안 #{id}의 투표를 취소하시겠습니까?",
+      "voteDesc": "이 제안에 투표하시겠습니까?",
+      "unvoteDesc": "이 제안의 투표를 취소하시겠습니까?",
+      "removeTitle": "제안 #{id}을(를) 삭제하시겠습니까?",
+      "removeDesc": "이 제안을 삭제하시겠습니까?",
+      "vote": "투표",
+      "unvote": "투표 취소",
+      "cancel": "취소",
+      "remove": "삭제",
+      "votedSuccess": "제안에 투표가 완료되었습니다",
+      "unvotedSuccess": "제안 투표가 취소되었습니다",
+      "removedSuccess": "제안이 삭제되었습니다"
+    }
+  },
+  "Tools": {
+    "title": "SteemPro 툴",
+    "description": "스팀 블록체인 사용자, 커뮤니티 및 큐레이터를 위한 필수 도구의 강력한 모음입니다.",
+    "list": {
+      "batchTransfer": {
+        "title": "일괄 전송",
+        "description": "여러 계정에 스팀 또는 SBD를 한 번에 효율적으로 보냅니다."
+      },
+      "batchVoting": {
+        "title": "일괄 투표",
+        "description": "여러 게시물에 동시에 투표하여 보상을 극대화하세요."
+      },
+      "communityReport": {
+        "title": "커뮤니티 보고서",
+        "description": "커뮤니티에 대한 자세한 통계 및 보고서를 생성합니다."
+      },
+      "authorReport": {
+        "title": "작성자 통계 보고서",
+        "description": "작성자의 게시물 성과, 지급액 및 참여도를 분석합니다."
+      },
+      "accountCreation": {
+        "title": "계정 생성",
+        "description": "계정 생성 토큰을 사용하여 새로운 스팀 계정을 신청하고 생성하세요."
+      },
+      "snippetsTemplates": {
+        "title": "스니펫 및 템플릿",
+        "description": "게시물에 스니펫과 템플릿을 삽입하세요"
+      }
+    }
+  },
+  "Submit": {
+    "communityPlaceholder": "커뮤니티 선택",
+    "noCommunity": "이용 가능한 커뮤니티가 없습니다",
+    "titlePlaceholder": "게시물 제목을 입력하세요...",
+    "preview": "미리보기",
+    "readingTime": "{words}단어, ~{text}",
+    "saveDraft": "임시저장",
+    "cancel": "취소",
+    "update": "수정",
+    "publish": "게시",
+    "scheduled": "예약",
+    "confirm": "확인",
+    "clear": "지우기",
+    "confirmTitle": "확인",
+    "confirmDesc": "정말로 모든 데이터를 초기화하시겠습니까?",
+    "saved": "저장됨",
+    "draftUpdated": "임시저장 업데이트됨",
+    "updated": "수정됨",
+    "published": "게시됨",
+    "scheduledSuccess": "게시물이 예약되었습니다!",
+    "editor": {
+      "placeholder": "이야기를 써보세요...",
+      "markdown": "마크다운",
+      "preview": "미리보기",
+      "uploading": "업로드 중...",
+      "uploadSuccess": "업로드 완료",
+      "uploadError": "업로드 실패",
+      "dragDrop": "파일을 끌어다 놓아 업로드",
+      "write": "작성"
+    },
+    "tags": {
+      "placeholder": "태그 추가 (Enter 또는 쉼표)",
+      "help": "태그는 공백으로 구분하세요.",
+      "copied": "태그가 클립보드에 복사되었습니다",
+      "copyError": "태그 복사에 실패했습니다",
+      "countInfo": "{count}/8개 태그 • 드래그하여 순서 변경",
+      "copyAll": "태그 전체 복사",
+      "clearAll": "태그 전체 삭제"
+    },
+    "beneficiaries": {
+      "title": "수혜자 관리",
+      "description": "다른 사용자와 보상을 나누도록 설정하세요. 합계가 100%를 초과할 수 없습니다.",
+      "add": "계정 추가",
+      "account": "계정",
+      "weight": "비율 (%)",
+      "total": "총 비율: {weight}%",
+      "favorites": "즐겨찾는 수혜자",
+      "usernamePlaceholder": "사용자명 입력...",
+      "allocation": "배분: {percent}%",
+      "totalAllocation": "총 배분:",
+      "save": "변경사항 저장",
+      "updated": "수혜자가 업데이트되었습니다",
+      "alreadyAdded": "이미 수혜자 목록에 있는 사용자입니다",
+      "alreadyAddedShort": "이미 추가된 사용자입니다",
+      "limitExceeded": "총 비율이 100%를 초과할 수 없습니다"
+    },
+    "payout": {
+      "title": "보상 유형",
+      "description": "글 보상을 받는 방법을 선택하세요.",
+      "decline": "보상 거절",
+      "half": "50% SBD / 50% SP",
+      "full": "100% 스팀 파워",
+      "declinedShort": "거절됨",
+      "fiftyFiftyShort": "50%/50%",
+      "oneHundredShort": "100% SP"
+    },
+    "schedule": {
+      "title": "게시물 예약",
+      "description": "게시물을 자동으로 게시할 날짜와 시간을 선택하세요."
+    },
+    "validation": {
+      "titleEmpty": "제목을 입력해주세요",
+      "postEmpty": "내용을 입력해주세요",
+      "tagEmpty": "태그를 추가하거나 커뮤니티를 선택하세요"
+    },
+    "error": {
+      "loginRequired": "로그인이 필요합니다"
+    },
+    "authority": {
+      "granted": "권한이 부여되었습니다!"
+    },
+    "actions": {
+      "cancel": "취소"
+    },
+    "snippets": {
+      "title": "스니펫 및 템플릿",
+      "description": "게시물에 스니펫과 템플릿을 삽입하세요",
+      "mySnippets": "내 스니펫",
+      "templates": "템플릿",
+      "new": "새 스니펫",
+      "create": "생성",
+      "update": "업데이트",
+      "delete": "삭제",
+      "insert": "삽입",
+      "cancel": "취소",
+      "titleLabel": "제목",
+      "titlePlaceholder": "스니펫 제목 입력",
+      "contentPlaceholder": "스니펫 내용 입력",
+      "deleteTitle": "스니펫 삭제",
+      "deleteDesc": "정말로 이 스니펫을 삭제하시겠습니까?",
+      "noSnippets": "스니펫을 찾을 수 없습니다. 첫 번째 스니펫을 만들어보세요!",
+      "manageSnippets": "스니펫 관리",
+      "created": "스니펫이 생성되었습니다",
+      "updated": "스니펫이 업데이트되었습니다",
+      "deleted": "스니펫이 삭제되었습니다",
+      "required": "제목과 본문은 필수입니다",
+      "templateList": {
+        "table": "표",
+        "code-block": "코드 블록",
+        "collapsible": "접기/펴기 섹션",
+        "divider": "구분선",
+        "task-list": "할 일 목록",
+        "blockquote": "인용문",
+        "image-grid": "이미지 그리드 (2열)",
+        "centered-text": "가운데 정렬 텍스트"
+      }
+    }
+  },
+  "BatchTransfer": {
+    "title": "일괄 전송",
+    "description": "여러 계정에 스팀 또는 SBD를 한 번에 효율적으로 보냅니다.",
+    "currency": "통화",
+    "bulkImport": "대량 가져오기",
+    "addRow": "행 추가",
+    "addAnotherRow": "다른 행 추가",
+    "clearAll": "전체 삭제",
+    "confirmTitle": "확인",
+    "confirmDesc": "정말로 모든 데이터를 초기화하시겠습니까?",
+    "bulkInfo": "여기에 목록을 붙여넣으세요. 아래에서 구분 기호를 사용자 지정할 수 있습니다.",
+    "lineSeparator": "줄 구분 기호",
+    "newLine": "새 줄 (\\n)",
+    "semicolon": "세미콜론 (;)",
+    "comma": "쉼표 (,)",
+    "custom": "사용자 지정",
+    "customPlaceholder": "예: |",
+    "bulkPlaceholder": "steememator 10.000 월간 상금\\nalice 5.000 콘테스트 우승자",
+    "cancel": "취소",
+    "parseList": "목록 분석",
+    "recipient": "수취인",
+    "amount": "금액",
+    "memo": "메모",
+    "memoOptional": "메모 (선택 사항)",
+    "action": "작업",
+    "username": "사용자 이름",
+    "summary": "요약",
+    "recipients": "수취인 수",
+    "totalAmount": "총 금액",
+    "yourBalance": "보유 잔액",
+    "insufficientBalance": "잔액 부족",
+    "sendButton": "일괄 전송 보내기",
+    "error": {
+      "loginFirst": "먼저 로그인해 주세요",
+      "invalidSeparator": "유효한 사용자 지정 줄 구분 기호를 제공해 주세요.",
+      "parseError": "유효한 전송을 분석할 수 없습니다. 형식을 확인해 주세요."
+    },
+    "success": {
+      "imported": "{count}개의 전송을 성공적으로 가져왔습니다",
+      "broadcast": "일괄 전송 성공!",
+      "sent": "{count}명의 사용자에게 {total} {currency}를 보냈습니다."
+    }
+  },
+  "BatchVoting": {
+    "title": "일괄 보팅",
+    "description": "여러 게시물에 동시에 보팅하여 큐레이션을 극대화하세요.",
+    "globalWeight": "전체 가중치",
+    "postList": "게시물 목록",
+    "bulkImport": "대량 가져오기",
+    "addPost": "게시물 추가",
+    "addAnotherPost": "다른 게시물 추가",
+    "clearAll": "전체 삭제",
+    "confirmTitle": "확인",
+    "confirmDesc": "정말로 모든 데이터를 초기화하시겠습니까?",
+    "bulkInfo": "게시물 URL을 여기에 붙여넣으세요. 형식: 줄당 {url} 또는 {url_weight}.",
+    "lineSeparator": "줄 구분자",
+    "newLine": "줄바꿈 (\\n)",
+    "semicolon": "세미콜론 (;)",
+    "comma": "쉼표 (,)",
+    "custom": "사용자 정의",
+    "customPlaceholder": "예: |",
+    "bulkPlaceholder": "https://www.steempro.com/@author/permlink\\nhttps://www.steempro.com/@author/permlink2 75",
+    "cancel": "취소",
+    "parseList": "목록 분석",
+    "table": {
+      "url": "스팀 게시물 URL 또는 @작성자/퍼머링크",
+      "weight": "가중치",
+      "status": "상태",
+      "action": "작업"
+    },
+    "urlPlaceholder": "https://...",
+    "global": "전체",
+    "status": {
+      "pending": "대기 중",
+      "voting": "보팅 중...",
+      "success": "성공",
+      "failed": "실패"
+    },
+    "action": {
+      "remove": "행 삭제"
+    },
+    "progress": {
+      "title": "진행 상황",
+      "totalPosts": "총 게시물",
+      "estTime": "예상 시간",
+      "min": "분",
+      "sec": "초",
+      "done": "완료",
+      "err": "오류",
+      "preparing": "보팅 준비 중...",
+      "votingOn": "@{author}님의 게시물에 보팅 중...",
+      "waiting": "3.5초 대기 중 (블록체인 제한)..."
+    },
+    "controls": {
+      "start": "보팅 시작",
+      "pause": "일시 정지",
+      "resume": "재개",
+      "stop": "중단"
+    },
+    "error": {
+      "invalidSeparator": "유효한 사용자 정의 줄 구분자를 입력하세요.",
+      "parseError": "유효한 게시물 URL을 분석할 수 없습니다. 형식을 확인하세요.",
+      "loginFirst": "먼저 로그인하세요",
+      "invalidUrl": "잘못된 URL 형식",
+      "invalidFormat": "일부 게시물의 형식이 잘못되어 처리할 수 없습니다.",
+      "votingStopped": "일괄 보팅이 중단되었습니다.",
+      "errorVoted": "@{author}님의 게시물 보팅 중 오류 발생: {error}"
+    },
+    "success": {
+      "imported": "{count}개의 게시물을 성공적으로 가져왔습니다",
+      "voted": "@{author}님의 게시물에 보팅했습니다",
+      "completed": "일괄 보팅이 완료되었습니다!"
+    }
+  },
+  "CommunityReport": {
+    "title": "커뮤니티 보고서",
+    "description": "모든 스팀 커뮤니티에 대한 통계 분석 및 마크다운 보고서를 생성합니다.",
+    "parameters": "보고서 매개변수",
+    "communityId": "커뮤니티 ID",
+    "placeholder": "예: hive-145160",
+    "startDate": "시작 날짜",
+    "endDate": "종료 날짜",
+    "generate": "보고서 생성",
+    "analyzing": "블록체인 분석 중...",
+    "emptyState": "커뮤니티 태그와 날짜 범위를 입력하여 블록체인 데이터를 분석하고 종합적인 마크다운 보고서를 생성하세요.",
+    "scanning": "블록체인 스캔 중...",
+    "stats": {
+      "posts": "게시물",
+      "authors": "저자",
+      "payouts": "보상",
+      "upvotes": "보팅"
+    },
+    "markdown": {
+      "title": "마크다운 출력",
+      "copy": "마크다운 복사",
+      "reportTitle": "커뮤니티 활동 보고서",
+      "community": "커뮤니티",
+      "dateRange": "날짜 범위",
+      "summary": "빠른 요약",
+      "metric": "지표",
+      "value": "값",
+      "totalPosts": "총 게시물 수",
+      "uniqueAuthors": "고유 저자 수",
+      "generatedPayouts": "생성된 보상",
+      "totalUpvotes": "총 보팅 수",
+      "commentsReplies": "댓글 및 답글",
+      "topAuthors": "최고 활성 저자",
+      "topAuthorsDesc": "가장 활발하게 활동하는 커뮤니티 회원들입니다!",
+      "fullList": "전체 활성 저자 목록",
+      "index": "#",
+      "author": "저자",
+      "repliesRcvd": "받은 댓글",
+      "footer": "[SteemPro Tools]({url})를 통해 생성된 보고서입니다."
+    },
+    "table": {
+      "title": "활성 회원 목록",
+      "search": "활성 회원 검색...",
+      "author": "저자",
+      "posts": "게시물",
+      "replies": "받은 답글"
+    },
+    "error": {
+      "invalidCommunity": "유효한 커뮤니티 ID를 입력하세요 (예: hive-145160)",
+      "fetchFailed": "커뮤니티 데이터를 가져오지 못했습니다"
+    },
+    "success": {
+      "analyzed": "보고서 생성을 위해 {count}개의 게시물을 분석했습니다",
+      "copied": "마크다운이 클립보드에 복사되었습니다!"
+    }
+  },
+  "AuthorStatistic": {
+    "title": "저자 통계 보고서",
+    "description": "저자의 게시물 성과, 보상 및 참여도를 시간 경과에 따라 분석합니다.",
+    "parameters": "보고서 매개변수",
+    "username": "사용자 이름",
+    "placeholder": "예: steempro.com",
+    "startDate": "시작 날짜",
+    "endDate": "종료 날짜",
+    "generate": "보고서 생성",
+    "analyzing": "블록체인 스캔 중...",
+    "emptyState": "저자의 사용자 이름과 날짜 범위를 입력하여 최근 게시물 성과를 분석하고 상세 보고서를 생성하세요.",
+    "scanning": "블록체인 스캔 중...",
+    "stats": {
+      "posts": "게시물",
+      "payouts": "보상",
+      "upvotes": "업보트",
+      "replies": "답글"
+    },
+    "markdown": {
+      "title": "마크다운 출력",
+      "copy": "마크다운 복사",
+      "reportTitle": "저자 통계 보고서: @{author}",
+      "dateRange": "날짜 범위",
+      "summary": "빠른 요약",
+      "metric": "지표",
+      "value": "값",
+      "totalPosts": "총 게시물 수",
+      "totalPayout": "총 생성 보상",
+      "avgPayout": "게시물당 평균 보상",
+      "totalUpvotes": "받은 총 업보트 수",
+      "totalComments": "받은 총 댓글 및 답글 수",
+      "performanceLog": "게시물 성과 로그",
+      "date": "날짜",
+      "postTitle": "제목",
+      "community": "커뮤니티",
+      "votes": "보트 수",
+      "replies": "답글 수",
+      "payout": "보상",
+      "footer": "보고서는 [SteemPro Tools]({url})를 통해 생성되었습니다."
+    },
+    "table": {
+      "title": "게시물 성과 로그",
+      "search": "제목 또는 커뮤니티로 검색...",
+      "date": "날짜",
+      "postTitle": "제목",
+      "community": "커뮤니티",
+      "payout": "보상",
+      "votes": "보트 수",
+      "replies": "답글 수"
+    },
+    "error": {
+      "invalidUsername": "유효한 Steem 사용자 이름을 입력하세요",
+      "fetchFailed": "저자 데이터를 가져오지 못했습니다"
+    },
+    "success": {
+      "analyzed": "@{author}님의 게시물 {count}개를 분석했습니다",
+      "copied": "마크다운이 클립보드에 복사되었습니다!"
+    }
+  },
+  "AccountCreation": {
+    "title": "계정 생성",
+    "description": "계정 생성 토큰을 사용하여 새로운 Steem 계정을 청구하고 만드세요.",
+    "comingSoon": "출시 예정",
+    "featureDescription": "계정 생성 도구는 생성 토큰을 원활하게 사용할 수 있도록 도와줍니다. 현재 이 기능을 개발 중입니다. 곧 다시 확인해 주세요!"
+  },
+  "Schedules": {
+    "title": "예약",
+    "description": "예약된 게시물을 관리하세요",
+    "loginAlert": "예약된 게시물 보기",
+    "status": {
+      "pending": "대기 중",
+      "published": "게시됨",
+      "failed": "실패"
+    },
+    "actions": {
+      "draft": "임시저장",
+      "draftDelete": "임시저장 후 삭제",
+      "delete": "삭제",
+      "cancel": "취소",
+      "deleteTitle": "예약 삭제",
+      "deleteDesc": "이 예약을 삭제하시겠습니까?"
+    },
+    "messages": {
+      "deleted": "예약된 게시물이 삭제되었습니다",
+      "drafted": "게시물이 임시저장되었습니다",
+      "draftedDesc": "게시 페이지에서 확인할 수 있습니다.",
+      "draftFailed": "임시저장 실패: {error}",
+      "timeDiffError": "시간 차이는 최소 5분 이상이어야 합니다",
+      "updated": "예약이 업데이트되었습니다"
+    }
+  },
+  "Settings": {
+    "title": "설정",
+    "tabs": {
+      "general": "일반",
+      "profile": "프로필",
+      "security": "보안"
+    }
+  },
+  "SecuritySettings": {
+    "loginAlert": "보안 설정 보기",
+    "publicKeys": {
+      "title": "공개 키",
+      "description": "Steem 블록체인의 공개 키입니다. 이 키는 공개적으로 공유할 수 있습니다.",
+      "posting": "Posting 공개 키",
+      "active": "Active 공개 키",
+      "owner": "Owner 공개 키",
+      "memo": "Memo 공개 키",
+      "copied": "{label}이(가) 클립보드에 복사되었습니다"
+    },
+    "recovery": {
+      "title": "계정 복구",
+      "description": "복구 계정은 계정이 탈취되었을 때 복구하는 데 도움을 줍니다.",
+      "current": "현재 복구 계정",
+      "change": "변경",
+      "note": "참고: 복구 계정 변경은 완료까지 30일이 소요되는 보안 작업입니다. 변경을 승인하려면 OWNER 키가 필요합니다."
+    }
+  },
+  "Auth": {
+    "title": "인증",
+    "description": "무제한 계정을 관리하고 클릭 한 번으로 계정을 전환하세요.",
+    "connectedAccounts": "연결된 계정",
+    "accountsConnected": "{count}개의 계정이 연결됨",
+    "addAccount": "계정 추가",
+    "login": "로그인",
+    "keychain": "키체인",
+    "privateKey": "개인 키",
+    "success": "성공",
+    "loginSuccess": "성공적으로 로그인되었습니다",
+    "manageAccounts": "계정 관리"
+  },
+  "Navbar": {
+    "discover": "검색",
+    "home": "홈",
+    "explore": "탐색",
+    "communities": "커뮤니티",
+    "games": "게임",
+    "blockchain": "블록체인",
+    "explorer": "익스플로러",
+    "market": "마켓",
+    "witnesses": "증인",
+    "proposals": "제안",
+    "schedules": "일정",
+    "tools": "도구",
+    "app": "앱",
+    "settings": "설정",
+    "privacy": "개인정보",
+    "about": "정보",
+    "manage": "관리",
+    "search": "검색...",
+    "create": "만들기",
+    "refresh": "새로고침",
+    "profile": "프로필",
+    "wallet": "지갑"
+  },
+  "Search": {
+    "placeholder": "Search blockchain content...",
+    "filterByAuthor": "Filter by author...",
+    "refineResults": "Refine results",
+    "accounts": "Accounts",
+    "posts": "Posts",
+    "comments": "Comments",
+    "fetching": "DATA FETCHING...",
+    "noAccountsFound": "No accounts found with this name prefix.",
+    "noPostsFound": "Try searching globally or with a different author filter.",
+    "noCommentsFound": "No textual matches found in recent discussions.",
+    "discoverSteem": "Discover Steem",
+    "discoverDescription": "Search for profiles, deep-dive into posts or filter by specific authors.",
+    "trySearch": "try \"{query}\"",
+    "reputation": "Reputation",
+    "profileLabel": "Profile",
+    "postLabel": "Post",
+    "commentLabel": "Comment"
+  }
+}

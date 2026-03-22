@@ -5,16 +5,19 @@ import { getMetadata } from "@/utils/metadata";
 import { Metadata } from "next";
 import { Suspense } from "react";
 import LoadingStatus from "@/components/LoadingStatus";
+import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = getMetadata.communities();
 
 async function layout({ children }: { children: React.ReactNode }) {
+  const t = await getTranslations("Communities");
+
   return (
     <MainWrapper className="flex flex-col gap-6">
       <PageHeader
         icon={Users}
-        title="Communities"
-        description="Explore and join vibrant communities on Steem. Manage your subscriptions and keep up with what matters most to you."
+        title={t("title")}
+        description={t("headerDesc")}
       />
       <Suspense fallback={<LoadingStatus />}>{children}</Suspense>
     </MainWrapper>

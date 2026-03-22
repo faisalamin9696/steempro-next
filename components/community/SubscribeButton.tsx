@@ -6,6 +6,7 @@ import { useAccountsContext } from "../auth/AccountsContext";
 import { steemApi } from "@/libs/steem";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface SubscribeButtonProps extends ButtonProps {
   community: Community;
@@ -21,12 +22,13 @@ function SubscribeButton({
   onSubscribe,
   ...rest
 }: SubscribeButtonProps) {
+  const t = useTranslations("Communities");
   const [isSubscribed, setIsSubscribed] = useState(
-    Boolean(community.observer_subscribed)
+    Boolean(community.observer_subscribed),
   );
 
   const color = isSubscribed ? "warning" : "primary";
-  const title = isSubscribed ? "Leave" : "Subscribe";
+  const title = isSubscribed ? t("leave") : t("subscribe");
   const [isPending, setIsPending] = useState(false);
   const { authenticateOperation } = useAccountsContext();
   const { data: session } = useSession();
@@ -45,7 +47,7 @@ function SubscribeButton({
       onSubscribe?.(!isSubscribed);
       setIsSubscribed(!isSubscribed);
       toast.success(
-        isSubscribed ? "Left community" : "Subscribed successfully"
+        isSubscribed ? t("leftSuccess") : t("subscribeSuccess")
       );
       setIsPending(false);
     }).finally(() => {

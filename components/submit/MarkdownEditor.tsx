@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
 import SAvatar from "../ui/SAvatar";
@@ -125,6 +126,7 @@ const MarkdownEditor = ({
   hideToolbar,
   ...props
 }: MarkdownEditorProps) => {
+  const t = useTranslations("Submit");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { data: session } = useSession();
   const [progress, setProgress] = useState<number>(0);
@@ -235,12 +237,12 @@ const MarkdownEditor = ({
   const handleUploads = useCallback(
     (files: File[]) => {
       return toast.promise(handleImagesOneByOne(files), {
-        loading: "Uploading...",
-        success: () => "Uploaded successfully",
-        error: (error) => error.message || "Upload failed",
+        loading: t("editor.uploading"),
+        success: () => t("editor.uploadSuccess"),
+        error: (error) => error.message || t("editor.uploadError"),
       });
     },
-    [handleImagesOneByOne],
+    [handleImagesOneByOne, t],
   );
 
   const handlePastedImage = useCallback(
@@ -442,12 +444,12 @@ const MarkdownEditor = ({
   return (
     <div {...getRootProps()} id="body" className="space-y-1 relative">
       {isDragActive && (
-        <div className="flex flex-row justify-center w-full absolute  h-full rounded-lg z-[11] backdrop-blur-[2px] bg-foreground/10">
+        <div className="flex flex-row justify-center w-full absolute  h-full rounded-lg z-11 backdrop-blur-[2px] bg-foreground/10">
           <div className="text-center self-center">
             <CloudUpload className="mx-auto text-5xl" />
 
             <h3 className="mt-2 text-sm font-medium text-default-600">
-              <span>Drag and drop to upload</span>
+              <span>{t("editor.dragDrop")}</span>
             </h3>
             <p className="mt-1 text-xs text-default-400">
               PNG, JPG, GIF up to {filesize(10000000)}
@@ -500,7 +502,7 @@ const MarkdownEditor = ({
                 className={twMerge(
                   "min-w-0 min-h-0 h-8 w-8 p-0 text-purple-600 hover:text-purple-500",
                 )}
-                title={"Snippets"}
+                title={t("snippets.title")}
                 type="button"
                 isDisabled={props.disabled}
               >
@@ -530,7 +532,7 @@ const MarkdownEditor = ({
                 title={
                   <div className="flex flex-row gap-2">
                     <PencilLine size={ICON_SIZE} />
-                    Write
+                    {t("editor.write")}
                   </div>
                 }
               ></Tab>
@@ -539,7 +541,7 @@ const MarkdownEditor = ({
                 title={
                   <div className="flex flex-row gap-2">
                     <Eye size={ICON_SIZE} />
-                    Preview
+                    {t("editor.preview")}
                   </div>
                 }
               ></Tab>
@@ -563,7 +565,7 @@ const MarkdownEditor = ({
               onChange={onChange}
               localUsers={initialUsers}
               onSearch={(query) => fetchUsers(query, initialUsers)}
-              placeholder="Write your post content here... Use @ to mention users"
+              placeholder={t("editor.placeholder")}
               variant="flat"
               radius="none"
               size="lg"

@@ -24,6 +24,7 @@ import { useAppSelector } from "@/hooks/redux/store";
 import { useSteemUtils } from "@/hooks/useSteemUtils";
 import { useSession } from "next-auth/react";
 import PageHeader from "../ui/PageHeader";
+import { useTranslations } from "next-intl";
 
 const FALLBACK_ICON = Bell;
 const FALLBACK_COLOR = "text-gray-400";
@@ -40,6 +41,7 @@ const typeConfig: Record<
 } as any;
 
 const NotificationsCard = ({ username }: { username: string }) => {
+  const t = useTranslations("Profile");
   const [typeFilter, setTypeFilter] = useState<NotificationType | "all">("all");
 
   const {
@@ -175,13 +177,17 @@ const NotificationsCard = ({ username }: { username: string }) => {
       {/* HEADER */}
 
       <PageHeader
-        title="Notifications"
+        title={t("notifications.title")}
         icon={Bell}
         size="sm"
         iconSize={20}
         description={
           isMe
-            ? `${unreadCount > 0 ? `${unreadCount} unread` : "All caught up"}`
+            ? `${
+                unreadCount > 0
+                  ? t("notifications.unread", { count: unreadCount })
+                  : t("notifications.allCaughtUp")
+              }`
             : ""
         }
         titleEndContent={
@@ -195,7 +201,7 @@ const NotificationsCard = ({ username }: { username: string }) => {
               isLoading={isPending}
             >
               {!isPending && <CheckCheck className="h-4 w-4" />}
-              <span>Mark all read</span>
+              <span>{t("notifications.markAllRead")}</span>
             </Button>
           )
         }
@@ -207,7 +213,7 @@ const NotificationsCard = ({ username }: { username: string }) => {
         <div className="flex flex-col 1xs:flex-row 1xs:items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Filter className="h-4 w-4 text-muted" />
-            Filter & Sort
+            {t("notifications.filterAndSort")}
           </div>
 
           <div className="flex flex-wrap gap-2 self-end">
@@ -223,7 +229,7 @@ const NotificationsCard = ({ username }: { username: string }) => {
               defaultSelectedKeys={["all"]}
               variant="faded"
             >
-              <SelectItem key="all">All types</SelectItem>
+              <SelectItem key="all">{t("notifications.allTypes")}</SelectItem>
               {
                 Object.entries(typeConfig).map(([type, config]) => (
                   <SelectItem key={type} textValue={config.label}>
@@ -248,8 +254,8 @@ const NotificationsCard = ({ username }: { username: string }) => {
               disallowEmptySelection
               variant="faded"
             >
-              <SelectItem key="newest">Newest</SelectItem>
-              <SelectItem key="oldest">Oldest</SelectItem>
+              <SelectItem key="newest">{t("notifications.newest")}</SelectItem>
+              <SelectItem key="oldest">{t("notifications.oldest")}</SelectItem>
             </Select>
           </div>
         </div>
@@ -259,9 +265,9 @@ const NotificationsCard = ({ username }: { username: string }) => {
           loadMore={(offset) => loadMore(offset, typeFilter)}
           hasMore={() => hasMore}
           columns={columns}
-          searchPlaceholder="Search by user or activity..."
+          searchPlaceholder={t("notifications.searchPlaceholder")}
           emptyMessage={
-            loading ? "Loading notifications..." : "No notifications found"
+            loading ? t("notifications.loading") : t("notifications.empty")
           }
           initialLoadCount={Math.max(notifications.length, 50)}
           loadMoreCount={50}
@@ -271,8 +277,8 @@ const NotificationsCard = ({ username }: { username: string }) => {
             const today = moment();
             const yesterday = moment().subtract(1, "day");
 
-            if (date.isSame(today, "day")) return "Today";
-            if (date.isSame(yesterday, "day")) return "Yesterday";
+            if (date.isSame(today, "day")) return t("notifications.today");
+            if (date.isSame(yesterday, "day")) return t("notifications.yesterday");
             return date.format("MMMM D, YYYY");
           }}
         />

@@ -8,6 +8,7 @@ import { useDisclosure } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { HowToPlayModal } from "./HowToPlayModal";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 interface Props {
   season: number;
@@ -79,6 +80,7 @@ export const getCoopConfig = (seasonPost?: any) => {
 };
 
 export const HeightsInfo = ({ season, seasonPost }: Props) => {
+  const t = useTranslations("Games.steemHeights.info");
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const [timeLeft, setTimeLeft] = useState<string | null>(null);
@@ -93,7 +95,7 @@ export const HeightsInfo = ({ season, seasonPost }: Props) => {
       const diff = endAt.diff(now);
 
       if (diff <= 0) {
-        setTimeLeft("Season Ended");
+        setTimeLeft(t("seasonEnded"));
         return;
       }
 
@@ -109,7 +111,7 @@ export const HeightsInfo = ({ season, seasonPost }: Props) => {
     calculateTimeLeft();
     const interval = setInterval(calculateTimeLeft, 1000);
     return () => clearInterval(interval);
-  }, [seasonPost]);
+  }, [seasonPost, t]);
 
   const rewardPool = getRewardPool(seasonPost);
 
@@ -117,7 +119,7 @@ export const HeightsInfo = ({ season, seasonPost }: Props) => {
     <div className="space-y-6 text-center lg:text-left">
       <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-black uppercase tracking-widest">
-          <Zap size={12} className="fill-amber-500" /> Skill Competition
+          <Zap size={12} className="fill-amber-500" /> {t("skillCompetition")}
         </div>
         {seasonPost ? (
           <>
@@ -125,7 +127,7 @@ export const HeightsInfo = ({ season, seasonPost }: Props) => {
               href={`/@${seasonPost.author}/${seasonPost.permlink}`}
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-widest hover:text-amber-500 hover:border-amber-500/50 transition-all cursor-pointer"
             >
-              Season {season}
+              {t("season", { season })}
             </Link>
             {timeLeft && (
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-widest">
@@ -135,7 +137,7 @@ export const HeightsInfo = ({ season, seasonPost }: Props) => {
           </>
         ) : (
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest">
-            No Active Season
+            {t("noActiveSeason")}
           </div>
         )}
       </div>
@@ -146,15 +148,14 @@ export const HeightsInfo = ({ season, seasonPost }: Props) => {
         </h1>
         {rewardPool && (
           <div className="flex items-center justify-center lg:justify-start gap-2 text-amber-500 font-black italic tracking-tighter text-xl">
-            <Trophy size={18} /> {rewardPool.reward} {rewardPool.symbol} Pool
+            <Trophy size={18} />{" "}
+            {t("pool", { amount: rewardPool.reward, symbol: rewardPool.symbol })}
           </div>
         )}
       </div>
 
       <p className="text-zinc-500 text-sm font-medium leading-relaxed max-w-sm mx-auto lg:mx-0">
-        Scale the skyline with unwavering focus. Align each block with surgical
-        precision to reach record-breaking altitudes. In this climb, focus is
-        your greatest power.
+        {t("description")}
       </p>
 
       <div className="pt-6 relative group">
@@ -174,7 +175,7 @@ export const HeightsInfo = ({ season, seasonPost }: Props) => {
               />
             }
           >
-            <span className="relative z-10">Climber's Handbook</span>
+            <span className="relative z-10">{t("handbook")}</span>
             <div className="absolute inset-0 bg-linear-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700 pointer-events-none" />
           </Button>
 

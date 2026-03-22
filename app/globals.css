@@ -55,7 +55,14 @@
 
 .post-card {
   @apply bg-content1/30 hover:bg-content1/50 transition-colors;
+}[lang="ur"] {
+  font-family: var(--font-noto-nastaliq-urdu), var(--font-geist-sans),
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-
+[lang="ur"] * {
+  line-height: 1.8;
+}
 

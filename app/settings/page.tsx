@@ -9,15 +9,17 @@ import SecuritySettings from "@/components/settings/SecuritySettings";
 import { useSession } from "next-auth/react";
 import STabs from "@/components/ui/STabs";
 import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
+import { useTranslations } from "next-intl";
 
 export default function SettingsPage() {
+  const t = useTranslations("Settings");
   const [activeTab, setActiveTab] = useState("general");
   const { data: session } = useSession();
   const { isMobile } = useDeviceInfo();
 
   return (
     <STabs
-      aria-label="Settings Options"
+      aria-label={t("title")}
       color="primary"
       classNames={{
         panel: "px-0",
@@ -27,7 +29,7 @@ export default function SettingsPage() {
       items={[
         {
           id: "general",
-          title: "General",
+          title: t("tabs.general"),
           icon: <Settings size={18} />,
           content: (
             <div className="animate-in fade-in slide-in-from-bottom-2 duration-400 ">
@@ -37,7 +39,7 @@ export default function SettingsPage() {
         },
         {
           id: "profile",
-          title: "Profile",
+          title: t("tabs.profile"),
           icon: <UserCircle size={18} />,
           content: (
             <div className="animate-in fade-in slide-in-from-bottom-2 duration-400">
@@ -47,7 +49,7 @@ export default function SettingsPage() {
         },
         {
           id: "security",
-          title: "Security",
+          title: t("tabs.security"),
           icon: <Shield size={18} />,
           content: (
             <div className="animate-in fade-in slide-in-from-bottom-2 duration-400">

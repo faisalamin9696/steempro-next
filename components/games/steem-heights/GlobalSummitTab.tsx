@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import {
   Trophy,
   Target,
@@ -10,6 +11,8 @@ import {
   Zap,
   Cloud,
   BarChart2,
+  CheckCircle2,
+  XCircle,
 } from "lucide-react";
 import Link from "next/link";
 import SAvatar from "@/components/ui/SAvatar";
@@ -37,12 +40,18 @@ interface Props {
   seasonPost: any | null;
   globalStats: GameStats;
   username: string;
+  eligibilityMap: {
+    [key: string]: { sp: number; rep: number; eligible: boolean };
+  };
 }
 
 export const calculateRewards = (
   highScores: HighScore[],
   seasonPost: any | null,
   poolValue: number,
+  eligibilityMap: {
+    [key: string]: { sp: number; rep: number; eligible: boolean };
+  },
 ) => {
   if (!seasonPost || !highScores.length)
     return { rewardMap: new Map<string, number>(), globalAverage: 0 };
@@ -53,10 +62,12 @@ export const calculateRewards = (
   const qualifiedClimbers = highScores.filter((u, index) => {
     const score = u.score || 0;
     const plays = u.plays || 0;
+    const accountEligibility = eligibilityMap[u.player]?.eligible ?? false;
     // skip the plays condition to check for bot if the REWARD_MIN_ALTITUDE meet
     const isQualified =
-      score >= REWARD_MIN_ALTITUDE ||
-      (score >= 10 && plays >= REWARD_MIN_PLAYS);
+      (score >= REWARD_MIN_ALTITUDE ||
+        (score >= 10 && plays >= REWARD_MIN_PLAYS)) &&
+      accountEligibility;
 
     return isQualified && index < REWARD_RANK_CUTOFF;
   });
@@ -105,10 +116,12 @@ export const calculateRewards = (
     // Check if player is qualified for ANY rewards (Skill + Effort check)
     const score = user.score || 0;
     const plays = user.plays || 0;
+    const accountEligibility = eligibilityMap[user.player]?.eligible ?? false;
     const isQualified =
       (score >= REWARD_MIN_ALTITUDE ||
         (score >= 10 && plays >= REWARD_MIN_PLAYS)) &&
-      index < REWARD_RANK_CUTOFF;
+      index < REWARD_RANK_CUTOFF &&
+      accountEligibility;
 
     if (index < 3) {
       // Podium is always qualified by default (guaranteed by ranking)
@@ -149,12 +162,34 @@ export const GlobalSummitTab = memo(
     seasonPost,
     globalStats,
     username,
+    eligibilityMap,
   }: Props) => {
+    const t = useTranslations("Games.steemHeights.leaderboard.global");
     const coopConfig = getCoopConfig(seasonPost);
-    const totalLeaderboardAltitude = highScores.reduce(
-      (acc, cur) => acc + (cur.score || 0),
-      0,
-    );
+    const { qualifiedHighScores, unqualifiedHighScores } = useMemo(() => {
+      const qualified: HighScore[] = [];
+      const unqualified: HighScore[] = [];
+
+      highScores.forEach((u) => {
+        const eligibility = eligibilityMap[u.player];
+        if (eligibility?.eligible) {
+          qualified.push(u);
+        } else if (eligibility) {
+          unqualified.push(u);
+        } else {
+          // If not in top 100 or not yet fetched, assume unqualified for now
+          unqualified.push(u);
+        }
+      });
+      return {
+        qualifiedHighScores: qualified,
+        unqualifiedHighScores: unqualified,
+      };
+    }, [highScores, eligibilityMap]);
+
+    const totalLeaderboardAltitude = useMemo(() => {
+      return qualifiedHighScores.reduce((acc, cur) => acc + (cur.score || 0), 0);
+    }, [qualifiedHighScores]);
 
     const rewardPool = getRewardPool(seasonPost);
     const postPool = rewardPool?.reward ?? 0;
@@ -167,8 +202,14 @@ export const GlobalSummitTab = memo(
     const activePool = Math.max(postPool, communityPool);
 
     const { rewardMap: rewards, globalAverage } = useMemo(
-      () => calculateRewards(highScores, seasonPost, communityPool),
-      [highScores, seasonPost, communityPool],
+      () =>
+        calculateRewards(
+          highScores,
+          seasonPost,
+          communityPool,
+          eligibilityMap,
+        ),
+      [highScores, seasonPost, communityPool, eligibilityMap],
     );
 
     const totalAscent = totalLeaderboardAltitude;
@@ -197,8 +238,8 @@ export const GlobalSummitTab = memo(
             />
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-500">
               {seasonPost
-                ? `Season ${currentSeason} Summit`
-                : "Global Summit Hall"}
+                ? t("summit", { season: currentSeason })
+                : t("hall")}
             </span>
             {seasonPost && (
               <ArrowUpRight
@@ -212,25 +253,26 @@ export const GlobalSummitTab = memo(
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-2xl">
             {[
               {
-                label: "Total Climbers",
+                label: t("totalClimbers"),
                 value: globalStats.totalParticipants,
                 icon: Users,
                 color: "text-blue-500",
               },
               {
-                label: "Active (24h)",
+                label: t("active24h"),
                 value: globalStats.activePlayers24h,
                 icon: Zap,
                 color: "text-amber-500",
               },
               {
-                label: "Total Ascent",
+                label: t("totalAscent"),
                 value: `${totalAscent.toLocaleString()}m`,
                 icon: Cloud,
                 color: "text-emerald-500",
+                hint: t("onlyQualified"),
               },
               {
-                label: "Avg Altitude",
+                label: t("avgAltitude"),
                 value: `${Math.round(globalAverage).toLocaleString()}m`,
                 icon: BarChart2,
                 color: "text-cyan-500",
@@ -248,6 +290,11 @@ export const GlobalSummitTab = memo(
                 <div className="text-[8px] font-bold text-zinc-500 uppercase tracking-tighter text-center">
                   {stat.label}
                 </div>
+                {"hint" in stat && (
+                  <div className="text-[8px] font-black text-emerald-500/50 uppercase tracking-widest mt-0.5">
+                    {stat.hint}
+                  </div>
+                )}
               </motion.div>
             ))}
           </div>
@@ -259,29 +306,29 @@ export const GlobalSummitTab = memo(
               </div>
               <div className="flex flex-col text-left">
                 <span className="text-[10px] font-black uppercase text-amber-500">
-                  Season Intermission
+                  {t("intermission")}
                 </span>
                 <span className="text-[10px] font-medium text-muted">
                   {seasonPost
-                    ? `Season ${currentSeason} ascent has concluded. The final altitude records are now locked.`
-                    : "No active climb is currently running. We are preparing the next big height, get your focus ready!"}
+                    ? t("concluded", { season: currentSeason })
+                    : t("preparing")}
                 </span>
               </div>
             </div>
           )}
 
           {/* Race Graph Visualization */}
-          {highScores.length > 0 && (
-            <HeightsRaceGraph highScores={highScores} />
+          {qualifiedHighScores.length > 0 && (
+            <HeightsRaceGraph highScores={qualifiedHighScores} />
           )}
         </div>
 
         <div className="mt-24">
           {/* Podium */}
-          {highScores.length > 0 && (
+          {qualifiedHighScores.length > 0 && (
             <div className="flex justify-center items-end gap-2 pb-8">
               {/* 2nd Place */}
-              {highScores[1] && (
+              {qualifiedHighScores[1] && (
                 <div className="flex flex-col items-center gap-2 w-24">
                   <div className="relative group">
                     <div className="absolute -inset-1 bg-linear-to-t from-blue-500/20 to-transparent rounded-full blur opacity-50 group-hover:opacity-100 transition duration-500" />
@@ -289,40 +336,40 @@ export const GlobalSummitTab = memo(
                       radius="full"
                       size="md"
                       quality="medium"
-                      username={highScores[1].player}
+                      username={qualifiedHighScores[1].player}
                       className="border-2 border-blue-500/30 grayscale-[0.5] group-hover:grayscale-0 transition-all"
                     />
                     <div className="absolute -bottom-1 -right-1 bg-zinc-900 border border-blue-500/50 rounded-full p-0.5">
                       🥈
                     </div>
-                    {highScores[1].player === username && (
+                    {qualifiedHighScores[1].player === username && (
                       <div className="absolute -top-1 -right-1 bg-primary-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-full shadow-lg z-10">
-                        YOU
+                        {t("you")}
                       </div>
                     )}
                   </div>
                   <div className="flex flex-col items-center text-center">
                     <SUsername
                       className="text-[10px] font-bold text-zinc-400 max-w-[80px] truncate"
-                      username={`@${highScores[1].player}`}
+                      username={`@${qualifiedHighScores[1].player}`}
                     />
                     <div className="flex flex-col items-center mt-0.5">
                       <span className="text-[11px] font-black text-blue-500 leading-none">
-                        {highScores[1].score}m
+                        {qualifiedHighScores[1].score}m
                       </span>
                       <div className="flex flex-col items-center gap-0.5 mt-1">
-                        {rewards.has(highScores[1].player) && (
+                        {rewards.has(qualifiedHighScores[1].player) && (
                           <span className="text-[9px] font-black bg-blue-500/20 px-1.5 py-0.5 rounded-full border border-blue-500/30 mb-1">
-                            +{rewards.get(highScores[1].player)?.toFixed(3)}{" "}
+                            +{rewards.get(qualifiedHighScores[1].player)?.toFixed(3)}{" "}
                             {symbol}
                           </span>
                         )}
                         <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-tighter leading-none">
-                          {highScores[1].plays} Plays
+                          {qualifiedHighScores[1].plays} {t("plays")}
                         </span>
-                        {(highScores[1].combos ?? 0) > 0 && (
+                        {(qualifiedHighScores[1].combos ?? 0) > 0 && (
                           <span className="text-[8px] font-black text-amber-500/80 uppercase tracking-wider bg-amber-500/5 px-1 rounded-sm border border-amber-500/10">
-                            {highScores[1].combos} Combos
+                            {qualifiedHighScores[1].combos} {t("combos")}
                           </span>
                         )}
                       </div>
@@ -331,8 +378,8 @@ export const GlobalSummitTab = memo(
                 </div>
               )}
 
-              {/* 1st Place */}
-              {highScores[0] && (
+               {/* 1st Place */}
+              {qualifiedHighScores[0] && (
                 <div className="flex flex-col items-center gap-3 w-28 -mt-6">
                   <div className="relative group">
                     <div className="absolute -inset-2 bg-linear-to-t from-amber-500/30 to-transparent rounded-full blur-md opacity-50 group-hover:opacity-100 transition duration-500" />
@@ -340,7 +387,7 @@ export const GlobalSummitTab = memo(
                       radius="full"
                       size="lg"
                       quality="medium"
-                      username={highScores[0].player}
+                      username={qualifiedHighScores[0].player}
                       className="border-2 border-amber-500 scale-110 shadow-2xl transition-transform group-hover:scale-115"
                     />
                     <div className="absolute -bottom-2 -right-2 bg-zinc-900 border-1 border-amber-500 rounded-full p-2 shadow-lg">
@@ -349,38 +396,38 @@ export const GlobalSummitTab = memo(
                         className="text-amber-500 fill-amber-500/20"
                       />
                     </div>
-                    {highScores[0].player === username && (
+                    {qualifiedHighScores[0].player === username && (
                       <div className="absolute -top-2 -left-2 bg-primary-500 text-white text-[8px] font-black px-2 py-0.5 rounded-full shadow-xl z-10 border-2 border-zinc-950">
-                        YOU
+                        {t("you")}
                       </div>
                     )}
                   </div>
                   <div className="flex flex-col items-center text-center">
                     <SUsername
                       className="text-xs font-black text-amber-500 tracking-tight max-w-[100px] truncate"
-                      username={`@${highScores[0].player}`}
+                      username={`@${qualifiedHighScores[0].player}`}
                     />
                     <div className="flex flex-col items-center mt-0.5">
                       <span className="text-sm font-black drop-shadow-sm leading-none">
-                        {highScores[0].score}m
+                        {qualifiedHighScores[0].score}m
                       </span>
                       <div className="flex flex-col items-center gap-0.5 mt-1">
-                        {rewards.has(highScores[0].player) && (
+                        {rewards.has(qualifiedHighScores[0].player) && (
                           <motion.div
                             initial={{ scale: 0.8 }}
                             animate={{ scale: 1 }}
                             className="text-[10px] font-black text-black bg-amber-500 px-2 py-0.5 rounded-full shadow-lg shadow-amber-500/20 mb-1"
                           >
-                            +{rewards.get(highScores[0].player)?.toFixed(3)}{" "}
+                            +{rewards.get(qualifiedHighScores[0].player)?.toFixed(3)}{" "}
                             {symbol}
                           </motion.div>
                         )}
                         <span className="text-[8px] font-black uppercase tracking-tighter text-amber-500/70 leading-none">
-                          {highScores[0].plays} Plays
+                          {qualifiedHighScores[0].plays} {t("plays")}
                         </span>
-                        {(highScores[0].combos ?? 0) > 0 && (
+                        {(qualifiedHighScores[0].combos ?? 0) > 0 && (
                           <span className="text-[8px] font-black text-amber-400 uppercase tracking-wider bg-amber-500/10 px-1.5 py-0.5 rounded-md border border-amber-500/20 shadow-[0_0_8px_rgba(245,158,11,0.1)]">
-                            {highScores[0].combos} Combos
+                            {qualifiedHighScores[0].combos} {t("combos")}
                           </span>
                         )}
                       </div>
@@ -390,7 +437,7 @@ export const GlobalSummitTab = memo(
               )}
 
               {/* 3rd Place */}
-              {highScores[2] && (
+              {qualifiedHighScores[2] && (
                 <div className="flex flex-col items-center gap-2 w-24">
                   <div className="relative group">
                     <div className="absolute -inset-1 bg-linear-to-t from-cyan-500/20 to-transparent rounded-full blur opacity-50 group-hover:opacity-100 transition duration-500" />
@@ -398,40 +445,40 @@ export const GlobalSummitTab = memo(
                       radius="full"
                       size="md"
                       quality="medium"
-                      username={highScores[2].player}
+                      username={qualifiedHighScores[2].player}
                       className="border-2 border-cyan-500/30 grayscale-[0.5] group-hover:grayscale-0 transition-all"
                     />
                     <div className="absolute -bottom-1 -right-1 bg-zinc-900 border border-cyan-500/50 rounded-full p-0.5">
                       🥉
                     </div>
-                    {highScores[2].player === username && (
+                    {qualifiedHighScores[2].player === username && (
                       <div className="absolute -top-1 -right-1 bg-primary-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-full shadow-lg z-10">
-                        YOU
+                        {t("you")}
                       </div>
                     )}
                   </div>
                   <div className="flex flex-col items-center text-center">
                     <SUsername
                       className="text-[10px] font-bold text-zinc-400 max-w-[80px] truncate"
-                      username={`@${highScores[2].player}`}
+                      username={`@${qualifiedHighScores[2].player}`}
                     />
                     <div className="flex flex-col items-center mt-0.5">
                       <span className="text-[11px] font-black text-cyan-500 leading-none">
-                        {highScores[2].score}m
+                        {qualifiedHighScores[2].score}m
                       </span>
                       <div className="flex flex-wrap items-center gap-0.5 mt-1 justify-center">
-                        {rewards.has(highScores[2].player) && (
+                        {rewards.has(qualifiedHighScores[2].player) && (
                           <span className="text-[9px] font-black bg-cyan-500/20 px-1.5 py-0.5 rounded-full border border-cyan-500/30 mb-1">
-                            +{rewards.get(highScores[2].player)?.toFixed(3)}{" "}
+                            +{rewards.get(qualifiedHighScores[2].player)?.toFixed(3)}{" "}
                             {symbol}
                           </span>
                         )}
                         <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-tighter leading-none">
-                          {highScores[2].plays} Plays
+                          {qualifiedHighScores[2].plays} {t("plays")}
                         </span>
-                        {(highScores[2].combos ?? 0) > 0 && (
+                        {(qualifiedHighScores[2].combos ?? 0) > 0 && (
                           <span className="text-[8px] font-black text-amber-500/80 uppercase tracking-wider bg-amber-500/5 px-1 rounded-sm border border-amber-500/10">
-                            {highScores[2].combos} Combos
+                            {qualifiedHighScores[2].combos} {t("combos")}
                           </span>
                         )}
                       </div>
@@ -446,7 +493,7 @@ export const GlobalSummitTab = memo(
         {/* Leaderboard Table */}
         <div className="max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 pr-2">
           <DataTable
-            data={highScores.map((item, i) => ({ ...item, rank: i + 1 }))}
+            data={qualifiedHighScores.map((item, i) => ({ ...item, rank: i + 1 }))}
             columns={[
               {
                 key: "rank",
@@ -461,7 +508,7 @@ export const GlobalSummitTab = memo(
               },
               {
                 key: "player",
-                header: "Player",
+                header: t("table.player"),
                 sortable: true,
                 searchable: true,
                 className: "px-2 py-2",
@@ -475,12 +522,25 @@ export const GlobalSummitTab = memo(
                       />
                       {player === username && (
                         <span className="text-[8px] font-black bg-primary-500 text-white px-1 rounded-sm uppercase tracking-widest ml-1">
-                          YOU
+                          {t("you")}
                         </span>
                       )}
+                      {eligibilityMap[row.player] && (
+                        <div className="flex items-center gap-1 mt-1">
+                          {eligibilityMap[row.player].eligible ? (
+                            <CheckCircle2 size={10} className="text-emerald-500" />
+                          ) : (
+                            <XCircle size={10} className="text-rose-500" />
+                          )}
+                          <span className="text-[8px] font-bold text-zinc-500">
+                            REP {eligibilityMap[row.player].rep.toFixed(1)} |{" "}
+                            {eligibilityMap[row.player].sp.toFixed(0)} SP
+                          </span>
+                        </div>
+                      )}
                       {rewards.has(row.player) && (
-                        <div className="flex flex-col">
-                          <span className="text-[10px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                        <div className="flex flex-col mt-1">
+                          <span className="text-[10px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 w-fit">
                             {rewards.get(row.player)?.toFixed(3)} {symbol}
                           </span>
                         </div>
@@ -491,7 +551,7 @@ export const GlobalSummitTab = memo(
               },
               {
                 key: "score",
-                header: "Performance",
+                header: t("table.performance"),
                 sortable: true,
                 className: "px-2 py-2",
                 render: (score, row) => (
@@ -509,7 +569,7 @@ export const GlobalSummitTab = memo(
                       <div className="flex items-center gap-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 px-1.5 py-0.5 rounded-sm w-fit">
                         <Target size={10} />
                         <span className="text-[8px] font-bold uppercase tracking-wider">
-                          {row.combos} Combos
+                          {row.combos} {t("combos")}
                         </span>
                       </div>
                     )}
@@ -521,11 +581,86 @@ export const GlobalSummitTab = memo(
             loadMoreCount={10}
             emptyMessage={
               highScores.length === 0
-                ? "Be the first to scale the heights!"
-                : "No more climbers in this range."
+                ? t("beFirst")
+                : t("noMore")
             }
           />
         </div>
+
+        {/* Unqualified Section */}
+        {unqualifiedHighScores.length > 0 && (
+          <div className="mt-8 pt-8 border-t border-zinc-500/10 opacity-70">
+            <div className="flex items-center gap-2 mb-4">
+              <XCircle size={14} className="text-zinc-500" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">
+                {t("unqualifiedClimbers")}
+              </span>
+            </div>
+            <div className="max-h-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 pr-2">
+              <DataTable
+                data={unqualifiedHighScores.map((item) => ({
+                  ...item,
+                  rank: "-",
+                }))}
+                columns={[
+                  {
+                    key: "rank",
+                    header: "#",
+                    className: "w-10 px-2 py-2",
+                    render: () => (
+                      <span className="text-[10px] font-black text-zinc-600">
+                        DQ
+                      </span>
+                    ),
+                  },
+                  {
+                    key: "player",
+                    header: t("table.player"),
+                    className: "px-2 py-2",
+                    render: (player) => (
+                      <div className="flex items-center gap-2">
+                        <SAvatar radius="full" size={"xs"} username={player} />
+                        <div>
+                          <SUsername
+                            className="text-xs font-bold text-zinc-600"
+                            username={`@${player}`}
+                          />
+                          {eligibilityMap[player] && (
+                            <div className="flex items-center gap-1 mt-1">
+                              <XCircle size={10} className="text-rose-500" />
+                              <span className="text-[8px] font-bold text-zinc-600">
+                                REP {eligibilityMap[player].rep.toFixed(1)} |{" "}
+                                {eligibilityMap[player].sp.toFixed(0)} SP
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ),
+                  },
+                  {
+                    key: "score",
+                    header: t("table.performance"),
+                    className: "px-2 py-2",
+                    render: (score, row) => (
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-black text-zinc-600 bg-zinc-800/50 px-2 py-0.5 rounded-md">
+                          {score}m
+                        </span>
+                        <span className="text-[10px] font-bold text-zinc-700 uppercase flex items-center gap-1">
+                          <History size={10} />
+                          {row.plays}
+                        </span>
+                      </div>
+                    ),
+                  },
+                ]}
+                initialLoadCount={50}
+                emptyMessage={t("noMore")}
+              />
+            </div>
+          </div>
+        )}
       </div>
     );
   },

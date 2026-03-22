@@ -35,7 +35,7 @@ export const THIRD_PARTY_GAMES: Game[] = [
     usesBlockchain: false,
     developer: {
       name: "stmpak.wit",
-      website: "https://steempro.com/@stmpak.wit",
+      website: "https://www.steempro.com/@stmpak.wit",
     },
   },
 
@@ -55,7 +55,7 @@ export const THIRD_PARTY_GAMES: Game[] = [
     usesBlockchain: false,
     developer: {
       name: "cur8",
-      website: "https://steempro.com/@cur8",
+      website: "https://www.steempro.com/@cur8",
     },
   },
 

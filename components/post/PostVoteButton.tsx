@@ -14,6 +14,7 @@ import { calculatePowerUsage } from "@/utils/user";
 import { addLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { useAccountsContext } from "../auth/AccountsContext";
 import { useSteemUtils } from "@/hooks/useSteemUtils";
+import { useTranslations } from "next-intl";
 
 const ICON_SIZE = 20;
 interface Props extends ButtonProps {
@@ -24,6 +25,7 @@ interface Props extends ButtonProps {
 
 function PostVoteButton(props: Props) {
   const { comment, isDownvote, labelClass } = props;
+  const t = useTranslations("Post");
   const { authenticateOperation } = useAccountsContext();
   const { globalProps } = useSteemUtils();
 
@@ -101,7 +103,7 @@ function PostVoteButton(props: Props) {
           })
         );
 
-        toast.success(isRemoved ? "Vote removed" : "Voted successfully!");
+        toast.success(isRemoved ? t("voteRemoved") : t("votedSuccessfully"));
       });
     } catch {
       dispatch(addCommentHandler({ ...comment, status: "idle" }));
@@ -117,8 +119,8 @@ function PostVoteButton(props: Props) {
       placement="top-start"
       trigger={(close) => (
         <Button
-          title={isDownvote ? "Downvote" : "Upvote"}
-          aria-label={isDownvote ? "Downvote" : "Upvote"}
+          title={isDownvote ? t("downvote") : t("upvote")}
+          aria-label={isDownvote ? t("downvote") : t("upvote")}
           isLoading={
             isDownvote
               ? comment.status === "downvoting"

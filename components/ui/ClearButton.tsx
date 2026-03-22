@@ -1,6 +1,7 @@
 import { Button, ButtonProps } from "@heroui/button";
 import SPopover from "./SPopover";
 import { Trash } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface Props extends Omit<ButtonProps, "onPress"> {
   iconSize?: number;
@@ -8,6 +9,8 @@ interface Props extends Omit<ButtonProps, "onPress"> {
 }
 
 function ClearButton({ iconSize = 22, onPress, ...props }: Props) {
+  const t = useTranslations("Submit");
+
   return (
     <SPopover
       trigger={
@@ -15,13 +18,13 @@ function ClearButton({ iconSize = 22, onPress, ...props }: Props) {
           <Trash size={iconSize} />
         </Button>
       }
-      title="Confirmation"
-      description="Do you really want to reset all data?"
+      title={t("confirmTitle")}
+      description={t("confirmDesc")}
     >
       {(onClose) => (
         <div className="flex flex-row gap-2 self-end">
           <Button onPress={onClose} variant="flat">
-            Cancel
+            {t("actions.cancel")}
           </Button>
 
           <Button
@@ -31,7 +34,7 @@ function ClearButton({ iconSize = 22, onPress, ...props }: Props) {
               onPress();
             }}
           >
-            Clear
+            {t("clear")}
           </Button>
         </div>
       )}

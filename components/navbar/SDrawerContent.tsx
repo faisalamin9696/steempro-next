@@ -7,7 +7,6 @@ import { proxifyImageUrl } from "@/utils/proxifyUrl";
 import SAvatar from "@/components/ui/SAvatar";
 import Reputation from "@/components/post/Reputation";
 import { useAppSelector } from "@/hooks/redux/store";
-import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
 import Link from "next/link";
 import LogoutButton from "../ui/LogoutButton";
 import BackgroundImage from "../BackgroundImage";
@@ -25,15 +24,18 @@ import {
   Settings,
   ShieldUser,
   Users,
+  Wrench,
   Zap,
 } from "lucide-react";
 import ManageAccountsButton from "../auth/ManageAccountsButton";
 import { motion } from "framer-motion";
 import ThemeSwitch from "@/components/ThemeSwitch";
+import { useTranslations } from "next-intl";
 
 const iconSize = 20;
 
 function SDrawerContent() {
+  const t = useTranslations("Navbar");
   const loginData = useAppSelector((s) => s.loginReducer.value);
   const { data: session, status } = useSession();
   const pathname = usePathname()?.replace(
@@ -42,8 +44,6 @@ function SDrawerContent() {
   );
   const isAuthenticated = status === "authenticated";
   const isLogin = !!session?.user?.name;
-  const { isMobile } = useDeviceInfo();
-
   const { name, posting_json_metadata } = loginData;
   const profile = JSON.parse(posting_json_metadata || "{}")?.profile ?? {};
   const displayName = profile.name || name;
@@ -53,30 +53,31 @@ function SDrawerContent() {
 
   const sections = [
     {
-      group: "Discover",
+      group: t("discover"),
       items: [
-        { title: "Home", href: "/", icon: House },
-        { title: "Explore", href: `/popular`, icon: Compass, login: true },
-        { title: "Communities", href: `/communities`, icon: Users },
-        { title: "Games", href: `/games`, icon: Gamepad2 },
+        { title: t("home"), href: "/", icon: House },
+        { title: t("explore"), href: `/popular`, icon: Compass, login: true },
+        { title: t("communities"), href: `/communities`, icon: Users },
+        { title: t("games"), href: `/games`, icon: Gamepad2 },
       ],
     },
     {
-      group: "Blockchain",
+      group: t("blockchain"),
       items: [
-        { title: "Explorer", href: `/explorer`, icon: Layers },
-        { title: "Market", href: `/market`, icon: ChartCandlestick },
-        { title: "Witnesses", href: `/witnesses`, icon: Landmark },
-        { title: "Proposals", href: `/proposals`, icon: Receipt },
-        { title: "Schedules", href: `/schedules`, icon: CalendarSearch },
+        { title: t("explorer"), href: `/explorer`, icon: Layers },
+        { title: t("market"), href: `/market`, icon: ChartCandlestick },
+        { title: t("witnesses"), href: `/witnesses`, icon: Landmark },
+        { title: t("proposals"), href: `/proposals`, icon: Receipt },
+        { title: t("schedules"), href: `/schedules`, icon: CalendarSearch },
+        { title: t("tools"), href: `/tools`, icon: Wrench },
       ],
     },
     {
-      group: "App",
+      group: t("app"),
       items: [
-        { title: "Settings", href: `/settings`, icon: Settings },
-        { title: "Privacy", href: `/privacy-policy`, icon: ShieldUser },
-        { title: "About", href: `/about`, icon: Info },
+        { title: t("settings"), href: `/settings`, icon: Settings },
+        { title: t("privacy"), href: `/privacy-policy`, icon: ShieldUser },
+        { title: t("about"), href: `/about`, icon: Info },
       ],
     },
   ];
@@ -169,7 +170,7 @@ function SDrawerContent() {
                   size="sm"
                   radius="full"
                   className="text-default-500 hover:text-foreground hover:bg-default/60 h-8 px-3 min-w-0 font-medium text-xs mb-1"
-                  title="Manage"
+                  title={t("manage")}
                 />
                 <ThemeSwitch mode="icon" className="mb-1" />
               </div>

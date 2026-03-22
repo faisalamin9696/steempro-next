@@ -17,10 +17,12 @@ import { addProfileHandler } from "@/hooks/redux/reducers/ProfileReducer";
 import { FeedList } from "@/components/FeedList";
 import CommunitiesTab from "../[username]/[tab]/communities/page";
 import WalletTab from "../[username]/[tab]/wallet/WalletTab";
+import { useTranslations } from "next-intl";
 
 const ICON_SIZE = 20;
 
 function ProfilePage({ account }: { account: AccountExt }) {
+  const t = useTranslations("Profile");
   const { username, tab } = useParams() as { username: string; tab: string };
   const initialTab = tab ?? "blog";
   const loginData = useAppSelector((s) => s.loginReducer.value);
@@ -55,20 +57,20 @@ function ProfilePage({ account }: { account: AccountExt }) {
 
   const profilePostsTab = useMemo(
     () => [
-      { id: "posts", title: "Posts", api: "getPostsByAuthor" + apiParams },
+      { id: "posts", title: t("tabs.posts"), api: "getPostsByAuthor" + apiParams },
       {
         id: "friends",
-        title: "Friends",
+        title: t("tabs.friends"),
         api: "getAccountFriendsFeed" + apiParams,
       },
       {
         id: "comments",
-        title: "Comments",
+        title: t("tabs.comments"),
         api: "getCommentsByAuthor" + apiParams,
       },
       {
         id: "replies",
-        title: "Replies",
+        title: t("tabs.replies"),
         api: "getCommentsByParentAuthor" + apiParams,
       },
     ],
@@ -79,13 +81,13 @@ function ProfilePage({ account }: { account: AccountExt }) {
     () => [
       {
         id: "blog",
-        title: "Blog",
+        title: t("tabs.blog"),
         api: "getAccountBlog" + apiParams,
         icon: <Rss size={ICON_SIZE} />,
       },
       {
         id: "posts",
-        title: "Posts",
+        title: t("tabs.posts"),
         api: "getPostsByAuthor" + apiParams,
         icon: <Newspaper size={ICON_SIZE} />,
         children: (
@@ -108,19 +110,19 @@ function ProfilePage({ account }: { account: AccountExt }) {
       },
       {
         id: "notifications",
-        title: "Notifications",
+        title: t("tabs.notifications"),
         icon: <Bell size={ICON_SIZE} />,
         children: <NotificationsCard username={username} />,
       },
       {
         id: "communities",
-        title: "Communities",
+        title: t("tabs.communities"),
         icon: <Users size={ICON_SIZE} />,
         children: <CommunitiesTab account={profileData} />,
       },
       {
         id: "wallet",
-        title: "Wallet",
+        title: t("tabs.wallet"),
         icon: <Wallet size={ICON_SIZE} />,
         children: <WalletTab account={profileData} />,
       },
@@ -145,7 +147,7 @@ function ProfilePage({ account }: { account: AccountExt }) {
           indicator: "text-foreground text-muted",
         }}
       >
-        <AccordionItem key="profile" aria-label="Profile details" title="About">
+        <AccordionItem key="profile" aria-label="Profile details" title={t("about")}>
           <ProfileCard
             account={profileData}
             classNames={{

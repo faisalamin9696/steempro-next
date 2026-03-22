@@ -23,6 +23,7 @@ import LoadingStatus from "../LoadingStatus";
 import SUsername from "../ui/SUsername";
 import { useSteemUtils } from "@/hooks/useSteemUtils";
 import { twMerge } from "tailwind-merge";
+import { useTranslations } from "next-intl";
 
 interface WitnessDetailsModalProps {
   witness: Witness | null;
@@ -35,6 +36,7 @@ const WitnessDetailsModal = ({
   isOpen,
   onOpenChange,
 }: WitnessDetailsModalProps) => {
+  const t = useTranslations("Witnesses");
   const [activeTab, setActiveTab] = useState<string>("info");
   const { vestsToSteem } = useSteemUtils();
 
@@ -50,7 +52,7 @@ const WitnessDetailsModal = ({
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
-    toast.success(`${label} copied to clipboard`);
+    toast.success(t("details.copied", { label }));
   };
 
   const formatSP = (vests: number) => {
@@ -76,7 +78,7 @@ const WitnessDetailsModal = ({
   const columns: ColumnDef<WitnessVote>[] = [
     {
       key: "account",
-      header: "Voter",
+      header: t("details.voter"),
       searchable: true,
       render: (value) => (
         <div className="flex items-center gap-2">
@@ -87,7 +89,7 @@ const WitnessDetailsModal = ({
     },
     {
       key: "vests_own",
-      header: "Own SP",
+      header: t("details.ownSp"),
       sortable: true,
       render: (value) => (
         <span className="font-mono text-xs">{formatSP(value)}</span>
@@ -95,7 +97,7 @@ const WitnessDetailsModal = ({
     },
     {
       key: "vests_proxied",
-      header: "Proxied SP",
+      header: t("details.proxiedSp"),
       sortable: true,
       render: (value) => (
         <span className="font-mono text-xs">{formatSP(value)}</span>
@@ -176,7 +178,7 @@ const WitnessDetailsModal = ({
                     content: "flex flex-row gap-1 items-center px-1",
                   }}
                 >
-                  <CheckCircle className="mr-1" size={14} /> Active
+                  <CheckCircle className="mr-1" size={14} /> {t("details.active")}
                 </Chip>
               ) : (
                 <Chip
@@ -187,11 +189,11 @@ const WitnessDetailsModal = ({
                     content: "flex flex-row gap-1 items-center px-1",
                   }}
                 >
-                  <XCircle className="mr-1" size={14} /> Disabled
+                  <XCircle className="mr-1" size={14} /> {t("details.disabled")}
                 </Chip>
               )}
             </div>
-            <span className="text-sm text-muted">Rank #{witness.rank}</span>
+            <span className="text-sm text-muted">{t("details.rank")} #{witness.rank}</span>
           </div>
         </div>
       )}
@@ -212,17 +214,17 @@ const WitnessDetailsModal = ({
               title={
                 <div className="flex items-center gap-2">
                   <Info size={16} />
-                  <span>Information</span>
+                  <span>{t("details.information")}</span>
                 </div>
               }
             >
               <div className="space-y-4 pb-4">
-                <Section title={"Basic Information"}>
-                  <DetailRow label="Owner" value={witness.name} copyable />
-                  <DetailRow label="Rank" value={witness.rank} />
+                <Section title={t("details.basicInfo")}>
+                  <DetailRow label={t("details.owner")} value={witness.name} copyable />
+                  <DetailRow label={t("details.rank")} value={witness.rank} />
                   <div className="flex items-center justify-between border-b border-border py-2">
                     <div className="flex flex-col gap-1">
-                      <span className="text-xs text-muted">Votes</span>
+                      <span className="text-xs text-muted">{t("details.votes")}</span>
                       <span className="font-mono text-sm">
                         {formatVotes(witness.received_votes.toString())} VESTS
                       </span>
@@ -234,23 +236,23 @@ const WitnessDetailsModal = ({
                       onPress={() => setActiveTab("voters")}
                       startContent={<Users size={16} />}
                     >
-                      View Voters
+                      {t("details.viewVoters")}
                     </Button>
                   </div>
                   <DetailRow
-                    label="Total Missed Blocks"
+                    label={t("details.totalMissedBlocks")}
                     value={witness.missed_blocks.toLocaleString()}
                   />
                   <DetailRow
-                    label="Last Confirmed Block"
+                    label={t("details.lastConfirmedBlock")}
                     value={`#${witness.last_confirmed_block.toLocaleString()}`}
                   />
                   <DetailRow
-                    label="Running Version"
+                    label={t("details.runningVersion")}
                     value={witness.running_version}
                   />
 
-                  <DetailRow label="URL" value={witness.url} />
+                  <DetailRow label={t("details.url")} value={witness.url} />
                   <a
                     href={witness.url}
                     target="_blank"
@@ -258,32 +260,32 @@ const WitnessDetailsModal = ({
                     className="text-xs text-primary hover:underline flex items-center gap-1 mt-1"
                   >
                     <ExternalLink size={14} />
-                    Visit Website
+                    {t("details.visitWebsite")}
                   </a>
                 </Section>
 
-                <Section title={"Signing Key"}>
+                <Section title={t("details.signingKey")}>
                   <DetailRow
-                    label="Signing Key"
+                    label={t("details.signingKey")}
                     value={witness.signing_key}
                     copyable
                   />
                 </Section>
 
-                <Section title={"Witness Properties"}>
+                <Section title={t("details.witnessProperties")}>
                   <DetailRow
-                    label="Account Creation Fee"
+                    label={t("details.accountCreationFee")}
                     value={witness.props?.account_creation_fee || "N/A"}
                   />
                   <DetailRow
-                    label="Maximum Block Size"
+                    label={t("details.maximumBlockSize")}
                     value={
                       witness.props?.maximum_block_size?.toLocaleString() ||
                       "N/A"
                     }
                   />
                   <DetailRow
-                    label="SBD Interest Rate"
+                    label={t("details.sbdInterestRate")}
                     value={
                       witness.props?.sbd_interest_rate !== undefined
                         ? `${(witness.props.sbd_interest_rate / 100).toFixed(
@@ -294,14 +296,14 @@ const WitnessDetailsModal = ({
                   />
                 </Section>
 
-                <Section title={"SBD Exchange Rate"}>
-                  <DetailRow label="Base" value={witness.reported_price.base} />
+                <Section title={t("details.sbdExchangeRate")}>
+                  <DetailRow label={t("details.base")} value={witness.reported_price.base} />
                   <DetailRow
-                    label="Quote"
+                    label={t("details.quote")}
                     value={witness.reported_price.quote}
                   />
                   <DetailRow
-                    label="Last Update"
+                    label={t("details.lastUpdate")}
                     value={moment.unix(witness.last_price_report).fromNow()}
                     className={
                       moment
@@ -313,19 +315,19 @@ const WitnessDetailsModal = ({
                   />
                 </Section>
 
-                <Section title={"Additional Details"}>
+                <Section title={t("details.additionalDetails")}>
                   <DetailRow
-                    label="Created"
+                    label={t("details.created")}
                     value={moment.unix(witness.created).toLocaleString()}
                   />
                   <DetailRow
-                    label="Last Work"
+                    label={t("details.lastWork")}
                     value={moment.unix(witness.last_sync).toLocaleString()}
                   />
 
                   {witness.hardfork_time_vote && (
                     <DetailRow
-                      label="Hardfork Time Vote"
+                      label={t("details.hardforkTimeVote")}
                       value={moment
                         .unix(witness.hardfork_time_vote)
                         .toLocaleString()}
@@ -340,7 +342,7 @@ const WitnessDetailsModal = ({
               title={
                 <div className="flex items-center gap-2">
                   <Users size={16} />
-                  <span>Voters</span>
+                  <span>{t("details.voters")}</span>
                 </div>
               }
             >
@@ -357,7 +359,7 @@ const WitnessDetailsModal = ({
                       </div>
                       <div>
                         <p className="text-xs text-muted font-medium">
-                          Total Voters
+                          {t("details.totalVoters")}
                         </p>
                         <p className="text-lg font-bold">
                           {votesData?.length.toLocaleString() || 0}
@@ -371,7 +373,7 @@ const WitnessDetailsModal = ({
                       </div>
                       <div className="flex-1">
                         <p className="text-xs text-muted font-medium">
-                          Total Support (SP)
+                          {t("details.totalSupport")}
                         </p>
                         <p className="text-lg font-bold">
                           {formatSP(totals.total)}
@@ -384,7 +386,7 @@ const WitnessDetailsModal = ({
                     data={votesData || []}
                     columns={columns}
                     className="rounded-xl overflow-hidden"
-                    emptyMessage="No votes found for this witness"
+                    emptyMessage={t("details.noVotes")}
                   />
                 </div>
               )}

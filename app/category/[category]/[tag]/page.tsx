@@ -8,9 +8,12 @@ import STabs from "@/components/ui/STabs";
 import { Zap, TrendingUp, ClockPlus, DollarSign, Sparkles } from "lucide-react";
 import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
 import { FeedList } from "@/components/FeedList";
+import { useTranslations } from "next-intl";
+
 const ICON_SIZE = 20;
 
 function CategoryPage() {
+  const t = useTranslations("Home.tabs");
   const { category, tag } = useParams();
   const { data: session } = useSession();
   const [selectedKey, setSelectedKey] = useState(
@@ -22,32 +25,32 @@ function CategoryPage() {
   const homeTabs = [
     {
       id: "trending",
-      title: "Trending",
+      title: t("trending"),
       api: "getActivePostsByTagTrending" + apiParam,
       icon: <TrendingUp size={ICON_SIZE} />,
     },
     {
       id: "popular",
-      title: "Popular",
+      title: t("popular"),
       api: "getActivePostsByTagInteraction" + apiParam,
       icon: <Sparkles size={ICON_SIZE} />,
     },
     {
       id: "created",
-      title: "Recent",
+      title: t("recent"),
       api: "getActivePostsByTagCreated" + apiParam,
       icon: <ClockPlus size={ICON_SIZE} />,
     },
     {
       id: "hot",
-      title: "Hot",
+      title: t("hot"),
       api: "getActivePostsByTagHot" + apiParam,
       icon: <Zap size={ICON_SIZE} />,
     },
 
     {
       id: "payout",
-      title: "Payout",
+      title: t("payout"),
       api: "getActivePostsByTagPayout" + apiParam,
       icon: <DollarSign size={ICON_SIZE} />,
     },

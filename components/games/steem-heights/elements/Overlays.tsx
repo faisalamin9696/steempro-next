@@ -2,6 +2,7 @@
 
 import { memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 interface OverlaysProps {
   showPerfect: boolean;
@@ -12,6 +13,8 @@ interface OverlaysProps {
 
 export const Overlays = memo(
   ({ showPerfect, showBonus, lastBonus, lastImpactTime }: OverlaysProps) => {
+    const t = useTranslations("Games.steemHeights.canvas");
+
     return (
       <>
         <AnimatePresence>
@@ -23,7 +26,7 @@ export const Overlays = memo(
               className="absolute inset-x-0 bottom-1/2 pointer-events-none  flex items-center justify-center text-center z-40"
             >
               <div className="text-amber-400 font-black italic tracking-widest text-4xl drop-shadow-[0_4px_20px_rgba(245,158,11,0.8)]">
-                PERFECT!
+                {t("perfect")}
               </div>
             </motion.div>
           )}
@@ -39,7 +42,7 @@ export const Overlays = memo(
                 +{lastBonus}m
               </div>
               <div className="text-white font-black text-sm uppercase tracking-[0.2em] -mt-1 drop-shadow-md">
-                COMBO BONUS
+                {t("comboBonus")}
               </div>
             </motion.div>
           )}

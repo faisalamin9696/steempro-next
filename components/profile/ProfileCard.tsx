@@ -25,6 +25,7 @@ import FollowButton from "./FollowButton";
 import ChatButton from "../chat/ChatButton";
 import EditButton from "../ui/EditButton";
 import ShareButton from "../ui/ShareButton";
+import { useTranslations } from "next-intl";
 
 const ICON_SIZE = 20;
 
@@ -34,6 +35,7 @@ interface Props extends CardProps {
 }
 
 function ProfileCard({ account, headerClass, ...props }: Props) {
+  const t = useTranslations("Profile");
   const { data: session } = useSession();
   const { globalProps } = useSteemUtils();
   const isMe = session?.user?.name === account.name;
@@ -96,7 +98,7 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
               size={"sm"}
               variant="flat"
               color="primary"
-              title={"Edit Profile"}
+              title={t("editProfile")}
             />
           )}
 
@@ -115,7 +117,7 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
 
         <ItemRow icon={<Calendar className="text-muted" size={ICON_SIZE} />}>
           <p className="text-sm" title={moment.unix(created).toLocaleString()}>
-            <span className="text-muted">Joined</span>{" "}
+            <span className="text-muted">{t("joined")}</span>{" "}
             {moment.unix(created).format("MMM DD, YYYY")}
           </p>
         </ItemRow>
@@ -143,14 +145,14 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
         {/* Followers + Following */}
         <div className="flex flex-wrap gap-6 text-sm">
           <FollowStat
-            label="Followers"
+            label={t("followers")}
             value={profileData.count_followers}
             onPress={() =>
               setShowUsersModal({ isOpen: true, fetchType: "followers" })
             }
           />
           <FollowStat
-            label="Following"
+            label={t("following")}
             value={profileData.count_following}
             isFollowing
             onPress={() =>
@@ -164,10 +166,10 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
         {/* Stats Grid */}
         <StatsGrid
           items={[
-            { label: "Posts", value: profileData.count_root_posts },
-            { label: "Comments", value: profileData.count_comments },
+            { label: t("posts"), value: profileData.count_root_posts },
+            { label: t("comments"), value: profileData.count_comments },
             {
-              label: "Active",
+              label: t("active"),
               value: moment.unix(profileData.last_action).fromNow(true),
               title: moment.unix(profileData.last_action).toLocaleString(),
             },
@@ -177,17 +179,17 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
         <StatsGrid
           items={[
             {
-              label: "VP",
+              label: t("vp"),
               value: `${profileData.upvote_mana_percent}%`,
-              title: "Voting Power",
+              title: t("vpTitle"),
             },
             {
-              label: "RC",
+              label: t("rc"),
               value: `${profileData.rc_mana_percent}%`,
-              title: "Resource Credits",
+              title: t("rcTitle"),
             },
             {
-              label: "Vote",
+              label: t("vote"),
               value: `$${calculateVoteValue(
                 profileData,
                 100,
@@ -195,14 +197,14 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
                 globalProps.median_price,
                 false
               ).toLocaleString()}`,
-              title: "Vote Value",
+              title: t("voteTitle"),
             },
           ]}
         />
 
         {/* Proxy */}
         {profileData.proxy && (
-          <Section title="Witness Proxy">
+          <Section title={t("witnessProxy")}>
             <ItemRow>
               <SAvatar size="sm" username={profileData.proxy} isBordered />
               <SUsername username={`@${profileData.proxy}`} />
@@ -212,7 +214,7 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
 
         {/* Witness Votes */}
         {!!profileData.witness_votes?.length && (
-          <Section title="Witness Votes">
+          <Section title={t("witnessVotes")}>
             <AvatarGroup
               isBordered
               radius="md"
@@ -222,7 +224,7 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
                   onClick={() => setShowUsersModal({ isOpen: true })}
                   className="text-small ms-2 font-medium hover:underline cursor-pointer"
                 >
-                  +{count} more
+                  {t("more", { count })}
                 </p>
               )}
             >
@@ -248,10 +250,10 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
           username={profileData.name}
           title={
             showUsersModal.fetchType === "followers"
-              ? "Followers"
+              ? t("followers")
               : showUsersModal.fetchType === "following"
-                ? "Following"
-                : "Witness Votes"
+                ? t("following")
+                : t("witnessVotes")
           }
         />
       )}

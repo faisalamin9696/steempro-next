@@ -6,14 +6,18 @@ import { CandlestickChart } from "lucide-react";
 import { Metadata } from "next";
 import React from "react";
 
+import { getTranslations } from "next-intl/server";
+
 export const metadata: Metadata = getMetadata.market();
 
-function layout({ children }: { children: React.ReactNode }) {
+async function layout({ children }: { children: React.ReactNode }) {
+  const t = await getTranslations("Market");
+
   return (
     <MainWrapper className="flex flex-col gap-6 pb-4">
       <PageHeader
-        title="Market"
-        description="Trade STEEM with SBD instantly"
+        title={t("title")}
+        description={t("description")}
         icon={CandlestickChart}
         titleEndContent={
           <Chip variant="flat" color="primary" className="font-bold">

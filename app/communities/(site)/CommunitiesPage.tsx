@@ -8,6 +8,7 @@ import { Checkbox } from "@heroui/checkbox";
 import { Input } from "@heroui/input";
 import { Search } from "lucide-react";
 import { useAppSelector } from "@/hooks/redux/store";
+import { useTranslations } from "next-intl";
 
 function CommunitiesPage({
   data,
@@ -16,6 +17,7 @@ function CommunitiesPage({
   data: Community[];
   account?: string;
 }) {
+  const t = useTranslations("Communities");
   const loginData = useAppSelector((s) => s.loginReducer.value);
   const [search, setSearch] = useState("");
   const [onlySubscribed, setOnlySubscribed] = useState(false);
@@ -40,7 +42,7 @@ function CommunitiesPage({
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-4 items-end">
         <Input
-          placeholder="Search by title or account..."
+          placeholder={t("searchPlaceholder")}
           value={search}
           onValueChange={setSearch}
           startContent={<Search size={18} className="text-muted" />}
@@ -61,7 +63,7 @@ function CommunitiesPage({
               label: "text-small text-muted font-medium",
             }}
           >
-            Show only subscribed communities
+            {t("showOnlySubscribed")}
           </Checkbox>
         )}
       </div>

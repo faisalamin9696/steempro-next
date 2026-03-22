@@ -16,6 +16,7 @@ import {
   CheckCircle,
   XCircle,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface MyWitnessTabProps {
   witness: Witness;
@@ -25,6 +26,7 @@ interface MyWitnessTabProps {
 const DISABLE_KEY = "STM1111111111111111111111111111111114T1Anm";
 
 const MyWitnessTab = ({ witness, username }: MyWitnessTabProps) => {
+  const t = useTranslations("Witnesses.myWitness");
   const [url, setUrl] = useState(witness.url);
   const [signingKey, setSigningKey] = useState(witness.signing_key);
   const [accountCreationFee, setAccountCreationFee] = useState(
@@ -62,7 +64,7 @@ const MyWitnessTab = ({ witness, username }: MyWitnessTabProps) => {
         useKeychain,
       );
 
-      toast.success("Witness properties updated successfully");
+      toast.success(t("updateSuccess"));
       if (customSigningKey) setSigningKey(customSigningKey);
     }).finally(() => {
       setIsUpdating(false);
@@ -83,10 +85,10 @@ const MyWitnessTab = ({ witness, username }: MyWitnessTabProps) => {
             <div>
               <h3 className="text-xl font-bold flex items-center gap-2">
                 <Shield className="text-primary" />
-                Witness Settings
+                {t("title")}
               </h3>
               <p className="text-sm text-muted">
-                Manage your witness node properties and status.
+                {t("description")}
               </p>
             </div>
             <div className="flex items-center gap-3 self-end">
@@ -108,7 +110,7 @@ const MyWitnessTab = ({ witness, username }: MyWitnessTabProps) => {
                     witness.signing_key === DISABLE_KEY)
                 }
               >
-                {!isDisabled ? "Disable Witness" : "Enable Witness"}
+                {!isDisabled ? t("disable") : t("enable")}
               </Button>
             </div>
           </div>
@@ -118,29 +120,29 @@ const MyWitnessTab = ({ witness, username }: MyWitnessTabProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex flex-col gap-4">
               <Input
-                label="Witness URL"
-                placeholder="https://steempro.com/witness-category/@username/witness-thread"
+                label={t("urlLabel")}
+                placeholder="https://www.steempro.com/witness-category/@username/witness-thread"
                 labelPlacement="outside"
                 value={url}
                 onValueChange={setUrl}
                 startContent={<Globe size={18} className="text-muted" />}
               />
               <Input
-                label="Block Signing Key"
+                label={t("signingKeyLabel")}
                 placeholder="STM..."
                 labelPlacement="outside"
                 value={signingKey}
                 onValueChange={setSigningKey}
                 classNames={{ description: "text-xs text-muted" }}
                 startContent={<Shield size={18} className="text-muted" />}
-                description="The public key used to sign blocks."
+                description={t("signingKeyDesc")}
               />
             </div>
 
             <div className="flex flex-col gap-4">
               <div className="grid grid-cols-2 gap-4">
                 <Input
-                  label="Account Creation Fee"
+                  label={t("creationFeeLabel")}
                   placeholder="3.000"
                   labelPlacement="outside"
                   type="number"
@@ -149,7 +151,7 @@ const MyWitnessTab = ({ witness, username }: MyWitnessTabProps) => {
                   endContent={<span className="text-xs text-muted">STEEM</span>}
                 />
                 <Input
-                  label="SBD Interest Rate"
+                  label={t("interestRateLabel")}
                   placeholder="0.00"
                   labelPlacement="outside"
                   type="number"
@@ -159,7 +161,7 @@ const MyWitnessTab = ({ witness, username }: MyWitnessTabProps) => {
                 />
               </div>
               <Input
-                label="Maximum Block Size"
+                label={t("blockSizeLabel")}
                 placeholder="65536"
                 labelPlacement="outside"
                 type="number"
@@ -173,11 +175,11 @@ const MyWitnessTab = ({ witness, username }: MyWitnessTabProps) => {
           <Alert
             color="warning"
             variant="faded"
-            title="Signing Key Security"
+            title={t("securityTitle")}
             classNames={{
               title: "font-semibold pb-2",
             }}
-            description="Changing your signing key requires active authority. Ensure you have the corresponding private key on your witness node before updating the public signing key, otherwise your node will miss blocks."
+            description={t("securityDesc")}
           />
 
           <div className="flex justify-end gap-3 mt-4">
@@ -186,7 +188,7 @@ const MyWitnessTab = ({ witness, username }: MyWitnessTabProps) => {
               isLoading={isUpdating}
               onPress={() => handleUpdate()}
             >
-              Update Witness Props
+              {t("updateProps")}
             </Button>
           </div>
         </CardBody>

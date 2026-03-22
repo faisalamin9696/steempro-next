@@ -7,10 +7,12 @@ import LoginModal from "./LoginModal";
 import { useAccountsContext } from "./AccountsContext";
 import { Plus, UserCog } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface Props extends Pick<ModalProps, "isOpen" | "onOpenChange"> {}
 
 function AuthModal(props: Props) {
+  const t = useTranslations("Auth");
   const { accounts } = useAccountsContext();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { isPending } = useAccountsContext();
@@ -19,10 +21,8 @@ function AuthModal(props: Props) {
     <>
       <SModal
         scrollBehavior="inside"
-        title={"Authentication"}
-        description={
-          "Manage unlimited accounts and switch between them with one click."
-        }
+        title={t("title")}
+        description={t("description")}
         hideCloseButton={isPending}
         isDismissable={!isPending}
         placement="center"
@@ -38,9 +38,9 @@ function AuthModal(props: Props) {
                 </div>
 
                 <div className="flex flex-col">
-                  <p className="text-xl font-bold">Connected Accounts</p>
+                  <p className="text-xl font-bold">{t("connectedAccounts")}</p>
                   <p className="text-sm text-muted">
-                    {accounts.length} accounts connected
+                    {t("accountsConnected", { count: accounts.length })}
                   </p>
                 </div>
               </div>
@@ -52,7 +52,7 @@ function AuthModal(props: Props) {
                 isLoading={isPending}
                 className="max-sm:h-8 max-sm:rounded-lg max-sm:px-3! w-auto text-xs"
               >
-                Add Account
+                {t("addAccount")}
               </Button>
             </div>
 
@@ -68,7 +68,9 @@ function AuthModal(props: Props) {
         onOpenChange={setShowLoginModal}
         onLoginSuccess={() => {
           setShowLoginModal(false);
-          toast.success("Success", { description: "Logged in successfully" });
+          toast.success(t("success"), {
+            description: t("loginSuccess"),
+          });
         }}
       />
     </>

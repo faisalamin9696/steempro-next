@@ -21,6 +21,7 @@ import {
 } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface CommunityGoalCardProps {
   totalAltitude: number;
@@ -39,6 +40,7 @@ export const CommunityGoalCard = ({
   symbol,
   config,
 }: CommunityGoalCardProps) => {
+  const t = useTranslations("Games.steemHeights.leaderboard.global.goal");
   const { minReward, maxReward, stepSize, increasePercent, baseAltitude } =
     config;
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -76,7 +78,7 @@ export const CommunityGoalCard = ({
   const progressValue = (totalAltitude / maxAltitude) * 100;
   const isMaxed = currentReward >= maxReward;
 
-  const invitationMarkdown = `#### 🏔️ Let'sReach New Heights in Steem Heights!\n\nI'm participating in **Steem Heights**, the ultimate stacking challenge on Steem. We're working together to unlock a massive **${maxReward} ${symbol}** community reward pool!\n\n📈 **Community Progress:** ${totalAltitude.toLocaleString()}m / ${maxAltitude.toLocaleString()}m\n💰 **Current Reward Pool:** ${currentReward.toFixed(1)} ${symbol}\n\nJoin the climb and earn your share of the prize pool based on your performance!\n\n🔗 **Play Now:** https://steempro.com/games/steem-heights`;
+  const invitationMarkdown = `#### 🏔️ Let's Reach New Heights in Steem Heights!\n\nI'm participating in **Steem Heights**, the ultimate stacking challenge on Steem. We're working together to unlock a massive **${maxReward} ${symbol}** community reward pool!\n\n📈 **Community Progress:** ${totalAltitude.toLocaleString()}m / ${maxAltitude.toLocaleString()}m\n💰 **Current Reward Pool:** ${currentReward.toFixed(1)} ${symbol}\n\nJoin the climb and earn your share of the prize pool based on your performance!\n\n🔗 **Play Now:** https://steempro.com/games/steem-heights`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(invitationMarkdown);
@@ -105,7 +107,7 @@ export const CommunityGoalCard = ({
                     <Zap size={14} className="fill-emerald-500 animate-pulse" />
                   </div>
                   <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500">
-                    Community Global Goal
+                    {t("title")}
                   </h3>
                 </div>
                 <div className="flex flex-col">
@@ -125,7 +127,7 @@ export const CommunityGoalCard = ({
                     </span>
                   </div>
                   <p className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest mt-1">
-                    Current Seasonal Bonus Pool
+                    {t("currentPool")}
                   </p>
                 </div>
               </div>
@@ -134,7 +136,7 @@ export const CommunityGoalCard = ({
                 <div className="flex flex-col items-center md:items-end gap-1 bg-zinc-300/50 dark:bg-zinc-900/70 border border-white/5 rounded-2xl p-4 backdrop-blur-md">
                   <div className="text-[9px] font-black text-zinc-500 dark:text-zinc-400 uppercase tracking-[0.2em] flex items-center gap-2">
                     <Target size={10} className="text-emerald-500" />
-                    Max Capability
+                    {t("maxCapability")}
                   </div>
                   <div className="text-xl font-black italic tracking-tight text-zinc-900 dark:text-white">
                     {maxReward}{" "}
@@ -148,7 +150,7 @@ export const CommunityGoalCard = ({
                   className="bg-emerald-500 hover:bg-emerald-400 text-white font-black uppercase tracking-[0.2em] text-[9px] h-9 px-6 rounded-xl shadow-lg shadow-emerald-500/20"
                   startContent={<Share2 size={12} />}
                 >
-                  Invite Friends
+                  {t("invite")}
                 </Button>
               </div>
             </div>
@@ -158,7 +160,7 @@ export const CommunityGoalCard = ({
               <div className="flex justify-between items-end mb-1">
                 <div className="flex flex-col">
                   <span className="text-[8px] font-black text-zinc-500 uppercase tracking-[0.2em]">
-                    Total Progress
+                    {t("totalProgress")}
                   </span>
                   <span className="text-xs font-black text-zinc-900 dark:text-white">
                     {totalAltitude.toLocaleString()}m
@@ -167,10 +169,10 @@ export const CommunityGoalCard = ({
                 {!isMaxed && (
                   <div className="text-right">
                     <span className="text-[8px] font-black text-emerald-500 uppercase tracking-[0.2em]">
-                      Targeting {nextThreshold}m
+                      {t("targeting", { altitude: nextThreshold })}
                     </span>
                     <div className="text-[10px] font-black text-zinc-500 dark:text-zinc-400">
-                      +{(minReward * increasePercent).toFixed(1)} {symbol} Boost
+                      {t("boost", { reward: (minReward * increasePercent).toFixed(1), symbol })}
                     </div>
                   </div>
                 )}
@@ -193,10 +195,10 @@ export const CommunityGoalCard = ({
               <div className="flex justify-between items-center text-[8px] font-bold uppercase tracking-widest text-zinc-500">
                 <div className="flex items-center gap-1.5">
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  Base Start: {baseAltitude}m
+                  {t("baseStart", { altitude: baseAltitude })}
                 </div>
                 <div className="flex items-center gap-1.5">
-                  Max Goal: {maxAltitude}m
+                  {t("maxGoal", { altitude: maxAltitude })}
                   <div className="w-1.5 h-1.5 rounded-full bg-zinc-800" />
                 </div>
               </div>
@@ -205,7 +207,7 @@ export const CommunityGoalCard = ({
             {/* Tiers List */}
             <div className="space-y-4">
               <h4 className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500 dark:text-zinc-400 text-center md:text-left">
-                Reward Milestones
+                {t("milestones")}
               </h4>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                 {tiers.map((tier, i) => (
@@ -242,10 +244,7 @@ export const CommunityGoalCard = ({
             <Info size={12} />
             <div className="absolute bottom-full right-0 mb-2 w-48 p-2 bg-zinc-950 border border-white/10 rounded-lg opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-40 shadow-2xl backdrop-blur-md">
               <p className="text-[8px] font-bold text-zinc-400 leading-tight">
-                Community rewards are calculated from the total combined
-                altitude of all players. Every {stepSize}m beyond {baseAltitude}
-                m adds {(minReward * increasePercent).toFixed(1)} {symbol} to
-                the pool.
+                {t("tooltip", { stepSize, baseAltitude, boost: (minReward * increasePercent).toFixed(1), symbol })}
               </p>
             </div>
           </div>
@@ -270,10 +269,12 @@ export const CommunityGoalCard = ({
                   </div>
                   <div>
                     <h2 className="text-xl font-black italic uppercase tracking-tight text-zinc-900 dark:text-white">
-                      Invite <span className="text-emerald-500">Climbers</span>
+                      {t.rich("modal.title", {
+                        climbers: (chunks) => <span className="text-emerald-500">{chunks}</span>
+                      })}
                     </h2>
                     <p className="text-zinc-500 text-[9px] font-black uppercase tracking-widest">
-                      Help break the community goal
+                      {t("modal.subtitle")}
                     </p>
                   </div>
                 </div>
@@ -282,7 +283,7 @@ export const CommunityGoalCard = ({
                 <div className="p-4 bg-zinc-300/30 dark:bg-zinc-900/50 rounded-2xl border border-white/5 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">
-                      Invitation Markdown
+                      {t("modal.markdown")}
                     </span>
                     <Button
                       size="sm"
@@ -307,9 +308,7 @@ export const CommunityGoalCard = ({
                     className="text-emerald-500 shrink-0 mt-0.5"
                   />
                   <p className="text-[10px] font-medium text-zinc-500 leading-relaxed">
-                    Copy this markdown and paste it in your next post or comment
-                    to invite friends. Higher collective altitude means bigger
-                    rewards for everyone!
+                    {t("modal.info")}
                   </p>
                 </div>
               </ModalBody>
@@ -318,7 +317,7 @@ export const CommunityGoalCard = ({
                   onPress={onClose}
                   className="bg-zinc-800 text-white font-black uppercase tracking-widest text-xs h-12 rounded-xl w-full"
                 >
-                  Close
+                  {t("close")}
                 </Button>
               </ModalFooter>
             </>
