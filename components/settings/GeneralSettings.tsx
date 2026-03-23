@@ -150,7 +150,7 @@ const GeneralSettings = () => {
         icon={Languages}
         title={t("General.language.title")}
         iconSize="sm"
-        iconColor="secondary"
+        iconColor="danger"
         description={t("General.language.description")}
       >
         <div className="space-y-4">
