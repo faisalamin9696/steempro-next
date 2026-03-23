@@ -40,13 +40,19 @@ function Providers({
     setIsMounted(true);
   }, []);
 
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
   return (
     <SessionProvider
       session={session}
       refetchInterval={60 * 60} // Refetch every 1 hour to keep session alive
       refetchOnWindowFocus={true} // Refresh when user comes back to the tab
     >
-      <NextIntlClientProvider locale={locale} messages={messages}>
+      <NextIntlClientProvider
+        locale={locale}
+        messages={messages}
+        timeZone={timeZone}
+      >
         <ScrollToTop />
         <ReduxProvider store={store}>
           <HeroUIProvider navigate={router.push}>
