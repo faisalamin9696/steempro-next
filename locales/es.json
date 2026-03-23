@@ -851,6 +851,10 @@
         "title": "Votación en Lote",
         "description": "Vota en varias publicaciones simultáneamente para maximizar tu curación."
       },
+      "batchCommenting": {
+        "title": "Comentarios en Lote",
+        "description": "Publica comentarios en el contenido más reciente de varios usuarios a la vez con plantillas personalizables."
+      },
       "communityReport": {
         "title": "Informe de Comunidad",
         "description": "Genera estadísticas e informes detallados de tus comunidades."
@@ -944,7 +948,6 @@
       "postEmpty": "La publicación no puede estar vacía",
       "tagEmpty": "Añade una etiqueta o selecciona una comunidad"
     },
-
     "error": {
       "loginRequired": "Se requiere iniciar sesión"
     },
@@ -988,7 +991,6 @@
       }
     }
   },
-
   "BatchTransfer": {
     "title": "Transferencia en Lote",
     "description": "Envía Steem o SBD a varias cuentas a la vez de forma eficiente.",
@@ -1034,16 +1036,16 @@
   },
   "BatchVoting": {
     "title": "Votación en Lote",
-    "description": "Vota en varias publicaciones simultáneamente para maximizar tu curación.",
-    "globalWeight": "Peso Global",
+    "description": "Vota en varias publicaciones a la vez para maximizar tu curación.",
+    "globalWeight": "Fuerza de Voto",
     "postList": "Lista de Publicaciones",
-    "bulkImport": "Importación Masiva",
+    "bulkImport": "Modo Importar",
     "addPost": "Añadir Publicación",
     "addAnotherPost": "Añadir Otra Publicación",
     "clearAll": "Borrar Todo",
     "confirmTitle": "Confirmación",
     "confirmDesc": "¿Realmente quieres restablecer todos los datos?",
-    "bulkInfo": "Pega las URLs de las publicaciones aquí. Formato: {url} o {url_weight} por línea.",
+    "bulkInfo": "Pega una lista de enlaces de publicaciones. Puedes añadir un número (ej. 75) para una fuerza personalizada.",
     "lineSeparator": "Separador de Línea",
     "newLine": "Nueva Línea (\\n)",
     "semicolon": "Punto y coma (;)",
@@ -1052,15 +1054,15 @@
     "customPlaceholder": "ej: |",
     "bulkPlaceholder": "https://www.steempro.com/@author/permlink\\nhttps://www.steempro.com/@author/permlink2 75",
     "cancel": "Cancelar",
-    "parseList": "Analizar Lista",
+    "parseList": "Importar Lista",
     "table": {
-      "url": "URL de la Publicación de Steem o @autor/permlink",
-      "weight": "Peso",
+      "url": "Enlace de Publicación (@autor/permlink)",
+      "weight": "Fuerza",
       "status": "Estado",
       "action": "Acción"
     },
     "urlPlaceholder": "https://...",
-    "global": "Global",
+    "global": "Auto",
     "status": {
       "pending": "Pendiente",
       "voting": "Votando...",
@@ -1071,36 +1073,36 @@
       "remove": "Eliminar Fila"
     },
     "progress": {
-      "title": "Progreso",
+      "title": "Estado",
       "totalPosts": "Publicaciones Totales",
       "estTime": "Tiempo Est.",
       "min": "min",
       "sec": "seg",
       "done": "listo",
       "err": "err",
-      "preparing": "Preparando para votar...",
-      "votingOn": "Votando en la publicación de @{author}...",
-      "waiting": "Esperando 3.5s (Límite de la Blockchain)..."
+      "preparing": "Preparando...",
+      "votingOn": "Votando por @{author}...",
+      "waiting": "Esperando 3.5s...",
+      "safeMode": "Modo Seguro (Estable)"
     },
     "controls": {
-      "start": "Iniciar Votaación",
+      "start": "Iniciar Votación",
       "pause": "Pausar",
       "resume": "Reanudar",
       "stop": "Detener"
     },
     "error": {
       "invalidSeparator": "Por favor, proporciona un separador de línea personalizado válido.",
-      "parseError": "No se pudo analizar ninguna URL de publicación válida. Comprueba el formato.",
+      "parseError": "No se pudo analizar ningún enlace de publicación válido. Comprueba el formato.",
       "loginFirst": "Por favor, inicia sesión primero",
       "invalidUrl": "Formato de URL inválido",
       "invalidFormat": "Algunas publicaciones tienen formatos inválidos y no pueden ser procesadas.",
       "votingStopped": "Votación en lote detenida.",
-      "errorVoted": "Error al votar en la publicación de @{author}: {error}"
+      "errorVoted": "Error al votar por @{author}: {error}"
     },
     "success": {
-      "imported": "Se han importado con éxito {count} publicaciones",
-      "voted": "Votado en la publicación de @{author}",
-      "completed": "¡Votación en lote completada!"
+      "voted": "¡Votación en lote completada!",
+      "votedCount": "Votado en {count} publicaciones con éxito."
     }
   },
   "CommunityReport": {
@@ -1329,5 +1331,49 @@
     "communityLabel": "Comunidad",
     "loading": "Cargando...",
     "noResults": "No se encontraron resultados para tu búsqueda"
+  },
+  "BatchCommenting": {
+    "title": "Comentarios en Lote",
+    "description": "Publica comentarios en el contenido más reciente de varios usuarios con plantillas personalizables.",
+    "usernames": "Nombres de usuario",
+    "bulkImport": "Modo Importar",
+    "clearAll": "Borrar Todo",
+    "confirmTitle": "Confirmación",
+    "confirmDesc": "¿Realmente quieres restablecer todos los datos?",
+    "cancel": "Cancelar",
+    "commentTemplate": "Plantilla de Comentario",
+    "usernameSeparator": "Separador de Nombres",
+    "newLine": "Nueva Línea",
+    "semicolon": "Punto y coma",
+    "comma": "Coma",
+    "custom": "Personalizado",
+    "customPlaceholder": "ej: |",
+    "bulkPlaceholder": "Introduce nombres de usuario separados por el separador elegido...",
+    "templatePlaceholder": "Hola @{{username}}, ¡buena publicación! - @{{me}}",
+    "execute": "Ejecutar Lote",
+    "status": "Estado",
+    "fetching": "Obteniendo publicaciones recientes...",
+    "broadcasting": "Emitiendo comentarios...",
+    "bulkInfo": "Introduce los nombres de usuario separados por nuevas líneas, comas o puntos y coma. Puedes usar {{username}} y {{me}} como marcadores de posición en el cuerpo del comentario.",
+    "parseList": "Importar Lista",
+    "error": {
+      "loginFirst": "Por favor, inicia sesión para usar esta herramienta.",
+      "invalidSeparator": "Por favor, proporciona un separador válido.",
+      "parseError": "No se encontraron nombres de usuario válidos.",
+      "fetchPostsError": "Error al obtener algunas publicaciones.",
+      "broadcastFailed": "Error al emitir los comentarios.",
+      "templateRequired": "La plantilla de comentario es obligatoria"
+    },
+    "success": {
+      "imported": "Se importaron con éxito {count} nombres de usuario",
+      "broadcast": "¡Comentarios en lote completados!",
+      "sent": "Se publicaron con éxito {count} comentarios."
+    },
+    "variables": {
+      "title": "Variables Disponibles",
+      "username": "Nombre de usuario objetivo",
+      "me": "Usuario actual (@mención)",
+      "name": "Nombre real (si está disponible)"
+    }
   }
 }

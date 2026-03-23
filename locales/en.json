@@ -851,6 +851,10 @@
         "title": "Batch Voting",
         "description": "Vote on multiple posts simultaneously to maximize your curation."
       },
+      "batchCommenting": {
+        "title": "Batch Commenting",
+        "description": "Post comments to multiple users' latest content with customizable templates."
+      },
       "communityReport": {
         "title": "Community Report",
         "description": "Generate detailed statistics and reports for your communities."
@@ -987,7 +991,6 @@
       }
     }
   },
-
   "BatchTransfer": {
     "title": "Batch Transfer",
     "description": "Send Steem or SBD to multiple accounts at once efficiently.",
@@ -1005,7 +1008,7 @@
     "comma": "Comma (,)",
     "custom": "Custom",
     "customPlaceholder": "e.g. |",
-    "bulkPlaceholder": "steememator 10.000 Monthly prize\\nalice 5.000 Contest winner",
+    "bulkPlaceholder": "faisalamin 10.000 Monthly prize\\nalice 5.000 Contest winner",
     "cancel": "Cancel",
     "parseList": "Parse List",
     "recipient": "Recipient",
@@ -1033,16 +1036,16 @@
   },
   "BatchVoting": {
     "title": "Batch Voting",
-    "description": "Vote on multiple posts simultaneously to maximize your curation.",
-    "globalWeight": "Global Weight",
+    "description": "Vote on multiple posts at once to maximize your curation.",
+    "globalWeight": "Voting Strength",
     "postList": "Post List",
-    "bulkImport": "Bulk Import",
+    "bulkImport": "Import Mode",
     "addPost": "Add Post",
     "addAnotherPost": "Add Another Post",
     "clearAll": "Clear All",
     "confirmTitle": "Confirmation",
     "confirmDesc": "Do you really want to reset all data?",
-    "bulkInfo": "Paste your post URLs here. Format: {url} or {url_weight} per line.",
+    "bulkInfo": "Paste a list of post links. You can add a number (e.g. 75) for custom strength.",
     "lineSeparator": "Line Separator",
     "newLine": "New Line (\\n)",
     "semicolon": "Semicolon (;)",
@@ -1051,15 +1054,15 @@
     "customPlaceholder": "e.g. |",
     "bulkPlaceholder": "https://www.steempro.com/@author/permlink\\nhttps://www.steempro.com/@author/permlink2 75",
     "cancel": "Cancel",
-    "parseList": "Parse List",
+    "parseList": "Import List",
     "table": {
-      "url": "Steem Post URL or @author/permlink",
-      "weight": "Weight",
+      "url": "Steem Post Link (@author/permlink)",
+      "weight": "Strength",
       "status": "Status",
       "action": "Action"
     },
     "urlPlaceholder": "https://...",
-    "global": "Global",
+    "global": "Auto",
     "status": {
       "pending": "Pending",
       "voting": "Voting...",
@@ -1070,16 +1073,17 @@
       "remove": "Remove Row"
     },
     "progress": {
-      "title": "Progress",
+      "title": "Status",
       "totalPosts": "Total Posts",
       "estTime": "Est. Time",
       "min": "min",
       "sec": "sec",
       "done": "done",
       "err": "err",
-      "preparing": "Preparing to vote...",
-      "votingOn": "Voting on @{author}'s post...",
-      "waiting": "Waiting 3.5s (Blockchain limit)..."
+      "preparing": "Preparing...",
+      "votingOn": "Voting for @{author}...",
+      "waiting": "Waiting 3.5s...",
+      "safeMode": "Safe Mode (Steady)"
     },
     "controls": {
       "start": "Start Voting",
@@ -1089,17 +1093,59 @@
     },
     "error": {
       "invalidSeparator": "Please provide a valid custom line separator.",
-      "parseError": "Could not parse any valid post URLs. Check the format.",
+      "parseError": "Could not parse any valid post links. Check the format.",
       "loginFirst": "Please login first",
       "invalidUrl": "Invalid URL format",
       "invalidFormat": "Some posts have invalid formats and cannot be processed.",
       "votingStopped": "Batch voting stopped.",
-      "errorVoted": "Error voting on @{author}: {error}"
+      "errorVoted": "Error voting for @{author}: {error}"
     },
     "success": {
-      "imported": "Successfully imported {count} posts",
-      "voted": "Voted on @{author}'s post",
-      "completed": "Batch voting completed!"
+      "voted": "Batch voting complete!",
+      "votedCount": "Voted on {count} posts successfully."
+    }
+  },
+  "BatchCommenting": {
+    "title": "Batch Commenting",
+    "description": "Auto-comment on the latest posts of multiple users at once.",
+    "usernames": "Add Usernames",
+    "bulkImport": "Import List",
+    "clearAll": "Clear All",
+    "confirmTitle": "Confirmation",
+    "confirmDesc": "Do you really want to reset all data?",
+    "cancel": "Cancel",
+    "commentTemplate": "Comment Template",
+    "usernameSeparator": "Username Separator",
+    "newLine": "New Line",
+    "semicolon": "Semicolon",
+    "comma": "Comma",
+    "custom": "Custom",
+    "customPlaceholder": "e.g. |",
+    "bulkPlaceholder": "Enter usernames separated by chosen separator...",
+    "templatePlaceholder": "Hi @{{username}}, great post! - @{{me}}",
+    "execute": "Start Commenting",
+    "status": "Status",
+    "fetching": "Finding latest posts...",
+    "broadcasting": "Sending comments...",
+    "bulkInfo": "Paste a list of usernames. You can use {{username}} or {{me}} to customize your message for each person.",
+    "parseList": "Add to List",
+    "error": {
+      "loginFirst": "Please login to use this tool.",
+      "invalidSeparator": "Please provide a valid separator.",
+      "parseError": "No valid usernames found.",
+      "fetchPostsError": "Failed to fetch some posts.",
+      "broadcastFailed": "Failed to broadcast comments.",
+      "templateRequired": "Comment template is required"
+    },
+    "success": {
+      "imported": "Successfully imported {count} usernames",
+      "broadcast": "Batch commenting completed!",
+      "sent": "Successfully posted {count} comments."
+    },
+    "variables": {
+      "title": "Custom Placeholders",
+      "username": "Username (@user)",
+      "me": "Yourself (@me)"
     }
   },
   "CommunityReport": {

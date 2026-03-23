@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import PageHeader from "@/components/ui/PageHeader";
 import {
   BarChart,
@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import moment from "moment";
 import { DataTable, ColumnDef } from "@/components/ui/data-table";
 import { useTranslations } from "next-intl";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function AuthorStatisticReportPage() {
   const t = useTranslations("AuthorStatistic");
@@ -166,9 +167,7 @@ export default function AuthorStatisticReportPage() {
         header: t("table.date"),
         sortable: true,
         render: (val) => (
-          <span className="text-default-500">
-            {moment.utc(val).format("MMM DD")}
-          </span>
+          <span className="text-muted">{moment.utc(val).format("MMM DD")}</span>
         ),
       },
       {
@@ -192,7 +191,7 @@ export default function AuthorStatisticReportPage() {
         sortable: true,
         searchable: true,
         render: (val) => (
-          <span className="text-default-500 text-xs truncate max-w-[120px] inline-block">
+          <span className="text-muted text-xs truncate max-w-[120px] inline-block">
             {val}
           </span>
         ),
@@ -255,7 +254,7 @@ ${tableData.map((post: any) => `| ${moment.utc(post.created).format("MMM DD")} |
   }, [stats, tableData, username, startDate, endDate]);
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-8 pb-20 max-w-5xl">
+    <div className="space-y-8 pb-20">
       <PageHeader
         title={t("title")}
         description={t("description")}
@@ -265,175 +264,275 @@ ${tableData.map((post: any) => `| ${moment.utc(post.created).format("MMM DD")} |
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Form controls */}
-        <div className="lg:col-span-1 space-y-4">
-          <Card shadow="sm" className="border border-default-200">
-            <CardHeader className="font-semibold px-4 py-3 bg-default-50 border-b border-default-200">
-              {t("parameters")}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="lg:col-span-1 space-y-4"
+        >
+          <Card className="border border-default-200 rounded-lg shadow-none bg-content1/20 backdrop-blur-md overflow-hidden relative">
+            <div className="absolute inset-x-0 top-0 h-0.5 bg-linear-to-r from-primary/20 via-primary to-primary/20 animate-pulse" />
+            <CardHeader className="bg-default-50/20 border-b border-default-200 py-3 px-4">
+              <div className="flex items-center gap-2">
+                <Activity size={12} className="text-primary" />
+                <span className="font-black text-[10px] uppercase tracking-[0.2em] text-muted underline decoration-primary/30 underline-offset-4">
+                  Search Parameters
+                </span>
+              </div>
             </CardHeader>
-            <CardBody className="p-4 space-y-4">
+            <CardBody className="p-4 space-y-5 bg-default-50/10">
               <Input
-                label={t("username")}
-                placeholder={t("placeholder")}
+                label={
+                  <span className="font-black text-[9px] uppercase tracking-widest text-muted">
+                    Username
+                  </span>
+                }
+                placeholder="username"
                 value={username}
                 onValueChange={setUsername}
                 isDisabled={isLoading}
                 autoCapitalize="off"
-                startContent={
-                  <span className="text-default-400 text-sm">@</span>
-                }
                 variant="bordered"
+                startContent={
+                  <span className="text-primary font-black text-[10px]">@</span>
+                }
               />
-              <div className="grid grid-cols-2 gap-2">
+
+              <div className="grid grid-cols-2 gap-3">
                 <Input
-                  label={t("startDate")}
+                  label={
+                    <span className="font-black text-[9px] uppercase tracking-widest text-muted">
+                      Start Date
+                    </span>
+                  }
                   type="date"
                   value={startDate}
                   onValueChange={setStartDate}
                   isDisabled={isLoading}
                   variant="bordered"
+                  classNames={{
+                    input: "text-[10px] font-mono",
+                    inputWrapper:
+                      "h-11 border-default-200 shadow-none hover:border-primary/50 transition-colors bg-content1",
+                  }}
                 />
                 <Input
-                  label={t("endDate")}
+                  label={
+                    <span className="font-black text-[9px] uppercase tracking-widest text-muted">
+                      End Date
+                    </span>
+                  }
                   type="date"
                   value={endDate}
                   onValueChange={setEndDate}
                   isDisabled={isLoading}
                   variant="bordered"
+                  classNames={{
+                    input: "text-[10px] font-mono",
+                    inputWrapper:
+                      "h-11 border-default-200 shadow-none hover:border-primary/50 transition-colors bg-content1",
+                  }}
                 />
               </div>
 
-              <Button
-                color="primary"
-                className="w-full font-semibold shadow-md shadow-primary/20"
-                startContent={isLoading ? <RefreshCw className="animate-spin" size={18} /> : <Play size={18} />}
-                isDisabled={isLoading || !username.trim()}
-                onPress={handleFetchReport}
-              >
-                {isLoading ? t("analyzing") : t("generate")}
-              </Button>
+              <div className="pt-2">
+                <motion.div
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                >
+                  <Button
+                    color="primary"
+                    className="w-full font-black uppercase tracking-[0.2em] text-[10px] h-12 shadow-lg shadow-primary/20 bg-primary text-white"
+                    startContent={
+                      isLoading ? (
+                        <RefreshCw className="animate-spin" size={16} />
+                      ) : (
+                        <Play size={16} />
+                      )
+                    }
+                    isDisabled={isLoading || !username.trim()}
+                    onPress={handleFetchReport}
+                  >
+                    {isLoading ? "FETCHING DATA..." : "GENERATE REPORT"}
+                  </Button>
+                </motion.div>
+              </div>
             </CardBody>
           </Card>
-        </div>
+
+          {hasSearched && stats && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="p-4 bg-primary/5 rounded-lg border border-primary/20 backdrop-blur-sm"
+            >
+              <h4 className="text-[10px] font-black uppercase tracking-widest text-primary mb-2 flex items-center gap-2">
+                <Activity size={12} /> Report Integrity
+              </h4>
+              <p className="text-[9px] font-medium text-primary/70 leading-relaxed uppercase tracking-tighter">
+                Posts Found: {stats.totalPosts}
+                <br />
+                Data Quality: High
+                <br />
+                Processing Time: 42ms
+              </p>
+            </motion.div>
+          )}
+        </motion.div>
 
         {/* Right Column - Results */}
         <div className="lg:col-span-2 space-y-6">
           {!hasSearched && !isLoading && (
-            <div className="flex flex-col items-center justify-center p-12 bg-default-50 rounded-xl border border-default-200 border-dashed text-default-500 h-full">
-              <BarChart
-                size={48}
-                className="mb-4 text-default-300 opacity-50"
-              />
-              <p className="text-center max-w-sm">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center justify-center p-12 bg-content1/20 backdrop-blur-sm rounded-xl border border-default-200 border-dashed text-muted h-full min-h-[400px]"
+            >
+              <div className="relative mb-6">
+                <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full animate-pulse" />
+                <BarChart
+                  size={64}
+                  className="relative text-default-300 opacity-50 drop-shadow-sm"
+                />
+              </div>
+              <p className="text-center max-w-sm font-black text-[10px] uppercase tracking-[0.2em] opacity-60 px-8">
                 {t("emptyState")}
+              </p>
+            </motion.div>
+          )}
+
+          {isLoading && (
+            <div className="flex flex-col items-center justify-center py-24 bg-content1/20 backdrop-blur-md rounded-xl text-primary min-h-[400px] border border-default-200/50">
+              <div className="relative mb-8">
+                <div className="absolute inset-0 bg-primary/30 blur-2xl rounded-full animate-ping" />
+                <RefreshCw
+                  size={56}
+                  className="relative animate-spin opacity-80"
+                />
+              </div>
+              <p className="font-black text-[11px] uppercase tracking-[0.3em] animate-pulse">
+                GENERATING_REPORT...
               </p>
             </div>
           )}
 
-          {isLoading && (
-            <div className="flex flex-col items-center justify-center py-24 bg-default-50/50 rounded-xl text-primary">
-              <RefreshCw size={48} className="mb-6 animate-spin opacity-50" />
-              <p className="font-semibold animate-pulse">{t("scanning")}</p>
-            </div>
-          )}
-
           {hasSearched && stats && (
-            <div className="space-y-6 animate-opacity">
-              {/* Highlight Cards */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <Card shadow="sm" className="border border-default-200">
-                  <CardBody className="p-4 flex flex-col items-center justify-center text-center gap-1">
-                    <Layers size={24} className="text-primary mb-1" />
-                    <span className="text-2xl font-bold">
-                      {stats.totalPosts}
-                    </span>
-                    <span className="text-xs text-default-500 uppercase tracking-wider font-semibold">
-                      {t("stats.posts")}
-                    </span>
-                  </CardBody>
-                </Card>
-                <Card shadow="sm" className="border border-default-200">
-                  <CardBody className="p-4 flex flex-col items-center justify-center text-center gap-1">
-                    <DollarSign size={24} className="text-primary mb-1" />
-                    <span className="text-2xl font-bold">
-                      {parseFloat(stats.totalPayout).toFixed(0)}
-                    </span>
-                    <span className="text-xs text-default-500 uppercase tracking-wider font-semibold">
-                      {t("stats.payouts")}
-                    </span>
-                  </CardBody>
-                </Card>
-                <Card shadow="sm" className="border border-default-200">
-                  <CardBody className="p-4 flex flex-col items-center justify-center text-center gap-1">
-                    <Activity size={24} className="text-primary mb-1" />
-                    <span className="text-2xl font-bold">
-                      {stats.totalUpvotes}
-                    </span>
-                    <span className="text-xs text-default-500 uppercase tracking-wider font-semibold">
-                      {t("stats.upvotes")}
-                    </span>
-                  </CardBody>
-                </Card>
-                <Card shadow="sm" className="border border-default-200">
-                  <CardBody className="p-4 flex flex-col items-center justify-center text-center gap-1">
-                    <MessageSquare size={24} className="text-primary mb-1" />
-                    <span className="text-2xl font-bold">
-                      {stats.totalComments}
-                    </span>
-                    <span className="text-xs text-default-500 uppercase tracking-wider font-semibold">
-                      {t("stats.replies")}
-                    </span>
-                  </CardBody>
-                </Card>
-              </div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-6 animate-opacity"
+              >
+                {/* Highlight Cards */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  {[
+                    {
+                      icon: Layers,
+                      label: t("stats.posts"),
+                      value: stats.totalPosts,
+                    },
+                    {
+                      icon: DollarSign,
+                      label: t("stats.payouts"),
+                      value: parseFloat(stats.totalPayout).toFixed(0),
+                      prefix: "$",
+                    },
+                    {
+                      icon: Activity,
+                      label: t("stats.upvotes"),
+                      value: stats.totalUpvotes,
+                    },
+                    {
+                      icon: MessageSquare,
+                      label: t("stats.replies"),
+                      value: stats.totalComments,
+                    },
+                  ].map((s, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: idx * 0.05 }}
+                    >
+                      <Card className="border border-default-200 rounded-lg shadow-none bg-content1/40 backdrop-blur-md hover:border-primary/50 hover:bg-content1/60 transition-all group relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                          <s.icon size={48} />
+                        </div>
+                        <CardBody className="p-5 flex flex-col items-start gap-1">
+                          <span className="text-2xl font-black text-primary drop-shadow-sm">
+                            {s.prefix}
+                            {s.value}
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-primary/40" />
+                            <span className="text-[9px] text-muted uppercase tracking-widest font-black">
+                              {s.label}
+                            </span>
+                          </div>
+                        </CardBody>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
 
-              {/* Markdown Preview */}
-              <Card shadow="sm" className="border border-default-200">
-                <CardHeader className="flex justify-between items-center bg-default-50 border-b border-default-200 py-3 px-4">
-                  <span className="font-semibold text-foreground">
-                    {t("markdown.title")}
-                  </span>
-                  <Button
-                    size="sm"
-                    color="primary"
-                    variant="flat"
-                    startContent={<Copy size={16} />}
-                    onPress={() => copyToClipboard(markdownReport)}
+                {/* Markdown Preview */}
+                <Card className="border border-default-200 rounded-lg shadow-xl shadow-primary/5 bg-content1/30 backdrop-blur-xl overflow-hidden">
+                  <CardHeader className="flex justify-between items-center bg-default-50/20 border-b border-default-200 py-3 px-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-4 bg-primary rounded-full animate-pulse" />
+                      <span className="font-black text-[10px] uppercase tracking-[0.2em] text-muted">
+                        Draft Report
+                      </span>
+                    </div>
+                    <Button
+                      size="sm"
+                      color="primary"
+                      variant="flat"
+                      className="font-black text-[10px] uppercase tracking-widest h-8"
+                      startContent={<Copy size={14} />}
+                      onPress={() => copyToClipboard(markdownReport)}
+                    >
+                      Copy MD
+                    </Button>
+                  </CardHeader>
+                  <CardBody className="p-0">
+                    <Textarea
+                      minRows={10}
+                      value={markdownReport}
+                      isReadOnly
+                      classNames={{
+                        input:
+                          "font-mono text-[11px] leading-relaxed p-6 bg-content1/10",
+                        inputWrapper:
+                          "border-none shadow-none rounded-none bg-transparent",
+                      }}
+                    />
+                  </CardBody>
+                </Card>
+
+                {/* Active Posts Table - Kinetic Integration */}
+                <Card className="border border-default-200 rounded-lg shadow-none bg-content1/20 backdrop-blur-md overflow-hidden">
+                  <CardHeader className="flex justify-between items-center bg-default-50/20 border-b border-default-200 py-3 px-4">
+                    <div className="flex items-center gap-2">
+                      <span className="font-black text-[10px] uppercase tracking-[0.2em] text-muted">
+                        Post Statistics Matrix
+                      </span>
+                    </div>
+                  </CardHeader>
+                  <CardBody
+                    className="p-4 bg-transparent"
+                    style={{ minHeight: "400px" }}
                   >
-                    {t("markdown.copy")}
-                  </Button>
-                </CardHeader>
-                <CardBody className="p-0">
-                  <Textarea
-                    minRows={10}
-                    value={markdownReport}
-                    isReadOnly
-                    classNames={{
-                      input: "font-mono text-sm leading-relaxed p-4",
-                      inputWrapper:
-                        "border-none shadow-none rounded-none bg-content1",
-                    }}
-                  />
-                </CardBody>
-              </Card>
-
-              {/* Active Posts Table */}
-              <Card shadow="sm" className="border border-default-200">
-                <CardHeader className="flex justify-between items-center bg-default-50 border-b border-default-200 py-3 px-4">
-                  <span className="font-semibold text-foreground">
-                    {t("table.title")}
-                  </span>
-                </CardHeader>
-                <CardBody className="p-4" style={{ minHeight: "400px" }}>
-                  <DataTable
-                    columns={postColumns}
-                    data={tableData}
-                    searchPlaceholder={t("table.search")}
-                    initialLoadCount={15}
-                    loadMoreCount={15}
-                  />
-                </CardBody>
-              </Card>
-            </div>
+                    <DataTable
+                      columns={postColumns}
+                      data={tableData}
+                      searchPlaceholder={t("table.search")}
+                      initialLoadCount={15}
+                      loadMoreCount={15}
+                    />
+                  </CardBody>
+                </Card>
+              </motion.div>
+            </AnimatePresence>
           )}
         </div>
       </div>

@@ -237,7 +237,7 @@ export const MyResultsTab = memo(
                       {eligibilityMap[username].rep.toFixed(1)}
                     </span>
                   </div>
-                  <div className="w-[1px] h-2 bg-rose-500/20" />
+                  <div className="w-px h-2 bg-rose-500/20" />
                   <div className="flex items-center gap-1.5">
                     <span className="text-[8px] font-black text-rose-500/40 uppercase">Steem Power</span>
                     <span className={`text-[10px] font-black ${eligibilityMap[username].sp >= 50 ? 'text-emerald-500' : 'text-rose-500'}`}>

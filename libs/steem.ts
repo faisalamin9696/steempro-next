@@ -466,6 +466,31 @@ class SteemApi {
   };
 
   /**
+   * Publish multiple comments in one or more transactions
+   */
+  batchComment = async (
+    username: string,
+    comments: PostingContent[],
+    privateKey?: string,
+    useKeychain: boolean = false,
+  ) => {
+    const operations: Operation[] = comments.map((data) => [
+      "comment",
+      {
+        parent_author: data.parent_author,
+        parent_permlink: data.parent_permlink,
+        author: data.author || username,
+        permlink: data.permlink,
+        title: data.title || "",
+        body: data.body,
+        json_metadata: JSON.stringify(data.json_metadata),
+      },
+    ]);
+
+    return this.broadcast(username, operations, privateKey, useKeychain);
+  };
+
+  /**
    * Cast an upvote / downvote / unvote
    */
   vote(

@@ -972,6 +972,10 @@
         "title": "बैच वोटिंग",
         "description": "अपने क्यूरेशन को अधिकतम करने के लिए एक साथ कई पोस्ट पर वोट करें।"
       },
+      "batchCommenting": {
+        "title": "बैच कमेंटिंग",
+        "description": "अनुकूलन योग्य टेम्पलेट्स के साथ एक साथ कई उपयोगकर्ताओं की नवीनतम सामग्री पर टिप्पणियां पोस्ट करें।"
+      },
       "communityReport": {
         "title": "कम्युनिटी रिपोर्ट",
         "description": "अपने समुदायों के लिए विस्तृत आंकड़े और रिपोर्ट तैयार करें।"
@@ -1125,7 +1129,7 @@
     "comma": "कॉमा (,)",
     "custom": "कस्टम",
     "customPlaceholder": "जैसे: |",
-    "bulkPlaceholder": "steememator 10.000 मासिक इनाम\\nalice 5.000 प्रतियोगिता विजेता",
+    "bulkPlaceholder": "faisalamin 10.000 मासिक इनाम\\nalice 5.000 प्रतियोगिता विजेता",
     "cancel": "रद्द करें",
     "parseList": "सूची पार्स करें",
     "recipient": "प्राप्तकर्ता",
@@ -1153,16 +1157,16 @@
   },
   "BatchVoting": {
     "title": "बैच वोटिंग",
-    "description": "अपनी क्यूरेशन को अधिकतम करने के लिए एक साथ कई पोस्ट पर वोट करें।",
-    "globalWeight": "ग्लोबल वेट",
+    "description": "एक साथ कई पोस्ट पर वोट करें और अपनी क्यूरेशन बढ़ाएं।",
+    "globalWeight": "वोटिंग शक्ति",
     "postList": "पोस्ट सूची",
-    "bulkImport": "बल्क इम्पोर्ट",
+    "bulkImport": "इम्पोर्ट मोड",
     "addPost": "पोस्ट जोड़ें",
     "addAnotherPost": "एक और पोस्ट जोड़ें",
     "clearAll": "सभी साफ़ करें",
     "confirmTitle": "पुष्टि",
     "confirmDesc": "क्या आप वाकई सभी डेटा को रीसेट करना चाहते हैं?",
-    "bulkInfo": "पोस्ट यूआरएल यहाँ पेस्ट करें। प्रारूप: प्रति पंक्ति {url} या {url_weight}।",
+    "bulkInfo": "यहाँ पोस्ट लिंक पेस्ट करें। कस्टम शक्ति के लिए एक नंबर (जैसे 75) जोड़ें।",
     "lineSeparator": "लाइन विभाजक",
     "newLine": "नई लाइन (\\n)",
     "semicolon": "सेमीकोलन (;)",
@@ -1171,15 +1175,15 @@
     "customPlaceholder": "जैसे: |",
     "bulkPlaceholder": "https://www.steempro.com/@author/permlink\\nhttps://www.steempro.com/@author/permlink2 75",
     "cancel": "रद्द करें",
-    "parseList": "सूची पार्स करें",
+    "parseList": "इम्पोर्ट लिस्ट",
     "table": {
-      "url": "Steem पोस्ट यूआरएल या @author/permlink",
-      "weight": "वेट",
+      "url": "पोस्ट लिंक (@लेखक/स्थायी लिंक)",
+      "weight": "शक्ति",
       "status": "स्थिति",
       "action": "कार्रवाई"
     },
     "urlPlaceholder": "https://...",
-    "global": "Global",
+    "global": "ऑटो",
     "status": {
       "pending": "लंबित",
       "voting": "वोटिंग हो रही है...",
@@ -1190,16 +1194,17 @@
       "remove": "पंक्ति हटाएँ"
     },
     "progress": {
-      "title": "प्रगति",
+      "title": "स्थिति",
       "totalPosts": "कुल पोस्ट",
       "estTime": "अनुमानित समय",
       "min": "मिनट",
       "sec": "सेकंड",
       "done": "पूर्ण",
       "err": "त्रुटि",
-      "preparing": "वोटिंग की तैयारी हो रही है...",
-      "votingOn": "@{author} की पोस्ट पर वोट दिया जा रहा है...",
-      "waiting": "3.5 सेकंड प्रतीक्षा (ब्लॉकचेन सीमा)..."
+      "preparing": "तैयारी हो रही है...",
+      "votingOn": "@{author} को वोट दिया जा रहा है...",
+      "waiting": "3.5 सेकंड प्रतीक्षा...",
+      "safeMode": "सुरक्षित मोड (स्थिर)"
     },
     "controls": {
       "start": "वोटिंग शुरू करें",
@@ -1208,18 +1213,17 @@
       "stop": "बंद करें"
     },
     "error": {
-      "invalidSeparator": "कृपया एक मान्य कस्टम लाइन विभाजक प्रदान करें।",
-      "parseError": "किसी भी मान्य पोस्ट यूआरएल को पार्स नहीं किया जा सका। प्रारूप की जाँच करें।",
+      "invalidSeparator": "कृपया एक मान्य कस्टम विभाजक प्रदान करें।",
+      "parseError": "कोई मान्य पोस्ट लिंक नहीं मिला। प्रारूप जाँचें।",
       "loginFirst": "कृपया पहले लॉगिन करें",
       "invalidUrl": "अमान्य यूआरएल प्रारूप",
       "invalidFormat": "कुछ पोस्ट के प्रारूप अमान्य हैं और उन पर कार्रवाई नहीं की जा सकती।",
       "votingStopped": "बैच वोटिंग बंद कर दी गई।",
-      "errorVoted": "@{author} की पोस्ट पर वोट देने में त्रुटि: {error}"
+      "errorVoted": "@{author} को वोट देने में त्रुटि: {error}"
     },
     "success": {
-      "imported": "सफलतापूर्वक {count} पोस्ट इम्पोर्ट की गईं",
-      "voted": "@{author} की पोस्ट पर वोट दिया गया",
-      "completed": "बैच वोटिंग पूर्ण हो गई!"
+      "voted": "बैच वोटिंग पूर्ण हो गई!",
+      "votedCount": "सफलतापूर्वक {count} पोस्ट पर वोट दिया गया।"
     }
   },
   "Schedules": {
@@ -1313,22 +1317,66 @@
     "wallet": "वॉलेट"
   },
   "Search": {
-    "placeholder": "Search blockchain content...",
-    "filterByAuthor": "Filter by author...",
-    "refineResults": "Refine results",
-    "accounts": "Accounts",
-    "posts": "Posts",
-    "comments": "Comments",
-    "fetching": "DATA FETCHING...",
-    "noAccountsFound": "No accounts found with this name prefix.",
-    "noPostsFound": "Try searching globally or with a different author filter.",
-    "noCommentsFound": "No textual matches found in recent discussions.",
-    "discoverSteem": "Discover Steem",
-    "discoverDescription": "Search for profiles, deep-dive into posts or filter by specific authors.",
-    "trySearch": "try \"{query}\"",
-    "reputation": "Reputation",
-    "profileLabel": "Profile",
-    "postLabel": "Post",
-    "commentLabel": "Comment"
+    "placeholder": "ब्लॉकचेन सामग्री खोजें...",
+    "filterByAuthor": "लेखक द्वारा फ़िल्टर करें...",
+    "refineResults": "परिणामों को बेहतर बनाएं",
+    "accounts": "खाते",
+    "posts": "पोस्ट",
+    "comments": "टिप्पणियाँ",
+    "fetching": "डेटा प्राप्त किया जा रहा है...",
+    "noAccountsFound": "इस नाम से कोई खाता नहीं मिला।",
+    "noPostsFound": "विश्व स्तर पर खोजने का प्रयास करें या लेखक फ़िल्टर बदलें।",
+    "noCommentsFound": "हालिया चर्चाओं में कोई टेक्स्ट मैच नहीं मिला।",
+    "discoverSteem": "Steem खोजें",
+    "discoverDescription": "प्रोफ़ाइल खोजें, पोस्ट का गहराई से विश्लेषण करें या लेखकों द्वारा फ़िल्टर करें।",
+    "trySearch": "कोशिश करें \"{query}\"",
+    "reputation": "प्रतिष्ठा",
+    "profileLabel": "प्रोफ़ाइल",
+    "postLabel": "पोस्ट",
+    "commentLabel": "टिप्पणी"
+  },
+  "BatchCommenting": {
+    "title": "बैच कमेंटिंग",
+    "description": "कस्टमाइज़ करने योग्य टेम्पलेट्स का उपयोग करके कई उपयोगकर्ताओं की नवीनतम सामग्री पर टिप्पणियाँ पोस्ट करें।",
+    "usernames": "यूज़रनेम",
+    "bulkImport": "इम्पोर्ट मोड",
+    "clearAll": "सभी साफ़ करें",
+    "confirmTitle": "पुष्टि",
+    "confirmDesc": "क्या आप वाकई सभी डेटा को रीसेट करना चाहते हैं?",
+    "cancel": "रद्द करें",
+    "commentTemplate": "कमेंट टेम्पलेट",
+    "usernameSeparator": "यूज़रनेम विभाजक",
+    "newLine": "नई लाइन",
+    "semicolon": "सेमीकोलन",
+    "comma": "कॉमा",
+    "custom": "कस्टम",
+    "customPlaceholder": "जैसे: |",
+    "bulkPlaceholder": "चुने गए विभाजक द्वारा अलग किए गए यूज़रनेम दर्ज करें...",
+    "templatePlaceholder": "नमस्ते @{{username}}, शानदार पोस्ट! - @{{me}}",
+    "execute": "बैच निष्पादित करें",
+    "status": "स्थिति",
+    "fetching": "नवीनतम पोस्ट प्राप्त किए जा रहे हैं...",
+    "broadcasting": "टिप्पणियाँ प्रसारित की जा रही हैं...",
+    "bulkInfo": "नई लाइनों, कॉमा या सेमीकोलन द्वारा अलग किए गए यूज़रनेम दर्ज करें। आप टिप्पणियों में {{username}} और {{me}} का उपयोग कर सकते हैं।",
+    "parseList": "इम्पोर्ट लिस्ट",
+    "error": {
+      "loginFirst": "इस टूल का उपयोग करने के लिए कृपया लॉगिन करें।",
+      "invalidSeparator": "कृपया एक मान्य विभाजक प्रदान करें।",
+      "parseError": "कोई मान्य यूज़रनेम नहीं मिला।",
+      "fetchPostsError": "कुछ पोस्ट प्राप्त करने में विफल।",
+      "broadcastFailed": "टिप्पणियाँ प्रसारित करने में विफल।",
+      "templateRequired": "कमेंट टेम्पलेट आवश्यक है"
+    },
+    "success": {
+      "imported": "सफलतापूर्वक {count} यूज़रनेम इम्पोर्ट किए गए",
+      "broadcast": "बैच कमेंटिंग पूर्ण!",
+      "sent": "सफलतापूर्वक {count} टिप्पणियाँ पोस्ट की गईं।"
+    },
+    "variables": {
+      "title": "उपलब्ध वेरिएबल्स",
+      "username": "लक्ष्य यूज़रनेम",
+      "me": "वर्तमान उपयोगकर्ता (@उल्लिखित)",
+      "name": "लक्ष्य नाम (यदि उपलब्ध हो)"
+    }
   }
 }

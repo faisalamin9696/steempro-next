@@ -9,8 +9,8 @@ class SdsApi {
     observer: string | null = "steem",
     limit: number = 50,
     offset: number = 0,
+    length: number = 500,
   ): Promise<Feed[]> {
-    const length = 500;
     return sdsFetcher(
       `/feeds_api/${apiPath}/${observer}/${length}/${limit}/${offset}`,
     );

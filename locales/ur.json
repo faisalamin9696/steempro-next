@@ -851,6 +851,10 @@
         "title": "بیچ ووٹنگ",
         "description": "اپنی کیوریشن کو زیادہ سے زیادہ کرنے کے لیے بیک وقت متعدد پوسٹس پر ووٹ دیں۔"
       },
+      "batchCommenting": {
+        "title": "بیچ کمنٹنگ",
+        "description": "حسب ضرورت ٹیمپلیٹس کے ساتھ ایک ساتھ متعدد صارفین کے تازہ ترین مواد پر تبصرے پوسٹ کریں۔"
+      },
       "communityReport": {
         "title": "کمیونٹی رپورٹ",
         "description": "اپنی کمیونٹیز کے لیے تفصیلی اعداد و شمار اور رپورٹس تیار کریں۔"
@@ -1004,7 +1008,7 @@
     "comma": "کوما (,)",
     "custom": "حسب ضرورت (Custom)",
     "customPlaceholder": "مثلاً: |",
-    "bulkPlaceholder": "steememator 10.000 ماہانہ انعام\\nalice 5.000 مقابلہ جیتنے والا",
+    "bulkPlaceholder": "faisalamin 10.000 ماہانہ انعام\\nalice 5.000 مقابلہ جیتنے والا",
     "cancel": "منسوخ کریں",
     "parseList": "فہرست کا تجزیہ کریں",
     "recipient": "وصول کنندہ",
@@ -1032,16 +1036,16 @@
   },
   "BatchVoting": {
     "title": "بیچ ووٹنگ",
-    "description": "اپنی کیوریشن کو زیادہ سے زیادہ بنانے کے لیے بیک وقت متعدد پوسٹس پر ووٹ دیں۔",
-    "globalWeight": "گلوبل ویٹ (Weight)",
+    "description": "ایک ہی وقت میں متعدد پوسٹس پر ووٹ دیں اور اپنی کیوریشن کو بڑھائیں۔",
+    "globalWeight": "ووٹنگ کی طاقت",
     "postList": "پوسٹ لسٹ",
-    "bulkImport": "بلک امپورٹ",
+    "bulkImport": "امپورٹ موڈ",
     "addPost": "پوسٹ شامل کریں",
     "addAnotherPost": "دوسری پوسٹ شامل کریں",
     "clearAll": "سب صاف کریں",
     "confirmTitle": "تصدیق",
     "confirmDesc": "کیا آپ واقعی تمام ڈیٹا کو دوبارہ ترتیب دینا چاہتے ہیں؟",
-    "bulkInfo": "پوسٹ کے یو آر ایل (URLs) یہاں پیسٹ کریں۔ فارمیٹ: ہر لائن پر {url} یا {url_weight}۔",
+    "bulkInfo": "پوسٹ کے لنکس یہاں پیسٹ کریں۔ حسب ضرورت طاقت کے لیے ایک نمبر (جیسے 75) شامل کریں۔",
     "lineSeparator": "لائن الگ کرنے والا",
     "newLine": "نئی لائن (\\n)",
     "semicolon": "سیمی کولن (;)",
@@ -1050,17 +1054,17 @@
     "customPlaceholder": "مثلاً: |",
     "bulkPlaceholder": "https://www.steempro.com/@author/permlink\\nhttps://www.steempro.com/@author/permlink2 75",
     "cancel": "منسوخ کریں",
-    "parseList": "فہرست کا تجزیہ کریں",
+    "parseList": "امپورٹ لسٹ",
     "table": {
-      "url": "Steem پوسٹ یو آر ایل یا @author/permlink",
-      "weight": "ویٹ (Weight)",
-      "status": "حالت (Status)",
+      "url": "لنک (@مصنف/پرملنک)",
+      "weight": "طاقت",
+      "status": "حیثیت",
       "action": "عمل"
     },
     "urlPlaceholder": "https://...",
-    "global": "گلوبل",
+    "global": "آٹو",
     "status": {
-      "pending": "زیر التواء (Pending)",
+      "pending": "زیر التوا",
       "voting": "ووٹنگ ہو رہی ہے...",
       "success": "کامیاب",
       "failed": "ناکام"
@@ -1069,36 +1073,36 @@
       "remove": "قطار ختم کریں"
     },
     "progress": {
-      "title": "پیش رفت (Progress)",
+      "title": "حیثیت",
       "totalPosts": "کل پوسٹس",
       "estTime": "متوقع وقت",
       "min": "منٹ",
       "sec": "سیکنڈ",
       "done": "مکمل",
       "err": "غلطی",
-      "preparing": "ووٹنگ کی تیاری ہو رہی ہے...",
-      "votingOn": "@{author} کی پوسٹ پر ووٹ دیا جا رہا ہے...",
-      "waiting": "3.5 سیکنڈ انتظار (بلاک چین کی حد)..."
+      "preparing": "تیاری ہو رہی ہے...",
+      "votingOn": "@{author} کو ووٹ دیا جا رہا ہے...",
+      "waiting": "انتظار 3.5 سیکنڈ...",
+      "safeMode": "محفوظ موڈ (مستقل)"
     },
     "controls": {
       "start": "ووٹنگ شروع کریں",
-      "pause": "روکیں (Pause)",
+      "pause": "روکیں",
       "resume": "دوبارہ شروع کریں",
       "stop": "ختم کریں"
     },
     "error": {
-      "invalidSeparator": "براہ کرم ایک درست کسٹم لائن الگ کرنے والا فراہم کریں۔",
-      "parseError": "کسی بھی درست پوسٹ یو آر ایل کا تجزیہ نہیں کیا جا سکا۔ فارمیٹ چیک کریں۔",
+      "invalidSeparator": "براہ کرم ایک درست کسٹم الگ کرنے والا فراہم کریں۔",
+      "parseError": "کوئی درست پوسٹ لنک نہیں ملا۔ فارمیٹ چیک کریں۔",
       "loginFirst": "براہ کرم پہلے لاگ ان کریں",
       "invalidUrl": "یو آر ایل کا فارمیٹ درست نہیں ہے",
       "invalidFormat": "کچھ پوسٹس کے فارمیٹ غلط ہیں اور ان پر کارروائی نہیں کی جا سکتی۔",
       "votingStopped": "بیچ ووٹنگ روک دی گئی ہے۔",
-      "errorVoted": "@{author} کی پوسٹ پر ووٹ دینے میں غلطی: {error}"
+      "errorVoted": "@{author} کو ووٹ دینے میں غلطی: {error}"
     },
     "success": {
-      "imported": "کامیابی کے ساتھ {count} پوسٹس امپورٹ ہو گئیں۔",
-      "voted": "@{author} کی پوسٹ پر ووٹ دے دیا گیا",
-      "completed": "بیچ ووٹنگ مکمل ہو گئی!"
+      "voted": "بیچ ووٹنگ مکمل ہو گئی!",
+      "votedCount": "{count} پوسٹس پر کامیابی سے ووٹ دے دیا گیا۔"
     }
   },
   "CommunityReport": {
@@ -1313,22 +1317,66 @@
     "wallet": "والٹ"
   },
   "Search": {
-    "placeholder": "Search blockchain content...",
-    "filterByAuthor": "Filter by author...",
-    "refineResults": "Refine results",
-    "accounts": "Accounts",
-    "posts": "Posts",
-    "comments": "Comments",
-    "fetching": "DATA FETCHING...",
-    "noAccountsFound": "No accounts found with this name prefix.",
-    "noPostsFound": "Try searching globally or with a different author filter.",
-    "noCommentsFound": "No textual matches found in recent discussions.",
-    "discoverSteem": "Discover Steem",
-    "discoverDescription": "Search for profiles, deep-dive into posts or filter by specific authors.",
-    "trySearch": "try \"{query}\"",
-    "reputation": "Reputation",
-    "profileLabel": "Profile",
-    "postLabel": "Post",
-    "commentLabel": "Comment"
+    "placeholder": "بلاک چین مواد تلاش کریں...",
+    "filterByAuthor": "مصنف کے لحاظ سے فلٹر کریں...",
+    "refineResults": "نتائج کو بہتر بنائیں",
+    "accounts": "اکاؤنٹس",
+    "posts": "پوسٹس",
+    "comments": "تبصرے",
+    "fetching": "ڈیٹا حاصل کیا جا رہا ہے...",
+    "noAccountsFound": "اس نام سے کوئی اکاؤنٹ نہیں ملا۔",
+    "noPostsFound": "عالمی سطح پر تلاش کرنے کی کوشش کریں یا مختلف فلٹر استعمال کریں۔",
+    "noCommentsFound": "حالیہ بات چیت میں کوئی مماثلت نہیں ملی۔",
+    "discoverSteem": "اسٹیم دریافت کریں",
+    "discoverDescription": "پروفائلز تلاش کریں، پوسٹس کا گہرا مطالعہ کریں یا مصنفین کے لحاظ سے فلٹر کریں۔",
+    "trySearch": "کوشش کریں \"{query}\"",
+    "reputation": "ساکھ",
+    "profileLabel": "پروفائل",
+    "postLabel": "پوسٹ",
+    "commentLabel": "تبصرہ"
+  },
+  "BatchCommenting": {
+    "title": "بیچ کمنٹنگ",
+    "description": "مرضی کے ٹیمپلیٹس کے ساتھ متعدد صارفین کی تازہ ترین پوسٹس پر تبصرے کریں۔",
+    "usernames": "صارف نام",
+    "bulkImport": "امپورٹ موڈ",
+    "clearAll": "سب صاف کریں",
+    "confirmTitle": "تصدیق",
+    "confirmDesc": "کیا آپ واقعی تمام ڈیٹا کو ری سیٹ کرنا چاہتے ہیں؟",
+    "cancel": "منسوخ کریں",
+    "commentTemplate": "تبصرہ ٹیمپلیٹ",
+    "usernameSeparator": "صارف نام الگ کرنے والا",
+    "newLine": "نئی لائن",
+    "semicolon": "سیمی کولن",
+    "comma": "کوما",
+    "custom": "حسب ضرورت",
+    "customPlaceholder": "مثلاً: |",
+    "bulkPlaceholder": "منتخب کردہ الگ کرنے والے کے ساتھ صارف نام درج کریں...",
+    "templatePlaceholder": "ہیلو @{{username}}، بہترین پوسٹ! - @{{me}}",
+    "execute": "بیچ چلائیں",
+    "status": "حیثیت",
+    "fetching": "تازہ ترین پوسٹس حاصل کی جا رہی ہیں...",
+    "broadcasting": "تبصرے پوسٹ کیے جا رہے ہیں...",
+    "bulkInfo": "نئی لائنوں، کوما یا سیمی کولن سے الگ صارف نام درج کریں۔ آپ تبصروں میں {{username}} اور {{me}} استعمال کر سکتے ہیں۔",
+    "parseList": "امپورٹ لسٹ",
+    "error": {
+      "loginFirst": "براہ کرم اس ٹول کو استعمال کرنے کے لیے لاگ ان کریں۔",
+      "invalidSeparator": "براہ کرم ایک درست الگ کرنے والا فراہم کریں۔",
+      "parseError": "کوئی درست صارف نام نہیں ملا۔",
+      "fetchPostsError": "کچھ پوسٹس حاصل کرنے میں ناکامی۔",
+      "broadcastFailed": "تبصرے پوسٹ کرنے میں ناکامی۔",
+      "templateRequired": "تبصرہ ٹیمپلیٹ ضروری ہے"
+    },
+    "success": {
+      "imported": "کامیابی سے {count} صارف نام امپورٹ ہو گئے",
+      "broadcast": "بیچ کمنٹنگ مکمل!",
+      "sent": "کامیابی سے {count} تبصرے پوسٹ کر دیے گئے۔"
+    },
+    "variables": {
+      "title": "دستیاب متغیرات",
+      "username": "ہدف صارف نام",
+      "me": "موجودہ صارف (@ مینشن)",
+      "name": "ہدف کا نام (اگر دستیاب ہو)"
+    }
   }
 }

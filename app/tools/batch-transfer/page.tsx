@@ -2,7 +2,18 @@
 
 import React, { useState, useMemo } from "react";
 import PageHeader from "@/components/ui/PageHeader";
-import { Send, Plus, Trash2, Import, Info, RotateCcw } from "lucide-react";
+import {
+  Send,
+  Plus,
+  Trash2,
+  Import,
+  Info,
+  RotateCcw,
+  Activity,
+  Zap,
+  CreditCard,
+  Hash,
+} from "lucide-react";
 import { Input, Textarea } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
 import { Button } from "@heroui/button";
@@ -16,6 +27,7 @@ import { useAppSelector } from "@/hooks/redux/store";
 import { normalizeUsername } from "@/utils/editor";
 import { useTranslations } from "next-intl";
 import SPopover from "@/components/ui/SPopover";
+import { motion, AnimatePresence } from "framer-motion";
 
 type Currency = "STEEM" | "SBD";
 
@@ -36,7 +48,7 @@ export default function BatchTransferPage() {
   const [transfers, setTransfers] = useState<TransferRow[]>([
     { id: Date.now().toString(), to: "", amount: "", memo: "" },
   ]);
-  
+
   const [isPending, setIsPending] = useState(false);
   const [bulkInput, setBulkInput] = useState("");
   const [isBulkMode, setIsBulkMode] = useState(false);
@@ -81,7 +93,7 @@ export default function BatchTransferPage() {
       transfers.map((t) => (t.id === id ? { ...t, [field]: value } : t)),
     );
   };
-  
+
   const handleReset = () => {
     setTransfers([{ id: Date.now().toString(), to: "", amount: "", memo: "" }]);
     setCurrency("STEEM");
@@ -182,7 +194,7 @@ export default function BatchTransferPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-8 pb-20 max-w-5xl">
+    <div className="space-y-8 pb-20">
       <PageHeader
         title={t("title")}
         description={t("description")}
@@ -192,35 +204,55 @@ export default function BatchTransferPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Left Column - Controls */}
-        <div className="lg:col-span-3 space-y-4">
-          <Card shadow="sm" className="border border-default-200">
-            <CardHeader className="flex flex-row justify-between items-center bg-default-50 border-b border-default-200 py-3 px-4">
-              <div className="flex items-center gap-3">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="lg:col-span-3 space-y-6"
+        >
+          <Card className="border border-default-200 rounded-lg shadow-none bg-content1/20 backdrop-blur-md overflow-hidden relative">
+            <div className="absolute inset-x-0 top-0 h-0.5 bg-linear-to-r from-primary/20 via-primary to-primary/20 animate-pulse" />
+            <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-default-50/20 border-b border-default-200 py-4 px-4 gap-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
                 <Select
                   selectedKeys={[currency]}
                   onSelectionChange={(key) =>
                     setCurrency(key.currentKey?.toString() as Currency)
                   }
-                  className="w-32"
+                  className="w-full sm:w-32"
                   size="sm"
+                  variant="bordered"
                   aria-label={t("currency")}
                   isDisabled={isPending}
+                  classNames={{
+                    trigger: "h-9 border-default-200 bg-content1 shadow-none",
+                    value:
+                      "font-black text-[10px] tracking-widest text-primary",
+                  }}
                 >
                   <SelectItem key="STEEM">STEEM</SelectItem>
                   <SelectItem key="SBD">SBD</SelectItem>
                 </Select>
+
+                <div className="flex items-center gap-2 px-3 py-1 bg-content1 rounded-full border border-default-200 shadow-inner w-full sm:w-auto justify-center sm:justify-start">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                  <span className="font-mono text-[9px] font-bold text-muted uppercase tracking-tighter">
+                    Balance: {(availableBalance || 0).toLocaleString()}{" "}
+                    {currency}
+                  </span>
+                </div>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2 w-full sm:w-auto justify-end">
                 <SPopover
                   title={t("confirmTitle")}
                   description={t("confirmDesc")}
                   trigger={
                     <Button
                       size="sm"
-                      variant="flat"
+                      variant="light"
                       color="danger"
-                      startContent={<RotateCcw size={16} />}
+                      className="font-bold text-[10px] uppercase tracking-widest h-8"
+                      startContent={<RotateCcw size={14} />}
                       isDisabled={isPending}
                     >
                       {t("clearAll")}
@@ -249,35 +281,20 @@ export default function BatchTransferPage() {
                 <Button
                   size="sm"
                   variant="flat"
-                  startContent={<Import size={16} />}
-                  onPress={() => {
-                    if (!isBulkMode) {
-                      const lSep =
-                        lineSeparator === "semicolon"
-                          ? ";"
-                          : lineSeparator === "comma"
-                            ? ","
-                            : lineSeparator === "custom" && customLineSeparator
-                              ? customLineSeparator
-                              : "\n";
-
-                      const formatted = transfers
-                        .filter((t) => t.to || t.amount || t.memo)
-                        .map((t) => `${t.to} ${t.amount} ${t.memo}`.trim())
-                        .join(lSep);
-                      setBulkInput(formatted);
-                    }
-                    setIsBulkMode(!isBulkMode);
-                  }}
+                  className="font-bold text-[10px] uppercase tracking-widest h-8"
+                  startContent={<Import size={14} />}
+                  onPress={() => setIsBulkMode(!isBulkMode)}
                   isDisabled={isPending}
                 >
-                  {t("bulkImport")}
+                  {isBulkMode ? "Visual Editor" : t("bulkImport")}
                 </Button>
+
                 <Button
                   size="sm"
                   color="primary"
                   variant="flat"
-                  startContent={<Plus size={16} />}
+                  className="font-bold text-[10px] uppercase tracking-widest h-8"
+                  startContent={<Plus size={14} />}
                   onPress={handleAddRow}
                   isDisabled={isPending || isBulkMode}
                 >
@@ -285,17 +302,20 @@ export default function BatchTransferPage() {
                 </Button>
               </div>
             </CardHeader>
-            <CardBody className="p-4 bg-content1">
+            <CardBody className="p-6">
               {isBulkMode ? (
                 <div className="space-y-4 animate-opacity">
-                  <div className="flex bg-primary/10 text-primary p-3 rounded-lg gap-3 text-sm">
+                  <div className="flex bg-primary/5 border border-primary/20 text-primary p-4 rounded-lg gap-3">
                     <Info size={20} className="shrink-0" />
-                    <p>{t("bulkInfo")}</p>
+                    <p className="opacity-90 leading-relaxed font-medium text-sm">
+                      {t("bulkInfo")}
+                    </p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex gap-2 items-end">
                       <Select
+                        aria-label="Select Separator"
                         label={t("lineSeparator")}
                         selectedKeys={[lineSeparator]}
                         onSelectionChange={(key) =>
@@ -305,6 +325,7 @@ export default function BatchTransferPage() {
                         }
                         className="grow"
                         size="sm"
+                        variant="bordered"
                       >
                         <SelectItem key="newline">{t("newLine")}</SelectItem>
                         <SelectItem key="semicolon">
@@ -320,6 +341,7 @@ export default function BatchTransferPage() {
                           value={customLineSeparator}
                           onValueChange={setCustomLineSeparator}
                           className="w-24 shrink-0"
+                          variant="bordered"
                         />
                       )}
                     </div>
@@ -329,123 +351,157 @@ export default function BatchTransferPage() {
                     placeholder={t("bulkPlaceholder")}
                     value={bulkInput}
                     onValueChange={setBulkInput}
-                    classNames={{ input: "font-mono text-sm" }}
+                    variant="bordered"
+                    classNames={{
+                      input: "font-mono text-xs uppercase leading-relaxed",
+                    }}
                   />
                   <div className="flex justify-end gap-2">
-                    <Button variant="flat" onPress={() => setIsBulkMode(false)}>
-                      {t("cancel")}
-                    </Button>
-                    <Button color="primary" onPress={handleParseBulk}>
-                      {t("parseList")}
+                    <Button
+                      color="primary"
+                      className="font-bold uppercase tracking-widest text-[10px]"
+                      onPress={handleParseBulk}
+                    >
+                      Parse Payload
                     </Button>
                   </div>
                 </div>
               ) : (
                 <div className="space-y-3">
-                  <div className="hidden md:grid grid-cols-12 gap-2 px-1 text-xs font-semibold text-default-500 uppercase tracking-wider mb-2">
-                    <div className="col-span-3">{t("recipient")}</div>
-                    <div className="col-span-3">{t("amount")}</div>
-                    <div className="col-span-5">{t("memo")}</div>
-                    <div className="col-span-1 text-center">{t("action")}</div>
-                  </div>
-
-                  {transfers.map((tRow, index) => (
-                    <div
-                      key={tRow.id}
-                      className="grid grid-cols-1 md:grid-cols-12 gap-2 bg-default-50 p-3 md:p-1 md:bg-transparent rounded-lg border border-default-100 md:border-none"
-                    >
-                      <div className="col-span-3">
-                        <Input
-                          placeholder={t("username")}
-                          size="sm"
-                          value={tRow.to}
-                          onValueChange={(val) => updateRow(tRow.id, "to", val)}
-                          isDisabled={isPending}
-                          autoCapitalize="off"
-                          startContent={
-                            <span className="text-default-400 text-small">
-                              @
-                            </span>
-                          }
-                        />
-                      </div>
-                      <div className="col-span-3">
-                        <Input
-                          placeholder="0.000"
-                          type="number"
-                          step="0.001"
-                          size="sm"
-                          value={tRow.amount}
-                          onValueChange={(val) =>
-                            updateRow(tRow.id, "amount", val)
-                          }
-                          isDisabled={isPending}
-                          endContent={
-                            <span className="text-default-400 text-xs">
-                              {currency}
-                            </span>
-                          }
-                        />
-                      </div>
-                      <div className="col-span-5 relative flex items-center">
-                        <Input
-                          placeholder={t("memoOptional")}
-                          size="sm"
-                          value={tRow.memo}
-                          onValueChange={(val) =>
-                            updateRow(tRow.id, "memo", val)
-                          }
-                          isDisabled={isPending}
-                          autoCapitalize="off"
-                        />
-                      </div>
-                      <div className="col-span-1 flex justify-end md:justify-center items-center h-full pt-1 md:pt-0">
-                        <Button
-                          isIconOnly
-                          color="danger"
-                          variant="light"
-                          size="sm"
-                          onPress={() => handleRemoveRow(tRow.id)}
-                          isDisabled={transfers.length <= 1 || isPending}
-                          aria-label="Remove Row"
-                        >
-                          <Trash2 size={16} />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-
-                  {transfers.length > 5 && (
-                    <div className="pt-2 flex justify-center">
-                      <Button
-                        size="sm"
-                        color="primary"
-                        variant="flat"
-                        startContent={<Plus size={16} />}
-                        onPress={handleAddRow}
-                        isDisabled={isPending}
+                  <AnimatePresence mode="popLayout">
+                    {transfers.map((tRow, index) => (
+                      <motion.div
+                        key={tRow.id}
+                        layout
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        className="relative grid grid-cols-12 gap-2 md:gap-4 p-4 rounded-lg bg-content1/40 border border-default-200 shadow-sm items-center overflow-hidden hover:border-primary/50 transition-colors"
                       >
-                        {t("addAnotherRow")}
-                      </Button>
-                    </div>
-                  )}
+                        <div className="col-span-1 text-center font-black text-[10px] text-muted font-mono">
+                          {String(index + 1).padStart(2, "0")}
+                        </div>
+
+                        <div className="col-span-9 md:col-span-3">
+                          <Input
+                            placeholder={t("username")}
+                            size="sm"
+                            value={tRow.to}
+                            onValueChange={(val) =>
+                              updateRow(tRow.id, "to", val)
+                            }
+                            isDisabled={isPending}
+                            autoCapitalize="off"
+                            variant="bordered"
+                            classNames={{
+                              input: "text-xs font-medium truncate",
+                              inputWrapper:
+                                "h-9 border-default-200 shadow-none hover:border-primary/50 transition-colors",
+                            }}
+                            startContent={
+                              <span className="text-primary/60 font-black text-[10px]">
+                                @
+                              </span>
+                            }
+                          />
+                        </div>
+
+                        <div className="col-span-2 md:col-span-1 flex justify-end md:justify-center items-center order-3 md:order-last">
+                          <Button
+                            isIconOnly
+                            variant="light"
+                            className="text-default-300 hover:text-danger hover:bg-danger/5 transition-all w-8 h-8 min-w-8"
+                            size="sm"
+                            onPress={() => handleRemoveRow(tRow.id)}
+                            isDisabled={transfers.length <= 1 || isPending}
+                          >
+                            <Trash2 size={13} />
+                          </Button>
+                        </div>
+
+                        <div className="col-span-5 md:col-span-3">
+                          <Input
+                            placeholder="0.000"
+                            type="number"
+                            step="0.001"
+                            size="sm"
+                            value={tRow.amount}
+                            onValueChange={(val) =>
+                              updateRow(tRow.id, "amount", val)
+                            }
+                            min={0.001}
+                            variant="bordered"
+                            isDisabled={isPending}
+                            classNames={{
+                              input: "text-center text-xs font-bold",
+                              inputWrapper:
+                                "h-9 border-default-200 shadow-none focus-within:border-primary/50 transition-colors",
+                            }}
+                            endContent={
+                              <span className="text-muted font-black text-[9px]">
+                                {currency}
+                              </span>
+                            }
+                          />
+                        </div>
+                        <div className="col-span-7 md:col-span-4 relative flex items-center">
+                          <Input
+                            placeholder={t("memoOptional")}
+                            size="sm"
+                            value={tRow.memo}
+                            onValueChange={(val) =>
+                              updateRow(tRow.id, "memo", val)
+                            }
+                            isDisabled={isPending}
+                            autoCapitalize="off"
+                            variant="bordered"
+                            classNames={{
+                              input: "text-xs italic",
+                              inputWrapper:
+                                "h-9 border-default-200 shadow-none hover:border-primary/50 transition-colors",
+                            }}
+                          />
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+
+                  <div className="pt-4 flex justify-center">
+                    <Button
+                      size="sm"
+                      variant="light"
+                      className="font-black uppercase tracking-[0.3em] text-[9px] text-muted hover:text-primary transition-all px-6 py-4"
+                      startContent={<Plus size={14} />}
+                      onPress={handleAddRow}
+                      isDisabled={isPending || isBulkMode}
+                    >
+                      Add New Target
+                    </Button>
+                  </div>
                 </div>
               )}
             </CardBody>
           </Card>
-        </div>
+        </motion.div>
 
         {/* Right Column - Summary */}
-        <div className="lg:col-span-1 space-y-4 relative">
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="lg:col-span-1 space-y-4 relative"
+        >
           <div className="sticky top-20">
-            <Card shadow="sm" className="border border-default-200">
-              <CardHeader className="bg-default-50 border-b border-default-200 py-3 px-4 font-semibold text-foreground">
-                {t("summary")}
+            <Card className="border border-default-200 rounded-lg shadow-2xl shadow-primary/5 bg-content1/40 backdrop-blur-xl overflow-hidden relative">
+              <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-primary/30 via-primary to-primary/30" />
+              <CardHeader className="bg-default-50/20 border-b border-default-200 py-3 px-4 font-black text-[10px] uppercase tracking-[0.2em] text-muted">
+                Transfer Summary
               </CardHeader>
-              <CardBody className="p-4 space-y-4">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-default-500">{t("recipients")}</span>
-                  <span className="font-semibold">
+              <CardBody className="p-6 space-y-6">
+                <div className="flex justify-between items-center group">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted flex items-center gap-2 group-hover:text-primary transition-colors">
+                    <Hash size={12} /> Recipients
+                  </span>
+                  <span className="font-mono text-sm font-bold bg-content1 px-2 py-0.5 rounded border border-default-200 shadow-inner">
                     {
                       transfers.filter(
                         (t) => t.to.trim() !== "" || parseFloat(t.amount) > 0,
@@ -454,44 +510,86 @@ export default function BatchTransferPage() {
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-default-500">{t("totalAmount")}</span>
-                  <span className="font-bold text-primary">
-                    {totalAmount.toFixed(3)} {currency}
-                  </span>
-                </div>
-
-                <div className="my-2 border-t border-default-200 border-dashed" />
-
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-default-500">{t("yourBalance")}</span>
-                  <span
-                    className={`font-semibold ${totalAmount > (availableBalance || 0) ? "text-danger" : "text-success"}`}
-                  >
-                    {availableBalance?.toLocaleString() || "0.000"} {currency}
-                  </span>
+                <div className="space-y-3">
+                  <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-muted">
+                    <span>Total Amount</span>
+                    <span className="text-primary font-mono">
+                      {totalAmount.toFixed(3)} {currency}
+                    </span>
+                  </div>
+                  <div className="flex bg-default-50/50 p-3 rounded-lg border border-default-200/50 items-center justify-between">
+                    <CreditCard size={14} className="text-muted" />
+                    <div className="text-right">
+                      <div className="text-[9px] font-black text-muted uppercase tracking-tighter">
+                        Available Liquid
+                      </div>
+                      <div
+                        className={`text-sm font-mono font-bold ${totalAmount > (availableBalance || 0) ? "text-danger" : "text-success"}`}
+                      >
+                        {availableBalance?.toLocaleString() || "0.000"}{" "}
+                        {currency}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {totalAmount > (availableBalance || 0) && (
-                  <p className="text-xs text-danger text-center bg-danger/10 p-2 rounded">
-                    {t("insufficientBalance")}
-                  </p>
+                  <div className="flex bg-danger/5 border border-danger/20 p-3 rounded-lg gap-2 items-center">
+                    <Zap size={14} className="text-danger animate-pulse" />
+                    <p className="text-[9px] font-black text-danger uppercase tracking-widest">
+                      Insufficient Liquid Assets
+                    </p>
+                  </div>
                 )}
 
-                <Button
-                  color="primary"
-                  className="w-full mt-4 font-semibold shadow-md shadow-primary/20"
-                  endContent={!isPending && <Send size={18} />}
-                  isDisabled={!isValid || isPending}
-                  isLoading={isPending}
-                  onPress={executeBatchTransfer}
-                >
-                  {t("sendButton")}
-                </Button>
+                <div className="pt-2">
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Button
+                      color="primary"
+                      className="w-full font-black uppercase tracking-[0.2em] text-[10px] h-12 shadow-lg shadow-primary/20 bg-primary text-white"
+                      endContent={!isPending && <Send size={16} />}
+                      isDisabled={!isValid || isPending}
+                      isLoading={isPending}
+                      onPress={executeBatchTransfer}
+                    >
+                      Authorize Transfer
+                    </Button>
+                  </motion.div>
+                </div>
+
+                <div className="p-4 bg-default-50/50 backdrop-blur-sm rounded-lg border border-default-200 group hover:border-primary/20 transition-colors mt-2">
+                  <h4 className="text-[10px] font-black uppercase text-muted tracking-widest mb-3 flex items-center gap-2">
+                    <Activity size={12} className="text-primary" /> Important
+                    Notes
+                  </h4>
+                  <ul className="text-[9px] text-muted space-y-2.5 font-medium leading-relaxed">
+                    <li className="flex gap-2">
+                      <span className="text-primary">01</span>
+                      <span>
+                        Active Key is required to authorize transfers.
+                      </span>
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="text-primary">02</span>
+                      <span>
+                        Transfers are permanent and cannot be reversed.
+                      </span>
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="text-primary">03</span>
+                      <span>
+                        Your balance is checked in real-time before sending.
+                      </span>
+                    </li>
+                  </ul>
+                </div>
               </CardBody>
             </Card>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

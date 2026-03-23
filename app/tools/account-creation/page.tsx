@@ -1,13 +1,12 @@
 import PageHeader from "@/components/ui/PageHeader";
 import { Settings, Construction } from "lucide-react";
-import React from "react";
 import { useTranslations } from "next-intl";
 
 export default function AccountCreationPage() {
   const t = useTranslations("AccountCreation");
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-8 pb-20 max-w-7xl">
+    <div className="space-y-8 pb-20">
       <PageHeader
         title={t("title")}
         description={t("description")}

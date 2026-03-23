@@ -17,8 +17,8 @@ import ScrollToTop from "@/components/ui/ScrollToTop";
 import LoadingCard from "@/components/ui/LoadingCard";
 import { ScrollToTopButton } from "@/components/ScrollToTopButton";
 import { Toaster } from "sonner";
+
 import { NextIntlClientProvider } from "next-intl";
-import * as Sentry from "@sentry/nextjs";
 
 function Providers({
   children,
@@ -38,13 +38,7 @@ function Providers({
 
   useEffect(() => {
     setIsMounted(true);
-    Sentry.init({
-      dsn: "https://e72641902ada2c524306740b278a6a1d@o4511086626603008.ingest.de.sentry.io/4511086631190608",
-    });
-    Sentry.metrics.count("test_metric", 1);
   }, []);
-
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   return (
     <SessionProvider
@@ -55,7 +49,6 @@ function Providers({
       <NextIntlClientProvider
         locale={locale}
         messages={messages}
-        timeZone={timeZone}
       >
         <ScrollToTop />
         <ReduxProvider store={store}>

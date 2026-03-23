@@ -851,6 +851,10 @@
         "title": "批量投票",
         "description": "同时对多个帖子进行投票，以最大化您的策展收益。"
       },
+      "batchCommenting": {
+        "title": "批量评论",
+        "description": "使用可自定义的模板同时在多个用户的最新内容上发表评论。"
+      },
       "communityReport": {
         "title": "社区报告",
         "description": "为您的社区生成详细的统计数据和报告。"
@@ -1004,7 +1008,7 @@
     "comma": "逗号 (,)",
     "custom": "自定义",
     "customPlaceholder": "例如: |",
-    "bulkPlaceholder": "steememator 10.000 每月奖励\\nalice 5.000 比赛获胜者",
+    "bulkPlaceholder": "faisalamin 10.000 每月奖励\\nalice 5.000 比赛获胜者",
     "cancel": "取消",
     "parseList": "解析列表",
     "recipient": "收款人",
@@ -1032,16 +1036,16 @@
   },
   "BatchVoting": {
     "title": "批量点赞",
-    "description": "同时对多个帖子点赞，以最大化您的策展收益。",
-    "globalWeight": "全局权重",
+    "description": "一次对多个帖子点赞，以最大化您的策展收益。",
+    "globalWeight": "投票强度",
     "postList": "帖子列表",
-    "bulkImport": "批量导入",
+    "bulkImport": "导入模式",
     "addPost": "添加帖子",
     "addAnotherPost": "添加另一个帖子",
     "clearAll": "全部清除",
     "confirmTitle": "确认",
     "confirmDesc": "您确定要重置所有数据吗？",
-    "bulkInfo": "在此处粘贴帖子 URL。格式：每行 {url} 或 {url_weight}。",
+    "bulkInfo": "在此处粘贴帖子链接列表。您可以添加数字（例如 75）以设置自定义强度。",
     "lineSeparator": "行分隔符",
     "newLine": "换行 (\\n)",
     "semicolon": "分号 (;)",
@@ -1050,15 +1054,15 @@
     "customPlaceholder": "例如：|",
     "bulkPlaceholder": "https://www.steempro.com/@author/permlink\\nhttps://www.steempro.com/@author/permlink2 75",
     "cancel": "取消",
-    "parseList": "解析列表",
+    "parseList": "导入列表",
     "table": {
-      "url": "Steem 帖子 URL 或 @作者/永久链接",
-      "weight": "权重",
+      "url": "帖子链接 (@作者/永久链接)",
+      "weight": "强度",
       "status": "状态",
       "action": "操作"
     },
     "urlPlaceholder": "https://...",
-    "global": "全局",
+    "global": "自动",
     "status": {
       "pending": "等待中",
       "voting": "点赞中...",
@@ -1069,16 +1073,17 @@
       "remove": "删除行"
     },
     "progress": {
-      "title": "进度",
+      "title": "状态",
       "totalPosts": "帖子总数",
       "estTime": "预计时间",
       "min": "分钟",
       "sec": "秒",
-      "done": "已完成",
+      "done": "完成",
       "err": "错误",
-      "preparing": "准备点赞...",
-      "votingOn": "正在点赞 @{author} 的帖子...",
-      "waiting": "等待 3.5 秒（区块链限制）..."
+      "preparing": "正在准备...",
+      "votingOn": "正在为 @{author} 投票...",
+      "waiting": "等待 3.5 秒...",
+      "safeMode": "安全模式 (稳步)"
     },
     "controls": {
       "start": "开始点赞",
@@ -1088,7 +1093,7 @@
     },
     "error": {
       "invalidSeparator": "请提供有效的自定义行分隔符。",
-      "parseError": "无法解析任何有效的帖子 URL。请检查格式。",
+      "parseError": "无法解析任何有效的帖子链接。请检查格式。",
       "loginFirst": "请先登录",
       "invalidUrl": "URL 格式无效",
       "invalidFormat": "部分帖子格式无效，无法处理。",
@@ -1096,9 +1101,8 @@
       "errorVoted": "对 @{author} 的帖子点赞时出错：{error}"
     },
     "success": {
-      "imported": "成功导入 {count} 个帖子",
-      "voted": "已点赞 @{author} 的帖子",
-      "completed": "批量点赞已完成！"
+      "voted": "批量点赞已完成！",
+      "votedCount": "成功点赞了 {count} 个帖子。"
     }
   },
   "CommunityReport": {
@@ -1313,22 +1317,66 @@
     "wallet": "钱包"
   },
   "Search": {
-    "placeholder": "Search blockchain content...",
-    "filterByAuthor": "Filter by author...",
-    "refineResults": "Refine results",
-    "accounts": "Accounts",
-    "posts": "Posts",
-    "comments": "Comments",
-    "fetching": "DATA FETCHING...",
-    "noAccountsFound": "No accounts found with this name prefix.",
-    "noPostsFound": "Try searching globally or with a different author filter.",
-    "noCommentsFound": "No textual matches found in recent discussions.",
-    "discoverSteem": "Discover Steem",
-    "discoverDescription": "Search for profiles, deep-dive into posts or filter by specific authors.",
-    "trySearch": "try \"{query}\"",
-    "reputation": "Reputation",
-    "profileLabel": "Profile",
-    "postLabel": "Post",
-    "commentLabel": "Comment"
+    "placeholder": "搜索区块链内容...",
+    "filterByAuthor": "按作者筛选...",
+    "refineResults": "精细化结果",
+    "accounts": "账户",
+    "posts": "帖子",
+    "comments": "评论",
+    "fetching": "正在获取数据...",
+    "noAccountsFound": "未找到以此名称开头的账户。",
+    "noPostsFound": "尝试全局搜索或使用不同的作者筛选器。",
+    "noCommentsFound": "在最近的讨论中未找到文本匹配。",
+    "discoverSteem": "发现 Steem",
+    "discoverDescription": "搜索个人资料、深入研究帖子或按特定作者进行筛选。",
+    "trySearch": "尝试 \"{query}\"",
+    "reputation": "声誉",
+    "profileLabel": "个人资料",
+    "postLabel": "帖子",
+    "commentLabel": "评论"
+  },
+  "BatchCommenting": {
+    "title": "批量评论",
+    "description": "使用自定义模板向多个用户的最新内容发布评论。",
+    "usernames": "用户名",
+    "bulkImport": "导入模式",
+    "clearAll": "全部清除",
+    "confirmTitle": "确认",
+    "confirmDesc": "您确定要重置所有数据吗？",
+    "cancel": "取消",
+    "commentTemplate": "评论模板",
+    "usernameSeparator": "用户名分隔符",
+    "newLine": "换行",
+    "semicolon": "分号",
+    "comma": "逗号",
+    "custom": "自定义",
+    "customPlaceholder": "例如：|",
+    "bulkPlaceholder": "输入以所选分隔符分隔的用户名...",
+    "templatePlaceholder": "嘿 @{{username}}，好文章！ - @{{me}}",
+    "execute": "执行批量操作",
+    "status": "状态",
+    "fetching": "正在获取最新帖子...",
+    "broadcasting": "正在发布评论...",
+    "bulkInfo": "输入以换行符、逗号或分号分隔的用户名。您可以在评论正文中使用 {{username}} 和 {{me}} 作为占位符。",
+    "parseList": "导入列表",
+    "error": {
+      "loginFirst": "请登录以使用此工具。",
+      "invalidSeparator": "请提供有效的分隔符。",
+      "parseError": "未找到有效的用户名。",
+      "fetchPostsError": "无法获取部分帖子。",
+      "broadcastFailed": "发布评论失败。",
+      "templateRequired": "必须填写评论模板"
+    },
+    "success": {
+      "imported": "成功导入 {count} 个用户名",
+      "broadcast": "批量评论已完成！",
+      "sent": "成功发布了 {count} 条评论。"
+    },
+    "variables": {
+      "title": "可用变量",
+      "username": "目标用户名",
+      "me": "当前用户 (@提及)",
+      "name": "目标姓名（如果可用）"
+    }
   }
 }

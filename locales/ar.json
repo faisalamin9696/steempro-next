@@ -851,6 +851,10 @@
         "title": "تصويت جماعي",
         "description": "صوّت على منشورات متعددة في وقت واحد لزيادة تقييمك."
       },
+      "batchCommenting": {
+        "title": "التعليق الجماعي",
+        "description": "نشر تعليقات على أحدث محتوى لعدة مستخدمين في وقت واحد باستخدام قوالب قابلة للتخصيص."
+      },
       "communityReport": {
         "title": "تقرير المجتمع",
         "description": "أنشئ إحصائيات وتقارير مفصلة لمجتمعاتك."
@@ -1004,7 +1008,7 @@
     "comma": "فاصلة (,)",
     "custom": "مخصص",
     "customPlaceholder": "مثال: |",
-    "bulkPlaceholder": "steememator 10.000 جائزة شهرية\\nalice 5.000 فائز بالمسابقة",
+    "bulkPlaceholder": "faisalamin 10.000 جائزة شهرية\\nalice 5.000 فائز بالمسابقة",
     "cancel": "إلغاء",
     "parseList": "تحليل القائمة",
     "recipient": "المستلم",
@@ -1033,9 +1037,9 @@
   "BatchVoting": {
     "title": "تصويت جماعي",
     "description": "صوّت على منشورات متعددة في وقت واحد لزيادة مكافآت التقييم الخاصة بك.",
-    "globalWeight": "الوزن العالمي",
+    "globalWeight": "قوة التصويت",
     "postList": "قائمة المنشورات",
-    "bulkImport": "استيراد جماعي",
+    "bulkImport": "وضع الاستيراد",
     "addPost": "إضافة منشور",
     "addAnotherPost": "إضافة منشور آخر",
     "clearAll": "مسح الكل",
@@ -1050,7 +1054,7 @@
     "customPlaceholder": "مثال: |",
     "bulkPlaceholder": "https://www.steempro.com/@author/permlink\\nhttps://www.steempro.com/@author/permlink2 75",
     "cancel": "إلغاء",
-    "parseList": "تحليل القائمة",
+    "parseList": "استيراد القائمة",
     "table": {
       "url": "رابط منشور Steem أو @المؤلف/الرابط_الدائم",
       "weight": "الوزن",
@@ -1058,7 +1062,7 @@
       "action": "إجراء"
     },
     "urlPlaceholder": "https://...",
-    "global": "عالمي",
+    "global": "تلقائي",
     "status": {
       "pending": "قيد الانتظار",
       "voting": "جاري التصويت...",
@@ -1069,16 +1073,17 @@
       "remove": "إزالة الصف"
     },
     "progress": {
-      "title": "التقدم",
+      "title": "الحالة",
       "totalPosts": "إجمالي المنشورات",
       "estTime": "الوقت المتوقع",
       "min": "دقيقة",
       "sec": "ثانية",
       "done": "تم",
       "err": "خطأ",
-      "preparing": "جارٍ التحضير للتصويت...",
-      "votingOn": "جارٍ التصويت على منشور @{author}...",
-      "waiting": "انتظار 3.5 ثانية (حد البلوكشين)..."
+      "preparing": "جارٍ التحضير...",
+      "votingOn": "جارٍ التصويت لـ @{author}...",
+      "waiting": "انتظار 3.5 ثانية...",
+      "safeMode": "الوضع الآمن (مستقر)"
     },
     "controls": {
       "start": "بدء التصويت",
@@ -1313,22 +1318,66 @@
     "wallet": "المحفظة"
   },
   "Search": {
-    "placeholder": "Search blockchain content...",
-    "filterByAuthor": "Filter by author...",
-    "refineResults": "Refine results",
-    "accounts": "Accounts",
-    "posts": "Posts",
-    "comments": "Comments",
-    "fetching": "DATA FETCHING...",
-    "noAccountsFound": "No accounts found with this name prefix.",
-    "noPostsFound": "Try searching globally or with a different author filter.",
-    "noCommentsFound": "No textual matches found in recent discussions.",
-    "discoverSteem": "Discover Steem",
-    "discoverDescription": "Search for profiles, deep-dive into posts or filter by specific authors.",
-    "trySearch": "try \"{query}\"",
-    "reputation": "Reputation",
-    "profileLabel": "Profile",
-    "postLabel": "Post",
-    "commentLabel": "Comment"
+    "placeholder": "ابحث في محتوى البلوكشين...",
+    "filterByAuthor": "تصفية حسب المؤلف...",
+    "refineResults": "تحسين النتائج",
+    "accounts": "الحسابات",
+    "posts": "المنشورات",
+    "comments": "التعليقات",
+    "fetching": "جارٍ جلب البيانات...",
+    "noAccountsFound": "لم يتم العثور على حسابات بهذه البادئة.",
+    "noPostsFound": "حاول البحث عالمياً أو باستخدام عامل تصفية مؤلف مختلف.",
+    "noCommentsFound": "لم يتم العثور على تطابقات نصية في النقاشات الأخيرة.",
+    "discoverSteem": "اكتشف Steem",
+    "discoverDescription": "ابحث عن الملفات الشخصية، أو تعمق في المنشورات، أو صَفِّ حسب مؤلفين محددين.",
+    "trySearch": "جرب \"{query}\"",
+    "reputation": "السمعة",
+    "profileLabel": "الملف الشخصي",
+    "postLabel": "منشور",
+    "commentLabel": "تعليق"
+  },
+  "BatchCommenting": {
+    "title": "التعليق الجماعي",
+    "description": "نشر التعليقات على أحدث محتوى لعدة مستخدمين باستخدام قوالب قابلة للتخصيص.",
+    "usernames": "أسماء المستخدمين",
+    "bulkImport": "وضع الاستيراد",
+    "clearAll": "مسح الكل",
+    "confirmTitle": "تأكيد",
+    "confirmDesc": "هل تريد حقاً إعادة تعيين جميع البيانات؟",
+    "cancel": "إلغاء",
+    "commentTemplate": "قالب التعليق",
+    "usernameSeparator": "فاصل أسماء المستخدمين",
+    "newLine": "سطر جديد",
+    "semicolon": "فاصلة منقوطة",
+    "comma": "فاصلة",
+    "custom": "مخصص",
+    "customPlaceholder": "مثال: |",
+    "bulkPlaceholder": "أدخل أسماء المستخدمين مفصولة بالفاصل المختار...",
+    "templatePlaceholder": "مرحباً @{{username}}، منشور رائع! - @{{me}}",
+    "execute": "تنفيذ الجماعي",
+    "status": "الحالة",
+    "fetching": "جارٍ جلب أحدث المنشورات...",
+    "broadcasting": "جارٍ نشر التعليقات...",
+    "bulkInfo": "أدخل أسماء المستخدمين مفصولة بأسطر جديدة، فواصل، أو فواصل منقوطة. يمكنك استخدام {{username}} و {{me}} كمتغيرات في نص التعليق.",
+    "parseList": "استيراد القائمة",
+    "error": {
+      "loginFirst": "يرجى تسجيل الدخول لاستخدام هذه الأداة.",
+      "invalidSeparator": "يرجى تقديم فاصل صالح.",
+      "parseError": "لم يتم العثور على أسماء مستخدمين صالحة.",
+      "fetchPostsError": "فشل جلب بعض المنشورات.",
+      "broadcastFailed": "فشل نشر التعليقات.",
+      "templateRequired": "قالب التعليق مطلوب"
+    },
+    "success": {
+      "imported": "تم استيراد {count} اسم مستخدم بنجاح",
+      "broadcast": "اكتمل التعليق الجماعي!",
+      "sent": "تم نشر {count} تعليقات بنجاح."
+    },
+    "variables": {
+      "title": "المتغيرات المتاحة",
+      "username": "اسم المستخدم المستهدف",
+      "me": "المستخدم الحالي (@إشارة)",
+      "name": "الاسم المستهدف (إن وجد)"
+    }
   }
 }

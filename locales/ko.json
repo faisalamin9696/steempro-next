@@ -851,6 +851,10 @@
         "title": "일괄 투표",
         "description": "여러 게시물에 동시에 투표하여 보상을 극대화하세요."
       },
+      "batchCommenting": {
+        "title": "배치 댓글 달기",
+        "description": "사용자 정의 가능한 템플릿을 사용하여 한 번에 여러 사용자의 최신 콘텐츠에 댓글을 게시하십시오."
+      },
       "communityReport": {
         "title": "커뮤니티 보고서",
         "description": "커뮤니티에 대한 자세한 통계 및 보고서를 생성합니다."
@@ -1004,7 +1008,7 @@
     "comma": "쉼표 (,)",
     "custom": "사용자 지정",
     "customPlaceholder": "예: |",
-    "bulkPlaceholder": "steememator 10.000 월간 상금\\nalice 5.000 콘테스트 우승자",
+    "bulkPlaceholder": "faisalamin 10.000 월간 상금\\nalice 5.000 콘테스트 우승자",
     "cancel": "취소",
     "parseList": "목록 분석",
     "recipient": "수취인",
@@ -1033,9 +1037,9 @@
   "BatchVoting": {
     "title": "일괄 보팅",
     "description": "여러 게시물에 동시에 보팅하여 큐레이션을 극대화하세요.",
-    "globalWeight": "전체 가중치",
+    "globalWeight": "보팅 강도",
     "postList": "게시물 목록",
-    "bulkImport": "대량 가져오기",
+    "bulkImport": "가져오기 모드",
     "addPost": "게시물 추가",
     "addAnotherPost": "다른 게시물 추가",
     "clearAll": "전체 삭제",
@@ -1050,7 +1054,7 @@
     "customPlaceholder": "예: |",
     "bulkPlaceholder": "https://www.steempro.com/@author/permlink\\nhttps://www.steempro.com/@author/permlink2 75",
     "cancel": "취소",
-    "parseList": "목록 분석",
+    "parseList": "목록 가져오기",
     "table": {
       "url": "스팀 게시물 URL 또는 @작성자/퍼머링크",
       "weight": "가중치",
@@ -1058,7 +1062,7 @@
       "action": "작업"
     },
     "urlPlaceholder": "https://...",
-    "global": "전체",
+    "global": "자동",
     "status": {
       "pending": "대기 중",
       "voting": "보팅 중...",
@@ -1069,16 +1073,17 @@
       "remove": "행 삭제"
     },
     "progress": {
-      "title": "진행 상황",
+      "title": "상태",
       "totalPosts": "총 게시물",
       "estTime": "예상 시간",
       "min": "분",
       "sec": "초",
       "done": "완료",
       "err": "오류",
-      "preparing": "보팅 준비 중...",
-      "votingOn": "@{author}님의 게시물에 보팅 중...",
-      "waiting": "3.5초 대기 중 (블록체인 제한)..."
+      "preparing": "준비 중...",
+      "votingOn": "@{author} 님에게 보팅 중...",
+      "waiting": "3.5초 대기 중...",
+      "safeMode": "안전 모드 (안정적)"
     },
     "controls": {
       "start": "보팅 시작",
@@ -1313,22 +1318,66 @@
     "wallet": "지갑"
   },
   "Search": {
-    "placeholder": "Search blockchain content...",
-    "filterByAuthor": "Filter by author...",
-    "refineResults": "Refine results",
-    "accounts": "Accounts",
-    "posts": "Posts",
-    "comments": "Comments",
-    "fetching": "DATA FETCHING...",
-    "noAccountsFound": "No accounts found with this name prefix.",
-    "noPostsFound": "Try searching globally or with a different author filter.",
-    "noCommentsFound": "No textual matches found in recent discussions.",
-    "discoverSteem": "Discover Steem",
-    "discoverDescription": "Search for profiles, deep-dive into posts or filter by specific authors.",
-    "trySearch": "try \"{query}\"",
-    "reputation": "Reputation",
-    "profileLabel": "Profile",
-    "postLabel": "Post",
-    "commentLabel": "Comment"
+    "placeholder": "블록체인 콘텐츠 검색...",
+    "filterByAuthor": "저자별 필터...",
+    "refineResults": "검색 결과 세분화",
+    "accounts": "계정",
+    "posts": "게시물",
+    "comments": "댓글",
+    "fetching": "데이터를 불러오는 중...",
+    "noAccountsFound": "이 이름으로 시작하는 계정을 찾을 수 없습니다.",
+    "noPostsFound": "전체 검색을 시도하거나 다른 저자 필터를 사용해 보세요.",
+    "noCommentsFound": "최근 토론에서 텍스트 일치 항목을 찾을 수 없습니다.",
+    "discoverSteem": "스팀 탐색",
+    "discoverDescription": "프로필을 검색하거나, 게시물을 심층 분석하거나, 특정 저자별로 필터링해 보세요.",
+    "trySearch": "\"{query}\" 검색 시도",
+    "reputation": "명성",
+    "profileLabel": "프로필",
+    "postLabel": "게시물",
+    "commentLabel": "댓글"
+  },
+  "BatchCommenting": {
+    "title": "일괄 댓글",
+    "description": "사용자 정의 템플릿을 사용하여 여러 사용자의 최신 콘텐츠에 댓글을 게시합니다.",
+    "usernames": "사용자 이름",
+    "bulkImport": "가져오기 모드",
+    "clearAll": "전체 삭제",
+    "confirmTitle": "확인",
+    "confirmDesc": "정말로 모든 데이터를 초기화하시겠습니까?",
+    "cancel": "취소",
+    "commentTemplate": "댓글 템플릿",
+    "usernameSeparator": "사용자 이름 구분 기호",
+    "newLine": "줄바꿈",
+    "semicolon": "세미콜론",
+    "comma": "쉼표",
+    "custom": "사용자 지정",
+    "customPlaceholder": "예: |",
+    "bulkPlaceholder": "선택한 구분 기호로 구분된 사용자 이름을 입력하세요...",
+    "templatePlaceholder": "안녕하세요 @{{username}} 님, 좋은 글입니다! - @{{me}}",
+    "execute": "일괄 실행",
+    "status": "상태",
+    "fetching": "최신 게시물을 불러오는 중...",
+    "broadcasting": "댓글 게시 중...",
+    "bulkInfo": "줄바꿈, 쉼표 또는 세미콜론으로 구분된 사용자 이름을 입력하세요. 댓글 본문에 {{username}} 및 {{me}}를 자리 표시자로 사용할 수 있습니다.",
+    "parseList": "목록 가져오기",
+    "error": {
+      "loginFirst": "이 도구를 사용하려면 로그인해 주세요.",
+      "invalidSeparator": "유효한 구분 기호를 입력해 주세요.",
+      "parseError": "유효한 사용자 이름을 찾을 수 없습니다.",
+      "fetchPostsError": "일부 게시물을 불러오지 못했습니다.",
+      "broadcastFailed": "댓글 게시 실패.",
+      "templateRequired": "댓글 템플릿은 필수입니다"
+    },
+    "success": {
+      "imported": "{count}개의 사용자 이름을 성공적으로 가져왔습니다",
+      "broadcast": "일괄 댓글이 완료되었습니다!",
+      "sent": "{count}개의 댓글을 성공적으로 게시했습니다."
+    },
+    "variables": {
+      "title": "사용 가능한 변수",
+      "username": "대상 사용자 이름",
+      "me": "현재 사용자 (@멘션)",
+      "name": "대상 이름 (가능한 경우)"
+    }
   }
 }

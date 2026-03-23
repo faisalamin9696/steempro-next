@@ -851,6 +851,10 @@
         "title": "Votação em Lote",
         "description": "Vote em múltiplas publicações simultaneamente para maximizar sua curadoria."
       },
+      "batchCommenting": {
+        "title": "Comentários em Lote",
+        "description": "Publique comentários no conteúdo mais recente de vários usuários de uma só vez com modelos personalizáveis."
+      },
       "communityReport": {
         "title": "Relatório da Comunidade",
         "description": "Gere estatísticas e relatórios detalhados para suas comunidades."
@@ -1033,9 +1037,9 @@
   "BatchVoting": {
     "title": "Votação em Lote",
     "description": "Vote em múltiplas publicações simultaneamente para maximizar sua curadoria.",
-    "globalWeight": "Peso Global",
+    "globalWeight": "Poder de Voto",
     "postList": "Lista de Postagens",
-    "bulkImport": "Importação em Massa",
+    "bulkImport": "Modo Importação",
     "addPost": "Adicionar Postagem",
     "addAnotherPost": "Adicionar Outra Postagem",
     "clearAll": "Limpar Tudo",
@@ -1050,15 +1054,15 @@
     "customPlaceholder": "ex: |",
     "bulkPlaceholder": "https://www.steempro.com/@author/permlink\\nhttps://www.steempro.com/@author/permlink2 75",
     "cancel": "Cancelar",
-    "parseList": "Analisar Lista",
+    "parseList": "Importar Lista",
     "table": {
       "url": "URL da Postagem Steem ou @autor/permlink",
-      "weight": "Peso",
+      "weight": "Poder",
       "status": "Estado",
       "action": "Ação"
     },
     "urlPlaceholder": "https://...",
-    "global": "Global",
+    "global": "Automático",
     "status": {
       "pending": "Pendente",
       "voting": "Votando...",
@@ -1069,16 +1073,17 @@
       "remove": "Remover Linha"
     },
     "progress": {
-      "title": "Progresso",
+      "title": "Status",
       "totalPosts": "Total de Postagens",
       "estTime": "Tempo Est.",
       "min": "min",
       "sec": "seg",
       "done": "concluído",
       "err": "erro",
-      "preparing": "Preparando para votar...",
-      "votingOn": "Votando na postagem de @{author}...",
-      "waiting": "Aguardando 3.5s (Limite da Blockchain)..."
+      "preparing": "Preparando...",
+      "votingOn": "Votando em @{author}...",
+      "waiting": "Aguardando 3.5s...",
+      "safeMode": "Modo Seguro (Estável)"
     },
     "controls": {
       "start": "Iniciar Votação",
@@ -1313,22 +1318,66 @@
     "wallet": "Carteira"
   },
   "Search": {
-    "placeholder": "Search blockchain content...",
-    "filterByAuthor": "Filter by author...",
-    "refineResults": "Refine results",
-    "accounts": "Accounts",
-    "posts": "Posts",
-    "comments": "Comments",
-    "fetching": "DATA FETCHING...",
-    "noAccountsFound": "No accounts found with this name prefix.",
-    "noPostsFound": "Try searching globally or with a different author filter.",
-    "noCommentsFound": "No textual matches found in recent discussions.",
-    "discoverSteem": "Discover Steem",
-    "discoverDescription": "Search for profiles, deep-dive into posts or filter by specific authors.",
-    "trySearch": "try \"{query}\"",
-    "reputation": "Reputation",
-    "profileLabel": "Profile",
-    "postLabel": "Post",
-    "commentLabel": "Comment"
+    "placeholder": "Pesquisar conteúdo na blockchain...",
+    "filterByAuthor": "Filtrar por autor...",
+    "refineResults": "Refinar resultados",
+    "accounts": "Contas",
+    "posts": "Publicações",
+    "comments": "Comentários",
+    "fetching": "Buscando dados...",
+    "noAccountsFound": "Nenhuma conta encontrada com este prefixo.",
+    "noPostsFound": "Tente pesquisar globalmente ou com um filtro de autor diferente.",
+    "noCommentsFound": "Nenhuma correspondência encontrada em discussões recentes.",
+    "discoverSteem": "Descobrir Steem",
+    "discoverDescription": "Pesquisar perfis, mergulhar nas publicações ou filtrar por autores específicos.",
+    "trySearch": "tente \"{query}\"",
+    "reputation": "Reputação",
+    "profileLabel": "Perfil",
+    "postLabel": "Publicação",
+    "commentLabel": "Comentário"
+  },
+  "BatchCommenting": {
+    "title": "Comentários em Lote",
+    "description": "Publique comentários no conteúdo mais recente de vários usuários usando modelos personalizáveis.",
+    "usernames": "Nomes de usuário",
+    "bulkImport": "Modo Importação",
+    "clearAll": "Limpar Tudo",
+    "confirmTitle": "Confirmação",
+    "confirmDesc": "Você realmente deseja redefinir todos os dados?",
+    "cancel": "Cancelar",
+    "commentTemplate": "Modelo de Comentário",
+    "usernameSeparator": "Separador de Nomes de Usuário",
+    "newLine": "Nova Linha",
+    "semicolon": "Ponto e Vírgula",
+    "comma": "Vírgula",
+    "custom": "Personalizado",
+    "customPlaceholder": "ex: |",
+    "bulkPlaceholder": "Insira os nomes de usuário separados pelo separador escolhido...",
+    "templatePlaceholder": "Olá @{{username}}, ótimo post! - @{{me}}",
+    "execute": "Executar Lote",
+    "status": "Status",
+    "fetching": "Buscando posts recentes...",
+    "broadcasting": "Publicando comentários...",
+    "bulkInfo": "Insira os nomes de usuário separados por novas linhas, vírgulas ou pontos e vírgulas. Você pode usar {{username}} e {{me}} como variáveis no corpo do comentário.",
+    "parseList": "Importar Lista",
+    "error": {
+      "loginFirst": "Por favor, faça login para usar esta ferramenta.",
+      "invalidSeparator": "Por favor, forneça um separador válido.",
+      "parseError": "Nenhum nome de usuário válido encontrado.",
+      "fetchPostsError": "Falha ao buscar alguns posts.",
+      "broadcastFailed": "Falha ao publicar os comentários.",
+      "templateRequired": "O modelo de comentário é obrigatório"
+    },
+    "success": {
+      "imported": "{count} nomes de usuário importados com sucesso",
+      "broadcast": "Comentário em lote concluído!",
+      "sent": "{count} comentários publicados com sucesso."
+    },
+    "variables": {
+      "title": "Variáveis Disponíveis",
+      "username": "Nome de Usuário de Destino",
+      "me": "Usuário Atual (@menção)",
+      "name": "Nome de Destino (se disponível)"
+    }
   }
 }
