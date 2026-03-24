@@ -111,7 +111,6 @@ export const MyResultsTab = memo(
       fetchUserHistory,
     ]);
 
-
     const bestScore = seasonStats?.highest_score || 0;
     const totalPlays = seasonStats?.total_plays || 0;
     const totalCombos = seasonStats?.total_combos || 0;
@@ -127,7 +126,8 @@ export const MyResultsTab = memo(
 
     const totalLeaderboardAltitude = useMemo(() => {
       return (
-        qualifiedHighScores?.reduce((acc, cur) => acc + (cur.score || 0), 0) || 0
+        qualifiedHighScores?.reduce((acc, cur) => acc + (cur.score || 0), 0) ||
+        0
       );
     }, [qualifiedHighScores]);
 
@@ -232,15 +232,23 @@ export const MyResultsTab = memo(
               {!isQualified && eligibilityMap[username] && (
                 <div className="flex items-center gap-3 px-3 py-1 bg-rose-500/5 border border-rose-500/10 rounded-full">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[8px] font-black text-rose-500/40 uppercase">Reputation</span>
-                    <span className={`text-[10px] font-black ${eligibilityMap[username].rep > 40 ? 'text-emerald-500' : 'text-rose-500'}`}>
+                    <span className="text-[8px] font-black text-rose-500/40 uppercase">
+                      Reputation
+                    </span>
+                    <span
+                      className={`text-[10px] font-black ${eligibilityMap[username].rep > 40 ? "text-emerald-500" : "text-rose-500"}`}
+                    >
                       {eligibilityMap[username].rep.toFixed(1)}
                     </span>
                   </div>
                   <div className="w-px h-2 bg-rose-500/20" />
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[8px] font-black text-rose-500/40 uppercase">Steem Power</span>
-                    <span className={`text-[10px] font-black ${eligibilityMap[username].sp >= 50 ? 'text-emerald-500' : 'text-rose-500'}`}>
+                    <span className="text-[8px] font-black text-rose-500/40 uppercase">
+                      Steem Power
+                    </span>
+                    <span
+                      className={`text-[10px] font-black ${eligibilityMap[username].sp >= 50 ? "text-emerald-500" : "text-rose-500"}`}
+                    >
                       {eligibilityMap[username].sp.toFixed(0)}
                     </span>
                   </div>
@@ -349,4 +357,3 @@ export const MyResultsTab = memo(
     );
   },
 );
-

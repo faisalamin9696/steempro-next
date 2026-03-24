@@ -1297,6 +1297,7 @@
   },
   "Settings": {
     "title": "Settings",
+    "description": "Manage your application preferences and Steem profile",
     "tabs": {
       "general": "General",
       "profile": "Profile",

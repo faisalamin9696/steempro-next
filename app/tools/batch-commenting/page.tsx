@@ -421,6 +421,7 @@ export default function BatchCommentingPage() {
                       </Select>
                       {lineSeparator === "custom" && (
                         <Input
+                          aria-label={t("customPlaceholder")}
                           placeholder={t("customPlaceholder")}
                           size="sm"
                           value={customLineSeparator}
@@ -432,6 +433,7 @@ export default function BatchCommentingPage() {
                     </div>
                   </div>
                   <Textarea
+                    aria-label={t("bulkPlaceholder")}
                     minRows={8}
                     placeholder={t("bulkPlaceholder")}
                     value={bulkInput}
@@ -460,6 +462,7 @@ export default function BatchCommentingPage() {
                         </span>
                       </div>
                       <Textarea
+                        aria-label="Message Template"
                         minRows={6}
                         placeholder={"Hi @{{username}}, great post! - @{{me}}"}
                         value={template}
@@ -568,7 +571,7 @@ export default function BatchCommentingPage() {
                               </span>
                             )}
                           </div>
-                          <span className="text-[9px] text-default-800 hidden md:block">
+                          <span suppressHydrationWarning className="text-[9px] text-default-800 hidden md:block">
                             {moment().format("HH:mm:ss")}
                           </span>
                         </div>

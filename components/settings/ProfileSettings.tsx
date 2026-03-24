@@ -246,6 +246,7 @@ const ProfileSettings = ({ className }: { className?: string }) => {
                 <ImageUploadButton
                   variant="light"
                   size="sm"
+                  aria-label={t("visual.profileImage")}
                   className="min-w-0 h-8 w-8 p-0"
                   onImagesSelected={(files) =>
                     handleImageUpload(files, "profile_image")
@@ -266,6 +267,7 @@ const ProfileSettings = ({ className }: { className?: string }) => {
                 <ImageUploadButton
                   variant="light"
                   size="sm"
+                  aria-label={t("visual.coverImage")}
                   className="min-w-0 h-8 w-8 p-0"
                   onImagesSelected={(files) =>
                     handleImageUpload(files, "cover_image")

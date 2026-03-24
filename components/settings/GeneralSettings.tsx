@@ -24,8 +24,9 @@ const GeneralSettings = () => {
   const locale = useLocale();
   const dispatch = useAppDispatch();
   const settings = useAppSelector((state) => state.settingsReducer.value);
-  if (!settings) return null;
   const { setTheme } = useTheme();
+  
+  if (!settings) return null;
 
   const handleUpdate = (updatedFields: Partial<Setting>) => {
     dispatch(updateSettingsHandler(updatedFields));
@@ -161,6 +162,7 @@ const GeneralSettings = () => {
               </p>
             </div>
             <Select
+              aria-label={t("General.language.select")}
               size="sm"
               selectedKeys={[locale]}
               onSelectionChange={async (keys) => {
@@ -204,6 +206,7 @@ const GeneralSettings = () => {
                 </p>
               </div>
               <Select
+                aria-label={t("General.interface.theme")}
                 size="sm"
                 selectedKeys={[settings.theme]}
                 onSelectionChange={(keys) => {
@@ -241,6 +244,7 @@ const GeneralSettings = () => {
                 </p>
               </div>
               <Select
+                aria-label={t("General.interface.feedStyle")}
                 size="sm"
                 selectedKeys={[settings.feed_style]}
                 onSelectionChange={(keys) => {
@@ -296,6 +300,7 @@ const GeneralSettings = () => {
                   </span>
                 </div>
                 <Slider
+                  aria-label={t("General.interface.defaultVote")}
                   step={1}
                   maxValue={100}
                   minValue={1}

@@ -1254,6 +1254,7 @@
   },
   "Settings": {
     "title": "Configuración",
+    "description": "Administra tus preferencias de la aplicación y perfil de Steem",
     "tabs": {
       "general": "General",
       "profile": "Perfil",

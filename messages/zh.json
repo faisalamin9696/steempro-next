@@ -1254,6 +1254,7 @@
   },
   "Settings": {
     "title": "设置",
+    "description": "管理您的应用程序首选项和 Steem 个人资料",
     "tabs": {
       "general": "通用",
       "profile": "个人资料",

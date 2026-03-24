@@ -2,7 +2,6 @@
 
 import { memo } from "react";
 import { Crown } from "lucide-react";
-import SAvatar from "@/components/ui/SAvatar";
 import { HighScore, BLOCK_HEIGHT, CANVAS_HEIGHT } from "../Config";
 import { useTranslations } from "next-intl";
 
@@ -39,14 +38,14 @@ export const GhostMarkers = memo(
                 }`}
               >
                 <div className="relative">
-                  <SAvatar
+                  {/* <SAvatar
                     username={hs.player}
                     radius="full"
                     size={20}
                     className={`border shadow-sm ${
                       isOwn ? "border-amber-500/50" : "border-zinc-700/50"
                     }`}
-                  />
+                  /> */}
 
                   {isTop && (
                     <div className="absolute self-center -top-2 right-[4px]  text-amber-500 drop-shadow-sm">

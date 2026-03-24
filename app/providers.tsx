@@ -8,8 +8,6 @@ import { Next13ProgressBar, useRouter } from "next13-progressbar";
 import AppWrapper from "@/components/wrappers/AppWrapper";
 import { SessionProvider } from "next-auth/react";
 import { HeroUIProvider } from "@heroui/system";
-import SNavbar from "@/components/navbar/SNavbar";
-import SDrawerContent from "@/components/navbar/SDrawerContent";
 import { AccountsProvider } from "@/components/auth/AccountsContext";
 import { MobileNavbar } from "@/components/navbar/MobileNavbar";
 import { Session } from "next-auth";
@@ -18,20 +16,17 @@ import LoadingCard from "@/components/ui/LoadingCard";
 import { ScrollToTopButton } from "@/components/ScrollToTopButton";
 import { Toaster } from "sonner";
 
-import { NextIntlClientProvider } from "next-intl";
+import SNavbar from "@/components/navbar/SNavbar";
+import SDrawerContent from "@/components/navbar/SDrawerContent";
 
 function Providers({
   children,
   globals,
   session,
-  locale,
-  messages,
 }: {
   children: React.ReactNode;
   globals: any;
   session: Session | null;
-  locale: string;
-  messages: any;
 }) {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
@@ -40,59 +35,64 @@ function Providers({
     setIsMounted(true);
   }, []);
 
+  // Prevent hydration mismatch - show loading until client is ready
+  if (!isMounted) {
+    return <LoadingCard />;
+  }
+
   return (
     <SessionProvider
       session={session}
-      refetchInterval={60 * 60} // Refetch every 1 hour to keep session alive
-      refetchOnWindowFocus={true} // Refresh when user comes back to the tab
+      refetchInterval={60 * 60}
+      refetchOnWindowFocus={true}
     >
-      <NextIntlClientProvider
-        locale={locale}
-        messages={messages}
-      >
-        <ScrollToTop />
-        <ReduxProvider store={store}>
-          <HeroUIProvider navigate={router.push}>
-            <SWRConfig
-              value={{
-                refreshInterval: 10 * 60 * 1000,
-                revalidateOnFocus: false,
-                errorRetryCount: 3,
-                shouldRetryOnError: true,
-                dedupingInterval: 10000,
-                loadingTimeout: 20000,
-              }}
-            >
-              <AccountsProvider>
-                <AppWrapper globals={globals}>
-                  <div className="flex flex-col">
-                    <SNavbar />
-                    <MobileNavbar />
-                    <div className="flex flex-row justify-start">
-                      <aside className="w-72 hidden sticky top-16 h-[calc(100vh-4rem)] shrink-0 xl:block border-e border-black/5 dark:border-white/5">
-                        <SDrawerContent />
-                      </aside>
-                      <span className="px-0.5 w-full pb-20 md:pb-0">
-                        {isMounted ? children : <LoadingCard />}
-                      </span>
-                    </div>
-                    <ScrollToTopButton />
-                    <Toaster richColors closeButton />
+      <ScrollToTop />
+
+      <ReduxProvider store={store}>
+        <HeroUIProvider navigate={router.push}>
+          <SWRConfig
+            value={{
+              refreshInterval: 10 * 60 * 1000,
+              revalidateOnFocus: false,
+              errorRetryCount: 3,
+              shouldRetryOnError: true,
+              dedupingInterval: 10000,
+              loadingTimeout: 20000,
+            }}
+          >
+            <AccountsProvider>
+              <AppWrapper globals={globals}>
+                <SNavbar />
+
+                <div className="flex flex-col">
+                  <MobileNavbar />
+
+                  <div className="flex flex-row justify-start">
+                    <aside className="w-72 hidden sticky top-16 h-[calc(100vh-4rem)] shrink-0 xl:block border-e border-black/5 dark:border-white/5">
+                      <SDrawerContent />
+                    </aside>
+
+                    <main className="px-0.5 w-full pb-20 md:pb-0">
+                      {children}
+                    </main>
                   </div>
-                </AppWrapper>
-              </AccountsProvider>
-            </SWRConfig>
-          </HeroUIProvider>
-        </ReduxProvider>
-        <Suspense fallback={null}>
-          <Next13ProgressBar
-            height="4px"
-            color="#ED4D5E"
-            options={{ showSpinner: false }}
-            showOnShallow
-          />
-        </Suspense>
-      </NextIntlClientProvider>
+
+                  <ScrollToTopButton />
+                  <Toaster richColors closeButton />
+                </div>
+              </AppWrapper>
+            </AccountsProvider>
+          </SWRConfig>
+        </HeroUIProvider>
+      </ReduxProvider>
+
+      {/* Progress Bar */}
+      <Next13ProgressBar
+        height="4px"
+        color="#ED4D5E"
+        options={{ showSpinner: false }}
+        showOnShallow
+      />
     </SessionProvider>
   );
 }

@@ -36,6 +36,7 @@ const KeyRow = ({ label, value }: KeyRowProps) => {
           isIconOnly
           size="sm"
           variant="light"
+          aria-label={t("publicKeys.copied", { label })}
           onPress={handleCopy}
           color={copied ? "success" : "primary"}
           className="opacity-0 group-hover:opacity-100 transition-opacity"

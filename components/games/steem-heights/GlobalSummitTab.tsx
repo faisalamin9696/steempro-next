@@ -110,29 +110,20 @@ export const calculateRewards = (
     0,
   );
 
-  highScores.forEach((user, index) => {
+  qualifiedClimbers.forEach((user, index) => {
     let reward = 0;
-
-    // Check if player is qualified for ANY rewards (Skill + Effort check)
     const score = user.score || 0;
-    const plays = user.plays || 0;
-    const accountEligibility = eligibilityMap[user.player]?.eligible ?? false;
-    const isQualified =
-      (score >= REWARD_MIN_ALTITUDE ||
-        (score >= 10 && plays >= REWARD_MIN_PLAYS)) &&
-      index < REWARD_RANK_CUTOFF &&
-      accountEligibility;
 
     if (index < 3) {
-      // Podium is always qualified by default (guaranteed by ranking)
+      // Podium gets fixed percentages of the podium pool
       reward += podiumPool * (podiumWeights[index] || 0);
-    } else if (isQualified && sumRank4PlusScores > 0) {
-      // Performance Share: Only distributed to qualified users
-      reward += ((user.score || 0) / sumRank4PlusScores) * performancePool;
+    } else if (sumRank4PlusScores > 0) {
+      // Performance Share distributed proportionally
+      reward += (score / sumRank4PlusScores) * performancePool;
     }
 
-    // Add Average Altitude Reward if qualified and reached target (Excluding podium)
-    if (index >= 3 && isQualified && (score || 0) >= globalAverage) {
+    // Add Average Altitude Reward if reached target
+    if (index >= 3 && score >= globalAverage) {
       reward += averageRewardPerPerson;
     }
 

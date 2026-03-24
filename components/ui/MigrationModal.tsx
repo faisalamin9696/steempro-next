@@ -18,8 +18,10 @@ import { supabase } from "@/libs/supabase/supabase";
 export default function MigrationModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, setIsPending] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     // Check if the old secure storage key exists
     const hasOldData = localStorage.getItem("@secure.j.auth");
     if (hasOldData) {
@@ -44,6 +46,8 @@ export default function MigrationModal() {
       setIsPending(false);
     }
   };
+
+  if (!isMounted) return null;
 
   return (
     <Modal

@@ -1,26 +1,32 @@
+// app/AppLayout.tsx  (alternative version)
 import { auth } from "@/auth";
 import { sdsApi } from "@/libs/sds";
-import React, { Suspense } from "react";
-import Providers from "./providers";
-import LoadingCard from "@/components/ui/LoadingCard";
+import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
+import Providers from "./providers";
 
-async function AppLayout({ children }: { children: React.ReactNode }) {
-  const globals = await sdsApi.getGlobalProps();
-  const session = await auth();
+export default async function AppLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const locale = await getLocale();
   const messages = await getMessages();
 
   return (
-    <Providers
-      globals={globals}
-      session={session}
-      locale={locale}
-      messages={messages}
-    >
-      <Suspense fallback={<LoadingCard />}>{children}</Suspense>
-    </Providers>
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      <DynamicProviders>{children}</DynamicProviders>
+    </NextIntlClientProvider>
   );
 }
 
-export default AppLayout;
+async function DynamicProviders({ children }: { children: React.ReactNode }) {
+  const globals = await sdsApi.getGlobalProps();
+  const session = await auth();
+
+  return (
+    <Providers globals={globals} session={session}>
+      {children}
+    </Providers>
+  );
+}

@@ -336,6 +336,7 @@ export default function BatchTransferPage() {
                       </Select>
                       {lineSeparator === "custom" && (
                         <Input
+                          aria-label={t("customPlaceholder")}
                           placeholder={t("customPlaceholder")}
                           size="sm"
                           value={customLineSeparator}
@@ -347,6 +348,7 @@ export default function BatchTransferPage() {
                     </div>
                   </div>
                   <Textarea
+                    aria-label={t("bulkPlaceholder")}
                     minRows={8}
                     placeholder={t("bulkPlaceholder")}
                     value={bulkInput}
@@ -384,6 +386,7 @@ export default function BatchTransferPage() {
 
                         <div className="col-span-9 md:col-span-3">
                           <Input
+                            aria-label={t("username")}
                             placeholder={t("username")}
                             size="sm"
                             value={tRow.to}
@@ -409,6 +412,7 @@ export default function BatchTransferPage() {
                         <div className="col-span-2 md:col-span-1 flex justify-end md:justify-center items-center order-3 md:order-last">
                           <Button
                             isIconOnly
+                            aria-label="Delete"
                             variant="light"
                             className="text-default-300 hover:text-danger hover:bg-danger/5 transition-all w-8 h-8 min-w-8"
                             size="sm"
@@ -421,6 +425,7 @@ export default function BatchTransferPage() {
 
                         <div className="col-span-5 md:col-span-3">
                           <Input
+                            aria-label="Amount"
                             placeholder="0.000"
                             type="number"
                             step="0.001"
@@ -446,6 +451,7 @@ export default function BatchTransferPage() {
                         </div>
                         <div className="col-span-7 md:col-span-4 relative flex items-center">
                           <Input
+                            aria-label={t("memoOptional")}
                             placeholder={t("memoOptional")}
                             size="sm"
                             value={tRow.memo}

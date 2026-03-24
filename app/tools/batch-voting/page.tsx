@@ -481,6 +481,7 @@ export default function BatchVotingPage() {
                       </Select>
                       {lineSeparator === "custom" && (
                         <Input
+                          aria-label={t("customPlaceholder")}
                           placeholder={t("customPlaceholder")}
                           size="sm"
                           value={customLineSeparator}
@@ -493,6 +494,7 @@ export default function BatchVotingPage() {
                   </div>
 
                   <Textarea
+                    aria-label="Bulk Input"
                     minRows={8}
                     placeholder={`https://www.steempro.com/@author/permlink\nhttps://www.steempro.com/@author/permlink2 75`}
                     value={bulkInput}
@@ -541,6 +543,7 @@ export default function BatchVotingPage() {
 
                         <div className="col-span-9 md:col-span-6">
                           <Input
+                            aria-label={t("urlPlaceholder")}
                             placeholder={t("urlPlaceholder")}
                             size="sm"
                             value={v.url}
@@ -565,6 +568,7 @@ export default function BatchVotingPage() {
                         <div className="col-span-2 md:col-span-1 flex justify-end md:justify-center items-center order-3 md:order-last">
                           <Button
                             isIconOnly
+                            aria-label="Delete"
                             variant="light"
                             className="text-default-300 hover:text-danger hover:bg-danger/5 transition-all w-8 h-8 min-w-8"
                             size="sm"
@@ -577,6 +581,7 @@ export default function BatchVotingPage() {
 
                         <div className="col-span-5 md:col-span-2">
                           <Input
+                            aria-label={t("global")}
                             placeholder={t("global")}
                             type="number"
                             size="sm"

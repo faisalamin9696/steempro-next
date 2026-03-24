@@ -120,7 +120,7 @@ function BodyImage({
           onLoad={handleLoad}
           onError={handleError}
           onErrorCapture={handleError}
-          onLoadingComplete={handleLoad}
+          onLoadCapture={handleLoad}
           removeWrapper
           onClick={() => setIsModalOpen(true)}
           style={{

@@ -1255,6 +1255,7 @@
   },
   "Settings": {
     "title": "설정",
+    "description": "애플리케이션 기본 설정 및 Steem 프로필을 관리하세요",
     "tabs": {
       "general": "일반",
       "profile": "프로필",
