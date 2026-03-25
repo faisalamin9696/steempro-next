@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, memo, useCallback } from "react";
+import { forwardRef, memo, useCallback, useMemo } from "react";
 import { Card } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -75,6 +75,11 @@ interface Props {
   isGeneratingSession?: boolean;
 }
 
+const BLOCK_HEIGHT_PERCENT = ((BLOCK_HEIGHT - 1) / CANVAS_HEIGHT) * 100;
+const IMPACT_SIZE = 60;
+const CAMERA_WINDOW = 10;
+const ARROW_MARKERS = [1, 2, 3, 4, 5];
+
 export const HeightsCanvas = memo(
   forwardRef<HTMLDivElement, Props>(
     (
@@ -84,7 +89,6 @@ export const HeightsCanvas = memo(
         blocks,
         debris,
         currentBlock,
-        speed,
         timeLeft,
         isSavingScore,
         isLoggedIn,
@@ -101,7 +105,6 @@ export const HeightsCanvas = memo(
         startGame,
         setGameState,
         scrollToLeaderboard,
-        perfectStreak,
         combos,
         totalBonusScore,
         showBonus,
@@ -117,7 +120,9 @@ export const HeightsCanvas = memo(
     ) => {
       const t = useTranslations("Games.steemHeights");
       const { isOpen, onOpen, onOpenChange } = useDisclosure();
-      const viewY = Math.max(0, (blocks.length - 10) * BLOCK_HEIGHT);
+      const viewY = Math.max(0, (blocks.length - CAMERA_WINDOW) * BLOCK_HEIGHT);
+      const cameraProgress = viewY / CANVAS_HEIGHT;
+      const skinNameKey = `leaderboard.lab.items.skins.${selectedSkin.id}.name`;
 
       const renderBlockIcon = useCallback(
         (width: number) => {
@@ -143,8 +148,49 @@ export const HeightsCanvas = memo(
               return null;
           }
         },
-        [selectedSkin?.id],
+        [selectedSkin.id],
       );
+
+      const currentBlockStyle = useMemo(() => {
+        if (!currentBlock) return null;
+
+        return {
+          left: `${(currentBlock.x / CANVAS_WIDTH) * 100}%`,
+          bottom: `${((CANVAS_HEIGHT - currentBlock.y - BLOCK_HEIGHT) / CANVAS_HEIGHT) * 100}%`,
+          width: `${(currentBlock.width / CANVAS_WIDTH) * 100}%`,
+          height: `${BLOCK_HEIGHT_PERCENT}%`,
+          backgroundColor: currentBlock.color,
+        };
+      }, [currentBlock]);
+
+      const debrisStyles = useMemo(
+        () =>
+          debris.map((piece, index) => ({
+            key: `debris-${index}`,
+            style: {
+              left: `${(piece.x / CANVAS_WIDTH) * 100}%`,
+              bottom: `${((CANVAS_HEIGHT - piece.y - BLOCK_HEIGHT) / CANVAS_HEIGHT) * 100}%`,
+              width: `${(piece.width / CANVAS_WIDTH) * 100}%`,
+              height: `${BLOCK_HEIGHT_PERCENT}%`,
+              backgroundColor: piece.color,
+              transform: `rotate(${piece.rotation}deg)`,
+            },
+          })),
+        [debris],
+      );
+
+      const impactStyle = useMemo(() => {
+        if (!lastImpactPos) return null;
+
+        return {
+          left: `${(lastImpactPos.x / CANVAS_WIDTH) * 100}%`,
+          bottom: `${((CANVAS_HEIGHT - lastImpactPos.y - BLOCK_HEIGHT) / CANVAS_HEIGHT) * 100}%`,
+          width: `${IMPACT_SIZE}px`,
+          height: `${IMPACT_SIZE}px`,
+          marginLeft: `-${IMPACT_SIZE / 2}px`,
+          marginBottom: `-${IMPACT_SIZE / 2}px`,
+        };
+      }, [lastImpactPos]);
 
       return (
         <div className="flex flex-col gap-1 sm:gap-2 w-full max-w-full sm:max-w-[450px] group select-none sm:px-1">
@@ -172,7 +218,7 @@ export const HeightsCanvas = memo(
                 </div>
               </div>
               <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">
-                {t(`leaderboard.lab.items.skins.${selectedSkin.id}.name`)}
+                {t(skinNameKey)}
               </span>
             </div>
           </div>
@@ -243,36 +289,35 @@ export const HeightsCanvas = memo(
             </AnimatePresence>
 
             {/* Background Gradients */}
-            <div className="absolute inset-0 bg-linear-to-b from-indigo-500/5 via-transparent to-amber-500/5 pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-b from-zinc-900 via-zinc-950 to-black pointer-events-none" />
             <div
-              className="absolute inset-0 opacity-20 pointer-events-none"
+              className="absolute inset-0 opacity-15 pointer-events-none"
               style={{
                 backgroundImage:
                   "radial-gradient(circle at 2px 2px, #3f3f46 1px, transparent 0)",
-                backgroundSize: "24px 24px",
+                backgroundSize: "28px 28px",
               }}
             />
 
-            {/* Deeper Parallax Layer (Distant Mountains / Nebulae) */}
+            {/* Subtle atmosphere */}
             <div
-              className="absolute inset-x-0 -top-[200%] -bottom-[200%] opacity-10 pointer-events-none"
+              className="absolute inset-x-0 -top-[160%] -bottom-[160%] opacity-10 pointer-events-none"
               style={{
                 backgroundImage:
-                  "radial-gradient(ellipse at 50% 100%, #3b82f6 0%, transparent 70%)",
+                  "radial-gradient(ellipse at 50% 100%, rgba(245,158,11,0.35) 0%, transparent 68%)",
                 backgroundSize: "100% 100%",
-                transform: `translate3d(0, ${(viewY / CANVAS_HEIGHT) * 15}%, 0)`,
-                filter: "blur(40px)",
+                transform: `translate3d(0, ${cameraProgress * 12}%, 0)`,
+                filter: "blur(48px)",
               }}
             />
 
-            {/* Mid-range Parallax Layer (Deep Stars) */}
             <div
               className="absolute inset-x-0 -top-full -bottom-full opacity-15 pointer-events-none"
               style={{
                 backgroundImage:
                   "radial-gradient(circle at 1px 1px, white 0.5px, transparent 0)",
-                backgroundSize: "64px 64px",
-                transform: `translate3d(0, ${(viewY / CANVAS_HEIGHT) * 35}%, 0)`,
+                backgroundSize: "72px 72px",
+                transform: `translate3d(0, ${cameraProgress * 20}%, 0)`,
               }}
             />
 
@@ -332,7 +377,7 @@ export const HeightsCanvas = memo(
             <div
               className="absolute w-full h-full bottom-0 transition-transform duration-500 ease-out will-change-transform"
               style={{
-                transform: `translate3d(0, ${(viewY / CANVAS_HEIGHT) * 100}%, 0)`,
+                transform: `translate3d(0, ${cameraProgress * 100}%, 0)`,
               }}
             >
               {gameState === "playing" && (
@@ -348,14 +393,7 @@ export const HeightsCanvas = memo(
                     animate={{ scale: 3.5, opacity: 0 }}
                     transition={{ duration: 0.6, ease: "easeOut" }}
                     className="absolute pointer-events-none border-2 border-white/40 rounded-full z-20"
-                    style={{
-                      left: `${(lastImpactPos.x / CANVAS_WIDTH) * 100}%`,
-                      bottom: `${((CANVAS_HEIGHT - lastImpactPos.y - BLOCK_HEIGHT) / CANVAS_HEIGHT) * 100}%`,
-                      width: "60px",
-                      height: "60px",
-                      marginLeft: "-30px", // Center the shockwave
-                      marginBottom: "-30px",
-                    }}
+                    style={impactStyle ?? undefined}
                   />
                 )}
               </AnimatePresence>
@@ -363,37 +401,22 @@ export const HeightsCanvas = memo(
               <BlockStack blocks={blocks} renderBlockIcon={renderBlockIcon} />
 
               {currentBlock && gameState === "playing" && (
-                <motion.div
-                  className="absolute rounded-sm shadow-xl border-t border-white/40 z-10 flex items-center justify-center overflow-hidden will-change-transform"
-                  style={{
-                    left: `${(currentBlock.x / CANVAS_WIDTH) * 100}%`,
-                    bottom: `${((CANVAS_HEIGHT - currentBlock.y - BLOCK_HEIGHT) / CANVAS_HEIGHT) * 100}%`,
-                    width: `${(currentBlock.width / CANVAS_WIDTH) * 100}%`,
-                    height: `${((BLOCK_HEIGHT - 1) / CANVAS_HEIGHT) * 100}%`,
-                    backgroundColor: currentBlock.color,
-                    boxShadow: "0 0 20px rgba(251, 191, 36, 0.4)",
-                    opacity: 0.9,
-                  }}
+                <div
+                  className="absolute rounded-sm border-t border-white/40 z-10 flex items-center justify-center overflow-hidden will-change-transform"
+                  style={currentBlockStyle ?? undefined}
                 >
                   <div className="absolute inset-0 bg-black/20" />
                   <div className="absolute inset-0 bg-linear-to-br from-white/20 to-transparent pointer-events-none" />
-                  <div className="absolute inset-0 animate-pulse bg-white/10" />
+                  <div className="absolute inset-0 bg-white/10" />
                   {renderBlockIcon(currentBlock.width)}
-                </motion.div>
+                </div>
               )}
 
-              {debris.map((d, i) => (
+              {debrisStyles.map((piece) => (
                 <div
-                  key={`debris-${i}`}
-                  className="absolute rounded-sm shadow-sm border-t border-white/10 z-5 opacity-60 will-change-transform"
-                  style={{
-                    left: `${(d.x / CANVAS_WIDTH) * 100}%`,
-                    bottom: `${((CANVAS_HEIGHT - d.y - BLOCK_HEIGHT) / CANVAS_HEIGHT) * 100}%`,
-                    width: `${(d.width / CANVAS_WIDTH) * 100}%`,
-                    height: `${((BLOCK_HEIGHT - 1) / CANVAS_HEIGHT) * 100}%`,
-                    backgroundColor: d.color,
-                    transform: `rotate(${d.rotation}deg)`,
-                  }}
+                  key={piece.key}
+                  className="absolute rounded-sm border-t border-white/10 z-5 opacity-60 will-change-transform"
+                  style={piece.style}
                 />
               ))}
             </div>
@@ -424,7 +447,7 @@ export const HeightsCanvas = memo(
 
           <div className="absolute -bottom-8 left-0 right-0 flex justify-center">
             <div className="flex gap-4 opacity-20">
-              {[1, 2, 3, 4, 5].map((i) => (
+              {ARROW_MARKERS.map((i) => (
                 <ArrowUp key={i} size={16} />
               ))}
             </div>

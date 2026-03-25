@@ -23,7 +23,7 @@ import { usePriceData } from "@/hooks/usePriceData";
 
 interface BalanceCardProps {
   account: AccountExt;
-  onTransfer: () => void;
+  onTransfer: (currency: "STEEM" | "SBD") => void;
   onPowerUp: () => void;
   onPowerDown: () => void;
   onDelegate: () => void;
@@ -161,7 +161,7 @@ export const BalanceCard = ({
                   color="primary"
                   className="flex-1 font-semibold text-xs h-8"
                   startContent={<ArrowUpRight size={14} />}
-                  onPress={onTransfer}
+                  onPress={() => onTransfer("STEEM")}
                 >
                   Transfer
                 </Button>
@@ -210,7 +210,7 @@ export const BalanceCard = ({
                   color="success"
                   className="flex-1 font-semibold text-xs h-8"
                   startContent={<ArrowUpRight size={14} />}
-                  onPress={onTransfer}
+                  onPress={() => onTransfer("SBD")}
                 >
                   Transfer
                 </Button>

@@ -28,6 +28,7 @@ interface TransferModalProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   initialRecipient?: string;
+  initialCurrency: Currencies;
 }
 
 type Currencies = "STEEM" | "SBD";
@@ -36,6 +37,7 @@ export const TransferModal = ({
   isOpen,
   onOpenChange,
   initialRecipient,
+  initialCurrency,
 }: TransferModalProps) => {
   const { data: session } = useSession();
   const lognData = useAppSelector((s) => s.loginReducer.value);
@@ -45,7 +47,7 @@ export const TransferModal = ({
   );
 
   const [amount, setAmount] = useState("");
-  const [currency, setCurrency] = useState<Currencies>("STEEM");
+  const [currency, setCurrency] = useState<Currencies>(initialCurrency);
   const [memo, setMemo] = useState("");
   const [convertAmount, setConvertAmount] = useState("");
   const [isPending, setIsPending] = useState(false);
@@ -63,6 +65,12 @@ export const TransferModal = ({
       setRecipient("");
     }
   }, [isOpen, initialRecipient]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setCurrency(initialCurrency);
+    }
+  }, [isOpen, initialCurrency]);
 
   // State for exchange validation
   const [validationResult, setValidationResult] = useState({

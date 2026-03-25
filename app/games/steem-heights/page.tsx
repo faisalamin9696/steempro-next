@@ -17,18 +17,18 @@ const SteemHeightsPage = () => {
   const pathname = usePathname();
   const t = useTranslations("Games.steemHeights");
 
-  // useEffect(() => {
-  //   disableDevtool({
-  //     detectors: [5, 6, 7],
-  //     url: "not_found",
-  //     clearIntervalWhenDevOpenTrigger: true,
-  //     disableMenu: false,
-  //     clearLog: true,
-  //     ignore: () => {
-  //       return pathname !== "/games/steem-heights"; // Disable is ignored when you are an administrator
-  //     },
-  //   });
-  // }, [pathname]);
+  useEffect(() => {
+    disableDevtool({
+      detectors: [5, 6, 7],
+      url: "not_found",
+      clearIntervalWhenDevOpenTrigger: true,
+      disableMenu: false,
+      clearLog: true,
+      ignore: () => {
+        return pathname !== "/games/steem-heights"; // Disable is ignored when you are an administrator
+      },
+    });
+  }, [pathname]);
 
   const scrollToLeaderboard = () => {
     leaderboardRef.current?.scrollIntoView({ behavior: "smooth" });

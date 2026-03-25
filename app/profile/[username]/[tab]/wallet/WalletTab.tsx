@@ -46,6 +46,10 @@ const WalletTab = ({ account }: { account: AccountExt }) => {
   const [initialTransferRecipient, setInitialTransferRecipient] = useState<
     string | undefined
   >(undefined);
+
+  const [initialTransferCurrency, setInitialTransferCurrency] = useState<
+    "STEEM" | "SBD"
+  >("STEEM");
   const [initialPowerUpRecipient, setInitialPowerUpRecipient] = useState<
     string | undefined
   >(undefined);
@@ -75,8 +79,9 @@ const WalletTab = ({ account }: { account: AccountExt }) => {
             {/* Balance and Actions */}
             <BalanceCard
               account={account}
-              onTransfer={() => {
+              onTransfer={(currency) => {
                 setInitialTransferRecipient(getTarget());
+                setInitialTransferCurrency(currency);
                 setShowTransferModal(true);
               }}
               onPowerUp={() => {
@@ -156,6 +161,7 @@ const WalletTab = ({ account }: { account: AccountExt }) => {
 
       {/* Modals */}
       <TransferModal
+        initialCurrency={initialTransferCurrency}
         isOpen={showTransferModal}
         onOpenChange={setShowTransferModal}
         initialRecipient={initialTransferRecipient}

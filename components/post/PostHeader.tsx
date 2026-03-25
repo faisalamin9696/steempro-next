@@ -119,14 +119,14 @@ function PostHeader({
             <span className="text-muted">{"in"}</span>
             <Link
               href={`/trending/${category}`}
-              className="font-semibold hover:underline text-default-900"
+              className="font-semibold hover:underline text-muted"
             >
               {communityName}
             </Link>
           </span>
           <span
             title={moment.unix(created).toLocaleString()}
-            className="flex flex-row gap-2 items-center text-muted"
+            className="flex flex-row gap-2 items-center text-default-400"
           >
             • {moment.unix(created).fromNow()}
             {!!comment.is_pinned && (
