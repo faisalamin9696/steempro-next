@@ -84,6 +84,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "always",
       priority: 0.8,
     },
+    {
+      url: `${baseUrl}/shorts`,
+      lastModified,
+      changeFrequency: "always",
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/shorts/submit`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
   ];
 
   return staticPages;

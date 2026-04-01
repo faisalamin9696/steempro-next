@@ -12,14 +12,15 @@ import { Alert } from "@heroui/alert";
 import { Chip } from "@heroui/chip";
 import SubmitPage from "@/app/submit/page";
 import NsfwOverlay from "@/components/nsfw/NsfwOverlay";
-import { hasNsfwTag } from "@/utils";
+import { hasNsfwTag, isSteemProShort } from "@/utils";
 import { trackPostView } from "@/utils/track-view";
 import { scrollToWithOffset } from "@/utils/helper";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
-import { CircleSlash2 } from "lucide-react";
+import { CircleSlash2, Video } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Button } from "@heroui/button";
 
 export default function PostPage({
   initAuthor,
@@ -132,7 +133,7 @@ export default function PostPage({
     );
   }
 
-  const tags =
+  const tags: string[] =
     typeof JSON.parse(commentData.json_metadata)?.tags === "string"
       ? []
       : JSON.parse(commentData.json_metadata)?.tags || [];
@@ -203,9 +204,24 @@ export default function PostPage({
                 isTranslated={isTranslated}
               />
               {!edit && (
-                <h1 className="text-3xl font-bold">
-                  {translatedTitle || commentData.title}
-                </h1>
+                <div className="flex flex-col gap-4 w-full">
+                  <h1 className="text-3xl font-bold font-heading">
+                    {translatedTitle || commentData.title}
+                  </h1>
+                  {isSteemProShort(commentData) && (
+                    <Button
+                      as={Link}
+                      href={`/shorts/@${commentData.author}/${commentData.permlink}`}
+                      color="primary"
+                      variant="shadow"
+                      className="w-fit font-bold shadow-lg"
+                      startContent={<Video size={20} />}
+                      size="md"
+                    >
+                      Watch Short
+                    </Button>
+                  )}
+                </div>
               )}
             </div>
 
@@ -224,12 +240,16 @@ export default function PostPage({
                     isNsfw={hasNsfwTag(commentData)}
                     placement="start"
                   >
-                    <MarkdownViewer body={translatedBody || commentData.body} />
+                    <MarkdownViewer
+                      body={translatedBody || commentData.body}
+                      isShort={isSteemProShort(commentData)}
+                      shortsUrl={`/shorts/@${commentData.author}/${commentData.permlink}`}
+                    />
                   </NsfwOverlay>
 
                   <div
                     className={twMerge(
-                      "flex md:hidden flex-row w-full sticky bottom-16 justify-center p-1 z-10",
+                      "flex md:hidden flex-row w-full sticky bottom-18 justify-center p-1 z-10",
                       "overflow-visible border-1 border-default-900/15 rounded-xl backdrop-blur-sm bg-background/50",
                     )}
                   >

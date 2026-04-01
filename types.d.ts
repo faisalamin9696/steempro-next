@@ -74,6 +74,9 @@ type Post = Feed & {
   votes: string[];
   parent_link_id: number;
 };
+interface ShortVideo extends Feed {
+  videoUrl?: string;
+}
 
 type KeyTypes = {
   POSTING: "POSTING";

@@ -38,16 +38,26 @@ const TagsInput = ({
   };
 
   const addTag = () => {
-    const tag = inputValue.trim().toLowerCase();
-    const invalid = validateTags([...tags, tag].join(" "));
+    // Split input into potential multiple tags, trim each, and strip leading '#'
+    const rawTags = inputValue.split(/[ ,]/).filter((t) => t.trim() !== "");
+    const cleanedTags = rawTags.map((t) =>
+      t.trim().toLowerCase().replace(/^#+/, ""),
+    );
 
+    if (cleanedTags.length === 0) return;
+
+    // Check for invalid tags using the first one as representative or joining them
+    const invalid = validateTags([...tags, ...cleanedTags].join(" "));
     if (invalid) {
       toast.info(invalid);
       return;
     }
 
-    if (tag && !tags.includes(tag)) {
-      onChange([...tags, ...tag.split(" ")]);
+    // Filter out tags that are already in the list
+    const newTags = cleanedTags.filter((t) => !tags.includes(t));
+
+    if (newTags.length > 0) {
+      onChange([...tags, ...newTags]);
       onInputValueChange("");
     }
   };

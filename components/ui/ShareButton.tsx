@@ -21,7 +21,7 @@ const ShareButton = ({
     <>
       <Button
         {...props}
-        startContent={<Share size={20} />}
+        startContent={props.startContent || <Share size={20} />}
         onPress={() => setIsShareOpen(!isShareOpen)}
       >
         {buttonTitle}

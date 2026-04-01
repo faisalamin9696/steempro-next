@@ -23,5 +23,19 @@
     "display": "standalone",
     "start_url": "/",
     "theme_color": "#01060c",
-    "background_color": "#01060c"
+    "background_color": "#01060c",
+    "shortcuts": [
+        {
+            "name": "Shorts",
+            "url": "/shorts",
+            "description": "Watch trending shorts"
+           
+        },
+        {
+            "name": "Create Short",
+            "url": "/shorts/submit",
+            "description": "Create a new short"
+           
+        }
+    ]
 }

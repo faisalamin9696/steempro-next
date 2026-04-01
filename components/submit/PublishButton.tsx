@@ -36,6 +36,8 @@ interface BaseProps extends Omit<ButtonProps, "title"> {
   title: string;
   body: string;
   tags: string[];
+  requiredTags?: string[];
+  extraMetadata?: Record<string, any>;
   beneficiaries: Beneficiary[];
   payoutType: Payout;
   community?: Community;
@@ -43,6 +45,7 @@ interface BaseProps extends Omit<ButtonProps, "title"> {
   isEdit?: boolean;
   onPending: (isPending: boolean) => void;
   isReply?: boolean;
+  isShort?: boolean;
   setTags?: (tags: string[]) => void;
   pendingTag?: string;
   setPendingTag?: (value: string) => void;
@@ -69,6 +72,8 @@ function PublishButton(props: Props) {
     title = "",
     body,
     tags,
+    requiredTags,
+    extraMetadata,
     beneficiaries,
     payoutType,
     community,
@@ -77,6 +82,7 @@ function PublishButton(props: Props) {
     onPublished,
     isEdit = false,
     isReply = false,
+    isShort = false,
     setTags,
     pendingTag,
     setPendingTag,
@@ -117,7 +123,8 @@ function PublishButton(props: Props) {
       return false;
     }
 
-    const normalizedTags = tags.filter(
+    const combinedForValidation = [...(requiredTags || []), ...tags];
+    const normalizedTags = combinedForValidation.filter(
       (t) => t && t !== " " && t !== community?.account,
     );
 
@@ -161,9 +168,12 @@ function PublishButton(props: Props) {
     }
 
     const tagsToUse = overrideTags || tags;
-    const normalizedTags = tagsToUse.filter(
-      (t) => t && t !== community?.account,
-    );
+    
+    // Add required tags at the start -> filter valid ones -> deduplicate -> trim to 8
+    const combinedTags = [...(requiredTags || []), ...tagsToUse];
+    const normalizedTags = Array.from(new Set(combinedTags))
+      .filter((t) => t && t.trim() !== "" && t !== community?.account)
+      .slice(0, 8);
 
     const parent_permlink = isReply
       ? comment!.permlink
@@ -171,7 +181,13 @@ function PublishButton(props: Props) {
         ? community.account
         : normalizedTags[0] || "steempro";
 
-    const cleanBody = sanitizeBody(body);
+    let cleanBody = sanitizeBody(body);
+    if (isShort) {
+      cleanBody = cleanBody.replace(
+        /SHORTS_URL/g,
+        `/shorts/@${author}/${permlink}`,
+      );
+    }
 
     let postData: PostingContent = {
       author,
@@ -180,9 +196,12 @@ function PublishButton(props: Props) {
       parent_author: isReply ? comment!.author : "",
       parent_permlink,
       permlink,
-      json_metadata: isReply
-        ? makeJsonMetadataReply()
-        : makeJsonMetadata(extractMetadata(cleanBody), normalizedTags),
+      json_metadata: {
+        ...(isReply
+          ? makeJsonMetadataReply()
+          : makeJsonMetadata(extractMetadata(cleanBody), normalizedTags)),
+        ...extraMetadata,
+      },
     };
 
     if (isEdit && comment) {
@@ -194,13 +213,16 @@ function PublishButton(props: Props) {
       postData.parent_author = comment.parent_author;
       postData.parent_permlink = comment.parent_permlink;
 
-      postData.json_metadata = isReply
-        ? JSON.parse(comment.json_metadata)
-        : makeJsonMetadataForUpdate(
-            JSON.parse(comment.json_metadata || "{}"),
-            extractMetadata(cleanBody),
-            normalizedTags,
-          );
+      postData.json_metadata = {
+        ...(isReply
+          ? JSON.parse(comment.json_metadata)
+          : makeJsonMetadataForUpdate(
+              JSON.parse(comment.json_metadata || "{}"),
+              extractMetadata(cleanBody),
+              normalizedTags,
+            )),
+        ...extraMetadata,
+      };
 
       postData.title = title.trim();
     }

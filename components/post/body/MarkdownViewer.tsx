@@ -24,6 +24,8 @@ interface MarkdownViewerProps {
   breaks?: boolean;
   isProxifyImages?: boolean;
   isNsfw?: boolean;
+  isShort?: boolean;
+  shortsUrl?: string;
 }
 
 const MarkdownViewer = memo(function MarkdownViewer({
@@ -36,6 +38,8 @@ const MarkdownViewer = memo(function MarkdownViewer({
   breaks = true,
   isProxifyImages,
   isNsfw = false,
+  isShort = false,
+  shortsUrl,
 }: MarkdownViewerProps) {
   const [allowNoImage, setAllowNoImage] = useState(noImage);
 
@@ -161,7 +165,12 @@ const MarkdownViewer = memo(function MarkdownViewer({
         className,
       )}
     >
-      <BodyParsed body={cleanText} isNsfw={isNsfw} />
+      <BodyParsed
+        body={cleanText}
+        isNsfw={isNsfw}
+        isShort={isShort}
+        shortsUrl={shortsUrl}
+      />
 
       {noImageActive && allowNoImage && (
         <div

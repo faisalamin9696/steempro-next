@@ -4,7 +4,8 @@ import { useState } from "react";
 import { Image as HeroImage } from "@heroui/image";
 import { twMerge } from "tailwind-merge";
 import NextImage from "next/image";
-import { Image, ImageOff } from "lucide-react";
+import Link from "next/link";
+import { Image, ImageOff, Play } from "lucide-react";
 import { Progress } from "@heroui/progress";
 
 interface CustomImageProps {
@@ -19,6 +20,8 @@ interface CustomImageProps {
   fetchPriority?: "low" | "high" | "auto";
   quality?: number;
   priority?: boolean;
+  isShort?: boolean;
+  shortsUrl?: string;
 }
 
 function BodyImage({
@@ -33,6 +36,8 @@ function BodyImage({
   fetchPriority = "auto",
   quality = 75,
   priority = false,
+  isShort = false,
+  shortsUrl
 }: CustomImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -110,7 +115,7 @@ function BodyImage({
           alt={alt}
           width={0}
           height={0}
-          isZoomed
+          isZoomed={!isShort}
           className={twMerge(
             `z-0 rounded-lg transition-all duration-500 cursor-zoom-in group-hover:opacity-90 ${
               !priority && isLoading ? "opacity-0" : "opacity-100"
@@ -122,7 +127,10 @@ function BodyImage({
           onErrorCapture={handleError}
           onLoadCapture={handleLoad}
           removeWrapper
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            if (isShort) return;
+            setIsModalOpen(true);
+          }}
           style={{
             objectFit: "cover",
             width,
@@ -135,12 +143,22 @@ function BodyImage({
           disableAnimation={priority}
           loading={priority ? "eager" : "lazy"}
         />
-        {!isLoading && (
+        {!isLoading && !isShort && (
           <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none">
             <div className="p-1.5 bg-black/50 backdrop-blur-md rounded-full text-white/80">
               <Image size={14} />
             </div>
           </div>
+        )}
+        {!isLoading && isShort && (
+          <Link
+            href={shortsUrl || ""}
+            className="absolute inset-0 flex items-center justify-center z-20 transition-opacity duration-300 group/play"
+          >
+            <div className="p-4 bg-primary/80 backdrop-blur-md rounded-full shadow-2xl ring-2 ring-white/20 transition-all duration-300 group-hover/play:scale-110 group-hover/play:bg-primary">
+              <Play size={40} className="text-white fill-white ml-1" />
+            </div>
+          </Link>
         )}
       </div>
 

@@ -11,6 +11,8 @@ export const Constants = {
     "https://steemitimages.com",
     //  "https://images.steempro.com"
   ],
+  ipfs_gateway: "https://cloud.steempro.com",
+  shorts_tag: "shorts",
   mobile_app_link:
     "https://play.google.com/store/apps/details?id=com.steempro.mobile",
   official_email: "steempro.official@gmail.com",
@@ -32,11 +34,10 @@ export const Constants = {
     "https://api.steemit.com",
     "https://api.steemyy.com",
     "https://api.steempro.com",
-    "https://rpc.amarbangla.net",
     "https://steemapi.boylikegirl.club",
-    "https://api.steem-fanbase.com",
     "https://api.steemitdev.com",
     "https://api.steem.fans",
+    "https://rpc.amarbangla.net",
   ],
   chain_timeout: 5000,
   wallet_key_types: {

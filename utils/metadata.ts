@@ -442,6 +442,110 @@ export const getMetadata = {
       },
     };
   },
+  explorer: () => {
+    const pageTitle = "Blockchain Explorer - Real-time Steem Data | SteemPro";
+    const pageDescription =
+      "Explore the Steem blockchain in real-time. Browse blocks, lookup accounts, view transactions, and monitor global chain properties with SteemPro's advanced explorer.";
+    const url = "https://www.steempro.com/explorer";
+
+    return {
+      title: pageTitle,
+      description: pageDescription,
+      keywords: [
+        "steem explorer",
+        "blockchain explorer",
+        "steem blocks",
+        "steem transactions",
+        "steem account lookup",
+        "real-time blockchain data",
+        "steem stats",
+      ],
+      alternates: {
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [DEFAULT_IMAGE],
+      },
+    };
+  },
+  shorts: () => {
+    const pageTitle = "Steem Shorts - Explore Short Videos on Steem";
+    const pageDescription =
+      "Watch and share trending short videos on the Steem blockchain. Experience decentralized entertainment with SteemPro Shorts.";
+    const url = "https://www.steempro.com/shorts";
+
+    return {
+      title: pageTitle,
+      description: pageDescription,
+      keywords: [
+        "Steem Shorts",
+        "vertical videos",
+        "blockchain videos",
+        "SteemPro video platform",
+        "decentralized entertainment",
+        "Steem content creators",
+        "Web3 shorts",
+      ],
+      alternates: {
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [DEFAULT_IMAGE],
+      },
+    };
+  },
+  shortsSubmit: () => {
+    const pageTitle = "Shorts Studio - Create and Publish Vertical Videos";
+    const pageDescription =
+      "Create, edit, and publish your vertical shorts on the Steem blockchain. Turn your videos into decentralized content with the SteemPro Shorts Studio.";
+    const url = "https://www.steempro.com/shorts/submit";
+
+    return {
+      title: pageTitle,
+      description: pageDescription,
+      keywords: [
+        "Create Steem Shorts",
+        "Shorts Studio",
+        "video upload Steem",
+        "publish vertical videos",
+        "SteemPro creator tools",
+        "blockchain video studio",
+      ],
+      alternates: {
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [DEFAULT_IMAGE],
+      },
+    };
+  },
 
   proposalAsync: async (id: string) => {
     try {
@@ -776,41 +880,6 @@ export const getMetadata = {
       description: pageDescription,
       keywords:
         "privacy policy SteemPro, privacy and policy, key management, security",
-      alternates: {
-        canonical: url,
-      },
-      openGraph: {
-        title: pageTitle,
-        description: pageDescription,
-        url: url,
-        images: [DEFAULT_IMAGE],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: pageTitle,
-        description: pageDescription,
-        images: [DEFAULT_IMAGE],
-      },
-    };
-  },
-  explorer: () => {
-    const pageTitle = "Blockchain Explorer - Real-time Steem Data | SteemPro";
-    const pageDescription =
-      "Explore the Steem blockchain in real-time. Browse blocks, lookup accounts, view transactions, and monitor global chain properties with SteemPro's advanced explorer.";
-    const url = "https://www.steempro.com/explorer";
-
-    return {
-      title: pageTitle,
-      description: pageDescription,
-      keywords: [
-        "steem explorer",
-        "blockchain explorer",
-        "steem blocks",
-        "steem transactions",
-        "steem account lookup",
-        "real-time blockchain data",
-        "steem stats",
-      ],
       alternates: {
         canonical: url,
       },

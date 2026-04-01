@@ -26,6 +26,35 @@ class SdsApi {
     );
   }
 
+  getSteemShorts(
+    observer: string | null = "steem",
+    limit: number = 50,
+    offset: number = 0,
+  ): Promise<Feed[]> {
+    return this.getFeedByApiPath(
+      `getCommunityPostsByTagCreated/${Constants.official_community}/${Constants.shorts_tag}`,
+      observer,
+      limit,
+      offset,
+      500,
+    );
+  }
+
+  getSteemShortsByAuthor(
+    author: string,
+    observer: string | null = "steem",
+    limit: number = 50,
+    offset: number = 0,
+  ): Promise<Feed[]> {
+    return this.getFeedByApiPath(
+      `getCommunityPostsByTagAuthor/${Constants.official_community}/${Constants.shorts_tag}/${author}`,
+      observer,
+      limit,
+      offset,
+      500,
+    );
+  }
+
   getGameSeasons(game: "steem-heights", limit: number = 100): Promise<Feed[]> {
     const length = 500;
     return sdsFetcher(

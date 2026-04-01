@@ -7,12 +7,16 @@ interface ImageButtonProps extends ButtonProps {
   onImagesSelected: (files: File[]) => void;
   iconSize?: number;
   progress?: number;
+  hideProgress?: boolean;
+  hideIcon?: boolean;
 }
 
 const ImageUploadButton = ({
   onImagesSelected,
   iconSize = 18,
   progress,
+  hideProgress = false,
+  hideIcon = false,
   ...props
 }: ImageButtonProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -40,7 +44,7 @@ const ImageUploadButton = ({
         onChange={handleFileChange}
         className="hidden"
       />
-      {progress ? (
+      {progress && !hideProgress ? (
         <CircularProgress
           aria-label="Uploading..."
           color="default"
@@ -56,7 +60,8 @@ const ImageUploadButton = ({
           type="button"
           {...props}
         >
-          <ImageUp size={iconSize} />
+          {!hideIcon && <ImageUp size={iconSize} />}
+          {props.children}
         </Button>
       )}
     </>

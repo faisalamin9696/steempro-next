@@ -51,7 +51,7 @@ function PostVoteButton(props: Props) {
       addCommentHandler({
         ...comment,
         status,
-      })
+      }),
     );
 
     try {
@@ -63,7 +63,7 @@ function PostVoteButton(props: Props) {
           comment.permlink,
           direction * weight * 100,
           key,
-          useKeychain
+          useKeychain,
         );
 
         const vote_value = calculateVoteValue(
@@ -71,7 +71,7 @@ function PostVoteButton(props: Props) {
           weight,
           globalProps.fund_per_rshare,
           globalProps.median_price,
-          isDownvote
+          isDownvote,
         );
 
         const power_usage = calculatePowerUsage(weight);
@@ -87,7 +87,7 @@ function PostVoteButton(props: Props) {
             observer_vote: isRemoved ? 0 : direction,
             observer_vote_percent: isRemoved ? 0 : direction * weight,
             payout: comment.payout + vote_value,
-          })
+          }),
         );
 
         const power_key = isDownvote
@@ -98,9 +98,9 @@ function PostVoteButton(props: Props) {
           addLoginHandler({
             ...loginData,
             [power_key]: parseFloat(
-              (loginData[power_key] - power_usage).toFixed(3)
+              (loginData[power_key] - power_usage).toFixed(3),
             ),
-          })
+          }),
         );
 
         toast.success(isRemoved ? t("voteRemoved") : t("votedSuccessfully"));

@@ -19,6 +19,7 @@ interface SModalProps extends Omit<ModalProps, "title" | "children"> {
   footer?: RenderFn;
   children?: RenderFn;
   bodyClass?: string;
+  moveProps?: any;
 }
 
 function SModal({
@@ -28,33 +29,34 @@ function SModal({
   description,
   footer,
   bodyClass = "",
+  moveProps,
   ...props
 }: SModalProps) {
   const mergedBodyClass = useMemo(
     () => twMerge("mt-2", bodyClass),
-    [bodyClass]
+    [bodyClass],
   );
 
   const renderTitle = useCallback(
     (onClose: () => void) =>
       typeof title === "function" ? title(onClose) : title,
-    [title]
+    [title],
   );
 
   const renderDescription = useCallback(
     (onClose: () => void) =>
       typeof description === "function" ? description(onClose) : description,
-    [description]
+    [description],
   );
 
   const renderChildren = useCallback(
     (onClose: () => void) => children?.(onClose),
-    [children]
+    [children],
   );
 
   const renderFooter = useCallback(
     (onClose: () => void) => footer?.(onClose),
-    [footer]
+    [footer],
   );
 
   return (
@@ -66,7 +68,7 @@ function SModal({
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1 pb-0">
+            <ModalHeader {...moveProps} className="flex flex-col gap-1 pb-0">
               <div className="flex justify-between w-full">
                 <div className="space-y-1 w-full">
                   <h2 className="text-medium sm:text-lg font-semibold">

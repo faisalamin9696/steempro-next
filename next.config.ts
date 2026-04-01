@@ -6,6 +6,7 @@ const withNextIntl = createNextIntlPlugin();
 const nextConfig: NextConfig = {
   reactCompiler: true,
   cacheComponents: true,
+  allowedDevOrigins: ["192.168.1.100"],
   experimental: {
     turbopackFileSystemCacheForDev: true,
   },
@@ -34,8 +35,14 @@ const nextConfig: NextConfig = {
       // profile mapping with tab
       {
         source:
-          "/@:username/:tab(blog|posts|comments|replies|friends|wallet|notifications|communities|settings)",
+          "/@:username/:tab(blog|posts|comments|replies|friends|wallet|notifications|communities|settings|shorts)",
         destination: "/profile/:username/:tab",
+      },
+
+      // shorts mapping
+      {
+        source: "/shorts/@:author/:permlink",
+        destination: "/shorts/:author/:permlink",
       },
 
       // post mapping without tag

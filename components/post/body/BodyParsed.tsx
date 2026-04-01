@@ -7,9 +7,13 @@ import ProcessedLink from "./ProcessedLink";
 export function BodyParsed({
   body,
   isNsfw,
+  isShort,
+  shortsUrl,
 }: {
   body: string;
   isNsfw?: boolean;
+  isShort?: boolean;
+  shortsUrl?: string;
 }): React.ReactNode {
   let imageCount = 0;
   const options = {
@@ -26,6 +30,8 @@ export function BodyParsed({
               <BodyImage
                 src={attribs.src}
                 alt={attribs.alt}
+                isShort={isShort}
+                shortsUrl={shortsUrl}
                 priority={imageCount === 1}
               />
             );

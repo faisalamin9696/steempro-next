@@ -27,7 +27,7 @@ export const getExternalLinkWarningMessage = () => "Open external link";
 
 const noop = () => {};
 const DOMParser = new DOMParserClass({
-  errorHandler: { warning: noop, error: noop },
+  onError: noop,
 });
 const XMLSerializer = new XMLSerializerClass();
 
@@ -42,7 +42,7 @@ export default function (
   state.images = new Set();
   state.links = new Set();
   try {
-    const doc = DOMParser.parseFromString(preprocessHtml(html));
+    const doc = DOMParser.parseFromString(preprocessHtml(html), "text/xml");
 
     traverse(doc, state);
 
@@ -164,8 +164,10 @@ function iframe(state, child) {
   }
 
   child.parentNode.replaceChild(
-    DOMParser.parseFromString(`<div class="iframeWrapper">${html}</div>`)
-      .documentElement,
+    DOMParser.parseFromString(
+      `<div class="iframeWrapper">${html}</div>`,
+      "text/xml",
+    ).documentElement,
     child,
   );
   const styleAttr = document.createAttribute("style");
@@ -217,6 +219,7 @@ function proxifyImages(doc, state) {
                         alt="${alt}"
                     />
                 </a>`,
+            "text/xml",
           ).documentElement,
         );
         parentNode.removeChild(node);
@@ -281,6 +284,7 @@ function linkifyNode(child: any, state: any) {
 
       let newChild: any = DOMParser.parseFromString(
         `<span>${content}</span>`,
+        "text/xml",
       ).documentElement;
 
       if (!href) {
@@ -295,6 +299,7 @@ function linkifyNode(child: any, state: any) {
         const permlink = postMatch[4];
         newChild = DOMParser.parseFromString(
           `<span><a href="/${tag}/@${author}/${permlink}">@${author}/${permlink}</a></span>`,
+          "text/xml",
         ).documentElement;
       }
 
@@ -309,6 +314,7 @@ function linkifyNode(child: any, state: any) {
         if (author.indexOf("/") === -1) {
           newChild = DOMParser.parseFromString(
             `<span><a href="/@${author}">@${author}</a></span>`,
+            "text/xml",
           ).documentElement;
         }
       }
@@ -330,6 +336,7 @@ function linkifyNode(child: any, state: any) {
           const href = `/@${author}/${section}`;
           newChild = DOMParser.parseFromString(
             `<span><a href="${href}">@${author}/${section}</a></span>`,
+            "text/xml",
           ).documentElement;
         }
       }

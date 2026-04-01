@@ -5,6 +5,9 @@ interface CommonValues {
   isLoadingGlobals: boolean;
   unread_notifications_count: number;
   unread_count_chat: number;
+  isShortsMuted: boolean;
+  isShortsCollapsed: boolean;
+  shortsResolution: "auto" | "high" | "low";
 }
 
 interface CommonState {
@@ -17,6 +20,9 @@ const initialState: CommonState = {
     isLoadingGlobals: false,
     unread_notifications_count: 0,
     unread_count_chat: 0,
+    isShortsMuted: false, // Default to muted
+    isShortsCollapsed: false, // Default to expanded
+    shortsResolution: "auto", // Default to auto
   },
 };
 

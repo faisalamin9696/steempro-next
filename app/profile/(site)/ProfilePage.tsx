@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
 import { Accordion, AccordionItem } from "@heroui/accordion";
 import ProfileCard from "@/components/profile/ProfileCard";
 import STabs from "@/components/ui/STabs";
-import { Wallet, Users, Bell, Rss, Newspaper } from "lucide-react";
+import { Wallet, Users, Bell, Rss, Newspaper, Video } from "lucide-react";
 import NotificationsCard from "@/components/profile/NotificationsCard";
 import useFeedLayout from "@/hooks/useFeedLayout";
 import { addLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
@@ -18,6 +18,7 @@ import { FeedList } from "@/components/FeedList";
 import CommunitiesTab from "../[username]/[tab]/communities/page";
 import WalletTab from "../[username]/[tab]/wallet/WalletTab";
 import { useTranslations } from "next-intl";
+import { Constants } from "@/constants";
 
 const ICON_SIZE = 20;
 
@@ -35,7 +36,6 @@ function ProfilePage({ account }: { account: AccountExt }) {
   const isMobile = useSmaller("sm");
   const isMe = session?.user?.name === account.name;
   const profileData = isMe ? loginData : (otherProfileData ?? account);
-  const { layout, className } = useFeedLayout();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -57,7 +57,11 @@ function ProfilePage({ account }: { account: AccountExt }) {
 
   const profilePostsTab = useMemo(
     () => [
-      { id: "posts", title: t("tabs.posts"), api: "getPostsByAuthor" + apiParams },
+      {
+        id: "posts",
+        title: t("tabs.posts"),
+        api: "getPostsByAuthor" + apiParams,
+      },
       {
         id: "friends",
         title: t("tabs.friends"),
@@ -108,6 +112,16 @@ function ProfilePage({ account }: { account: AccountExt }) {
           </STabs>
         ),
       },
+
+      {
+        id: "shorts",
+        title: "Shorts",
+        api:
+          "getCommunityPostsByTagAuthor" +
+          `/${Constants.official_community}/${Constants.shorts_tag}/${username}`,
+        icon: <Video size={ICON_SIZE} />,
+      },
+
       {
         id: "notifications",
         title: t("tabs.notifications"),
@@ -147,7 +161,11 @@ function ProfilePage({ account }: { account: AccountExt }) {
           indicator: "text-foreground text-muted",
         }}
       >
-        <AccordionItem key="profile" aria-label="Profile details" title={t("about")}>
+        <AccordionItem
+          key="profile"
+          aria-label="Profile details"
+          title={t("about")}
+        >
           <ProfileCard
             account={profileData}
             classNames={{

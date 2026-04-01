@@ -25,11 +25,14 @@ import {
   User,
   Wallet,
   Zap,
+  Video,
+  FileText,
 } from "lucide-react";
 import ManageAccountsButton from "../auth/ManageAccountsButton";
 import { useState } from "react";
 import SearchModal from "../search/SearchModal";
 import { useTranslations } from "next-intl";
+import { usePathname } from "next/navigation";
 
 export async function refreshData(username?: string | null) {
   mutate("globals");
@@ -41,9 +44,12 @@ export async function refreshData(username?: string | null) {
 
 function SNavbar() {
   const t = useTranslations("Navbar");
+  const authT = useTranslations("Auth");
+
   const { data: session, status } = useSession();
   const isAuth = status === "authenticated";
   const [isSearchModal, setIsSearchModal] = useState(false);
+  const pathname = usePathname();
 
   // Optimize selector to only pick what we need?
   // Redux useSelector with object equality check might be better if performance is critical,
@@ -57,7 +63,14 @@ function SNavbar() {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 h-16 flex items-center px-4 border-b border-default-100/50 bg-background/70 backdrop-blur-xl supports-backdrop-filter:bg-background/60">
+      <nav
+        className={twMerge(
+          "sticky top-0 z-50 h-16 flex items-center px-4 border-b border-default-100/50 bg-background/70 backdrop-blur-xl supports-backdrop-filter:bg-background/60",
+
+          (pathname === "/shorts" || pathname === "/shorts/submit") &&
+            "hidden md:flex",
+        )}
+      >
         {/* LEFT */}
         <div className="flex items-center gap-3">
           <SDrawer />
@@ -87,7 +100,7 @@ function SNavbar() {
         </div>
 
         {/* RIGHT */}
-        <div className="ml-auto flex items-center gap-2 md:gap-3">
+        <div className="ml-auto flex items-center gap-3 md:gap-3">
           {/* Search Trigger */}
           <div
             className="hidden 1md:flex items-center gap-2 px-3 py-2 rounded-full bg-default-100/50 hover:bg-default-200/50 text-muted cursor-pointer transition-colors w-64 group"
@@ -101,25 +114,69 @@ function SNavbar() {
             isIconOnly
             variant="light"
             radius="full"
-            className="1md:hidden text-muted"
+            className="1md:hidden text-default-700"
             onPress={() => setIsSearchModal(true)}
           >
             <Search size={22} />
           </Button>
 
+          {/* Shorts Button */}
+          <Button
+            as={Link}
+            href="/shorts"
+            radius="full"
+            variant="flat"
+            color="secondary"
+            startContent={<Video size={18} />}
+          >
+            {"Shorts"}
+          </Button>
+
           {/* Create Button (Desktop) */}
           <div className="hidden md:flex">
-            <Button
-              as={Link}
-              href="/submit"
-              radius="full"
-              color="primary"
-              variant="shadow"
-              className="font-medium shadow-primary/20"
-              startContent={<Plus size={18} />}
+            <SPopover
+              placement="bottom-end"
+              trigger={
+                <Button
+                  radius="full"
+                  color="primary"
+                  variant="shadow"
+                  className="font-medium shadow-primary/20"
+                  startContent={<Plus size={18} />}
+                >
+                  {t("create")}
+                </Button>
+              }
             >
-              {t("create")}
-            </Button>
+              {(onClose) => (
+                <div className="w-48 p-1 flex flex-col gap-1">
+                  <Button
+                    as={Link}
+                    href="/submit"
+                    variant="light"
+                    className="justify-start h-11"
+                    onPress={onClose}
+                    startContent={
+                      <FileText size={18} className="text-primary" />
+                    }
+                  >
+                    {"Create Post"}
+                  </Button>
+                  <Button
+                    variant="light"
+                    className="justify-start h-11"
+                    as={Link}
+                    href="/shorts/submit"
+                    onPress={onClose}
+                    startContent={
+                      <Video size={18} className="text-secondary" />
+                    }
+                  >
+                    {"Create Short"}
+                  </Button>
+                </div>
+              )}
+            </SPopover>
           </div>
 
           {/* Notifications */}
@@ -165,7 +222,7 @@ function SNavbar() {
               isDisabled={status === "loading"}
               onPress={manageAccounts}
             >
-              {useTranslations("Auth")("login")}
+              {authT("login")}
             </Button>
           ) : (
             <SPopover

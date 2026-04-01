@@ -1,10 +1,11 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Provider as ReduxProvider } from "react-redux";
 import { SWRConfig } from "swr";
 import { store } from "@/hooks/redux/store";
-import { Next13ProgressBar, useRouter } from "next13-progressbar";
+import { Next13ProgressBar } from "next13-progressbar";
+import { usePathname, useRouter } from "next/navigation";
 import AppWrapper from "@/components/wrappers/AppWrapper";
 import { SessionProvider } from "next-auth/react";
 import { HeroUIProvider } from "@heroui/system";
@@ -15,6 +16,7 @@ import ScrollToTop from "@/components/ui/ScrollToTop";
 import LoadingCard from "@/components/ui/LoadingCard";
 import { ScrollToTopButton } from "@/components/ScrollToTopButton";
 import { Toaster } from "sonner";
+import { twMerge } from "tailwind-merge";
 
 import SNavbar from "@/components/navbar/SNavbar";
 import SDrawerContent from "@/components/navbar/SDrawerContent";
@@ -29,6 +31,7 @@ function Providers({
   session: Session | null;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -68,11 +71,23 @@ function Providers({
                   <MobileNavbar />
 
                   <div className="flex flex-row justify-start">
-                    <aside className="w-72 hidden sticky top-16 h-[calc(100vh-4rem)] shrink-0 xl:block border-e border-black/5 dark:border-white/5">
+                    <aside
+                      className={twMerge(
+                        "w-72 hidden sticky top-16 shrink-0 xl:block border-e border-black/5 dark:border-white/5",
+                        pathname === "/shorts"
+                          ? "h-[calc(100vh-4rem)] md:h-[calc(100vh-4rem)] md:top-16"
+                          : "h-[calc(100vh-4rem)]",
+                      )}
+                    >
                       <SDrawerContent />
                     </aside>
 
-                    <main className="px-0.5 w-full pb-20 md:pb-0">
+                    <main
+                      className={twMerge(
+                        "px-0.5 w-full",
+                        pathname === "/shorts" ? "pb-0" : "pb-20 md:pb-0",
+                      )}
+                    >
                       {children}
                     </main>
                   </div>

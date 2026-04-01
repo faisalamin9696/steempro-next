@@ -16,6 +16,23 @@ export function hasNsfwTag(content: Feed | Post) {
     /\b(nsfw|fuck|dick|anal|cock|penis|ass|porn|pornhub|xxx|hentai|hardcore|softcore|sexual|nude|camgirl|sex|vagina|boobs|booty|pussy|tits|blowjob|handjob|threesome|foursome|gangbang|orgasm|horny|sexy|nude)\b/i; // Add more NSFW words here
   const parsed = parsePostMeta(content.json_metadata);
   return nsfwRegex.test(
-    content.title?.toLowerCase() + JSON.stringify(parsed.tags) + content.body
+    content.title?.toLowerCase() + JSON.stringify(parsed.tags) + content.body,
   );
+}
+
+export function isSteemProShort(content: Feed | Post) {
+  try {
+    const meta = JSON.parse(content.json_metadata || "{}");
+    const tags = meta.tags || [];
+    const hasShortsTag = Array.isArray(tags)
+      ? tags.includes("shorts")
+      : tags === "shorts";
+    const hasVideo = !!meta.video;
+    const isCorrectParent =
+      content.category === "shorts" ||
+      content.category === Constants.official_community;
+    return hasShortsTag && hasVideo && isCorrectParent;
+  } catch {
+    return false;
+  }
 }
