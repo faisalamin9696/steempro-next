@@ -13,6 +13,7 @@ import "swiper/css";
 import "swiper/css/virtual";
 import { useRouter } from "next/navigation";
 import { twMerge } from "tailwind-merge";
+import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
 
 interface ShortVideo extends Feed {
   videoUrl?: string;
@@ -25,6 +26,7 @@ export default function ShortsPage({ author }: { author?: string }) {
   const { data: session } = useSession();
   const router = useRouter();
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
+  const { isMobile } = useDeviceInfo();
 
   const isFetching = useRef(false);
   const hasMore = useRef(true);
@@ -123,20 +125,15 @@ export default function ShortsPage({ author }: { author?: string }) {
             }}
             modules={[Mousewheel, A11y]}
             mousewheel={true}
-            slidesPerView={1.06}
-            spaceBetween={12}
+            slidesPerView={isMobile ? 1 : 1.06}
+            spaceBetween={isMobile ? 0 : 12}
             speed={400}
           >
             {shorts.map((short, index) => (
               <SwiperSlide
                 key={short.link_id}
                 virtualIndex={index}
-                className={twMerge(
-                  "w-full relative",
-                  activeVideoIndex === shorts.length - 1
-                    ? "pb-14 md:pb-0"
-                    : "pb-4 md:pb-0",
-                )}
+                className={twMerge("w-full relative", "pb-14 md:pb-0")}
               >
                 <ShortPlayer
                   short={short}

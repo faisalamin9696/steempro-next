@@ -84,7 +84,7 @@ function Providers({
 
                     <main
                       className={twMerge(
-                        "px-0.5 w-full",
+                        "w-full",
                         pathname === "/shorts" ? "pb-0" : "pb-20 md:pb-0",
                       )}
                     >

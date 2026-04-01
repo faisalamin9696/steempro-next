@@ -274,7 +274,7 @@ export default function ShortPlayer({
   }, [short.videoUrl, isActive]);
 
   return (
-    <div className="h-full w-full flex flex-col py-2 md:flex-row md:flex-nowrap md:items-end md:justify-center md:gap-4 md:px-4 md:pb-4">
+    <div className="h-full w-full flex flex-col py-0 md:py-2 md:flex-row md:flex-nowrap md:items-end md:justify-center md:gap-4 px-0 md:px-4 md:pb-4">
       {/* --- DESKTOP ONLY: Left Sidebar (Identity) --- */}
       <div
         className={twMerge(
@@ -291,7 +291,7 @@ export default function ShortPlayer({
       <div
         ref={containerRef}
         className={twMerge(
-          "shrink-0 h-full w-full md:max-w-[500px] rounded-2xl bg-zinc-900 group relative flex items-center justify-center overflow-hidden shadow-2xl shadow-black/40 border border-white/5 transition-all duration-500",
+          "shrink-0 h-full w-full md:max-w-[500px] rounded-none md:rounded-2xl bg-zinc-900 group relative flex items-center justify-center overflow-hidden shadow-sm shadow-black/40 border border-white/5 transition-all duration-500",
           !isActive && "brightness-50 grayscale-[0.2]",
         )}
         onClick={togglePlay}

@@ -68,7 +68,7 @@ export function validateIframeUrl(
   url: string,
   large = true,
   width: string | null = null,
-  height: string | null = null
+  height: string | null = null,
 ) {
   if (!url) {
     return {
@@ -90,7 +90,7 @@ export function validateIframeUrl(
       large,
       url,
       width,
-      height
+      height,
     );
     if (!iframeDimensions) {
       iframeDimensions = getIframeDimensions(large);
@@ -128,7 +128,7 @@ export function normalizeEmbedUrl(url) {
     const validEmbedUrl = callProviderMethod(
       provider,
       "normalizeEmbedUrlFn",
-      url
+      url,
     );
 
     if (validEmbedUrl === true) {
@@ -158,7 +158,7 @@ export function embedNode(child, links, images) {
       "embedNode",
       child,
       links,
-      images
+      images,
     );
     if (newChild) {
       child = newChild;
@@ -204,7 +204,7 @@ export function generateMd(section, idx, large) {
   let markdown = null;
   const supportedProvidersIds = getProviderIds();
   const regexString = `^([A-Za-z0-9\\?\\=\\_\\-\\/\\.]+) (${supportedProvidersIds.join(
-    "|"
+    "|",
   )})\\s?(.*?) ~~~`;
   const regex = new RegExp(regexString);
   const match = section.match(regex);
@@ -226,7 +226,7 @@ export function generateMd(section, idx, large) {
         provider,
         "getIframeDimensions",
         large,
-        id
+        id,
       );
       if (!iframeDimensions) {
         iframeDimensions = getIframeDimensions(large);
@@ -239,7 +239,7 @@ export function generateMd(section, idx, large) {
         id,
         iframeDimensions.width,
         iframeDimensions.height,
-        metadata
+        metadata,
       );
     } else {
       console.error("MarkdownViewer unknown embed type", type);
