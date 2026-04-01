@@ -25,7 +25,6 @@ export default function ShortsPlayer({
   shouldPreload,
 }: ShortPlayerProps) {
   const playerRef = useRef<any>(null);
-  const progressBarRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
   const [isPlaying, setIsPlaying] = useState(false);
@@ -129,42 +128,19 @@ export default function ShortsPlayer({
     [short.videoUrl, isMuted, isActive, shouldPreload],
   );
 
-  const seek = useCallback((e: React.PointerEvent | PointerEvent) => {
+  const onSeekChange = useCallback((val: number | number[]) => {
+    const v = Array.isArray(val) ? val[0] : val;
     const player = playerRef.current;
-    const bar = progressBarRef.current;
-    if (!player || !bar) return;
+    if (!player || typeof player.duration !== "function") return;
 
-    const rect = bar.getBoundingClientRect();
-    const x = ("clientX" in e ? e.clientX : (e as any).clientX) - rect.left;
-    const p = Math.max(0, Math.min(1, x / rect.width));
     const d = player.duration();
     if (d > 0) {
-      player.currentTime(p * d);
-      setProgress(p * 100);
+      player.currentTime((v / 100) * d);
+      setProgress(v);
     }
   }, []);
 
-  const handlePointerDown = useCallback(
-    (e: React.PointerEvent<HTMLDivElement>) => {
-      e.stopPropagation();
-      setIsSeeking(true);
-      seek(e);
-    },
-    [seek],
-  );
-
-  useEffect(() => {
-    if (!isSeeking) return;
-    const onPointerMove = (e: PointerEvent) => seek(e);
-    const onPointerUp = () => setIsSeeking(false);
-
-    window.addEventListener("pointermove", onPointerMove);
-    window.addEventListener("pointerup", onPointerUp);
-    return () => {
-      window.removeEventListener("pointermove", onPointerMove);
-      window.removeEventListener("pointerup", onPointerUp);
-    };
-  }, [isSeeking, seek]);
+  // --- Player Handlers ---
 
   const handlePlayerReady = useCallback(
     (player: any) => {
@@ -247,6 +223,22 @@ export default function ShortsPlayer({
           (player.tech({ IWillNotUseThisInPlugins: true }) as any)?.vhs;
         if (vhs && typeof vhs.representations === "function") {
           const levels = vhs.representations();
+
+          // ✅ Seek-Boost: Force highest resolution during seeker interaction
+          if (isHoveringBar) {
+            const highLevel = [...levels].sort(
+              (a: any, b: any) => b.height - a.height,
+            )[0];
+            if (highLevel) {
+              levels.forEach((rep: any) =>
+                rep.enabled(
+                  rep.id === highLevel.HighId || rep.id === highLevel.id,
+                ),
+              );
+              return;
+            }
+          }
+
           if (shortsResolution === "auto") {
             // Enable all for ABR
             levels.forEach((rep: any) => rep.enabled(true));
@@ -275,7 +267,7 @@ export default function ShortsPlayer({
         clearTimeout(t);
       };
     }
-  }, [isActive, shortsResolution]);
+  }, [isActive, shortsResolution, isHoveringBar]);
 
   // --- UI Interactivity ---
   useEffect(() => {
@@ -284,7 +276,7 @@ export default function ShortsPlayer({
     const resetTimer = () => {
       setIsUiVisible(true);
       clearTimeout(timeoutId);
-      if (isPlaying && !isHoveringVolume) {
+      if (isPlaying && !isHoveringVolume && !isHoveringBar) {
         timeoutId = setTimeout(() => setIsUiVisible(false), 3000);
       }
     };
@@ -299,7 +291,7 @@ export default function ShortsPlayer({
       window.removeEventListener("touchstart", resetTimer);
       clearTimeout(timeoutId);
     };
-  }, [isActive, isPlaying, isHoveringVolume]);
+  }, [isActive, isPlaying, isHoveringVolume, isHoveringBar]);
 
   const nsfw = useMemo(() => hasNsfwTag(commentData), [commentData]);
   // Generate a unique key for the video player
@@ -405,7 +397,13 @@ export default function ShortsPlayer({
           <div
             onMouseEnter={() => setIsHoveringVolume(true)}
             onMouseLeave={() => setIsHoveringVolume(false)}
-            className="flex flex-row-reverse items-center justify-end bg-black/40 rounded-full border border-white/10 backdrop-blur-md overflow-hidden group/volume transition-all max-w-10 hover:max-w-96 p-0 hover:p-1"
+            onPointerUp={() => setIsHoveringVolume(false)}
+            className={twMerge(
+              "flex flex-row-reverse items-center justify-end bg-black/40 rounded-full border border-white/10 backdrop-blur-md overflow-hidden transition-all duration-300",
+              isHoveringVolume
+                ? "md:max-w-96 max-w-10 md:p-1 p-0"
+                : "max-w-10 p-0",
+            )}
           >
             <Button
               isIconOnly
@@ -441,7 +439,7 @@ export default function ShortsPlayer({
                     }
               }
               transition={{ duration: 0.3 }}
-              className="flex items-center overflow-hidden h-10"
+              className="hidden md:flex items-center overflow-hidden h-10"
             >
               <Slider
                 size="sm"
@@ -461,7 +459,7 @@ export default function ShortsPlayer({
                 className="w-56"
                 classNames={{
                   track: "bg-white/20 h-1",
-                  thumb: "bg-white after:bg-white",
+                  thumb: "bg-white after:bg-white shadow-lg border-none",
                 }}
               />
             </motion.div>
@@ -500,33 +498,31 @@ export default function ShortsPlayer({
         </div>
 
         {/* --- Progress Bar --- */}
-        {/* Progress / Seek Bar */}
         <div
-          ref={progressBarRef}
+          onPointerUp={() => setIsHoveringBar(false)}
           className={twMerge(
-            "absolute bottom-2 left-3 right-3 z-40 cursor-pointer touch-none transition-all group-hover:h-2 h-1",
-            (isHoveringBar || isSeeking) && isActive ? "h-2" : "h-1",
-            !isActive && "opacity-10",
+            "absolute bottom-1 left-3 right-3 z-40 px-2 transition-opacity duration-500",
+            !isActive && "opacity-0 pointer-events-none",
           )}
-          onPointerDown={handlePointerDown}
-          onPointerMove={isSeeking ? (e) => seek(e) : undefined}
-          onPointerUp={() => setIsSeeking(false)}
-          onMouseEnter={() => setIsHoveringBar(true)}
-          onMouseLeave={() => setIsHoveringBar(false)}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="relative w-full h-full bg-white/20 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-primary transition-none rounded-full"
-              style={{ width: `${progress}%` }}
-            />
-            {(isHoveringBar || isSeeking) && isActive && (
-              <div
-                className="absolute top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white shadow-xl"
-                style={{ left: `${progress}%`, marginLeft: "-7px" }}
-              />
-            )}
-          </div>
+          <Slider
+            size="sm"
+            step={0.1}
+            maxValue={100}
+            minValue={0}
+            aria-label="Video progress"
+            value={progress}
+            onChange={onSeekChange}
+            onMouseEnter={() => setIsHoveringBar(true)}
+            onMouseLeave={() => setIsHoveringBar(false)}
+            classNames={{
+              track: isUiVisible && "h-2",
+              base: "max-w-full",
+              thumb:
+                "bg-white w-3 h-3 before:w-3! before:h-3! after:w-2! after:h-2! after:bg-white shadow-lg border-none",
+            }}
+          />
         </div>
       </div>
 
