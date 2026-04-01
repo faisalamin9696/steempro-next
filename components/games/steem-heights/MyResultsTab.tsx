@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, memo } from "react";
-import { ScrollShadow } from "@heroui/react";
+import { ScrollShadow } from "@heroui/scroll-shadow";
 import { HighScore } from "./Config";
 import {
   Trophy,

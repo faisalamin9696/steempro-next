@@ -11,7 +11,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Button } from "@heroui/button";
-import { Progress } from "@heroui/react";
+import { Progress } from "@heroui/progress";
 import type { StageEntry, StageCard } from "./types";
 
 interface Props {

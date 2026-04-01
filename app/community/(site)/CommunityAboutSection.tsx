@@ -1,7 +1,7 @@
 "use client";
 
 import CommunityCard from "@/components/community/CommunityCard";
-import { Accordion, AccordionItem } from "@heroui/react";
+import { Accordion, AccordionItem } from "@heroui/accordion";
 import { useTranslations } from "next-intl";
 
 function CommunityAboutSection({

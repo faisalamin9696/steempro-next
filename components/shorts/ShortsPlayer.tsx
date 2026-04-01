@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
-import { Volume2, VolumeX, Play, ChevronLeft } from "lucide-react";
+import { Volume2, VolumeX, Play, Pause } from "lucide-react";
 import { Button } from "@heroui/button";
-import ShortActions from "./ShortActions";
-import ShortOverlayInfo from "./ShortOverlayInfo";
+import ShortsActions from "./ShortsActions";
+import ShortsOverlayInfo from "./ShortsOverlayInfo";
 import { getThumbnail } from "@/utils/image";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
 import { addCommonDataHandler } from "@/hooks/redux/reducers/CommonReducer";
@@ -11,19 +11,18 @@ import NsfwOverlay from "../nsfw/NsfwOverlay";
 import { hasNsfwTag } from "@/utils";
 import { twMerge } from "tailwind-merge";
 import { motion, AnimatePresence } from "framer-motion";
+import { Slider } from "@heroui/slider";
 
 interface ShortPlayerProps {
   short: ShortVideo;
   isActive: boolean;
   shouldPreload?: boolean;
-  onBack?: () => void;
 }
 
-export default function ShortPlayer({
+export default function ShortsPlayer({
   short,
   isActive,
   shouldPreload,
-  onBack,
 }: ShortPlayerProps) {
   const playerRef = useRef<any>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
@@ -31,14 +30,17 @@ export default function ShortPlayer({
   const dispatch = useAppDispatch();
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
   const [isSeeking, setIsSeeking] = useState(false);
   const [isHoveringBar, setIsHoveringBar] = useState(false);
+  const [isHoveringVolume, setIsHoveringVolume] = useState(false);
   const [isUiVisible, setIsUiVisible] = useState(true);
   const [showMuteOverlay, setShowMuteOverlay] = useState(false);
 
   const isMuted = useAppSelector(
     (state) => state.commonReducer.values.isShortsMuted,
+  );
+  const shortsVolume = useAppSelector(
+    (state) => state.commonReducer.values.shortsVolume,
   );
   const shortsResolution = useAppSelector(
     (state) => state.commonReducer.values.shortsResolution,
@@ -101,11 +103,20 @@ export default function ShortPlayer({
       autoplay: false,
       controls: false,
       muted: isMuted,
-      preload: isActive ? "auto" : shouldPreload ? "metadata" : "none",
+      volume: shortsVolume,
+      preload: isActive || shouldPreload ? "auto" : "none",
       loop: true,
       responsive: true,
       fluid: false,
       disablePictureInPicture: true,
+      html5: {
+        vhs: {
+          overrideNative: true,
+        },
+        nativeVideoTracks: false,
+        nativeAudioTracks: false,
+        nativeTextTracks: false,
+      },
       sources: [
         {
           src: short?.videoUrl,
@@ -158,7 +169,7 @@ export default function ShortPlayer({
   const handlePlayerReady = useCallback(
     (player: any) => {
       playerRef.current = player;
-
+      player.volume(shortsVolume);
       player.poster(thumbnail || "");
       // player.one("playing", () => player.poster(""));
 
@@ -168,11 +179,8 @@ export default function ShortPlayer({
       }
 
       player.on("playing", () => {
-        setIsLoading(false);
         setIsPlaying(true);
       });
-      player.on("canplay", () => setIsLoading(false));
-      player.on("waiting", () => setIsLoading(true));
       player.on("pause", () => setIsPlaying(false));
       player.on("timeupdate", () => {
         const d = player.duration();
@@ -181,30 +189,6 @@ export default function ShortPlayer({
           const nextP = (c / d) * 100;
           setProgress((prev) => (Math.abs(prev - nextP) > 0.3 ? nextP : prev));
         }
-      });
-
-      player.on("loadedmetadata", () => {
-        try {
-          // Official VHS (Video.js HTTP Streaming) API for quality steering
-          const vhs =
-            player.vhs ||
-            (player.tech({ IWillNotUseThisInPlugins: true }) as any)?.vhs;
-          if (vhs && typeof vhs.representations === "function") {
-            if (shortsResolution !== "auto") {
-              const levels = vhs.representations();
-              const target =
-                shortsResolution === "high"
-                  ? [...levels].sort((a: any, b: any) => b.height - a.height)[0]
-                  : [...levels].sort(
-                      (a: any, b: any) => a.height - b.height,
-                    )[0];
-              if (target)
-                vhs.representations().forEach((rep: any) => {
-                  rep.enabled(rep.id === target.id);
-                });
-            }
-          }
-        } catch (e) {}
       });
 
       player.ready(() => {
@@ -229,12 +213,9 @@ export default function ShortPlayer({
     if (!player) return;
 
     if (isActive) {
-      const timer = setTimeout(() => {
-        if (player && !player.isDisposed?.()) {
-          player.play()?.catch(() => {});
-        }
-      }, 50);
-      return () => clearTimeout(timer);
+      if (player && !player.isDisposed?.()) {
+        player.play()?.catch(() => {});
+      }
     } else {
       if (typeof player.pause === "function" && !player.isDisposed?.()) {
         player.pause();
@@ -243,6 +224,59 @@ export default function ShortPlayer({
     }
   }, [isActive, shouldPreload]);
 
+  useEffect(() => {
+    const player = playerRef.current;
+    if (
+      player &&
+      typeof player.volume === "function" &&
+      !player.isDisposed?.()
+    ) {
+      player.volume(shortsVolume);
+    }
+  }, [shortsVolume]);
+
+  // ✅ Resolution Steering: Dynamically switch HLS levels
+  useEffect(() => {
+    const player = playerRef.current;
+    if (!player || player.isDisposed?.()) return;
+
+    const handleResolution = () => {
+      try {
+        const vhs =
+          player.vhs ||
+          (player.tech({ IWillNotUseThisInPlugins: true }) as any)?.vhs;
+        if (vhs && typeof vhs.representations === "function") {
+          const levels = vhs.representations();
+          if (shortsResolution === "auto") {
+            // Enable all for ABR
+            levels.forEach((rep: any) => rep.enabled(true));
+          } else {
+            const target =
+              shortsResolution === "high"
+                ? [...levels].sort((a: any, b: any) => b.height - a.height)[0]
+                : [...levels].sort((a: any, b: any) => a.height - b.height)[0];
+
+            if (target) {
+              levels.forEach((rep: any) => {
+                rep.enabled(rep.id === target.id);
+              });
+            }
+          }
+        }
+      } catch (e) {}
+    };
+
+    if (isActive) {
+      // Small delay to ensure TECH/VHS is initialized
+      const t = setTimeout(handleResolution, 500);
+      player.on("loadedmetadata", handleResolution);
+      return () => {
+        player.off("loadedmetadata", handleResolution);
+        clearTimeout(t);
+      };
+    }
+  }, [isActive, shortsResolution]);
+
   // --- UI Interactivity ---
   useEffect(() => {
     if (!isActive) return;
@@ -250,7 +284,7 @@ export default function ShortPlayer({
     const resetTimer = () => {
       setIsUiVisible(true);
       clearTimeout(timeoutId);
-      if (isPlaying) {
+      if (isPlaying && !isHoveringVolume) {
         timeoutId = setTimeout(() => setIsUiVisible(false), 3000);
       }
     };
@@ -265,33 +299,35 @@ export default function ShortPlayer({
       window.removeEventListener("touchstart", resetTimer);
       clearTimeout(timeoutId);
     };
-  }, [isActive, isPlaying]);
+  }, [isActive, isPlaying, isHoveringVolume]);
 
   const nsfw = useMemo(() => hasNsfwTag(commentData), [commentData]);
   // Generate a unique key for the video player
   const videoPlayerKey = useMemo(() => {
-    return `${short.videoUrl}-${isActive}`;
-  }, [short.videoUrl, isActive]);
+    return `${short.videoUrl}`;
+  }, [short.videoUrl]);
 
   return (
-    <div className="h-full w-full flex flex-col py-0 md:py-2 md:flex-row md:flex-nowrap md:items-end md:justify-center md:gap-4 px-0 md:px-4 md:pb-4">
-      {/* --- DESKTOP ONLY: Left Sidebar (Identity) --- */}
-      <div
-        className={twMerge(
-          "hidden xl:flex shrink-0 flex-col items-start justify-end h-full w-[240px] gap-4 pb-12 transition-all duration-700 pointer-events-auto",
-          !isActive
-            ? "opacity-0 translate-x-[-20px] pointer-events-none"
-            : "animate-in slide-in-from-left-8",
-        )}
-      >
-        <ShortOverlayInfo short={commentData} isSidebar />
+    <div className="h-full w-full flex py-0 md:py-2 flex-row items-end justify-center px-0 md:px-4 md:pb-4 overflow-hidden relative">
+      {/* 1. Left Sidebar Column (Center-relative Identity) */}
+      <div className="hidden md:flex flex-1 flex-col items-end justify-end h-full pb-12 pointer-events-none">
+        <div
+          className={twMerge(
+            "hidden xl:flex flex-col items-start w-full px-4 transition-all duration-700 pointer-events-auto",
+            !isActive
+              ? "opacity-0 translate-x-[-20px] pointer-events-none"
+              : "animate-in slide-in-from-left-8",
+          )}
+        >
+          <ShortsOverlayInfo short={commentData} isSidebar />
+        </div>
       </div>
 
       {/* Immersive Center Stage (Fixed 500px) */}
       <div
         ref={containerRef}
         className={twMerge(
-          "shrink-0 h-full w-full md:max-w-[500px] rounded-none md:rounded-2xl bg-zinc-900 group relative flex items-center justify-center overflow-hidden shadow-sm shadow-black/40 border border-white/5 transition-all duration-500",
+          "shrink-0 h-full w-full md:max-w-[500px] rounded-none md:rounded-2xl group relative flex items-center justify-center overflow-hidden shadow-sm shadow-black/40 border border-white/5 transition-all duration-500",
           !isActive && "brightness-50 grayscale-[0.2]",
         )}
         onClick={togglePlay}
@@ -307,7 +343,7 @@ export default function ShortPlayer({
         {/* Unified High-Fidelity Interaction Overlay */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
           <AnimatePresence mode="popLayout">
-            {((!isPlaying && !isLoading && isActive) || showMuteOverlay) && (
+            {((!isPlaying && isActive) || showMuteOverlay) && (
               <motion.div
                 key="interaction-overlay"
                 initial={{ opacity: 0, scale: 0.8, y: 10 }}
@@ -317,7 +353,7 @@ export default function ShortPlayer({
                 className="flex flex-row items-center gap-8 p-4 bg-black/40 backdrop-blur-md rounded-full border border-white/10 shadow-2xl"
               >
                 {/* Play/Pause Status */}
-                {!isPlaying && !isLoading && isActive && !showMuteOverlay && (
+                {isActive && !showMuteOverlay && (
                   <motion.div
                     initial={{ x: -10, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
@@ -345,7 +381,7 @@ export default function ShortPlayer({
             )}
 
             {/* Global Loading Spinner */}
-            {isLoading && isActive && (
+            {/* {isLoading && isActive && (
               <motion.div
                 key="loading-spinner"
                 initial={{ opacity: 0 }}
@@ -355,25 +391,90 @@ export default function ShortPlayer({
               >
                 <div className="w-14 h-14 border-4 border-white/20 border-t-white rounded-full animate-spin shadow-xl" />
               </motion.div>
-            )}
+            )} */}
           </AnimatePresence>
         </div>
 
-        {/* Toolbar: Right side floating buttons */}
         <div
           className={twMerge(
-            "absolute top-4 right-4 z-20 flex flex-col gap-3 transition-opacity duration-500",
+            "absolute top-4 right-4 z-20 flex flex-col items-end gap-3 transition-all duration-500",
             (!isUiVisible || !isActive) && "opacity-0",
           )}
         >
+          {/* Volume Control Horizontal Group */}
+          <div
+            onMouseEnter={() => setIsHoveringVolume(true)}
+            onMouseLeave={() => setIsHoveringVolume(false)}
+            className="flex flex-row-reverse items-center justify-end bg-black/40 rounded-full border border-white/10 backdrop-blur-md overflow-hidden group/volume transition-all max-w-10 hover:max-w-96 p-0 hover:p-1"
+          >
+            <Button
+              isIconOnly
+              radius="full"
+              variant="light"
+              className="text-white min-w-0"
+              onClick={(e) => toggleMute(e as any)}
+            >
+              {isMuted || shortsVolume === 0 ? (
+                <VolumeX size={18} />
+              ) : (
+                <Volume2 size={18} />
+              )}
+            </Button>
+
+            <motion.div
+              initial={false}
+              animate={
+                isHoveringVolume
+                  ? {
+                      width: 250,
+                      opacity: 1,
+                      marginRight: 8,
+                      paddingLeft: 4,
+                      paddingRight: 4,
+                    }
+                  : {
+                      width: 0,
+                      opacity: 0,
+                      marginRight: 0,
+                      paddingLeft: 0,
+                      paddingRight: 0,
+                    }
+              }
+              transition={{ duration: 0.3 }}
+              className="flex items-center overflow-hidden h-10"
+            >
+              <Slider
+                size="sm"
+                step={0.01}
+                maxValue={1}
+                minValue={0}
+                aria-label="Volume"
+                value={isMuted ? 0 : shortsVolume}
+                onChange={(val) => {
+                  dispatch(
+                    addCommonDataHandler({
+                      shortsVolume: val as number,
+                      isShortsMuted: val === 0,
+                    }),
+                  );
+                }}
+                className="w-56"
+                classNames={{
+                  track: "bg-white/20 h-1",
+                  thumb: "bg-white after:bg-white",
+                }}
+              />
+            </motion.div>
+          </div>
+
           <Button
             isIconOnly
             radius="full"
             variant="flat"
             className="bg-black/40 text-white pointer-events-auto"
-            onClick={(e) => toggleMute(e as any)}
+            onClick={(e) => togglePlay(e as any)}
           >
-            {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+            {isPlaying ? <Pause size={18} /> : <Play size={18} />}
           </Button>
         </div>
 
@@ -385,7 +486,7 @@ export default function ShortPlayer({
           )}
         >
           <div className="absolute bottom-0 inset-x-0 h-48 bg-linear-to-t from-black/80 via-black/40 to-transparent" />
-          <ShortOverlayInfo short={commentData} />
+          <ShortsOverlayInfo short={commentData} />
         </div>
 
         {/* Short Actions (Mobile) */}
@@ -395,20 +496,7 @@ export default function ShortPlayer({
             (!isUiVisible || !isActive) && "opacity-0",
           )}
         >
-          <ShortActions short={commentData} />
-        </div>
-
-        {/* Navigation Back (Mobile) */}
-        <div className="absolute top-4 left-4 z-20 md:hidden">
-          <Button
-            isIconOnly
-            radius="full"
-            variant="flat"
-            className="bg-black/40 text-white"
-            onClick={onBack}
-          >
-            <ChevronLeft size={20} />
-          </Button>
+          <ShortsActions short={commentData} />
         </div>
 
         {/* --- Progress Bar --- */}
@@ -442,16 +530,18 @@ export default function ShortPlayer({
         </div>
       </div>
 
-      {/* --- DESKTOP ONLY: Right Sidebar (Actions) --- */}
-      <div
-        className={twMerge(
-          "hidden md:flex backdrop-blur-xs flex-col items-center justify-end h-full w-[80px] pb-12 gap-6 transition-all duration-700 delay-100",
-          !isActive
-            ? "opacity-0 translate-y-[20px] pointer-events-none"
-            : "animate-in slide-in-from-bottom-8",
-        )}
-      >
-        <ShortActions short={commentData} />
+      {/* 3. Right Sidebar Column (Center-relative Actions) */}
+      <div className="hidden md:flex flex-1 flex-col items-start justify-end h-full pb-12 pointer-events-none">
+        <div
+          className={twMerge(
+            "flex flex-col items-center w-[80px] px-2 gap-6 transition-all duration-700 delay-100 pointer-events-auto",
+            !isActive
+              ? "opacity-0 translate-y-[20px] pointer-events-none"
+              : "animate-in slide-in-from-bottom-8",
+          )}
+        >
+          <ShortsActions short={commentData} />
+        </div>
       </div>
     </div>
   );

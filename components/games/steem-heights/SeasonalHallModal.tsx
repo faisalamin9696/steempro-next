@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/modal";
 import { Button } from "@heroui/button";
-import { Spinner } from "@heroui/react";
+import { Spinner } from "@heroui/spinner";
 import {
   History,
   Target,

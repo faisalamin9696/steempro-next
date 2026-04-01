@@ -23,7 +23,7 @@ import { steemApi } from "@/libs/steem";
 import { toast } from "sonner";
 import { useAppSelector } from "@/hooks/redux/store";
 import { Chip } from "@heroui/chip";
-import { Slider } from "@heroui/react";
+import { Slider } from "@heroui/slider";
 import { useTranslations } from "next-intl";
 import SPopover from "@/components/ui/SPopover";
 import { motion, AnimatePresence } from "framer-motion";

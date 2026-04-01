@@ -7,6 +7,7 @@ interface CommonValues {
   unread_count_chat: number;
   isShortsMuted: boolean;
   isShortsCollapsed: boolean;
+  shortsVolume: number;
   shortsResolution: "auto" | "high" | "low";
 }
 
@@ -22,6 +23,7 @@ const initialState: CommonState = {
     unread_count_chat: 0,
     isShortsMuted: false, // Default to muted
     isShortsCollapsed: false, // Default to expanded
+    shortsVolume: 1.0, // Default to full volume
     shortsResolution: "auto", // Default to auto
   },
 };

@@ -1,6 +1,6 @@
 function ShortPlayerSkeleton() {
   return (
-    <div className="h-[calc(100vh-64px)] w-full flex flex-col py-2 md:flex-row md:flex-nowrap md:items-end md:justify-center md:gap-4 md:px-4 md:pb-4 animate-pulse">
+    <div className="h-[calc(100vh-64px)] w-full flex flex-col md:py-2 md:flex-row md:flex-nowrap md:items-end md:justify-center md:gap-4 md:px-4 md:pb-4 animate-pulse">
       {/* 1. Left Sidebar (XL Only): Identity Placeholder */}
       <div className="hidden xl:flex shrink-0 flex-col items-start justify-end h-full w-[240px] gap-4 pb-12">
         <div className="bg-zinc-800/20 backdrop-blur-md rounded-2xl border border-white/5 p-4 w-full space-y-4">
@@ -22,7 +22,7 @@ function ShortPlayerSkeleton() {
       </div>
 
       {/* 2. Center Stage: Video Canvas Placeholder */}
-      <div className="flex-1 h-full w-full md:max-w-[500px] rounded-2xl bg-zinc-900 group relative flex items-center justify-center overflow-hidden shadow-2xl border border-white/5">
+      <div className="flex-1 h-full w-full md:max-w-[500px] md:rounded-2xl bg-zinc-900 group relative flex items-center justify-center overflow-hidden shadow-2xl border border-white/5">
         
         {/* MOBILE ONLY Overlay Info (Hidden on XL) */}
         <div className="absolute inset-x-0 bottom-0 pointer-events-none xl:hidden">

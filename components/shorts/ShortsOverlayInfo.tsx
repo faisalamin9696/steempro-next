@@ -11,7 +11,7 @@ interface Props {
   isSidebar?: boolean;
 }
 
-export default function ShortOverlayInfo({ short, isSidebar }: Props) {
+export default function ShortsOverlayInfo({ short, isSidebar }: Props) {
   const meta = (() => {
     try {
       return JSON.parse(short.json_metadata || "{}");
@@ -91,7 +91,11 @@ export default function ShortOverlayInfo({ short, isSidebar }: Props) {
             !isSidebar && "drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]",
           )}
         >
-          <PostLink comment={short} title={short.title} />
+          <PostLink
+            comment={short}
+            title={short.title}
+            className="line-clamp-1"
+          />
         </h3>
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-1">

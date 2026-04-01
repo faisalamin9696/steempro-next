@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { sdsApi } from "@/libs/sds";
-import ShortPlayer from "@/components/shorts/ShortPlayer";
+import ShortsPlayer from "@/components/shorts/ShortsPlayer";
 import { useSession } from "next-auth/react";
 import { Constants } from "@/constants";
 import { isSteemProShort } from "@/utils";
@@ -135,10 +135,9 @@ export default function ShortsPage({ author }: { author?: string }) {
                 virtualIndex={index}
                 className={twMerge("w-full relative", "pb-14 md:pb-0")}
               >
-                <ShortPlayer
+                <ShortsPlayer
                   short={short}
                   isActive={index === activeVideoIndex}
-                  onBack={() => router.back()}
                   shouldPreload={
                     index > activeVideoIndex && index <= activeVideoIndex + 4
                   }

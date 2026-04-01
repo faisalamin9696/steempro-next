@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { sdsApi } from "@/libs/sds";
-import ShortPlayer from "@/components/shorts/ShortPlayer";
+import ShortsPlayer from "@/components/shorts/ShortsPlayer";
 import { useSession } from "next-auth/react";
 import { extractVideoUrl } from "../../page";
 import { useAppSelector } from "@/hooks/redux/store";
 import { isSteemProShort } from "@/utils";
 import ShortPlayerSkeleton from "@/components/skeleton/ShortPlayerSkeleton";
+import { Button } from "@heroui/button";
 
 export default function SingleShortPage() {
   const params = useParams();
@@ -49,16 +50,16 @@ export default function SingleShortPage() {
     }
   }, [author, permlink, session?.user?.name]);
 
-  // if (!commentData) {
-  //   return (
-  //     <div className="h-screen w-full flex flex-col items-center justify-center text-white gap-4">
-  //       <p>Short not found or not a valid video.</p>
-  //       <Button onPress={() => router.push("/shorts")} color="primary">
-  //         Go back to Shorts
-  //       </Button>
-  //     </div>
-  //   );
-  // }
+  if (!commentData) {
+    return (
+      <div className="h-screen w-full flex flex-col items-center justify-center text-white gap-4">
+        <p>Short not found or not a valid video.</p>
+        <Button onPress={() => router.push("/shorts")} color="primary">
+          Go back to Shorts
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="relative h-dvh md:h-[calc(100vh-64px)] w-full overflow-hidden flex justify-center pb-0 md:pb-0">
@@ -68,10 +69,9 @@ export default function SingleShortPage() {
             <ShortPlayerSkeleton />
           </div>
         ) : (
-          <ShortPlayer
+          <ShortsPlayer
             short={{ ...commentData, videoUrl: short?.videoUrl }}
             isActive={true}
-            onBack={() => router.push("/shorts")}
           />
         )}
       </div>

@@ -5,7 +5,7 @@ import { AlertCircle, Plus, Trash2 } from "lucide-react";
 import SModal from "../ui/SModal";
 import { validateTags } from "@/utils/editor";
 import { toast } from "sonner";
-import { Alert } from "@heroui/react";
+import { Alert } from "@heroui/alert";
 
 interface UnfinishedTagsModalProps {
   isOpen: boolean;

@@ -5,12 +5,14 @@ import {
   MoreHorizontal,
   Maximize2,
   Minimize2,
+  Rocket,
 } from "lucide-react";
 import { Button } from "@heroui/button";
 import PostVoteButton from "@/components/post/PostVoteButton";
 import ShareButton from "../ui/ShareButton";
 import { Constants } from "@/constants";
 import SPopover from "../ui/SPopover";
+import BoostModal from "../post/BoostModal";
 import { useState, useRef } from "react";
 import MarkdownViewer from "@/components/post/body/MarkdownViewer";
 import SModal from "../ui/SModal";
@@ -18,12 +20,9 @@ import VoteCountButton from "../ui/VoteCountButton";
 import PayoutButton from "../post/PayoutButton";
 import { isSteemProShort } from "@/utils";
 import CommentsList from "../comments/CommentsList";
-import {
-  useDraggable,
-  Accordion,
-  AccordionItem,
-  Textarea,
-} from "@heroui/react";
+import { Textarea } from "@heroui/input";
+import { Accordion, AccordionItem } from "@heroui/accordion";
+import { useDraggable } from "@heroui/use-draggable";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
 import { addCommonDataHandler } from "@/hooks/redux/reducers/CommonReducer";
 import { useSession } from "next-auth/react";
@@ -33,7 +32,7 @@ interface Props {
   short: ShortVideo;
 }
 
-export default function ShortActions({ short }: Props) {
+export default function ShortsActions({ short }: Props) {
   const dispatch = useAppDispatch();
   const isCollapsed = useAppSelector(
     (s) => s.commonReducer.values.isShortsCollapsed,
@@ -41,6 +40,7 @@ export default function ShortActions({ short }: Props) {
   const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [isBoostModalOpen, setIsBoostModalOpen] = useState(false);
   const [reportNote, setReportNote] = useState("");
   const [isReporting, setIsReporting] = useState(false);
   const { data: session } = useSession();
@@ -171,10 +171,10 @@ export default function ShortActions({ short }: Props) {
               }
             >
               {(close) => (
-                <div className="flex flex-col min-w-[160px] p-1">
+                <div className="flex flex-col gap-2">
                   <Button
                     variant="light"
-                    className="justify-start gap-4 h-12 font-bold"
+                    className="justify-start gap-4"
                     onPress={() => {
                       close();
                       setIsDescriptionOpen(true);
@@ -188,7 +188,7 @@ export default function ShortActions({ short }: Props) {
                   <Button
                     variant="light"
                     color="danger"
-                    className="justify-start gap-4 h-12 font-bold"
+                    className="justify-start gap-4"
                     onPress={() => {
                       close();
                       setIsReportModalOpen(true);
@@ -196,6 +196,17 @@ export default function ShortActions({ short }: Props) {
                     startContent={<Flag size={18} />}
                   >
                     Report
+                  </Button>
+                  <Button
+                    variant="light"
+                    className="justify-start gap-4"
+                    onPress={() => {
+                      close();
+                      setIsBoostModalOpen(true);
+                    }}
+                    startContent={<Rocket size={18} className="text-warning" />}
+                  >
+                    Boost
                   </Button>
                 </div>
               )}
@@ -304,6 +315,13 @@ export default function ShortActions({ short }: Props) {
           </div>
         )}
       </SModal>
+
+      {/* Boost Modal */}
+      <BoostModal
+        isOpen={isBoostModalOpen}
+        onOpenChange={setIsBoostModalOpen}
+        post={short}
+      />
     </div>
   );
 }

@@ -17,11 +17,10 @@ import {
   Skin,
   POWER_UPS,
   PowerUp,
-  POWERUP_CONFLICT_MESSAGE,
 } from "./Config";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
-import { ScrollShadow } from "@heroui/react";
+import { ScrollShadow } from "@heroui/scroll-shadow";
 import { useTranslations } from "next-intl";
 
 interface Props {

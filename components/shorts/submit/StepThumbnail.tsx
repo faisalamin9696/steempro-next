@@ -2,7 +2,7 @@
 
 import { Button } from "@heroui/button";
 import { Image } from "@heroui/image";
-import { Progress } from "@heroui/react";
+import { Progress } from "@heroui/progress";
 import {
   Camera,
   CheckCircle2,
