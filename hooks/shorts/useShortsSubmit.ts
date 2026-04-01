@@ -376,11 +376,6 @@ export function useShortsSubmit() {
         "done",
         `720p + 360p · ${totalMB.toFixed(1)} MB total.`,
       );
-
-      // Automatically trigger signing and upload after compression
-      setTimeout(() => {
-        handleUploadAndSign(bundle, playlistFile);
-      }, 500);
     } catch (error) {
       if (error instanceof Error && error.message.includes("terminated")) {
         console.log("FFmpeg was terminated by user.");

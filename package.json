@@ -18,7 +18,6 @@
     "@steempro/dsteem": "^1.0.6",
     "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.99.3",
-    "@videojs/react": "^10.0.0-beta.13",
     "@xmldom/xmldom": "^0.9.9",
     "axios": "^1.13.6",
     "babel-plugin-react-compiler": "^1.0.0",

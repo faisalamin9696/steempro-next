@@ -2546,56 +2546,6 @@
     "@supabase/realtime-js" "2.99.3"
     "@supabase/storage-js" "2.99.3"
 
-"@svta/cml-608@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/@svta/cml-608/-/cml-608-1.0.1.tgz"
-  integrity sha512-Y/Ier9VPUSOBnf0bJqdDyTlPrt4dDB+jk5mYHa1bnD2kcRl8qn7KkW3PRuj4w1aVN+BS2eHmsLxodt7P2hylUg==
-
-"@svta/cml-cmcd@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/@svta/cml-cmcd/-/cml-cmcd-1.0.1.tgz"
-  integrity sha512-eox305g+QUJgXqOLVrbgxeQHCgl90ewwQ9O2bIoo7m+hanR8Xswu5CknFnT5qqIbLOHfw80ug+raycoAFHTQ+w==
-
-"@svta/cml-cmsd@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/@svta/cml-cmsd/-/cml-cmsd-1.0.1.tgz"
-  integrity sha512-+nIB8PuSfb/qw+xGaArPhNqPm84tBJUbe3H1DnPL5QUsjSUI7mUIUQwAtRV1ZdEu0+80g9i0op79woB0OIwr/g==
-
-"@svta/cml-cta@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/@svta/cml-cta/-/cml-cta-1.0.1.tgz"
-  integrity sha512-jcXqNIPv26bmFxIOFh8/c3+6WLH4qBjKpq9qTQcggDPoHuV1YBydMsJLOnYPDeK8rNMKcAkFLbnDRvyJthu5yw==
-
-"@svta/cml-dash@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/@svta/cml-dash/-/cml-dash-1.0.1.tgz"
-  integrity sha512-lYnD1I7FUbbQND+xICI+kcRaRXuT+whKk27R8m8me5VMVu2sMsAMc7Yui6l9sxw2cBKt8pSETPYRm/1+n4LZkw==
-
-"@svta/cml-id3@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/@svta/cml-id3/-/cml-id3-1.0.1.tgz"
-  integrity sha512-90fGlL1qRI88CcaB89k6NG6cC3kky4Eu2jwqU4HefqK+S5k2OASUxf8JXkGz+DsdaiY7sh51vGPYdolfBZS7ug==
-
-"@svta/cml-request@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/@svta/cml-request/-/cml-request-1.0.1.tgz"
-  integrity sha512-enL19BuXUjFkDDDF9jdNwUclMNPRsagnjGAetVC7xcmpDMpEx+ZLgsDip6BFNg5p6izSEk/OyujTWW1r8bDNiA==
-
-"@svta/cml-structured-field-values@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/@svta/cml-structured-field-values/-/cml-structured-field-values-1.0.1.tgz"
-  integrity sha512-Kibciki59Pon3Pn/sl5uyrbJcSpZQDKqdCfDrokBvOdLoqqcd0oFrkEPsZBiuuIODX1CB80612xe8hopeFDyBA==
-
-"@svta/cml-utils@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/@svta/cml-utils/-/cml-utils-1.0.1.tgz"
-  integrity sha512-kso3curTJfp00I1mKFoBliBApjn4aPE+wF8cPucf7TrSDVWZDeLLuF14ASmUE9m7rnrqTTK4878VvmXaXcCCfQ==
-
-"@svta/cml-xml@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/@svta/cml-xml/-/cml-xml-1.0.1.tgz"
-  integrity sha512-11LkJa5kDEcsRMWkVI1ABH3KLCxGoiSVe4kQ293ItVj8ncTTQ7htmCGiJDjS+Cmy35UgF3e/vc0ysJIiWRTx2g==
-
 "@swc/core-win32-x64-msvc@1.15.18":
   version "1.15.18"
   resolved "https://registry.npmjs.org/@swc/core-win32-x64-msvc/-/core-win32-x64-msvc-1.15.18.tgz"
@@ -2928,18 +2878,6 @@
   resolved "https://registry.npmjs.org/@unrs/resolver-binding-win32-x64-msvc/-/resolver-binding-win32-x64-msvc-1.11.1.tgz"
   integrity sha512-lrW200hZdbfRtztbygyaq/6jP6AKE8qQN2KvPcJ+x7wiD038YtnYtZ82IMNJ69GJibV7bwL3y9FgK+5w/pYt6g==
 
-"@videojs/core@10.0.0-beta.13":
-  version "10.0.0-beta.13"
-  resolved "https://registry.npmjs.org/@videojs/core/-/core-10.0.0-beta.13.tgz"
-  integrity sha512-weD07Qk291F5ZzrQlThFNYZYy3ZY1QpO7PYPro30C0JsGchDfDsNeT/dD5V92eTTvnUNuDTMpWBfnwzAARUXWg==
-  dependencies:
-    "@videojs/spf" "10.0.0-beta.13"
-    "@videojs/store" "10.0.0-beta.13"
-    "@videojs/utils" "10.0.0-beta.13"
-    dashjs "^5.0.0"
-    hls.js "^1.6.7"
-    mux-embed "^5.17.10"
-
 "@videojs/http-streaming@^3.17.3":
   version "3.17.4"
   resolved "https://registry.npmjs.org/@videojs/http-streaming/-/http-streaming-3.17.4.tgz"
@@ -2953,36 +2891,6 @@
     mpd-parser "^1.3.1"
     mux.js "7.1.0"
     video.js "^7 || ^8"
-
-"@videojs/react@^10.0.0-beta.13":
-  version "10.0.0-beta.13"
-  resolved "https://registry.npmjs.org/@videojs/react/-/react-10.0.0-beta.13.tgz"
-  integrity sha512-E5ERuvnXXJA8lVyf7DxjqctGZsANREJ3b0WE0/FQtxMVORW3VfgV78KLicIQXi9X2EjCXO2p/cPPc9JRn1KZVQ==
-  dependencies:
-    "@videojs/core" "10.0.0-beta.13"
-    "@videojs/spf" "10.0.0-beta.13"
-    "@videojs/store" "10.0.0-beta.13"
-    "@videojs/utils" "10.0.0-beta.13"
-
-"@videojs/spf@10.0.0-beta.13":
-  version "10.0.0-beta.13"
-  resolved "https://registry.npmjs.org/@videojs/spf/-/spf-10.0.0-beta.13.tgz"
-  integrity sha512-sbhccoZQ4idNS1Pki/yUL5z4GkEo0vkviBSIXkh8GGE5uw7Fe9/AU4HxxT4dijl4tgamGfXVu2gMP01Uu+2IlQ==
-  dependencies:
-    "@videojs/utils" "10.0.0-beta.13"
-    signal-polyfill "^0.2.2"
-
-"@videojs/store@10.0.0-beta.13":
-  version "10.0.0-beta.13"
-  resolved "https://registry.npmjs.org/@videojs/store/-/store-10.0.0-beta.13.tgz"
-  integrity sha512-Y2DCLOOhJTviJ0ZQVTd7XB/4ZockAotpEtMfYtj8/Kafd4g5NuBlCRrXA3PZOq9hww9wDqqDBEO8dBNwmftyTA==
-  dependencies:
-    "@videojs/utils" "10.0.0-beta.13"
-
-"@videojs/utils@10.0.0-beta.13":
-  version "10.0.0-beta.13"
-  resolved "https://registry.npmjs.org/@videojs/utils/-/utils-10.0.0-beta.13.tgz"
-  integrity sha512-VHsMp1KYBlEHjPOe78vid5c31lA+gQ7n0uquP9qwkpcHv/V1eRVJRRqH73iGdbUYmKbMVKxuzoe3GKzlchqjHg==
 
 "@videojs/vhs-utils@^4.0.0", "@videojs/vhs-utils@^4.1.1":
   version "4.1.1"
@@ -3238,28 +3146,6 @@ baseline-browser-mapping@^2.9.0, baseline-browser-mapping@^2.9.19:
   resolved "https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.10.10.tgz"
   integrity sha512-sUoJ3IMxx4AyRqO4MLeHlnGDkyXRoUG0/AI9fjK+vS72ekpV0yWVY7O0BVjmBcRtkNcsAO2QDZ4tdKKGoI6YaQ==
 
-bcp-47-match@^2.0.0, bcp-47-match@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.npmjs.org/bcp-47-match/-/bcp-47-match-2.0.3.tgz"
-  integrity sha512-JtTezzbAibu8G0R9op9zb3vcWZd9JF6M0xOYGPn0fNCd7wOpRB1mU2mH9T8gaBGbAAyIIVgB2G7xG0GP98zMAQ==
-
-bcp-47-normalize@^2.3.0:
-  version "2.3.0"
-  resolved "https://registry.npmjs.org/bcp-47-normalize/-/bcp-47-normalize-2.3.0.tgz"
-  integrity sha512-8I/wfzqQvttUFz7HVJgIZ7+dj3vUaIyIxYXaTRP1YWoSDfzt6TUmxaKZeuXR62qBmYr+nvuWINFRl6pZ5DlN4Q==
-  dependencies:
-    bcp-47 "^2.0.0"
-    bcp-47-match "^2.0.0"
-
-bcp-47@^2.0.0:
-  version "2.1.0"
-  resolved "https://registry.npmjs.org/bcp-47/-/bcp-47-2.1.0.tgz"
-  integrity sha512-9IIS3UPrvIa1Ej+lVDdDwO7zLehjqsaByECw0bu2RRGP73jALm6FYbzI5gWbgHLvNdkvfXB5YrSbocZdOS0c0w==
-  dependencies:
-    is-alphabetical "^2.0.0"
-    is-alphanumerical "^2.0.0"
-    is-decimal "^2.0.0"
-
 bigi@^1.1.0, bigi@^1.4.2:
   version "1.4.2"
   resolved "https://registry.npmjs.org/bigi/-/bigi-1.4.2.tgz"
@@ -3456,11 +3342,6 @@ clsx@^2.0.0, clsx@^2.1.1:
   resolved "https://registry.npmjs.org/clsx/-/clsx-2.1.1.tgz"
   integrity sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==
 
-codem-isoboxer@0.3.10:
-  version "0.3.10"
-  resolved "https://registry.npmjs.org/codem-isoboxer/-/codem-isoboxer-0.3.10.tgz"
-  integrity sha512-eNk3TRV+xQMJ1PEj0FQGY8KD4m0GPxT487XJ+Iftm7mVa9WpPFDMWqPt+46buiP5j5Wzqe5oMIhqBcAeKfygSA==
-
 color-convert@^2.0.1:
   version "2.0.1"
   resolved "https://registry.npmjs.org/color-convert/-/color-convert-2.0.1.tgz"
@@ -3604,28 +3485,6 @@ damerau-levenshtein@^1.0.8:
   version "1.0.8"
   resolved "https://registry.npmjs.org/damerau-levenshtein/-/damerau-levenshtein-1.0.8.tgz"
   integrity sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA==
-
-dashjs@^5.0.0:
-  version "5.1.1"
-  resolved "https://registry.npmjs.org/dashjs/-/dashjs-5.1.1.tgz"
-  integrity sha512-BzNXlUgzEjhuZ5M5hlSp1qIyQHZ7NpXAR0loP9DAAFVZj/ntL1DHeZ7qp/L3bvI4rq50X5indkAZQ3zEHWJoCA==
-  dependencies:
-    "@svta/cml-608" "1.0.1"
-    "@svta/cml-cmcd" "1.0.1"
-    "@svta/cml-cmsd" "1.0.1"
-    "@svta/cml-dash" "1.0.1"
-    "@svta/cml-id3" "1.0.1"
-    "@svta/cml-request" "1.0.1"
-    "@svta/cml-xml" "1.0.1"
-    bcp-47-match "^2.0.3"
-    bcp-47-normalize "^2.3.0"
-    codem-isoboxer "0.3.10"
-    fast-deep-equal "3.1.3"
-    html-entities "^2.5.2"
-    imsc "^1.1.5"
-    localforage "^1.10.0"
-    path-browserify "^1.0.1"
-    ua-parser-js "^1.0.37"
 
 data-view-buffer@^1.0.2:
   version "1.0.2"
@@ -4571,7 +4430,7 @@ hermes-parser@^0.25.1:
   dependencies:
     hermes-estree "0.25.1"
 
-hls.js@^1.6.15, hls.js@^1.6.7:
+hls.js@^1.6.15:
   version "1.6.15"
   resolved "https://registry.npmjs.org/hls.js/-/hls.js-1.6.15.tgz"
   integrity sha512-E3a5VwgXimGHwpRGV+WxRTKeSp2DW5DI5MWv34ulL3t5UNmyJWCQ1KmLEHbYzcfThfXG8amBL+fCYPneGHC4VA==
@@ -4592,11 +4451,6 @@ html-dom-parser@5.1.8:
   dependencies:
     domhandler "5.0.3"
     htmlparser2 "10.1.0"
-
-html-entities@^2.5.2:
-  version "2.6.0"
-  resolved "https://registry.npmjs.org/html-entities/-/html-entities-2.6.0.tgz"
-  integrity sha512-kig+rMn/QOVRvr7c86gQ8lWXq+Hkv6CbAH1hLu+RG338StTpE8Z0b44SDVaqVu7HGKf27frdmUYEs9hTUX/cLQ==
 
 html-react-parser@^5.2.17:
   version "5.2.17"
@@ -4668,11 +4522,6 @@ ignore@^7.0.5:
   resolved "https://registry.npmjs.org/ignore/-/ignore-7.0.5.tgz"
   integrity sha512-Hs59xBNfUIunMFgWAbGX5cq6893IbWg4KnrjbYwX3tx0ztorVgTDA6B2sxf8ejHJ4wz8BqGUMYlnzNBer5NvGg==
 
-immediate@~3.0.5:
-  version "3.0.6"
-  resolved "https://registry.npmjs.org/immediate/-/immediate-3.0.6.tgz"
-  integrity sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==
-
 immer@^11.0.0:
   version "11.1.3"
   resolved "https://registry.npmjs.org/immer/-/immer-11.1.3.tgz"
@@ -4690,13 +4539,6 @@ import-fresh@^3.2.1:
   dependencies:
     parent-module "^1.0.0"
     resolve-from "^4.0.0"
-
-imsc@^1.1.5:
-  version "1.1.5"
-  resolved "https://registry.npmjs.org/imsc/-/imsc-1.1.5.tgz"
-  integrity sha512-V8je+CGkcvGhgl2C1GlhqFFiUOIEdwXbXLiu1Fcubvvbo+g9inauqT3l0pNYXGoLPBj3jxtZz9t+wCopMkwadQ==
-  dependencies:
-    sax "1.2.1"
 
 imurmurhash@^0.1.4:
   version "0.1.4"
@@ -4745,19 +4587,6 @@ intl-messageformat@^11.1.0:
     "@formatjs/ecma402-abstract" "3.2.0"
     "@formatjs/fast-memoize" "3.1.1"
     "@formatjs/icu-messageformat-parser" "3.5.3"
-
-is-alphabetical@^2.0.0:
-  version "2.0.1"
-  resolved "https://registry.npmjs.org/is-alphabetical/-/is-alphabetical-2.0.1.tgz"
-  integrity sha512-FWyyY60MeTNyeSRpkM2Iry0G9hpr7/9kD40mD/cGQEuilcZYS4okz8SN2Q6rLCJ8gbCt6fN+rC+6tMGS99LaxQ==
-
-is-alphanumerical@^2.0.0:
-  version "2.0.1"
-  resolved "https://registry.npmjs.org/is-alphanumerical/-/is-alphanumerical-2.0.1.tgz"
-  integrity sha512-hmbYhX/9MUMF5uh7tOXyK/n0ZvWpad5caBA17GsC6vyuCqaWliRG5K1qS9inmUhEMaOBIW7/whAnSwveW/LtZw==
-  dependencies:
-    is-alphabetical "^2.0.0"
-    is-decimal "^2.0.0"
 
 is-array-buffer@^3.0.4, is-array-buffer@^3.0.5:
   version "3.0.5"
@@ -4834,11 +4663,6 @@ is-date-object@^1.0.5, is-date-object@^1.1.0:
   dependencies:
     call-bound "^1.0.2"
     has-tostringtag "^1.0.2"
-
-is-decimal@^2.0.0:
-  version "2.0.1"
-  resolved "https://registry.npmjs.org/is-decimal/-/is-decimal-2.0.1.tgz"
-  integrity sha512-AAB9hiomQs5DXWcRB1rqsxGUstbRroFOPPVAomNk/3XHR5JyEZChOyTWe2oayKnsSsr/kcGqF+z6yuH6HHpN0A==
 
 is-extglob@^2.1.1:
   version "2.1.1"
@@ -5111,13 +4935,6 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-lie@3.1.1:
-  version "3.1.1"
-  resolved "https://registry.npmjs.org/lie/-/lie-3.1.1.tgz"
-  integrity sha512-RiNhHysUjhrDQntfYSfY4MU24coXXdEOgw9WGcKHNeEwffDYbF//u87M1EWaMGzuFoSbqW0C9C6lEEhDOAswfw==
-  dependencies:
-    immediate "~3.0.5"
-
 lightningcss-win32-x64-msvc@1.30.2:
   version "1.30.2"
   resolved "https://registry.npmjs.org/lightningcss-win32-x64-msvc/-/lightningcss-win32-x64-msvc-1.30.2.tgz"
@@ -5146,13 +4963,6 @@ load-script@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/load-script/-/load-script-1.0.0.tgz"
   integrity sha512-kPEjMFtZvwL9TaZo0uZ2ml+Ye9HUMmPwbYRJ324qF9tqMejwykJ5ggTyvzmrbBeapCAbk98BSbTeovHEEP1uCA==
-
-localforage@^1.10.0:
-  version "1.10.0"
-  resolved "https://registry.npmjs.org/localforage/-/localforage-1.10.0.tgz"
-  integrity sha512-14/H1aX7hzBBmmh7sGPd+AOMkkIrHM3Z1PAyGgZigA1H1p5O5ANnMyWzvpAETtG68/dC4pC0ncy3+PPGzXZHPg==
-  dependencies:
-    lie "3.1.1"
 
 locate-path@^6.0.0:
   version "6.0.0"
@@ -5349,11 +5159,6 @@ murmurhash-js@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/murmurhash-js/-/murmurhash-js-1.0.0.tgz"
   integrity sha512-TvmkNhkv8yct0SVBSy+o8wYzXjE4Zz3PCesbfs8HiCXXdcTuocApFv11UWlNFWKYsP2okqrhb7JNlSm9InBhIw==
-
-mux-embed@^5.17.10:
-  version "5.17.10"
-  resolved "https://registry.npmjs.org/mux-embed/-/mux-embed-5.17.10.tgz"
-  integrity sha512-i+eaoezVxIEliYGWPsjQztrWbA8A3Rzwqhwv1WGuRrl2npx85jFYJV5y+cjh7FASPOjT+7zJTYCJfxmcbgM7Hg==
 
 mux.js@^7.0.1, mux.js@7.1.0:
   version "7.1.0"
@@ -5599,11 +5404,6 @@ parse-srcset@^1.0.2:
   version "1.0.2"
   resolved "https://registry.npmjs.org/parse-srcset/-/parse-srcset-1.0.2.tgz"
   integrity sha512-/2qh0lav6CmI15FzA3i/2Bzk2zCgQhGMkvhOhKNcBVQ1ldgpbfiNTVslmooUmWJcADi1f1kIeynbDRVzNlfR6Q==
-
-path-browserify@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/path-browserify/-/path-browserify-1.0.1.tgz"
-  integrity sha512-b7uo2UCUOYZcnF/3ID0lulOJi/bafxa1xPe7ZPsammBSpjSWQkjNxlt635YGS2MiR9GjvuXCtz2emr3jbsz98g==
 
 path-exists@^4.0.0:
   version "4.0.0"
@@ -6103,11 +5903,6 @@ sass@^1.3.0, sass@^1.97.3:
   optionalDependencies:
     "@parcel/watcher" "^2.4.1"
 
-sax@1.2.1:
-  version "1.2.1"
-  resolved "https://registry.npmjs.org/sax/-/sax-1.2.1.tgz"
-  integrity sha512-8I2a3LovHTOpm7NV5yOyO8IHqgVsfK4+UuySrXU8YXkSRX7k6hCV9b3HrkKCr3nMpgj+0bmocaJJWpvp1oc7ZA==
-
 scheduler@^0.27.0:
   version "0.27.0"
   resolved "https://registry.npmjs.org/scheduler/-/scheduler-0.27.0.tgz"
@@ -6279,11 +6074,6 @@ side-channel@^1.1.0:
     side-channel-list "^1.0.0"
     side-channel-map "^1.0.1"
     side-channel-weakmap "^1.0.2"
-
-signal-polyfill@^0.2.2:
-  version "0.2.2"
-  resolved "https://registry.npmjs.org/signal-polyfill/-/signal-polyfill-0.2.2.tgz"
-  integrity sha512-p63Y4Er5/eMQ9RHg0M0Y64NlsQKpiu6MDdhBXpyywRuWiPywhJTpKJ1iB5K2hJEbFZ0BnDS7ZkJ+0AfTuL37Rg==
 
 simple-swizzle@^0.2.2:
   version "0.2.4"
@@ -6623,11 +6413,6 @@ typescript@^5, typescript@^5.0.0, typescript@>=3.3.1, typescript@>=4.8.4, "types
   version "5.9.3"
   resolved "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz"
   integrity sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==
-
-ua-parser-js@^1.0.37:
-  version "1.0.41"
-  resolved "https://registry.npmjs.org/ua-parser-js/-/ua-parser-js-1.0.41.tgz"
-  integrity sha512-LbBDqdIC5s8iROCUjMbW1f5dJQTEFB1+KO9ogbvlb3nm9n4YHa5p4KTvFPWvh2Hs8gZMBuiB1/8+pdfe/tDPug==
 
 unbox-primitive@^1.1.0:
   version "1.1.0"
