@@ -1,4 +1,5 @@
 "use client";
+import React, { useState, useRef } from "react";
 
 import {
   AlertCircle,
@@ -9,6 +10,8 @@ import {
   MonitorPlay,
   Zap,
   Sparkles,
+  Video,
+  X,
 } from "lucide-react";
 import { Button } from "@heroui/button";
 import { Progress } from "@heroui/progress";
@@ -89,6 +92,91 @@ export function StepUpload({
 }: Props) {
   const isIdle = !file && processState === "idle";
 
+  // Native WebCam Recorder Engine for Desktop
+  const [showWebcam, setShowWebcam] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const startWebcam = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: { ideal: 720 }, height: { ideal: 1280 }, facingMode: "user" },
+        audio: true,
+      });
+      setShowWebcam(true);
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.play();
+        }
+      }, 50);
+    } catch (err) {
+      alert("Camera access denied or unavailable.");
+    }
+  };
+
+  const startStreamRecording = () => {
+    if (!videoRef.current || !videoRef.current.srcObject) return;
+    const stream = videoRef.current.srcObject as MediaStream;
+    chunksRef.current = [];
+    const mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+    mediaRecorder.ondataavailable = (e) => {
+      if (e.data.size > 0) chunksRef.current.push(e.data);
+    };
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(chunksRef.current, { type: 'video/webm' });
+      const recordFile = new File([blob], "webcam-recording.webm", { type: 'video/webm' });
+      
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(recordFile);
+      onFileChange({ target: { files: dataTransfer.files } } as any);
+      
+      closeWebcam();
+    };
+    mediaRecorderRef.current = mediaRecorder;
+    mediaRecorder.start();
+    setIsRecording(true);
+    setRecordingTime(0);
+    timerRef.current = setInterval(() => {
+      setRecordingTime((prev) => {
+        if (prev >= 59) {
+           stopStreamRecording();
+        }
+        return prev + 1;
+      });
+    }, 1000);
+  };
+
+  const stopStreamRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      if (timerRef.current) clearInterval(timerRef.current);
+    }
+  };
+
+  const closeWebcam = () => {
+    setShowWebcam(false);
+    setIsRecording(false);
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach((track) => track.stop());
+    }
+  };
+
+  const handleRecordClick = (e: React.MouseEvent) => {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (!isMobile) {
+      e.preventDefault();
+      startWebcam();
+    }
+  };
+
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Compact Guidelines Section */}
@@ -105,38 +193,101 @@ export function StepUpload({
               Vertical (9:16) clip up to{" "}
               <span className="text-foreground font-bold underline decoration-primary/30">
                 60s
-              </span>. Final size: <span className="text-foreground font-bold">15MB max</span>.
+              </span>. Final size: <span className="text-foreground font-bold">25MB max</span>.
             </p>
           </div>
         </div>
       </div>
 
-      {isIdle ? (
-        /* High-End Drop zone */
-        <label className="group relative flex min-h-[300px] cursor-pointer flex-col items-center justify-center gap-6 rounded-4xl border-2 border-dashed border-default-300 bg-default-50/50 px-8 py-12 text-center transition-all duration-500 hover:border-primary/60 hover:bg-primary/5 hover:shadow-2xl hover:shadow-primary/5 dark:border-white/10 dark:bg-zinc-950/20">
-          <div className="relative">
-            <div className="absolute -inset-4 rounded-full bg-primary/20 blur-xl opacity-0 transition-opacity group-hover:opacity-100" />
-            <div className="relative rounded-3xl bg-linear-to-br from-primary to-danger p-6 text-white shadow-xl transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
-              <UploadCloud size={32} strokeWidth={2.5} />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <h3 className="text-xl font-black tracking-tight">
-              Select your clip
-            </h3>
-            <p className="text-sm font-medium text-default-500 max-w-[240px] mx-auto">
-              Drag and drop or click to browse <br />
-              (MP4, MOV, or WebM)
-            </p>
+      {showWebcam ? (
+        /* Native WebRTC Camera UI */
+        <div className="relative w-full max-w-[400px] mx-auto aspect-9/16 bg-zinc-950 rounded-[2.5rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-500 border-4 border-zinc-900">
+          <video 
+            ref={videoRef} 
+            muted 
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover scale-x-[-1]" 
+          />
+          
+          <div className="absolute top-6 inset-x-0 flex justify-between items-start px-6 z-20">
+            {isRecording && (
+               <div className="bg-danger/90 backdrop-blur-md text-white px-3 py-1.5 rounded-full flex items-center gap-2 shadow-lg animate-in slide-in-from-top-2">
+                 <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                 <span className="font-mono text-xs font-bold tracking-widest">{recordingTime}s / 60s</span>
+               </div>
+            )}
+            <button 
+              onClick={closeWebcam} 
+              className="bg-black/40 hover:bg-black/60 transition-colors backdrop-blur-md shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white ml-auto border border-white/10"
+            >
+              <X size={20} />
+            </button>
           </div>
 
-          <input
-            type="file"
-            accept="video/*"
-            onChange={onFileChange}
-            className="hidden"
-          />
-        </label>
+          <div className="absolute bottom-10 inset-x-0 flex justify-center z-20">
+            <button
+              onClick={isRecording ? stopStreamRecording : startStreamRecording}
+              className={`w-20 h-20 rounded-full border-4 flex items-center justify-center transition-all duration-300 ${
+                isRecording 
+                  ? "border-danger bg-danger/20 scale-95" 
+                  : "border-white bg-white/20 hover:scale-105"
+              }`}
+            >
+               <div className={`transition-all duration-300 bg-danger ${isRecording ? "w-6 h-6 rounded-md" : "w-14 h-14 rounded-full"}`} />
+            </button>
+          </div>
+        </div>
+      ) : isIdle ? (
+        /* Dual Options for Mobile & Desktop */
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+          {/* Quick Record Tile */}
+          <label 
+            onClick={handleRecordClick}
+            className="group relative flex min-h-[260px] cursor-pointer flex-col items-center justify-center gap-5 rounded-4xl border-2 border-dashed border-default-300 bg-default-50/50 px-6 py-8 text-center transition-all duration-500 hover:border-danger/60 hover:bg-danger/5 hover:shadow-2xl hover:shadow-danger/5 dark:border-white/10 dark:bg-zinc-950/20"
+          >
+            <div className="relative">
+              <div className="absolute -inset-4 rounded-full bg-danger/20 blur-xl opacity-0 transition-opacity group-hover:opacity-100" />
+              <div className="relative rounded-3xl bg-linear-to-br from-danger to-orange-500 p-5 text-white shadow-xl transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-3">
+                <Video size={28} strokeWidth={2.5} />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <h3 className="text-lg font-black tracking-tight">Record Video</h3>
+              <p className="text-[13px] font-medium text-default-500 max-w-[180px] mx-auto">
+                Open camera & record natively on mobile
+              </p>
+            </div>
+            <input
+              type="file"
+              accept="video/*"
+              capture="environment"
+              onChange={onFileChange}
+              className="hidden"
+            />
+          </label>
+
+          {/* Gallery Browse Tile */}
+          <label className="group relative flex min-h-[260px] cursor-pointer flex-col items-center justify-center gap-5 rounded-4xl border-2 border-dashed border-default-300 bg-default-50/50 px-6 py-8 text-center transition-all duration-500 hover:border-primary/60 hover:bg-primary/5 hover:shadow-2xl hover:shadow-primary/5 dark:border-white/10 dark:bg-zinc-950/20">
+            <div className="relative">
+              <div className="absolute -inset-4 rounded-full bg-primary/20 blur-xl opacity-0 transition-opacity group-hover:opacity-100" />
+              <div className="relative rounded-3xl bg-linear-to-br from-primary to-indigo-500 p-5 text-white shadow-xl transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
+                <UploadCloud size={28} strokeWidth={2.5} />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <h3 className="text-lg font-black tracking-tight">Browse Files</h3>
+              <p className="text-[13px] font-medium text-default-500 max-w-[180px] mx-auto">
+                Select from gallery (MP4, MOV, WebM)
+              </p>
+            </div>
+            <input
+              type="file"
+              accept="video/*"
+              onChange={onFileChange}
+              className="hidden"
+            />
+          </label>
+        </div>
       ) : (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
           {/* Stage Progress Grid */}
@@ -269,17 +420,17 @@ export function StepUpload({
           {processState === "compressed" && (
             <div
               className={`relative overflow-hidden rounded-4xl border p-6 shadow-xl animate-in slide-in-from-bottom-5 duration-500 ${
-                sizeInfo.compressed > 15
+                sizeInfo.compressed > 25
                   ? "border-danger/30 bg-linear-to-br from-danger/10 to-transparent shadow-danger/5"
                   : "border-warning/30 bg-linear-to-br from-warning/10 to-transparent shadow-warning/5"
               }`}
             >
               <div
                 className={`absolute -right-6 -bottom-6 rotate-12 ${
-                  sizeInfo.compressed > 15 ? "text-danger/10" : "text-warning/10"
+                  sizeInfo.compressed > 25 ? "text-danger/10" : "text-warning/10"
                 }`}
               >
-                {sizeInfo.compressed > 15 ? (
+                {sizeInfo.compressed > 25 ? (
                   <Sparkles size={120} />
                 ) : (
                   <UploadCloud size={120} />
@@ -290,7 +441,7 @@ export function StepUpload({
                 <div className="flex items-center gap-3">
                   <div
                     className={`rounded-full p-2 ${
-                      sizeInfo.compressed > 15
+                      sizeInfo.compressed > 25
                         ? "bg-danger/20 text-danger"
                         : "bg-warning/20 text-warning"
                     }`}
@@ -303,18 +454,18 @@ export function StepUpload({
                   </div>
                   <div className="min-w-0">
                     <h4 className="text-lg font-black text-foreground truncate">
-                      {sizeInfo.compressed > 15
+                      {sizeInfo.compressed > 25
                         ? "Size Limit Exceeded"
                         : "Optimization Complete"}
                     </h4>
                     <p
                       className={`text-xs font-semibold uppercase tracking-widest ${
-                        sizeInfo.compressed > 15
+                        sizeInfo.compressed > 25
                           ? "text-danger/80"
                           : "text-warning/80"
                       }`}
                     >
-                      {sizeInfo.compressed > 15
+                      {sizeInfo.compressed > 25
                         ? "Requires High Compression"
                         : "Pending Submission"}
                     </p>
@@ -331,12 +482,12 @@ export function StepUpload({
                     label="Current Size"
                     value={`${sizeInfo.compressed.toFixed(1)} MB`}
                     icon={Zap}
-                    tone={sizeInfo.compressed > 15 ? "text-danger" : "text-primary"}
+                    tone={sizeInfo.compressed > 25 ? "text-danger" : "text-primary"}
                   />
                 </div>
 
                 <div className="space-y-3">
-                  {sizeInfo.compressed > 15 ? (
+                  {sizeInfo.compressed > 25 ? (
                     <Button
                       size="lg"
                       color="danger"
@@ -356,7 +507,7 @@ export function StepUpload({
                     </Button>
                   )}
                   <p className="text-center text-[11px] font-bold text-default-500/80 uppercase tracking-tighter">
-                    {sizeInfo.compressed > 15
+                    {sizeInfo.compressed > 25
                       ? "Use high-intensity compression to fit within the decentralized storage limit."
                       : "A signature is required to securely store your video on IPFS."}
                   </p>

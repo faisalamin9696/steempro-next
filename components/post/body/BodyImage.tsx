@@ -153,7 +153,7 @@ function BodyImage({
         {!isLoading && isShort && (
           <Link
             href={shortsUrl || ""}
-            className="absolute inset-0 flex items-center justify-center z-20 transition-opacity duration-300 group/play"
+            className="absolute inset-0 flex items-center justify-center z-10 transition-opacity duration-300 group/play hover:scale-110"
           >
             <div className="p-4 bg-primary/80 backdrop-blur-md rounded-full shadow-2xl ring-2 ring-white/20 transition-all duration-300 group-hover/play:scale-110 group-hover/play:bg-primary">
               <Play size={40} className="text-white fill-white ml-1" />

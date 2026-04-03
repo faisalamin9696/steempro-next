@@ -114,7 +114,10 @@ export function useShortsSubmit() {
   );
 
   // --- Validation ---
-  const validateVideoDimensions = (selectedFile: File): Promise<boolean> =>
+  const validateVideoDimensions = (
+    selectedFile: File,
+    isRetry = false,
+  ): Promise<{ isValid: boolean; parsedFile: File | null }> =>
     new Promise((resolve) => {
       const video = document.createElement("video");
       video.preload = "metadata";
@@ -126,7 +129,7 @@ export function useShortsSubmit() {
             `Invalid Dimensions: ${videoWidth}x${videoHeight}. Shorts must be vertical (9:16).`,
             { duration: 6000 },
           );
-          return resolve(false);
+          return resolve({ isValid: false, parsedFile: null });
         }
         setDuration(duration);
         if (duration > 60) {
@@ -135,11 +138,74 @@ export function useShortsSubmit() {
             { duration: 6000 },
           );
         }
-        resolve(true);
+        resolve({ isValid: true, parsedFile: selectedFile });
       };
-      video.onerror = () => {
-        toast.error("Could not read video metadata.");
-        resolve(false);
+      video.onerror = async () => {
+        window.URL.revokeObjectURL(video.src);
+        if (isRetry) {
+          toast.error("Could not read video metadata even after conversion.");
+          return resolve({ isValid: false, parsedFile: null });
+        }
+
+        toast.info(
+          "Codec not supported by browser. Converting formats smoothly...",
+        );
+        upsertStage(
+          "validation",
+          "Normalizing video",
+          "active",
+          "Converting to supported format for preview...",
+        );
+
+        try {
+          const ffmpeg = new FFmpeg();
+          ffmpegRef.current = ffmpeg;
+          await ffmpeg.load();
+          await ffmpeg.writeFile("raw_input", await fetchFile(selectedFile));
+
+          // Fast transcode to MP4 to allow browser playback and validation
+          await ffmpeg.exec([
+            "-i",
+            "raw_input",
+            "-t",
+            "60",
+            "-c:v",
+            "libx264",
+            "-profile:v",
+            "main",
+            "-pix_fmt",
+            "yuv420p",
+            "-preset",
+            "ultrafast",
+            "-crf",
+            "28",
+            "-c:a",
+            "aac",
+            "-b:a",
+            "96k",
+            "normalized.mp4",
+          ]);
+
+          const data = await ffmpeg.readFile("normalized.mp4");
+          const normalizedFile = new File(
+            [(data as Uint8Array).buffer as ArrayBuffer],
+            "normalized.mp4",
+            {
+              type: "video/mp4",
+            },
+          );
+
+          // Retry validation on the universally compatible MP4
+          const retryResult = await validateVideoDimensions(
+            normalizedFile,
+            true,
+          );
+          resolve(retryResult);
+        } catch (e) {
+          console.error(e);
+          toast.error("Format conversion failed.");
+          resolve({ isValid: false, parsedFile: null });
+        }
       };
       video.src = URL.createObjectURL(selectedFile);
     });
@@ -149,10 +215,10 @@ export function useShortsSubmit() {
     if (!e.target.files?.length) return;
     const selected = e.target.files[0];
 
-    // 8MB limit
-    // if (selected.size > 8 * 1024 * 1024) {
+    // 25MB limit
+    // if (selected.size > 25 * 1024 * 1024) {
     //   toast.error(
-    //     `File too large (${(selected.size / (1024 * 1024)).toFixed(1)}MB). Max 8MB allowed for initial upload.`,
+    //     `File too large (${(selected.size / (1024 * 1024)).toFixed(1)}MB). Max 25MB allowed for initial upload.`,
     //     { duration: 6000 },
     //   );
     //   e.target.value = "";
@@ -160,8 +226,8 @@ export function useShortsSubmit() {
     // }
 
     upsertStage("validation", "Validating video", "active");
-    const isValid = await validateVideoDimensions(selected);
-    if (!isValid) {
+    const { isValid, parsedFile } = await validateVideoDimensions(selected);
+    if (!isValid || !parsedFile) {
       upsertStage(
         "validation",
         "Validating video",
@@ -177,8 +243,8 @@ export function useShortsSubmit() {
       "done",
       "Vertical format and duration approved.",
     );
-    setFile(selected);
-    await processAndUpload(selected);
+    setFile(parsedFile);
+    await processAndUpload(parsedFile);
   };
 
   // --- HLS Transcode ---
@@ -234,9 +300,9 @@ export function useShortsSubmit() {
       await ffmpeg.createDir("360p");
 
       // 720p with 60s limit
-      const preset = mode === "normal" ? "ultrafast" : "faster";
-      const crf720 = mode === "normal" ? "30" : "28";
-      const crf360 = mode === "normal" ? "36" : "34";
+      const preset = mode === "normal" ? "veryfast" : "faster";
+      const crf720 = mode === "normal" ? "28" : "26";
+      const crf360 = mode === "normal" ? "32" : "30";
 
       await ffmpeg.exec([
         "-i",
@@ -247,6 +313,10 @@ export function useShortsSubmit() {
         "scale=-2:720",
         "-c:v",
         "libx264",
+        "-profile:v",
+        "main",
+        "-pix_fmt",
+        "yuv420p",
         "-crf",
         crf720,
         "-preset",
@@ -254,7 +324,7 @@ export function useShortsSubmit() {
         "-c:a",
         "aac",
         "-b:a",
-        "96k",
+        "128k",
         "-hls_time",
         "4",
         "-hls_list_size",
@@ -275,6 +345,10 @@ export function useShortsSubmit() {
         "scale=-2:360",
         "-c:v",
         "libx264",
+        "-profile:v",
+        "main",
+        "-pix_fmt",
+        "yuv420p",
         "-crf",
         crf360,
         "-preset",
@@ -282,7 +356,7 @@ export function useShortsSubmit() {
         "-c:a",
         "aac",
         "-b:a",
-        "64k",
+        "96k",
         "-hls_time",
         "4",
         "-hls_list_size",
@@ -434,7 +508,8 @@ export function useShortsSubmit() {
       );
       const { key, useKeychain } = await authenticateOperation("posting");
       const username = session?.user?.name || "";
-      toast.info("Awaiting Steem Keychain signature...");
+      if (useKeychain) toast.info("Awaiting Steem Keychain signature...");
+      else toast.info("Signing video upload...");
       await steemApi.signMessage(
         username,
         `steempro_short_${Date.now()}`,

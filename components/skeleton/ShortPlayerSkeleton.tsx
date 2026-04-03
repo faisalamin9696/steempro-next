@@ -27,7 +27,7 @@ function ShortPlayerSkeleton() {
         {/* MOBILE ONLY Overlay Info (Hidden on XL) */}
         <div className="absolute inset-x-0 bottom-0 pointer-events-none xl:hidden">
           <div className="absolute bottom-0 inset-x-0 h-48 bg-linear-to-t from-black/80 via-black/40 to-transparent" />
-          <div className="relative p-6 pt-20 pb-10 flex flex-col gap-3">
+          <div className="relative p-4 pt-20 pb-10 flex flex-col gap-3">
              <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-zinc-800/80 rounded-full" />
                 <div className="h-4 bg-zinc-800/80 rounded w-28" />
@@ -44,7 +44,7 @@ function ShortPlayerSkeleton() {
         </div>
 
         {/* Progress Bar placeholder */}
-        <div className="absolute bottom-2 left-3 right-3 z-40 h-1 bg-white/10 rounded-full" />
+        {/* <div className="absolute bottom-2 left-3 right-3 z-40 h-1 bg-white/10 rounded-full" /> */}
       </div>
 
       {/* 3. Right Sidebar (MD Only): Actions Placeholder */}

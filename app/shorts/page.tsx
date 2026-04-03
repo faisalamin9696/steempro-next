@@ -2,56 +2,58 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { sdsApi } from "@/libs/sds";
-import ShortsPlayer from "@/components/shorts/ShortsPlayer";
 import { useSession } from "next-auth/react";
-import { Constants } from "@/constants";
 import { isSteemProShort } from "@/utils";
 import ShortPlayerSkeleton from "@/components/skeleton/ShortPlayerSkeleton";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Mousewheel, A11y } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/virtual";
-import { useRouter } from "next/navigation";
 import { twMerge } from "tailwind-merge";
-import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
+import { createPlayer, videoFeatures } from "@videojs/react";
+import { Constants } from "@/constants";
+import ShortsPlayer from "@/components/shorts/ShortsPlayer";
+import { useAppSelector } from "@/hooks/redux/store";
 
 interface ShortVideo extends Feed {
   videoUrl?: string;
 }
 
+export const ShortsPlayerInstance = createPlayer({
+  features: videoFeatures,
+});
+
 export default function ShortsPage({ author }: { author?: string }) {
   const [shorts, setShorts] = useState<ShortVideo[]>([]);
   const [loading, setLoading] = useState(true);
-  const [offset, setOffset] = useState(0);
-  const { data: session } = useSession();
-  const router = useRouter();
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
-  const { isMobile } = useDeviceInfo();
-
+  const { data: session } = useSession();
   const isFetching = useRef(false);
   const hasMore = useRef(true);
+  const offsetRef = useRef(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const loadShorts = useCallback(
-    async (currentOffset = 0) => {
-      if (isFetching.current || !hasMore.current) return;
+    async (reset = false) => {
+      if (isFetching.current || (!hasMore.current && !reset)) return;
       try {
+        if (reset) {
+          offsetRef.current = 0;
+          hasMore.current = true;
+          setShorts([]);
+        }
         isFetching.current = true;
         setLoading(true);
-
-        const limit = 20;
-        // Fetch posts under #shorts tag
-        const posts = author
-          ? await sdsApi.getSteemShortsByAuthor(
-              author,
-              session?.user?.name || "steem",
-              limit,
-              currentOffset,
-            )
-          : await sdsApi.getSteemShorts(
-              session?.user?.name || "steem",
-              limit,
-              currentOffset,
-            );
+        const limit = 2;
+        const posts =
+          (author
+            ? await sdsApi.getSteemShortsByAuthor(
+                author,
+                session?.user?.name || "steem",
+                limit,
+                offsetRef.current,
+              )
+            : await sdsApi.getSteemShorts(
+                session?.user?.name || "steem",
+                limit,
+                offsetRef.current,
+              )) ?? [];
 
         if (posts.length < limit) {
           hasMore.current = false;
@@ -59,21 +61,18 @@ export default function ShortsPage({ author }: { author?: string }) {
 
         const videoPosts = posts
           .filter((p) => {
-            // Filter out muted shorts
             const isMuted = p.is_muted || p.is_author_muted;
             return isSteemProShort(p) && !isMuted;
           })
           .map((p) => ({ ...p, videoUrl: extractVideoUrl(p) }) as ShortVideo);
 
         setShorts((prev) => {
-          // Create a map to filter out duplicates if we're rapidly paging
-          const newArr = [...prev, ...videoPosts];
-          const unique = newArr.filter(
-            (v, i, a) => a.findIndex((t) => t.link_id === v.link_id) === i,
+          const novel = videoPosts.filter(
+            (p) => !prev.some((x) => x.link_id === p.link_id),
           );
-          return unique;
+          return [...prev, ...novel];
         });
-        setOffset(currentOffset + limit);
+        offsetRef.current += limit;
       } catch (error) {
         console.error("Failed to load shorts:", error);
       } finally {
@@ -81,103 +80,92 @@ export default function ShortsPage({ author }: { author?: string }) {
         setLoading(false);
       }
     },
-    [session?.user?.name],
+    [author, session?.user?.name],
   );
 
-  const handleRefresh = useCallback(async () => {
-    hasMore.current = true;
-    setOffset(0);
-    setShorts([]);
-    await loadShorts(0);
+  useEffect(() => {
+    loadShorts(true);
   }, [loadShorts]);
 
-  useEffect(() => {
-    loadShorts();
-  }, [loadShorts]);
+  const handleScroll = useCallback(() => {
+    if (!scrollContainerRef.current || shorts.length === 0) return;
+    const container = scrollContainerRef.current;
 
-  // Load more when reaching near bottom
-  useEffect(() => {
-    if (shorts.length > 0 && activeVideoIndex >= shorts.length - 2) {
-      loadShorts(offset);
+    // Determine active index strictly from scroll math
+    const slideHeight = container.clientHeight;
+    let closestIndex = Math.floor(
+      (container.scrollTop + slideHeight / 2) / slideHeight,
+    );
+    closestIndex = Math.max(0, Math.min(closestIndex, shorts.length - 1));
+
+    if (closestIndex !== activeVideoIndex) {
+      setActiveVideoIndex(closestIndex);
     }
-  }, [activeVideoIndex, shorts.length, loadShorts, offset]);
+
+    // Secure Native Infinite Load Math
+    const remainingScroll =
+      container.scrollHeight - container.scrollTop - container.clientHeight;
+    // If the user reaches within 2 complete video frames of the bottom, silently fetch more!
+    if (remainingScroll <= slideHeight * 2) {
+      loadShorts();
+    }
+  }, [activeVideoIndex, shorts.length, loadShorts]);
 
   return (
-    <div className="relative h-dvh md:h-[calc(100vh-64px)] w-full overflow-hidden flex justify-center pb-0 md:pb-0">
-      <div className="h-full w-full max-w-[500px] md:max-w-none relative transition-all duration-500">
+    <div className="relative h-dvh md:h-[calc(100vh-64px)] w-full overflow-hidden flex justify-center ">
+      <div
+        ref={scrollContainerRef}
+        onScroll={handleScroll}
+        className="h-full w-full relative overflow-y-scroll snap-y snap-mandatory scrollbar-hide"
+      >
         {loading && shorts.length === 0 ? (
-          <div className="h-full w-full flex flex-col">
+          <div className="h-full w-full flex flex-col items-center justify-center pb-14 md:pb-0">
             <ShortPlayerSkeleton />
           </div>
         ) : (
-          <Swiper
-            direction="vertical"
-            className="h-full w-full"
-            onSlideChange={(swiper) => setActiveVideoIndex(swiper.activeIndex)}
-            onSliderMove={(swiper) => {
-              if (
-                swiper.activeIndex === 0 &&
-                swiper.translate > 100 &&
-                !isFetching.current
-              ) {
-                handleRefresh();
-              }
-            }}
-            modules={[Mousewheel, A11y]}
-            mousewheel={true}
-            slidesPerView={isMobile ? 1 : 1.06}
-            spaceBetween={isMobile ? 0 : 12}
-            speed={400}
-          >
-            {shorts.map((short, index) => (
-              <SwiperSlide
-                key={short.link_id}
-                virtualIndex={index}
-                className={twMerge("w-full relative", "pb-14 md:pb-0")}
-              >
-                <ShortsPlayer
-                  short={short}
-                  isActive={index === activeVideoIndex}
-                  shouldPreload={
-                    index > activeVideoIndex && index <= activeVideoIndex + 4
-                  }
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        )}
+          <div className="flex flex-col items-center w-full">
+            {shorts.map((short, index) => {
+              // Smart Virtualization: Render active + neighbors
+              const isAround = Math.abs(index - activeVideoIndex) <= 2; // Expanded window prevents jitter
 
-        {isFetching.current && activeVideoIndex === 0 && offset === 0 && (
-          <div className="absolute top-4 inset-x-0 z-50 flex justify-center pointer-events-none">
-            <div className="w-full flex flex-col md:flex-row md:flex-nowrap md:justify-center md:gap-4 md:px-4">
-              {/* Identity Space Spacer */}
-              <div className="hidden xl:flex shrink-0 w-[240px]" />
-              {/* Alert Stage */}
-              <div className="shrink-0 w-full md:max-w-[500px] flex justify-center">
-                <span className="bg-black/40 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-white border border-white/5 animate-pulse">
-                  Refreshing...
-                </span>
-              </div>
-              {/* Actions Space Spacer */}
-              <div className="hidden md:flex shrink-0 w-16" />
-            </div>
+              return (
+                <div
+                  key={short.link_id}
+                  className={twMerge(
+                    "h-dvh w-full snap-start snap-always shrink-0 flex items-center justify-center relative",
+                    "pb-14",
+                  )}
+                >
+                  {isAround ? (
+                    <ShortsPlayerInstance.Provider>
+                      <ShortsPlayer
+                        short={short}
+                        isActive={index === activeVideoIndex}
+                        shouldPreload={true}
+                      />
+                    </ShortsPlayerInstance.Provider>
+                  ) : null}
+                </div>
+              );
+            })}
           </div>
         )}
 
-        {loading && shorts.length > 0 && activeVideoIndex !== 0 && (
-          <div className="absolute bottom-4 inset-x-0 z-50 flex justify-center pointer-events-none">
-            <div className="w-full flex flex-col md:flex-row md:flex-nowrap md:justify-center md:gap-4 md:px-4">
-              {/* Identity Space Spacer */}
-              <div className="hidden xl:flex shrink-0 w-[240px]" />
-              {/* Alert Stage */}
-              <div className="shrink-0 w-full md:max-w-[500px] flex justify-center">
-                <span className="bg-black/40 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-white border border-white/5 animate-pulse">
-                  Loading More...
-                </span>
-              </div>
-              {/* Actions Space Spacer */}
-              <div className="hidden md:flex shrink-0 w-16" />
-            </div>
+        {/* Refreshing Indicator */}
+        {isFetching.current && offsetRef.current === 0 && (
+          <div className="absolute top-6 inset-x-0 z-50 flex justify-center pointer-events-none">
+            <span className="bg-black/40 backdrop-blur-md px-5 py-2 rounded-full text-[11px] font-bold uppercase tracking-[0.2em] text-white/90 border border-white/10 animate-pulse shadow-xl">
+              Refreshing...
+            </span>
+          </div>
+        )}
+
+        {/* Loading Indicator at Bottom perfectly overlaid to video */}
+        {loading && shorts?.length > 0 && activeVideoIndex !== 0 && (
+          <div className="absolute bottom-8 inset-x-0 z-50 flex justify-center pointer-events-none">
+            <span className="bg-black/40 backdrop-blur-md px-5 py-2 rounded-full text-[11px] font-bold uppercase tracking-[0.2em] text-white/90 border border-white/10 animate-pulse shadow-xl">
+              Loading More...
+            </span>
           </div>
         )}
       </div>

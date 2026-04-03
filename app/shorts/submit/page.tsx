@@ -66,9 +66,6 @@ export default function ShortsSubmitPage() {
     <MainWrapper className="flex flex-col gap-4 p-2 sm:p-6">
       {/* Header */}
       <div className="relative overflow-hidden">
-        <div className="absolute -right-20 -top-20 z-0 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute -left-20 -bottom-20 z-0 h-64 w-64 rounded-full bg-secondary/5 blur-3xl" />
-
         <div className="relative z-10 flex w-full flex-col gap-5">
           <div className="flex items-center justify-between">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.24em] text-primary shadow-sm">
