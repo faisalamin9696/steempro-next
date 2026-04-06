@@ -101,7 +101,7 @@ export default function ImageModal({
       size="full"
       backdrop="opaque"
       classNames={{
-        base: "bg-black/5 backdrop-blur-none",
+        base: "bg-black/5 backdrop-blur-sm",
         wrapper: "z-[100]",
         backdrop: "bg-black/80",
         closeButton:

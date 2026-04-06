@@ -34,14 +34,7 @@ export function useWitnesses(
 
 export function formatVotes(votes: string): string {
   const vests = parseFloat(votes);
-  if (vests >= 1e15) {
-    return (vests / 1e15).toFixed(2) + "T";
-  } else if (vests >= 1e12) {
-    return (vests / 1e12).toFixed(2) + "B";
-  } else if (vests >= 1e9) {
-    return (vests / 1e9).toFixed(2) + "M";
-  } else if (vests >= 1e6) {
-    return (vests / 1e6).toFixed(2) + "K";
-  }
-  return vests.toFixed(0);
+  const mv = vests / 1e12; // Convert to Mega Vests
+
+  return mv.toLocaleString(undefined, { maximumFractionDigits: 2 });
 }

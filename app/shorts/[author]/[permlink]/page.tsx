@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { sdsApi } from "@/libs/sds";
 import ShortsPlayer from "@/components/shorts/ShortsPlayer";
 import { useSession } from "next-auth/react";
@@ -9,11 +9,9 @@ import { extractVideoUrl, ShortsPlayerInstance } from "../../page";
 import { useAppSelector } from "@/hooks/redux/store";
 import { isSteemProShort } from "@/utils";
 import ShortPlayerSkeleton from "@/components/skeleton/ShortPlayerSkeleton";
-import { Button } from "@heroui/button";
 
 export default function SingleShortPage() {
   const params = useParams();
-  const router = useRouter();
   const { data: session } = useSession();
   const [short, setShort] = useState<ShortVideo | null>(null);
   const [loading, setLoading] = useState(true);
@@ -50,31 +48,23 @@ export default function SingleShortPage() {
     }
   }, [author, permlink, session?.user?.name]);
 
-  if (!commentData) {
-    return (
-      <div className="h-screen w-full flex flex-col items-center justify-center text-white gap-4">
-        <p>Short not found or not a valid video.</p>
-        <Button onPress={() => router.push("/shorts")} color="primary">
-          Go back to Shorts
-        </Button>
-      </div>
-    );
-  }
-
   return (
-    <div className="relative h-dvh md:h-[calc(100vh-64px)] w-full overflow-hidden flex justify-center pb-0 md:pb-0">
-      <div className="h-full w-full max-w-[500px] md:max-w-none relative transition-all duration-500">
-        {loading ? (
-          <div className="h-full w-full flex flex-col">
+    <div className="w-full h-dvh overflow-hidden flex justify-center ">
+      <div className="h-full w-full">
+        {loading && !commentData ? (
+          <div className="h-full w-full flex flex-col items-center justify-center">
             <ShortPlayerSkeleton />
           </div>
         ) : (
-          <ShortsPlayerInstance.Provider>
-            <ShortsPlayer
-              short={{ ...commentData, videoUrl: short?.videoUrl }}
-              isActive={true}
-            />
-          </ShortsPlayerInstance.Provider>
+          <div className="flex flex-col items-center w-full ">
+            <ShortsPlayerInstance.Provider>
+              <ShortsPlayer
+                short={commentData}
+                isActive={true}
+                shouldPreload={true}
+              />
+            </ShortsPlayerInstance.Provider>
+          </div>
         )}
       </div>
     </div>

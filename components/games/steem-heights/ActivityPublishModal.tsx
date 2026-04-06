@@ -213,10 +213,22 @@ Think you can beat my score? Join the climb on Steem Heights!
                     </div>
                     <p className="text-[11px] text-zinc-400 font-medium leading-relaxed">
                       {t.rich("supportDesc", {
-                        pro: (chunks) => <span className="text-emerald-500 font-bold">{chunks}</span>,
-                        steempro: (chunks) => <span className="text-foreground">{chunks}</span>,
-                        burn: (chunks) => <span className="text-foreground">{chunks}</span>,
-                        eco: (chunks) => <span className="text-emerald-500 font-bold">{chunks}</span>,
+                        pro: (chunks) => (
+                          <span className="text-emerald-500 font-bold">
+                            {chunks}
+                          </span>
+                        ),
+                        steempro: (chunks) => (
+                          <span className="text-foreground">{chunks}</span>
+                        ),
+                        burn: (chunks) => (
+                          <span className="text-foreground">{chunks}</span>
+                        ),
+                        eco: (chunks) => (
+                          <span className="text-emerald-500 font-bold">
+                            {chunks}
+                          </span>
+                        ),
                       })}
                     </p>
                   </div>
@@ -259,7 +271,7 @@ Think you can beat my score? Join the climb on Steem Heights!
                         // inputWrapper:
                         //   "bg-zinc-300/50 dark:bg-zinc-900/50 border-white/5 data-[hover=true]:border-white/10 group-data-[focus=true]:border-emerald-500/50",
                       }}
-                      onChange={() => {}}
+                      onChange={setBody}
                       authors={[]}
                     />
                   </div>

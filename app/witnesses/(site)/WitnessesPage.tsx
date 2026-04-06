@@ -266,10 +266,11 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
     },
 
     {
-      key: "name",
+      key: "actions",
       header: t("columns.action"),
-      render: (value, row) => {
-        const issVoted = loginData.witness_votes.includes(value);
+      render: (_, row) => {
+        const witnessName = row.name;
+        const issVoted = loginData.witness_votes.includes(witnessName);
         return (
           <div className="flex items-center gap-2">
             <Button
@@ -288,16 +289,16 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
               variant="flat"
               isDisabled={
                 !loginData ||
-                votingFor === value ||
+                votingFor === witnessName ||
                 // !isWitnessActive(row) ||
                 hasProxy
               }
               onPress={() =>
-                handleVote(value, row.observer_votes_witness !== 1)
+                handleVote(witnessName, row.observer_votes_witness !== 1)
               }
-              isLoading={votingFor === value}
+              isLoading={votingFor === witnessName}
             >
-              {votingFor !== value && <Vote className="mr-1" size={20} />}
+              {votingFor !== witnessName && <Vote className="mr-1" size={20} />}
               {issVoted ? t("unvote") : t("vote")}
             </Button>
           </div>
@@ -374,7 +375,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
                       columns={columns}
                       searchPlaceholder={t("searchPlaceholder")}
                       emptyMessage={t("noWitnesses")}
-                      rowIdKey="name"
+                      rowIdKey="rank"
                       highlightId={highlightedWitness || undefined}
                     />
                   </CardBody>

@@ -87,20 +87,22 @@ const WitnessDetailsModal = ({
         </div>
       ),
     },
+
     {
       key: "vests_own",
-      header: t("details.ownSp"),
+      header: "Own (MV)",
       sortable: true,
-      render: (value) => (
-        <span className="font-mono text-xs">{formatSP(value)}</span>
+      render: (value, row) => (
+        <span className="font-mono text-xs">{(value / 1e6).toLocaleString()}</span>
       ),
     },
+
     {
       key: "vests_proxied",
-      header: t("details.proxiedSp"),
+      header: "Proxied (MV)",
       sortable: true,
       render: (value) => (
-        <span className="font-mono text-xs">{formatSP(value)}</span>
+        <span className="font-mono text-xs">{(value / 1e6).toLocaleString()}</span>
       ),
     },
   ];
@@ -178,7 +180,8 @@ const WitnessDetailsModal = ({
                     content: "flex flex-row gap-1 items-center px-1",
                   }}
                 >
-                  <CheckCircle className="mr-1" size={14} /> {t("details.active")}
+                  <CheckCircle className="mr-1" size={14} />{" "}
+                  {t("details.active")}
                 </Chip>
               ) : (
                 <Chip
@@ -193,7 +196,9 @@ const WitnessDetailsModal = ({
                 </Chip>
               )}
             </div>
-            <span className="text-sm text-muted">{t("details.rank")} #{witness.rank}</span>
+            <span className="text-sm text-muted">
+              {t("details.rank")} #{witness.rank}
+            </span>
           </div>
         </div>
       )}
@@ -220,11 +225,17 @@ const WitnessDetailsModal = ({
             >
               <div className="space-y-4 pb-4">
                 <Section title={t("details.basicInfo")}>
-                  <DetailRow label={t("details.owner")} value={witness.name} copyable />
+                  <DetailRow
+                    label={t("details.owner")}
+                    value={witness.name}
+                    copyable
+                  />
                   <DetailRow label={t("details.rank")} value={witness.rank} />
                   <div className="flex items-center justify-between border-b border-border py-2">
                     <div className="flex flex-col gap-1">
-                      <span className="text-xs text-muted">{t("details.votes")}</span>
+                      <span className="text-xs text-muted">
+                        {t("details.votes")}
+                      </span>
                       <span className="font-mono text-sm">
                         {formatVotes(witness.received_votes.toString())} VESTS
                       </span>
@@ -297,7 +308,10 @@ const WitnessDetailsModal = ({
                 </Section>
 
                 <Section title={t("details.sbdExchangeRate")}>
-                  <DetailRow label={t("details.base")} value={witness.reported_price.base} />
+                  <DetailRow
+                    label={t("details.base")}
+                    value={witness.reported_price.base}
+                  />
                   <DetailRow
                     label={t("details.quote")}
                     value={witness.reported_price.quote}
@@ -373,10 +387,10 @@ const WitnessDetailsModal = ({
                       </div>
                       <div className="flex-1">
                         <p className="text-xs text-muted font-medium">
-                          {t("details.totalSupport")}
+                          {"Total Support (MV)"}
                         </p>
                         <p className="text-lg font-bold">
-                          {formatSP(totals.total)}
+                          {(totals.total / 1e6).toLocaleString()}
                         </p>
                       </div>
                     </div>
