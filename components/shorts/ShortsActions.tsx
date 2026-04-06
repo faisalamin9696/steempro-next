@@ -27,6 +27,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
 import { addCommonDataHandler } from "@/hooks/redux/reducers/CommonReducer";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
+import { Card } from "@heroui/react";
 
 interface Props {
   short: ShortVideo;
@@ -84,11 +85,12 @@ export default function ShortsActions({ short }: Props) {
     "text-inherit transition-all duration-300 active:scale-90 h-10 w-10 min-w-0";
 
   return (
-    <div
-      className="flex flex-col items-center gap-4 z-20 pointer-events-auto"
+    <Card
+      isBlurred
+      className="flex flex-col items-center gap-4 z-20 pointer-events-auto rounded-full bg-transparent xl:bg-default text-white md:text-default-900!"
       onClick={(e) => e.stopPropagation()}
     >
-      <div className="flex flex-col p-2 text-inherit items-center bg-black/20 rounded-full border border-white/5 shadow-2xl transition-all duration-300 overflow-hidden">
+      <div className="flex flex-col p-1 text-inherit items-cente transition-all duration-300 overflow-hidden">
         <Accordion
           selectedKeys={isCollapsed ? [] : ["actions"]}
           className="p-0 flex flex-col items-center gap-4!"
@@ -322,6 +324,6 @@ export default function ShortsActions({ short }: Props) {
         onOpenChange={setIsBoostModalOpen}
         post={short}
       />
-    </div>
+    </Card>
   );
 }

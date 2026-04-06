@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, memo } from "react";
+import { useEffect, useMemo, memo } from "react";
 import { getThumbnail } from "@/utils/image";
 import { useAppSelector } from "@/hooks/redux/store";
 import NsfwOverlay from "../nsfw/NsfwOverlay";
@@ -21,7 +21,7 @@ export default memo(function ShortsPlayerEnhanced({
   shouldPreload,
 }: ShortsPlayer) {
   const player = ShortsPlayerInstance.usePlayer().target;
-  const [isUiVisible, setIsUiVisible] = useState(true);
+  // const [isUiVisible, setIsUiVisible] = useState(true);
 
   const commentData =
     useAppSelector(
@@ -46,50 +46,50 @@ export default memo(function ShortsPlayerEnhanced({
   }, [isActive, player]);
 
   // Adaptive UI Visibility Logic (Minified)
-  useEffect(() => {
-    if (!isActive || !player?.media) return;
-    let t: NodeJS.Timeout;
-    const hide = () => {
-      clearTimeout(t);
-      !player.media.paused &&
-        (t = setTimeout(() => setIsUiVisible(false), 3000));
-    };
-    const show = () => {
-      setIsUiVisible(true);
-      hide();
-    };
-    const evs = [
-      "mousemove",
-      "mousedown",
-      "touchstart",
-      "touchmove",
-      "keydown",
-    ];
-    const h = () => show();
+  // useEffect(() => {
+  //   if (!isActive || !player?.media) return;
+  //   let t: NodeJS.Timeout;
+  //   const hide = () => {
+  //     clearTimeout(t);
+  //     !player.media.paused &&
+  //       (t = setTimeout(() => setIsUiVisible(false), 3000));
+  //   };
+  //   const show = () => {
+  //     setIsUiVisible(true);
+  //     hide();
+  //   };
+  //   const evs = [
+  //     "mousemove",
+  //     "mousedown",
+  //     "touchstart",
+  //     "touchmove",
+  //     "keydown",
+  //   ];
+  //   const h = () => show();
 
-    hide();
-    evs.forEach((e) => window.addEventListener(e, h));
-    player.media.addEventListener("play", hide);
-    player.media.addEventListener("pause", h);
+  //   hide();
+  //   evs.forEach((e) => window.addEventListener(e, h));
+  //   player.media.addEventListener("play", hide);
+  //   player.media.addEventListener("pause", h);
 
-    return () => {
-      clearTimeout(t);
-      evs.forEach((e) => window.removeEventListener(e, h));
-      player.media?.removeEventListener("play", hide);
-      player.media?.removeEventListener("pause", h);
-    };
-  }, [isActive, player]);
+  //   return () => {
+  //     clearTimeout(t);
+  //     evs.forEach((e) => window.removeEventListener(e, h));
+  //     player.media?.removeEventListener("play", hide);
+  //     player.media?.removeEventListener("pause", h);
+  //   };
+  // }, [isActive, player]);
 
-  const visibilityClass = useMemo(
-    () =>
-      twMerge(
-        "transition-opacity duration-500",
-        !isUiVisible && isActive
-          ? "opacity-0 pointer-events-none"
-          : "opacity-100 pointer-events-auto",
-      ),
-    [isUiVisible, isActive],
-  );
+  // const visibilityClass = useMemo(
+  //   () =>
+  //     twMerge(
+  //       "transition-opacity duration-500",
+  //       !isUiVisible && isActive
+  //         ? "opacity-0 pointer-events-none"
+  //         : "opacity-100 pointer-events-auto",
+  //     ),
+  //   [isUiVisible, isActive],
+  // );
 
   return (
     <div className="h-full w-full flex py-0 md:py-2 flex-row items-end justify-center px-0 md:px-4 md:pb-4 overflow-hidden relative">
@@ -110,7 +110,7 @@ export default memo(function ShortsPlayerEnhanced({
       {/* Center Media Stage */}
       <div
         className={twMerge(
-          "shrink-0 h-full w-full md:max-w-[500px] rounded-none md:rounded-2xl group relative flex items-center justify-center overflow-hidden border border-white/5 shadow-2xl transition-all duration-500",
+          "shrink-0 h-full w-full md:max-w-[500px] rounded-none group relative flex items-center justify-center overflow-hidden shadow-2xl transition-all duration-500",
           !isActive && "brightness-50 grayscale-[0.2]",
         )}
       >
@@ -124,27 +124,25 @@ export default memo(function ShortsPlayerEnhanced({
             loop
             disablePictureInPicture
             preload={shouldPreload ? "auto" : "none"}
+            customContent={
+              <div
+                className={twMerge(
+                  "xl:hidden transition-opacity duration-500",
+                  // visibilityClass
+                )}
+              >
+                <ShortsOverlayInfo short={commentData} />
+              </div>
+            }
           />
         </NsfwOverlay>
-
-        {/* Mobile Info Overlay */}
-        <div
-          className={twMerge(
-            "absolute inset-x-0 bottom-0 pointer-events-none transition-opacity duration-500 xl:hidden",
-            !isActive && "opacity-0",
-            visibilityClass,
-          )}
-        >
-          <div className="absolute bottom-0 inset-x-0 bg-linear-to-t from-black/80 via-black/40 to-transparent" />
-          <ShortsOverlayInfo short={commentData} />
-        </div>
 
         {/* Mobile Actions Overlay */}
         <div
           className={twMerge(
-            "absolute bottom-4 right-2 z-20 backdrop-blur-xs transition-opacity duration-500 md:hidden text-white",
+            "absolute bottom-34 right-2 z-20 transition-opacity duration-500 md:hidden",
             !isActive && "opacity-0",
-            visibilityClass,
+            // visibilityClass,
           )}
         >
           <ShortsActions short={commentData} />

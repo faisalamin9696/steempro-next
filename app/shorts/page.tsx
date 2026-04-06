@@ -40,7 +40,7 @@ export default function ShortsPage({ author }: { author?: string }) {
         }
         isFetching.current = true;
         setLoading(true);
-        const limit = 2;
+        const limit = 10;
         const posts =
           (author
             ? await sdsApi.getSteemShortsByAuthor(
@@ -87,29 +87,74 @@ export default function ShortsPage({ author }: { author?: string }) {
     loadShorts(true);
   }, [loadShorts]);
 
-  const handleScroll = useCallback(() => {
+  const scrollState = useRef({
+    ticking: false,
+  });
+
+  // Global IntersectionObserver for guaranteed flawless active index detection
+  useEffect(() => {
     if (!scrollContainerRef.current || shorts.length === 0) return;
-    const container = scrollContainerRef.current;
 
-    // Determine active index strictly from scroll math
-    const slideHeight = container.clientHeight;
-    let closestIndex = Math.floor(
-      (container.scrollTop + slideHeight / 2) / slideHeight,
+    // Single observer instance eliminates heavy memory leaks and mathematical drift
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const idx = Number(entry.target.getAttribute("data-index"));
+            setActiveVideoIndex(idx);
+          }
+        });
+      },
+      {
+        root: scrollContainerRef.current,
+        threshold: 0.6, // Element must be at least 60% visible to flip the switch
+      },
     );
-    closestIndex = Math.max(0, Math.min(closestIndex, shorts.length - 1));
 
-    if (closestIndex !== activeVideoIndex) {
-      setActiveVideoIndex(closestIndex);
-    }
+    // Discover all freshly mapped wrappers securely
+    const slides = scrollContainerRef.current.querySelectorAll(".shorts-slide");
+    slides.forEach((slide) => observer.observe(slide));
 
-    // Secure Native Infinite Load Math
-    const remainingScroll =
-      container.scrollHeight - container.scrollTop - container.clientHeight;
-    // If the user reaches within 2 complete video frames of the bottom, silently fetch more!
-    if (remainingScroll <= slideHeight * 2) {
-      loadShorts();
-    }
-  }, [activeVideoIndex, shorts.length, loadShorts]);
+    return () => observer.disconnect();
+  }, [shorts.length]);
+
+  const handleScroll = useCallback(() => {
+    if (
+      !scrollContainerRef.current ||
+      shorts.length === 0 ||
+      scrollState.current.ticking
+    )
+      return;
+
+    scrollState.current.ticking = true;
+    requestAnimationFrame(() => {
+      const container = scrollContainerRef.current;
+      if (!container) {
+        scrollState.current.ticking = false;
+        return;
+      }
+
+      const slideHeight = container.clientHeight;
+      if (slideHeight <= 0) {
+        scrollState.current.ticking = false;
+        return;
+      }
+
+      // Secure Native Infinite Load Engine
+      const scrollPosition = container.scrollTop + slideHeight;
+      const threshold = container.scrollHeight - slideHeight * 3; // Trigger 3 slides early
+
+      if (
+        scrollPosition > threshold &&
+        hasMore.current &&
+        !isFetching.current
+      ) {
+        loadShorts();
+      }
+
+      scrollState.current.ticking = false;
+    });
+  }, [shorts.length, loadShorts]);
 
   return (
     <div className="relative h-dvh md:h-[calc(100vh-64px)] w-full overflow-hidden flex justify-center ">
@@ -131,9 +176,9 @@ export default function ShortsPage({ author }: { author?: string }) {
               return (
                 <div
                   key={short.link_id}
+                  data-index={index}
                   className={twMerge(
-                    "h-dvh w-full snap-start snap-always shrink-0 flex items-center justify-center relative",
-                    "pb-14",
+                    "shorts-slide h-dvh md:h-[calc(100vh-64px)] w-full snap-start snap-always shrink-0 flex items-center justify-center relative pb-14 md:pb-0",
                   )}
                 >
                   {isAround ? (

@@ -3,6 +3,7 @@ import SAvatar from "../ui/SAvatar";
 import SUsername from "../ui/SUsername";
 import { twMerge } from "tailwind-merge";
 import PostLink from "../post/PostLink";
+import ShortBody from "../post/body/ShortBody";
 
 interface Props {
   short: ShortVideo;
@@ -30,7 +31,7 @@ export default function ShortsOverlayInfo({ short, isSidebar }: Props) {
         "relative flex flex-col gap-3 z-10 pointer-events-none",
         isSidebar
           ? "p-0"
-          : "p-4 text-white bg-linear-to-t from-black/80 via-black/20 to-transparent",
+          : "p-4 text-white",
       )}
     >
       <div className="flex items-center gap-3 pointer-events-auto">
@@ -59,6 +60,7 @@ export default function ShortsOverlayInfo({ short, isSidebar }: Props) {
                 isSidebar
                   ? "bg-default-100 border-default-200 text-default-600"
                   : "bg-white/20 border-white/10 text-white",
+                !isSidebar && " text-shadow-sm",
               )}
             >
               {reputation}
@@ -88,7 +90,9 @@ export default function ShortsOverlayInfo({ short, isSidebar }: Props) {
             className="line-clamp-1 self-start w-fit"
           />
         </h3>
-        {tags.length > 0 && (
+
+        <ShortBody body={short.body} className="line-clamp-1"/>
+        {/* {tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-1">
             {tags.map((tag: string) => (
               <span
@@ -97,14 +101,15 @@ export default function ShortsOverlayInfo({ short, isSidebar }: Props) {
                   "text-[10px] px-2 py-0.5 rounded-full font-bold border",
                   isSidebar
                     ? "bg-default-100 border-default-200 text-default-600"
-                    : "bg-white/10 backdrop-blur-md border-white/5 drop-shadow-sm text-white",
+                    : "bg-white/10 backdrop-blur-md border-white/30 drop-shadow-sm text-white",
+                  !isSidebar && " text-shadow-sm",
                 )}
               >
                 #{tag}
               </span>
             ))}
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

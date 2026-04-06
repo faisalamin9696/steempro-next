@@ -90,7 +90,7 @@ export default function ShortsSubmitPage() {
                 </span>
               </h1>
               <p className="max-w-md text-xs font-medium text-default-500 leading-normal">
-                Convert your vertical clips into high-quality digital content,
+                Convert your clips into high-quality digital content,
                 optimized for instant playback.
               </p>
             </div>

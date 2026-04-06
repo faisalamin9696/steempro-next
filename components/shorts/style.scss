@@ -1,5 +1,7 @@
+@import "tailwindcss";
+
 .vjs-poster img {
-  object-fit: cover !important;
+  object-fit: contain !important;
 }
 
 /* Click-through: clicks pass through controls to video beneath */
@@ -39,7 +41,7 @@
   display: block;
   height: 100%;
   width: 100%;
-  border-radius: var(--media-border-radius, 2rem);
+  // border-radius: var(--media-border-radius, 2rem);
   font-family:
     Inter Variable,
     Inter,
@@ -81,7 +83,7 @@
     inset: 0;
     z-index: 10;
     border-radius: inherit;
-    box-shadow: inset 0 0 0 1px var(--media-surface-inner-border-color);
+    // box-shadow: inset 0 0 0 1px var(--media-surface-inner-border-color);
     pointer-events: none;
   }
 }
@@ -95,7 +97,7 @@
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: var(--media-object-fit, cover);
+  object-fit: var(--media-object-fit, contain);
   object-position: var(--media-object-position, center);
 }
 .media-default-skin ::slotted(video) {
@@ -107,7 +109,7 @@
 
 .media-default-skin:fullscreen ::slotted(video),
 .media-default-skin:fullscreen video {
-  object-fit: cover;
+  object-fit: contain;
 }
 
 /* ==========================================================================
@@ -406,19 +408,19 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: var(--media-object-fit, cover);
+  object-fit: var(--media-object-fit, contain);
   object-position: var(--media-object-position, center);
   border-radius: var(--media-video-border-radius);
 }
 .media-default-skin > img {
-  object-fit: var(--media-object-fit, cover);
+  object-fit: var(--media-object-fit, contain);
   object-position: var(--media-object-position, center);
   border-radius: inherit;
 }
 
 .media-default-skin:fullscreen media-poster ::slotted(img),
 .media-default-skin:fullscreen > img {
-  object-fit: cover;
+  object-fit: contain;
 }
 
 /* ==========================================================================
@@ -891,10 +893,10 @@
     0.997 50.9%,
     1
   );
-  --media-border-color: oklch(0 0 0 / 0.1);
-  --media-surface-background-color: oklch(1 0 0 / 0.1);
-  --media-surface-inner-border-color: oklch(1 0 0 / 0.05);
-  --media-surface-outer-border-color: oklch(0 0 0 / 0.1);
+  // --media-border-color: oklch(0 0 0 / 0.1);
+  // --media-surface-background-color: oklch(1 0 0 / 0.1);
+  // --media-surface-inner-border-color: oklch(1 0 0 / 0.05);
+  // --media-surface-outer-border-color: oklch(0 0 0 / 0.1);
   --media-surface-shadow-color: oklch(0 0 0 / 0.15);
   --media-surface-backdrop-filter: blur(16px) saturate(1.5);
   --media-video-border-radius: var(--media-border-radius, 2rem);
@@ -915,14 +917,14 @@
     --media-popup-transition-duration: 0ms;
   }
 
-  @media (prefers-color-scheme: dark) {
-    --media-border-color: oklch(1 0 0 / 0.15);
-  }
+  // @media (prefers-color-scheme: dark) {
+  //   --media-border-color: oklch(1 0 0 / 0.15);
+  // }
 
   @media (prefers-reduced-transparency: reduce) or (prefers-contrast: more) {
     --media-surface-background-color: oklch(0 0 0);
-    --media-surface-inner-border-color: oklch(1 0 0 / 0.25);
-    --media-surface-outer-border-color: transparent;
+    // --media-surface-inner-border-color: oklch(1 0 0 / 0.25);
+    // --media-surface-outer-border-color: transparent;
   }
 
   &:has(.media-controls:not([data-visible])) {
@@ -1016,7 +1018,7 @@
   color: var(--media-color-primary, oklch(1 0 0));
   transition-duration: var(--media-controls-transition-duration);
   transition-timing-function: var(--media-controls-transition-timing-function);
-  transition-delay: 3s;
+  transition-delay: 2.5s;
   transform-origin: bottom;
 
   &[data-visible] {
@@ -1138,4 +1140,53 @@
   opacity: 1;
   scale: 1;
   filter: blur(0);
+}
+
+/* ==========================================================================
+   Mobile Persistent Visibility Locks
+   ========================================================================== */
+
+/* Base styles - controls follow their natural behavior */
+.media-default-skin .media-controls {
+  transition-property: opacity, visibility, scale, filter;
+  transition-duration: var(--media-controls-transition-duration);
+  transition-timing-function: var(--media-controls-transition-timing-function);
+}
+
+/* On mobile/tablet (below xl breakpoint), keep controls always visible */
+@media (max-width: 1279px) {
+  .media-default-skin .media-controls {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    scale: 1 !important;
+    filter: blur(0) !important;
+  }
+  
+  /* Hide cursor normally on mobile when controls would be hidden */
+  .media-default-skin--video:has(.media-controls:not([data-visible])) {
+    cursor: auto;
+  }
+}
+
+/* On desktop (xl and above), allow hardware auto-hiding of inactive media controls */
+@media (min-width: 1280px) {
+  .media-default-skin .media-controls:not([data-visible]) {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    scale: 0.9;
+  }
+  
+  /* Keep blur effect on desktop when hidden */
+  @media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .media-default-skin .media-controls:not([data-visible]) {
+      filter: blur(8px);
+    }
+  }
+  
+  /* Hide cursor on desktop when controls are hidden */
+  .media-default-skin--video:has(.media-controls:not([data-visible])) {
+    cursor: none;
+  }
 }

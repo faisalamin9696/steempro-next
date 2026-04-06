@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { sdsApi } from "@/libs/sds";
 import ShortsPlayer from "@/components/shorts/ShortsPlayer";
 import { useSession } from "next-auth/react";
-import { extractVideoUrl } from "../../page";
+import { extractVideoUrl, ShortsPlayerInstance } from "../../page";
 import { useAppSelector } from "@/hooks/redux/store";
 import { isSteemProShort } from "@/utils";
 import ShortPlayerSkeleton from "@/components/skeleton/ShortPlayerSkeleton";
@@ -69,10 +69,12 @@ export default function SingleShortPage() {
             <ShortPlayerSkeleton />
           </div>
         ) : (
-          <ShortsPlayer
-            short={{ ...commentData, videoUrl: short?.videoUrl }}
-            isActive={true}
-          />
+          <ShortsPlayerInstance.Provider>
+            <ShortsPlayer
+              short={{ ...commentData, videoUrl: short?.videoUrl }}
+              isActive={true}
+            />
+          </ShortsPlayerInstance.Provider>
         )}
       </div>
     </div>

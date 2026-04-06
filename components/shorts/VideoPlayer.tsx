@@ -1,4 +1,4 @@
-import React, { ComponentProps, forwardRef, ReactNode } from "react";
+import React, { ComponentProps, forwardRef, ReactNode, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 import {
   BufferingIndicator,
@@ -58,12 +58,12 @@ export const VideoPlayer: React.FC<VideoPlayerEnhancedProps> = ({
   return (
     <div
       className={twMerge(
-        "h-full w-full relative group/vjs rounded-none! overflow-hidden bg-black",
+        "h-full w-full relative group/vjs rounded-none! overflow-hidden ",
         className,
       )}
     >
       <ShortsPlayerInstance.Container
-        className={`media-default-skin media-default-skin--video controls rounded-none! md:rounded-2xl relative z-10 w-full h-full max-h-dvh object-cover bg-transparent!`}
+        className={`media-default-skin media-default-skin--video controls rounded-none! md:rounded-2xl relative z-10 w-full h-full max-h-dvh`}
       >
         <HlsVideo
           onCanPlay={(e) => {
@@ -79,7 +79,9 @@ export const VideoPlayer: React.FC<VideoPlayerEnhancedProps> = ({
           }}
           onVolumeChange={(e) => {
             dispatch(
-              addCommonDataHandler({ shortsVolume: e.currentTarget.volume }),
+              addCommonDataHandler({
+                shortsVolume: e.currentTarget.volume,
+              }),
             );
           }}
           {...props}
@@ -113,104 +115,117 @@ export const VideoPlayer: React.FC<VideoPlayerEnhancedProps> = ({
           </ErrorDialog.Popup>
         </ErrorDialog.Root>
 
-        <Controls.Root className="media-surface media-controls absolute top-2 h-max">
-          <Tooltip.Provider>
-            <div className="media-button-group">
-              <Tooltip.Root side="bottom">
-                <Tooltip.Trigger
-                  render={
-                    <PlayButton
-                      className="media-button--play"
-                      render={<Button />}
-                    >
-                      <RestartIcon className="media-icon media-icon--restart" />
-                      <PlayIcon className="media-icon media-icon--play" />
-                      <PauseIcon className="media-icon media-icon--pause" />
-                    </PlayButton>
-                  }
-                />
-                <Tooltip.Popup className="media-surface media-tooltip">
-                  <PlayLabel />
-                </Tooltip.Popup>
-              </Tooltip.Root>
+        <div className="controls-div">
+          {/* Gradient overlay for better contrast */}
+          <div className="absolute bottom-0 w-full h-58 xl:h-20 pointer-events-none bg-linear-to-t from-black/70 via-black/30 to-transparent" />
 
-              <Tooltip.Root side="bottom">
-                <Tooltip.Trigger
-                  render={
-                    <SeekButton
-                      seconds={-SEEK_TIME}
-                      className="media-button--seek"
-                      render={<Button />}
-                    >
-                      <span className="media-icon__container">
-                        <SeekIcon className="media-icon media-icon--seek media-icon--flipped" />
-                        <span className="media-icon__label">{SEEK_TIME}</span>
-                      </span>
-                    </SeekButton>
-                  }
-                />
-                <Tooltip.Popup className="media-surface media-tooltip">
-                  Seek backward {SEEK_TIME} seconds
-                </Tooltip.Popup>
-              </Tooltip.Root>
+          {/* Secondary overlay for additional contrast on white backgrounds */}
+          <div className="absolute bottom-0 w-full h-58 xl:h-20 pointer-events-none bg-linear-to-t from-white/10 via-transparent to-transparent mix-blend-overlay" />
 
-              <Tooltip.Root side="bottom">
-                <Tooltip.Trigger
-                  render={
-                    <SeekButton
-                      seconds={SEEK_TIME}
-                      className="media-button--seek"
-                      render={<Button />}
-                    >
-                      <span className="media-icon__container">
-                        <SeekIcon className="media-icon media-icon--seek" />
-                        <span className="media-icon__label">{SEEK_TIME}</span>
-                      </span>
-                    </SeekButton>
-                  }
-                />
-                <Tooltip.Popup className="media-surface media-tooltip">
-                  Seek forward {SEEK_TIME} seconds
-                </Tooltip.Popup>
-              </Tooltip.Root>
+          {customContent && (
+            <div className="w-full pointer-events-auto absolute bottom-20!">
+              {customContent}
             </div>
+          )}
 
-            <div className="media-time-controls">
-              <Time.Value type="current" className="media-time" />
-              <TimeSlider.Root className="media-slider">
-                <TimeSlider.Track className="media-slider__track">
-                  <TimeSlider.Fill className="media-slider__fill" />
-                  <TimeSlider.Buffer className="media-slider__buffer" />
-                </TimeSlider.Track>
-                <TimeSlider.Thumb className="media-slider__thumb" />
-
-                <div className="media-surface media-preview media-slider__preview">
-                  <Slider.Thumbnail className="media-preview__thumbnail" />
-                  <TimeSlider.Value
-                    type="pointer"
-                    className="media-time media-preview__time"
+          <Controls.Root className="media-surface media-controls  backdrop-blur-none! p-2! absolute! bottom-0! inset-x-0! rounded-none! h-max">
+            <Tooltip.Provider>
+              <div className="media-button-group">
+                <Tooltip.Root side="bottom">
+                  <Tooltip.Trigger
+                    render={
+                      <PlayButton
+                        className="media-button--play"
+                        render={<Button />}
+                      >
+                        <RestartIcon className="media-icon media-icon--restart" />
+                        <PlayIcon className="media-icon media-icon--play" />
+                        <PauseIcon className="media-icon media-icon--pause" />
+                      </PlayButton>
+                    }
                   />
-                  <SpinnerIcon className="media-preview__spinner media-icon" />
-                </div>
-              </TimeSlider.Root>
-              <Time.Value type="duration" className="media-time" />
-            </div>
+                  <Tooltip.Popup className="media-surface media-tooltip">
+                    <PlayLabel />
+                  </Tooltip.Popup>
+                </Tooltip.Root>
 
-            <div className="media-button-group">
-              <Tooltip.Root side="bottom">
-                <Tooltip.Trigger
-                  render={
-                    <PlaybackRateButton
-                      className="media-button--playback-rate"
-                      render={<Button />}
+                <Tooltip.Root side="bottom">
+                  <Tooltip.Trigger
+                    render={
+                      <SeekButton
+                        seconds={-SEEK_TIME}
+                        className="media-button--seek"
+                        render={<Button />}
+                      >
+                        <span className="media-icon__container">
+                          <SeekIcon className="media-icon media-icon--seek media-icon--flipped" />
+                          <span className="media-icon__label">{SEEK_TIME}</span>
+                        </span>
+                      </SeekButton>
+                    }
+                  />
+                  <Tooltip.Popup className="media-surface media-tooltip">
+                    Seek backward {SEEK_TIME} seconds
+                  </Tooltip.Popup>
+                </Tooltip.Root>
+
+                <Tooltip.Root side="bottom">
+                  <Tooltip.Trigger
+                    render={
+                      <SeekButton
+                        seconds={SEEK_TIME}
+                        className="media-button--seek"
+                        render={<Button />}
+                      >
+                        <span className="media-icon__container">
+                          <SeekIcon className="media-icon media-icon--seek" />
+                          <span className="media-icon__label">{SEEK_TIME}</span>
+                        </span>
+                      </SeekButton>
+                    }
+                  />
+                  <Tooltip.Popup className="media-surface media-tooltip">
+                    Seek forward {SEEK_TIME} seconds
+                  </Tooltip.Popup>
+                </Tooltip.Root>
+              </div>
+
+              <div className="media-time-controls">
+                <Time.Value type="current" className="media-time" />
+                <TimeSlider.Root className="media-slider">
+                  <TimeSlider.Track className="media-slider__track">
+                    <TimeSlider.Fill className="media-slider__fill" />
+                    <TimeSlider.Buffer className="media-slider__buffer" />
+                  </TimeSlider.Track>
+                  <TimeSlider.Thumb className="media-slider__thumb" />
+
+                  <div className="media-surface media-preview media-slider__preview">
+                    <Slider.Thumbnail className="media-preview__thumbnail" />
+                    <TimeSlider.Value
+                      type="pointer"
+                      className="media-time media-preview__time"
                     />
-                  }
-                />
-                <Tooltip.Popup className="media-surface media-tooltip">
-                  Toggle playback rate
-                </Tooltip.Popup>
-              </Tooltip.Root>
-              {/* <Tooltip.Root side="bottom">
+                    <SpinnerIcon className="media-preview__spinner media-icon" />
+                  </div>
+                </TimeSlider.Root>
+                <Time.Value type="duration" className="media-time" />
+              </div>
+
+              <div className="media-button-group">
+                <Tooltip.Root side="bottom">
+                  <Tooltip.Trigger
+                    render={
+                      <PlaybackRateButton
+                        className="media-button--playback-rate"
+                        render={<Button />}
+                      />
+                    }
+                  />
+                  <Tooltip.Popup className="media-surface media-tooltip">
+                    Toggle playback rate
+                  </Tooltip.Popup>
+                </Tooltip.Root>
+                {/* <Tooltip.Root side="bottom">
                 <Tooltip.Trigger
                   render={
                     <CaptionsButton
@@ -226,7 +241,7 @@ export const VideoPlayer: React.FC<VideoPlayerEnhancedProps> = ({
                   <CaptionsLabel />
                 </Tooltip.Popup>
               </Tooltip.Root> */}
-              {/* <Tooltip.Root side="bottom">
+                {/* <Tooltip.Root side="bottom">
                 <Tooltip.Trigger
                   render={
                     <PiPButton
@@ -242,78 +257,79 @@ export const VideoPlayer: React.FC<VideoPlayerEnhancedProps> = ({
                   <PiPLabel />
                 </Tooltip.Popup>
               </Tooltip.Root> */}
-              {isVideoMuted ? (
-                <Button
-                  onClick={() => {
-                    dispatch(
-                      addCommonDataHandler({
-                        isShortsMuted: false,
-                        shortsVolume: shortsPlayerInstance?.media.volume,
-                      }),
-                    );
-                  }}
-                >
-                  <VolumeOffIcon className="media-icon media-icon--volume-off" />
-                </Button>
-              ) : (
-                <Popover.Root
-                  openOnHover
-                  delay={200}
-                  closeDelay={100}
-                  side="bottom"
-                >
-                  <Popover.Trigger
-                    render={
-                      <Button
-                        onClick={() => {
-                          dispatch(
-                            addCommonDataHandler({
-                              isShortsMuted: true,
-                              shortsVolume: shortsPlayerInstance?.media.volume,
-                            }),
-                          );
-                        }}
+                {isVideoMuted ? (
+                  <Button
+                    onClick={() => {
+                      dispatch(
+                        addCommonDataHandler({
+                          isShortsMuted: false,
+                          shortsVolume: shortsPlayerInstance?.media.volume,
+                        }),
+                      );
+                    }}
+                  >
+                    <VolumeOffIcon className="media-icon media-icon--volume-off" />
+                  </Button>
+                ) : (
+                  <Popover.Root
+                    openOnHover
+                    delay={200}
+                    closeDelay={500}
+                    side="top"
+                  >
+                    <Popover.Trigger
+                      render={
+                        <Button
+                          onClick={() => {
+                            dispatch(
+                              addCommonDataHandler({
+                                isShortsMuted: true,
+                                shortsVolume:
+                                  shortsPlayerInstance?.media.volume,
+                              }),
+                            );
+                          }}
+                        >
+                          <VolumeLowIcon className="media-icon media-icon--volume-low" />
+                          <VolumeHighIcon className="media-icon media-icon--volume-high" />
+                        </Button>
+                      }
+                    />
+                    <Popover.Popup className="media-surface media-popover media-popover--volume p-0! px-2!">
+                      <VolumeSlider.Root
+                        className="media-slider"
+                        orientation="horizontal"
+                        thumbAlignment="edge"
                       >
-                        <VolumeLowIcon className="media-icon media-icon--volume-low" />
-                        <VolumeHighIcon className="media-icon media-icon--volume-high" />
-                      </Button>
+                        <VolumeSlider.Track className="media-slider__track">
+                          <VolumeSlider.Fill className="media-slider__fill" />
+                        </VolumeSlider.Track>
+                        <VolumeSlider.Thumb className="media-slider__thumb media-slider__thumb--persistent" />
+                      </VolumeSlider.Root>
+                    </Popover.Popup>
+                  </Popover.Root>
+                )}
+                {/* {/* <VolumePop    */}{" "}
+                <Tooltip.Root side="bottom">
+                  <Tooltip.Trigger
+                    render={
+                      <FullscreenButton
+                        className="media-button--fullscreen"
+                        render={<Button />}
+                      >
+                        <FullscreenEnterIcon className="media-icon media-icon--fullscreen-enter" />
+                        <FullscreenExitIcon className="media-icon media-icon--fullscreen-exit" />
+                      </FullscreenButton>
                     }
                   />
-                  <Popover.Popup className="media-surface media-popover media-popover--volume p-0! px-2!">
-                    <VolumeSlider.Root
-                      className="media-slider"
-                      orientation="horizontal"
-                      thumbAlignment="edge"
-                    >
-                      <VolumeSlider.Track className="media-slider__track">
-                        <VolumeSlider.Fill className="media-slider__fill" />
-                      </VolumeSlider.Track>
-                      <VolumeSlider.Thumb className="media-slider__thumb media-slider__thumb--persistent" />
-                    </VolumeSlider.Root>
-                  </Popover.Popup>
-                </Popover.Root>
-              )}
-              {/* {/* <VolumePop    */}{" "}
-              <Tooltip.Root side="bottom">
-                <Tooltip.Trigger
-                  render={
-                    <FullscreenButton
-                      className="media-button--fullscreen"
-                      render={<Button />}
-                    >
-                      <FullscreenEnterIcon className="media-icon media-icon--fullscreen-enter" />
-                      <FullscreenExitIcon className="media-icon media-icon--fullscreen-exit" />
-                    </FullscreenButton>
-                  }
-                />
-                <Tooltip.Popup className="media-surface media-tooltip">
-                  <FullscreenLabel />
-                </Tooltip.Popup>
-              </Tooltip.Root>
-            </div>
-          </Tooltip.Provider>
-        </Controls.Root>
-
+                  <Tooltip.Popup className="media-surface media-tooltip">
+                    <FullscreenLabel />
+                  </Tooltip.Popup>
+                </Tooltip.Root>
+              </div>
+            </Tooltip.Provider>
+          </Controls.Root>
+        </div>
         <div className="media-overlay" />
       </ShortsPlayerInstance.Container>
     </div>

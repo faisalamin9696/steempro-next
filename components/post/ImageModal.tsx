@@ -99,8 +99,9 @@ export default function ImageModal({
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       size="full"
+      backdrop="opaque"
       classNames={{
-        base: "bg-black/95 sm:bg-black/90 backdrop-blur-sm",
+        base: "bg-black/5 backdrop-blur-none",
         wrapper: "z-[100]",
         backdrop: "bg-black/80",
         closeButton:

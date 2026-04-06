@@ -115,7 +115,7 @@ function BodyImage({
           alt={alt}
           width={0}
           height={0}
-          isZoomed={!isShort}
+          // isZoomed={!isShort}
           className={twMerge(
             `z-0 rounded-lg transition-all duration-500 cursor-zoom-in group-hover:opacity-90 ${
               !priority && isLoading ? "opacity-0" : "opacity-100"

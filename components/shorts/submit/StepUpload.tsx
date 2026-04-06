@@ -180,7 +180,7 @@ export function StepUpload({
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Compact Guidelines Section */}
-      <div className="group relative overflow-hidden rounded-2xl bg-linear-to-br from-primary/5 to-secondary/5 p-4 border border-primary/10">
+      {/* <div className="group relative overflow-hidden rounded-2xl bg-linear-to-br from-primary/5 to-secondary/5 p-4 border border-primary/10">
         <div className="flex flex-col sm:flex-row items-center gap-4">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-inner">
             <Zap size={20} className="animate-pulse" />
@@ -190,14 +190,14 @@ export function StepUpload({
               Creator Guidelines
             </h4>
             <p className="text-xs font-medium text-default-500 leading-normal">
-              Vertical (9:16) clip up to{" "}
+              Video clip up to{" "}
               <span className="text-foreground font-bold underline decoration-primary/30">
                 60s
               </span>. Final size: <span className="text-foreground font-bold">25MB max</span>.
             </p>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {showWebcam ? (
         /* Native WebRTC Camera UI */

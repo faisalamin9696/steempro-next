@@ -488,7 +488,7 @@ export const getMetadata = {
       description: pageDescription,
       keywords: [
         "Steem Shorts",
-        "vertical videos",
+        "Video clips",
         "blockchain videos",
         "SteemPro video platform",
         "decentralized entertainment",
@@ -513,9 +513,9 @@ export const getMetadata = {
     };
   },
   shortsSubmit: () => {
-    const pageTitle = "Shorts Studio - Create and Publish Vertical Videos";
+    const pageTitle = "Shorts Studio - Create and Publish Video Clips";
     const pageDescription =
-      "Create, edit, and publish your vertical shorts on the Steem blockchain. Turn your videos into decentralized content with the SteemPro Shorts Studio.";
+      "Create, edit, and publish your video clips on the Steem blockchain. Turn your videos into decentralized content with the SteemPro Shorts Studio.";
     const url = "https://www.steempro.com/shorts/submit";
 
     return {
@@ -525,7 +525,7 @@ export const getMetadata = {
         "Create Steem Shorts",
         "Shorts Studio",
         "video upload Steem",
-        "publish vertical videos",
+        "publish video clips",
         "SteemPro creator tools",
         "blockchain video studio",
       ],
