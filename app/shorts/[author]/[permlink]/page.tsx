@@ -50,13 +50,13 @@ export default function SingleShortPage() {
 
   return (
     <div className="w-full h-dvh overflow-hidden flex justify-center ">
-      <div className="h-full w-full">
+      <div className="h-[calc(100dvh-64px)] md:h-[calc(100vh-64px)] w-full shrink-0 flex items-center justify-center relative pb-14 md:pb-0">
         {loading && !commentData ? (
           <div className="h-full w-full flex flex-col items-center justify-center">
             <ShortPlayerSkeleton />
           </div>
         ) : (
-          <div className="flex flex-col items-center w-full ">
+          <div className="flex flex-col items-center w-full h-full">
             <ShortsPlayerInstance.Provider>
               <ShortsPlayer
                 short={commentData}

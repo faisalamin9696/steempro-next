@@ -168,7 +168,7 @@ function PublishButton(props: Props) {
     }
 
     const tagsToUse = overrideTags || tags;
-    
+
     // Add required tags at the start -> filter valid ones -> deduplicate -> trim to 8
     const combinedTags = [...(requiredTags || []), ...tagsToUse];
     const normalizedTags = Array.from(new Set(combinedTags))
@@ -185,7 +185,7 @@ function PublishButton(props: Props) {
     if (isShort) {
       cleanBody = cleanBody.replace(
         /SHORTS_URL/g,
-        `/shorts/@${author}/${permlink}`,
+        `${Constants.site_url}/shorts/@${author}/${permlink}`,
       );
     }
 

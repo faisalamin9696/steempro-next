@@ -478,33 +478,6 @@
               }
             }
           }
-        },
-        "howToPlay": {
-          "title": "Master the <climb>Climb</climb>",
-          "subtitle": "Essential Survival Guide",
-          "controls": {
-            "dropControl": {
-              "title": "Drop Control",
-              "desc": "TAP anywhere to drop the moving block. Timing is everything."
-            },
-            "precision": {
-              "title": "Precision Slicing",
-              "desc": "Blocks must land on the foundation. Overhanging parts are sliced off instantly!"
-            },
-            "perfect": {
-              "title": "Perfect Streak",
-              "desc": "Aligning blocks exactly gives a PERFECT score. Increases combos and make less wind resistance."
-            },
-            "bonus": {
-              "title": "Altitude Bonus",
-              "desc": "Every successful combos grants a massive Altitude Bonus!"
-            }
-          },
-          "gravityPulse": "Gravity Pulse",
-          "gravityDesc": "You have <time>{timeVal} seconds</time> to drop each block. Taking too long triggers an <autoDrop>Automatic Drop!</autoDrop>",
-          "dailyRewards": "Daily Rewards",
-          "dailyDesc": "Complete <challenges>Daily Challenges</challenges> to earn <energy>Energy</energy>. Use Energy in the Lab to buy <powerups>Power-Ups</powerups> and <skins>Skins</skins>.",
-          "close": "Start Your Ascent"
         }
       },
       "canvas": {
@@ -536,6 +509,33 @@
         "combos": "Combos",
         "bonus": "Bonus",
         "you": "YOU"
+      },
+      "howToPlay": {
+        "title": "Master the <climb>Climb</climb>",
+        "subtitle": "Essential Survival Guide",
+        "controls": {
+          "dropControl": {
+            "title": "Drop Control",
+            "desc": "TAP anywhere to drop the moving block. Timing is everything."
+          },
+          "precision": {
+            "title": "Precision Slicing",
+            "desc": "Blocks must land on the foundation. Overhanging parts are sliced off instantly!"
+          },
+          "perfect": {
+            "title": "Perfect Streak",
+            "desc": "Aligning blocks exactly gives a PERFECT score. Increases combos and make less wind resistance."
+          },
+          "bonus": {
+            "title": "Altitude Bonus",
+            "desc": "Every successful combos grants a massive Altitude Bonus!"
+          }
+        },
+        "gravityPulse": "Gravity Pulse",
+        "gravityDesc": "You have <time>{timeVal} seconds</time> to drop each block. Taking too long triggers an <autoDrop>Automatic Drop!</autoDrop>",
+        "dailyRewards": "Daily Rewards",
+        "dailyDesc": "Complete <challenges>Daily Challenges</challenges> to earn <energy>Energy</energy>. Use Energy in the Lab to buy <powerups>Power-Ups</powerups> and <skins>Skins</skins>.",
+        "close": "Start Your Ascent"
       }
     }
   },

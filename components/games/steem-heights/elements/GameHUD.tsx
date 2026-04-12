@@ -2,7 +2,7 @@
 
 import { memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Info, Heart, Shield, Zap } from "lucide-react";
+import { Info, Heart, Shield, Zap, MessageSquare } from "lucide-react";
 import { Button } from "@heroui/button";
 import { PowerUp } from "../Config";
 import { useTranslations } from "next-intl";
@@ -16,6 +16,9 @@ interface GameHUDProps {
   windDrift: number;
   onOpenGuide: () => void;
   scrollToLeaderboard?: () => void;
+  onlineCount?: number;
+  isChatOpen?: boolean;
+  onToggleChat?: () => void;
 }
 
 export const GameHUD = memo(
@@ -28,6 +31,9 @@ export const GameHUD = memo(
     windDrift,
     onOpenGuide,
     scrollToLeaderboard,
+    onlineCount = 1,
+    isChatOpen = false,
+    onToggleChat,
   }: GameHUDProps) => {
     const t = useTranslations("Games.steemHeights");
 
@@ -127,7 +133,7 @@ export const GameHUD = memo(
           </div>
         </div>
 
-        {/* Right Section: Wind & Leaderboard */}
+        {/* Right Section: Wind & Online */}
         <div className="flex items-center gap-3 sm:gap-4">
           {gameState === "playing" && (
             <motion.div
@@ -151,14 +157,30 @@ export const GameHUD = memo(
             </motion.div>
           )}
 
-          <Button
-            size="sm"
-            variant="flat"
-            onPress={scrollToLeaderboard}
-            className="lg:hidden h-7 sm:h-9 px-3 sm:px-4 bg-black/10 dark:bg-white/5 hover:bg-white/10 font-black uppercase text-[8px] sm:text-[10px] tracking-widest rounded-xl sm:rounded-2xl border border-white/5 active:scale-95 transition-all"
+          {/* Online Count */}
+          <div className="flex flex-col items-center sm:items-end">
+             <div className="flex items-center gap-1 mb-0.5">
+                <span className="text-[8px] sm:text-[9px] text-zinc-500 font-black uppercase tracking-widest sm:tracking-[0.2em]">
+                  Online
+                </span>
+                <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-green-700 animate-pulse" />
+             </div>
+             <span className="text-xs sm:text-sm font-black tabular-nums text-green-600/90 leading-tight">
+                {onlineCount}
+             </span>
+          </div>
+
+          {/* Chat Toggle */}
+          <button
+            onClick={onToggleChat}
+            className={`flex items-center justify-center p-2 rounded-xl border transition-all active:scale-95 ${
+              isChatOpen 
+                ? 'bg-amber-500 border-amber-600 text-black shadow-[0_0_15px_rgba(245,158,11,0.4)]' 
+                : 'bg-zinc-800 border-white/5 text-zinc-400 hover:text-white hover:bg-zinc-700'
+            }`}
           >
-            {t("canvas.rankings")}
-          </Button>
+            <MessageSquare size={16} />
+          </button>
         </div>
       </div>
     );

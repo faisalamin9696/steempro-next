@@ -131,7 +131,7 @@ export const VideoPlayer: React.FC<VideoPlayerEnhancedProps> = ({
           <Controls.Root className="media-surface media-controls  backdrop-blur-none! p-2! absolute! bottom-0! inset-x-0! rounded-none! h-max">
             <Tooltip.Provider>
               <div className="media-button-group">
-                <Tooltip.Root side="bottom">
+                <Tooltip.Root side="top">
                   <Tooltip.Trigger
                     render={
                       <PlayButton
@@ -149,7 +149,7 @@ export const VideoPlayer: React.FC<VideoPlayerEnhancedProps> = ({
                   </Tooltip.Popup>
                 </Tooltip.Root>
 
-                <Tooltip.Root side="bottom">
+                <Tooltip.Root side="top">
                   <Tooltip.Trigger
                     render={
                       <SeekButton
@@ -169,7 +169,7 @@ export const VideoPlayer: React.FC<VideoPlayerEnhancedProps> = ({
                   </Tooltip.Popup>
                 </Tooltip.Root>
 
-                <Tooltip.Root side="bottom">
+                <Tooltip.Root side="top">
                   <Tooltip.Trigger
                     render={
                       <SeekButton
@@ -212,7 +212,7 @@ export const VideoPlayer: React.FC<VideoPlayerEnhancedProps> = ({
               </div>
 
               <div className="media-button-group">
-                <Tooltip.Root side="bottom">
+                <Tooltip.Root side="top">
                   <Tooltip.Trigger
                     render={
                       <PlaybackRateButton
@@ -310,7 +310,7 @@ export const VideoPlayer: React.FC<VideoPlayerEnhancedProps> = ({
                   </Popover.Root>
                 )}
                 {/* {/* <VolumePop    */}{" "}
-                <Tooltip.Root side="bottom">
+                <Tooltip.Root side="top">
                   <Tooltip.Trigger
                     render={
                       <FullscreenButton

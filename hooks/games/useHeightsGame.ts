@@ -18,6 +18,7 @@ import {
   Skin,
   PowerUp,
 } from "@/components/games/steem-heights/Config";
+import { CheerEvent } from "@/components/games/steem-heights/elements/LiveCheer";
 import { useDeviceInfo } from "../redux/useDeviceInfo";
 import { useHeightsSound } from "./useHeightsSound";
 import { generateHMAC } from "@/utils/encryption";
@@ -36,6 +37,8 @@ interface useHeightsGameProps {
   isMuted: boolean;
   perfectStreak: number;
   setPerfectStreak: (s: number | ((prev: number) => number)) => void;
+  sendCheer?: (type: CheerEvent["type"], value?: number | string) => void;
+  sendChatMessage?: (text: string) => void;
 }
 
 export const useHeightsGame = ({
@@ -52,6 +55,7 @@ export const useHeightsGame = ({
   isMuted,
   perfectStreak,
   setPerfectStreak,
+  sendCheer,
 }: useHeightsGameProps) => {
   const { isMobile } = useDeviceInfo();
   const { playSound } = useHeightsSound(isMuted, perfectStreak);
@@ -266,7 +270,8 @@ export const useHeightsGame = ({
 
     // Final step: trigger loops
     setGameState("playing");
-  }, [selectedSkin, session?.user?.name, currentSeason]);
+    if (sendCheer) sendCheer("START");
+  }, [selectedSkin, session?.user?.name, currentSeason, sendCheer]);
 
   useEffect(() => {
     if (gameState !== "playing" || isPaused) return;
@@ -410,6 +415,9 @@ export const useHeightsGame = ({
         setCombos((c) => c + 1);
         setShowBonus(true);
         playSound("combo");
+        if (sendCheer && combos + 1 >= 5 && (combos + 1) % 5 === 0) {
+          sendCheer("COMBO", combos + 1);
+        }
         setTimeout(() => setShowBonus(false), 600);
       } else {
         setShowPerfect(true);
@@ -482,6 +490,10 @@ export const useHeightsGame = ({
         MAX_SPEED,
       ),
     );
+
+    if (sendCheer && newBlocks.length % 50 === 0) {
+      sendCheer("MILESTONE", newBlocks.length);
+    }
 
     const nextBlock = {
       x: directionRef.current === 1 ? 0 : CANVAS_WIDTH - newWidth,

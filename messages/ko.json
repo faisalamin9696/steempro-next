@@ -478,33 +478,6 @@
               }
             }
           }
-        },
-        "howToPlay": {
-          "title": "<climb>등반</climb> 마스터 가이드",
-          "subtitle": "필수 생존 가이드",
-          "controls": {
-            "dropControl": {
-              "title": "낙하 조작",
-              "desc": "화면 어디서나 탭하면 이동 중인 블록이 떨어집니다. 타이밍이 전부입니다."
-            },
-            "precision": {
-              "title": "정밀 절단",
-              "desc": "블록은 반드시 기초 위에 착지해야 합니다. 튀어나온 부분은 즉시 잘려나갑니다!"
-            },
-            "perfect": {
-              "title": "퍼펙트 스트릭",
-              "desc": "블록을 정확히 맞추면 PERFECT 판정을 받습니다. 콤보가 쌓이고 바람 저항이 줄어듭니다."
-            },
-            "bonus": {
-              "title": "고도 보너스",
-              "desc": "콤보를 성공할 때마다 막대한 고도 보너스를 획득합니다!"
-            }
-          },
-          "gravityPulse": "중력 펄스",
-          "gravityDesc": "블록을 낙하시킬 시간은 <time>{timeVal}초</time>입니다. 너무 늦으면 <autoDrop>자동 낙하!</autoDrop>가 발동됩니다.",
-          "dailyRewards": "일일 보상",
-          "dailyDesc": "<challenges>일일 챌린지</challenges>를 완료해 <energy>에너지</energy>를 획득하세요. 랩에서 에너지를 사용해 <powerups>파워업</powerups>과 <skins>스킨</skins>을 구매하세요.",
-          "close": "등반 시작"
         }
       },
       "canvas": {
@@ -536,6 +509,33 @@
         "combos": "콤보",
         "bonus": "보너스",
         "you": "나"
+      },
+      "howToPlay": {
+        "title": "<climb>등반</climb> 마스터 가이드",
+        "subtitle": "필수 생존 가이드",
+        "controls": {
+          "dropControl": {
+            "title": "낙하 조작",
+            "desc": "화면 어디서나 탭하면 이동 중인 블록이 떨어집니다. 타이밍이 전부입니다."
+          },
+          "precision": {
+            "title": "정밀 절단",
+            "desc": "블록은 반드시 기초 위에 착지해야 합니다. 튀어나온 부분은 즉시 잘려나갑니다!"
+          },
+          "perfect": {
+            "title": "퍼펙트 스트릭",
+            "desc": "블록을 정확히 맞추면 PERFECT 판정을 받습니다. 콤보가 쌓이고 바람 저항이 줄어듭니다."
+          },
+          "bonus": {
+            "title": "고도 보너스",
+            "desc": "콤보를 성공할 때마다 막대한 고도 보너스를 획득합니다!"
+          }
+        },
+        "gravityPulse": "중력 펄스",
+        "gravityDesc": "블록을 낙하시킬 시간은 <time>{timeVal}초</time>입니다. 너무 늦으면 <autoDrop>자동 낙하!</autoDrop>가 발동됩니다.",
+        "dailyRewards": "일일 보상",
+        "dailyDesc": "<challenges>일일 챌린지</challenges>를 완료해 <energy>에너지</energy>를 획득하세요. 랩에서 에너지를 사용해 <powerups>파워업</powerups>과 <skins>스킨</skins>을 구매하세요.",
+        "close": "등반 시작"
       }
     }
   },

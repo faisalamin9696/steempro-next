@@ -77,7 +77,7 @@ export default function ShortsOverlayInfo({ short, isSidebar }: Props) {
         </div>
       </div>
 
-      <div className="space-y-3 pointer-events-auto max-w-[85%] md:max-w-full">
+      <div className="flex flex-col gap-3 pointer-events-auto max-w-[85%] md:max-w-full">
         <h3
           className={twMerge(
             "font-semibold text-base leading-tight line-clamp-1",

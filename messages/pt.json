@@ -478,33 +478,6 @@
               }
             }
           }
-        },
-        "howToPlay": {
-          "title": "Domine a <climb>escalada</climb>",
-          "subtitle": "Guia essencial de sobrevivência",
-          "controls": {
-            "dropControl": {
-              "title": "Controle de queda",
-              "desc": "Toque em qualquer lugar para soltar o bloco em movimento. O timing é tudo."
-            },
-            "precision": {
-              "title": "Corte de precisão",
-              "desc": "Os blocos devem pousar sobre a base. As partes que ultrapassam são cortadas instantaneamente!"
-            },
-            "perfect": {
-              "title": "Sequência perfeita",
-              "desc": "Alinhar os blocos exatamente dá uma pontuação PERFECT. Aumenta os combos e reduz a resistência do vento."
-            },
-            "bonus": {
-              "title": "Bônus de altitude",
-              "desc": "Cada combo bem-sucedido concede um enorme bônus de altitude!"
-            }
-          },
-          "gravityPulse": "Pulso de gravidade",
-          "gravityDesc": "Você tem <time>{timeVal} segundos</time> para soltar cada bloco. Demorar demais aciona uma <autoDrop>queda automática!</autoDrop>",
-          "dailyRewards": "Recompensas diárias",
-          "dailyDesc": "Complete <challenges>desafios diários</challenges> para ganhar <energy>energia</energy>. Use energia no laboratório para comprar <powerups>power-ups</powerups> e <skins>skins</skins>.",
-          "close": "Iniciar sua ascensão"
         }
       },
       "canvas": {
@@ -536,6 +509,33 @@
         "combos": "Combos",
         "bonus": "Bônus",
         "you": "VOCÊ"
+      },
+      "howToPlay": {
+        "title": "Domine a <climb>escalada</climb>",
+        "subtitle": "Guia essencial de sobrevivência",
+        "controls": {
+          "dropControl": {
+            "title": "Controle de queda",
+            "desc": "Toque em qualquer lugar para soltar o bloco em movimento. O timing é tudo."
+          },
+          "precision": {
+            "title": "Corte de precisão",
+            "desc": "Os blocos devem pousar sobre a base. As partes que ultrapassam são cortadas instantaneamente!"
+          },
+          "perfect": {
+            "title": "Sequência perfeita",
+            "desc": "Alinhar os blocos exatamente dá uma pontuação PERFECT. Aumenta os combos e reduz a resistência do vento."
+          },
+          "bonus": {
+            "title": "Bônus de altitude",
+            "desc": "Cada combo bem-sucedido concede um enorme bônus de altitude!"
+          }
+        },
+        "gravityPulse": "Pulso de gravidade",
+        "gravityDesc": "Você tem <time>{timeVal} segundos</time> para soltar cada bloco. Demorar demais aciona uma <autoDrop>queda automática!</autoDrop>",
+        "dailyRewards": "Recompensas diárias",
+        "dailyDesc": "Complete <challenges>desafios diários</challenges> para ganhar <energy>energia</energy>. Use energia no laboratório para comprar <powerups>power-ups</powerups> e <skins>skins</skins>.",
+        "close": "Iniciar sua ascensão"
       }
     }
   },

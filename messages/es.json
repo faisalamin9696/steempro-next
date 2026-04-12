@@ -478,33 +478,6 @@
               }
             }
           }
-        },
-        "howToPlay": {
-          "title": "Domina la <climb>escalada</climb>",
-          "subtitle": "Guía esencial de supervivencia",
-          "controls": {
-            "dropControl": {
-              "title": "Control de caída",
-              "desc": "Toca en cualquier lugar para soltar el bloque en movimiento. El momento lo es todo."
-            },
-            "precision": {
-              "title": "Corte de precisión",
-              "desc": "Los bloques deben caer sobre la base. ¡Las partes que sobresalen se cortan al instante!"
-            },
-            "perfect": {
-              "title": "Racha perfecta",
-              "desc": "Alinear bloques exactamente da una puntuación PERFECT. Aumenta los combos y reduce la resistencia del viento."
-            },
-            "bonus": {
-              "title": "Bonus de altitud",
-              "desc": "¡Cada combo exitoso otorga un enorme bonus de altitud!"
-            }
-          },
-          "gravityPulse": "Pulso de gravedad",
-          "gravityDesc": "Tienes <time>{timeVal} segundos</time> para soltar cada bloque. Si tardas demasiado, ¡se activa una <autoDrop>caída automática!</autoDrop>",
-          "dailyRewards": "Recompensas diarias",
-          "dailyDesc": "Completa <challenges>desafíos diarios</challenges> para ganar <energy>energía</energy>. Usa la energía en el laboratorio para comprar <powerups>power-ups</powerups> y <skins>skins</skins>.",
-          "close": "Comenzar tu ascenso"
         }
       },
       "canvas": {
@@ -536,6 +509,33 @@
         "combos": "Combos",
         "bonus": "Bonus",
         "you": "TÚ"
+      },
+      "howToPlay": {
+        "title": "Domina la <climb>escalada</climb>",
+        "subtitle": "Guía esencial de supervivencia",
+        "controls": {
+          "dropControl": {
+            "title": "Control de caída",
+            "desc": "Toca en cualquier lugar para soltar el bloque en movimiento. El momento lo es todo."
+          },
+          "precision": {
+            "title": "Corte de precisión",
+            "desc": "Los bloques deben caer sobre la base. ¡Las partes que sobresalen se cortan al instante!"
+          },
+          "perfect": {
+            "title": "Racha perfecta",
+            "desc": "Alinear bloques exactamente da una puntuación PERFECT. Aumenta los combos y reduce la resistencia del viento."
+          },
+          "bonus": {
+            "title": "Bonus de altitud",
+            "desc": "¡Cada combo exitoso otorga un enorme bonus de altitud!"
+          }
+        },
+        "gravityPulse": "Pulso de gravedad",
+        "gravityDesc": "Tienes <time>{timeVal} segundos</time> para soltar cada bloque. Si tardas demasiado, ¡se activa una <autoDrop>caída automática!</autoDrop>",
+        "dailyRewards": "Recompensas diarias",
+        "dailyDesc": "Completa <challenges>desafíos diarios</challenges> para ganar <energy>energía</energy>. Usa la energía en el laboratorio para comprar <powerups>power-ups</powerups> y <skins>skins</skins>.",
+        "close": "Comenzar tu ascenso"
       }
     }
   },

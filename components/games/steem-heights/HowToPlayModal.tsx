@@ -27,6 +27,7 @@ export const HowToPlayModal = ({ isOpen, onOpenChange }: Props) => {
       onOpenChange={onOpenChange}
       backdrop="blur"
       size="xl"
+      scrollBehavior="inside"
       className="dark:bg-zinc-950 border border-white/10"
     >
       <ModalContent>
@@ -40,7 +41,9 @@ export const HowToPlayModal = ({ isOpen, onOpenChange }: Props) => {
                 <div>
                   <h2 className="text-2xl font-black italic uppercase tracking-tight text-zinc-900 dark:text-white">
                     {t.rich("title", {
-                      climb: (chunks) => <span className="text-amber-500">{chunks}</span>,
+                      climb: (chunks) => (
+                        <span className="text-amber-500">{chunks}</span>
+                      ),
                     })}
                   </h2>
                   <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
@@ -113,8 +116,16 @@ export const HowToPlayModal = ({ isOpen, onOpenChange }: Props) => {
                   <p className="text-[11px] font-medium text-zinc-500 leading-relaxed">
                     {t.rich("gravityDesc", {
                       timeVal: TIME_LIMIT,
-                      time: (chunks) => <span className="text-amber-500 font-bold italic">{chunks}</span>,
-                      autoDrop: (chunks) => <span className="text-red-500 font-bold italic">{chunks}</span>,
+                      time: (chunks) => (
+                        <span className="text-amber-500 font-bold italic">
+                          {chunks}
+                        </span>
+                      ),
+                      autoDrop: (chunks) => (
+                        <span className="text-red-500 font-bold italic">
+                          {chunks}
+                        </span>
+                      ),
                     })}
                   </p>
                 </div>
@@ -134,10 +145,26 @@ export const HowToPlayModal = ({ isOpen, onOpenChange }: Props) => {
                   </h4>
                   <p className="text-[11px] font-medium text-zinc-500 leading-relaxed">
                     {t.rich("dailyDesc", {
-                      challenges: (chunks) => <span className="text-amber-500 font-bold">{chunks}</span>,
-                      energy: (chunks) => <span className="text-amber-500 font-bold">{chunks}</span>,
-                      powerups: (chunks) => <span className="text-amber-500 font-bold">{chunks}</span>,
-                      skins: (chunks) => <span className="text-amber-500 font-bold">{chunks}</span>,
+                      challenges: (chunks) => (
+                        <span className="text-amber-500 font-bold">
+                          {chunks}
+                        </span>
+                      ),
+                      energy: (chunks) => (
+                        <span className="text-amber-500 font-bold">
+                          {chunks}
+                        </span>
+                      ),
+                      powerups: (chunks) => (
+                        <span className="text-amber-500 font-bold">
+                          {chunks}
+                        </span>
+                      ),
+                      skins: (chunks) => (
+                        <span className="text-amber-500 font-bold">
+                          {chunks}
+                        </span>
+                      ),
                     })}
                   </p>
                 </div>

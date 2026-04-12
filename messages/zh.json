@@ -478,33 +478,6 @@
               }
             }
           }
-        },
-        "howToPlay": {
-          "title": "掌握<climb>攀登</climb>技巧",
-          "subtitle": "必备生存指南",
-          "controls": {
-            "dropControl": {
-              "title": "落块控制",
-              "desc": "点击屏幕任意位置即可放下移动中的方块，时机就是一切。"
-            },
-            "precision": {
-              "title": "精准切割",
-              "desc": "方块必须落在基座上，悬空部分会被立即切除！"
-            },
-            "perfect": {
-              "title": "完美连击",
-              "desc": "精准对齐方块可获得 PERFECT 判定，增加连击数并降低风阻。"
-            },
-            "bonus": {
-              "title": "高度加成",
-              "desc": "每次成功连击都能获得丰厚的高度奖励！"
-            }
-          },
-          "gravityPulse": "重力脉冲",
-          "gravityDesc": "您有 <time>{timeVal} 秒</time>时间放下每个方块，拖延太久将触发<autoDrop>自动落块！</autoDrop>",
-          "dailyRewards": "每日奖励",
-          "dailyDesc": "完成<challenges>每日挑战</challenges>赚取<energy>能量</energy>，在实验室用能量购买<powerups>道具</powerups>和<skins>皮肤</skins>。",
-          "close": "开始攀登"
         }
       },
       "canvas": {
@@ -536,6 +509,33 @@
         "combos": "连击",
         "bonus": "加成",
         "you": "我"
+      },
+      "howToPlay": {
+        "title": "掌握<climb>攀登</climb>技巧",
+        "subtitle": "必备生存指南",
+        "controls": {
+          "dropControl": {
+            "title": "落块控制",
+            "desc": "点击屏幕任意位置即可放下移动中的方块，时机就是一切。"
+          },
+          "precision": {
+            "title": "精准切割",
+            "desc": "方块必须落在基座上，悬空部分会被立即切除！"
+          },
+          "perfect": {
+            "title": "完美连击",
+            "desc": "精准对齐方块可获得 PERFECT 判定，增加连击数并降低风阻。"
+          },
+          "bonus": {
+            "title": "高度加成",
+            "desc": "每次成功连击都能获得丰厚的高度奖励！"
+          }
+        },
+        "gravityPulse": "重力脉冲",
+        "gravityDesc": "您有 <time>{timeVal} 秒</time>时间放下每个方块，拖延太久将触发<autoDrop>自动落块！</autoDrop>",
+        "dailyRewards": "每日奖励",
+        "dailyDesc": "完成<challenges>每日挑战</challenges>赚取<energy>能量</energy>，在实验室用能量购买<powerups>道具</powerups>和<skins>皮肤</skins>。",
+        "close": "开始攀登"
       }
     }
   },

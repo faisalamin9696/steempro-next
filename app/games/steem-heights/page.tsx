@@ -1,21 +1,31 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HeightsCanvas } from "@/components/games/steem-heights/HeightsCanvas";
 import { HeightsInfo } from "@/components/games/steem-heights/HeightsInfo";
 import { HeightsLeaderboard } from "@/components/games/steem-heights/HeightsLeaderboard";
 import { useHeights } from "@/hooks/games/useHeights";
 import { Button } from "@heroui/button";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, GripHorizontal } from "lucide-react";
 import disableDevtool from "disable-devtool";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { motion, useDragControls } from "framer-motion";
 
 const SteemHeightsPage = () => {
   const heights = useHeights();
   const leaderboardRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const t = useTranslations("Games.steemHeights");
+  const [isFloating, setIsFloating] = useState<boolean>(false);
+  const dragControls = useDragControls();
+
+  const getDockClasses = () => {
+    if (isFloating) {
+      return "fixed bottom-2 right-2 sm:bottom-6 sm:right-6 lg:right-10 z-[40] w-max max-w-[100vw] shadow-2xl sm:scale-100 scale-95 origin-bottom-right bg-zinc-950/95 backdrop-blur-xl border border-white/10 rounded-3xl pt-2 px-3 pb-6";
+    }
+    return "w-max max-w-[100vw] relative transition-transform duration-700";
+  };
 
   useEffect(() => {
     disableDevtool({
@@ -42,17 +52,43 @@ const SteemHeightsPage = () => {
           <div className="relative flex flex-col justify-center min-h-[calc(100vh-64px)]">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-center">
               {/* Game Canvas - Order 1 on mobile, 2 on desktop */}
-              <div className="flex flex-col items-center order-1 lg:order-2 h-svh sm:h-screen">
-                <div className="w-full max-w-112.5 relative">
+              <div className="flex flex-col items-center order-1 lg:order-2 h-svh sm:h-screen w-full">
+                {/* Placeholder to prevent layout shift when docked */}
+                {isFloating && (
+                  <div className="hidden lg:block w-full max-w-112.5 h-[650px]" />
+                )}
+                
+                <motion.div
+                  className={getDockClasses()}
+                  drag={isFloating}
+                  dragControls={dragControls}
+                  dragListener={false}
+                  dragMomentum={false}
+                  animate={!isFloating ? { x: 0, y: 0 } : undefined}
+                  style={{ touchAction: isFloating ? "none" : "auto" }}
+                >
+                  {isFloating && (
+                    <div
+                      className="w-full flex justify-center pb-3 pt-1 cursor-grab active:cursor-grabbing hover:opacity-100 opacity-60 transition-opacity"
+                      onPointerDown={(e) => dragControls.start(e)}
+                    >
+                      <div className="w-12 h-1.5 bg-zinc-600 rounded-full" />
+                    </div>
+                  )}
+
                   <div className="absolute -inset-8 bg-amber-500/5 blur-[100px] rounded-full opacity-50 pointer-events-none" />
                   <HeightsCanvas
                     {...heights}
+                    isFloating={isFloating}
+                    setIsFloating={setIsFloating}
                     scrollToLeaderboard={scrollToLeaderboard}
                     highScores={heights.highScores}
                     username={heights.username}
                     isGeneratingSession={heights.isGeneratingSession}
+                    lastCheer={heights.lastCheer}
+                    onlineCount={heights.onlineCount}
                   />
-                </div>
+                </motion.div>
               </div>
 
               {/* Game Info - Order 2 on mobile, 1 on desktop */}

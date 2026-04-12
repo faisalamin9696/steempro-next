@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, memo, useCallback, useMemo } from "react";
+import { forwardRef, memo, useCallback, useMemo, useState } from "react";
 import { Card } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,6 +17,8 @@ import {
   Pause,
   Play,
   Mountain,
+  PictureInPicture,
+  Minimize2,
 } from "lucide-react";
 import { useDisclosure } from "@heroui/modal";
 import { HeightsGuideModal } from "./HeightsGuideModal";
@@ -32,12 +34,15 @@ import {
   HighScore,
   PowerUp,
 } from "./Config";
+import { LiveCheer, CheerEvent } from "./elements/LiveCheer";
 
 import { GameHUD } from "./elements/GameHUD";
 import { GhostMarkers } from "./elements/GhostMarkers";
 import { GameMenus } from "./elements/GameMenus";
 import { Overlays } from "./elements/Overlays";
 import { BlockStack } from "./elements/BlockStack";
+import { LandmarksBar } from "./elements/LandmarksBar";
+import { GameChat } from "./elements/GameChat";
 
 interface Props {
   gameState: "idle" | "playing" | "gameover";
@@ -73,12 +78,17 @@ interface Props {
   highScores: HighScore[];
   username: string;
   isGeneratingSession?: boolean;
+  isFloating?: boolean;
+  setIsFloating?: (isFloating: boolean) => void;
+  lastCheer?: CheerEvent | null;
+  onlineCount?: number;
+  chatMessages?: { id: string; user: string; text: string }[];
+  sendChatMessage?: (text: string) => void;
 }
 
 const BLOCK_HEIGHT_PERCENT = ((BLOCK_HEIGHT - 1) / CANVAS_HEIGHT) * 100;
 const IMPACT_SIZE = 60;
 const CAMERA_WINDOW = 10;
-const ARROW_MARKERS = [1, 2, 3, 4, 5];
 
 export const HeightsCanvas = memo(
   forwardRef<HTMLDivElement, Props>(
@@ -115,11 +125,18 @@ export const HeightsCanvas = memo(
         highScores,
         username,
         isGeneratingSession,
+        isFloating = false,
+        setIsFloating,
+        lastCheer,
+        onlineCount,
+        chatMessages = [],
+        sendChatMessage,
       },
       ref,
     ) => {
       const t = useTranslations("Games.steemHeights");
       const { isOpen, onOpen, onOpenChange } = useDisclosure();
+      const [isChatOpen, setIsChatOpen] = useState(false);
       const viewY = Math.max(0, (blocks.length - CAMERA_WINDOW) * BLOCK_HEIGHT);
       const cameraProgress = viewY / CANVAS_HEIGHT;
       const skinNameKey = `leaderboard.lab.items.skins.${selectedSkin.id}.name`;
@@ -193,7 +210,7 @@ export const HeightsCanvas = memo(
       }, [lastImpactPos]);
 
       return (
-        <div className="flex flex-col gap-1 sm:gap-2 w-full max-w-full sm:max-w-[450px] group select-none sm:px-1">
+        <div className="flex flex-col gap-1 sm:gap-2 w-max max-w-full group select-none sm:px-1">
           <GameHUD
             score={score}
             lives={lives}
@@ -203,6 +220,9 @@ export const HeightsCanvas = memo(
             windDrift={windDrift}
             onOpenGuide={onOpen}
             scrollToLeaderboard={scrollToLeaderboard}
+            onlineCount={onlineCount}
+            isChatOpen={isChatOpen}
+            onToggleChat={() => setIsChatOpen(!isChatOpen)}
           />
 
           <div className="flex items-center justify-between mb-1 px-1">
@@ -224,9 +244,16 @@ export const HeightsCanvas = memo(
           </div>
 
           <Card
+            id="heights-canvas"
             ref={ref}
-            className="relative w-full aspect-2/3 bg-zinc-950 border-4 border-zinc-900 rounded-3xl overflow-hidden shadow-[0_0_80px_-20px_rgba(0,0,0,0.8)] cursor-pointer active:scale-[0.99] transition-transform touch-none"
-            onMouseDown={handleAction}
+            className="relative w-[80vw] sm:w-[380px] min-w-[280px] min-h-[420px] sm:min-w-[320px] sm:min-h-[480px] max-w-[95vw] sm:max-w-[500px] max-h-[85vh] sm:max-h-[750px] aspect-2/3 bg-zinc-950 border-4 border-zinc-900 rounded-3xl overflow-hidden shadow-[0_0_80px_-20px_rgba(0,0,0,0.8)] transition-transform touch-none resize [&::-webkit-resizer]:bg-transparent [&::-webkit-resizer]:opacity-0"
+            onMouseDown={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const isResizeHandle =
+                e.clientX > rect.right - 24 && e.clientY > rect.bottom - 24;
+              if (isResizeHandle) return;
+              handleAction();
+            }}
           >
             {/* Countdown Progress Bar */}
             {gameState === "playing" && (
@@ -245,7 +272,7 @@ export const HeightsCanvas = memo(
             {/* Status Overlay Notices */}
             <AnimatePresence>
               {(!isLoggedIn || !isSeasonActive) && gameState === "idle" && (
-                <div className="absolute top-14 left-0 right-0 z-41 px-4 pointer-events-none">
+                <div className="absolute top-14 left-0 right-0 z-41 px-4 pointer-events-none ">
                   <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -275,7 +302,9 @@ export const HeightsCanvas = memo(
                           !isLoggedIn ? "text-amber-500" : "text-blue-500"
                         }`}
                       >
-                        {!isLoggedIn ? t("canvas.testGameplay") : t("canvas.seasonBreak")}
+                        {!isLoggedIn
+                          ? t("canvas.testGameplay")
+                          : t("canvas.seasonBreak")}
                       </span>
                       <p className="text-[10px] text-zinc-400 font-medium leading-tight max-w-[200px]">
                         {!isLoggedIn
@@ -289,7 +318,7 @@ export const HeightsCanvas = memo(
             </AnimatePresence>
 
             {/* Background Gradients */}
-            <div className="absolute inset-0 bg-linear-to-b from-zinc-900 via-zinc-950 to-black pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-b from-zinc-900 via-zinc-950  to-black pointer-events-none" />
             <div
               className="absolute inset-0 opacity-15 pointer-events-none"
               style={{
@@ -323,9 +352,27 @@ export const HeightsCanvas = memo(
 
             {/* Game Controls */}
             <div
-              className="absolute top-3 right-4 z-41 flex flex-row gap-2"
+              className="absolute top-3 right-4 z-41 flex flex-row gap-2 flex-wrap justify-end max-w-[200px]"
               onMouseDown={(e) => e.stopPropagation()}
             >
+              {setIsFloating && (
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="flat"
+                  className="w-8 h-8 bg-zinc-900/40 backdrop-blur-xl text-zinc-400 border border-white/5 hover:bg-zinc-800/60 hover:text-white hover:border-white/10 transition-all duration-300 rounded-xl shadow-lg active:scale-95"
+                  onPress={() => setIsFloating(!isFloating)}
+                >
+                  <div className="relative">
+                    {isFloating ? (
+                      <Minimize2 size={16} className="drop-shadow-sm" />
+                    ) : (
+                      <PictureInPicture size={16} className="drop-shadow-sm" />
+                    )}
+                  </div>
+                </Button>
+              )}
+
               <Button
                 isIconOnly
                 size="sm"
@@ -375,7 +422,7 @@ export const HeightsCanvas = memo(
             </div>
 
             <div
-              className="absolute w-full h-full bottom-0 transition-transform duration-500 ease-out will-change-transform"
+              className="absolute w-full h-full bottom-0 transition-transform duration-500 ease-out will-change-transform "
               style={{
                 transform: `translate3d(0, ${cameraProgress * 100}%, 0)`,
               }}
@@ -421,13 +468,14 @@ export const HeightsCanvas = memo(
               ))}
             </div>
 
-
             <Overlays
               showPerfect={showPerfect}
               showBonus={showBonus}
               lastBonus={lastBonus}
               lastImpactTime={lastImpactTime}
             />
+
+            <LiveCheer cheer={lastCheer || null} />
 
             <GameMenus
               gameState={gameState}
@@ -445,13 +493,17 @@ export const HeightsCanvas = memo(
             />
           </Card>
 
-          <div className="absolute -bottom-8 left-0 right-0 flex justify-center">
-            <div className="flex gap-4 opacity-20">
-              {ARROW_MARKERS.map((i) => (
-                <ArrowUp key={i} size={16} />
-              ))}
-            </div>
-          </div>
+          <LandmarksBar score={score} highScores={highScores} />
+
+          <GameChat
+            messages={chatMessages}
+            onSendMessage={sendChatMessage || (() => {})}
+            currentScore={score}
+            currentCombo={combos}
+            isLoggedIn={isLoggedIn}
+            isOpen={isChatOpen}
+            onOpenChange={setIsChatOpen}
+          />
 
           <HeightsGuideModal isOpen={isOpen} onOpenChange={onOpenChange} />
         </div>
