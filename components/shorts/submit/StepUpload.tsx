@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Button } from "@heroui/button";
 import { Progress } from "@heroui/progress";
+import { Constants } from "@/constants";
 import type { StageEntry, StageCard } from "./types";
 
 interface Props {
@@ -193,7 +194,7 @@ export function StepUpload({
               Video clip up to{" "}
               <span className="text-foreground font-bold underline decoration-primary/30">
                 60s
-              </span>. Final size: <span className="text-foreground font-bold">25MB max</span>.
+              </span>. Final size: <span className="text-foreground font-bold">{Constants.SHORTS_ALLOWED_SIZE}MB max</span>.
             </p>
           </div>
         </div>
@@ -420,17 +421,17 @@ export function StepUpload({
           {processState === "compressed" && (
             <div
               className={`relative overflow-hidden rounded-4xl border p-6 shadow-xl animate-in slide-in-from-bottom-5 duration-500 ${
-                sizeInfo.compressed > 25
+                sizeInfo.compressed > Constants.SHORTS_ALLOWED_SIZE
                   ? "border-danger/30 bg-linear-to-br from-danger/10 to-transparent shadow-danger/5"
                   : "border-warning/30 bg-linear-to-br from-warning/10 to-transparent shadow-warning/5"
               }`}
             >
               <div
                 className={`absolute -right-6 -bottom-6 rotate-12 ${
-                  sizeInfo.compressed > 25 ? "text-danger/10" : "text-warning/10"
+                  sizeInfo.compressed > Constants.SHORTS_ALLOWED_SIZE ? "text-danger/10" : "text-warning/10"
                 }`}
               >
-                {sizeInfo.compressed > 25 ? (
+                {sizeInfo.compressed > Constants.SHORTS_ALLOWED_SIZE ? (
                   <Sparkles size={120} />
                 ) : (
                   <UploadCloud size={120} />
@@ -441,7 +442,7 @@ export function StepUpload({
                 <div className="flex items-center gap-3">
                   <div
                     className={`rounded-full p-2 ${
-                      sizeInfo.compressed > 25
+                      sizeInfo.compressed > Constants.SHORTS_ALLOWED_SIZE
                         ? "bg-danger/20 text-danger"
                         : "bg-warning/20 text-warning"
                     }`}
@@ -454,18 +455,18 @@ export function StepUpload({
                   </div>
                   <div className="min-w-0">
                     <h4 className="text-lg font-black text-foreground truncate">
-                      {sizeInfo.compressed > 25
+                      {sizeInfo.compressed > Constants.SHORTS_ALLOWED_SIZE
                         ? "Size Limit Exceeded"
                         : "Optimization Complete"}
                     </h4>
                     <p
                       className={`text-xs font-semibold uppercase tracking-widest ${
-                        sizeInfo.compressed > 25
+                        sizeInfo.compressed > Constants.SHORTS_ALLOWED_SIZE
                           ? "text-danger/80"
                           : "text-warning/80"
                       }`}
                     >
-                      {sizeInfo.compressed > 25
+                      {sizeInfo.compressed > Constants.SHORTS_ALLOWED_SIZE
                         ? "Requires High Compression"
                         : "Pending Submission"}
                     </p>
@@ -482,12 +483,12 @@ export function StepUpload({
                     label="Current Size"
                     value={`${sizeInfo.compressed.toFixed(1)} MB`}
                     icon={Zap}
-                    tone={sizeInfo.compressed > 25 ? "text-danger" : "text-primary"}
+                    tone={sizeInfo.compressed > Constants.SHORTS_ALLOWED_SIZE ? "text-danger" : "text-primary"}
                   />
                 </div>
 
                 <div className="space-y-3">
-                  {sizeInfo.compressed > 25 ? (
+                  {sizeInfo.compressed > Constants.SHORTS_ALLOWED_SIZE ? (
                     <Button
                       size="lg"
                       color="danger"
@@ -507,7 +508,7 @@ export function StepUpload({
                     </Button>
                   )}
                   <p className="text-center text-[11px] font-bold text-default-500/80 uppercase tracking-tighter">
-                    {sizeInfo.compressed > 25
+                    {sizeInfo.compressed > Constants.SHORTS_ALLOWED_SIZE
                       ? "Use high-intensity compression to fit within the decentralized storage limit."
                       : "A signature is required to securely store your video on IPFS."}
                   </p>

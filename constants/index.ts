@@ -13,6 +13,7 @@ export const Constants = {
   ],
   ipfs_gateway: "https://cloud.steempro.com",
   shorts_tag: "shorts",
+  SHORTS_ALLOWED_SIZE: 30,
   mobile_app_link:
     "https://play.google.com/store/apps/details?id=com.steempro.mobile",
   official_email: "steempro.official@gmail.com",

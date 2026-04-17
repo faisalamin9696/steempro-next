@@ -9,6 +9,7 @@ import { fetchFile } from "@ffmpeg/util";
 import { steemApi } from "@/libs/steem";
 import { toBase64 } from "@/utils/helper";
 import { useAccountsContext } from "@/components/auth/AccountsContext";
+import { Constants } from "@/constants";
 import type {
   ProcessState,
   StageEntry,
@@ -124,9 +125,9 @@ export function useShortsSubmit() {
       video.onloadedmetadata = () => {
         window.URL.revokeObjectURL(video.src);
         const { videoWidth, videoHeight, duration } = video;
-        
+
         // Validation removed: All dimensions are now permitted.
-        
+
         setDuration(duration);
         if (duration > 60) {
           toast.info(
@@ -211,16 +212,6 @@ export function useShortsSubmit() {
     if (!e.target.files?.length) return;
     const selected = e.target.files[0];
 
-    // 25MB limit
-    // if (selected.size > 25 * 1024 * 1024) {
-    //   toast.error(
-    //     `File too large (${(selected.size / (1024 * 1024)).toFixed(1)}MB). Max 25MB allowed for initial upload.`,
-    //     { duration: 6000 },
-    //   );
-    //   e.target.value = "";
-    //   return;
-    // }
-
     upsertStage("validation", "Validating video", "active");
     const { isValid, parsedFile } = await validateVideoDimensions(selected);
     if (!isValid || !parsedFile) {
@@ -292,45 +283,12 @@ export function useShortsSubmit() {
         "active",
         "Generating high-quality HLS stream...",
       );
-      await ffmpeg.createDir("1080p");
       await ffmpeg.createDir("720p");
 
-      // 1080p with 60s limit
-      const preset = mode === "normal" ? "veryfast" : "faster";
-      const crf1080 = mode === "normal" ? "28" : "26";
-      const crf720 = mode === "normal" ? "32" : "30";
+      const preset = mode === "normal" ? "ultrafast" : "superfast";
+      const crf720 = mode === "normal" ? "28" : "32";
 
-      await ffmpeg.exec([
-        "-i",
-        "input.mp4",
-        "-t",
-        "60",
-        "-vf",
-        "scale=1080:-2",
-        "-c:v",
-        "libx264",
-        "-profile:v",
-        "high",
-        "-pix_fmt",
-        "yuv420p",
-        "-crf",
-        crf1080,
-        "-preset",
-        preset,
-        "-c:a",
-        "aac",
-        "-b:a",
-        "192k",
-        "-hls_time",
-        "4",
-        "-hls_list_size",
-        "0",
-        "-f",
-        "hls",
-        "1080p/playlist.m3u8",
-      ]);
-
-      // 720p with 60s limit
+      // 720p Pass only with 60s limit
       currentPass = 1;
       await ffmpeg.exec([
         "-i",
@@ -338,23 +296,27 @@ export function useShortsSubmit() {
         "-t",
         "60",
         "-vf",
-        "scale=720:-2",
+        "scale=720:-2:flags=fast_bilinear",
         "-c:v",
         "libx264",
         "-profile:v",
         "main",
+        "-tune",
+        "fastdecode,zerolatency",
         "-pix_fmt",
         "yuv420p",
         "-crf",
         crf720,
         "-preset",
         preset,
+        "-threads",
+        "0",
         "-c:a",
         "aac",
         "-b:a",
         "128k",
         "-hls_time",
-        "4",
+        "10",
         "-hls_list_size",
         "0",
         "-f",
@@ -365,13 +327,12 @@ export function useShortsSubmit() {
       // Master playlist
       const masterM3U8 =
         "#EXTM3U\n#EXT-X-VERSION:3\n" +
-        '#EXT-X-STREAM-INF:BANDWIDTH=4500000,RESOLUTION=1080x1920,NAME="1080p"\n1080p/playlist.m3u8\n' +
         '#EXT-X-STREAM-INF:BANDWIDTH=2500000,RESOLUTION=720x1280,NAME="720p"\n720p/playlist.m3u8';
       await ffmpeg.writeFile("master.m3u8", masterM3U8);
 
       // Collect segments
       const bundle: { blob: Blob; name: string }[] = [];
-      for (const folder of ["1080p", "720p"]) {
+      for (const folder of ["720p"]) {
         for (const entry of await ffmpeg.listDir(folder)) {
           if (!entry.isDir) {
             const data = await ffmpeg.readFile(`${folder}/${entry.name}`);
@@ -398,7 +359,7 @@ export function useShortsSubmit() {
         bundle.reduce((acc, r) => acc + r.blob.size, 0) / (1024 * 1024);
 
       // Post-compression size validation
-      if (totalMB > 25 && mode === "normal") {
+      if (totalMB > Constants.SHORTS_ALLOWED_SIZE && mode === "normal") {
         setProcessState("compressed");
         setSizeInfo({
           original: selectedFile.size / (1024 * 1024),
@@ -412,14 +373,14 @@ export function useShortsSubmit() {
           `Resulting bundle is ${totalMB.toFixed(1)}MB. Try High Compression?`,
         );
         toast.warning(
-          "Video is slightly over 25MB. We recommend 'High Compression' to ensure successful upload.",
+          `Video is slightly over ${Constants.SHORTS_ALLOWED_SIZE}MB. We recommend 'High Compression' to ensure successful upload.`,
         );
         return;
       }
 
-      if (totalMB > 25 && mode === "high") {
+      if (totalMB > Constants.SHORTS_ALLOWED_SIZE && mode === "high") {
         throw new Error(
-          `Even with high compression, version is too large (${totalMB.toFixed(1)}MB). Max 25MB allowed.`,
+          `Even with high compression, version is too large (${totalMB.toFixed(1)}MB). Max ${Constants.SHORTS_ALLOWED_SIZE}MB allowed.`,
         );
       }
 
@@ -444,7 +405,7 @@ export function useShortsSubmit() {
         "compress",
         "Video ready to upload",
         "done",
-        `1080p + 720p · ${totalMB.toFixed(1)} MB total.`,
+        `720p · ${totalMB.toFixed(1)} MB total.`,
       );
     } catch (error) {
       if (error instanceof Error && error.message.includes("terminated")) {

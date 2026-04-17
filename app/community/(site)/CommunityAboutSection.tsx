@@ -22,7 +22,11 @@ function CommunityAboutSection({
         indicator: "text-foreground text-muted",
       }}
     >
-      <AccordionItem key="profile" aria-label="Profile details" title={t("about")}>
+      <AccordionItem
+        key="profile"
+        aria-label="Profile details"
+        title={t("about")}
+      >
         <CommunityCard
           community={community}
           account={account}

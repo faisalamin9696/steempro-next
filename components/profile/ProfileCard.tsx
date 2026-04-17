@@ -70,7 +70,7 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
   const displayName = (fullName || name).replace("@", "");
 
   return (
-    <Card className="flex flex-col gap-2 " {...props}>
+    <Card className={"flex flex-col"} {...props}>
       <div className={twMerge("hidden lg:block", headerClass)}>
         <BackgroundImage
           fetchPriority="high"
@@ -195,7 +195,7 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
                 100,
                 globalProps.fund_per_rshare,
                 globalProps.median_price,
-                false
+                false,
               ).toLocaleString()}`,
               title: t("voteTitle"),
             },

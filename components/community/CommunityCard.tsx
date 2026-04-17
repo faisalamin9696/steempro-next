@@ -16,11 +16,20 @@ import { mapSds } from "@/constants/functions";
 import MarkdownViewer from "../post/body/MarkdownViewer";
 import { Role as RoleLevel } from "@/utils/community";
 import UsersModal from "../ui/UsersModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SAvatar from "../ui/SAvatar";
 import SUsername from "../ui/SUsername";
 import { Chip } from "@heroui/chip";
 import { useTranslations } from "next-intl";
+import ChatButton from "../chat/ChatButton";
+import EditButton from "../ui/EditButton";
+import ShareButton from "../ui/ShareButton";
+import SubscribeButton from "./SubscribeButton";
+import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
+import { getUnreadChatCount } from "@/libs/supabase/chat";
+import ChatModal from "../chat/ChatModal";
+import { getChatMemoKey } from "@/utils/user";
+import MemoKeyModal from "../chat/MemoKeyModal";
 
 const ICON_SIZE = 20;
 
@@ -34,6 +43,7 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
   const { data: session } = useSession();
   const { account: name, title, about, rank, created } = community || {};
   const isMe = session?.user?.name === name;
+  const { isMobile } = useDeviceInfo();
   const displayName = (title || name).replace("@", "");
   const shareUrl = `${Constants.site_url}/trending/${name}`;
   const roles: Role[] = mapSds(community.roles);
@@ -46,9 +56,27 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
     isOpen: boolean;
     isLeaders?: boolean;
   }>({ isOpen: false, isLeaders: false });
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isMemoModalOpen, setIsMemoModalOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const handleOpenChat = () => {
+    const memoKey = getChatMemoKey(session?.user?.name || "");
+    if (memoKey) {
+      setIsChatOpen(true);
+    } else {
+      setIsMemoModalOpen(true);
+    }
+  };
+
+  useEffect(() => {
+    if (session?.user?.name) {
+      getUnreadChatCount(session.user.name).then(setUnreadCount);
+    }
+  }, [session]);
 
   return (
-    <Card className="flex flex-col gap-2 " {...props}>
+    <Card className={"flex flex-col"} {...props}>
       {/* Cover image */}
 
       <div className={twMerge("hidden lg:block", headerClass)}>
@@ -63,7 +91,40 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
         />
       </div>
 
-      <CardBody className="flex flex-col gap-4 py-1 pb-4">
+      <CardBody className="flex flex-col gap-4">
+        <div className="hidden lg:flex flex-row w-full flex-wrap justify-start gap-2">
+          {!isMe && (
+            <>
+              <SubscribeButton
+                size={isMobile ? "sm" : "md"}
+                radius="md"
+                community={community}
+              />
+
+              <ChatButton
+                size={isMobile ? "sm" : "md"}
+                unreadCount={unreadCount}
+                onPress={handleOpenChat}
+              />
+            </>
+          )}
+
+          {isMe && (
+            <EditButton
+              size={isMobile ? "sm" : "md"}
+              variant="flat"
+              color="primary"
+            />
+          )}
+
+          <ShareButton
+            url={shareUrl}
+            size={isMobile ? "sm" : "md"}
+            variant="flat"
+            title={displayName}
+          />
+        </div>
+
         {/* About */}
         {about && (
           <MarkdownViewer body={about} className="prose-sm! font-semibold" />
@@ -100,7 +161,8 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
             {
               label: (
                 <span className="flex flex-row gap-1 items-center">
-                  <span className="h-2 w-2 bg-success rounded-full" /> {t("active")}
+                  <span className="h-2 w-2 bg-success rounded-full" />{" "}
+                  {t("active")}
                 </span>
               ),
               value: community.count_authors,
@@ -144,6 +206,23 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
           />
         </Section>
       </CardBody>
+
+      {isChatOpen && (
+        <ChatModal
+          isOpen={isChatOpen}
+          onOpenChange={setIsChatOpen}
+          community={name}
+        />
+      )}
+
+      {isMemoModalOpen && (
+        <MemoKeyModal
+          isOpen={isMemoModalOpen}
+          onOpenChange={setIsMemoModalOpen}
+          username={session?.user?.name || ""}
+          onSuccess={() => setIsChatOpen(true)}
+        />
+      )}
 
       {showUsersModal.isOpen && (
         <UsersModal
