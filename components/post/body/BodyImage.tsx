@@ -37,7 +37,7 @@ function BodyImage({
   quality = 75,
   priority = false,
   isShort = false,
-  shortsUrl
+  shortsUrl,
 }: CustomImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -124,7 +124,14 @@ function BodyImage({
           )}
           onLoad={handleLoad}
           onError={handleError}
-          onErrorCapture={handleError}
+          onErrorCapture={(e) => {
+            const altThumbnail = getCdnImage(src || "");
+            if (altThumbnail && !e.currentTarget.src.includes(altThumbnail)) {
+              e.currentTarget.src = altThumbnail;
+            } else {
+              handleError();
+            }
+          }}
           onLoadCapture={handleLoad}
           removeWrapper
           onClick={() => {
@@ -175,5 +182,6 @@ function BodyImage({
 }
 
 import ImageModal from "@/components/post/ImageModal";
+import { getCdnImage } from "@/utils/proxifyUrl";
 
 export default BodyImage;

@@ -39,7 +39,15 @@ export function BodyParsed({
           break;
 
         case "a":
-          return <ProcessedLink domNode={domNode} />;
+          const hasImg = (domNode.children as DOMNode[])?.some(
+            (child) => child instanceof Element && child.name === "img",
+          );
+
+          if (hasImg) {
+            return domToReact(domNode.children as DOMNode[], options);
+          }
+
+          return <ProcessedLink domNode={domNode} options={options} />;
 
         case "table":
           return (

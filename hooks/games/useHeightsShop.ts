@@ -11,6 +11,7 @@ import { supabase } from "@/libs/supabase/supabase";
 import { authenticateWithEmail } from "@/libs/supabase/database";
 import { checkActionDuplicate } from "@/libs/supabase/steem-heights";
 import { generateHMAC } from "@/utils/encryption";
+import { AsyncUtils } from "@/utils/async.utils";
 
 interface UseHeightsShopProps {
   session: any;
@@ -173,6 +174,8 @@ export const useHeightsShop = ({
               activePowerUp,
               selectedSkinId,
             );
+
+            await AsyncUtils.sleep(3);
 
             // Update local state only after successful sync
             setEnergy(newEnergy);

@@ -6,6 +6,7 @@ import NsfwOverlay from "../nsfw/NsfwOverlay";
 import { hasNsfwTag } from "@/utils";
 import { getThumbnail } from "@/utils/image";
 import NextImage from "next/image";
+import { getCdnImage } from "@/utils/proxifyUrl";
 
 interface Props {
   comment: Feed | Post;
@@ -35,7 +36,7 @@ function PostBody(props: Props) {
         <p
           className={twMerge(
             "font-semibold hover:text-blue-500 transition-colors delay-75",
-            isBlog ? "text-xl md:text-2xl" : ""
+            isBlog ? "text-xl md:text-2xl" : "",
           )}
         >
           {heading}
@@ -46,7 +47,7 @@ function PostBody(props: Props) {
         <div
           className={twMerge(
             "flex gap-3 items-start w-full",
-            isBlog ? "flex-col" : "flex-row"
+            isBlog ? "flex-col" : "flex-row",
           )}
         >
           <div className="flex flex-col gap-2 flex-1 w-full">
@@ -62,6 +63,16 @@ function PostBody(props: Props) {
                     ? "w-full object-cover max-h-[500px]"
                     : "object-cover",
                   wrapper: isBlog ? "w-full" : "",
+                }}
+                onErrorCapture={(e) => {
+                  const altThumbnail = getCdnImage(thumbnail);
+
+                  if (
+                    altThumbnail &&
+                    !e.currentTarget.src.includes(altThumbnail)
+                  ) {
+                    e.currentTarget.src = altThumbnail;
+                  }
                 }}
                 src={thumbnail}
                 quality={75}
@@ -90,6 +101,15 @@ function PostBody(props: Props) {
               height={80}
               width={160}
               alt="thumbnail"
+              onErrorCapture={(e) => {
+                const altThumbnail = getCdnImage(thumbnail);
+                if (
+                  altThumbnail &&
+                  !e.currentTarget.src.includes(altThumbnail)
+                ) {
+                  e.currentTarget.src = altThumbnail;
+                }
+              }}
               style={{
                 objectFit: "cover",
               }}

@@ -64,6 +64,16 @@ function PostCard({ comment, isDetail, layout = "list" }: Props) {
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   alt="Post thumbnail"
                   radius="none"
+                  onErrorCapture={(e) => {
+                    const altThumbnail =
+                      JSON.parse(comment.json_images)?.[0] || "";
+                    if (
+                      altThumbnail &&
+                      !e.currentTarget.src.includes(altThumbnail)
+                    ) {
+                      e.currentTarget.src = altThumbnail;
+                    }
+                  }}
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-sm text-default-400">

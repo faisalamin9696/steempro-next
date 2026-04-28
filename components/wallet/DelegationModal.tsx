@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Users } from "lucide-react";
 import SModal from "../ui/SModal";
-import {  Checkbox } from "@heroui/checkbox";
+import { Checkbox } from "@heroui/checkbox";
 import { Alert } from "@heroui/alert";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
@@ -59,7 +59,7 @@ export const DelegationModal = ({
 
     const cleanUsername = delegatee.replace("@", "").toLowerCase().trim();
     const existing = outgoingDelegations?.find(
-      (d) => d.to.toLowerCase() === cleanUsername
+      (d) => d.to.toLowerCase() === cleanUsername,
     );
     setExistingDelegation(existing || null);
   }, [delegatee, outgoingDelegations]);
@@ -73,7 +73,7 @@ export const DelegationModal = ({
       lognData.vests_out -
       lognData.powerdown +
       lognData.powerdown_done +
-      existingAmount
+      existingAmount,
   );
 
   const handleDelegate = async () => {
@@ -88,7 +88,7 @@ export const DelegationModal = ({
         delegatee,
         steemToVests(amount),
         key,
-        useKeychain
+        useKeychain,
       );
 
       dispatch(
@@ -97,7 +97,7 @@ export const DelegationModal = ({
           vests_out: existingDelegation
             ? lognData.vests_out - existingAmount + steemToVests(amount)
             : lognData.vests_out + steemToVests(amount),
-        })
+        }),
       );
 
       if (isRemoved) {
@@ -202,7 +202,9 @@ export const DelegationModal = ({
                 className="text-xs text-muted hover:underline underline-offset-4 cursor-pointer"
               >
                 Available: {availableSp.toLocaleString()}{" "}
-                {!!existingAmount && `+ ${existingAmount.toLocaleString()}`} SP
+                {!!existingAmount &&
+                  `+ ${existingAmount.toLocaleString()} = ${(availableSp + existingAmount).toFixed(3)}`}{" "}
+                SP
               </button>
             }
           />
@@ -216,7 +218,11 @@ export const DelegationModal = ({
                 className="flex-1"
                 isDisabled={isPending}
                 onPress={() =>
-                  setAmount(((availableSp * percent) / 100).toFixed(3))
+                  setAmount(
+                    (((availableSp + existingAmount) * percent) / 100).toFixed(
+                      3,
+                    ),
+                  )
                 }
               >
                 {percent}%
@@ -283,8 +289,8 @@ export const DelegationModal = ({
             {parseFloat(amount) === 0
               ? "Remove Delegation"
               : existingDelegation
-              ? "Update Delegation"
-              : "Delegate"}
+                ? "Update Delegation"
+                : "Delegate"}
           </Button>
         </div>
       )}

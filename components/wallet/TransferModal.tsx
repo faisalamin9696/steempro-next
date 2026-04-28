@@ -291,6 +291,7 @@ export const TransferModal = ({
                       setCurrency(key.currentKey?.toString() as Currencies);
                       setAmount("");
                     }}
+                    disallowEmptySelection
                     isDisabled={isPending}
                     label="Currency"
                     labelPlacement="outside"

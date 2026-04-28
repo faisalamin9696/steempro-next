@@ -127,7 +127,7 @@ export const DailyChallengesTab = memo(
                       isClaimed
                         ? "dark:bg-zinc-950/20 bg-zinc-300/20 border-white/5 opacity-70"
                         : isCompleted
-                          ? "bg-zinc-950/40 border-emerald-500/30 shadow-[0_0_40px_rgba(16,185,129,0.1)]"
+                          ? "bg-green-300/10 border-emerald-500/30 shadow-[0_0_40px_rgba(16,185,129,0.1)]"
                           : "bg-zinc-300/50 dark:bg-zinc-950/40 border-white/10 hover:border-amber-500/30"
                     }`}
                   >

@@ -1,3 +1,4 @@
+import { getCdnImage } from "@/utils/proxifyUrl";
 import Image from "next/image";
 import React from "react";
 import { twMerge } from "tailwind-merge";
@@ -45,6 +46,12 @@ const BackgroundImage: React.FC<BackgroundImageProps> = ({
           fetchPriority={fetchPriority}
           sizes="100vw"
           className="object-cover"
+          onErrorCapture={(e) => {
+            const altThumbnail = getCdnImage(src || "");
+            if (altThumbnail && !e.currentTarget.src.includes(altThumbnail)) {
+              e.currentTarget.src = altThumbnail;
+            }
+          }}
         />
       )}
 
@@ -53,7 +60,7 @@ const BackgroundImage: React.FC<BackgroundImageProps> = ({
         <div
           className={twMerge(
             "absolute inset-0 pointer-events-none",
-            overlayClass
+            overlayClass,
           )}
         />
       )}

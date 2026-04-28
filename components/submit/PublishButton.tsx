@@ -128,7 +128,12 @@ function PublishButton(props: Props) {
       (t) => t && t !== " " && t !== community?.account,
     );
 
-    if (!isReply && !normalizedTags.length && !community?.account) {
+    if (
+      !isReply &&
+      !normalizedTags.length &&
+      !community?.account &&
+      !pendingTag
+    ) {
       toast.info(t("validation.tagEmpty"));
       return false;
     }
@@ -410,6 +415,7 @@ function PublishButton(props: Props) {
 
       {setTags && setPendingTag && (
         <UnfinishedTagsModal
+          isSchedule={!!scheduleTime}
           isOpen={isTagsWarningModalOpen}
           onOpenChange={setIsTagsWarningModalOpen}
           pendingTag={pendingTag || ""}

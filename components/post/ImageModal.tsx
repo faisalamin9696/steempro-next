@@ -170,7 +170,7 @@ export default function ImageModal({
                   wrapperClass="!w-full !h-full cursor-grab active:cursor-grabbing"
                   contentClass="!w-full !h-full flex items-center justify-center"
                 >
-                  <div className="relative flex items-center justify-center max-w-[95vw] max-h-[95vh]">
+                  <div className="relative h-full w-full flex items-center justify-center max-w-[95vw] max-h-[95vh]">
                     {/* Low Res Placeholder */}
                     <img
                       src={lowResImage!}
@@ -186,6 +186,14 @@ export default function ImageModal({
                       alt={alt}
                       fetchPriority="high"
                       onLoad={() => setIsLoading(false)}
+                      onError={(e) => {
+                        // If high-res original fails, try the low-res proxied one as fallback
+                        if (e.currentTarget.src !== lowResImage) {
+                          e.currentTarget.src = lowResImage!;
+                        } else {
+                          setIsLoading(false);
+                        }
+                      }}
                       className={twMerge(
                         "absolute inset-0 w-full h-full object-contain shadow-2xl transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) pointer-events-none select-none",
                         isLoading

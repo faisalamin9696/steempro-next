@@ -18,7 +18,6 @@ import { useSteemUtils } from "@/hooks/useSteemUtils";
 import { useAccountsContext } from "../auth/AccountsContext";
 import { Plus, Trash2 } from "lucide-react";
 import useSWR from "swr";
-import { client } from "@/libs/steem";
 import SInput from "../ui/SInput";
 import SUsername from "../ui/SUsername";
 
@@ -120,6 +119,7 @@ export const PowerDownModal = ({
           powerdown: steemToVests(amount),
           next_powerdown: moment().add(7, "days").unix(),
           powerdown_rate: steemToVests(amount) / 4,
+          powerdown_done: 0,
         }),
       );
 

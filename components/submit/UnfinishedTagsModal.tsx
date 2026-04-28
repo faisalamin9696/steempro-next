@@ -16,6 +16,7 @@ interface UnfinishedTagsModalProps {
   setPendingTag: (value: string) => void;
   onConfirm: (finalTags: string[]) => void;
   onDiscard: () => void;
+  isSchedule?: boolean;
 }
 
 const UnfinishedTagsModal = ({
@@ -27,6 +28,7 @@ const UnfinishedTagsModal = ({
   setPendingTag,
   onConfirm,
   onDiscard,
+  isSchedule,
 }: UnfinishedTagsModalProps) => {
   const handleAddAndPublish = (onClose: () => void) => {
     const rawTag = pendingTag?.trim().toLowerCase();
@@ -82,7 +84,7 @@ const UnfinishedTagsModal = ({
           <Alert
             color="default"
             title="Wait, you forgot something!"
-            description="You typed some tags but didn't hit Enter to add them. They won't be saved if you publish now."
+            description={`You typed some tags but didn't hit Enter to add them. They won't be saved if you ${isSchedule ? "schedule" : "publish"} now.`}
           />
 
           <div className="space-y-3">
@@ -109,23 +111,23 @@ const UnfinishedTagsModal = ({
               <Button
                 variant="flat"
                 color="danger"
-                size="lg"
+                size="md"
                 startContent={<Trash2 size={18} className="shrink-0" />}
                 onPress={() => {
                   onClose();
                   onDiscard();
                 }}
               >
-                Skip & Publish
+                Skip Tags & {isSchedule ? "Schedule" : "Publish"}
               </Button>
               <Button
                 color="success"
                 variant="flat"
-                size="lg"
+                size="md"
                 startContent={<Plus size={18} />}
                 onPress={() => handleAddAndPublish(onClose)}
               >
-                Add Tags & Publish
+                Add Tags & {isSchedule ? "Schedule" : "Publish"}
               </Button>
             </div>
           </div>
