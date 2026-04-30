@@ -15,6 +15,7 @@ function LogoutModal(props: Props) {
     try {
       setIsPending(true);
       await logout();
+      props?.onOpenChange?.(false);
     } catch (error: any) {
       toast.error("Error", {
         description: error?.message ?? "Something went wrong",

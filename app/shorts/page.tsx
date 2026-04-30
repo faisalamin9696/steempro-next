@@ -6,10 +6,9 @@ import { useSession } from "next-auth/react";
 import { isSteemProShort } from "@/utils";
 import ShortPlayerSkeleton from "@/components/skeleton/ShortPlayerSkeleton";
 import { twMerge } from "tailwind-merge";
-import { createPlayer, videoFeatures } from "@videojs/react";
+import {  createPlayer, videoFeatures } from "@videojs/react";
 import { Constants } from "@/constants";
 import ShortsPlayer from "@/components/shorts/ShortsPlayer";
-import { useAppSelector } from "@/hooks/redux/store";
 
 interface ShortVideo extends Feed {
   videoUrl?: string;

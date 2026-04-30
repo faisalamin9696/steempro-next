@@ -250,14 +250,23 @@ export function MobileNavbar() {
                         />
                       </Badge>
                     ) : (
-                      <Icon
-                        size={isCreate ? 22 : ICON_SIZE}
-                        strokeWidth={isActive || isCreate ? 2.5 : 2}
-                        fill={isActive && !isCreate ? "currentColor" : "none"}
+                      <div
                         className={
-                          isActive && !isCreate ? "fill-primary/10" : ""
+                          !isAuth && item.key === "profile"
+                            ? "flex flex-row gap-1 items-center bg-primary text-primary-foreground rounded-lg px-2 py-1"
+                            : ""
                         }
-                      />
+                      >
+                        {!isAuth && item.key === "profile" && item.label}
+                        <Icon
+                          size={isCreate ? 22 : ICON_SIZE}
+                          strokeWidth={isActive || isCreate ? 2.5 : 2}
+                          fill={isActive && !isCreate ? "currentColor" : "none"}
+                          className={
+                            isActive && !isCreate ? "fill-primary/10" : ""
+                          }
+                        />
+                      </div>
                     )}
                   </motion.div>
                 </AnimatePresence>

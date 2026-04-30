@@ -17,7 +17,6 @@ import LoadingCard from "@/components/ui/LoadingCard";
 import { ScrollToTopButton } from "@/components/ScrollToTopButton";
 import { Toaster } from "sonner";
 import { twMerge } from "tailwind-merge";
-
 import SNavbar from "@/components/navbar/SNavbar";
 import SDrawerContent from "@/components/navbar/SDrawerContent";
 

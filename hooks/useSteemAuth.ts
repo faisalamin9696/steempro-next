@@ -206,6 +206,7 @@ export function useSteemAuth() {
       persist(updated, newCurrent);
     } else {
       persist(updated, null);
+      setCurrent(null);
     }
   };
 
@@ -214,16 +215,15 @@ export function useSteemAuth() {
   // -------------------------------
   const logout = async (): Promise<void> => {
     if (!current) return;
-    await supabase.auth
-      .signOut()
-      .then(async () => {
-        removeAccount(current.username, current.type, true);
-        await signOut();
-        router.refresh();
-      })
-      .catch((e) => {
-        throw new Error(e);
-      });
+    try {
+      await supabase.auth.signOut({ scope: "global" });
+      await signOut();
+      removeAccount(current.username, current.type, true);
+      window.location.reload();
+    } catch (error: any) {
+      console.error("Logout error:", error);
+      throw new Error(error.message || "Failed to logout");
+    }
   };
 
   return {
