@@ -957,6 +957,45 @@
         "info": "Power down em andamento: {amount} (Próxima parcela: {date}).",
         "none": "Nenhum power down em andamento.",
         "description": "O power down converte seu Steem Power em Steem líquido ao longo de 4 semanas. Se você não iniciou isso, sua conta pode estar comprometida."
+      },
+      "keyDuplicates": {
+        "title": "Chaves Duplicadas",
+        "good": "Todas as suas chaves são únicas e seguras.",
+        "danger": "Você está usando a mesma chave privada para múltiplas autoridades!",
+        "description": "Cada autoridade (Posting, Active, Owner) deve ter uma chave separada. Usar a mesma chave aumenta o risco, pois se uma chave for comprometida, toda a conta estará em perigo."
+      },
+      "withdrawRoutes": {
+        "title": "Rotas de Retirada",
+        "good": "Nenhuma rota de retirada inesperada definida.",
+        "warning": "Seus fundos estão sendo enviados automaticamente para @{name}.",
+        "description": "As rotas de retirada podem enviar uma parte do seu power down para outras contas. Hackers costumam usar isso para roubar fundos discretamente."
+      },
+      "csi": {
+        "title": "Eficiência de Curadoria (CSI)",
+        "good": "Seu índice de seleção de curadoria é excelente, mostrando um apoio diversificado.",
+        "info": "Seu CSI está em uma faixa saudável.",
+        "warning": "Seu CSI está baixo. Considere apoiar uma gama mais diversificada de autores para melhorar a saúde do ecossistema.",
+        "description": "O CSI (Curation Selection Index) mede o quão diversificado é o seu comportamento de votação. Uma maior diversidade ajuda a comunidade a crescer."
+      },
+      "selfVote": {
+        "title": "Taxa de Autovoto",
+        "good": "Você tem uma taxa de autovoto saudável.",
+        "warning": "Sua taxa de autovoto é moderada ({percent}%).",
+        "danger": "Sua taxa de autovoto é alta ({percent}%). Isso pode afetar negativamente sua reputação e o apoio da comunidade.",
+        "description": "A taxa de autovoto mostra quanto do seu poder de voto é usado em seu próprio conteúdo. O autovoto excessivo geralmente é desencorajado."
+      },
+      "unclaimedRewards": {
+        "title": "Recompensas não Reclamadas",
+        "good": "Todas as recompensas foram reclamadas.",
+        "warning": "Você tem recompensas pendentes para reclamar. Reclame-as para aumentar sua participação.",
+        "description": "Recompensas não reclamadas não contribuem para o seu poder de voto nem geram juros. É melhor reclamá-las regularmente."
+      },
+      "liquidFunds": {
+        "title": "Fundos Líquidos",
+        "good": "Seus fundos líquidos estão bem gerenciados em relação à sua participação.",
+        "warning": "Você possui uma quantidade significativa de fundos líquidos ({ratio}%). Considere fazer Power Up ou movê-los para a poupança.",
+        "danger": "A maioria dos seus fundos é líquida ({ratio}%). Isso representa um alto risco de segurança se a conta for hackeada!",
+        "description": "STEEM e SBD líquidos podem ser transferidos instantaneamente. Para reduzir o risco, mantenha a maioria dos seus fundos como Steem Power ou no cofre de poupança de 3 dias."
       }
     }
   },

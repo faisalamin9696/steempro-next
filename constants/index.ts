@@ -25,6 +25,7 @@ export const Constants = {
     "steemcurator01",
     "retrieve",
     "steemworld.org",
+    "steemchiller",
   ],
   team: [
     {

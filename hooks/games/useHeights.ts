@@ -80,6 +80,7 @@ export const useHeights = () => {
     fetchGameStats,
     fetchSeasonalWinners,
     eligibilityMap,
+    isLoadingSeasonalWinners,
   } = useHeightsData({
     currentSeason,
     setEnergy,
@@ -316,6 +317,7 @@ export const useHeights = () => {
     syncingSkinId,
     isGeneratingSession,
     eligibilityMap,
+    isLoadingSeasonalWinners,
     lastCheer,
     onlineCount,
     chatMessages,

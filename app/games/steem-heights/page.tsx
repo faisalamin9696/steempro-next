@@ -141,6 +141,7 @@ const SteemHeightsPage = () => {
             syncingPowerUpId={heights.syncingPowerUpId}
             syncingSkinId={heights.syncingSkinId}
             eligibilityMap={heights.eligibilityMap}
+            isLoadingSeasonalWinners={heights.isLoadingSeasonalWinners}
           />
         </div>
       </div>

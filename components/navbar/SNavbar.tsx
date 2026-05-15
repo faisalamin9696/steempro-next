@@ -33,6 +33,7 @@ import { useState } from "react";
 import SearchModal from "../search/SearchModal";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
+import { Divider } from "@heroui/react";
 
 export async function refreshData(username?: string | null) {
   mutate("globals");
@@ -225,116 +226,128 @@ function SNavbar() {
               {authT("login")}
             </Button>
           ) : (
-            <SPopover
-              placement="bottom-end"
-              shouldCloseOnBlur={false}
-              trigger={
-                <SAvatar
-                  username={session?.user?.name ?? ""}
-                  className="cursor-pointer transition-transform hover:scale-105"
-                  showLink={false}
-                  isBordered
-                  color={
-                    current?.loginMethod === "keychain"
-                      ? "primary"
-                      : current?.type === "active"
-                        ? "success"
-                        : current?.type === "posting"
-                          ? "warning"
-                          : "default"
-                  }
-                />
-              }
-            >
-              {(onClose) => (
-                <div className="w-52 p-1">
-                  {/* Popover Header Stats */}
-                  <div className="flex items-center justify-between gap-1 mb-2 p-1">
-                    <div className="flex gap-2">
-                      <Chip
-                        size="sm"
+            <div className="flex items-center gap-4">
+              <Divider orientation="vertical" className="h-6" />
+              <SPopover
+                placement="bottom-end"
+                shouldCloseOnBlur={false}
+                trigger={
+                  <SAvatar
+                    username={session?.user?.name ?? ""}
+                    className="cursor-pointer transition-transform hover:scale-105"
+                    showLink={false}
+                    isBordered
+                    color={
+                      current?.loginMethod === "keychain"
+                        ? "primary"
+                        : current?.type === "active"
+                          ? "success"
+                          : current?.type === "posting"
+                            ? "warning"
+                            : "default"
+                    }
+                  />
+                }
+              >
+                {(onClose) => (
+                  <div className="w-52 p-1">
+                    {/* Popover Header Stats */}
+                    <div className="flex items-center justify-between gap-1 mb-2 p-1">
+                      <div className="flex gap-2">
+                        <Chip
+                          size="sm"
+                          variant="flat"
+                          classNames={{
+                            base: "bg-warning/10 border-warning/20 border text-warning h-7",
+                            content:
+                              "flex gap-1 items-center px-1 font-mono font-bold",
+                          }}
+                        >
+                          <Zap size={14} className="fill-current" />
+                          {loginData.upvote_mana_percent}%
+                        </Chip>
+                        <Chip
+                          size="sm"
+                          variant="flat"
+                          classNames={{
+                            base: "bg-primary/10 border-primary/20 border text-primary h-7",
+                            content:
+                              "flex gap-1 items-center px-1 font-mono font-bold",
+                          }}
+                        >
+                          <DatabaseZap size={14} />
+                          {loginData.rc_mana_percent}%
+                        </Chip>
+                      </div>
+
+                      <Button
+                        title={t("refresh")}
                         variant="flat"
-                        classNames={{
-                          base: "bg-warning/10 border-warning/20 border text-warning h-7",
-                          content:
-                            "flex gap-1 items-center px-1 font-mono font-bold",
-                        }}
+                        isIconOnly
+                        radius="full"
+                        onPress={() => refreshData(session?.user?.name)}
+                        className="w-7 h-7 min-w-0"
                       >
-                        <Zap size={14} className="fill-current" />
-                        {loginData.upvote_mana_percent}%
-                      </Chip>
-                      <Chip
-                        size="sm"
-                        variant="flat"
-                        classNames={{
-                          base: "bg-primary/10 border-primary/20 border text-primary h-7",
-                          content:
-                            "flex gap-1 items-center px-1 font-mono font-bold",
-                        }}
-                      >
-                        <DatabaseZap size={14} />
-                        {loginData.rc_mana_percent}%
-                      </Chip>
+                        {isLoadingAccount ? (
+                          <Spinner size="sm" color="current" />
+                        ) : (
+                          <RotateCw size={14} />
+                        )}
+                      </Button>
                     </div>
 
-                    <Button
-                      title={t("refresh")}
-                      variant="flat"
-                      isIconOnly
-                      radius="full"
-                      onPress={() => refreshData(session?.user?.name)}
-                      className="w-7 h-7 min-w-0"
-                    >
-                      {isLoadingAccount ? (
-                        <Spinner size="sm" color="current" />
-                      ) : (
-                        <RotateCw size={14} />
-                      )}
-                    </Button>
+                    <div className="flex flex-col gap-1">
+                      <Button
+                        as={Link}
+                        variant="light"
+                        className="justify-start h-auto py-2 px-3 data-[hover=true]:bg-default/60"
+                        href={`/@${session?.user?.name}`}
+                        onPress={onClose}
+                        startContent={<User size={20} className="text-muted" />}
+                      >
+                        <div className="flex flex-col items-start gap-0">
+                          <span className="text-sm font-semibold">
+                            {t("profile")}
+                          </span>
+                          <span className="text-[11px] text-default-500 font-mono lowercase">
+                            @{session?.user?.name}
+                          </span>
+                        </div>
+                      </Button>
+
+                      <Button
+                        as={Link}
+                        variant="light"
+                        className="justify-start h-10 px-3 data-[hover=true]:bg-default/60"
+                        href={`/@${session?.user?.name}/wallet`}
+                        onPress={onClose}
+                        startContent={
+                          <Wallet size={18} className="text-muted" />
+                        }
+                      >
+                        {t("wallet")}
+                      </Button>
+
+                      <ManageAccountsButton
+                        variant="light"
+                        className="justify-start h-10 px-3 data-[hover=true]:bg-default/60 "
+                        onPress={onClose}
+                        iconSize={18}
+                        iconClass="text-muted"
+                      />
+
+                      <div className="my-1 border-t border-default-100/50" />
+
+                      <LogoutButton
+                        variant="light"
+                        className="justify-start h-10 px-3 text-danger data-[hover=true]:bg-danger/10"
+                        onPress={onClose}
+                      />
+                    </div>
                   </div>
-
-                  <div className="flex flex-col gap-1">
-                    <Button
-                      as={Link}
-                      variant="light"
-                      className="justify-start h-10 px-3 data-[hover=true]:bg-default/60"
-                      href={`/@${session?.user?.name}`}
-                      onPress={onClose}
-                      startContent={<User size={18} className="text-muted" />}
-                    >
-                      {t("profile")}
-                    </Button>
-
-                    <Button
-                      as={Link}
-                      variant="light"
-                      className="justify-start h-10 px-3 data-[hover=true]:bg-default/60"
-                      href={`/@${session?.user?.name}/wallet`}
-                      onPress={onClose}
-                      startContent={<Wallet size={18} className="text-muted" />}
-                    >
-                      {t("wallet")}
-                    </Button>
-
-                    <ManageAccountsButton
-                      variant="light"
-                      className="justify-start h-10 px-3 data-[hover=true]:bg-default/60 "
-                      onPress={onClose}
-                      iconSize={18}
-                      iconClass="text-muted"
-                    />
-
-                    <div className="my-1 border-t border-default-100/50" />
-
-                    <LogoutButton
-                      variant="light"
-                      className="justify-start h-10 px-3 text-danger data-[hover=true]:bg-danger/10"
-                      onPress={onClose}
-                    />
-                  </div>
-                </div>
-              )}
-            </SPopover>
+                )}
+              </SPopover>
+            </div>
           )}
         </div>
       </nav>

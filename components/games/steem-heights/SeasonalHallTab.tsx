@@ -4,6 +4,7 @@ import { Trophy, Cloud, Users, Award, Eye } from "lucide-react";
 import { useState, useMemo, memo } from "react";
 import { useDisclosure } from "@heroui/modal";
 import { Button } from "@heroui/button";
+import { Spinner } from "@heroui/spinner";
 import { SeasonalHallModal } from "./SeasonalHallModal";
 import { getCoopConfig, getRewardPool } from "./HeightsInfo";
 import { getCommunityReward } from "./GlobalSummitTab";
@@ -14,10 +15,11 @@ interface Props {
   seasonalWinners: any[];
   seasonalPosts: Feed[];
   eligibilityMap: Record<string, any>;
+  isLoading?: boolean;
 }
 
 export const SeasonalHallTab = memo(
-  ({ seasonalWinners, seasonalPosts, eligibilityMap }: Props) => {
+  ({ seasonalWinners, seasonalPosts, eligibilityMap, isLoading }: Props) => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [selectedSeason, setSelectedSeason] = useState<number | null>(null);
     const t = useTranslations("Games.steemHeights.leaderboard.winners");
@@ -40,7 +42,16 @@ export const SeasonalHallTab = memo(
       <>
         {/* Compact Seasonal List */}
         <div className="space-y-2 mt-2">
-          {filteredWinners.map((w, i) => {
+          {isLoading ? (
+            <div className="py-12 flex flex-col items-center justify-center">
+              <Spinner size="lg" color="warning" />
+              <p className="mt-4 text-xs text-zinc-500 font-bold uppercase tracking-widest animate-pulse">
+                Loading Hall of Fame...
+              </p>
+            </div>
+          ) : (
+            <>
+              {filteredWinners.map((w, i) => {
             const post = seasonalPosts.find((p) => {
               const season = getSeasonFromTitle(p.title);
               return season === w.season;
@@ -154,13 +165,15 @@ export const SeasonalHallTab = memo(
               </div>
             );
           })}
-          {seasonalWinners.length === 0 && (
+          {!isLoading && seasonalWinners.length === 0 && (
             <div className="py-8 flex flex-col items-center justify-center opacity-40">
               <Award size={32} className="text-zinc-500 mb-2" />
               <p className="text-[10px] text-zinc-500 font-black uppercase tracking-widest">
                 {t("hallAwaits")}
               </p>
             </div>
+          )}
+          </>
           )}
         </div>
         <SeasonalHallModal

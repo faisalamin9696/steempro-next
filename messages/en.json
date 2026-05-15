@@ -905,6 +905,12 @@
         "pending": "Recovery account change to @{name} is in progress (Effective: {date}).",
         "description": "The recovery account is the only entity that can help you recover your account if it's hacked. It should be a trusted service or a person you trust completely."
       },
+      "withdrawRoutes": {
+        "title": "Withdraw Routes",
+        "good": "No automated withdraw routes are set.",
+        "warning": "You have {count} active withdraw routes. Ensure you recognize the destination accounts.",
+        "description": "Withdraw routes automatically redirect a percentage of your power-down funds to other accounts. Hackers often set these up to steal funds even if you stop a power-down."
+      },
       "activeAuthority": {
         "title": "Active Authority",
         "good": "No unexpected accounts have active authority.",
@@ -922,6 +928,15 @@
         "good": "Only your primary posting key has authority.",
         "warning": "Multiple entities have posting authority.",
         "description": "Posting authority allows an account to post content and vote. Many apps require this, but you should periodically review and revoke access for apps you no longer use."
+      },
+      "keyDuplicates": {
+        "title": "Key Hierarchy Security",
+        "good": "All your public keys (Posting, Active, Owner) are unique and properly separated.",
+        "warning": "Your Posting and Active keys are identical. This increases the risk if a posting-only app is compromised.",
+        "danger": "Your Owner key is identical to your Active/Posting key! A single leak could lead to a permanent loss of your account.",
+        "description": "Steem uses a multi-level key system for security. Using the same key for different authority levels defeats this protection. It is highly recommended to use unique keys for each level.",
+        "detected": "Duplicates Found",
+        "unique": "Properly Separated"
       },
       "witnessVotes": {
         "title": "Witness Voting",
@@ -946,6 +961,20 @@
         "warning": "Voting power is full (not being used).",
         "danger": "Voting power is very low ({percent}%)."
       },
+      "csi": {
+        "title": "Curation Efficiency (CSI)",
+        "good": "Your Curation Selection Index is excellent, showing diverse support.",
+        "info": "Your CSI is in a healthy range.",
+        "warning": "Your CSI is low. Consider supporting a wider variety of authors to improve ecosystem health.",
+        "description": "CSI (Curation Selection Index) measures how diverse your voting behavior is. Higher diversity helps the community grow."
+      },
+      "selfVote": {
+        "title": "Self-Vote Rate",
+        "good": "You have a healthy self-vote rate.",
+        "warning": "Your self-vote rate is moderate ({percent}%).",
+        "danger": "Your self-vote rate is high ({percent}%). This may negatively impact your reputation and community support.",
+        "description": "The self-vote rate shows how much of your voting power is used on your own content. Excessive self-voting is generally discouraged."
+      },
       "savings": {
         "title": "Savings",
         "info": "You have {amount} in savings.",
@@ -957,6 +986,19 @@
         "info": "Power down is in progress: {amount} (Next: {date}).",
         "none": "No power down in progress.",
         "description": "Powering down converts your Steem Power back into liquid Steem over 4 weeks. If you didn't start this, your account might be compromised."
+      },
+      "liquidFunds": {
+        "title": "Liquid Funds",
+        "good": "Your liquid funds are well-managed relative to your stake.",
+        "warning": "You have a significant amount of liquid funds ({ratio}% of stake). Consider powering up or moving to savings.",
+        "danger": "Most of your funds are liquid ({ratio}% of stake). This is high security risk if compromised!",
+        "description": "Liquid STEEM and SBD can be transferred instantly. To minimize risk, keep most of your funds as Steem Power or in the 3-day Savings vault."
+      },
+      "unclaimedRewards": {
+        "title": "Unclaimed Rewards",
+        "good": "All rewards have been claimed.",
+        "warning": "You have unclaimed rewards waiting. Claim them to increase your stake or liquid balance.",
+        "description": "Unclaimed rewards don't contribute to your voting power or earn interest. It's best to claim them regularly."
       }
     }
   },

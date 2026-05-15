@@ -36,6 +36,7 @@ export const useHeightsData = ({
   const [seasonalWinners, setSeasonalWinners] = useState<any[]>([]);
   const [userStats, setUserStats] = useState<any>(null);
   const [userHistory, setUserHistory] = useState<HighScore[]>([]);
+  const [isLoadingSeasonalWinners, setIsLoadingSeasonalWinners] = useState(true);
   const [globalStats, setGlobalStats] = useState<GameStats>({
     totalParticipants: 0,
     activePlayers24h: 0,
@@ -96,10 +97,15 @@ export const useHeightsData = ({
   }, [globalData]);
 
   const fetchSeasonalWinners = useCallback(async () => {
-    const winners = await heightsDb.getHeightsSeasonalWinners(
-      session?.user?.name || undefined,
-    );
-    setSeasonalWinners(winners);
+    setIsLoadingSeasonalWinners(true);
+    try {
+      const winners = await heightsDb.getHeightsSeasonalWinners(
+        session?.user?.name || undefined,
+      );
+      setSeasonalWinners(winners);
+    } finally {
+      setIsLoadingSeasonalWinners(false);
+    }
   }, [session?.user?.name]);
 
   const fetchGameStats = useCallback(async () => {
@@ -279,5 +285,6 @@ export const useHeightsData = ({
     fetchUserHistory,
     fetchSeasonalWinners,
     eligibilityMap,
+    isLoadingSeasonalWinners,
   };
 };

@@ -1,4 +1,4 @@
-import { client } from "./steem";
+import { client, steemApi } from "./steem";
 import { Constants } from "@/constants";
 import moment from "moment";
 
@@ -11,6 +11,7 @@ export interface HealthCheckResult {
   value?: string | number;
   data?: any;
   entities?: string[];
+  link?: string;
 }
 
 export class AccountHealthService {
@@ -73,6 +74,7 @@ export class AccountHealthService {
         ? t("checks.recoveryAccount.danger")
         : t("checks.recoveryAccount.warning"),
       value: `@${data.recovery_account}`,
+      link: `/@${data.name}/wallet`,
     };
   }
 
@@ -102,6 +104,7 @@ export class AccountHealthService {
         : t("checks.activeAuthority.good"),
       value: hasActiveAuth ? `${activeEntities.length} Entities` : undefined,
       entities: activeEntities,
+      link: `/@${data.name}/wallet`,
     });
 
     // Owner
@@ -120,6 +123,7 @@ export class AccountHealthService {
         : t("checks.ownerAuthority.good"),
       value: hasOwnerAuth ? `${ownerEntities.length} Entities` : undefined,
       entities: ownerEntities,
+      link: `/@${data.name}/wallet`,
     });
 
     // Posting
@@ -138,6 +142,7 @@ export class AccountHealthService {
         : t("checks.postingAuthority.good"),
       value: hasPostingAuth ? `${postingEntities.length} Entities` : undefined,
       entities: postingEntities,
+      link: `/@${data.name}/wallet`,
     });
 
     return results;
@@ -186,6 +191,7 @@ export class AccountHealthService {
           })
         : "You have no funds in savings for extra security.",
       value: hasSavings ? `${data.savings_steem} STEEM` : "0",
+      link: `/@${data.name}/wallet`,
     };
   }
 
@@ -207,6 +213,7 @@ export class AccountHealthService {
           date: moment(data.next_powerdown * 1000).format("LLL"),
         }),
         value: `${steemAmount.toFixed(0)} STEEM`,
+        link: `/@${data.name}/wallet`,
       };
     }
     return {
@@ -252,6 +259,7 @@ export class AccountHealthService {
         title: t("checks.proxy.title"),
         description: t("checks.proxy.info", { name: data.proxy }),
         value: `@${data.proxy}`,
+        link: `/witnesses`,
       });
     }
 
@@ -269,6 +277,7 @@ export class AccountHealthService {
             ? t("checks.witnessVotes.good")
             : t("checks.witnessVotes.warning", { count: votesCount }),
         value: `${votesCount}/30`,
+        link: `/witnesses`,
       });
     } else {
       // If has proxy, witness votes are info only
@@ -308,11 +317,12 @@ export class AccountHealthService {
       section: "security",
       status: rep < 25 ? "warning" : rep > 60 ? "good" : "info",
       title: "Account Reputation",
-      description: rep < 25
-        ? "Your reputation is low. This may restrict your visibility on some platforms."
-        : rep > 60
-          ? "You have a high reputation, which indicates a trusted and established account."
-          : "Your reputation is in the normal range.",
+      description:
+        rep < 25
+          ? "Your reputation is low. This may restrict your visibility on some platforms."
+          : rep > 60
+            ? "You have a high reputation, which indicates a trusted and established account."
+            : "Your reputation is in the normal range.",
       value: rep.toFixed(1),
     };
   }
@@ -321,16 +331,172 @@ export class AccountHealthService {
     const created = moment(data.created * 1000);
     const daysOld = moment().diff(created, "days");
     const isNew = daysOld < 30;
-    
+
     return {
       id: "accountAge",
       section: "security",
       status: isNew ? "warning" : "good",
       title: "Account Age",
-      description: isNew 
+      description: isNew
         ? `Your account is only ${daysOld} days old. Make sure to secure your master password and keys.`
         : `Your account is ${daysOld} days old and well-established.`,
       value: `${daysOld} Days`,
+    };
+  }
+
+  static checkLiquidFunds(
+    data: AccountExt,
+    t: any,
+    vestsToSteem: (vests: number) => number,
+  ): HealthCheckResult {
+    const liquidSteem = data.balance_steem || 0;
+    const liquidSbd = data.balance_sbd || 0;
+    const totalLiquid = liquidSteem + liquidSbd;
+    const totalSP = vestsToSteem(data.vests_own || 0);
+
+    const ratio = totalSP > 0 ? totalLiquid / totalSP : totalLiquid > 0 ? 1 : 0;
+
+    return {
+      id: "liquidFunds",
+      section: "resource",
+      status: ratio > 0.5 ? "danger" : ratio > 0.2 ? "warning" : "good",
+      title: t("checks.liquidFunds.title"),
+      description:
+        ratio > 0.5
+          ? t("checks.liquidFunds.danger", { ratio: (ratio * 100).toFixed(1) })
+          : ratio > 0.2
+            ? t("checks.liquidFunds.warning", {
+                ratio: (ratio * 100).toFixed(1),
+              })
+            : t("checks.liquidFunds.good"),
+      value: `${totalLiquid.toFixed(3)} STEEM`,
+      link: `/@${data.name}/wallet`,
+    };
+  }
+
+  static checkUnclaimedRewards(data: AccountExt, t: any): HealthCheckResult {
+    const hasUnclaimed =
+      (data.rewards_steem || 0) > 0 ||
+      (data.rewards_sbd || 0) > 0 ||
+      (data.rewards_vests || 0) > 0;
+
+    return {
+      id: "unclaimedRewards",
+      section: "resource",
+      status: hasUnclaimed ? "warning" : "good",
+      title: t("checks.unclaimedRewards.title"),
+      description: hasUnclaimed
+        ? t("checks.unclaimedRewards.warning")
+        : t("checks.unclaimedRewards.good"),
+      value: hasUnclaimed ? "Pending" : "None",
+      link: `/@${data.name}/wallet`,
+    };
+  }
+
+  static async checkWithdrawRoutes(
+    data: AccountExt,
+    t: any,
+  ): Promise<HealthCheckResult> {
+    const routeCount = data.withdraw_routes || 0;
+    const hasRoutes = routeCount > 0;
+    let routes: any[] = [];
+
+    if (hasRoutes) {
+      try {
+        routes = await steemApi.getWithdrawRoutes(data.name, "outgoing");
+      } catch (e) {
+        console.error("Failed to fetch withdraw routes", e);
+      }
+    }
+
+    const entities = routes.map(
+      (r) => `@${r.to_account} (${r.percent / 100}%)`,
+    );
+
+    return {
+      id: "withdrawRoutes",
+      section: "security",
+      status: hasRoutes ? "warning" : "good",
+      title: t("checks.withdrawRoutes.title"),
+      description: hasRoutes
+        ? t("checks.withdrawRoutes.warning", { count: routeCount })
+        : t("checks.withdrawRoutes.good"),
+      value: hasRoutes ? `${routeCount} Routes` : "0",
+      entities: entities,
+      link: `/@${data.name}/wallet`,
+    };
+  }
+
+  static checkCSI(data: AccountExt, t: any): HealthCheckResult {
+    const csi = data.voting_csi || 0;
+    return {
+      id: "csi",
+      section: "governance",
+      status: csi >= 80 ? "good" : csi >= 50 ? "info" : "warning",
+      title: t("checks.csi.title"),
+      description:
+        csi >= 80
+          ? t("checks.csi.good")
+          : csi >= 50
+            ? t("checks.csi.info")
+            : t("checks.csi.warning"),
+      value: `${csi.toFixed(1)}%`,
+    };
+  }
+
+  static checkSelfVoteRate(data: AccountExt, t: any): HealthCheckResult {
+    const rate = data.selfvote_rate || 0;
+    return {
+      id: "selfVote",
+      section: "governance",
+      status: rate <= 5 ? "good" : rate <= 20 ? "warning" : "danger",
+      title: t("checks.selfVote.title"),
+      description:
+        rate <= 5
+          ? t("checks.selfVote.good")
+          : rate <= 20
+            ? t("checks.selfVote.warning", { percent: rate.toFixed(1) })
+            : t("checks.selfVote.danger", { percent: rate.toFixed(1) }),
+      value: `${rate.toFixed(1)}%`,
+    };
+  }
+
+  static checkKeyDuplicates(data: AccountExt, t: any): HealthCheckResult {
+    const postingKey = data.posting_key_auths?.[0]?.[0];
+    const activeKey = data.active_key_auths?.[0]?.[0];
+    const ownerKey = data.owner_key_auths?.[0]?.[0];
+
+    const hasPostingActiveDuplicate = postingKey === activeKey;
+    const hasActiveOwnerDuplicate = activeKey === ownerKey;
+    const hasPostingOwnerDuplicate = postingKey === ownerKey;
+
+    const anyDuplicate =
+      hasPostingActiveDuplicate ||
+      hasActiveOwnerDuplicate ||
+      hasPostingOwnerDuplicate;
+
+    let status: "good" | "warning" | "danger" = "good";
+    if (hasActiveOwnerDuplicate || hasPostingOwnerDuplicate) {
+      status = "danger";
+    } else if (hasPostingActiveDuplicate) {
+      status = "warning";
+    }
+
+    return {
+      id: "keyDuplicates",
+      section: "security",
+      status: status,
+      title: t("checks.keyDuplicates.title"),
+      description:
+        status === "danger"
+          ? t("checks.keyDuplicates.danger")
+          : status === "warning"
+            ? t("checks.keyDuplicates.warning")
+            : t("checks.keyDuplicates.good"),
+      value: anyDuplicate
+        ? t("checks.keyDuplicates.detected")
+        : t("checks.keyDuplicates.unique"),
+      link: `/@${data.name}/wallet`,
     };
   }
 }

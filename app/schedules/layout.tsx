@@ -3,9 +3,7 @@ import PageHeader from "@/components/ui/PageHeader";
 import { CalendarSearch } from "lucide-react";
 import { Metadata } from "next";
 import { getMetadata } from "@/utils/metadata";
-
 import { getTranslations } from "next-intl/server";
-import MaintenanceCard from "@/components/ui/MaintenanceCard";
 
 export const metadata: Metadata = getMetadata.schedules();
 
@@ -18,8 +16,7 @@ async function layout({ children }: { children: React.ReactNode }) {
         title={t("title")}
         description={t("description")}
       />
-      <MaintenanceCard estimatedBackTime="2026-05-15T20:00:00" />
-      {/* {children} */}
+      {children}
     </MainWrapper>
   );
 }

@@ -108,6 +108,9 @@ class SdsApi {
       "posting_weight_threshold",
       "memo_key",
       "recovery_account",
+      "withdraw_routes",
+      "selfvote_rate",
+      "voting_csi",
     ];
 
     return sdsFetcher<AccountExt>(
