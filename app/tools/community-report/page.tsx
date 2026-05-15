@@ -342,9 +342,8 @@ ${stats.allAuthors.map((a, i) => `| ${i + 1} | @${a.author} | ${a.posts} | ${a.c
                 <div className="w-2 h-2 rounded-full bg-success animate-ping" />
               </div>
               <p className="text-[9px] font-medium text-success/70 leading-relaxed uppercase tracking-widest">
-                Nodes Found: {stats.totalPosts}<br />
+                Posts Found: {stats.totalPosts}<br />
                 Accuracy: High<br />
-                Source: Hive API
               </p>
             </motion.div>
           )}

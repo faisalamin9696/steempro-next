@@ -870,6 +870,93 @@
       "snippetsTemplates": {
         "title": "Snippets & Templates",
         "description": "Insert snippets and templates into your post"
+      },
+      "accountHealth": {
+        "title": "Account Health Check",
+        "description": "Scan your account for security risks, recovery settings, and resource efficiency."
+      }
+    }
+  },
+  "AccountHealth": {
+    "title": "Account Health Check",
+    "description": "Perform a comprehensive audit of your Steem account security and health.",
+    "scan": "Scan Account",
+    "scanning": "Scanning...",
+    "change": "Change",
+    "overallScore": "Overall Health Score",
+    "riskLevel": {
+      "low": "Low Risk",
+      "medium": "Medium Risk",
+      "high": "High Risk"
+    },
+    "sections": {
+      "security": "Security & Keys",
+      "authority": "Account Authority",
+      "resource": "Resources & Efficiency",
+      "governance": "Governance & Voting",
+      "trustedEntities": "Trusted Recovery Entities"
+    },
+    "checks": {
+      "recoveryAccount": {
+        "title": "Recovery Account",
+        "good": "Recovery account is set to a trusted entity.",
+        "warning": "Recovery account is not set to a known trusted entity.",
+        "danger": "Recovery account is set to yourself or an unknown account.",
+        "pending": "Recovery account change to @{name} is in progress (Effective: {date}).",
+        "description": "The recovery account is the only entity that can help you recover your account if it's hacked. It should be a trusted service or a person you trust completely."
+      },
+      "activeAuthority": {
+        "title": "Active Authority",
+        "good": "No unexpected accounts have active authority.",
+        "danger": "External accounts have active authority over your wallet!",
+        "description": "Active authority allows an account to transfer funds, power up/down, and vote for witnesses. Only you should have this power unless you explicitly trust a service."
+      },
+      "ownerAuthority": {
+        "title": "Owner Authority",
+        "good": "No unexpected accounts have owner authority.",
+        "danger": "External accounts have owner authority over your account!",
+        "description": "Owner authority is the highest level of control. It can change ALL other keys. External owner authority is extremely risky."
+      },
+      "postingAuthority": {
+        "title": "Posting Authority",
+        "good": "Only your primary posting key has authority.",
+        "warning": "Multiple entities have posting authority.",
+        "description": "Posting authority allows an account to post content and vote. Many apps require this, but you should periodically review and revoke access for apps you no longer use."
+      },
+      "witnessVotes": {
+        "title": "Witness Voting",
+        "good": "You are actively voting for witnesses.",
+        "warning": "You have unused witness votes ({count}/30).",
+        "danger": "You are not voting for any witnesses."
+      },
+      "proxy": {
+        "title": "Voting Proxy",
+        "info": "Proxying your votes to @{name} ensures your influence is used to support trusted witnesses.",
+        "none": "No voting proxy set."
+      },
+      "resourceCredits": {
+        "title": "Resource Credits",
+        "good": "Resource credits are healthy ({percent}%).",
+        "warning": "Resource credits are low ({percent}%).",
+        "danger": "Account is out of resource credits!"
+      },
+      "votingPower": {
+        "title": "Voting Power",
+        "good": "Voting power is optimal.",
+        "warning": "Voting power is full (not being used).",
+        "danger": "Voting power is very low ({percent}%)."
+      },
+      "savings": {
+        "title": "Savings",
+        "info": "You have {amount} in savings.",
+        "withdrawal": "Savings withdrawal in progress: {amount} (Effective: {date}).",
+        "description": "Funds in savings are protected by a 3-day withdrawal delay. This acts as a 'buffer' against immediate theft if your active key is compromised."
+      },
+      "powerDown": {
+        "title": "Power Down",
+        "info": "Power down is in progress: {amount} (Next: {date}).",
+        "none": "No power down in progress.",
+        "description": "Powering down converts your Steem Power back into liquid Steem over 4 weeks. If you didn't start this, your account might be compromised."
       }
     }
   },

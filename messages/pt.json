@@ -870,6 +870,93 @@
       "snippetsTemplates": {
         "title": "Trechos e Modelos",
         "description": "Insira trechos e modelos na sua postagem"
+      },
+      "accountHealth": {
+        "title": "Verificação de Saúde da Conta",
+        "description": "Escaneie sua conta em busca de riscos de segurança, configurações de recuperação e eficiência de recursos."
+      }
+    }
+  },
+  "AccountHealth": {
+    "title": "Verificação de Saúde da Conta",
+    "description": "Realize uma auditoria completa de segurança e saúde em sua conta Steem.",
+    "scan": "Escanear Conta",
+    "scanning": "Escaneando...",
+    "change": "Alterar",
+    "overallScore": "Pontuação Geral de Saúde",
+    "riskLevel": {
+      "low": "Baixo Risco",
+      "medium": "Risco Médio",
+      "high": "Alto Risco"
+    },
+    "sections": {
+      "security": "Segurança e Chaves",
+      "authority": "Autoridade da Conta",
+      "resource": "Recursos e Eficiência",
+      "governance": "Governança e Votação",
+      "trustedEntities": "Entidades de Recuperação Confiáveis"
+    },
+    "checks": {
+      "recoveryAccount": {
+        "title": "Conta de Recuperação",
+        "good": "A conta de recuperação está definida para uma entidade confiável.",
+        "warning": "A conta de recuperação não está definida para uma entidade confiável conhecida.",
+        "danger": "A conta de recuperação está definida para você mesmo ou uma conta desconhecida.",
+        "pending": "Alteração da conta de recuperação para @{name} em andamento (Data efetiva: {date}).",
+        "description": "A conta de recuperação é a única entidade que pode ajudá-lo a recuperar sua conta caso ela seja hackeada. Deve ser um serviço confiável ou alguém em quem você confia plenamente."
+      },
+      "activeAuthority": {
+        "title": "Autoridade Ativa (Active)",
+        "good": "Nenhuma conta inesperada possui autoridade ativa.",
+        "danger": "Contas externas possuem autoridade ativa sobre sua carteira!",
+        "description": "A autoridade ativa permite que uma conta transfira fundos, realize power up/down e vote em testemunhas. Você deve ser o único com esse poder, a menos que confie explicitamente em um serviço."
+      },
+      "ownerAuthority": {
+        "title": "Autoridade de Proprietário (Owner)",
+        "good": "Nenhuma conta inesperada possui autoridade de proprietário.",
+        "danger": "Contas externas possuem autoridade de proprietário sobre sua conta!",
+        "description": "A autoridade de proprietário é o nível mais alto de controle. Ela pode alterar todas as outras chaves. Autoridade de proprietário externa é extremamente perigosa."
+      },
+      "postingAuthority": {
+        "title": "Autoridade de Postagem (Posting)",
+        "good": "Apenas suas chaves de postagem primárias possuem autoridade.",
+        "warning": "Múltiplas entidades possuem autoridade de postagem.",
+        "description": "A autoridade de postagem permite que uma conta publique conteúdo e vote. Muitos aplicativos exigem isso, mas você deve revisar periodicamente e revogar o acesso de apps que não usa mais."
+      },
+      "witnessVotes": {
+        "title": "Votos em Testemunhas",
+        "good": "Você está votando ativamente em testemunhas.",
+        "warning": "Você tem votos de testemunhas não utilizados ({count}/30).",
+        "danger": "Você não está votando em nenhuma testemunha."
+      },
+      "proxy": {
+        "title": "Proxy de Votação",
+        "info": "Delegar seus votos para @{name} garante que sua influência seja usada para apoiar testemunhas confiáveis.",
+        "none": "Nenhum proxy de votação definido."
+      },
+      "resourceCredits": {
+        "title": "Créditos de Recurso (RC)",
+        "good": "Os créditos de recurso estão em bom estado ({percent}%).",
+        "warning": "Os créditos de recurso estão baixos ({percent}%).",
+        "danger": "A conta está sem créditos de recurso!"
+      },
+      "votingPower": {
+        "title": "Poder de Voto",
+        "good": "O poder de voto está em níveis ideais.",
+        "warning": "O poder de voto está cheio (não sendo utilizado).",
+        "danger": "O poder de voto está muito baixo ({percent}%)."
+      },
+      "savings": {
+        "title": "Poupança (Savings)",
+        "info": "Você tem {amount} em sua poupança.",
+        "withdrawal": "Retirada da poupança em andamento: {amount} (Data efetiva: {date}).",
+        "description": "Os fundos mantidos na poupança são protegidos por um atraso de retirada de 3 dias. Isso serve como um buffer contra roubos instantâneos caso sua chave ativa seja comprometida."
+      },
+      "powerDown": {
+        "title": "Power Down",
+        "info": "Power down em andamento: {amount} (Próxima parcela: {date}).",
+        "none": "Nenhum power down em andamento.",
+        "description": "O power down converte seu Steem Power em Steem líquido ao longo de 4 semanas. Se você não iniciou isso, sua conta pode estar comprometida."
       }
     }
   },

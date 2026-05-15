@@ -25,12 +25,12 @@ const GeneralSettings = () => {
   const dispatch = useAppDispatch();
   const settings = useAppSelector((state) => state.settingsReducer.value);
   const { setTheme } = useTheme();
-  
+
   if (!settings) return null;
 
   const handleUpdate = (updatedFields: Partial<Setting>) => {
     dispatch(updateSettingsHandler(updatedFields));
-    // window?.location?.reload();
+    window?.location?.reload();
   };
 
   return (

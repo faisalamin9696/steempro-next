@@ -20,6 +20,12 @@ export const Constants = {
   github_link: "https://github.com/faisalamin9696/steempro-next",
   discord_link: "https://discord.gg/SXpWY8FGCB",
   witness_name: "faisalamin",
+  trusted_recovery_accounts: [
+    "steem",
+    "steemcurator01",
+    "retrieve",
+    "steemworld.org",
+  ],
   team: [
     {
       name: "faisalamin",
@@ -35,10 +41,10 @@ export const Constants = {
     "https://api.steemit.com",
     "https://api.steemyy.com",
     "https://api.steempro.com",
+    "https://api.moecki.online",
     "https://steemapi.boylikegirl.club",
     "https://api.steemitdev.com",
     "https://api.steem.fans",
-    "https://rpc.amarbangla.net",
   ],
   chain_timeout: 5000,
   wallet_key_types: {

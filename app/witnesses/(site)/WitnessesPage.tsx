@@ -488,7 +488,7 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
             {tab.icon}
             {!isMobile || activeTab === tab.id ? (
               <span>{tab.title}</span>
-            ) : null}{" "}
+            ) : null}
           </div>
         )}
       >

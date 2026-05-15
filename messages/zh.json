@@ -870,6 +870,93 @@
       "snippetsTemplates": {
         "title": "片段和模板",
         "description": "在您的帖子中插入片段和模板"
+      },
+      "accountHealth": {
+        "title": "账户健康检查",
+        "description": "扫描您的账户，评估安全风险、恢复设置和资源效率。"
+      }
+    }
+  },
+  "AccountHealth": {
+    "title": "账户健康检查",
+    "description": "对您的 Steem 账户进行全面的安全和健康审计。",
+    "scan": "扫描账户",
+    "scanning": "正在扫描...",
+    "change": "更改",
+    "overallScore": "整体健康评分",
+    "riskLevel": {
+      "low": "低风险",
+      "medium": "中风险",
+      "high": "高风险"
+    },
+    "sections": {
+      "security": "安全与密钥",
+      "authority": "账户权限",
+      "resource": "资源与效率",
+      "governance": "治理与投票",
+      "trustedEntities": "信任的恢复实体"
+    },
+    "checks": {
+      "recoveryAccount": {
+        "title": "恢复账户",
+        "good": "恢复账户已设置为信任实体。",
+        "warning": "恢复账户未设置为已知的信任实体。",
+        "danger": "恢复账户设置为您自己或未知账户。",
+        "pending": "正在更改恢复账户为 @{name}（生效日期：{date}）。",
+        "description": "恢复账户是唯一能在您账户被盗时帮助找回的实体。它应该是您完全信任的专业服务或个人。"
+      },
+      "activeAuthority": {
+        "title": "Active 权限",
+        "good": "没有异常账户拥有 Active 权限。",
+        "danger": "外部账户拥有您钱包的 Active 权限！",
+        "description": "Active 权限允许账户转账、升级/降级权力（Power Up/Down）以及为见证人投票。除非您明确信任某项服务，否则此权限应仅由您自己持有。"
+      },
+      "ownerAuthority": {
+        "title": "Owner 权限",
+        "good": "没有异常账户拥有 Owner 权限。",
+        "danger": "外部账户拥有您账户的 Owner 权限！",
+        "description": "Owner 权限是最高级别的控制权，可以更改所有其他密钥。外部账户持有 Owner 权限极其危险。"
+      },
+      "postingAuthority": {
+        "title": "Posting 权限",
+        "good": "仅您的主 Posting 密钥拥有权限。",
+        "warning": "多个实体拥有 Posting 权限。",
+        "description": "Posting 权限允许账户发布内容和点赞。许多应用需要此权限，但您应定期检查并撤销不再使用的应用的访问权限。"
+      },
+      "witnessVotes": {
+        "title": "见证人投票",
+        "good": "您正在积极为见证人投票。",
+        "warning": "您还有未使用的见证人投票名额 ({count}/30)。",
+        "danger": "您尚未为任何见证人投票。"
+      },
+      "proxy": {
+        "title": "投票代理",
+        "info": "代理投票给 @{name} 可确保您的影响力被用于支持信任的见证人。",
+        "none": "未设置投票代理。"
+      },
+      "resourceCredits": {
+        "title": "资源积分 (RC)",
+        "good": "资源积分状态良好 ({percent}%)。",
+        "warning": "资源积分较低 ({percent}%)。",
+        "danger": "账户资源积分已耗尽！"
+      },
+      "votingPower": {
+        "title": "投票能量",
+        "good": "投票能量处于理想水平。",
+        "warning": "投票能量已满（未被使用）。",
+        "danger": "投票能量过低 ({percent}%)。"
+      },
+      "savings": {
+        "title": "储蓄 (Savings)",
+        "info": "您的储蓄中有 {amount}。",
+        "withdrawal": "储蓄提取中：{amount}（生效日期：{date}）。",
+        "description": "存放在储蓄中的资金受到 3 天提取延迟的保护。如果您 Active 密钥泄露，这可以作为防止资金被瞬间盗取的缓冲。"
+      },
+      "powerDown": {
+        "title": "降权 (Power Down)",
+        "info": "正在降权：{amount}（下次发放：{date}）。",
+        "none": "当前没有降权操作。",
+        "description": "降权会在 4 周内将您的 Steem Power 转换为流动 Steem。如果您未主动操作，您的账户可能已被盗。"
       }
     }
   },

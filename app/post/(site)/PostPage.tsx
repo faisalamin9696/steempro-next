@@ -13,9 +13,8 @@ import { Chip } from "@heroui/chip";
 import SubmitPage from "@/app/submit/page";
 import NsfwOverlay from "@/components/nsfw/NsfwOverlay";
 import { hasNsfwTag, isSteemProShort } from "@/utils";
-import { trackPostView } from "@/utils/track-view";
 import { scrollToWithOffset } from "@/utils/helper";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
 import { CircleSlash2, Video } from "lucide-react";
@@ -54,33 +53,12 @@ export default function PostPage({
   const [isTranslated, setIsTranslated] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState<string>();
   const isMuted = Boolean(commentData.is_muted);
-  const handleViewTrack = useCallback(async () => {
-    if (
-      !commentData.author ||
-      !commentData.permlink ||
-      commentData.link_id === 0
-    )
-      return;
-    try {
-      await trackPostView(commentData.author, commentData.permlink);
-    } catch (error) {
-      // ignore error
-    }
-  }, [commentData.author, commentData.permlink, commentData.link_id]);
 
   useEffect(() => {
     if (data) {
       dispatch(addCommentHandler(data));
     }
   }, [data]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (commentData.depth ?? 0 > 0) return;
-      handleViewTrack();
-    }, 30000); // 30 seconds to count view
-    return () => clearTimeout(timer);
-  }, [handleViewTrack]);
 
   useEffect(() => {
     const hash = window.location.hash?.slice(1);

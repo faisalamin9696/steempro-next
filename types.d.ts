@@ -671,7 +671,6 @@ type PromotedPost = {
   title: string;
   thumbnail: string;
   created_at?: string;
-  views?: number;
 };
 
 type LoginMethod = "keychain" | "private-key";

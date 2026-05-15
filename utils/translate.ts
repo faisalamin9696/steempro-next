@@ -27,6 +27,7 @@ export const POPULAR_LANGUAGES = [
   { code: "ru", name: "Russian", flag: "🇷🇺" },
   { code: "tr", name: "Turkish", flag: "🇹🇷" },
   { code: "id", name: "Indonesian", flag: "🇮🇩" },
+  { code: "fa", name: "Persian", flag: "🇮🇷" },
 ] as const;
 
 async function executeTranslation(
