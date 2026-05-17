@@ -150,6 +150,7 @@ function SDrawerContent() {
           <div className="relative group rounded-2xl overflow-hidden border border-default-100 bg-background/50 backdrop-blur-xl shadow-sm transition-all hover:shadow-md hover:border-default-200">
             <div className="absolute inset-0 h-16">
               <BackgroundImage
+                fetchPriority="high"
                 src={coverImg}
                 overlay={!coverImg}
                 className="w-full h-full opacity-80 group-hover:opacity-100 transition-opacity duration-500"

@@ -42,11 +42,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <script
+        async
         defer
         src="https://analytics.steempro.com/script.js"
         data-website-id="71e9bdb4-ddf2-4ca8-8db0-75f527e55a4d"
       ></script>
-
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${notoNastaliqUrdu.variable}`}
         suppressHydrationWarning
