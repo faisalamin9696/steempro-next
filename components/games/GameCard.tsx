@@ -8,6 +8,7 @@ import { Chip } from "@heroui/chip";
 import { Zap, Trophy, Play, Globe, Database } from "lucide-react";
 import Link from "next/link";
 import { Game } from "./types";
+import { proxifyImageUrl } from "@/utils/proxifyUrl";
 
 interface GameCardProps {
   game: Game;
@@ -146,7 +147,7 @@ export const ThirdPartyGameCard = ({ game }: GameCardProps) => {
         removeWrapper
         alt={game.title}
         className="z-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 brightness-50 group-hover:brightness-[0.65]"
-        src={game.image}
+        src={proxifyImageUrl(game.image)!}
       />
 
       <CardBody className="absolute bottom-0 z-10 w-full bg-linear-to-t from-black via-black/95 to-transparent p-6 space-y-4">

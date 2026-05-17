@@ -27,7 +27,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
 import { addCommonDataHandler } from "@/hooks/redux/reducers/CommonReducer";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
-import { Card } from "@heroui/react";
+import { Card } from "@heroui/card";
 
 interface Props {
   short: ShortVideo;

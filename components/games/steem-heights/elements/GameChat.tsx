@@ -1,9 +1,7 @@
 "use client";
 
-import { useState, memo, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, Send, X, Star, Flame } from "lucide-react";
-import { Button } from "@heroui/button";
+import { memo, useRef, useEffect } from "react";
+import { MessageSquare } from "lucide-react";
 import SModal from "@/components/ui/SModal";
 import { useDraggable } from "@heroui/react";
 import React from "react";

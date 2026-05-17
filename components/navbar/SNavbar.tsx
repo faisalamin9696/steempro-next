@@ -33,7 +33,7 @@ import { useState } from "react";
 import SearchModal from "../search/SearchModal";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
-import { Divider } from "@heroui/react";
+import { Divider } from "@heroui/divider";
 
 export async function refreshData(username?: string | null) {
   mutate("globals");

@@ -9,7 +9,6 @@ import {
   AlertTriangle,
   XCircle,
   Info,
-  RefreshCw,
   Key,
   ShieldAlert,
   Zap,
@@ -20,7 +19,7 @@ import { useAppSelector } from "@/hooks/redux/store";
 import { sdsApi } from "@/libs/sds";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
-import { Progress, CircularProgress } from "@heroui/react";
+import { Progress, CircularProgress } from "@heroui/progress";
 import { Chip } from "@heroui/chip";
 import SInput from "@/components/ui/SInput";
 import SAvatar from "@/components/ui/SAvatar";
@@ -274,8 +273,10 @@ export default function AccountHealthCheckPage() {
                   </div>
 
                   <div className="space-y-3">
-                    <h3 className="text-xl font-bold
-                     uppercase tracking-tighter">
+                    <h3
+                      className="text-xl font-bold
+                     uppercase tracking-tighter"
+                    >
                       {t("overallScore")}
                     </h3>
                     <div className="flex flex-col gap-2">
@@ -448,7 +449,7 @@ export default function AccountHealthCheckPage() {
             {/* Detailed Audit Categories */}
             <div className="space-y-4 pt-4">
               <div className="flex items-center gap-3 px-1">
-                <div className="h-[1px] flex-1 bg-default-100" />
+                <div className="h-px flex-1 bg-default-100" />
                 <h4 className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em]">
                   Detailed Security Audit
                 </h4>
@@ -466,7 +467,7 @@ export default function AccountHealthCheckPage() {
                         <div className="p-2 rounded-lg bg-default-50">
                           {sectionIcons[section as keyof typeof sectionIcons]}
                         </div>
-                        <h4 className="font-black uppercase tracking-[0.1em] text-xs">
+                        <h4 className="font-black uppercase tracking-widest text-xs">
                           {t(`sections.${section}`)}
                         </h4>
                         <div className="ml-auto">
