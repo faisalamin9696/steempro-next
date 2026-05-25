@@ -66,8 +66,21 @@ export default function (
     }
     // console.log('state', state)
     if (!mutate) return state;
+
+    let serializedHtml = doc ? XMLSerializer.serializeToString(doc) : "";
+    
+    // xmldom serializes empty nodes as <tag/>. htmlparser2 (used later by sanitize-html) treats non-void <tag/> as an open tag.
+    // This expands non-void self-closing tags to prevent them from swallowing adjacent content.
+    const voidElements = ["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"];
+    serializedHtml = serializedHtml.replace(/<([a-zA-Z0-9\-]+)([^>]*?)\s*\/>/g, (match, tag, attrs) => {
+      if (voidElements.includes(tag.toLowerCase())) {
+        return match;
+      }
+      return `<${tag}${attrs}></${tag}>`;
+    });
+
     return {
-      html: doc ? XMLSerializer.serializeToString(doc) : "",
+      html: serializedHtml,
       ...state,
     };
   } catch (error: any) {
