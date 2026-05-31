@@ -19,79 +19,199 @@ export const getHeightsHighScores = async (
   return data || [];
 };
 
-export const getHeightsSeasonalWinners = async (player?: string) => {
-  const { data } = await supabase
-    .from("steempro_game_heights")
-    .select("*")
-    .eq("game", "steem-heights")
-    .order("score", { ascending: false });
+export const getHeightsSeasonalWinners = async (
+  player?: string,
+  limit: number = 5,
+  offset: number = 0,
+) => {
+  try {
+    const { data, error } = await supabase.rpc("get_heights_seasonal_winners", {
+      p_player: player || null,
+      p_limit: limit,
+      p_offset: offset,
+    });
 
-  if (!data) return [];
-
-  // Map to store: Season -> { winner, totalClimbers, totalAscent, totalEntries }
-  const seasonStats = new Map<
-    number,
-    {
-      playerStats: Map<string, any>;
-      totalAscent: number;
-      totalEntries: number;
-      userBest: number;
-    }
-  >();
-
-  data.forEach((item: any) => {
-    if (!seasonStats.has(item.season)) {
-      seasonStats.set(item.season, {
-        playerStats: new Map(),
-        totalAscent: 0,
-        totalEntries: 0,
-        userBest: 0,
-      });
+    if (error || !data) {
+      throw error || new Error("No seasonal winners returned from RPC");
     }
 
-    const stats = seasonStats.get(item.season)!;
-    stats.totalEntries += 1;
+    return data.map((item: any) => ({
+      ...item,
+      totalClimbers: Number(item.total_climbers),
+      totalAscent: Number(item.total_ascent),
+      totalEntries: Number(item.total_entries),
+      avgAltitude: Number(item.avg_altitude),
+      userBest: Number(item.user_best),
+    }));
+  } catch (error) {
+    console.warn(
+      "getHeightsSeasonalWinners RPC failed, falling back to client-side aggregation:",
+      error,
+    );
+    const { data } = await supabase
+      .from("steempro_game_heights")
+      .select("*")
+      .eq("game", "steem-heights")
+      .order("score", { ascending: false });
 
-    const playerMap = stats.playerStats;
-    const pStats = playerMap.get(item.player);
-    if (!pStats) {
-      // First time seeing this player in this season.
-      // Since data is sorted by score DESC, this is their best score.
-      playerMap.set(item.player, { ...item, plays: 1 });
-      stats.totalAscent += item.score || 0;
-    } else {
-      pStats.plays += 1;
-      // Subsequent entries for the same player are <= max score, so we don't add them.
-    }
+    if (!data) return [];
 
-    if (player && item.player === player) {
-      stats.userBest = Math.max(stats.userBest, item.score || 0);
-    }
-  });
+    // Map to store: Season -> { winner, totalClimbers, totalAscent, totalEntries }
+    const seasonStats = new Map<
+      number,
+      {
+        playerStats: Map<string, any>;
+        totalAscent: number;
+        totalEntries: number;
+        userBest: number;
+      }
+    >();
 
-  const winners: any[] = [];
-  seasonStats.forEach((stats, season) => {
-    const sortedPlayers = Array.from(stats.playerStats.values()).sort(
-      (a, b) => {
-        if (b.score !== a.score) return b.score - a.score;
-        return (a.plays || 0) - (b.plays || 0);
+    data.forEach((item: any) => {
+      if (!seasonStats.has(item.season)) {
+        seasonStats.set(item.season, {
+          playerStats: new Map(),
+          totalAscent: 0,
+          totalEntries: 0,
+          userBest: 0,
+        });
+      }
+
+      const stats = seasonStats.get(item.season)!;
+      stats.totalEntries += 1;
+
+      const playerMap = stats.playerStats;
+      const pStats = playerMap.get(item.player);
+      if (!pStats) {
+        // First time seeing this player in this season.
+        // Since data is sorted by score DESC, this is their best score.
+        playerMap.set(item.player, { ...item, plays: 1 });
+        stats.totalAscent += item.score || 0;
+      } else {
+        pStats.plays += 1;
+        // Subsequent entries for the same player are <= max score, so we don't add them.
+      }
+
+      if (player && item.player === player) {
+        stats.userBest = Math.max(stats.userBest, item.score || 0);
+      }
+    });
+
+    const winners: any[] = [];
+    seasonStats.forEach((stats, season) => {
+      const sortedPlayers = Array.from(stats.playerStats.values()).sort(
+        (a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          return (a.plays || 0) - (b.plays || 0);
+        },
+      );
+
+      if (sortedPlayers.length > 0) {
+        const totalClimbers = stats.playerStats.size;
+        winners.push({
+          ...sortedPlayers[0],
+          totalClimbers,
+          totalAscent: stats.totalAscent,
+          totalEntries: stats.totalEntries,
+          avgAltitude:
+            totalClimbers > 0 ? stats.totalAscent / totalClimbers : 0,
+          userBest: stats.userBest,
+        });
+      }
+    });
+
+    const allSorted = winners.sort((a, b) => b.season - a.season);
+    return allSorted.slice(offset, offset + limit);
+  }
+};
+
+export const getHeightsCombinedUserData = async (
+  player: string,
+  season: number,
+) => {
+  try {
+    const { data, error } = await supabase.rpc(
+      "get_heights_combined_user_data",
+      {
+        p_player: player,
+        p_season: season,
       },
     );
 
-    if (sortedPlayers.length > 0) {
-      const totalClimbers = stats.playerStats.size;
-      winners.push({
-        ...sortedPlayers[0],
-        totalClimbers,
-        totalAscent: stats.totalAscent,
-        totalEntries: stats.totalEntries,
-        avgAltitude: totalClimbers > 0 ? stats.totalAscent / totalClimbers : 0,
-        userBest: stats.userBest,
-      });
+    if (error || !data) {
+      throw error || new Error("No combined data returned");
     }
-  });
 
-  return winners.sort((a, b) => b.season - a.season);
+    // Process shop stats if they exist
+    let processedShop = null;
+    if (data.shop_stats) {
+      const raw = data.shop_stats;
+      let powerup: any = null;
+      if (raw.powerup) {
+        if (typeof raw.powerup === "string") {
+          try {
+            powerup = JSON.parse(raw.powerup);
+          } catch (e) {
+            powerup = { name: raw.powerup };
+          }
+        } else {
+          powerup = raw.powerup;
+        }
+      }
+
+      let skins = [];
+      if (raw.skins) {
+        if (typeof raw.skins === "string") {
+          try {
+            skins = JSON.parse(raw.skins);
+          } catch (e) {
+            skins = raw.skins.split(",").filter(Boolean);
+          }
+        } else {
+          skins = Array.isArray(raw.skins) ? raw.skins : [];
+        }
+      }
+
+      let actions = [];
+      if (raw.current_day_actions) {
+        if (typeof raw.current_day_actions === "string") {
+          try {
+            actions = JSON.parse(raw.current_day_actions);
+          } catch (e) {
+            actions = raw.current_day_actions.split(",").filter(Boolean);
+          }
+        } else {
+          actions = Array.isArray(raw.current_day_actions)
+            ? raw.current_day_actions
+            : [];
+        }
+      }
+
+      processedShop = {
+        ...raw,
+        powerup,
+        skins,
+        current_day_actions: actions,
+      };
+    }
+
+    return {
+      shop: processedShop,
+      daily: data.daily_stats || null,
+      player: data.player_stats || null,
+    };
+  } catch (error) {
+    console.warn(
+      "getHeightsCombinedUserData RPC failed, falling back to parallel fetch:",
+      error,
+    );
+    const [shop, daily, playerRes] = await Promise.all([
+      getHeightsShopStats(player, season),
+      getHeightsDailyStats(player, season),
+      getHeightsPlayerStats(player, season),
+    ]);
+    return { shop, daily, player: playerRes };
+  }
 };
 
 export const getHeightsShopStats = async (player: string, season: number) => {
@@ -283,4 +403,48 @@ export const checkActionDuplicate = async (
 
   if (error) return false;
   return (data || []).length > 0;
+};
+
+export const getGameChatMessages = async (
+  game: string,
+  season: number,
+  limit: number = 25,
+  beforeId?: number,
+) => {
+  let query = supabase
+    .from("steempro_game_chat")
+    .select("*")
+    .eq("game", game)
+    .eq("season", season)
+    .order("id", { ascending: false })
+    .limit(limit);
+
+  if (beforeId) {
+    query = query.lt("id", beforeId);
+  }
+
+  const { data, error } = await query;
+  if (error) {
+    console.error("getGameChatMessages failed:", error);
+    return [];
+  }
+  return data || [];
+};
+
+export const insertGameChatMessage = async (
+  game: string,
+  player: string,
+  season: number,
+  message: string,
+) => {
+  const { data, error } = await supabase
+    .from("steempro_game_chat")
+    .insert([{ game, player, season, message }])
+    .select();
+
+  if (error) {
+    console.error("insertGameChatMessage failed:", error);
+    return null;
+  }
+  return data?.[0] || null;
 };

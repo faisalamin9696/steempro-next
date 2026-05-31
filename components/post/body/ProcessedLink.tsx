@@ -36,6 +36,8 @@ const tiktokRegex = {
     /<blockquote class="tiktok-embed" cite="https:\/\/www.tiktok.com\/@([A-Za-z0-9_\-/.]+)\/video\/([0-9]*?)".*<\/script>/i,
 };
 
+import { TweetErrorBoundary } from "./TweetErrorBoundary";
+
 function ProcessedLink({
   domNode,
   options,
@@ -46,16 +48,20 @@ function ProcessedLink({
   const url: string = domNode?.attribs?.href;
 
   if (url.match(twitterRegex.main)) {
+    const fallbackLink = (
+      <Link {...domNode?.attribs}>
+        {domToReact(domNode.children, options)}
+      </Link>
+    );
+
     return (
-      <Tweet
-        fallback={
-          <Link {...domNode?.attribs}>
-            {domToReact(domNode.children, options)}
-          </Link>
-        }
-        id={extractTweetId(url) ?? ""}
-        components={tweet_components}
-      />
+      <TweetErrorBoundary fallback={fallbackLink}>
+        <Tweet
+          fallback={fallbackLink}
+          id={extractTweetId(url) ?? ""}
+          components={tweet_components}
+        />
+      </TweetErrorBoundary>
     );
   }
 
@@ -84,9 +90,7 @@ function ProcessedLink({
   }
 
   return (
-    <Link {...domNode?.attribs}>
-      {domToReact(domNode.children, options)}
-    </Link>
+    <Link {...domNode?.attribs}>{domToReact(domNode.children, options)}</Link>
   );
 }
 

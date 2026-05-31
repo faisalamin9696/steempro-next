@@ -51,10 +51,11 @@ interface Props {
     [key: string]: { sp: number; rep: number; eligible: boolean };
   };
   isLoadingSeasonalWinners: boolean;
+  fetchSeasonalWinners: (limit?: number, offset?: number) => Promise<void>;
 }
 
 export const HeightsLeaderboard = memo(
-  ({
+  function HeightsLeaderboard({
     highScores,
     userStats,
     userHistory,
@@ -83,7 +84,8 @@ export const HeightsLeaderboard = memo(
     fetchUserHistory,
     eligibilityMap,
     isLoadingSeasonalWinners,
-  }: Props) => {
+    fetchSeasonalWinners,
+  }: Props) {
     const t = useTranslations("Games.steemHeights.leaderboard.tabs");
 
     return (
@@ -186,6 +188,7 @@ export const HeightsLeaderboard = memo(
                 seasonalPosts={seasonalHistory}
                 eligibilityMap={eligibilityMap}
                 isLoading={isLoadingSeasonalWinners}
+                fetchSeasonalWinners={fetchSeasonalWinners}
               />
             </Tab>
 

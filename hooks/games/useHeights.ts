@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { supabase } from "@/libs/supabase/supabase";
+import * as heightsDb from "@/libs/supabase/steem-heights";
 
 import { SKINS, PowerUp } from "@/components/games/steem-heights/Config";
 import { useHeightsShop } from "./useHeightsShop";
@@ -13,6 +14,8 @@ import { CheerEvent } from "@/components/games/steem-heights/elements/LiveCheer"
 
 export const useHeights = () => {
   const { data: session } = useSession();
+  const { currentSeason, activeSeasonPost, seasonalHistory, isSeasonActive } =
+    useHeightsSeason();
   const [energy, setEnergy] = useState(0);
   const [purchasedSkins, setPurchasedSkins] = useState<string[]>([]);
   const [activePowerUp, setActivePowerUp] = useState<PowerUp | null>(null);
@@ -28,10 +31,56 @@ export const useHeights = () => {
   const [perfectStreak, setPerfectStreak] = useState(0);
   const [lastCheer, setLastCheer] = useState<CheerEvent | null>(null);
   const [onlineCount, setOnlineCount] = useState(1);
-  const [chatMessages, setChatMessages] = useState<{ id: string, user: string, text: string }[]>([]);
+  const [chatMessages, setChatMessages] = useState<any[]>([]);
+  const [hasMoreChat, setHasMoreChat] = useState(true);
+  const [isLoadingChatHistory, setIsLoadingChatHistory] = useState(false);
+  const lastSentTimeRef = useRef<number>(0);
 
-  const { currentSeason, activeSeasonPost, seasonalHistory, isSeasonActive } =
-    useHeightsSeason();
+  const sendChatMessage = useCallback(
+    async (text: string) => {
+      if (!session?.user?.name || !currentSeason) return;
+      const now = Date.now();
+      if (now - lastSentTimeRef.current < 2500) {
+        console.warn("Chat message ignored due to cooldown.");
+        return;
+      }
+      lastSentTimeRef.current = now;
+
+      await heightsDb.insertGameChatMessage(
+        "steem-heights",
+        session.user.name,
+        currentSeason,
+        text,
+      );
+    },
+    [session, currentSeason],
+  );
+
+  const loadMoreChatHistory = useCallback(async () => {
+    if (
+      chatMessages.length === 0 ||
+      isLoadingChatHistory ||
+      !hasMoreChat ||
+      !currentSeason
+    )
+      return;
+    setIsLoadingChatHistory(true);
+    const oldestId = chatMessages[0].id;
+    const olderMessages = await heightsDb.getGameChatMessages(
+      "steem-heights",
+      currentSeason,
+      25,
+      oldestId,
+    );
+    if (olderMessages.length < 25) {
+      setHasMoreChat(false);
+    }
+    if (olderMessages.length > 0) {
+      const reversed = [...olderMessages].reverse();
+      setChatMessages((prev) => [...reversed, ...prev]);
+    }
+    setIsLoadingChatHistory(false);
+  }, [chatMessages, currentSeason, isLoadingChatHistory, hasMoreChat]);
 
   const {
     claimChallenge,
@@ -125,34 +174,24 @@ export const useHeights = () => {
     purchasedSkins,
     selectedSkinId,
     syncShopState,
-    sendCheer: useCallback((type: CheerEvent["type"], value?: number | string) => {
-      if (!session?.user?.name) return;
-      supabase.channel('global_game_events').send({
-        type: 'broadcast',
-        event: 'cheer',
-        payload: { 
-          id: Math.random().toString(36).substring(7),
-          username: session.user.name,
-          type,
-          value 
-        }
-      });
-    }, [session?.user?.name]),
+    sendCheer: useCallback(
+      (type: CheerEvent["type"], value?: number | string) => {
+        if (!session?.user?.name) return;
+        supabase.channel("global_game_events").send({
+          type: "broadcast",
+          event: "cheer",
+          payload: {
+            id: Math.random().toString(36).substring(7),
+            username: session.user.name,
+            type,
+            value,
+          },
+        });
+      },
+      [session],
+    ),
 
-    sendChatMessage: useCallback((text: string) => {
-      if (!session?.user?.name) return;
-      const payload = { 
-        id: Math.random().toString(36).substring(7),
-        user: session.user.name,
-        text
-      };
-      setChatMessages(prev => [payload, ...prev].slice(0, 20));
-      supabase.channel('global_game_events').send({
-        type: 'broadcast',
-        event: 'chat',
-        payload
-      });
-    }, [session?.user?.name]),
+    sendChatMessage,
     fetchData: useCallback(() => {
       fetchHighScores(currentSeason);
       fetchGameStats();
@@ -174,24 +213,23 @@ export const useHeights = () => {
 
   // Sync global cheers and Presence
   useEffect(() => {
-    const channel = supabase.channel('global_game_events');
+    const channel = supabase.channel("global_game_events");
 
     channel
-      .on('presence', { event: 'sync' }, () => {
+      .on("presence", { event: "sync" }, () => {
         const state = channel.presenceState();
         // Count total unique presence keys
         setOnlineCount(Object.keys(state).length);
       })
-      .on('broadcast', { event: 'cheer' }, ({ payload }) => {
-         setLastCheer(payload);
-      })
-      .on('broadcast', { event: 'chat' }, ({ payload }) => {
-         setChatMessages(prev => [payload, ...prev].slice(0, 20));
+      .on("broadcast", { event: "cheer" }, ({ payload }) => {
+        setLastCheer(payload);
       })
       .subscribe(async (status) => {
-        if (status === 'SUBSCRIBED') {
+        if (status === "SUBSCRIBED") {
           await channel.track({
-            user: session?.user?.name || 'anon-' + Math.random().toString(36).substring(7),
+            user:
+              session?.user?.name ||
+              "anon-" + Math.random().toString(36).substring(7),
           });
         }
       });
@@ -200,6 +238,49 @@ export const useHeights = () => {
       supabase.removeChannel(channel);
     };
   }, [session?.user?.name]);
+
+  // Load and sync database chat history
+  useEffect(() => {
+    if (!currentSeason) return;
+
+    const loadInitialChat = async () => {
+      const history = await heightsDb.getGameChatMessages(
+        "steem-heights",
+        currentSeason,
+        25,
+      );
+      const reversed = [...history].reverse();
+      setChatMessages(reversed);
+      setHasMoreChat(history.length === 25);
+    };
+    loadInitialChat();
+
+    const chatChannel = supabase
+      .channel("game_chat_realtime")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "steempro_game_chat",
+          filter: "game=eq.steem-heights",
+        },
+        (payload) => {
+          const newMsg = payload.new;
+          if (newMsg && newMsg.season === currentSeason) {
+            setChatMessages((prev) => {
+              if (prev.some((m) => m.id === newMsg.id)) return prev;
+              return [...prev, newMsg];
+            });
+          }
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(chatChannel);
+    };
+  }, [currentSeason]);
 
   // Sync shop and game results realtime
   useEffect(() => {
@@ -321,19 +402,10 @@ export const useHeights = () => {
     lastCheer,
     onlineCount,
     chatMessages,
-    sendChatMessage: useCallback((text: string) => {
-      if (!session?.user?.name) return;
-      const payload = { 
-        id: Math.random().toString(36).substring(7),
-        user: session.user.name,
-        text
-      };
-      setChatMessages(prev => [payload, ...prev].slice(0, 20));
-      supabase.channel('global_game_events').send({
-        type: 'broadcast',
-        event: 'chat',
-        payload
-      });
-    }, [session?.user?.name]),
+    sendChatMessage,
+    hasMoreChat,
+    isLoadingChatHistory,
+    loadMoreChatHistory,
+    fetchSeasonalWinners,
   };
 };

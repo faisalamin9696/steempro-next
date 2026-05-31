@@ -96,11 +96,13 @@ export const useHeightsData = ({
     }
   }, [globalData]);
 
-  const fetchSeasonalWinners = useCallback(async () => {
+  const fetchSeasonalWinners = useCallback(async (limit: number = 5, offset: number = 0) => {
     setIsLoadingSeasonalWinners(true);
     try {
       const winners = await heightsDb.getHeightsSeasonalWinners(
         session?.user?.name || undefined,
+        limit,
+        offset,
       );
       setSeasonalWinners(winners);
     } finally {
@@ -225,14 +227,75 @@ export const useHeightsData = ({
 
   const fetchHeightsUserData = useCallback(
     async (season?: number) => {
-      const [shop, daily, player] = await Promise.all([
-        fetchShopData(season),
-        fetchDailyData(season),
-        fetchPlayerStats(season),
-      ]);
-      return { ...shop, ...daily, ...player };
+      const s = season ?? currentSeason;
+      if (!session?.user?.name || !s) return null;
+      try {
+        const combined = await heightsDb.getHeightsCombinedUserData(
+          session.user.name,
+          s,
+        );
+        if (combined) {
+          const { shop, daily, player } = combined;
+          
+          if (!season || season === currentSeason) {
+            if (shop) {
+              setUserStats((prev: any) => ({ ...prev, ...shop }));
+              setEnergy(shop.latest_energy || 0);
+
+              const powerupName = shop.powerup?.name || "";
+              if (powerupName) {
+                const powerUp = POWER_UPS.find((p) => p.name === powerupName);
+                setActivePowerUp(powerUp || null);
+              } else {
+                setActivePowerUp(null);
+              }
+
+              setPurchasedSkins(shop.skins || []);
+              setSelectedSkinId(shop.equiped || "default");
+
+              const claimedIds = DAILY_CHALLENGES.filter((c) =>
+                (shop.current_day_actions || []).includes(
+                  `Claimed challenge: ${c.title}`,
+                ),
+              ).map((c) => c.id);
+
+              setDailyProgress((prev: any) => ({
+                ...prev,
+                claimed: claimedIds,
+              }));
+            }
+
+            if (daily) {
+              setUserStats((prev: any) => ({ ...prev, ...daily }));
+              setDailyProgress((prev: any) => ({
+                ...prev,
+                plays: daily.daily_plays || 0,
+                combos: daily.daily_combos || 0,
+                ascent: daily.daily_climb || 0,
+              }));
+            }
+
+            if (player) {
+              setUserStats((prev: any) => ({ ...prev, ...player }));
+            }
+          }
+          return { ...shop, ...daily, ...player };
+        }
+        return null;
+      } catch (error) {
+        console.error("Failed to fetch combined user data:", error);
+        return null;
+      }
     },
-    [fetchShopData, fetchDailyData, fetchPlayerStats],
+    [
+      session?.user?.name,
+      currentSeason,
+      setEnergy,
+      setPurchasedSkins,
+      setActivePowerUp,
+      setSelectedSkinId,
+      setDailyProgress,
+    ],
   );
 
   const fetchUserHistory = useCallback(

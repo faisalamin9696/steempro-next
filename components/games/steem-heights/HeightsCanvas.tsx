@@ -82,8 +82,11 @@ interface Props {
   setIsFloating?: (isFloating: boolean) => void;
   lastCheer?: CheerEvent | null;
   onlineCount?: number;
-  chatMessages?: { id: string; user: string; text: string }[];
+  chatMessages?: any[];
   sendChatMessage?: (text: string) => void;
+  hasMoreChat?: boolean;
+  isLoadingChatHistory?: boolean;
+  loadMoreChatHistory?: () => void;
 }
 
 const BLOCK_HEIGHT_PERCENT = ((BLOCK_HEIGHT - 1) / CANVAS_HEIGHT) * 100;
@@ -131,6 +134,9 @@ export const HeightsCanvas = memo(
         onlineCount,
         chatMessages = [],
         sendChatMessage,
+        hasMoreChat = false,
+        isLoadingChatHistory = false,
+        loadMoreChatHistory = () => {},
       },
       ref,
     ) => {
@@ -503,6 +509,9 @@ export const HeightsCanvas = memo(
             isLoggedIn={isLoggedIn}
             isOpen={isChatOpen}
             onOpenChange={setIsChatOpen}
+            hasMore={hasMoreChat}
+            isLoadingMore={isLoadingChatHistory}
+            onLoadMore={loadMoreChatHistory}
           />
 
           <HeightsGuideModal isOpen={isOpen} onOpenChange={onOpenChange} />
