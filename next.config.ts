@@ -81,65 +81,6 @@ const nextConfig: NextConfig = {
         source: "/:category(created|trending|hot|payout|popular)",
         destination: "/home/:category",
       },
-
-      // about page uppercase handle
-      {
-        source: "/ABOUT",
-        destination: "/about",
-      },
-
-      // proposal page uppercase handle
-      {
-        source: "/PROPOSALS",
-        destination: "/proposals",
-      },
-
-      // proposal page uppercase handle
-      {
-        source: "/PROPOSALS/:id",
-        destination: "/proposals/:id",
-      },
-
-      // settings page uppercase handle
-      {
-        source: "/SETTINGS",
-        destination: "/settings",
-      },
-
-      // policy page uppercase handle
-      {
-        source: "/PRIVACY-POLICY",
-        destination: "/privacy-policy",
-      },
-
-      // communities page uppercase handle
-      {
-        source: "/COMMUNITIES",
-        destination: "/communities",
-      },
-
-      // schedules page uppercase handle
-      {
-        source: "/SCHEDULES",
-        destination: "/schedules",
-      },
-      // communities page uppercase handle
-      {
-        source: "/GAMES",
-        destination: "/games",
-      },
-
-      // schedules page uppercase handle
-      {
-        source: "/GAMES/STEEM-HEIGHTS",
-        destination: "/games/steem-heights",
-      },
-
-      // explorer page uppercase handle
-      {
-        source: "/EXPLORER",
-        destination: "/explorer",
-      },
     ];
   },
 };

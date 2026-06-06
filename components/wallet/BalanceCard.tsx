@@ -50,8 +50,7 @@ export const BalanceCard = ({
   const ownSP = vestsToSteem(account.vests_own);
   const inSP = vestsToSteem(account.vests_in);
   const outSP = vestsToSteem(account.vests_out);
-  const effectiveSP =
-    ownSP - vestsToSteem(account.powerdown_done) - outSP + inSP;
+  const effectiveSP = ownSP - outSP + inSP;
   const availableSP =
     ownSP -
     outSP -
@@ -229,90 +228,306 @@ export const BalanceCard = ({
           shadow="none"
           className="card border border-default-200 dark:border-default-100/40 xs:col-span-1 sm:col-span-2"
         >
-          <CardBody className="p-4 space-y-3">
+          <CardBody className="p-4 space-y-5">
             {/* Header */}
-            <div className="flex items-start gap-3">
-              <div className="p-2 rounded-xl bg-secondary/10 text-secondary shrink-0">
-                <Zap size={20} fill="currentColor" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <p className="text-sm font-semibold">Steem Power</p>
-                  <Tooltip
-                    content={
-                      <div className="px-1 py-2 max-w-xs">
-                        <div className="text-small font-bold">STEEM POWER</div>
-                        <div className="text-tiny text-default-500">
-                          Influence tokens for post payouts and curation
-                          rewards. Earns ~2.61% APR. Cannot be transferred
-                          directly.
+            <div className="flex items-start justify-between gap-4 flex-wrap sm:flex-nowrap">
+              <div className="flex items-start gap-3">
+                <div className="p-2.5 rounded-xl bg-secondary/10 text-secondary shrink-0">
+                  <Zap size={22} fill="currentColor" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <p className="text-xs font-bold uppercase tracking-wider text-default-500">
+                      Steem Power
+                    </p>
+                    <Chip
+                      size="sm"
+                      color="secondary"
+                      variant="flat"
+                      className="h-5 text-[9px] font-black tracking-tighter uppercase px-1"
+                    >
+                      Influence
+                    </Chip>
+                    <Tooltip
+                      content={
+                        <div className="px-1 py-2 max-w-xs">
+                          <div className="text-small font-bold">
+                            STEEM POWER
+                          </div>
+                          <div className="text-tiny text-default-500">
+                            Influence tokens for post payouts and curation
+                            rewards. Earns ~2.61% APR. Cannot be transferred
+                            directly.
+                          </div>
                         </div>
-                      </div>
-                    }
-                  >
-                    <Info
-                      size={13}
-                      className="text-muted cursor-help opacity-60 hover:opacity-100"
-                    />
-                  </Tooltip>
+                      }
+                    >
+                      <Info
+                        size={13}
+                        className="text-muted cursor-help opacity-60 hover:opacity-100"
+                      />
+                    </Tooltip>
+                  </div>
+                  <div className="flex items-baseline gap-1.5 mt-1">
+                    <span className="text-2xl font-black font-mono tracking-tight text-foreground">
+                      {fmt(effectiveSP)}
+                    </span>
+                    <span className="text-xs text-secondary font-black">
+                      SP
+                    </span>
+                    <span className="text-[10px] text-default-400 font-semibold uppercase tracking-wider">
+                      Voting Weight
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-baseline gap-1.5 mt-0.5">
-                  <span className="text-xl font-bold font-mono">
-                    {fmt(effectiveSP)}
-                  </span>
-                  <span className="text-xs text-secondary font-bold">SP</span>
-                  <span className="text-[11px] text-default-400">
-                    (effective)
-                  </span>
-                </div>
+              </div>
+
+              {/* APR Badge */}
+              <div className="flex items-center gap-1 px-3 py-1.5 rounded-full border border-secondary/20 bg-secondary/5 text-secondary text-xs font-bold shrink-0 self-center">
+                <Zap size={12} fill="currentColor" />
+                <span>2.61% APR</span>
               </div>
             </div>
 
-            {/* SP breakdown */}
-            <div className="rounded-lg bg-default-100 dark:bg-default-50/10 p-3 grid grid-cols-2 gap-x-4 gap-y-2.5">
-              <SpRow
-                icon={<Landmark size={13} />}
-                label="Own"
-                value={`${fmt(ownSP, 0)} SP`}
-                colorClass="text-default-600"
-              />
-              <SpRow
-                icon={<ArrowDownToLine size={13} />}
-                label="Delegated In"
-                value={inSP > 0 ? `+${fmt(inSP, 0)} SP` : "—"}
-                colorClass="text-success"
-              />
-              <SpRow
-                icon={<ArrowUpFromLine size={13} />}
-                label="Delegated Out"
-                value={outSP > 0 ? `-${fmt(outSP, 0)} SP` : "—"}
-                colorClass="text-danger"
-              />
-              <SpRow
-                icon={<Zap size={13} />}
-                label="Available"
-                value={`${fmt(availableSP, 0)} SP`}
-                colorClass="text-secondary"
-                bold
-              />
-              {expiringCount > 0 && (
-                <SpRow
-                  icon={<Clock size={13} />}
-                  label="Expiring (5d)"
-                  value={`${expiringCount} deleg.`}
-                  colorClass="text-warning"
-                />
+            {/* Stacked Proportions Bar */}
+            {effectiveSP > 0 && (
+              <div className="space-y-1.5">
+                <div className="flex h-1.5 w-full rounded-full overflow-hidden bg-default-100 dark:bg-default-800 gap-0.5">
+                  <Tooltip
+                    content={`Active Staked: ${fmt(ownSP - outSP, 0)} SP (${(((ownSP - outSP) / effectiveSP) * 100).toFixed(1)}%)`}
+                  >
+                    <div
+                      className="bg-primary hover:opacity-90 transition-all cursor-pointer"
+                      style={{
+                        width: `${Math.max(0, ((ownSP - outSP) / effectiveSP) * 100)}%`,
+                      }}
+                    />
+                  </Tooltip>
+                  {inSP > 0 && (
+                    <Tooltip
+                      content={`Received Delegations: +${fmt(inSP, 0)} SP (${((inSP / effectiveSP) * 100).toFixed(1)}%)`}
+                    >
+                      <div
+                        className="bg-success hover:opacity-90 transition-all cursor-pointer"
+                        style={{ width: `${(inSP / effectiveSP) * 100}%` }}
+                      />
+                    </Tooltip>
+                  )}
+                </div>
+                <div className="flex justify-between text-[10px] text-default-500 font-medium px-0.5">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 bg-primary rounded-full" />
+                    <span>
+                      Active Staked:{" "}
+                      <span className="font-bold text-foreground font-mono">
+                        {fmt(ownSP - outSP, 0)}
+                      </span>{" "}
+                      SP
+                    </span>
+                  </div>
+                  {inSP > 0 && (
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 bg-success rounded-full" />
+                      <span>
+                        Received Delegations:{" "}
+                        <span className="font-bold text-foreground font-mono">
+                          +{fmt(inSP, 0)}
+                        </span>{" "}
+                        SP
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Visual Equation Breakdown */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 p-3.5 bg-default-50/50 dark:bg-default-50/5 rounded-xl border border-default-200/50">
+              {/* Own SP */}
+              <Tooltip content="Steem Power you purchased or earned from rewards. It belongs fully to you.">
+                <div className="flex-1 flex flex-row sm:flex-col items-center justify-between sm:justify-center p-2.5 bg-content1 border border-default-200 rounded-lg shadow-sm hover:border-primary/50 transition-all group cursor-help">
+                  <div className="flex items-center gap-1.5 sm:flex-col">
+                    <Landmark
+                      size={16}
+                      className="text-muted group-hover:text-primary transition-colors"
+                    />
+                    <span className="text-[10px] uppercase font-bold text-default-500 tracking-wider">
+                      Own Staked
+                    </span>
+                  </div>
+                  <span className="text-xs font-bold font-mono mt-0.5 text-foreground">
+                    {fmt(ownSP, 0)} SP
+                  </span>
+                </div>
+              </Tooltip>
+
+              {/* Plus Sign */}
+              <div
+                className="text-sm font-bold text-success text-center self-center sm:px-1"
+                title="Plus Received Delegations"
+              >
+                +
+              </div>
+
+              {/* Delegated In */}
+              <Tooltip content="Steem Power lent to you by other users, which increases your active voting weight and resource credits.">
+                <div className="flex-1 flex flex-row sm:flex-col items-center justify-between sm:justify-center p-2.5 bg-content1 border border-default-200 rounded-lg shadow-sm hover:border-success/50 transition-all group cursor-help">
+                  <div className="flex items-center gap-1.5 sm:flex-col">
+                    <ArrowDownToLine
+                      size={16}
+                      className="text-muted group-hover:text-success transition-colors"
+                    />
+                    <span className="text-[10px] uppercase font-bold text-default-500 tracking-wider">
+                      Delegated In
+                    </span>
+                  </div>
+                  <span className="text-xs font-bold font-mono mt-0.5 text-success">
+                    +{fmt(inSP, 0)} SP
+                  </span>
+                </div>
+              </Tooltip>
+
+              {/* Minus Sign */}
+              <div
+                className="text-sm font-bold text-danger text-center self-center sm:px-1"
+                title="Minus Lent Delegations"
+              >
+                -
+              </div>
+
+              {/* Delegated Out */}
+              <Tooltip content="Steem Power you lent to other users, curation trails, or communities. This temporarily reduces your voting power.">
+                <div className="flex-1 flex flex-row sm:flex-col items-center justify-between sm:justify-center p-2.5 bg-content1 border border-default-200 rounded-lg shadow-sm hover:border-danger/50 transition-all group cursor-help">
+                  <div className="flex items-center gap-1.5 sm:flex-col">
+                    <ArrowUpFromLine
+                      size={16}
+                      className="text-muted group-hover:text-danger transition-colors"
+                    />
+                    <span className="text-[10px] uppercase font-bold text-default-500 tracking-wider">
+                      Delegated Out
+                    </span>
+                  </div>
+                  <span className="text-xs font-bold font-mono mt-0.5 text-danger">
+                    -{fmt(outSP, 0)} SP
+                  </span>
+                </div>
+              </Tooltip>
+
+              {/* Equal Sign */}
+              <div className="text-sm font-bold text-secondary text-center self-center sm:px-1">
+                =
+              </div>
+
+              {/* Effective SP */}
+              <Tooltip content="Your active voting weight. This determines the exact size of your upvotes and curation earnings.">
+                <div className="flex-1 flex flex-row sm:flex-col items-center justify-between sm:justify-center p-2.5 bg-secondary/5 border border-secondary/20 rounded-lg shadow-sm group cursor-help">
+                  <div className="flex items-center gap-1.5 sm:flex-col">
+                    <Zap
+                      size={16}
+                      fill="currentColor"
+                      className="text-secondary"
+                    />
+                    <span className="text-[10px] uppercase font-bold text-secondary tracking-wider">
+                      Voting Weight
+                    </span>
+                  </div>
+                  <span className="text-xs font-black font-mono mt-0.5 text-secondary">
+                    {fmt(effectiveSP, 0)} SP
+                  </span>
+                </div>
+              </Tooltip>
+            </div>
+
+            {/* Additional Metrics Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Available SP Card */}
+              <Tooltip content="Your owned Steem Power that is currently liquid and uncommitted. You can delegate or power down this amount anytime.">
+                <div className="p-3.5 bg-default-100 dark:bg-default-50/10 rounded-xl border border-default-200/40 hover:border-secondary/40 transition-all cursor-help space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-default-500 uppercase tracking-wider">
+                      Available to Delegate
+                    </span>
+                    <Zap size={13} className="text-secondary" />
+                  </div>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-lg font-black font-mono text-foreground">
+                      {fmt(availableSP, 0)}
+                    </span>
+                    <span className="text-xs text-default-400 font-bold">
+                      SP
+                    </span>
+                  </div>
+                </div>
+              </Tooltip>
+
+              {/* Expiring / Power Down Status Card */}
+              {expiringCount > 0 ? (
+                <Tooltip content="Staked delegations you cancelled that are currently returning to your account after the lockup cooldown period.">
+                  <div className="p-3.5 bg-warning/5 rounded-xl border border-warning/20 hover:border-warning/40 transition-all cursor-help space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-warning uppercase tracking-wider">
+                        Expiring Cooldown (5d)
+                      </span>
+                      <Clock size={13} className="text-warning" />
+                    </div>
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-lg font-black font-mono text-warning">
+                        {expiringCount}
+                      </span>
+                      <span className="text-xs text-warning/80 font-bold">
+                        Delegations
+                      </span>
+                    </div>
+                  </div>
+                </Tooltip>
+              ) : (
+                <div className="p-3.5 bg-default-100 dark:bg-default-50/10 rounded-xl border border-default-200/40 opacity-60 flex flex-col justify-center space-y-1.5">
+                  <span className="text-[11px] font-bold text-muted uppercase tracking-wider">
+                    Expiring Cooldown
+                  </span>
+                  <p className="text-xs font-semibold text-muted">
+                    — No active returns
+                  </p>
+                </div>
               )}
             </div>
 
+            {/* Active Power Down visual tracker (within SP card for consolidation) */}
+            {account.powerdown > 0 && (
+              <div className="p-3 bg-warning/5 dark:bg-warning/10 border border-warning/20 rounded-xl space-y-2">
+                <div className="flex items-center justify-between text-xs font-bold text-warning">
+                  <span className="flex items-center gap-1.5 uppercase tracking-wide">
+                    <ArrowDownLeft size={14} />
+                    Active Power Down Payout
+                  </span>
+                  <span>
+                    {fmt(vestsToSteem(account.powerdown_done), 0)} /{" "}
+                    {fmt(vestsToSteem(account.powerdown), 0)} SP
+                  </span>
+                </div>
+                <div className="w-full bg-default-100 dark:bg-default-800 h-1.5 rounded-full overflow-hidden">
+                  <div
+                    className="bg-warning h-full rounded-full transition-all"
+                    style={{
+                      width: `${Math.min(100, (account.powerdown_done / account.powerdown) * 100)}%`,
+                    }}
+                  />
+                </div>
+                <p className="text-[10px] text-default-500 font-medium">
+                  Converts your Steem Power back to liquid STEEM in weekly
+                  installments.
+                </p>
+              </div>
+            )}
+
             {/* SP actions */}
             {isMe && (
-              <div className="flex gap-2 pt-1">
+              <div className="flex gap-2.5 pt-1.5 flex-wrap sm:flex-nowrap">
                 <Button
                   size="sm"
                   variant="flat"
                   color="secondary"
-                  className="flex-1 font-semibold text-xs h-8"
+                  className="flex-1 font-bold text-xs h-9 uppercase tracking-wider"
                   startContent={<Zap size={14} />}
                   onPress={onPowerUp}
                 >
@@ -322,7 +537,7 @@ export const BalanceCard = ({
                   size="sm"
                   variant="flat"
                   color="warning"
-                  className="flex-1 font-semibold text-xs h-8"
+                  className="flex-1 font-bold text-xs h-9 uppercase tracking-wider"
                   startContent={<ArrowDownLeft size={14} />}
                   onPress={onPowerDown}
                 >
@@ -331,7 +546,7 @@ export const BalanceCard = ({
                 <Button
                   size="sm"
                   variant="flat"
-                  className="flex-1 font-semibold text-xs h-8"
+                  className="flex-1 font-bold text-xs h-9 uppercase tracking-wider border border-default-300"
                   startContent={<Users size={14} />}
                   onPress={onDelegate}
                 >
@@ -489,35 +704,5 @@ function TokenCard({
         {actions}
       </CardBody>
     </Card>
-  );
-}
-
-function SpRow({
-  icon,
-  label,
-  value,
-  colorClass,
-  bold,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  colorClass: string;
-  bold?: boolean;
-}) {
-  return (
-    <div className="flex items-center justify-between gap-2">
-      <div className="flex items-center gap-1.5 min-w-0">
-        <span className={`shrink-0 ${colorClass}`}>{icon}</span>
-        <span className="text-[11px] text-default-600 dark:text-default-400 truncate">
-          {label}
-        </span>
-      </div>
-      <span
-        className={`text-[11px] font-mono shrink-0 ${colorClass} ${bold ? "font-bold" : "font-medium"}`}
-      >
-        {value}
-      </span>
-    </div>
   );
 }
