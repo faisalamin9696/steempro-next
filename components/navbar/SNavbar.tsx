@@ -92,10 +92,11 @@ function SNavbar() {
             <Image
               src="/steempro-logo.svg"
               alt="SteemPro"
-              priority
               height={32}
               width={32}
               className="md:hidden w-8 h-8"
+              priority={true}
+              loading="eager"
             />
           </Link>
         </div>

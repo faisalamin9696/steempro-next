@@ -99,6 +99,8 @@ export default function AboutPage() {
             width={400}
             src={"/steempro-logo.svg"}
             alt="SteemPro"
+               priority={true}
+                loading="eager"
           />
         </div>
       </section>
@@ -139,6 +141,8 @@ export default function AboutPage() {
                 width={120}
                 src={"/steempro-logo.svg"}
                 alt="SteemPro"
+                priority={true}
+                loading="eager"
               />
             </div>
           </div>
@@ -211,9 +215,7 @@ export default function AboutPage() {
 
       {/* Footer/Contact CTA */}
       <section className="rounded-3xl bg-foreground text-background p-8 md:p-16 text-center space-y-8">
-        <h2 className="text-3xl md:text-5xl font-bold">
-          {t("cta.title")}
-        </h2>
+        <h2 className="text-3xl md:text-5xl font-bold">{t("cta.title")}</h2>
         <p className="text-background/70 max-w-xl mx-auto text-lg leading-relaxed italic">
           {t("cta.description")}
         </p>
