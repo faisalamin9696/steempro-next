@@ -2,8 +2,19 @@ import { updateSession } from "@/libs/supabase/proxy";
 import { NextResponse, type NextRequest } from "next/server";
 export { auth as middleware } from "@/auth";
 
+// Social media / SEO crawlers that must receive clean SSR HTML with OG metadata
+const BOT_UA_REGEX =
+  /bot|crawler|spider|crawling|facebookexternalhit|Twitterbot|WhatsApp|Slackbot|LinkedInBot|TelegramBot|Discordbot|ia_archiver|Googlebot|bingbot/i;
+
 export async function proxy(request: NextRequest) {
   const { nextUrl } = request;
+
+  const userAgent = request.headers.get("user-agent") ?? "";
+
+  // Let bots through immediately — they need raw SSR HTML for OG / link preview metadata
+  if (BOT_UA_REGEX.test(userAgent)) {
+    return NextResponse.next();
+  }
 
   // Check if there are uppercase characters in the pathname
   if (nextUrl.pathname !== nextUrl.pathname.toLowerCase()) {
