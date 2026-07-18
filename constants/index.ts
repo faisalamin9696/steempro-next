@@ -41,7 +41,6 @@ export const Constants = {
   rpc_servers: [
     "https://api.steemit.com",
     "https://api.steemyy.com",
-    "https://api.steempro.com",
     "https://api.moecki.online",
     "https://steemapi.boylikegirl.club",
     "https://api.steemitdev.com",
