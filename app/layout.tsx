@@ -30,9 +30,74 @@ export const viewport: Viewport = {
   userScalable: true,
 };
 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.steempro.com";
+
 export const metadata: Metadata = {
-  /* your metadata remains the same */
+  metadataBase: new URL(baseUrl),
+  title: {
+    default: "SteemPro - Decentralized Blogging & Social Platform",
+    template: "%s | SteemPro",
+  },
+  description:
+    "Discover, share, and earn rewards on SteemPro. A modern, decentralized blogging platform built on the Steem blockchain.",
+  keywords: [
+    "SteemPro",
+    "Steem",
+    "Web3",
+    "Blockchain Blogging",
+    "Crypto Rewards",
+    "Decentralized Social Media",
+    "STEEM Token",
+  ],
+  authors: [{ name: "SteemPro Team", url: baseUrl }],
+  creator: "SteemPro",
+  publisher: "SteemPro",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: baseUrl,
+    siteName: "SteemPro",
+    title: "SteemPro - Decentralized Blogging & Social Platform",
+    description:
+      "Discover, share, and earn rewards on SteemPro. A modern, decentralized blogging platform built on the Steem blockchain.",
+    images: [
+      {
+        url: `${baseUrl}/logo192.png`,
+        width: 192,
+        height: 192,
+        alt: "SteemPro Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SteemPro - Decentralized Blogging & Social Platform",
+    description:
+      "Discover, share, and earn rewards on SteemPro. A modern, decentralized blogging platform built on the Steem blockchain.",
+    creator: "@steempro",
+    images: [`${baseUrl}/logo192.png`],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
+
 
 export default function RootLayout({
   children,
@@ -51,6 +116,37 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${notoNastaliqUrdu.variable}`}
         suppressHydrationWarning
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "SteemPro",
+              url: baseUrl,
+              potentialAction: {
+                "@type": "SearchAction",
+                target: `${baseUrl}/explorer?q={search_term_string}`,
+                "query-input": "required name=search_term_string",
+              },
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "SteemPro",
+              url: baseUrl,
+              logo: `${baseUrl}/logo192.png`,
+              sameAs: [
+                "https://twitter.com/steempro",
+              ],
+            }),
+          }}
+        />
         <ThemeProvider
           attribute="class"
           disableTransitionOnChange

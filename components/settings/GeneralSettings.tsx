@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect, useCallback } from "react";
 import { Select, SelectItem } from "@heroui/select";
 import { Switch } from "@heroui/switch";
 import { Slider } from "@heroui/slider";
@@ -9,6 +10,7 @@ import {
   ShieldAlert,
   Palette,
   Languages,
+  RefreshCw,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
 import { updateSettingsHandler } from "@/hooks/redux/reducers/SettingsReducer";
@@ -19,12 +21,58 @@ import { useTranslations, useLocale } from "next-intl";
 import { locales, localeNames } from "@/i18n/config";
 import { setUserLocale } from "@/utils/actions/locale";
 
+const checkRpcLatency = async (url: string): Promise<number> => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 4000);
+  const start = performance.now();
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        method: "condenser_api.get_dynamic_global_properties",
+        params: [],
+        id: 1,
+      }),
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    if (res.ok) {
+      return Math.round(performance.now() - start);
+    }
+    return -1;
+  } catch {
+    clearTimeout(timeoutId);
+    return -1;
+  }
+};
+
 const GeneralSettings = () => {
   const t = useTranslations();
   const locale = useLocale();
   const dispatch = useAppDispatch();
   const settings = useAppSelector((state) => state.settingsReducer.value);
   const { setTheme } = useTheme();
+
+  const [latencies, setLatencies] = useState<Record<string, number>>({});
+  const [isPinging, setIsPinging] = useState(false);
+
+  const measureLatencies = useCallback(async () => {
+    setIsPinging(true);
+    const results: Record<string, number> = {};
+    await Promise.all(
+      Constants.rpc_servers.map(async (url) => {
+        results[url] = await checkRpcLatency(url);
+      })
+    );
+    setLatencies(results);
+    setIsPinging(false);
+  }, []);
+
+  useEffect(() => {
+    measureLatencies();
+  }, [measureLatencies]);
 
   if (!settings) return null;
 
@@ -80,12 +128,90 @@ const GeneralSettings = () => {
             classNames={{ description: "text-muted mt-1" }}
             description={t("General.network.rpcNodeDesc")}
             size="sm"
+            endContent={
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  measureLatencies();
+                }}
+                disabled={isPinging}
+                title="Re-test node latencies"
+                className="p-1 text-default-400 hover:text-primary transition-colors disabled:opacity-50"
+              >
+                <RefreshCw size={14} className={isPinging ? "animate-spin" : ""} />
+              </button>
+            }
+            renderValue={(items) => {
+              return items.map((item) => {
+                const key = item.key as string;
+                const isAuto = key === "auto";
+                const latency = isAuto ? undefined : latencies[key];
+                return (
+                  <div
+                    key={key}
+                    className="flex items-center justify-between w-full gap-2 pr-2"
+                  >
+                    <span className="truncate">
+                      {isAuto ? t("General.network.autoFailover") : key}
+                    </span>
+                    {!isAuto && latency !== undefined && (
+                      <span
+                        className={`text-[10px] font-mono px-1.5 py-0.5 rounded-full shrink-0 font-medium ${
+                          latency === -1
+                            ? "text-danger bg-danger-50 dark:bg-danger-950/40"
+                            : latency < 300
+                            ? "text-success bg-success-50 dark:bg-success-950/40"
+                            : latency < 800
+                            ? "text-warning bg-warning-50 dark:bg-warning-950/40"
+                            : "text-danger bg-danger-50 dark:bg-danger-950/40"
+                        }`}
+                      >
+                        {latency === -1 ? "Offline" : `${latency} ms`}
+                      </span>
+                    )}
+                  </div>
+                );
+              });
+            }}
           >
-            {["auto", ...Constants.rpc_servers].map((rpc) => (
-              <SelectItem key={rpc}>
-                {rpc === "auto" ? t("General.network.autoFailover") : rpc}
-              </SelectItem>
-            ))}
+            {["auto", ...Constants.rpc_servers].map((rpc) => {
+              const isAuto = rpc === "auto";
+              const latency = isAuto ? undefined : latencies[rpc];
+              return (
+                <SelectItem
+                  key={rpc}
+                  textValue={isAuto ? t("General.network.autoFailover") : rpc}
+                >
+                  <div className="flex items-center justify-between w-full gap-2">
+                    <span className="truncate">
+                      {isAuto ? t("General.network.autoFailover") : rpc}
+                    </span>
+                    {!isAuto && (
+                      <span
+                        className={`text-xs font-mono px-2 py-0.5 rounded-full shrink-0 ${
+                          latency === undefined
+                            ? "text-default-400 bg-default-100 animate-pulse"
+                            : latency === -1
+                            ? "text-danger bg-danger-50 dark:bg-danger-950/40 font-medium"
+                            : latency < 300
+                            ? "text-success bg-success-50 dark:bg-success-950/40 font-medium"
+                            : latency < 800
+                            ? "text-warning bg-warning-50 dark:bg-warning-950/40 font-medium"
+                            : "text-danger bg-danger-50 dark:bg-danger-950/40 font-medium"
+                        }`}
+                      >
+                        {latency === undefined
+                          ? "..."
+                          : latency === -1
+                          ? "Offline"
+                          : `${latency} ms`}
+                      </span>
+                    )}
+                  </div>
+                </SelectItem>
+              );
+            })}
           </Select>
         </div>
       </SCard>

@@ -123,7 +123,7 @@ function SNavbar() {
           </Button>
 
           {/* Shorts Button */}
-          <Button
+          {/* <Button
             as={Link}
             href="/shorts"
             radius="full"
@@ -132,7 +132,7 @@ function SNavbar() {
             startContent={<Video size={18} />}
           >
             {"Shorts"}
-          </Button>
+          </Button> */}
 
           {/* Create Button (Desktop) */}
           <div className="hidden md:flex">

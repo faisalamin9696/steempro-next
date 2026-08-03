@@ -3,10 +3,12 @@ import { ResolvingMetadata } from "next";
 import { getResizedAvatar, getThumbnail } from "./image";
 import { sdsApi } from "@/libs/sds";
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.steempro.com";
+
 const DEFAULT_DESCRIPTION =
   "SteemPro is a decentralized social media platform powered by the Steem blockchain. Explore trending discussions, join vibrant communities, and share your unique perspective.";
 
-const DEFAULT_IMAGE = "https://www.steempro.com/opengraph-image.jpg";
+const DEFAULT_IMAGE = `${BASE_URL}/opengraph-image.jpg`;
 
 export const getMetadata = {
   home: (category: string) => {
@@ -17,8 +19,8 @@ export const getMetadata = {
     const pageDescription = `Explore ${category} discussions on a user-owned social network. ${capCat} topics cover a wide range of interests and perspectives, providing valuable insights and lively conversations.`;
     const url =
       category === "trending"
-        ? "https://www.steempro.com"
-        : `https://www.steempro.com/${category}`;
+        ? BASE_URL
+        : `${BASE_URL}/${category}`;
 
     return {
       title: pageTitle,
@@ -516,11 +518,15 @@ export const getMetadata = {
     const pageTitle = "Shorts Studio - Create and Publish Video Clips";
     const pageDescription =
       "Create, edit, and publish your video clips on the Steem blockchain. Turn your videos into decentralized content with the SteemPro Shorts Studio.";
-    const url = "https://www.steempro.com/shorts/submit";
+    const url = `${BASE_URL}/shorts/submit`;
 
     return {
       title: pageTitle,
       description: pageDescription,
+      robots: {
+        index: false,
+        follow: true,
+      },
       keywords: [
         "Create Steem Shorts",
         "Shorts Studio",

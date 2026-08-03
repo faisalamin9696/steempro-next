@@ -113,14 +113,14 @@ function ProfilePage({ account }: { account: AccountExt }) {
         ),
       },
 
-      {
-        id: "shorts",
-        title: "Shorts",
-        api:
-          "getCommunityPostsByTagAuthor" +
-          `/${Constants.official_community}/${Constants.shorts_tag}/${username}`,
-        icon: <Video size={ICON_SIZE} />,
-      },
+      // {
+      //   id: "shorts",
+      //   title: "Shorts",
+      //   api:
+      //     "getCommunityPostsByTagAuthor" +
+      //     `/${Constants.official_community}/${Constants.shorts_tag}/${username}`,
+      //   icon: <Video size={ICON_SIZE} />,
+      // },
 
       {
         id: "notifications",

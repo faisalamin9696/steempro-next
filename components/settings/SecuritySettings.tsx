@@ -9,6 +9,7 @@ import RecoveryUpdateModal from "../wallet/RecoveryUpdateModal";
 import SCard from "../ui/SCard";
 import LoginAlertCard from "../ui/LoginAlertCard";
 import { useTranslations } from "next-intl";
+import SUsername from "../ui/SUsername";
 
 interface KeyRowProps {
   label: string;
@@ -27,7 +28,7 @@ const KeyRow = ({ label, value }: KeyRowProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-1 py-3 group">
+    <div className="flex flex-col gap-1 py-2 group">
       <div className="flex justify-between items-center ">
         <span className="text-xs font-semibold text-muted uppercase tracking-wider">
           {label}
@@ -68,7 +69,7 @@ export default function SecuritySettings() {
   const memoKey = loginData.memo_key || "";
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-10">
       <SCard
         title={t("publicKeys.title")}
         icon={Key}
@@ -99,9 +100,10 @@ export default function SecuritySettings() {
               <p className="text-xs text-muted uppercase font-semibold">
                 {t("recovery.current")}
               </p>
-              <p className="font-semibold text-lg text-primary">
-                @{loginData.recovery_account}
-              </p>
+              <SUsername
+                username={`@${loginData.recovery_account}`}
+                className="font-semibold text-lg text-primary"
+              ></SUsername>
             </div>
             <Button
               color="primary"
