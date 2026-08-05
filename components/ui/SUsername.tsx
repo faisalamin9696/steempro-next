@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import { twMerge } from "tailwind-merge";
 
 function SUsername({

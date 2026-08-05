@@ -36,7 +36,7 @@ import {
 } from "@/libs/consenser";
 import { motion } from "framer-motion";
 import SAvatar from "@/components/ui/SAvatar";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import CopyButton from "@/components/ui/CopyButton";
 import PageHeader from "@/components/ui/PageHeader";
 import moment from "moment";
@@ -687,7 +687,7 @@ export default function AccountDetailPage() {
               <CardBody>
                 <div className="flex flex-wrap gap-2">
                   {account.witness_votes.sort().map((w) => (
-                    <Link key={w} href={`/@${w}`}>
+                    <Link  key={w} href={`/@${w}`}>
                       <Chip
                         size="sm"
                         variant="flat"

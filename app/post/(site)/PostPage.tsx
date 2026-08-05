@@ -15,7 +15,7 @@ import NsfwOverlay from "@/components/nsfw/NsfwOverlay";
 import { hasNsfwTag, isSteemProShort } from "@/utils";
 import { scrollToWithOffset } from "@/utils/helper";
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import { twMerge } from "tailwind-merge";
 import { CircleSlash2, Video } from "lucide-react";
 import { useTranslations } from "next-intl";

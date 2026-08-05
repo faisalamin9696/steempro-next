@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Zap, Trophy, Clock, Info } from "lucide-react";
 import moment from "moment";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import { useDisclosure } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { HowToPlayModal } from "./HowToPlayModal";
@@ -149,7 +149,10 @@ export const HeightsInfo = ({ season, seasonPost }: Props) => {
         {rewardPool && (
           <div className="flex items-center justify-center lg:justify-start gap-2 text-amber-500 font-black italic tracking-tighter text-xl">
             <Trophy size={18} />{" "}
-            {t("pool", { amount: rewardPool.reward, symbol: rewardPool.symbol })}
+            {t("pool", {
+              amount: rewardPool.reward,
+              symbol: rewardPool.symbol,
+            })}
           </div>
         )}
       </div>

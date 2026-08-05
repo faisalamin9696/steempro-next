@@ -3,7 +3,7 @@ import SAvatar from "../ui/SAvatar";
 import { Users, ShieldCheck, DollarSign } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import SubscribeButton from "./SubscribeButton";
 import { useTranslations } from "next-intl";
 
@@ -35,9 +35,7 @@ export default function CommunityItem({ community, account }: Props) {
             </h3>
           </Link>
           <p className="text-xs text-muted truncate opacity-80">
-            {community.about ||
-              community.description ||
-              t("noDescription")}
+            {community.about || community.description || t("noDescription")}
           </p>
 
           <div className="flex items-center gap-3 mt-1.5">

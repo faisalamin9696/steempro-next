@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import { useEffect, useState, useMemo } from "react";
 import {
   Bell,
@@ -134,59 +134,83 @@ export function MobileNavbar() {
           const isCreate = item.key === "create";
 
           return isCreate ? (
-            <SPopover
+            <Link
               key={item.key}
-              placement="top"
-              trigger={
-                <div
-                  className={twMerge(
-                    "relative flex-1 flex flex-col items-center justify-center py-1 transition-all duration-300 rounded-xl cursor-pointer",
-                    isActive
-                      ? "text-primary"
-                      : "text-default-400 hover:text-default-700",
-                    "flex-[0_0_auto] mx-4 active:scale-95",
-                  )}
-                >
-                  <motion.div
-                    className={twMerge(
-                      "relative flex items-center justify-center transition-all duration-300 rounded-full w-9 h-9 bg-primary text-primary-foreground shadow-lg shadow-primary/20",
-                    )}
-                  >
-                    <Plus size={24} strokeWidth={3} />
-                  </motion.div>
-                </div>
-              }
-            >
-              {(onClose) => (
-                <div className="w-48 p-1 flex flex-col gap-1">
-                  <Button
-                    as={Link}
-                    href="/submit"
-                    variant="light"
-                    className="justify-start h-11"
-                    onPress={onClose}
-                    startContent={
-                      <FileText size={18} className="text-primary" />
-                    }
-                  >
-                    Create Post
-                  </Button>
-                  <Button
-                    as={Link}
-                    href="/shorts/submit"
-                    variant="light"
-                    className="justify-start h-11"
-                    onPress={onClose}
-                    startContent={
-                      <Video size={18} className="text-secondary" />
-                    }
-                  >
-                    Create Short
-                  </Button>
-                </div>
+              href={item.href}
+              onClick={(e) => {
+                if (item.href === "") e.preventDefault();
+                item.onClick?.(e);
+              }}
+              className={twMerge(
+                "relative flex-1 flex flex-col items-center justify-center py-1.5 transition-all duration-300 rounded-xl",
+                isActive
+                  ? "text-primary"
+                  : "text-default-400 hover:text-default-700",
+                isCreate ? "flex-[0_0_auto] mx-4" : "active:scale-95",
+                item.className,
               )}
-            </SPopover>
+            >
+              <motion.div
+                className={twMerge(
+                  "relative flex items-center justify-center transition-all duration-300 rounded-full w-9 h-9 bg-primary text-primary-foreground shadow-lg shadow-primary/20",
+                )}
+              >
+                <Plus size={24} strokeWidth={3} />
+              </motion.div>
+            </Link>
           ) : (
+            // <SPopover
+            //   key={item.key}
+            //   placement="top"
+            //   trigger={
+            //     <div
+            //       className={twMerge(
+            //         "relative flex-1 flex flex-col items-center justify-center py-1 transition-all duration-300 rounded-xl cursor-pointer",
+            //         isActive
+            //           ? "text-primary"
+            //           : "text-default-400 hover:text-default-700",
+            //         "flex-[0_0_auto] mx-4 active:scale-95",
+            //       )}
+            //     >
+            //       <motion.div
+            //         className={twMerge(
+            //           "relative flex items-center justify-center transition-all duration-300 rounded-full w-9 h-9 bg-primary text-primary-foreground shadow-lg shadow-primary/20",
+            //         )}
+            //       >
+            //         <Plus size={24} strokeWidth={3} />
+            //       </motion.div>
+            //     </div>
+            //   }
+            // >
+            //   {(onClose) => (
+            //     <div className="w-48 p-1 flex flex-col gap-1">
+            //       <Button
+            //         as={Link}
+            //         href="/submit"
+            //         variant="light"
+            //         className="justify-start h-11"
+            //         onPress={onClose}
+            //         startContent={
+            //           <FileText size={18} className="text-primary" />
+            //         }
+            //       >
+            //         Create Post
+            //       </Button>
+            //       <Button
+            //         as={Link}
+            //         href="/shorts/submit"
+            //         variant="light"
+            //         className="justify-start h-11"
+            //         onPress={onClose}
+            //         startContent={
+            //           <Video size={18} className="text-secondary" />
+            //         }
+            //       >
+            //         Create Short
+            //       </Button>
+            //     </div>
+            //   )}
+            // </SPopover>
             <Link
               key={item.key}
               href={item.href}

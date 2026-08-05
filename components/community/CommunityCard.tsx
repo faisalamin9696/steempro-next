@@ -7,7 +7,7 @@ import { Avatar, AvatarGroup } from "@heroui/avatar";
 import { Divider } from "@heroui/divider";
 import { useSession } from "next-auth/react";
 import moment from "moment";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import { getResizedAvatar } from "@/utils/image";
 import { Calendar, DollarSign } from "lucide-react";
 import { Constants } from "@/constants";

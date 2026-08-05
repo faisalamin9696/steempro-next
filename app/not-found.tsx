@@ -3,7 +3,7 @@
 import { Card, CardBody, CardFooter } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { FileQuestion, Home } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import { motion } from "framer-motion";
 import { Suspense } from "react";
 import LoadingCard from "@/components/ui/LoadingCard";

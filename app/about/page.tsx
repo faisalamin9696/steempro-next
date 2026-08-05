@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import SAvatar from "@/components/ui/SAvatar";
 import SUsername from "@/components/ui/SUsername";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import Image from "next/image";
 import { DiscordIcon } from "@/components/icons/DiscordIcon";
 import { GithubIcon } from "@/components/icons/GithubIcon";

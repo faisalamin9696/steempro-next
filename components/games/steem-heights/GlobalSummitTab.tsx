@@ -14,7 +14,7 @@ import {
   CheckCircle2,
   XCircle,
 } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import SAvatar from "@/components/ui/SAvatar";
 import SUsername from "@/components/ui/SUsername";
 import { DataTable } from "@/components/ui/data-table";
@@ -179,7 +179,10 @@ export const GlobalSummitTab = memo(
     }, [highScores, eligibilityMap]);
 
     const totalLeaderboardAltitude = useMemo(() => {
-      return qualifiedHighScores.reduce((acc, cur) => acc + (cur.score || 0), 0);
+      return qualifiedHighScores.reduce(
+        (acc, cur) => acc + (cur.score || 0),
+        0,
+      );
     }, [qualifiedHighScores]);
 
     const rewardPool = getRewardPool(seasonPost);
@@ -194,12 +197,7 @@ export const GlobalSummitTab = memo(
 
     const { rewardMap: rewards, globalAverage } = useMemo(
       () =>
-        calculateRewards(
-          highScores,
-          seasonPost,
-          communityPool,
-          eligibilityMap,
-        ),
+        calculateRewards(highScores, seasonPost, communityPool, eligibilityMap),
       [highScores, seasonPost, communityPool, eligibilityMap],
     );
 
@@ -228,9 +226,7 @@ export const GlobalSummitTab = memo(
               className="text-amber-500 group-hover/season:scale-110 transition-transform"
             />
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-500">
-              {seasonPost
-                ? t("summit", { season: currentSeason })
-                : t("hall")}
+              {seasonPost ? t("summit", { season: currentSeason }) : t("hall")}
             </span>
             {seasonPost && (
               <ArrowUpRight
@@ -351,7 +347,10 @@ export const GlobalSummitTab = memo(
                       <div className="flex flex-col items-center gap-0.5 mt-1">
                         {rewards.has(qualifiedHighScores[1].player) && (
                           <span className="text-[9px] font-black bg-blue-500/20 px-1.5 py-0.5 rounded-full border border-blue-500/30 mb-1">
-                            +{rewards.get(qualifiedHighScores[1].player)?.toFixed(3)}{" "}
+                            +
+                            {rewards
+                              .get(qualifiedHighScores[1].player)
+                              ?.toFixed(3)}{" "}
                             {symbol}
                           </span>
                         )}
@@ -369,7 +368,7 @@ export const GlobalSummitTab = memo(
                 </div>
               )}
 
-               {/* 1st Place */}
+              {/* 1st Place */}
               {qualifiedHighScores[0] && (
                 <div className="flex flex-col items-center gap-3 w-28 -mt-6">
                   <div className="relative group">
@@ -409,7 +408,10 @@ export const GlobalSummitTab = memo(
                             animate={{ scale: 1 }}
                             className="text-[10px] font-black text-black bg-amber-500 px-2 py-0.5 rounded-full shadow-lg shadow-amber-500/20 mb-1"
                           >
-                            +{rewards.get(qualifiedHighScores[0].player)?.toFixed(3)}{" "}
+                            +
+                            {rewards
+                              .get(qualifiedHighScores[0].player)
+                              ?.toFixed(3)}{" "}
                             {symbol}
                           </motion.div>
                         )}
@@ -460,7 +462,10 @@ export const GlobalSummitTab = memo(
                       <div className="flex flex-wrap items-center gap-0.5 mt-1 justify-center">
                         {rewards.has(qualifiedHighScores[2].player) && (
                           <span className="text-[9px] font-black bg-cyan-500/20 px-1.5 py-0.5 rounded-full border border-cyan-500/30 mb-1">
-                            +{rewards.get(qualifiedHighScores[2].player)?.toFixed(3)}{" "}
+                            +
+                            {rewards
+                              .get(qualifiedHighScores[2].player)
+                              ?.toFixed(3)}{" "}
                             {symbol}
                           </span>
                         )}
@@ -484,7 +489,10 @@ export const GlobalSummitTab = memo(
         {/* Leaderboard Table */}
         <div className="max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 pr-2">
           <DataTable
-            data={qualifiedHighScores.map((item, i) => ({ ...item, rank: i + 1 }))}
+            data={qualifiedHighScores.map((item, i) => ({
+              ...item,
+              rank: i + 1,
+            }))}
             columns={[
               {
                 key: "rank",
@@ -519,7 +527,10 @@ export const GlobalSummitTab = memo(
                       {eligibilityMap[row.player] && (
                         <div className="flex items-center gap-1 mt-1">
                           {eligibilityMap[row.player].eligible ? (
-                            <CheckCircle2 size={10} className="text-emerald-500" />
+                            <CheckCircle2
+                              size={10}
+                              className="text-emerald-500"
+                            />
                           ) : (
                             <XCircle size={10} className="text-rose-500" />
                           )}
@@ -570,11 +581,7 @@ export const GlobalSummitTab = memo(
             ]}
             initialLoadCount={10}
             loadMoreCount={10}
-            emptyMessage={
-              highScores.length === 0
-                ? t("beFirst")
-                : t("noMore")
-            }
+            emptyMessage={highScores.length === 0 ? t("beFirst") : t("noMore")}
           />
         </div>
 

@@ -5,7 +5,7 @@ import { Chip } from "@heroui/chip";
 import { Spinner } from "@heroui/spinner";
 import { Box, Clock, ArrowRight, User, Zap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import { useRecentBlocks } from "./useExplorerData";
 import CopyButton from "../ui/CopyButton";
 

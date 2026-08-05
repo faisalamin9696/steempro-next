@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Image as HeroImage } from "@heroui/image";
 import { twMerge } from "tailwind-merge";
 import NextImage from "next/image";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import { Image, ImageOff, Play } from "lucide-react";
 import { Progress } from "@heroui/progress";
 

@@ -1,8 +1,8 @@
 import { useSdsList } from "@/hooks/sds-client-hooks";
 import { ColumnDef, DataTable } from "../ui/data-table";
 import { Card, CardBody } from "@heroui/card";
-import {  Chip } from "@heroui/chip";
-import Link from "next/link";
+import { Chip } from "@heroui/chip";
+import Link from "@/components/ui/CustomLink";
 import SUsername from "../ui/SUsername";
 import moment from "moment";
 import LoadingStatus from "../LoadingStatus";
@@ -10,7 +10,7 @@ import { Link2 } from "lucide-react";
 
 function CommuntiyLog({ account }: { account: string }) {
   const { data, error, isLoading } = useSdsList<CommunityLog>(
-    `/communities_api/getCommunityActivityLogs/${account}`
+    `/communities_api/getCommunityActivityLogs/${account}`,
   );
 
   const columns: ColumnDef<CommunityLog>[] = [
@@ -134,9 +134,9 @@ function getTypeColor(type: string) {
   return type === "subscribe" || type === "pinPost"
     ? "text-green-500"
     : type === "mutePost" ||
-      type === "flagPost" ||
-      type === "unpinPost" ||
-      type === "unsubscribe"
-    ? "text-red-400"
-    : "text-blue-400";
+        type === "flagPost" ||
+        type === "unpinPost" ||
+        type === "unsubscribe"
+      ? "text-red-400"
+      : "text-blue-400";
 }

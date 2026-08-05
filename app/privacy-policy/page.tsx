@@ -2,7 +2,7 @@
 
 import { Constants } from "@/constants";
 import { Button } from "@heroui/button";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import {
   Shield,
   Lock,

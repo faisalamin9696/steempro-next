@@ -7,7 +7,7 @@ import { Avatar, AvatarGroup } from "@heroui/avatar";
 import { Divider } from "@heroui/divider";
 import { useSession } from "next-auth/react";
 import moment from "moment";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import SAvatar from "../ui/SAvatar";
 import SUsername from "../ui/SUsername";
 import { getResizedAvatar } from "@/utils/image";

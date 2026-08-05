@@ -6,7 +6,7 @@ import { Image } from "@heroui/image";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
 import { Zap, Trophy, Play, Globe, Database } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import { Game } from "./types";
 import { proxifyImageUrl } from "@/utils/proxifyUrl";
 

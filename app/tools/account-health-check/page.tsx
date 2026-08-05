@@ -32,7 +32,7 @@ import { AccountHealthService, HealthCheckResult } from "@/libs/account-health";
 import { useSteemUtils } from "@/hooks/useSteemUtils";
 import RecoveryUpdateModal from "@/components/wallet/RecoveryUpdateModal";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 
 interface HealthResult {
   score: number;

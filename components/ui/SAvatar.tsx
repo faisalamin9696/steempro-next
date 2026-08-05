@@ -2,7 +2,7 @@
 
 import { getResizedAvatar } from "@/utils/image";
 import { Avatar, AvatarProps } from "@heroui/avatar";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import { twMerge } from "tailwind-merge";
 import { useMemo } from "react";
 import { getCachedAvatarUrl, setCachedAvatarUrl } from "@/utils/avatarCache";

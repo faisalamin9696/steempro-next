@@ -24,11 +24,8 @@ import {
   parseZonedDateTime,
   ZonedDateTime,
 } from "@internationalized/date";
-import {
-  extractMetadata,
-  validateCommunityAccount,
-} from "@/utils/editor";
-import Link from "next/link";
+import { extractMetadata, validateCommunityAccount } from "@/utils/editor";
+import Link from "@/components/ui/CustomLink";
 import { empty_comment, empty_community } from "@/constants/templates";
 import SPopover from "../ui/SPopover";
 import PostBody from "../post/PostBody";
@@ -136,7 +133,7 @@ export default function ScheduleCard({ schedule, onRefresh }: Props) {
                 title: schedule.title,
                 json_metadata: JSON.stringify(extractMetadata(schedule.body)),
                 json_images: JSON.stringify(
-                  extractMetadata(schedule.body)?.["image"] ?? []
+                  extractMetadata(schedule.body)?.["image"] ?? [],
                 ),
               }}
             />
@@ -159,15 +156,15 @@ export default function ScheduleCard({ schedule, onRefresh }: Props) {
                 schedule.status === 0
                   ? "warning"
                   : schedule.status === 1
-                  ? "success"
-                  : "danger"
+                    ? "success"
+                    : "danger"
               }
             >
               {schedule.status === 0
                 ? t("status.pending")
                 : schedule.status === 1
-                ? t("status.published")
-                : t("status.failed")}
+                  ? t("status.published")
+                  : t("status.failed")}
             </Chip>
             {targetUrl && schedule.status === 1 && (
               <Chip
@@ -281,7 +278,7 @@ export default function ScheduleCard({ schedule, onRefresh }: Props) {
         onOpenChange={setIsRescheduling}
         onDateTimeChange={handleReschedule}
         startTime={parseZonedDateTime(
-          parseAbsoluteToLocal(schedule.time).toString()
+          parseAbsoluteToLocal(schedule.time).toString(),
         )}
       />
     </Card>

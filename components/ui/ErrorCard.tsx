@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { Card, CardBody, CardFooter } from "@heroui/card";
 import { Button } from "@heroui/button";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 
 interface ErrorCardProps {
   error: Error & { digest?: string };

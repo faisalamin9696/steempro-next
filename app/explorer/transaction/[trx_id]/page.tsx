@@ -9,7 +9,7 @@ import { Spinner } from "@heroui/spinner";
 import { ArrowLeft, ArrowRightLeft, Hash } from "lucide-react";
 import { condenserApi, SteemTransaction } from "@/libs/consenser";
 import { motion } from "framer-motion";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import CopyButton from "@/components/ui/CopyButton";
 import PageHeader from "@/components/ui/PageHeader";
 

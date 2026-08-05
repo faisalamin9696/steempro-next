@@ -12,7 +12,7 @@ import { ColumnDef, DataTable } from "../ui/data-table";
 import SCard from "../ui/SCard";
 import OperationItem from "./OperationItem";
 import moment from "moment";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import { useCallback, useMemo, useState } from "react";
 import { Select, SelectItem } from "@heroui/select";
 import useSWR from "swr";

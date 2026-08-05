@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { Send, X, Navigation, ExternalLink } from "lucide-react";
 import SAvatar from "../ui/SAvatar";
 import MarkdownViewer from "../post/body/MarkdownViewer";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import { Button } from "@heroui/button";
 import MarkdownEditor from "../submit/MarkdownEditor";
 import { scrollToWithOffset } from "@/utils/helper";
@@ -219,7 +219,9 @@ export default function CommentCard({
                 if (!edit) draftData.setBody(body);
               }}
               placeholder={
-                edit ? t("updateReply") : t("replyTo", { author: comment.author })
+                edit
+                  ? t("updateReply")
+                  : t("replyTo", { author: comment.author })
               }
               body={root.body + commentData.body}
               autoFocus

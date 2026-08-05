@@ -15,7 +15,7 @@ import {
   ShieldCheck,
   LayoutGrid,
 } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import { useTranslations } from "next-intl";
 import { twMerge } from "tailwind-merge";
 import { motion, AnimatePresence } from "framer-motion";

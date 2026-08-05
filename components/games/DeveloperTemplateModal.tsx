@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { useDisclosure } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { Code2 } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import SModal from "../ui/SModal";
 
 export const DeveloperTemplateModal = () => {
@@ -77,9 +77,7 @@ export const DeveloperTemplateModal = () => {
       >
         {() => (
           <div className="space-y-4">
-            <p className="text-muted text-sm">
-              {t("description")}
-            </p>
+            <p className="text-muted text-sm">{t("description")}</p>
             <pre className="bg-zinc-900 p-4 rounded-xl border border-zinc-800 overflow-x-auto text-[10px] text-amber-500 font-mono">
               {codeString}
             </pre>

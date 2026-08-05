@@ -18,7 +18,7 @@ import useSWR from "swr";
 import SCard from "@/components/ui/SCard";
 import { Plus } from "lucide-react";
 import { Button } from "@heroui/button";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import { WithdrawSavingsModal } from "@/components/wallet/WithdrawSavingsModal";
 import { useTranslations } from "next-intl";
 

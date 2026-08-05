@@ -7,7 +7,7 @@ import { proxifyImageUrl } from "@/utils/proxifyUrl";
 import SAvatar from "@/components/ui/SAvatar";
 import Reputation from "@/components/post/Reputation";
 import { useAppSelector } from "@/hooks/redux/store";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import LogoutButton from "../ui/LogoutButton";
 import BackgroundImage from "../BackgroundImage";
 import {

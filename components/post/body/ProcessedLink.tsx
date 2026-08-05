@@ -1,5 +1,5 @@
 import { domToReact, DOMNode, HTMLReactParserOptions } from "html-react-parser";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import { InstagramEmbed, TikTokEmbed } from "react-social-media-embed";
 import { YouTubeEmbed } from "react-social-media-embed";
 import { Tweet } from "react-tweet";
@@ -49,9 +49,7 @@ function ProcessedLink({
 
   if (url.match(twitterRegex.main)) {
     const fallbackLink = (
-      <Link {...domNode?.attribs}>
-        {domToReact(domNode.children, options)}
-      </Link>
+      <Link {...domNode?.attribs}>{domToReact(domNode.children, options)}</Link>
     );
 
     return (

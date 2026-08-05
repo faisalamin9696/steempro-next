@@ -3,7 +3,7 @@
 import { Button } from "@heroui/button";
 import { Badge } from "@heroui/badge";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import { useSession } from "next-auth/react";
 import { twMerge } from "tailwind-merge";
 import { mutate } from "swr";

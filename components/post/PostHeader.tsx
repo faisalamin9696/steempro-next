@@ -1,5 +1,5 @@
 import moment from "moment";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import Reputation from "./Reputation";
 import { Chip } from "@heroui/chip";
 import SAvatar from "../ui/SAvatar";

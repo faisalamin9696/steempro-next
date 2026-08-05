@@ -5,7 +5,7 @@ import { MessageCircle } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import PostVoteButton from "./PostVoteButton";
 import ResteemButton from "./ResteemButton";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import { scrollToWithOffset } from "@/utils/helper";
 
 interface Props {

@@ -19,10 +19,7 @@ import {
   useProposalVoters,
   ProposalVoterData,
 } from "@/hooks/useProposals";
-import {
-  getFundingBadge,
-  StatusIcon,
-} from "./ProposalItem";
+import { getFundingBadge, StatusIcon } from "./ProposalItem";
 import { useAppSelector } from "@/hooks/redux/store";
 import { Tab, Tabs } from "@heroui/tabs";
 import { Chip } from "@heroui/chip";
@@ -32,7 +29,7 @@ import { ColumnDef, DataTable } from "../ui/data-table";
 import { twMerge } from "tailwind-merge";
 import { useSteemUtils } from "@/hooks/useSteemUtils";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 
 const ProposalDetailModal = ({
   proposal,
@@ -152,8 +149,19 @@ const ProposalDetailModal = ({
                 }}
               >
                 <div className="flex flex-row gap-1 items-center">
-                  <StatusIcon proposal={proposal} returnProposal={returnProposal} />
-                  <span>{t(badge === "Funded" ? "funded" : badge === "Not Funded" ? "notFunded" : "threshold")}</span>
+                  <StatusIcon
+                    proposal={proposal}
+                    returnProposal={returnProposal}
+                  />
+                  <span>
+                    {t(
+                      badge === "Funded"
+                        ? "funded"
+                        : badge === "Not Funded"
+                          ? "notFunded"
+                          : "threshold",
+                    )}
+                  </span>
                 </div>
               </Chip>
             </div>
@@ -309,7 +317,8 @@ const ProposalDetailModal = ({
                           {votesData?.length.toLocaleString() || 0}
                         </p>
                         <p className="text-xs text-muted">
-                          {t("details.effective")} {effective.count.toLocaleString()}
+                          {t("details.effective")}{" "}
+                          {effective.count.toLocaleString()}
                         </p>
                       </div>
                     </div>
@@ -327,7 +336,8 @@ const ProposalDetailModal = ({
                         </p>
 
                         <p className="text-xs text-muted">
-                          {t("details.effective")} {effective.votes.toLocaleString()}
+                          {t("details.effective")}{" "}
+                          {effective.votes.toLocaleString()}
                         </p>
                       </div>
                     </div>

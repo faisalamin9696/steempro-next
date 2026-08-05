@@ -12,7 +12,7 @@ import {
   XCircle,
   Users,
 } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import { DataTable } from "@/components/ui/data-table";
 import SAvatar from "@/components/ui/SAvatar";
 import SUsername from "@/components/ui/SUsername";

@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { condenserApi, SteemBlock } from "@/libs/consenser";
 import { motion } from "framer-motion";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import CopyButton from "@/components/ui/CopyButton";
 import { useGlobalProps } from "@/components/explorer/useExplorerData";
 import PageHeader from "@/components/ui/PageHeader";

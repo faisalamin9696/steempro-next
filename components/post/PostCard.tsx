@@ -3,7 +3,7 @@ import PostBody from "./PostBody";
 import PostFooter from "./PostFooter";
 import { useAppSelector } from "@/hooks/redux/store";
 import { Image } from "@heroui/image";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import PostLink from "./PostLink";
 import NsfwOverlay from "../nsfw/NsfwOverlay";
 import { hasNsfwTag } from "@/utils";

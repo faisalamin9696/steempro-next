@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import ShortBody from "./body/ShortBody";
 import { Image } from "@heroui/image";
 import { twMerge } from "tailwind-merge";

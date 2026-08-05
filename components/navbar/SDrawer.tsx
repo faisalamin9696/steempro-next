@@ -6,7 +6,7 @@ import { twMerge } from "tailwind-merge";
 import Image from "next/image";
 import SDrawerContent from "./SDrawerContent";
 import { usePathname } from "next/navigation";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
 import { ArrowLeft, Menu } from "lucide-react";
 

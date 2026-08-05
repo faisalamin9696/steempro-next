@@ -1,4 +1,5 @@
-import Link, { LinkProps } from "next/link";
+import Link from "@/components/ui/CustomLink";
+import { LinkProps } from "next/link";
 
 type BaseProps = Omit<LinkProps, "children" | "href"> & {
   title: string | React.ReactNode;

@@ -16,7 +16,7 @@ import { Select, SelectItem } from "@heroui/select";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
 import moment from "moment";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import SAvatar from "../ui/SAvatar";
 import SCard from "../ui/SCard";
 import SUsername from "../ui/SUsername";
@@ -278,7 +278,8 @@ const NotificationsCard = ({ username }: { username: string }) => {
             const yesterday = moment().subtract(1, "day");
 
             if (date.isSame(today, "day")) return t("notifications.today");
-            if (date.isSame(yesterday, "day")) return t("notifications.yesterday");
+            if (date.isSame(yesterday, "day"))
+              return t("notifications.yesterday");
             return date.format("MMMM D, YYYY");
           }}
         />

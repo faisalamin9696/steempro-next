@@ -20,7 +20,7 @@ import { useEffect, useState, useCallback } from "react";
 import { sdsApi } from "@/libs/sds";
 import SAvatar from "../ui/SAvatar";
 import SUsername from "../ui/SUsername";
-import Link from "next/link";
+import Link from "@/components/ui/CustomLink";
 import moment from "moment";
 import SInput from "../ui/SInput";
 import { extractBodySummary } from "@/utils/extractContent";
