@@ -5,6 +5,11 @@ export const Constants = {
 
   site_url: "https://www.steempro.com",
   sds_url: "https://sds0.steemworld.org",
+  sds_endpoints: [
+    "https://sds0.steemworld.org",
+    "https://sds1.steemworld.org",
+    "https://sds.steemworld.org",
+  ],
   steemit_url: "https://steemit.com",
   signup_link: "https://signup.steemit.com/",
   image_servers: [
