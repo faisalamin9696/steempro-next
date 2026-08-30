@@ -6,7 +6,6 @@ const withNextIntl = createNextIntlPlugin();
 const nextConfig: NextConfig = {
   reactCompiler: true,
   cacheComponents: true,
-  allowedDevOrigins: ["192.168.1.100"],
   experimental: {
     turbopackFileSystemCacheForDev: true,
   },
@@ -38,11 +37,16 @@ const nextConfig: NextConfig = {
           "/@:username/:tab(blog|posts|comments|replies|friends|wallet|notifications|communities|settings|shorts)",
         destination: "/profile/:username/:tab",
       },
-
       // shorts mapping
       {
         source: "/shorts/@:author/:permlink",
         destination: "/shorts/:author/:permlink",
+      },
+
+      // games mapping
+      {
+        source: "/GAMES",
+        destination: "/games",
       },
 
       // post mapping without tag
@@ -80,6 +84,48 @@ const nextConfig: NextConfig = {
       {
         source: "/:category(created|trending|hot|payout|popular)",
         destination: "/home/:category",
+      },
+
+      // about page uppercase handle
+      {
+        source: "/ABOUT",
+        destination: "/about",
+      },
+
+      // proposal page uppercase handle
+      {
+        source: "/PROPOSALS",
+        destination: "/proposals",
+      },
+
+      // proposal page uppercase handle
+      {
+        source: "/PROPOSALS/:id",
+        destination: "/proposals/:id",
+      },
+
+      // settings page uppercase handle
+      {
+        source: "/SETTINGS",
+        destination: "/settings",
+      },
+
+      // policy page uppercase handle
+      {
+        source: "/PRIVACY-POLICY",
+        destination: "/privacy-policy",
+      },
+
+      // communities page uppercase handle
+      {
+        source: "/COMMUNITIES",
+        destination: "/communities",
+      },
+
+      // schedules page uppercase handle
+      {
+        source: "/SCHEDULES",
+        destination: "/schedules",
       },
     ];
   },

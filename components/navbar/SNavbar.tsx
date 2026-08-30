@@ -136,7 +136,19 @@ function SNavbar() {
 
           {/* Create Button (Desktop) */}
           <div className="hidden md:flex">
-            <SPopover
+            <Button
+              radius="full"
+              color="primary"
+              variant="shadow"
+              className="font-medium shadow-primary/20"
+              startContent={<Plus size={18} />}
+              as={Link}
+              href="/submit"
+            >
+              {t("create")}
+            </Button>
+
+            {/* <SPopover
               placement="bottom-end"
               trigger={
                 <Button
@@ -178,7 +190,7 @@ function SNavbar() {
                   </Button>
                 </div>
               )}
-            </SPopover>
+            </SPopover> */}
           </div>
 
           {/* Notifications */}

@@ -17,7 +17,6 @@ export const sdsFetcher = async <T>(
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
         const res = await fetch(baseUrl + api, {
-          cache: "no-store",
           ...opts,
         });
 
