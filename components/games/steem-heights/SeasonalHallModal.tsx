@@ -11,6 +11,9 @@ import {
   CheckCircle2,
   XCircle,
   Users,
+  Crown,
+  Trophy,
+  Sparkles,
 } from "lucide-react";
 import Link from "@/components/ui/CustomLink";
 import { DataTable } from "@/components/ui/data-table";
@@ -34,7 +37,9 @@ interface SeasonalHallModalProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   selectedSeason: number | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   selectedSeasonPost: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   eligibilityMap: Record<string, any>;
 }
 
@@ -83,6 +88,7 @@ export function SeasonalHallModal({
             string,
             { sp: number; rep: number; eligible: boolean }
           > = {};
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           accounts.forEach((acc: any) => {
             const sp = condenserApi.vestsToSteem(
               acc.vests_own,
@@ -132,7 +138,6 @@ export function SeasonalHallModal({
       return acc;
     }, 0);
 
-    const postPool = getRewardPool(selectedSeasonPost)?.reward ?? 0;
     const communityPool = getCommunityReward(totalAltitude, coopConfig);
     const { rewardMap } = calculateRewards(
       seasonData,
@@ -174,6 +179,89 @@ export function SeasonalHallModal({
   }, [processedData, eligibilityMap, localEligibilityMap]);
 
   const topThree = useMemo(() => qualifiedData.slice(0, 3), [qualifiedData]);
+
+  type PodiumSpotItem = (typeof qualifiedData)[number];
+  interface PodiumSpot {
+    player: PodiumSpotItem;
+    rank: number;
+    title: string;
+    avatarSize: number;
+    pedestalHeight: string;
+    pedestalBg: string;
+    pedestalFace: string;
+    badgeColor: string;
+    auraColor: string;
+    glowBg: string;
+    textColor: string;
+    accentBorder: string;
+  }
+
+  const podiumSpots = useMemo(() => {
+    if (topThree.length === 0) return [];
+    const first = topThree[0];
+    const second = topThree[1];
+    const third = topThree[2];
+
+    const spots: PodiumSpot[] = [];
+    if (second) {
+      spots.push({
+        player: second,
+        rank: 2,
+        title: "RUNNER-UP",
+        avatarSize: 64,
+        pedestalHeight: "h-8 sm:h-11",
+        pedestalBg:
+          "from-slate-600/30 via-slate-700/20 to-slate-900/60 border-slate-400/40",
+        pedestalFace: "from-slate-400/15 via-transparent to-transparent",
+        badgeColor:
+          "bg-gradient-to-br from-slate-200 to-slate-400 text-black shadow-[0_0_10px_rgba(203,213,225,0.4)]",
+        auraColor:
+          "ring-2 ring-slate-300/80 shadow-[0_0_15px_rgba(203,213,225,0.3)]",
+        glowBg: "bg-slate-500/15",
+        textColor: "text-slate-200",
+        accentBorder: "border-slate-400/40",
+      });
+    }
+    if (first) {
+      spots.push({
+        player: first,
+        rank: 1,
+        title: "CHAMPION",
+        avatarSize: 76,
+        pedestalHeight: "h-12 sm:h-16",
+        pedestalBg:
+          "from-amber-500/35 via-amber-600/20 to-amber-950/60 border-amber-400/50 shadow-[0_0_20px_rgba(245,158,11,0.15)]",
+        pedestalFace: "from-amber-400/20 via-transparent to-transparent",
+        badgeColor:
+          "bg-gradient-to-br from-amber-300 to-yellow-500 text-black shadow-[0_0_12px_rgba(245,158,11,0.6)]",
+        auraColor:
+          "ring-[3px] ring-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.45)]",
+        glowBg: "bg-amber-500/15",
+        textColor: "text-amber-400",
+        accentBorder: "border-amber-400/50",
+      });
+    }
+    if (third) {
+      spots.push({
+        player: third,
+        rank: 3,
+        title: "3RD PLACE",
+        avatarSize: 64,
+        pedestalHeight: "h-8 sm:h-11",
+        pedestalBg:
+          "from-amber-700/30 via-amber-800/20 to-amber-950/60 border-amber-600/40",
+        pedestalFace: "from-amber-600/15 via-transparent to-transparent",
+        badgeColor:
+          "bg-gradient-to-br from-amber-600 to-amber-800 text-amber-100 shadow-[0_0_10px_rgba(217,119,6,0.3)]",
+        auraColor:
+          "ring-2 ring-amber-600/80 shadow-[0_0_12px_rgba(217,119,6,0.25)]",
+        glowBg: "bg-amber-700/15",
+        textColor: "text-amber-500",
+        accentBorder: "border-amber-600/40",
+      });
+    }
+    return spots;
+  }, [topThree]);
 
   const symbol = getRewardPool(selectedSeasonPost)?.symbol || "STEEM";
 
@@ -222,7 +310,7 @@ export function SeasonalHallModal({
       scrollBehavior="inside"
     >
       <ModalContent>
-        {(onClose) => (
+        {() => (
           <>
             <ModalHeader className="border-b border-white/5 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div className="flex items-center gap-4">
@@ -277,53 +365,150 @@ export function SeasonalHallModal({
                 </div>
               ) : (
                 <>
-                  {/* Top 3 Winners - Compact Podium */}
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    {topThree.map((winner, idx) => (
-                      <div
-                        key={winner.player}
-                        className={`relative flex-1 p-3 rounded-2xl border transition-all flex items-center gap-4 ${
-                          idx === 0
-                            ? "bg-amber-500/10 border-amber-500/30 ring-1 ring-amber-500/20"
-                            : "bg-zinc-300/50 dark:bg-zinc-800/40 border-white/5"
-                        }`}
-                      >
-                        <div
-                          className={`w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-[10px] font-black ${
-                            idx === 0
-                              ? "bg-amber-500 text-black shadow-lg shadow-amber-500/50"
-                              : idx === 1
-                                ? "bg-zinc-300 text-black"
-                                : "bg-amber-700"
-                          }`}
-                        >
-                          {idx + 1}
+                  {/* Top 3 Winners - Olympic 3D Pedestal Showcase (Compact & Professional) */}
+                  {podiumSpots.length > 0 && (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-1.5">
+                          <Trophy size={14} className="text-amber-500" />
+                          <h3 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.25em] text-amber-500">
+                            Seasonal Podium Showcase
+                          </h3>
+                        </div>
+                        <span className="text-[8px] sm:text-[9px] font-bold text-zinc-500 uppercase tracking-widest hidden sm:inline-block">
+                          Top 3 Climbers
+                        </span>
+                      </div>
+
+                      <div className="relative rounded-2xl py-3 sm:py-4 px-1.5 sm:px-4 bg-gradient-to-b from-zinc-900/80 via-zinc-950/90 to-zinc-950 border border-white/10 shadow-xl overflow-hidden">
+                        {/* Ambient subtle glow behind Center Champion */}
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-20 bg-amber-500/10 blur-[40px] rounded-full pointer-events-none" />
+
+                        {/* Pedestals Container: items-end establishes shared baseline */}
+                        <div className="relative z-10 flex items-end justify-center gap-1.5 sm:gap-3 max-w-xl mx-auto">
+                          {podiumSpots.map((spot) => {
+                            const isFirst = spot.rank === 1;
+                            const isSecond = spot.rank === 2;
+                            const isMe =
+                              spot.player.player === session?.user?.name;
+
+                            return (
+                              <div
+                                key={spot.player.player}
+                                className={`flex-1 min-w-0 max-w-[170px] flex flex-col items-center ${
+                                  isFirst
+                                    ? "z-20 scale-[1.02] sm:scale-105"
+                                    : "z-10"
+                                }`}
+                              >
+                                {/* Player Showcase Card (Mounted on top of pedestal) */}
+                                <div className="w-full flex flex-col items-center mb-1.5 px-0.5 sm:px-1 text-center">
+                                  {/* Floating Crown for 1st Place */}
+                                  {isFirst ? (
+                                    <div className="w-full flex items-center justify-center -mb-0.5">
+                                      <Crown
+                                        size={16}
+                                        className="text-amber-400 fill-amber-400 drop-shadow-[0_0_6px_rgba(245,158,11,0.7)]"
+                                      />
+                                    </div>
+                                  ) : (
+                                    <div className="h-4" />
+                                  )}
+
+                                  {/* Avatar with Metallic Aura Ring - Perfectly Centered */}
+                                  <div className="relative mb-1.5 w-full flex items-center justify-center">
+                                    <div
+                                      className={`rounded-full p-0.5 transition-transform hover:scale-105 flex items-center justify-center shrink-0 ${spot.auraColor}`}
+                                    >
+                                      <SAvatar
+                                        username={spot.player.player}
+                                        size={spot.avatarSize}
+                                        quality="medium"
+                                        radius="full"
+                                        className="border border-zinc-950 block"
+                                      />
+                                    </div>
+
+                                    {/* Rank Badge overlay centered on Avatar */}
+                                    <div
+                                      className={`absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-0.2 rounded-full text-[8px] sm:text-[9px] font-black flex items-center gap-0.5 border border-white/20 whitespace-nowrap z-10 shadow-sm ${spot.badgeColor}`}
+                                    >
+                                      {isFirst && (
+                                        <Sparkles
+                                          size={8}
+                                          className="fill-current"
+                                        />
+                                      )}
+                                      #{spot.rank}
+                                    </div>
+                                  </div>
+
+                                  {/* Username & Title */}
+                                  <div className="w-full flex flex-col items-center mt-0.5 min-w-0">
+                                    <div className="flex items-center justify-center gap-0.5 max-w-full">
+                                      <SUsername
+                                        username={`@${spot.player.player}`}
+                                        className={`text-[10px] sm:text-xs font-black break-all sm:break-normal text-center leading-tight line-clamp-2 ${spot.textColor}`}
+                                      />
+                                      {isMe && (
+                                        <span className="text-[6px] sm:text-[7px] font-black bg-amber-500 text-black px-1 rounded uppercase tracking-wider shrink-0">
+                                          YOU
+                                        </span>
+                                      )}
+                                    </div>
+                                    <span
+                                      className={`text-[7px] sm:text-[8px] font-black uppercase tracking-widest mt-0.5 px-1 py-0.2 rounded-full border ${spot.accentBorder} ${spot.glowBg} ${spot.textColor} truncate max-w-full`}
+                                    >
+                                      {spot.title}
+                                    </span>
+                                  </div>
+
+                                  {/* Altitude & Reward Showcase */}
+                                  <div className="w-full mt-1.5 pt-1 border-t border-white/5 flex flex-col items-center gap-0.5">
+                                    <span className="text-[10px] sm:text-xs font-black italic text-zinc-200 drop-shadow-sm">
+                                      {spot.player.score.toLocaleString()}m
+                                    </span>
+                                    {spot.player.reward > 0 && (
+                                      <div className="bg-emerald-500/10 border border-emerald-500/25 px-1 sm:px-1.5 py-0.2 rounded text-[7px] sm:text-[8px] font-mono font-black text-emerald-400 truncate max-w-full">
+                                        +{spot.player.reward.toFixed(2)}{" "}
+                                        {symbol}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+
+                                {/* Simple & Elegant Rounded-2xl Pedestal Block */}
+                                <div
+                                  className={`w-full ${spot.pedestalHeight} rounded-2xl border bg-gradient-to-b ${spot.pedestalBg} flex items-center justify-center relative overflow-hidden shadow-lg`}
+                                >
+                                  {/* Inner ambient light gradient */}
+                                  <div
+                                    className={`absolute inset-0 bg-gradient-to-b ${spot.pedestalFace} pointer-events-none`}
+                                  />
+
+                                  {/* Engraved Rank Number */}
+                                  <span
+                                    className={`relative z-10 text-xl sm:text-3xl font-black italic tracking-tighter select-none px-2 ${
+                                      isFirst
+                                        ? "bg-gradient-to-b from-amber-100 via-amber-300 to-amber-600 bg-clip-text text-transparent drop-shadow-sm"
+                                        : isSecond
+                                          ? "bg-gradient-to-b from-white via-slate-200 to-slate-500 bg-clip-text text-transparent drop-shadow-sm"
+                                          : "bg-gradient-to-b from-amber-200 via-amber-500 to-amber-800 bg-clip-text text-transparent drop-shadow-sm"
+                                    }`}
+                                  >
+                                    {spot.rank}
+                                  </span>
+                                </div>
+                              </div>
+                            );
+                          })}
                         </div>
 
-                        <div className="flex items-center gap-3 flex-1 min-w-0">
-                          <SAvatar
-                            username={winner.player}
-                            size="sm"
-                            radius="full"
-                          />
-                          <div className="flex flex-col min-w-0">
-                            <SUsername
-                              username={`@${winner.player}`}
-                              className="text-xs font-black truncate"
-                            />
-                            <div className="flex items-center gap-2">
-                              <span className="text-[10px] font-black italic">
-                                {winner.score}m
-                              </span>
-                              <span className="text-[9px] font-black text-emerald-500">
-                                +{winner.reward.toFixed(2)} {symbol}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
+                        {/* Ground Stage Reflection Line */}
+                        <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-amber-500/20 to-transparent mt-[-1px] rounded-full blur-[0.5px]" />
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  )}
 
                   {/* All Participants Table */}
                   <div className="space-y-4">
@@ -422,6 +607,7 @@ export function SeasonalHallModal({
                             header: t("table.performance"),
                             sortable: true,
                             className: "px-2 py-2",
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             render: (score, row: any) => (
                               <div className="flex flex-col gap-1.5">
                                 <div className="flex items-center gap-2">
@@ -536,6 +722,7 @@ export function SeasonalHallModal({
                               key: "score",
                               header: t("table.performance"),
                               className: "px-2 py-2",
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
                               render: (score, row: any) => (
                                 <div className="flex items-center gap-2">
                                   <span className="text-xs font-black text-zinc-600 bg-zinc-800/50 px-2 py-0.5 rounded-md">
