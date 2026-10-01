@@ -9,7 +9,9 @@ const nextConfig: NextConfig = {
   experimental: {
     turbopackFileSystemCacheForDev: true,
   },
-  productionBrowserSourceMaps: true,
+  // Shipping source maps to the browser exposes your full source to anyone
+  // and inflates every JS payload — keep them out of production bundles.
+  productionBrowserSourceMaps: false,
   transpilePackages: ["lottie-react", "lottie-web", "lucide-react", "next"],
   images: {
     qualities: [25, 50, 75],

@@ -1,8 +1,10 @@
 import { auth } from "@/auth";
+import { JsonLd } from "@/components/seo/JsonLd";
 import ProfileCard from "@/components/profile/ProfileCard";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import MainWrapper from "@/components/wrappers/MainWrapper";
 import { sdsApi } from "@/libs/sds";
+import { profileJsonLd } from "@/utils/jsonld";
 import { Suspense } from "react";
 import ProfileHeaderSkeleton from "@/components/skeleton/ProfileHeaderSkeleton";
 
@@ -24,6 +26,7 @@ async function layout({ children, params }: ProfileLayoutProps) {
         </MainWrapper>
       }
     >
+      <JsonLd data={profileJsonLd(username.toLowerCase(), account)} />
       <MainWrapper
         endClass="w-[320px] min-w-[320px] 1md:hidden! lg:block!"
         end={<ProfileCard account={account} className="card" />}

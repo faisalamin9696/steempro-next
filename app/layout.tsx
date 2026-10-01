@@ -57,9 +57,11 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  alternates: {
-    canonical: "/",
-  },
+  // NOTE: no site-wide `alternates.canonical` here. Metadata from this root
+  // layout is inherited by every route, so a global canonical of "/" made all
+  // routes that didn't set their own (communities, explorer, proposals, tools…)
+  // declare the homepage as their canonical — Google then dropped them as
+  // duplicates of the homepage. Every route must declare its own canonical.
   openGraph: {
     type: "website",
     locale: "en_US",

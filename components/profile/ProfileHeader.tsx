@@ -84,7 +84,9 @@ function ProfileHeader({ account }: { account: AccountExt }) {
               </div>
 
               <div className="flex flex-col md:-mt-2">
-                <p className="text-lg sm:text-xl font-bold">{displayName}</p>
+                <h1 className="text-lg sm:text-xl font-bold">
+                  {displayName}
+                </h1>
                 <div className="flex flex-row gap-1">
                   <p className="text-sm text-muted">@{name}</p>
                   <Reputation value={profileData.reputation} />

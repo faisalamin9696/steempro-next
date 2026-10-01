@@ -1,90 +1,38 @@
-"use client";
+import { sdsApi } from "@/libs/sds";
+import { tagFeedApi } from "@/utils/feedApis";
+import { CategoryTabs } from "./CategoryTabs";
 
-import { getMetadata, updateMetadata } from "@/utils/metadata";
-import { useSession } from "next-auth/react";
-import { Key, useState } from "react";
-import { useParams } from "next/navigation";
-import STabs from "@/components/ui/STabs";
-import { Zap, TrendingUp, ClockPlus, DollarSign, Sparkles } from "lucide-react";
-import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
-import { FeedList } from "@/components/FeedList";
-import { useTranslations } from "next-intl";
+/**
+ * Server component: preloads the requested tab's feed so crawlers receive an
+ * HTML document with real post cards, titles and links rather than a spinner.
+ */
+export default async function CategoryPage({
+  params,
+}: {
+  params: Promise<{ category?: string; tag?: string }>;
+}) {
+  const { category, tag } = await params;
+  const activeCategory = (category || "trending").toLowerCase();
+  const activeTag = (tag || "").toLowerCase();
 
-const ICON_SIZE = 20;
+  const apiPath = activeTag ? tagFeedApi(activeCategory, activeTag) : "";
 
-function CategoryPage() {
-  const t = useTranslations("Home.tabs");
-  const { category, tag } = useParams();
-  const { data: session } = useSession();
-  const [selectedKey, setSelectedKey] = useState(
-    (category as string) || "trending",
-  );
-  const { isMobile } = useDeviceInfo();
-  const apiParam = `/${tag}`;
-
-  const homeTabs = [
-    {
-      id: "trending",
-      title: t("trending"),
-      api: "getActivePostsByTagTrending" + apiParam,
-      icon: <TrendingUp size={ICON_SIZE} />,
-    },
-    {
-      id: "popular",
-      title: t("popular"),
-      api: "getActivePostsByTagInteraction" + apiParam,
-      icon: <Sparkles size={ICON_SIZE} />,
-    },
-    {
-      id: "created",
-      title: t("recent"),
-      api: "getActivePostsByTagCreated" + apiParam,
-      icon: <ClockPlus size={ICON_SIZE} />,
-    },
-    {
-      id: "hot",
-      title: t("hot"),
-      api: "getActivePostsByTagHot" + apiParam,
-      icon: <Zap size={ICON_SIZE} />,
-    },
-
-    {
-      id: "payout",
-      title: t("payout"),
-      api: "getActivePostsByTagPayout" + apiParam,
-      icon: <DollarSign size={ICON_SIZE} />,
-    },
-  ];
-
-  const handleSelectionChange = (key: Key) => {
-    if (!key) return;
-    setSelectedKey(key.toString());
-    const { title, description } = getMetadata.home(key.toString());
-    updateMetadata({ title, description });
-  };
+  let initialFeed: Feed[] = [];
+  if (apiPath) {
+    try {
+      const posts = await sdsApi.getFeedByApiPath(apiPath, "steem", 16, 0);
+      initialFeed = Array.isArray(posts) ? posts : [];
+    } catch (error) {
+      console.error("[category] initial feed fetch failed", error);
+    }
+  }
 
   return (
-    <STabs
-      key={`tabs-category-${session?.user?.name || "anonymous"}`}
-      variant="bordered"
-      selectedKey={selectedKey}
-      onSelectionChange={handleSelectionChange}
-      items={homeTabs}
-      tabTitle={(tab) => (
-        <div className="flex items-center space-x-2">
-          {tab.icon}
-          {!isMobile || selectedKey === tab.id ? (
-            <span>{tab.title}</span>
-          ) : null}
-        </div>
-      )}
-      tabHref={(tab) => `/${tab.id}/${tag}`}
-    >
-      {(tab) => (
-        <FeedList apiPath={tab.api} observer={session?.user?.name ?? "steem"} />
-      )}
-    </STabs>
+    <CategoryTabs
+      category={activeCategory}
+      tag={activeTag}
+      initialApiPath={apiPath}
+      initialFeed={initialFeed}
+    />
   );
 }
-
-export default CategoryPage;

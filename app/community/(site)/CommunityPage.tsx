@@ -20,10 +20,15 @@ import { sdsApi } from "@/libs/sds";
 function CommunityPage({
   community: initCommunity,
   account: initAccount,
+  initialApiPath,
+  initialFeed,
 }: {
   community?: Community;
   account?: AccountExt;
   pinnedPost?: PromotedPost[];
+  /** API path the server preloaded `initialFeed` for (the URL's active tab). */
+  initialApiPath?: string;
+  initialFeed?: Feed[];
 }) {
   const th = useTranslations("Home.tabs");
   const tc = useTranslations("Community");
@@ -110,6 +115,9 @@ function CommunityPage({
 
   return (
     <div className="flex flex-col gap-2">
+      <h1 className="sr-only">
+        {communityData.title || communityData.account}
+      </h1>
       <STabs
         key={`tabs-community-${session?.user?.name || "anonymous"}`}
         variant="bordered"
@@ -133,7 +141,10 @@ function CommunityPage({
           ) : (
             <FeedList
               apiPath={tab.api || ""}
-              observer={session?.user?.name || ""}
+              observer={session?.user?.name || "steem"}
+              initialData={
+                tab.api && tab.api === initialApiPath ? initialFeed : undefined
+              }
             />
           )
         }

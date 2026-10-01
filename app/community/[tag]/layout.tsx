@@ -7,6 +7,9 @@ import HomeCarousel from "@/components/carousal/HomeCarousal";
 import moment from "moment";
 import { getThumbnail } from "@/utils/image";
 import CommunityAboutSection from "../(site)/CommunityAboutSection";
+import { Metadata } from "next";
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.steempro.com";
 
 async function layout({
   children,
@@ -63,4 +66,27 @@ async function layout({
 }
 
 export default layout;
+
+/**
+ * `/community/{tag}` renders the community's *trending* feed, which is the same
+ * content as the public URL `/{category}/hive-{tag}`. Canonicalise it there so
+ * the two URLs don't compete, and give it its own title/description instead of
+ * inheriting the homepage's canonical from the root layout.
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ tag: string }>;
+}): Promise<Metadata> {
+  const { tag } = await params;
+  const canonical = `${BASE_URL}/trending/hive-${tag}`;
+
+  return {
+    alternates: { canonical },
+    openGraph: {
+      url: canonical,
+      type: "website",
+    },
+  };
+}
 

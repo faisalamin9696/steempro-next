@@ -1,89 +1,34 @@
-"use client";
+import { sdsApi } from "@/libs/sds";
+import { FALLBACK_HOME_FEED_API, HOME_FEED_APIS } from "@/utils/feedApis";
+import { HomeTabs } from "./HomeTabs";
 
-import { getMetadata, updateMetadata } from "@/utils/metadata";
-import { useSession } from "next-auth/react";
-import { Key, useState } from "react";
-import { useParams } from "next/navigation";
-import STabs from "@/components/ui/STabs";
-import { Sparkles, Zap, TrendingUp, ClockPlus, DollarSign } from "lucide-react";
-import { FeedList } from "@/components/FeedList";
-import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
-import { useTranslations } from "next-intl";
+/**
+ * Server component: fetches the first page of the requested feed so the HTML
+ * we serve to crawlers already contains real post cards and their links.
+ * Everything interactive stays in `HomeTabs`.
+ */
+export default async function HomePage({
+  params,
+}: {
+  params: Promise<{ category?: string }>;
+}) {
+  const { category } = await params;
+  const activeCategory = (category || "trending").toLowerCase();
+  const apiPath = HOME_FEED_APIS[activeCategory] ?? FALLBACK_HOME_FEED_API;
 
-const ICON_SIZE = 20;
-
-function HomePage() {
-  const t = useTranslations("Home.tabs");
-  const { category } = useParams();
-  const { data: session } = useSession();
-  const [selectedKey, setSelectedKey] = useState(
-    (category as string) || "trending",
-  );
-  const { isMobile } = useDeviceInfo();
-
-  const homeTabs = [
-    {
-      id: "trending",
-      title: t("trending"),
-      api: "getActivePostsByTrending",
-      icon: <TrendingUp size={ICON_SIZE} />,
-    },
-
-    {
-      id: "popular",
-      title: t("popular"),
-      api: "getActivePostsByInteraction",
-      icon: <Sparkles size={ICON_SIZE} />,
-    },
-
-    {
-      id: "created",
-      title: t("recent"),
-      api: "getActivePostsByCreated",
-      icon: <ClockPlus size={ICON_SIZE} />,
-    },
-    {
-      id: "hot",
-      title: t("hot"),
-      api: "getActivePostsByHot",
-      icon: <Zap size={ICON_SIZE} />,
-    },
-
-    {
-      id: "payout",
-      title: t("payout"),
-      api: "getActivePostsByPayout",
-      icon: <DollarSign size={ICON_SIZE} />,
-    },
-  ];
-
-  const handleSelectionChange = (key: Key) => {
-    if (!key) return;
-    setSelectedKey(key.toString());
-    const { title, description } = getMetadata.home(key.toString());
-    updateMetadata({ title, description });
-  };
+  let initialFeed: Feed[] = [];
+  try {
+    const posts = await sdsApi.getFeedByApiPath(apiPath, "steem", 16, 0);
+    initialFeed = Array.isArray(posts) ? posts : [];
+  } catch (error) {
+    console.error("[home] initial feed fetch failed", error);
+  }
 
   return (
-    <STabs
-      key={`tabs-home-${session?.user?.name || "anonymous"}`}
-      variant="bordered"
-      selectedKey={selectedKey}
-      items={homeTabs}
-      tabHref={(tab) => `/${tab.id}`}
-      onSelectionChange={handleSelectionChange}
-      tabTitle={(tab) => (
-        <div className="flex items-center space-x-2">
-          {tab.icon}
-          {!isMobile || selectedKey === tab.id ? (
-            <span>{tab.title}</span>
-          ) : null}{" "}
-        </div>
-      )}
-    >
-      {(tab) => <FeedList apiPath={tab.api} observer={session?.user?.name} />}
-    </STabs>
+    <HomeTabs
+      category={activeCategory}
+      initialApiPath={apiPath}
+      initialFeed={initialFeed}
+    />
   );
 }
-
-export default HomePage;

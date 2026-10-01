@@ -20,24 +20,40 @@ const feedCache = new Map<
 export function FeedList({
   apiPath,
   observer = "steem",
+  initialData,
 }: {
   apiPath: string;
   observer?: string | null;
+  /**
+   * First page fetched on the server. The SSR HTML therefore contains real
+   * post cards (and their links) instead of a spinner, and hydration starts
+   * from the same list instead of immediately refetching page one.
+   */
+  initialData?: Feed[];
 }) {
   const { layout, className } = useFeedLayout();
   const cacheKey = `${apiPath}:${observer}`;
   const cachedData = feedCache.get(cacheKey);
+  const hasSeed = !!initialData && initialData.length > 0;
 
-  const [feed, setFeed] = useState<Feed[]>(cachedData?.feed || []);
-  const [loading, setLoading] = useState(!cachedData);
+  const [feed, setFeed] = useState<Feed[]>(() =>
+    cachedData?.feed?.length ? cachedData.feed : initialData ?? [],
+  );
+  const [loading, setLoading] = useState(
+    () => !(cachedData || (initialData && initialData.length > 0)),
+  );
   const [loadingMore, setLoadingMore] = useState(false);
-  const [offset, setOffset] = useState(cachedData?.offset || 0);
-  const [hasMore, setHasMore] = useState(cachedData?.hasMore ?? true);
+  const [offset, setOffset] = useState(
+    () => cachedData?.offset || initialData?.length || 0,
+  );
+  const [hasMore, setHasMore] = useState(() => cachedData?.hasMore ?? true);
 
   const LIMIT = 16;
   const feedRef = useRef(feed);
   const offsetRef = useRef(offset);
   const isFetching = useRef(false);
+  // Which cache key (if any) still needs publishing on the first effect pass.
+  const seedCacheKeyRef = useRef<string | null>(hasSeed ? cacheKey : null);
 
   useEffect(() => {
     feedRef.current = feed;
@@ -103,6 +119,22 @@ export function FeedList({
   );
 
   useEffect(() => {
+    // The server-rendered list is already on screen — cache it once so tab
+    // switches and back-navigation reuse it instead of refetching page one.
+    if (seedCacheKeyRef.current === cacheKey && initialData) {
+      seedCacheKeyRef.current = null;
+      if (!feedCache.has(cacheKey)) {
+        feedCache.set(cacheKey, {
+          feed: initialData,
+          offset: initialData.length,
+          hasMore: true,
+          seenIds: new Set(initialData.map((item) => item.link_id.toString())),
+        });
+      }
+      setLoading(false);
+      return;
+    }
+
     const cached = feedCache.get(cacheKey);
     if (!cached) {
       setFeed([]);
@@ -116,7 +148,7 @@ export function FeedList({
       setHasMore(cached.hasMore);
       setLoading(false);
     }
-  }, [cacheKey, loadFeed]);
+  }, [cacheKey, loadFeed, initialData]);
 
   return (
     <InfiniteList

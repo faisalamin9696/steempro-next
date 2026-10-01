@@ -10,6 +10,50 @@ const DEFAULT_DESCRIPTION =
 
 const DEFAULT_IMAGE = `${BASE_URL}/opengraph-image.jpg`;
 
+/**
+ * Static metadata for the `/tools/*` routes. Each of these routes is a static
+ * segment, so it needs its own `layout.tsx` exporting metadata — otherwise the
+ * root layout's metadata leaks down and every tool page ends up with the same
+ * (wrong) canonical, i.e. `/tools`.
+ */
+const TOOL_PAGES: Record<string, { title: string; description: string }> = {
+  "account-creation": {
+    title: "Create a Steem Account",
+    description:
+      "Claim and create new Steem accounts using your account creation tokens, right from SteemPro Tools.",
+  },
+  "account-health-check": {
+    title: "Steem Account Health Check",
+    description:
+      "Run a comprehensive audit of your Steem account: key hierarchy, authorities, recovery settings, resource credits and voting power.",
+  },
+  "author-statistic-report": {
+    title: "Author Statistic Report",
+    description:
+      "Analyze any author's post performance, payouts and engagement over a date range on the Steem blockchain.",
+  },
+  "batch-commenting": {
+    title: "Batch Commenting",
+    description:
+      "Auto-comment on the latest posts of multiple users at once with customizable templates.",
+  },
+  "batch-transfer": {
+    title: "Batch Transfer",
+    description:
+      "Send Steem or SBD to multiple accounts at once efficiently — paste a list and transfer in a single confirmation.",
+  },
+  "batch-voting": {
+    title: "Batch Voting",
+    description:
+      "Vote on multiple posts simultaneously to maximize your curation efficiency on the Steem blockchain.",
+  },
+  "community-report": {
+    title: "Community Report",
+    description:
+      "Generate statistical analysis and markdown reports for any Steem community, including active authors and payouts.",
+  },
+};
+
 export const getMetadata = {
   home: (category: string) => {
     category = category?.toLowerCase();
@@ -352,7 +396,10 @@ export const getMetadata = {
       ? `${title} - ${category} in the ${community} Community`
       : `${community} Community ${category} List`;
     const pageDescription = about || DEFAULT_DESCRIPTION;
-    const url = `https://www.steempro.com/community/${category}/${tag}`;
+    // Public URL is `/{category}/hive-{tag}` (see next.config rewrites) — this
+    // must match the URL users see, otherwise Google canonicalises every
+    // community feed to the homepage.
+    const url = `${BASE_URL}/${category}/hive-${tag}`;
     const image = result?.account
       ? getResizedAvatar(result.account, "medium")
       : DEFAULT_IMAGE;
@@ -373,6 +420,9 @@ export const getMetadata = {
       title: pageTitle,
       description: pageDescription,
       keywords: keywords,
+      alternates: {
+        canonical: url,
+      },
       images: result?.account
         ? [getResizedAvatar(result.account, "medium"), ...previousImages]
         : previousImages,
@@ -445,10 +495,10 @@ export const getMetadata = {
     };
   },
   explorer: () => {
-    const pageTitle = "Blockchain Explorer - Real-time Steem Data | SteemPro";
+    const pageTitle = "Blockchain Explorer - Real-time Steem Data";
     const pageDescription =
       "Explore the Steem blockchain in real-time. Browse blocks, lookup accounts, view transactions, and monitor global chain properties with SteemPro's advanced explorer.";
-    const url = "https://www.steempro.com/explorer";
+    const url = `${BASE_URL}/explorer`;
 
     return {
       title: pageTitle,
@@ -608,6 +658,9 @@ export const getMetadata = {
     return {
       title: pageTitle,
       description: pageDescription,
+      // Private, per-user workspace — also blocked in robots.txt, but a meta
+      // robots noindex is the belt-and-braces guarantee.
+      robots: { index: false, follow: true },
       keywords: "SteemPro, schedule posts, scheduling",
       alternates: {
         canonical: url,
@@ -634,6 +687,8 @@ export const getMetadata = {
     return {
       title: pageTitle,
       description: pageDescription,
+      // Private, per-user settings — never indexable.
+      robots: { index: false, follow: true },
       alternates: {
         canonical: url,
       },
@@ -718,6 +773,34 @@ export const getMetadata = {
         title: pageTitle,
         description: pageDescription,
         url: url,
+        images: [DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [DEFAULT_IMAGE],
+      },
+    };
+  },
+  tool: (slug: string) => {
+    const entry = TOOL_PAGES[slug];
+    const pageTitle = entry
+      ? `${entry.title} - SteemPro Tools`
+      : "SteemPro Tools";
+    const pageDescription =
+      entry?.description ||
+      "Discover a suite of powerful tools tailored for Steem users.";
+    const url = `${BASE_URL}/tools/${slug}`;
+
+    return {
+      title: pageTitle,
+      description: pageDescription,
+      alternates: { canonical: url },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url,
         images: [DEFAULT_IMAGE],
       },
       twitter: {

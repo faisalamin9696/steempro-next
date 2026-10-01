@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Provider as ReduxProvider } from "react-redux";
 import { SWRConfig } from "swr";
 import { store } from "@/hooks/redux/store";
@@ -13,7 +13,6 @@ import { AccountsProvider } from "@/components/auth/AccountsContext";
 import { MobileNavbar } from "@/components/navbar/MobileNavbar";
 import { Session } from "next-auth";
 import ScrollToTop from "@/components/ui/ScrollToTop";
-import LoadingCard from "@/components/ui/LoadingCard";
 import { ScrollToTopButton } from "@/components/ScrollToTopButton";
 import { Toaster } from "sonner";
 import { twMerge } from "tailwind-merge";
@@ -31,16 +30,13 @@ function Providers({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [isMounted, setIsMounted] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  // Prevent hydration mismatch - show loading until client is ready
-  if (!isMounted) {
-    return <LoadingCard />;
-  }
+  // NOTE: The app must render on the server. An `isMounted` gate here used to
+  // swap the whole tree for a loading spinner during SSR, which meant every
+  // page shipped an HTML shell containing only <title> + "Loading..." — no
+  // content, no headings and no links for search engines to crawl or index.
+  // Anything that genuinely mismatches on hydration must be fixed at the
+  // component level (or wrapped in its own boundary), not by hiding the tree.
 
   return (
     <SessionProvider

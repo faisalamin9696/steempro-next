@@ -1,72 +1,63 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { auth } from "@/auth";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { sdsApi } from "@/libs/sds";
-import ShortsPlayer from "@/components/shorts/ShortsPlayer";
-import { useSession } from "next-auth/react";
-import { extractVideoUrl, ShortsPlayerInstance } from "../../page";
-import { useAppSelector } from "@/hooks/redux/store";
-import { isSteemProShort } from "@/utils";
-import ShortPlayerSkeleton from "@/components/skeleton/ShortPlayerSkeleton";
+import { breadcrumbJsonLd, videoObjectJsonLd } from "@/utils/jsonld";
+import { extractVideoUrl } from "@/utils/shorts";
+import { notFound } from "next/navigation";
+import SingleShort from "./SingleShort";
 
-export default function SingleShortPage() {
-  const params = useParams();
-  const { data: session } = useSession();
-  const [short, setShort] = useState<ShortVideo | null>(null);
-  const [loading, setLoading] = useState(true);
-  const author = decodeURIComponent(params.author as string).replace("@", "");
-  const permlink = params.permlink as string;
-  const commentData =
-    useAppSelector((s) => s.commentReducer.values[`${author}/${permlink}`]) ??
-    short;
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.steempro.com";
 
-  useEffect(() => {
-    const fetchShort = async () => {
-      try {
-        setLoading(true);
-        const post = await sdsApi.getPost(
-          author,
-          permlink,
-          session?.user?.name || "steem",
-        );
-        if (post && isSteemProShort(post)) {
-          const videoUrl = extractVideoUrl(post);
-          if (videoUrl) {
-            setShort({ ...post, videoUrl } as ShortVideo);
-          }
-        }
-      } catch (error) {
-        console.error("Failed to fetch short:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+/**
+ * Server component: the player itself is client-only, but fetching the short
+ * here means the response already carries the title, description and
+ * `VideoObject` JSON-LD — a crawler that does not run JavaScript still gets a
+ * fully-described video page instead of an empty shell.
+ */
+export default async function SingleShortPage({
+  params,
+}: {
+  params: Promise<{ author: string; permlink: string }>;
+}) {
+  const { author: rawAuthor, permlink } = await params;
+  const author = decodeURIComponent(rawAuthor).replace("@", "");
+  if (!author || !permlink) notFound();
 
-    if (author && permlink) {
-      fetchShort();
-    }
-  }, [author, permlink, session?.user?.name]);
+  const session = await auth();
+
+  let post: Post | null = null;
+  try {
+    post = await sdsApi.getPost(author, permlink, session?.user?.name || "steem");
+  } catch (error) {
+    console.error("[shorts] failed to load short", error);
+  }
+
+  // A missing short must be a real 404 rather than a spinner in a 200 response.
+  if (!post || post.link_id === -1) notFound();
+
+  const canonical = `${BASE_URL}/shorts/@${author}/${permlink}`;
+  const videoUrl = extractVideoUrl(post);
+  const heading = post.title || `Short by @${author}`;
 
   return (
-    <div className="w-full h-dvh overflow-hidden flex justify-center ">
-      <div className="h-[calc(100dvh-64px)] md:h-[calc(100vh-64px)] w-full shrink-0 flex items-center justify-center relative pb-14 md:pb-0">
-        {loading && !commentData ? (
-          <div className="h-full w-full flex flex-col items-center justify-center">
-            <ShortPlayerSkeleton />
-          </div>
-        ) : (
-          <div className="flex flex-col items-center w-full h-full">
-            <ShortsPlayerInstance.Provider>
-              <ShortsPlayer
-                short={commentData}
-                isActive={true}
-                shouldPreload={true}
-              />
-            </ShortsPlayerInstance.Provider>
-          </div>
-        )}
-      </div>
-    </div>
+    <>
+      <JsonLd
+        data={[
+          videoObjectJsonLd(post, canonical),
+          breadcrumbJsonLd([
+            { name: "Home", url: BASE_URL },
+            { name: "Shorts", url: `${BASE_URL}/shorts` },
+            { name: heading, url: canonical },
+          ]),
+        ]}
+      />
+      {/* The player renders no text at all; crawlers need a heading to know what this page is. */}
+      <h1 className="sr-only">{heading}</h1>
+      <SingleShort
+        author={author}
+        permlink={permlink}
+        initialPost={videoUrl ? { ...post, videoUrl } : post}
+      />
+    </>
   );
 }

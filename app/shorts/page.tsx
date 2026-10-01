@@ -4,10 +4,10 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { sdsApi } from "@/libs/sds";
 import { useSession } from "next-auth/react";
 import { isSteemProShort } from "@/utils";
+import { extractVideoUrl } from "@/utils/shorts";
 import ShortPlayerSkeleton from "@/components/skeleton/ShortPlayerSkeleton";
 import { twMerge } from "tailwind-merge";
 import {  createPlayer, videoFeatures } from "@videojs/react";
-import { Constants } from "@/constants";
 import ShortsPlayer from "@/components/shorts/ShortsPlayer";
 
 interface ShortVideo extends Feed {
@@ -157,6 +157,10 @@ export default function ShortsPage({ author }: { author?: string }) {
 
   return (
     <div className="relative h-dvh md:h-[calc(100vh-64px)] w-full overflow-hidden flex justify-center ">
+      {/* Headings for crawlers: the player UI itself renders no text. */}
+      <h1 className="sr-only">
+        Steem Shorts - Explore Short Videos on Steem
+      </h1>
       <div
         ref={scrollContainerRef}
         onScroll={handleScroll}
@@ -217,28 +221,5 @@ export default function ShortsPage({ author }: { author?: string }) {
   );
 }
 
-export const extractVideoUrl = (post: Feed): string | undefined => {
-  try {
-    const meta = JSON.parse(post.json_metadata || "{}");
-    if (!meta?.video) return undefined;
-    const v =
-      typeof meta.video === "string"
-        ? meta.video
-        : Array.isArray(meta.video)
-          ? meta.video[0]
-          : null;
-    if (!v) return undefined;
-
-    if (v.startsWith("http")) return v;
-
-    // Resolve as HLS if metadata flag is present
-    const baseGateway = Constants.ipfs_gateway;
-    if (meta?.isHls) {
-      return `${baseGateway}/ipfs/${v}/master.m3u8`;
-    }
-
-    return `${baseGateway}/ipfs/${v}`;
-  } catch {
-    return undefined;
-  }
-};
+// Re-exported for existing importers (`app/shorts/[author]/[permlink]`).
+export { extractVideoUrl };
