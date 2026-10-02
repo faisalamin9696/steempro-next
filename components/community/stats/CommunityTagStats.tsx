@@ -1,6 +1,7 @@
 "use client";
 
 import { full, usd } from "@/components/explorer/format";
+import Link from "@/components/ui/CustomLink";
 import type { CommunityTagStats } from "@/utils/communityStats";
 import { Hash, MessageSquare } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -82,13 +83,13 @@ function CommunityTagStats({
                 <span className="w-5 shrink-0 text-center text-[11px] font-bold text-default-400">
                   {i + 1}
                 </span>
-                <a
+                <Link
                   href={`/trending/${encodeURIComponent(tag.tag)}`}
                   className={`shrink-0 max-w-[130px] truncate px-2 py-0.5 rounded-md text-xs font-bold transition-opacity hover:opacity-75 ${style.chip}`}
                   title={tag.tag}
                 >
                   #{tag.tag}
-                </a>
+                </Link>
                 <div className="hidden sm:block flex-1 min-w-0">
                   <div className="h-1.5 rounded-full bg-default-200/70 dark:bg-default-100/15 overflow-hidden">
                     <div

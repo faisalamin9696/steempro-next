@@ -211,6 +211,31 @@
       "email": "ای میل کریں"
     }
   },
+  "Dashboard": {
+    "title": "Stats Dashboard",
+    "homeSub": "Your progress at a glance, plus dashboards for the communities you run",
+    "myProgress": "My progress",
+    "myProgressSub": "Your posting activity, rewards and engagement over time",
+    "signIn": "Sign in to see your stats",
+    "signInSub": "Log in with the button in the top bar, then open this page again.",
+    "myCommunities": "Your communities",
+    "myCommunitiesSub": "Communities where you are a moderator, admin or owner",
+    "noCommunities": "No staff roles yet — moderate a community and it will show up here.",
+    "openPanel": "Open",
+    "loadError": "Couldn't load this panel. Please try again.",
+    "adminSub": "Moderator-only stats for {name}",
+    "adminOnly": "Admins only",
+    "adminOnlySub": "Only moderators, admins and owners of this community can open this panel.",
+    "backToStats": "View public stats instead",
+    "backToDashboard": "Back to dashboard",
+    "delta": {
+      "vsPrevious": "vs previous {range}",
+      "prev": "(prev)",
+      "up": "up",
+      "down": "down",
+      "flat": "no change"
+    }
+  },
   "Explorer": {
     "title": "Blockchain ایکسپلورر",
     "description": "Steem blockchain کا ریئل ٹائم ڈیٹا، بلاکس، ٹرانزیکشنز اور چین کے اعداد و شمار",
@@ -1546,6 +1571,7 @@
     "schedules": "شیڈول",
     "tools": "ٹولز",
     "app": "ایپ",
+    "dashboard": "ڈیش بورڈ",
     "settings": "ترتیبات",
     "privacy": "رازداری",
     "about": "ہمارے بارے میں",

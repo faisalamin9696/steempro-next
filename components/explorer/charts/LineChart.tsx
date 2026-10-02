@@ -17,6 +17,8 @@ export interface LineSeries {
   name: string;
   color: string;
   points: LinePoint[];
+  /** render the stroke dashed (used for previous-period comparison lines) */
+  dash?: boolean;
 }
 
 /**
@@ -184,6 +186,7 @@ export default function LineChart({
                     fill="none"
                     stroke={s.color}
                     strokeWidth="2"
+                    strokeDasharray={s.dash ? "6 5" : undefined}
                     vectorEffect="non-scaling-stroke"
                     strokeLinejoin="round"
                     strokeLinecap="round"

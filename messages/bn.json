@@ -211,6 +211,31 @@
       "email": "আমাদের ইমেইল করুন"
     }
   },
+  "Dashboard": {
+    "title": "Stats Dashboard",
+    "homeSub": "Your progress at a glance, plus dashboards for the communities you run",
+    "myProgress": "My progress",
+    "myProgressSub": "Your posting activity, rewards and engagement over time",
+    "signIn": "Sign in to see your stats",
+    "signInSub": "Log in with the button in the top bar, then open this page again.",
+    "myCommunities": "Your communities",
+    "myCommunitiesSub": "Communities where you are a moderator, admin or owner",
+    "noCommunities": "No staff roles yet — moderate a community and it will show up here.",
+    "openPanel": "Open",
+    "loadError": "Couldn't load this panel. Please try again.",
+    "adminSub": "Moderator-only stats for {name}",
+    "adminOnly": "Admins only",
+    "adminOnlySub": "Only moderators, admins and owners of this community can open this panel.",
+    "backToStats": "View public stats instead",
+    "backToDashboard": "Back to dashboard",
+    "delta": {
+      "vsPrevious": "vs previous {range}",
+      "prev": "(prev)",
+      "up": "up",
+      "down": "down",
+      "flat": "no change"
+    }
+  },
   "Explorer": {
     "title": "ব্লকচেইন এক্সপ্লোরার",
     "description": "রিয়েল-টাইম Steem ব্লকচেইন ডেটা, ব্লক, ট্রানজেকশন ও চেইন পরিসংখ্যান",
@@ -1546,6 +1571,7 @@
     "schedules": "সময়সূচী",
     "tools": "সরঞ্জাম",
     "app": "অ্যাপ",
+    "dashboard": "ড্যাশবোর্ড",
     "settings": "সেটিংস",
     "privacy": "প্রাইভেসি",
     "about": "সম্পর্কে",

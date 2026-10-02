@@ -682,6 +682,34 @@ export const getMetadata = {
       },
     };
   },
+  dashboard: () => {
+    const pageTitle = "Stats Dashboard - Track Your Steem Progress";
+    const pageDescription =
+      "Your personal Steem stats: posting activity, rewards and engagement over time, plus admin dashboards for the communities you moderate.";
+    const url = "https://www.steempro.com/dashboard";
+
+    return {
+      title: pageTitle,
+      description: pageDescription,
+      // Per-user stats workspace — never indexable.
+      robots: { index: false, follow: true },
+      alternates: {
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [DEFAULT_IMAGE],
+      },
+    };
+  },
   settings: () => {
     const pageTitle = `Settings - Customize Your SteemPro Experience`;
     const pageDescription = `Explore the settings page on SteemPro to personalize and optimize your experience on the Steem blockchain. Customize your preferences, security settings, notifications, and more to tailor SteemPro to your needs and preferences.`;

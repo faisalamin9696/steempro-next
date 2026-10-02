@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "@/components/ui/CustomLink";
 import { compact } from "../format";
 
 /**
@@ -66,13 +67,13 @@ export default function BarChart({
           </div>
         );
         return d.href ? (
-          <a
+          <Link
             key={d.label}
             href={d.href}
             className="block hover:opacity-80 transition-opacity"
           >
             {inner}
-          </a>
+          </Link>
         ) : (
           <div key={d.label}>{inner}</div>
         );

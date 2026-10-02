@@ -19,6 +19,7 @@ import {
   House,
   Info,
   Landmark,
+  LayoutDashboard,
   Layers,
   Receipt,
   Settings,
@@ -75,6 +76,7 @@ function SDrawerContent() {
     {
       group: t("app"),
       items: [
+        { title: t("dashboard"), href: `/dashboard`, icon: LayoutDashboard },
         { title: t("settings"), href: `/settings`, icon: Settings },
         { title: t("privacy"), href: `/privacy-policy`, icon: ShieldUser },
         { title: t("about"), href: `/about`, icon: Info },

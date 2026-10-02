@@ -206,6 +206,14 @@ export interface CommunityViewerStats {
   total: number;
 }
 
+/** Previous-window comparison — only present when BOTH windows are fully covered. */
+export interface StatsWindowCompare {
+  from: number;
+  to: number;
+  series: CommunitySeriesPoint[];
+  totals: CommunityStatsTotals;
+}
+
 export interface CommunityStats {
   community: {
     account: string;
@@ -230,6 +238,36 @@ export interface CommunityStats {
   tags: CommunityTagStats;
   leaders: CommunityLeaderStats[];
   viewer: CommunityViewerStats | null;
+  /** the viewer's role in this community (owner/admin/mod/…, null if none) */
+  viewerRole: string | null;
+  /** previous-window bundle for delta chips; null when not requested/covered */
+  compare: StatsWindowCompare | null;
+}
+
+/**
+ * One user's own stats across all their content (any community/tag).
+ * `totals` reuses the community shape so delta math stays uniform — the
+ * "unique/active" fields are trivially 0/1 for a single author.
+ */
+export interface AuthorStats {
+  author: string;
+  range: CommunityRange;
+  from: number;
+  to: number;
+  series: CommunitySeriesPoint[];
+  totals: CommunityStatsTotals;
+  topPosts: CommunityTopPost[];
+  topComments: CommunityTopComment[];
+  compare: StatsWindowCompare | null;
+}
+
+/** A community where the viewer holds a staff role (mod or above). */
+export interface MyCommunity {
+  account: string;
+  title: string;
+  rank: number;
+  count_subs: number;
+  role: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -338,6 +376,51 @@ async function fetchCommunityWindow(
   };
 }
 
+/**
+ * Same paging contract as fetchCommunityWindow but against the author's own
+ * feeds (their root posts / their comments, newest first, any community).
+ */
+async function fetchAuthorWindow(
+  kind: "Posts" | "Comments",
+  author: string,
+  from: number,
+  maxPages: number,
+): Promise<WindowResult> {
+  const apiPath = `get${kind}ByAuthor`;
+  const collected: FeedWindowRow[] = [];
+  let oldest = Math.floor(Date.now() / 1000);
+  let covered = false;
+
+  for (let page = 0; page < maxPages; page++) {
+    const rows = await sdsFetcher<FeedWindowRow[]>(
+      `/feeds_api/${apiPath}/${author}/steem/${FEED_PAGE}/${FEED_PAGE}/${
+        page * FEED_PAGE
+      }`,
+    );
+    if (!rows || rows.length === 0) {
+      covered = true;
+      break;
+    }
+    collected.push(...rows);
+    oldest = Math.min(oldest, ...rows.map((r) => num(r.created)));
+    if (oldest < from) {
+      covered = true;
+      break;
+    }
+    if (rows.length < FEED_PAGE) {
+      covered = true;
+      break;
+    }
+  }
+
+  return {
+    rows: collected.filter((r) => num(r.created) >= from),
+    oldest,
+    covered,
+    fetched: collected.length,
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Aggregation
 // ---------------------------------------------------------------------------
@@ -403,14 +486,201 @@ function metricRank(
   return rank;
 }
 
+interface WindowAggregate {
+  series: CommunitySeriesPoint[];
+  totals: CommunityStatsTotals;
+  byAuthor: Map<string, CommunityAuthorStats>;
+  topPosts: CommunityTopPost[];
+  topComments: CommunityTopComment[];
+}
+
+/**
+ * Shared window aggregation — used for the current window, the previous
+ * (compare) window and author stats alike: per-author totals, the day-aligned
+ * daily series and the window's top rewarded content.
+ *
+ * `start` must be day-aligned; `from` is the effective covered start (>= start).
+ * Days before `from` are dropped from BOTH the series and the totals so
+ * sum(series).posts === totals.posts always holds (the page-cap rule: a day
+ * the feed cannot fully account for is excluded entirely).
+ */
+function aggregateWindow(
+  postRows: FeedWindowRow[],
+  commentRows: FeedWindowRow[],
+  start: number,
+  dayCount: number,
+  from: number,
+): WindowAggregate {
+  // ---- per-author aggregation -------------------------------------------
+  const byAuthor = new Map<string, CommunityAuthorStats>();
+  const entry = (author: string): CommunityAuthorStats => {
+    let e = byAuthor.get(author);
+    if (!e) {
+      e = {
+        author,
+        posts: 0,
+        comments: 0,
+        postPayout: 0,
+        commentPayout: 0,
+        rewards: 0,
+        votesReceived: 0,
+        commentsReceived: 0,
+        engagement: 0,
+        lastActive: 0,
+      };
+      byAuthor.set(author, e);
+    }
+    return e;
+  };
+
+  let postPayout = 0;
+  let commentPayout = 0;
+  let postVotes = 0;
+  let up = 0;
+  let down = 0;
+  let words = 0;
+  let discussed = 0;
+  let postsFetched = 0;
+  let commentsFetched = 0;
+
+  for (const row of postRows) {
+    const payout = num(row.payout);
+    const e = entry(row.author);
+    e.posts += 1;
+    e.postPayout += payout;
+    e.rewards += payout;
+    e.votesReceived += num(row.upvote_count);
+    e.commentsReceived += num(row.children);
+    e.engagement += num(row.upvote_count) + num(row.children);
+    e.lastActive = Math.max(e.lastActive, num(row.created));
+
+    postPayout += payout;
+    postVotes += num(row.upvote_count);
+    up += num(row.upvote_count);
+    down += num(row.downvote_count);
+    words += num(row.word_count);
+    if (num(row.children) > 0) discussed += 1;
+    postsFetched += 1;
+  }
+
+  for (const row of commentRows) {
+    const payout = num(row.payout);
+    const e = entry(row.author);
+    e.comments += 1;
+    e.commentPayout += payout;
+    e.rewards += payout;
+    e.votesReceived += num(row.upvote_count);
+    e.engagement += num(row.upvote_count);
+    e.lastActive = Math.max(e.lastActive, num(row.created));
+
+    commentPayout += payout;
+    up += num(row.upvote_count);
+    down += num(row.downvote_count);
+    words += num(row.word_count);
+    commentsFetched += 1;
+  }
+
+  // ---- daily series ------------------------------------------------------
+  const seriesMap = new Map<number, CommunitySeriesPoint>();
+  for (let d = 0; d < dayCount; d++) {
+    seriesMap.set(start + d * 86400, {
+      t: start + d * 86400,
+      posts: 0,
+      comments: 0,
+      payout: 0,
+      votes: 0,
+    });
+  }
+  const bump = (row: FeedWindowRow, kind: "posts" | "comments") => {
+    const day = Math.floor(num(row.created) / 86400) * 86400;
+    const bucket = seriesMap.get(day);
+    if (!bucket) return;
+    bucket[kind] += 1;
+    bucket.payout += num(row.payout);
+    bucket.votes += num(row.upvote_count);
+  };
+  postRows.forEach((r) => bump(r, "posts"));
+  commentRows.forEach((r) => bump(r, "comments"));
+
+  // Keep only fully covered days (see `from` above).
+  const series = [...seriesMap.values()].filter((p) => p.t >= from);
+
+  // ---- totals ------------------------------------------------------------
+  const activeMembers = byAuthor.size;
+  const uniqueAuthors = postRows.length
+    ? new Set(postRows.map((r) => r.author)).size
+    : 0;
+  const uniqueCommenters = commentRows.length
+    ? new Set(commentRows.map((r) => r.author)).size
+    : 0;
+  const rewards = postPayout + commentPayout;
+  const commentsPerPost = postsFetched ? commentsFetched / postsFetched : 0;
+  const votesPerPost = postsFetched ? postVotes / postsFetched : 0;
+  const engagementRate = commentsPerPost + votesPerPost;
+  const upvoteRatio = up + down > 0 ? up / (up + down) : 0;
+  const discussedPct = postsFetched ? discussed / postsFetched : 0;
+
+  const totals: CommunityStatsTotals = {
+    posts: postsFetched,
+    comments: commentsFetched,
+    uniqueAuthors,
+    uniqueCommenters,
+    activeMembers,
+    postPayout,
+    commentPayout,
+    rewards,
+    avgPostPayout: postsFetched ? postPayout / postsFetched : 0,
+    commentsPerPost,
+    votesPerPost,
+    engagementRate,
+    upvoteRatio,
+    discussedPct,
+    words,
+    partial: from > start,
+    oldestCovered: from,
+  };
+
+  // ---- top content in the window ----------------------------------------
+  const topPosts: CommunityTopPost[] = postRows
+    .filter((r) => num(r.payout) > 0 || num(r.children) > 0)
+    .sort((a, b) => num(b.payout) - num(a.payout))
+    .slice(0, 8)
+    .map((r) => ({
+      author: r.author,
+      permlink: r.permlink,
+      title: r.title || r.permlink,
+      payout: num(r.payout),
+      comments: num(r.children),
+      votes: num(r.upvote_count),
+      created: num(r.created),
+    }));
+
+  const topComments: CommunityTopComment[] = commentRows
+    .filter((r) => num(r.payout) > 0)
+    .sort((a, b) => num(b.payout) - num(a.payout))
+    .slice(0, 6)
+    .map((r) => ({
+      author: r.author,
+      permlink: r.permlink,
+      root_author: r.root_author || "",
+      root_title: r.root_title || "",
+      payout: num(r.payout),
+      created: num(r.created),
+    }));
+
+  return { series, totals, byAuthor, topPosts, topComments };
+}
+
 export function getCommunityStats(
   community: string,
   range: CommunityRange,
   viewer?: string,
-): Promise<CommunityStats> {
-  const bucketKey = Math.floor(Date.now() / 900_000); // 15-min memo window
+  compareRequested = false,
+): Promise<CommunityStats> {  const bucketKey = Math.floor(Date.now() / 900_000); // 15-min memo window
   return memo(
-    `community-stats-${community}-${range}-${bucketKey}`,
+    // viewer is part of the key: the bundle embeds viewer-specific data
+    // (race ranks, observer_role) that must never leak across viewers.
+    `community-stats-${community}-${range}-${compareRequested ? "c1" : "c0"}-v${viewer || "-"}-${bucketKey}`,
     10 * 60_000,
     async () => {
       const to = Math.floor(Date.now() / 1000);
@@ -421,12 +691,22 @@ export function getCommunityStats(
       const today = Math.floor(to / 86400) * 86400;
       const dayCount = COMMUNITY_RANGE_DAYS[range];
       const start = today - (dayCount - 1) * 86400;
+      const prevStart = start - COMMUNITY_RANGE_SECONDS[range];
+      // Compare mode scans one window deeper in the SAME pass — no second
+      // request. Page caps stay fixed, so a busy feed simply yields
+      // compare=null (see the fairness rule below) instead of 2× SDS load.
+      const fetchFrom = compareRequested ? prevStart : start;
       const observer = viewer || "steem";
 
       const [comm, postWin, commentWin] = await Promise.all([
         safe(sdsApi.getCommunity(community, observer), null as Community | null),
-        fetchCommunityWindow("Posts", community, start, MAX_POST_PAGES),
-        fetchCommunityWindow("Comments", community, start, MAX_COMMENT_PAGES),
+        fetchCommunityWindow("Posts", community, fetchFrom, MAX_POST_PAGES),
+        fetchCommunityWindow(
+          "Comments",
+          community,
+          fetchFrom,
+          MAX_COMMENT_PAGES,
+        ),
       ]);
 
       // Effective cutoff: if a feed hit the page cap before reaching the
@@ -440,154 +720,51 @@ export function getCommunityStats(
         postWin.covered ? start : firstFullDay(postWin.oldest),
         commentWin.covered ? start : firstFullDay(commentWin.oldest),
       );
-      const partial = from > start;
       const postRows = postWin.rows.filter((r) => num(r.created) >= from);
       const commentRows = commentWin.rows.filter(
         (r) => num(r.created) >= from,
       );
       const tags = aggregateTags(postRows, community);
 
-      // ---- per-author aggregation -----------------------------------------
-      const byAuthor = new Map<string, CommunityAuthorStats>();
-      const entry = (author: string): CommunityAuthorStats => {
-        let e = byAuthor.get(author);
-        if (!e) {
-          e = {
-            author,
-            posts: 0,
-            comments: 0,
-            postPayout: 0,
-            commentPayout: 0,
-            rewards: 0,
-            votesReceived: 0,
-            commentsReceived: 0,
-            engagement: 0,
-            lastActive: 0,
-          };
-          byAuthor.set(author, e);
-        }
-        return e;
-      };
+      // ---- shared aggregation: per-author, series, totals, top content ----
+      const cur = aggregateWindow(postRows, commentRows, start, dayCount, from);
+      const { series, totals, byAuthor, topPosts, topComments } = cur;
 
-      let postPayout = 0;
-      let commentPayout = 0;
-      let postVotes = 0;
-      let up = 0;
-      let down = 0;
-      let words = 0;
-      let discussed = 0;
-      let postsFetched = 0;
-      let commentsFetched = 0;
-
-      for (const row of postRows) {
-        const payout = num(row.payout);
-        const e = entry(row.author);
-        e.posts += 1;
-        e.postPayout += payout;
-        e.rewards += payout;
-        e.votesReceived += num(row.upvote_count);
-        e.commentsReceived += num(row.children);
-        e.engagement += num(row.upvote_count) + num(row.children);
-        e.lastActive = Math.max(e.lastActive, num(row.created));
-
-        postPayout += payout;
-        postVotes += num(row.upvote_count);
-        up += num(row.upvote_count);
-        down += num(row.downvote_count);
-        words += num(row.word_count);
-        if (num(row.children) > 0) discussed += 1;
-        postsFetched += 1;
+      // ---- previous-window comparison ------------------------------------
+      // Fairness rule: only produce a compare bundle when BOTH feeds fully
+      // covered the previous window (i.e. the scan reached prevStart or the
+      // feed ended). Otherwise a truncated prev would yield misleading deltas
+      // — return null and let the UI hide the chips.
+      let compare: StatsWindowCompare | null = null;
+      if (
+        compareRequested &&
+        postWin.covered &&
+        commentWin.covered &&
+        from === start
+      ) {
+        const inPrev = (r: FeedWindowRow) => {
+          const t = num(r.created);
+          return t >= prevStart && t < start;
+        };
+        const prev = aggregateWindow(
+          postWin.rows.filter(inPrev),
+          commentWin.rows.filter(inPrev),
+          prevStart,
+          dayCount,
+          prevStart,
+        );
+        compare = {
+          from: prevStart,
+          to: start,
+          series: prev.series,
+          totals: prev.totals,
+        };
       }
 
-      for (const row of commentRows) {
-        const payout = num(row.payout);
-        const e = entry(row.author);
-        e.comments += 1;
-        e.commentPayout += payout;
-        e.rewards += payout;
-        e.votesReceived += num(row.upvote_count);
-        e.engagement += num(row.upvote_count);
-        e.lastActive = Math.max(e.lastActive, num(row.created));
-
-        commentPayout += payout;
-        up += num(row.upvote_count);
-        down += num(row.downvote_count);
-        words += num(row.word_count);
-        commentsFetched += 1;
-      }
-
+      // top-50 race pool (rewards first, engagement tie-break)
       const authors = [...byAuthor.values()]
         .sort((a, b) => b.rewards - a.rewards || b.engagement - a.engagement)
         .slice(0, AUTHOR_LIMIT);
-
-      // ---- daily series ----------------------------------------------------
-      const seriesMap = new Map<number, CommunitySeriesPoint>();
-      for (let d = 0; d < dayCount; d++) {
-        seriesMap.set(start + d * 86400, {
-          t: start + d * 86400,
-          posts: 0,
-          comments: 0,
-          payout: 0,
-          votes: 0,
-        });
-      }
-      const bump = (row: FeedWindowRow, kind: "posts" | "comments") => {
-        const day = Math.floor(num(row.created) / 86400) * 86400;
-        const bucket = seriesMap.get(day);
-        if (!bucket) return;
-        bucket[kind] += 1;
-        bucket.payout += num(row.payout);
-        bucket.votes += num(row.upvote_count);
-      };
-      postRows.forEach((r) => bump(r, "posts"));
-      commentRows.forEach((r) => bump(r, "comments"));
-
-      // Keep only fully covered days (see `from` above).
-      const series = [...seriesMap.values()].filter((p) => p.t >= from);
-
-      // ---- totals ----------------------------------------------------------
-      const activeMembers = byAuthor.size;
-      const uniqueAuthors = postRows.length
-        ? new Set(postRows.map((r) => r.author)).size
-        : 0;
-      const uniqueCommenters = commentRows.length
-        ? new Set(commentRows.map((r) => r.author)).size
-        : 0;
-      const rewards = postPayout + commentPayout;
-      const commentsPerPost = postsFetched ? commentsFetched / postsFetched : 0;
-      const votesPerPost = postsFetched ? postVotes / postsFetched : 0;
-      const engagementRate = commentsPerPost + votesPerPost;
-      const upvoteRatio = up + down > 0 ? up / (up + down) : 0;
-      const discussedPct = postsFetched ? discussed / postsFetched : 0;
-      const oldestCovered = from;
-
-      // ---- top content in the window --------------------------------------
-      const topPosts: CommunityTopPost[] = postRows
-        .filter((r) => num(r.payout) > 0 || num(r.children) > 0)
-        .sort((a, b) => num(b.payout) - num(a.payout))
-        .slice(0, 8)
-        .map((r) => ({
-          author: r.author,
-          permlink: r.permlink,
-          title: r.title || r.permlink,
-          payout: num(r.payout),
-          comments: num(r.children),
-          votes: num(r.upvote_count),
-          created: num(r.created),
-        }));
-
-      const topComments: CommunityTopComment[] = commentRows
-        .filter((r) => num(r.payout) > 0)
-        .sort((a, b) => num(b.payout) - num(a.payout))
-        .slice(0, 6)
-        .map((r) => ({
-          author: r.author,
-          permlink: r.permlink,
-          root_author: r.root_author || "",
-          root_title: r.root_title || "",
-          payout: num(r.payout),
-          created: num(r.created),
-        }));
 
       // ---- leaders (roles ≥ mod, enriched with their window performance) --
       type RoleRow = { account: string; role: string; title?: string };
@@ -601,6 +778,21 @@ export function getCommunityStats(
       const roles: RoleRow[] = comm?.roles
         ? (mapSds(comm.roles) as RoleRow[])
         : [];
+
+      // the viewer's staff role — SDS observer_role, falling back to a scan
+      // of the community's roles list (null when anonymous or unknown)
+      let viewerRole: string | null = null;
+      if (viewer) {
+        const raw =
+          (comm?.observer_role ? String(comm.observer_role) : "") ||
+          roles.find((r) => r.account === viewer)?.role ||
+          "";
+        try {
+          if (raw && Role.level(raw) >= 0) viewerRole = raw;
+        } catch {
+          viewerRole = null;
+        }
+      }
       const leaderRows = roles
         .filter((r) => r?.account && isLeader(r.role))
         .sort((a, b) => levelOf(b.role) - levelOf(a.role));
@@ -661,7 +853,7 @@ export function getCommunityStats(
             comments: metricRank(all, "comments", v.comments),
             engagement: metricRank(all, "engagement", v.engagement),
           },
-          total: activeMembers,
+          total: totals.activeMembers,
         };
       }
 
@@ -680,32 +872,137 @@ export function getCommunityStats(
         from,
         to,
         series,
-        totals: {
-          posts: postsFetched,
-          comments: commentsFetched,
-          uniqueAuthors,
-          uniqueCommenters,
-          activeMembers,
-          postPayout,
-          commentPayout,
-          rewards,
-          avgPostPayout: postsFetched ? postPayout / postsFetched : 0,
-          commentsPerPost,
-          votesPerPost,
-          engagementRate,
-          upvoteRatio,
-          discussedPct,
-          words,
-          partial,
-          oldestCovered,
-        },
+        totals,
         authors,
         topPosts,
         topComments,
         tags,
         leaders,
         viewer: viewerStats,
+        viewerRole,
+        compare,
       };
+    },
+  );
+}
+
+/**
+ * One user's own progress across all their content (any community/tag):
+ * same day-aligned windows, same fairness rules and the same totals shape as
+ * the community stats — so KPI delta chips work identically in both panels.
+ */
+export function getAuthorStats(
+  author: string,
+  range: CommunityRange,
+  compareRequested = false,
+): Promise<AuthorStats> {
+  const bucketKey = Math.floor(Date.now() / 900_000);
+  return memo(
+    `author-stats-${author}-${range}-${compareRequested ? "c1" : "c0"}-${bucketKey}`,
+    10 * 60_000,
+    async () => {
+      const to = Math.floor(Date.now() / 1000);
+      const today = Math.floor(to / 86400) * 86400;
+      const dayCount = COMMUNITY_RANGE_DAYS[range];
+      const start = today - (dayCount - 1) * 86400;
+      const prevStart = start - COMMUNITY_RANGE_SECONDS[range];
+      const fetchFrom = compareRequested ? prevStart : start;
+
+      const [postWin, commentWin] = await Promise.all([
+        fetchAuthorWindow("Posts", author, fetchFrom, MAX_POST_PAGES),
+        fetchAuthorWindow("Comments", author, fetchFrom, MAX_COMMENT_PAGES),
+      ]);
+
+      // Effective cutoff (same page-cap rule as the community stats): drop
+      // days the feeds cannot fully account for, from series AND totals.
+      const firstFullDay = (oldest: number) =>
+        oldest % 86400 === 0
+          ? oldest
+          : Math.floor(oldest / 86400) * 86400 + 86400;
+      const from = Math.max(
+        postWin.covered ? start : firstFullDay(postWin.oldest),
+        commentWin.covered ? start : firstFullDay(commentWin.oldest),
+      );
+      const postRows = postWin.rows.filter((r) => num(r.created) >= from);
+      const commentRows = commentWin.rows.filter((r) => num(r.created) >= from);
+
+      const cur = aggregateWindow(postRows, commentRows, start, dayCount, from);
+
+      // Fairness rule: only compare when BOTH feeds fully covered the
+      // previous window (mirrors getCommunityStats).
+      let compare: StatsWindowCompare | null = null;
+      if (
+        compareRequested &&
+        postWin.covered &&
+        commentWin.covered &&
+        from === start
+      ) {
+        const inPrev = (r: FeedWindowRow) => {
+          const t = num(r.created);
+          return t >= prevStart && t < start;
+        };
+        const prev = aggregateWindow(
+          postWin.rows.filter(inPrev),
+          commentWin.rows.filter(inPrev),
+          prevStart,
+          dayCount,
+          prevStart,
+        );
+        compare = {
+          from: prevStart,
+          to: start,
+          series: prev.series,
+          totals: prev.totals,
+        };
+      }
+
+      return {
+        author,
+        range,
+        from,
+        to,
+        series: cur.series,
+        totals: cur.totals,
+        topPosts: cur.topPosts,
+        topComments: cur.topComments,
+        compare,
+      };
+    },
+  );
+}
+
+/**
+ * Communities where the user holds a staff role (mod+), for the dashboard's
+ * "your communities" entry points.
+ *
+ * Note: sourced from the user's subscribed communities (the only SDS list
+ * carrying per-row observer_role) — a staff role in a community the user
+ * does not follow will not appear here.
+ */
+export function getMyCommunities(user: string): Promise<MyCommunity[]> {
+  const bucketKey = Math.floor(Date.now() / 900_000);
+  return memo(
+    `my-communities-${user}-${bucketKey}`,
+    10 * 60_000,
+    async () => {
+      const rows = await sdsApi.getCommunitiesBySubscriber(user, user, 100, 0);
+      const isStaff = (role?: string) => {
+        try {
+          return Role.atLeast(role || "", "mod");
+        } catch {
+          return false;
+        }
+      };
+      return (rows || [])
+        .filter((c) => c?.account && isStaff(c.observer_role))
+        .map((c) => ({
+          account: c.account,
+          title: c.title || c.account,
+          rank: c.rank ?? 0,
+          count_subs: c.count_subs ?? 0,
+          role: String(c.observer_role),
+        }))
+        .sort((a, b) => a.rank - b.rank || a.account.localeCompare(b.account));
     },
   );
 }

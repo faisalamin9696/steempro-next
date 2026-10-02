@@ -9,6 +9,7 @@ import {
 import { compact, full, usd } from "@/components/explorer/format";
 import LineChart, { type LineSeries } from "@/components/explorer/charts/LineChart";
 import StatCard from "@/components/explorer/StatCard";
+import Link from "@/components/ui/CustomLink";
 import SAvatar from "@/components/ui/SAvatar";
 import { DataTable, type ColumnDef } from "@/components/ui/data-table";
 import {
@@ -38,6 +39,7 @@ import type {
 } from "@/utils/communityStats";
 import CommunityRaceGraph from "./CommunityRaceGraph";
 import CommunityTagStats from "./CommunityTagStats";
+import ProgressDelta from "@/components/dashboard/ProgressDelta";
 
 /**
  * Community Stats tab — KPIs, time-series charts, the member race graph,
@@ -63,12 +65,24 @@ function CommunityStatsTab({
   account,
   viewer,
   initialStats,
+  compare = false,
+  fullView = false,
 }: {
   account: string;
   viewer?: string;
   initialStats?: CommunityStats;
+  /** request previous-window bundles (delta chips + dashed chart overlays) */
+  compare?: boolean;
+  /**
+   * Staff view (dashboard admin): also renders person-level panels —
+   * member race, community leaders, top authors. Public surfaces keep the
+   * default so only community-level/relative stats show there; individual
+   * rankings, staff and earnings must not be usable to target members.
+   */
+  fullView?: boolean;
 }) {
   const t = useTranslations("Community.statsPanel");
+  const td = useTranslations("Dashboard.delta");
   const [range, setRange] = useState<CommunityRange>("7d");
   // Charts gate on mount: their axis labels use locale-dependent date
   // formatting, which must not run during SSR (hydration mismatch).
@@ -77,7 +91,8 @@ function CommunityStatsTab({
 
   const key =
     `/api/community/stats?community=${account}&range=${range}` +
-    (viewer ? `&observer=${encodeURIComponent(viewer)}` : "");
+    (viewer ? `&observer=${encodeURIComponent(viewer)}` : "") +
+    (compare ? "&compare=1" : "");
 
   const { data, error, isValidating, mutate } = useSWR<CommunityStats>(
     key,
@@ -122,6 +137,15 @@ function CommunityStatsTab({
 
   const { totals, series, authors, topPosts, topComments, leaders } = data;
   const viewerStats = data.viewer;
+  const cmp = data.compare;
+
+  // Previous-period lines (dashed, same hue at reduced alpha) — rendered
+  // only when the compare bundle is present. Points are shifted onto the
+  // current window so both periods share one x-axis (true overlay: the
+  // dashed line sits "on top of" the solid one for day-by-day comparison).
+  const prevShift = cmp ? data.from - cmp.from : 0;
+  const prevPts = (pick: (p: (typeof series)[number]) => number) =>
+    (cmp?.series ?? []).map((p) => ({ x: p.t + prevShift, y: pick(p) }));
 
   const activitySeries: LineSeries[] = [
     {
@@ -134,6 +158,22 @@ function CommunityStatsTab({
       color: "#8b5cf6",
       points: series.map((p) => ({ x: p.t, y: p.comments })),
     },
+    ...(cmp
+      ? [
+          {
+            name: `${t("postsSeries")} ${td("prev")}`,
+            color: "#3b82f699",
+            points: prevPts((p) => p.posts),
+            dash: true,
+          },
+          {
+            name: `${t("commentsSeries")} ${td("prev")}`,
+            color: "#8b5cf699",
+            points: prevPts((p) => p.comments),
+            dash: true,
+          },
+        ]
+      : []),
   ];
   const rewardsSeries: LineSeries[] = [
     {
@@ -141,6 +181,16 @@ function CommunityStatsTab({
       color: "#10b981",
       points: series.map((p) => ({ x: p.t, y: Math.round(p.payout * 100) / 100 })),
     },
+    ...(cmp
+      ? [
+          {
+            name: `${t("rewardsSeries")} ${td("prev")}`,
+            color: "#10b98199",
+            points: prevPts((p) => Math.round(p.payout * 100) / 100),
+            dash: true,
+          },
+        ]
+      : []),
   ];
   const votesSeries: LineSeries[] = [
     {
@@ -148,6 +198,16 @@ function CommunityStatsTab({
       color: "#f59e0b",
       points: series.map((p) => ({ x: p.t, y: p.votes })),
     },
+    ...(cmp
+      ? [
+          {
+            name: `${t("votesSeries")} ${td("prev")}`,
+            color: "#f59e0b99",
+            points: prevPts((p) => p.votes),
+            dash: true,
+          },
+        ]
+      : []),
   ];
 
   const rangeLabels: Record<CommunityRange, string> = {
@@ -155,6 +215,17 @@ function CommunityStatsTab({
     "30d": t("range30d"),
     "90d": t("range90d"),
   };
+
+  // delta chips only when the compare bundle is present for this range
+  const deltaTitle = td("vsPrevious", { range: rangeLabels[range] });
+  const chip = (current: number, previous: number) =>
+    cmp ? (
+      <ProgressDelta
+        current={current}
+        previous={previous}
+        title={deltaTitle}
+      />
+    ) : undefined;
 
   const roleLabel = (role: string) =>
     role === "owner"
@@ -174,12 +245,12 @@ function CommunityStatsTab({
       render: (_v, row) => (
         <div className="flex items-center gap-2 min-w-0">
           <SAvatar username={row.author} size="xxs" showLink={false} />
-          <a
+          <Link
             href={`/@${row.author}`}
             className="truncate text-sm font-semibold hover:text-primary transition-colors"
           >
             {row.author}
-          </a>
+          </Link>
           {viewerStats?.author === row.author ? (
             <span className="px-1.5 py-0.5 rounded-md bg-primary text-white text-[9px] font-bold shrink-0">
               {t("you")}
@@ -275,6 +346,7 @@ function CommunityStatsTab({
           label={t("posts")}
           value={full(totals.posts)}
           sub={t("postsSub")}
+          delta={chip(totals.posts, cmp?.totals.posts ?? 0)}
         />
         <StatCard
           icon={MessageSquare}
@@ -282,6 +354,7 @@ function CommunityStatsTab({
           label={t("comments")}
           value={full(totals.comments)}
           sub={t("commentsSub")}
+          delta={chip(totals.comments, cmp?.totals.comments ?? 0)}
         />
         <StatCard
           icon={Zap}
@@ -290,6 +363,7 @@ function CommunityStatsTab({
           value={`${totals.engagementRate.toFixed(1)}×`}
           sub={t("engagementRateSub")}
           title={totals.engagementRate.toFixed(3)}
+          delta={chip(totals.engagementRate, cmp?.totals.engagementRate ?? 0)}
         />
         <StatCard
           icon={Coins}
@@ -298,6 +372,7 @@ function CommunityStatsTab({
           value={usd(totals.rewards)}
           sub={t("rewardsSub")}
           title={totals.rewards.toFixed(2)}
+          delta={chip(totals.rewards, cmp?.totals.rewards ?? 0)}
         />
         <StatCard
           icon={Users}
@@ -305,6 +380,7 @@ function CommunityStatsTab({
           label={t("activeMembers")}
           value={full(totals.activeMembers)}
           sub={t("activeMembersSub")}
+          delta={chip(totals.activeMembers, cmp?.totals.activeMembers ?? 0)}
         />
         <StatCard
           icon={Wallet}
@@ -313,6 +389,7 @@ function CommunityStatsTab({
           value={usd(totals.avgPostPayout)}
           sub={t("avgPayoutSub")}
           title={totals.avgPostPayout.toFixed(4)}
+          delta={chip(totals.avgPostPayout, cmp?.totals.avgPostPayout ?? 0)}
         />
         <StatCard
           icon={ThumbsUp}
@@ -321,6 +398,7 @@ function CommunityStatsTab({
           value={`${(totals.upvoteRatio * 100).toFixed(0)}%`}
           sub={t("upvoteRatioSub")}
           title={totals.upvoteRatio.toFixed(4)}
+          delta={chip(totals.upvoteRatio, cmp?.totals.upvoteRatio ?? 0)}
         />
         <StatCard
           icon={UserPlus}
@@ -457,20 +535,22 @@ function CommunityStatsTab({
       </div>
 
       {/* ---------------------------------------------------------------- */}
-      {/* race graph                                                       */}
+      {/* race graph — person-level rankings: full (staff) view only       */}
       {/* ---------------------------------------------------------------- */}
-      <div className={CARD}>
-        <CommunityRaceGraph
-          authors={authors}
-          viewer={viewerStats}
-          resetKey={data.range}
-        />
-      </div>
+      {fullView && (
+        <div className={CARD}>
+          <CommunityRaceGraph
+            authors={authors}
+            viewer={viewerStats}
+            resetKey={data.range}
+          />
+        </div>
+      )}
 
       {/* ---------------------------------------------------------------- */}
-      {/* leaders                                                          */}
+      {/* leaders — staff view only (person-level performance)             */}
       {/* ---------------------------------------------------------------- */}
-      {leaders.length > 0 ? (
+      {fullView && leaders.length > 0 ? (
         <div className={CARD}>
           <h3 className="text-sm font-bold flex items-center gap-2">
             <Users size={16} className="text-primary" />
@@ -488,12 +568,12 @@ function CommunityStatsTab({
                 <div className="flex items-center gap-2.5 min-w-0">
                   <SAvatar username={l.account} size="sm" quality="small" />
                   <div className="min-w-0 flex-1">
-                    <a
+                    <Link
                       href={`/@${l.account}`}
                       className="block text-sm font-semibold truncate hover:text-primary transition-colors"
                     >
                       {l.account}
-                    </a>
+                    </Link>
                     <div className="flex flex-wrap items-center gap-1.5 mt-1">
                       <span
                         className={`px-1.5 py-0.5 rounded-md text-[10px] font-bold ${
@@ -574,13 +654,13 @@ function CommunityStatsTab({
                   </span>
                   <SAvatar username={p.author} size="xxs" showLink={false} />
                   <div className="min-w-0 flex-1">
-                    <a
+                    <Link
                       href={`/@${p.author}/${p.permlink}`}
                       className="block text-sm font-semibold truncate hover:text-primary transition-colors"
                       title={p.title}
                     >
                       {p.title}
-                    </a>
+                    </Link>
                     <div className="flex items-center gap-2.5 text-[10px] text-default-400">
                       <span>@{p.author}</span>
                       <span className="flex items-center gap-0.5">
@@ -624,13 +704,13 @@ function CommunityStatsTab({
                   </span>
                   <SAvatar username={c.author} size="xxs" showLink={false} />
                   <div className="min-w-0 flex-1">
-                    <a
+                    <Link
                       href={`/@${c.author}/${c.permlink}`}
                       className="block text-sm font-semibold truncate hover:text-primary transition-colors"
                       title={c.root_title || c.permlink}
                     >
                       {c.root_title || c.permlink}
-                    </a>
+                    </Link>
                     <div className="flex items-center gap-2.5 text-[10px] text-default-400">
                       <span>@{c.author}</span>
                       <span className="font-mono">
@@ -649,28 +729,30 @@ function CommunityStatsTab({
       </div>
 
       {/* ---------------------------------------------------------------- */}
-      {/* top authors table                                                */}
+      {/* top authors table — person-level earnings: full view only        */}
       {/* ---------------------------------------------------------------- */}
-      <div className={CARD}>
-        <h3 className="text-sm font-bold mb-1 flex items-center gap-2">
-          <BarChart3 size={16} className="text-primary" />
-          {t("topAuthors")}
-        </h3>
-        <p className="text-xs text-default-400 mb-3">{t("topAuthorsSub")}</p>
-        {authors.length === 0 ? (
-          <p className="text-sm text-default-400 py-6 text-center">
-            {t("emptyTable")}
-          </p>
-        ) : (
-          <DataTable
-            columns={columns}
-            data={authors}
-            rowIdKey="author"
-            searchPlaceholder={t("searchAuthors")}
-            emptyMessage={t("emptyTable")}
-          />
-        )}
-      </div>
+      {fullView && (
+        <div className={CARD}>
+          <h3 className="text-sm font-bold mb-1 flex items-center gap-2">
+            <BarChart3 size={16} className="text-primary" />
+            {t("topAuthors")}
+          </h3>
+          <p className="text-xs text-default-400 mb-3">{t("topAuthorsSub")}</p>
+          {authors.length === 0 ? (
+            <p className="text-sm text-default-400 py-6 text-center">
+              {t("emptyTable")}
+            </p>
+          ) : (
+            <DataTable
+              columns={columns}
+              data={authors}
+              rowIdKey="author"
+              searchPlaceholder={t("searchAuthors")}
+              emptyMessage={t("emptyTable")}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 }

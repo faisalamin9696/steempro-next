@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "@/components/ui/CustomLink";
 import SAvatar from "@/components/ui/SAvatar";
 import { compact, usd } from "@/components/explorer/format";
 import { Crown, Trophy, TrendingUp } from "lucide-react";
@@ -212,13 +213,13 @@ function CommunityRaceGraph({
                   showLink={false}
                   className="shrink-0"
                 />
-                <a
+                <Link
                   href={`/@${row.author}`}
                   className="text-xs font-semibold truncate hover:text-primary transition-colors"
                   title={`@${row.author}`}
                 >
                   {row.author}
-                </a>
+                </Link>
                 {row.rank === 1 ? (
                   <Crown size={13} className="text-amber-500 shrink-0" />
                 ) : null}

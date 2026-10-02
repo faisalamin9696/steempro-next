@@ -109,14 +109,16 @@ class SteemApi {
       const formData = new FormData();
       const sanitizedFilename = file.name.replace(/[()\s]/g, "_");
       formData.append("file", file, sanitizedFilename);
+      formData.append("username", username);
+      formData.append("signature", signature);
+      formData.append("server", Constants.activeSettings.image_server);
 
-      const url = `${Constants.activeSettings.image_server}/${username}/${signature}`;
+      // Same-origin proxy: the image server only CORS-allowlists steemit.com,
+      // so a direct browser XHR from steempro.com/localhost dies with a
+      // generic "Network error". The route forwards server-side.
+      const url = "/api/upload-image";
 
       xhr.open("POST", url);
-      xhr.setRequestHeader(
-        "Authorization",
-        Constants.activeSettings.image_server,
-      );
 
       // Set timeout to 60 seconds
       xhr.timeout = 60000;

@@ -29,6 +29,7 @@ export default function StatCard({
   title,
   tone = "primary",
   href,
+  delta,
 }: {
   icon: LucideIcon;
   label: string;
@@ -38,6 +39,8 @@ export default function StatCard({
   title?: string;
   tone?: StatTone;
   href?: string;
+  /** progress chip rendered beside the value (e.g. ProgressDelta) */
+  delta?: React.ReactNode;
 }) {
   const body = (
     <div className="rounded-xl border border-default-200/60 dark:border-default-100/40 bg-white/60 dark:bg-content1/30 p-4 h-full transition-all duration-300 hover:border-primary/30 dark:hover:border-default-200/60 hover:shadow-sm group">
@@ -51,12 +54,15 @@ export default function StatCard({
           <p className="text-[11px] text-default-500 dark:text-default-400 uppercase tracking-wider font-semibold">
             {label}
           </p>
-          <p
-            className="text-lg font-bold font-mono leading-tight text-foreground truncate mt-0.5"
-            title={title}
-          >
-            {value}
-          </p>
+          <div className="flex items-center gap-2 min-w-0 mt-0.5">
+            <p
+              className="text-lg font-bold font-mono leading-tight text-foreground truncate"
+              title={title}
+            >
+              {value}
+            </p>
+            {delta ? <span className="shrink-0">{delta}</span> : null}
+          </div>
           {sub ? (
             <p className="text-[11px] text-default-400 mt-1 truncate">{sub}</p>
           ) : null}
