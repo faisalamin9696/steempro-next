@@ -45,21 +45,23 @@ const MarketCandleChart = ({ data }: { data: MarketHistory[] | undefined }) => {
 
   return (
     <div className="w-full h-full min-h-[350px] relative group p-4 flex flex-col">
-      <div className="flex-1 w-full relative">
-        <svg
-          width="100%"
-          height="100%"
-          viewBox={`0 0 ${chartWidth} ${chartHeight}`}
-          preserveAspectRatio="none"
-          className="overflow-visible absolute inset-0"
-        >
-          {/* Grid lines & Labels */}
-          {[0, 0.25, 0.5, 0.75, 1].map((p, i) => {
-            const price = maxHigh - p * range;
-            const y = getY(price);
-            return (
-              <g key={i}>
+      <div className="flex-1 w-full relative flex">
+        <div className="relative flex-1 min-w-0">
+          <svg
+            width="100%"
+            height="100%"
+            viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+            preserveAspectRatio="none"
+            className="overflow-visible absolute inset-0"
+          >
+            {/* Grid lines — labels live in the HTML gutter beside the plot so
+                the non-uniform SVG scaling cannot squash them */}
+            {[0, 0.25, 0.5, 0.75, 1].map((p, i) => {
+              const price = maxHigh - p * range;
+              const y = getY(price);
+              return (
                 <line
+                  key={i}
                   x1={paddingX}
                   y1={y}
                   x2={chartWidth - paddingX}
@@ -68,55 +70,63 @@ const MarketCandleChart = ({ data }: { data: MarketHistory[] | undefined }) => {
                   strokeOpacity="0.05"
                   strokeDasharray="4"
                 />
-                <text
-                  x={chartWidth - paddingX + 5}
-                  y={y + 4}
-                  fill="currentColor"
-                  className="text-[10px] opacity-40 font-mono"
-                >
-                  {price.toFixed(4)}
-                </text>
-              </g>
-            );
-          })}
+              );
+            })}
 
-          {validData.map((d, i) => {
-            const open = getPrice(d.open_sbd, d.open_steem);
-            const close = getPrice(d.close_sbd, d.close_steem);
-            const high = getPrice(d.high_sbd, d.high_steem);
-            const low = getPrice(d.low_sbd, d.low_steem);
-            const isUp = close >= open;
-            const x = getX(i);
-            const candleWidth =
-              ((chartWidth - paddingX * 2) / validData.length) * 0.7;
+            {validData.map((d, i) => {
+              const open = getPrice(d.open_sbd, d.open_steem);
+              const close = getPrice(d.close_sbd, d.close_steem);
+              const high = getPrice(d.high_sbd, d.high_steem);
+              const low = getPrice(d.low_sbd, d.low_steem);
+              const isUp = close >= open;
+              const x = getX(i);
+              const candleWidth =
+                ((chartWidth - paddingX * 2) / validData.length) * 0.7;
 
+              return (
+                <g key={i} className="hover:opacity-80 cursor-crosshair">
+                  <title>{`Time: ${new Date(
+                    d.time * 1000
+                  ).toLocaleString()}\nPrice: ${close.toFixed(6)}`}</title>
+                  {/* Wick */}
+                  <line
+                    x1={x}
+                    y1={getY(high)}
+                    x2={x}
+                    y2={getY(low)}
+                    stroke={isUp ? "#17c964" : "#f31260"}
+                    strokeWidth="1.5"
+                  />
+                  {/* Body */}
+                  <rect
+                    x={x - candleWidth / 2}
+                    y={isUp ? getY(close) : getY(open)}
+                    width={candleWidth}
+                    height={Math.max(Math.abs(getY(close) - getY(open)), 1)}
+                    fill={isUp ? "#17c964" : "#f31260"}
+                    rx="1"
+                  />
+                </g>
+              );
+            })}
+          </svg>
+        </div>
+
+        {/* price axis — HTML text, vertically centered on each grid line */}
+        <div className="relative w-[64px] shrink-0 pl-1.5">
+          {[0, 0.25, 0.5, 0.75, 1].map((p, i) => {
+            const price = maxHigh - p * range;
             return (
-              <g key={i} className="hover:opacity-80 cursor-crosshair">
-                <title>{`Time: ${new Date(
-                  d.time * 1000
-                ).toLocaleString()}\nPrice: ${close.toFixed(6)}`}</title>
-                {/* Wick */}
-                <line
-                  x1={x}
-                  y1={getY(high)}
-                  x2={x}
-                  y2={getY(low)}
-                  stroke={isUp ? "#17c964" : "#f31260"}
-                  strokeWidth="1.5"
-                />
-                {/* Body */}
-                <rect
-                  x={x - candleWidth / 2}
-                  y={isUp ? getY(close) : getY(open)}
-                  width={candleWidth}
-                  height={Math.max(Math.abs(getY(close) - getY(open)), 1)}
-                  fill={isUp ? "#17c964" : "#f31260"}
-                  rx="1"
-                />
-              </g>
+              <span
+                key={i}
+                className="absolute right-0 -translate-y-1/2 whitespace-nowrap font-mono text-[11px] font-medium text-default-500 dark:text-default-400"
+                style={{ top: `${(getY(price) / chartHeight) * 100}%` }}
+              >
+                {price.toFixed(4)}
+              </span>
             );
           })}
-        </svg>
+        </div>
       </div>
 
       {/* Legend */}
