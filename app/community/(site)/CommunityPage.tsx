@@ -1,12 +1,20 @@
 "use client";
 
 import CommuntiyLog from "@/components/community/CommuntiyLog";
+import CommunityStatsTab from "@/components/community/stats/CommunityStatsTab";
 import STabs from "@/components/ui/STabs";
 import { addCommunityHandler } from "@/hooks/redux/reducers/CommunityReducer";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
 import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
 import { getMetadata, updateMetadata } from "@/utils/metadata";
-import { TrendingUp, Sparkles, ClockPlus, Logs } from "lucide-react";
+import type { CommunityStats } from "@/utils/communityStats";
+import {
+  TrendingUp,
+  Sparkles,
+  ClockPlus,
+  Logs,
+  BarChart3,
+} from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import { Key, useEffect, useMemo, useState } from "react";
@@ -22,6 +30,7 @@ function CommunityPage({
   account: initAccount,
   initialApiPath,
   initialFeed,
+  initialStats,
 }: {
   community?: Community;
   account?: AccountExt;
@@ -29,6 +38,8 @@ function CommunityPage({
   /** API path the server preloaded `initialFeed` for (the URL's active tab). */
   initialApiPath?: string;
   initialFeed?: Feed[];
+  /** Server-preloaded Stats bundle for the default (7d) range. */
+  initialStats?: CommunityStats;
 }) {
   const th = useTranslations("Home.tabs");
   const tc = useTranslations("Community");
@@ -100,6 +111,19 @@ function CommunityPage({
       },
 
       {
+        id: "stats",
+        title: th("stats"),
+        icon: <BarChart3 size={ICON_SIZE} />,
+        children: communityData?.account ? (
+          <CommunityStatsTab
+            account={communityData.account}
+            viewer={session?.user?.name || undefined}
+            initialStats={initialStats}
+          />
+        ) : null,
+      },
+
+      {
         id: "log",
         title: tc("activities"),
         icon: <Logs size={ICON_SIZE} />,
@@ -108,7 +132,7 @@ function CommunityPage({
         ) : null,
       },
     ],
-    [apiParams, isMobile, communityData?.account, th, tc],
+    [apiParams, isMobile, communityData?.account, th, tc, initialStats],
   );
 
   if (!communityData || !account) return null;

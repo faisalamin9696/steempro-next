@@ -66,7 +66,7 @@ const nextConfig: NextConfig = {
       // community mapping
       {
         source:
-          "/:category(created|trending|hot|payout|about|pinned|roles|log|popular)/hive-:tag",
+          "/:category(created|trending|hot|payout|about|pinned|roles|log|popular|stats)/hive-:tag",
         destination: "/community/:tag/:category",
       },
 

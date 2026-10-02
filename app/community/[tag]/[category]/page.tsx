@@ -2,6 +2,10 @@ import { auth } from "@/auth";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { sdsApi } from "@/libs/sds";
 import { COMMUNITY_FEED_APIS, communityFeedApi } from "@/utils/feedApis";
+import {
+  getCommunityStats,
+  type CommunityStats,
+} from "@/utils/communityStats";
 import { communityJsonLd } from "@/utils/jsonld";
 import CommunityPage from "../../(site)/CommunityPage";
 
@@ -15,9 +19,22 @@ async function page({
   const commAccount = `hive-${tag}`;
   const tab = (category || "trending").toLowerCase();
 
-  const [account, community] = await Promise.all([
+  // The Stats tab's first paint comes from a server-side bundle so the SSR
+  // HTML contains real numbers/charts (SEO) instead of skeletons.
+  const statsPromise: Promise<CommunityStats | null> =
+    tab === "stats"
+      ? getCommunityStats(commAccount, "7d", session?.user?.name || undefined).catch(
+          (error) => {
+            console.error("[community] stats preload failed", error);
+            return null;
+          },
+        )
+      : Promise.resolve(null);
+
+  const [account, community, initialStats] = await Promise.all([
     sdsApi.getAccountExt(commAccount, session?.user?.name),
     sdsApi.getCommunity(commAccount, session?.user?.name),
+    statsPromise,
   ]);
 
   // Preload the active tab's first page so the HTML we serve to crawlers
@@ -44,6 +61,7 @@ async function page({
         community={community}
         initialApiPath={apiPath}
         initialFeed={initialFeed}
+        initialStats={initialStats ?? undefined}
       />
     </>
   );
