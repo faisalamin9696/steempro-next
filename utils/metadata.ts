@@ -495,9 +495,9 @@ export const getMetadata = {
     };
   },
   explorer: () => {
-    const pageTitle = "Blockchain Explorer - Real-time Steem Data";
+    const pageTitle = "Blockchain Explorer - Real-time Steem Data, Stats & Charts";
     const pageDescription =
-      "Explore the Steem blockchain in real-time. Browse blocks, lookup accounts, view transactions, and monitor global chain properties with SteemPro's advanced explorer.";
+      "Explore the Steem blockchain in real-time: live blocks and transactions, network activity charts, active authors, top witnesses, largest accounts, communities and complete chain statistics.";
     const url = `${BASE_URL}/explorer`;
 
     return {
@@ -511,6 +511,9 @@ export const getMetadata = {
         "steem account lookup",
         "real-time blockchain data",
         "steem stats",
+        "steem blockchain charts",
+        "steem witnesses",
+        "steem active authors",
       ],
       alternates: {
         canonical: url,

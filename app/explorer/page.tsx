@@ -1,65 +1,108 @@
-"use client";
-
-import { useState } from "react";
-import { Activity, ArrowRightLeft, Box, Layers, User } from "lucide-react";
+import { connection } from "next/server";
+import { getTranslations } from "next-intl/server";
+import { Clock, Database, Layers, TrendingUp } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
+import ExplorerSearch from "@/components/explorer/ExplorerSearch";
 import ExplorerGlobalStats from "@/components/explorer/ExplorerGlobalStats";
-import ExplorerBlockView from "@/components/explorer/ExplorerBlockView";
-import ExplorerTransactionViewer from "@/components/explorer/ExplorerTransactionViewer";
+import ExplorerTabs from "@/components/explorer/ExplorerTabs";
+import ExplorerChainTotals from "@/components/explorer/ExplorerChainTotals";
+import ExplorerMarketSummary from "@/components/explorer/ExplorerMarketSummary";
 import ExplorerRecentBlocks from "@/components/explorer/ExplorerRecentBlocks";
-import ExplorerAccountLookup from "@/components/explorer/ExplorerAccountLookup";
-import STabs from "@/components/ui/STabs";
-import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
-import { useTranslations } from "next-intl";
+import ExplorerSection from "@/components/explorer/ExplorerSection";
+import {
+  EMPTY_CHAIN_STATS,
+  getChainStats,
+  getLiveSnapshot,
+  getMarketSummary,
+  getRecentBlocks,
+  safe,
+} from "@/utils/explorerStats";
 
-export default function ExplorerPage() {
-  const t = useTranslations("Explorer");
-  const [selectedKey, setSelectedKey] = useState("overview");
-  const { isMobile } = useDeviceInfo();
+/**
+ * Steem blockchain explorer dashboard.
+ *
+ * Tabbed shell: only the Overview tab is server-rendered (chain totals,
+ * 24h market snapshot, KPI strip + live block stream, both SSR-seeded so
+ * real values and deep links ship in the initial HTML), keeping server
+ * work to four memoized fetches. Every other tab fetches exactly one
+ * /api/explorer section on first activation — nothing else is requested.
+ */
 
-  const explorerTabs = [
-    {
-      id: "overview",
-      title: t("tabs.overview"),
-      icon: <Activity size={16} />,
-      content: (
-        <div className="space-y-8">
-          <ExplorerGlobalStats />
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="p-2 rounded-lg bg-primary/10 text-primary border border-primary/20">
-                <Box size={18} />
-              </div>
-              <h2 className="font-bold text-lg">{t("recentBlocks")}</h2>
-            </div>
-            <ExplorerRecentBlocks />
-          </div>
-        </div>
-      ),
-    },
-    {
-      id: "blocks",
-      title: t("tabs.blocks"),
-      icon: <Box size={16} />,
-      content: <ExplorerBlockView />,
-    },
-    {
-      id: "transactions",
-      title: t("tabs.transactions"),
-      icon: <ArrowRightLeft size={16} />,
-      content: <ExplorerTransactionViewer />,
-    },
-    {
-      id: "accounts",
-      title: t("tabs.accounts"),
-      icon: <User size={16} />,
-      content: <ExplorerAccountLookup />,
-    },
-  ];
+const TAB_IDS = [
+  "overview",
+  "activity",
+  "statistics",
+  "content",
+  "leaderboards",
+  "parameters",
+  "lookup",
+];
+const LOOKUP_IDS = ["blocks", "transactions", "accounts"];
+
+type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+
+export default async function ExplorerPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
+  // cacheComponents: opt this page into per-request rendering.
+  await connection();
+
+  const sp = await searchParams;
+  const t = await getTranslations("Explorer");
+
+  const rawTab = typeof sp.tab === "string" ? sp.tab : "";
+  const initialTab = TAB_IDS.includes(rawTab) ? rawTab : "overview";
+  const rawSub = typeof sp.sub === "string" ? sp.sub : "";
+  const initialLookup = LOOKUP_IDS.includes(rawSub) ? rawSub : "blocks";
+  const initialQuery = typeof sp.q === "string" ? sp.q : undefined;
+
+  // Overview-only fetches (all memoized in-process): the static overview
+  // groups plus SSR seeds for the two live widgets so the initial HTML
+  // carries real KPI values and block links for crawlers.
+  const [chainStats, market, live, recentBlocks] = await Promise.all([
+    safe(getChainStats(), EMPTY_CHAIN_STATS),
+    safe(getMarketSummary(24, 3600), null),
+    safe(getLiveSnapshot(), null),
+    safe(getRecentBlocks(10), []),
+  ]);
+
+  const overview = (
+    <div className="space-y-8">
+      <section>
+        <ExplorerSection
+          icon={Database}
+          title={t("sections.chainTotals")}
+          description={t("sections.chainTotalsDesc")}
+        />
+        <ExplorerChainTotals stats={chainStats} />
+      </section>
+
+      <section>
+        <ExplorerSection
+          icon={TrendingUp}
+          title={t("sections.market")}
+          description={t("sections.marketDesc")}
+        />
+        <ExplorerMarketSummary summary={market} windowLabel="24h" />
+      </section>
+
+      <section>
+        <ExplorerSection
+          icon={Clock}
+          title={t("recentBlocks")}
+          description="Last 10 blocks · refreshes every 3 seconds"
+        />
+        <ExplorerRecentBlocks
+          initial={recentBlocks.length ? recentBlocks : undefined}
+        />
+      </section>
+    </div>
+  );
 
   return (
-    <div className="space-y-6 pb-20">
-      {/* Page Header */}
+    <div className="space-y-8 pb-20">
       <PageHeader
         title={t("title")}
         description={t("description")}
@@ -67,33 +110,19 @@ export default function ExplorerPage() {
         color="primary"
       />
 
-      {/* Tabs */}
-      <STabs
-        aria-label="Explorer sections"
-        color="primary"
-        variant="bordered"
-        selectedKey={selectedKey}
-        onSelectionChange={(key) => setSelectedKey(key.toString())}
-        items={explorerTabs}
-        classNames={{
-          tabList:
-            "gap-4 w-full relative border-b border-default-200/60 dark:border-default-100/50 px-0",
-          tab: "data-[hover=true]:opacity-80",
-          cursor: "bg-primary",
-          panel: "px-0 py-4",
-          tabContent: "overflow-x-scroll!",
-        }}
-        tabTitle={(tab) => (
-          <div className="flex items-center space-x-2">
-            {tab.icon}
-            {!isMobile || selectedKey === tab.id ? (
-              <span>{tab.title}</span>
-            ) : null}{" "}
-          </div>
-        )}
-      >
-        {(tab) => tab.content}
-      </STabs>
+      {/* Unified search */}
+      <ExplorerSearch />
+
+      {/* Live global stats (3s refresh, SSR-seeded) */}
+      <ExplorerGlobalStats initial={live ?? undefined} />
+
+      {/* Dashboard tabs — only the selected panel mounts and fetches */}
+      <ExplorerTabs
+        initialTab={initialTab}
+        initialLookup={initialLookup}
+        initialQuery={initialQuery}
+        overview={overview}
+      />
     </div>
   );
 }

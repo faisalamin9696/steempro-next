@@ -2,20 +2,37 @@
 
 import { Card, CardBody } from "@heroui/card";
 import { Chip } from "@heroui/chip";
-import { Spinner } from "@heroui/spinner";
 import { Box, Clock, ArrowRight, User, Zap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "@/components/ui/CustomLink";
 import { useRecentBlocks } from "./useExplorerData";
 import CopyButton from "../ui/CopyButton";
+import { Skeleton } from "./Skeleton";
+import type { RecentBlock } from "@/utils/explorerStats";
 
-export default function ExplorerRecentBlocks() {
-  const { data: blocks, isLoading } = useRecentBlocks();
+export default function ExplorerRecentBlocks({
+  initial,
+}: {
+  /** SSR seed — real block rows + links in the initial HTML, then live */
+  initial?: RecentBlock[];
+}) {
+  // NB: gate on `data`, not `isLoading` — SWR reports isLoading=true on the
+  // initial server render even when fallbackData is seeded, which would hide
+  // the SSR-seeded block rows behind skeletons.
+  const { data: blocks } = useRecentBlocks(initial);
 
-  if (isLoading || !blocks) {
+  if (!blocks) {
     return (
-      <div className="flex items-center justify-center py-16">
-        <Spinner size="lg" color="primary" />
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-5 w-20 rounded-full" />
+          <Skeleton className="h-3 w-48" />
+        </div>
+        <div className="space-y-2">
+          {Array.from({ length: 5 }, (_, i) => (
+            <Skeleton key={i} className="h-[76px] rounded-xl w-full" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -84,7 +101,10 @@ export default function ExplorerRecentBlocks() {
                       </div>
 
                       <div className="flex items-center gap-3 text-xs text-default-500 dark:text-default-400">
-                        <span className="flex items-center gap-1">
+                        <span
+                          className="flex items-center gap-1"
+                          suppressHydrationWarning
+                        >
                           <Clock size={11} />
                           {new Date(block.timestamp + "Z").toLocaleTimeString()}
                         </span>

@@ -136,9 +136,40 @@
       "overview": "সংক্ষিপ্ত বিবরণ",
       "blocks": "ব্লক",
       "transactions": "ট্রানজেকশন",
-      "accounts": "অ্যাকাউন্ট"
+      "accounts": "অ্যাকাউন্ট",
+      "activity": "Activity",
+      "statistics": "Statistics",
+      "content": "Content",
+      "leaderboards": "Leaderboards",
+      "parameters": "Parameters",
+      "lookup": "Lookup"
     },
-    "recentBlocks": "সাম্প্রতিক ব্লক"
+    "recentBlocks": "সাম্প্রতিক ব্লক",
+    "search": {
+      "placeholder": "Search block number, transaction ID or @account",
+      "submit": "Search",
+      "hint": "Accepts block heights, 40-character transaction hashes, @usernames or full post URLs"
+    },
+    "sections": {
+      "activity": "Network activity",
+      "activityDesc": "Transactions and operations per block, sampled across the selected time frame",
+      "chainTotals": "Chain totals",
+      "chainTotalsDesc": "Lifetime counters recorded on the Steem blockchain",
+      "operations": "Operations",
+      "operationsDesc": "Distribution of every operation type ever processed",
+      "content": "Content & authors",
+      "contentDesc": "Posting activity over time and the most active authors",
+      "shareRate": "Reward share rate",
+      "shareRateDesc": "Daily average share rate over the last 90 days",
+      "leaderboards": "Leaderboards",
+      "leaderboardsDesc": "Top witnesses, largest balances, newest accounts and busiest communities",
+      "parameters": "Chain parameters",
+      "parametersDesc": "Network configuration, pricing and scheduled upgrades",
+      "lookup": "Look up",
+      "lookupDesc": "Inspect any block, transaction or account in detail",
+      "market": "Market · 24h",
+      "marketDesc": "Internal-market snapshot: price, change, range and volume over the last day"
+    }
   },
   "Market": {
     "title": "মার্কেট",

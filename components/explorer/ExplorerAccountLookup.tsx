@@ -1,15 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardBody } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { User, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function ExplorerAccountLookup() {
-  const [searchInput, setSearchInput] = useState("");
+export default function ExplorerAccountLookup({
+  initialQuery = "",
+}: {
+  initialQuery?: string;
+}) {
+  const [searchInput, setSearchInput] = useState(initialQuery);
   const router = useRouter();
+
+  // The search fallback can navigate here while this panel is already
+  // mounted (?q= arrives as a new prop) — state initializers don't re-run,
+  // so apply incoming queries explicitly. Never clobber what the user is
+  // typing: only apply when the prop itself changes to a non-empty value.
+  useEffect(() => {
+    if (initialQuery) setSearchInput(initialQuery);
+  }, [initialQuery]);
 
   const handleSearch = () => {
     const username = searchInput.trim().toLowerCase().replace("@", "");

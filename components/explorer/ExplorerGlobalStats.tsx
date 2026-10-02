@@ -1,7 +1,6 @@
 "use client";
 
 import { Card, CardBody } from "@heroui/card";
-import { Spinner } from "@heroui/spinner";
 import { Chip } from "@heroui/chip";
 import {
   Activity,
@@ -18,6 +17,8 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useGlobalProps } from "./useExplorerData";
+import { Skeleton, StatGridSkeleton } from "./Skeleton";
+import type { LiveSnapshot } from "@/utils/explorerStats";
 
 interface StatCardProps {
   label: string;
@@ -56,7 +57,12 @@ function StatCard({
             <p className="text-[11px] text-default-500 dark:text-default-400 uppercase tracking-wider font-semibold">
               {label}
             </p>
-            <p className="text-base font-bold font-mono truncate text-foreground">
+            {/* value can be locale/timezone-formatted (block time) — the
+                server and client intentionally format it independently */}
+            <p
+              className="text-base font-bold font-mono truncate text-foreground"
+              suppressHydrationWarning
+            >
               {value}
             </p>
           </div>
@@ -66,13 +72,28 @@ function StatCard({
   );
 }
 
-export default function ExplorerGlobalStats() {
-  const { data, isLoading } = useGlobalProps();
+export default function ExplorerGlobalStats({
+  initial,
+}: {
+  /** SSR seed — real values in the initial HTML, then refreshes live */
+  initial?: LiveSnapshot;
+}) {
+  // NB: gate on `data`, not `isLoading` — SWR reports isLoading=true on the
+  // initial server render even when fallbackData is seeded (it bypasses
+  // fallback data), which would hide the SSR-seeded values behind skeletons.
+  const { data } = useGlobalProps(initial);
 
-  if (isLoading || !data) {
+  if (!data) {
     return (
-      <div className="flex items-center justify-center py-16">
-        <Spinner size="lg" color="primary" />
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-5 w-16 rounded-full" />
+          <Skeleton className="h-3 w-40" />
+        </div>
+        <StatGridSkeleton
+          count={12}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3"
+        />
       </div>
     );
   }
