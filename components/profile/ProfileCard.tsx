@@ -69,6 +69,23 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
 
   const displayName = (fullName || name).replace("@", "");
 
+  // Vote value depends on `globalProps`, which is only dispatched into the
+  // Redux store from AppWrapper's effect (never during SSR), so the server
+  // always renders `$0`. Gate the value until after mount so server and
+  // client render identical HTML at hydration time.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const voteValue =
+    mounted && globalProps?.fund_per_rshare
+      ? `$${calculateVoteValue(
+          profileData,
+          100,
+          globalProps.fund_per_rshare,
+          globalProps.median_price,
+          false,
+        ).toLocaleString()}`
+      : "$—";
+
   return (
     <Card className={"flex flex-col"} {...props}>
       <div className={twMerge("hidden lg:block", headerClass)}>
@@ -190,13 +207,7 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
             },
             {
               label: t("vote"),
-              value: `$${calculateVoteValue(
-                profileData,
-                100,
-                globalProps.fund_per_rshare,
-                globalProps.median_price,
-                false,
-              ).toLocaleString()}`,
+              value: voteValue,
               title: t("voteTitle"),
             },
           ]}

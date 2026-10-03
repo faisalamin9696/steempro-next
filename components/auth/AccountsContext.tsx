@@ -8,6 +8,7 @@ import {
   ReactNode,
   useState,
   useEffect,
+  useRef,
 } from "react";
 import AuthModal from "./AuthModal";
 import LogoutModal from "../ui/LogoutModal";
@@ -66,11 +67,29 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
     logout: _logout,
   } = useSteemAuth();
 
+  // Auto-restore the stored account when the NextAuth session is missing.
+  // `_switchAccount` gets a new identity on every render of `useSteemAuth`,
+  // so using it as an effect dependency made this effect re-fire on every
+  // render — on silent sign-in failure that became an endless loop of
+  // authenticate/signIn/router.refresh requests (and could bounce the user to
+  // NextAuth's /api/auth/error page). Key the attempt so it runs at most once
+  // per stored account while logged out.
+  const autoLoginAttemptRef = useRef<string | null>(null);
+  const switchAccountRef = useRef(_switchAccount);
+  switchAccountRef.current = _switchAccount;
+
   useEffect(() => {
-    if (status === "unauthenticated" && current && !isPending) {
-      _switchAccount(current.username, current.type, true);
+    if (status === "authenticated") {
+      autoLoginAttemptRef.current = null;
+      return;
     }
-  }, [status, current, isPending, _switchAccount]);
+    if (status !== "unauthenticated" || !current || isPending) return;
+
+    const attemptKey = `${current.username}:${current.type ?? ""}`;
+    if (autoLoginAttemptRef.current === attemptKey) return;
+    autoLoginAttemptRef.current = attemptKey;
+    switchAccountRef.current(current.username, current.type, true);
+  }, [status, current, isPending]);
 
   const loginWithKeychain = async (username: string) => {
     SESSION_PIN = null;

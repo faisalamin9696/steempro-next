@@ -127,6 +127,9 @@ function PostHeader({
           <span
             title={moment.unix(created).toLocaleString()}
             className="flex flex-row gap-2 items-center text-default-400"
+            // Relative time is computed from the clock, so server and client
+            // renders can legitimately differ — don't let it fail hydration.
+            suppressHydrationWarning
           >
             • {moment.unix(created).fromNow()}
             {!!comment.is_pinned && (

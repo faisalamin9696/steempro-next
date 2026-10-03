@@ -6,7 +6,7 @@ import { secureLocalStorageFresh } from "@/utils/user";
 import { PrivateKey } from "@steempro/dsteem";
 import { Session, User } from "@supabase/supabase-js";
 import moment from "moment";
-import { signIn, signOut } from "next-auth/react";
+import { getProviders, signIn, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import secureLocalStorage from "react-secure-storage";
@@ -65,7 +65,16 @@ export function useSteemAuth() {
         session: result.session,
       };
 
-      // 2. NextAuth Credential Login
+      // 2. NextAuth Credential Login.
+      // next-auth's `signIn()` redirects to the /error page whenever
+      // `getProviders()` fails to load (returns null) — even with
+      // `redirect: false`. Pre-check providers so a transient failure throws
+      // here instead of bouncing the user to an auth error page.
+      const providers = await getProviders().catch(() => null);
+      if (!providers) {
+        throw new Error("Authentication service unavailable. Please retry.");
+      }
+
       const { error } = await signIn("credentials", {
         username,
         redirect: false,

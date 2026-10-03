@@ -12,20 +12,33 @@ const defaultBreakpoints = {
 type Breakpoint = keyof typeof defaultBreakpoints;
 type BreakpointValue = (typeof defaultBreakpoints)[Breakpoint];
 
-export const useDeviceInfo = (customBreakpoints = defaultBreakpoints) => {
-  const [windowSize, setWindowSize] = React.useState({
-    width: typeof window !== "undefined" ? window.innerWidth : 0,
-    height: typeof window !== "undefined" ? window.innerHeight : 0,
-  });
+// Hydration-safe window size: the server can't know the viewport, so the
+// server snapshot is 0x0 and React uses it for the hydration render too —
+// client and server trees always match. After hydration (and on plain
+// client-side mounts) the real size is read. Reading window.innerWidth during
+// render made any isMobile/width branch render different markup on the client
+// than the server did, which threw React #418 "Hydration failed" and made
+// React throw away the whole server-rendered subtree.
+const subscribeWindowResize = (onStoreChange: () => void) => {
+  window.addEventListener("resize", onStoreChange);
+  return () => window.removeEventListener("resize", onStoreChange);
+};
+const getWindowWidth = () => window.innerWidth;
+const getWindowHeight = () => window.innerHeight;
+const getWindowSizeOnServer = () => 0;
 
-  React.useEffect(() => {
-    const handleResize = () => setWindowSize({
-      width: window.innerWidth,
-      height: window.innerHeight
-    });
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+export const useDeviceInfo = (customBreakpoints = defaultBreakpoints) => {
+  const width = React.useSyncExternalStore(
+    subscribeWindowResize,
+    getWindowWidth,
+    getWindowSizeOnServer,
+  );
+  const height = React.useSyncExternalStore(
+    subscribeWindowResize,
+    getWindowHeight,
+    getWindowSizeOnServer,
+  );
+  const windowSize = React.useMemo(() => ({ width, height }), [width, height]);
 
   const breakpoints = React.useMemo(() => {
     return Object.entries(customBreakpoints).sort(([, a], [, b]) => a - b) as [Breakpoint, number][];
