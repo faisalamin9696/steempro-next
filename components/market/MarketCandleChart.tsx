@@ -1,6 +1,23 @@
+"use client";
+
+import { useState } from "react";
 import { Spinner } from "@heroui/spinner";
 
+/**
+ * Raw-SVG candlestick chart for the market page.
+ *
+ * Interactive: hovering (or dragging a finger) snaps to the nearest candle,
+ * draws a crosshair and shows an OHLC tooltip in HTML — the old native
+ * `<title>` popups took ~1s to appear and never worked on touch.
+ */
 const MarketCandleChart = ({ data }: { data: MarketHistory[] | undefined }) => {
+  // Hooks first: the two early returns below must not skip them.
+  const [hover, setHover] = useState<{
+    i: number;
+    xPct: number;
+    yPct: number;
+  } | null>(null);
+
   if (!data || data.length === 0)
     return (
       <div className="flex items-center justify-center h-full">
@@ -43,10 +60,45 @@ const MarketCandleChart = ({ data }: { data: MarketHistory[] | undefined }) => {
     paddingY -
     ((price - minLow) / range) * (chartHeight - paddingY * 2);
 
+  // Stale hover index (data refreshed on a 5s poll) → ignore it.
+  const hoverCandle =
+    hover && hover.i >= 0 && hover.i < validData.length
+      ? validData[hover.i]
+      : null;
+
+  const trackPointer = (e: React.PointerEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const xPct = ((e.clientX - rect.left) / rect.width) * 100;
+    const yPct = ((e.clientY - rect.top) / rect.height) * 100;
+    const svgX = (xPct / 100) * chartWidth;
+    const step = (chartWidth - paddingX * 2) / (validData.length - 1);
+    const i = Math.min(
+      validData.length - 1,
+      Math.max(0, Math.round((svgX - paddingX) / step)),
+    );
+    setHover({ i, xPct, yPct: Math.min(88, Math.max(12, yPct)) });
+  };
+
+  const ohlc = hoverCandle
+    ? {
+        open: getPrice(hoverCandle.open_sbd, hoverCandle.open_steem),
+        high: getPrice(hoverCandle.high_sbd, hoverCandle.high_steem),
+        low: getPrice(hoverCandle.low_sbd, hoverCandle.low_steem),
+        close: getPrice(hoverCandle.close_sbd, hoverCandle.close_steem),
+      }
+    : null;
+  const changePct =
+    ohlc && ohlc.open > 0 ? ((ohlc.close - ohlc.open) / ohlc.open) * 100 : 0;
+  const isUp = (ohlc?.close ?? 0) >= (ohlc?.open ?? 0);
+
   return (
     <div className="w-full h-full min-h-[350px] relative group p-4 flex flex-col">
       <div className="flex-1 w-full relative flex">
-        <div className="relative flex-1 min-w-0">
+        <div
+          className="relative flex-1 min-w-0 cursor-crosshair"
+          onPointerMove={trackPointer}
+          onPointerLeave={() => setHover(null)}
+        >
           <svg
             width="100%"
             height="100%"
@@ -78,38 +130,119 @@ const MarketCandleChart = ({ data }: { data: MarketHistory[] | undefined }) => {
               const close = getPrice(d.close_sbd, d.close_steem);
               const high = getPrice(d.high_sbd, d.high_steem);
               const low = getPrice(d.low_sbd, d.low_steem);
-              const isUp = close >= open;
+              const isUpCandle = close >= open;
               const x = getX(i);
               const candleWidth =
                 ((chartWidth - paddingX * 2) / validData.length) * 0.7;
 
               return (
-                <g key={i} className="hover:opacity-80 cursor-crosshair">
-                  <title>{`Time: ${new Date(
-                    d.time * 1000
-                  ).toLocaleString()}\nPrice: ${close.toFixed(6)}`}</title>
+                <g
+                  key={i}
+                  className={`transition-opacity ${
+                    hover && hoverCandle
+                      ? i === hover.i
+                        ? "opacity-100"
+                        : "opacity-45"
+                      : "hover:opacity-80"
+                  }`}
+                >
                   {/* Wick */}
                   <line
                     x1={x}
                     y1={getY(high)}
                     x2={x}
                     y2={getY(low)}
-                    stroke={isUp ? "#17c964" : "#f31260"}
+                    stroke={isUpCandle ? "#17c964" : "#f31260"}
                     strokeWidth="1.5"
                   />
                   {/* Body */}
                   <rect
                     x={x - candleWidth / 2}
-                    y={isUp ? getY(close) : getY(open)}
+                    y={isUpCandle ? getY(close) : getY(open)}
                     width={candleWidth}
                     height={Math.max(Math.abs(getY(close) - getY(open)), 1)}
-                    fill={isUp ? "#17c964" : "#f31260"}
+                    fill={isUpCandle ? "#17c964" : "#f31260"}
                     rx="1"
                   />
                 </g>
               );
             })}
+
+            {/* crosshair at the hovered candle */}
+            {hover && hoverCandle && (
+              <line
+                x1={getX(hover.i)}
+                y1={paddingY / 2}
+                x2={getX(hover.i)}
+                y2={chartHeight - paddingY / 2}
+                stroke="currentColor"
+                strokeOpacity="0.3"
+                strokeWidth="1"
+                strokeDasharray="4"
+                /* the plot scales with preserveAspectRatio="none", so without
+                   this the 1px stroke is multiplied by the x-scale (0.45px in
+                   a 545px-wide plot) and the crosshair all but disappears */
+                vectorEffect="non-scaling-stroke"
+              />
+            )}
           </svg>
+
+          {/* OHLC tooltip (HTML so the stretched SVG can't distort it) */}
+          {hover && hoverCandle && ohlc && (
+            <div
+              className="pointer-events-none absolute z-20 min-w-[178px] rounded-lg border border-default-200/60 dark:border-divider bg-content1/95 backdrop-blur px-2.5 py-2 shadow-lg"
+              style={{
+                left: `${hover.xPct}%`,
+                top: `${hover.yPct}%`,
+                transform:
+                  hover.xPct > 58
+                    ? "translate(calc(-100% - 14px), -50%)"
+                    : "translate(14px, -50%)",
+              }}
+            >
+              <div className="flex items-center justify-between gap-3 mb-1">
+                {/* default-700 clears 4.5:1 on this surface in both themes —
+                    HeroUI inverts default-* in dark mode, so 500/600 and any
+                    `dark:` variant land far too dim here. */}
+                <span className="text-[10px] font-bold uppercase tracking-wide text-default-700">
+                  {new Date(hoverCandle.time * 1000).toLocaleString(undefined, {
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+                <span
+                  className={`text-[11px] font-black tabular-nums ${
+                    isUp ? "text-success" : "text-danger"
+                  }`}
+                >
+                  {changePct >= 0 ? "+" : ""}
+                  {changePct.toFixed(2)}%
+                </span>
+              </div>
+              {(
+                [
+                  ["Open", ohlc.open],
+                  ["High", ohlc.high],
+                  ["Low", ohlc.low],
+                  ["Close", ohlc.close],
+                ] as const
+              ).map(([label, value]) => (
+                <div
+                  key={label}
+                  className="flex items-center justify-between gap-4 text-[11px] leading-5"
+                >
+                  <span className="font-semibold text-default-700">
+                    {label}
+                  </span>
+                  <span className="font-mono font-bold text-foreground tabular-nums">
+                    {value.toFixed(6)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* price axis — HTML text, vertically centered on each grid line */}

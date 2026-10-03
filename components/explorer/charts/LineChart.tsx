@@ -6,7 +6,13 @@
  * Deliberately dependency-free: the app already ships raw-SVG charts
  * (MarketCandleChart) and adding a charting library for a few plots would
  * inflate the client bundle.
+ *
+ * Interactive: moving the pointer (or dragging a finger) snaps to the nearest
+ * data point and shows a crosshair + tooltip with every series' value there,
+ * and legend entries toggle their series on/off.
  */
+
+import { useState } from "react";
 
 export interface LinePoint {
   x: number; // unix seconds
@@ -60,6 +66,14 @@ export default function LineChart({
   yTickCount = 4,
   emptyText = "No data available",
 }: LineChartProps) {
+  // Hooks first — the empty-data early return below must not skip them.
+  const [hidden, setHidden] = useState<Set<string>>(new Set());
+  const [hover, setHover] = useState<{
+    i: number; // index into the distinct x ticks
+    xPct: number; // pointer position inside the plot, 0–100
+    yPct: number; // clamped so the tooltip never leaves the plot
+  } | null>(null);
+
   const yFormatValue = FORMATTERS[yFormat];
   const xFormatValue = formatX;
   const points = series.flatMap((s) => s.points);
@@ -70,6 +84,8 @@ export default function LineChart({
       </div>
     );
   }
+
+  const visible = series.filter((s) => !hidden.has(s.name));
 
   const H = height;
   // HTML row under the plot that carries the x labels — keeping text out of
@@ -82,7 +98,12 @@ export default function LineChart({
   const padBottom = 8;
 
   const xs = points.map((p) => p.x);
-  const ys = points.map((p) => p.y);
+  // Scale from the visible series only, so hiding one rescales the axis.
+  // (If everything is hidden the plot keeps its frame with no strokes.)
+  const scalePoints = visible.length
+    ? visible.flatMap((s) => s.points)
+    : points;
+  const ys = scalePoints.map((p) => p.y);
   const minX = Math.min(...xs);
   const maxX = Math.max(...xs);
   let minY = Math.min(...ys);
@@ -123,13 +144,56 @@ export default function LineChart({
 
   const gradientIds = series.map((_, i) => `linechart-fill-${i}`);
 
+  // Hover bookkeeping — `i` can go stale when the range/data changes, so it is
+  // always validated against the current tick list before rendering.
+  const hoverIdx =
+    hover && hover.i >= 0 && hover.i < uniqXs.length ? hover.i : null;
+  const hoverX = hoverIdx !== null ? uniqXs[hoverIdx] : null;
+
+  const trackPointer = (e: React.PointerEvent<HTMLDivElement>) => {
+    // The legend lives inside the plot box; don't hijack its pointer moves.
+    if ((e.target as HTMLElement).closest?.("[data-chart-legend]")) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const xPct = ((e.clientX - rect.left) / rect.width) * 100;
+    const yPct = ((e.clientY - rect.top) / rect.height) * 100;
+    const dataX =
+      minX + ((xPct / 100) * W - padX) / (W - padX * 2) * spanX;
+    let best = 0;
+    let bestDist = Infinity;
+    uniqXs.forEach((x, i) => {
+      const d = Math.abs(x - dataX);
+      if (d < bestDist) {
+        bestDist = d;
+        best = i;
+      }
+    });
+    setHover({
+      i: best,
+      xPct,
+      // keep the tooltip box inside the plot vertically
+      yPct: Math.min(90, Math.max(10, yPct)),
+    });
+  };
+
+  const toggleSeries = (name: string) =>
+    setHidden((prev) => {
+      const next = new Set(prev);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
+      return next;
+    });
+
   return (
     <div className="w-full" style={{ height: H }}>
       <div className="flex w-full" style={{ height: plotH }}>
         {/* plot area — grid + series only; every label lives in the HTML
             layers beside/below so the non-uniform SVG scaling can never
             squash the text */}
-        <div className="relative flex-1 min-w-0 h-full">
+        <div
+          className="relative flex-1 min-w-0 h-full"
+          onPointerMove={trackPointer}
+          onPointerLeave={() => setHover(null)}
+        >
           <svg
             viewBox={`0 0 ${W} ${plotH}`}
             preserveAspectRatio="none"
@@ -170,7 +234,7 @@ export default function LineChart({
 
             {/* series */}
             {series.map((s, i) => {
-              if (s.points.length === 0) return null;
+              if (hidden.has(s.name) || s.points.length === 0) return null;
               const sorted = [...s.points].sort((a, b) => a.x - b.x);
               const linePath = sorted
                 .map((p, j) => `${j === 0 ? "M" : "L"}${getX(p.x)},${getY(p.y)}`)
@@ -191,38 +255,140 @@ export default function LineChart({
                     strokeLinejoin="round"
                     strokeLinecap="round"
                   />
-                  {/* hover targets: invisible hit circles with native tooltips */}
-                  {sorted.map((p) => (
-                    <circle
-                      key={`${s.name}-${p.x}`}
-                      cx={getX(p.x)}
-                      cy={getY(p.y)}
-                      r="6"
-                      fill="transparent"
-                    >
-                      <title>{`${s.name}\n${new Date(p.x * 1000).toLocaleString()}\n${yFormatValue(p.y)}`}</title>
-                    </circle>
-                  ))}
                 </g>
               );
             })}
+
+            {/* crosshair at the hovered timestamp */}
+            {hoverX !== null && (
+              <line
+                x1={getX(hoverX)}
+                y1={padTop - 10}
+                x2={getX(hoverX)}
+                y2={plotH - padBottom}
+                stroke="currentColor"
+                strokeOpacity="0.28"
+                strokeWidth="1"
+                vectorEffect="non-scaling-stroke"
+              />
+            )}
           </svg>
 
-          {/* legend (HTML, unaffected by SVG stretching) */}
-          <div className="absolute -top-1 left-2 flex items-center gap-3">
-            {series.map((s) => (
-              <span
-                key={s.name}
-                className="flex items-center gap-1.5 text-[11px] font-semibold text-default-500 dark:text-default-400"
-              >
-                <span
-                  className="inline-block w-2.5 h-2.5 rounded-full"
-                  style={{ backgroundColor: s.color }}
-                />
-                {s.name}
-              </span>
-            ))}
+          {/* Focus dots are HTML rather than SVG for the same reason the
+              labels are: the plot scales with preserveAspectRatio="none", so
+              an SVG <circle> is squashed by the x-scale (an 8px dot measured
+              2.5×8px in a 379px-wide plot). CSS pixels never scale, so these
+              stay perfectly round at any container width. */}
+          {hoverX !== null && (
+            <div
+              className="pointer-events-none absolute inset-0"
+              aria-hidden="true"
+            >
+              {visible.map((s) => {
+                const p = s.points.find((pt) => pt.x === hoverX);
+                if (!p) return null;
+                // 9.5px total with a 1.5px border reproduces r=4 with a
+                // straddling 1.5px stroke (outer radius 4.75). Set inline:
+                // Tailwind v4 never emitted an arbitrary `border-[1.5px]`
+                // utility here, and the base border-width is 1px. Chromium
+                // also snaps fractional borders at DPR 1, so this measures
+                // as 1px — that is rendering, not a missing rule.
+                return (
+                  <span
+                    key={`dot-${s.name}`}
+                    className="absolute block rounded-full"
+                    style={{
+                      left: `${(getX(p.x) / W) * 100}%`,
+                      top: `${(getY(p.y) / plotH) * 100}%`,
+                      width: 9.5,
+                      height: 9.5,
+                      boxSizing: "border-box",
+                      border: "1.5px solid #fff",
+                      backgroundColor: s.color,
+                      transform: "translate(-50%, -50%)",
+                    }}
+                  />
+                );
+              })}
+            </div>
+          )}
+
+          {/* legend (HTML, unaffected by SVG stretching) — click to toggle */}
+          <div
+            className="absolute -top-1 left-2 flex flex-wrap items-center gap-3"
+            data-chart-legend
+          >
+            {series.map((s) => {
+              const off = hidden.has(s.name);
+              return (
+                <button
+                  key={s.name}
+                  type="button"
+                  aria-pressed={!off}
+                  onClick={() => toggleSeries(s.name)}
+                  className={`flex items-center gap-1.5 text-[11px] font-semibold transition-opacity hover:opacity-70 cursor-pointer ${
+                    off ? "opacity-40 line-through" : ""
+                  }`}
+                >
+                  <span
+                    className="inline-block w-2.5 h-2.5 rounded-full"
+                    style={{ backgroundColor: s.color }}
+                  />
+                  {s.name}
+                </button>
+              );
+            })}
           </div>
+
+          {/* tooltip (HTML, follows the pointer, flips near the right edge) */}
+          {hoverX !== null && hover && (
+            <div
+              className="pointer-events-none absolute z-20 min-w-[150px] rounded-lg border border-default-200/60 dark:border-divider bg-content1/95 backdrop-blur px-2.5 py-2 shadow-lg"
+              style={{
+                left: `${hover.xPct}%`,
+                top: `${hover.yPct}%`,
+                transform:
+                  hover.xPct > 55
+                    ? "translate(calc(-100% - 12px), -50%)"
+                    : "translate(12px, -50%)",
+              }}
+            >
+              {/* HeroUI inverts its default-* ramp in dark mode (300 = 20%
+                  lightness), so "dark:" variants darken text. default-700 is
+                  the one shade that clears 4.5:1 on the tooltip surface in
+                  both themes — 6.7:1 dark, 4.8:1 light. */}
+              <div className="text-[10px] font-bold uppercase tracking-wide text-default-700 mb-1">
+                {new Date(hoverX * 1000).toLocaleString(undefined, {
+                  month: "short",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </div>
+              {visible.map((s) => {
+                const p = s.points.find((pt) => pt.x === hoverX);
+                return (
+                  <div
+                    key={s.name}
+                    className="flex items-center justify-between gap-3 text-[11px] leading-5"
+                  >
+                    <span className="flex items-center gap-1.5 min-w-0">
+                      <span
+                        className="w-2 h-2 rounded-full shrink-0"
+                        style={{ backgroundColor: s.color }}
+                      />
+                      <span className="truncate font-semibold text-default-700">
+                        {s.name}
+                      </span>
+                    </span>
+                    <span className="font-mono font-bold text-foreground tabular-nums">
+                      {p ? yFormatValue(p.y) : "–"}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* y-axis values — plain HTML text, vertically centered on each grid

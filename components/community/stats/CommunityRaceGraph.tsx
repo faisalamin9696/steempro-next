@@ -179,7 +179,6 @@ function CommunityRaceGraph({
       <div className="flex flex-col gap-2">
         {rows.map((row) => {
           const pct = Math.max(1.5, (row.value / maxValue) * 100);
-          const inTop = row.rank <= 3;
           return (
             <div
               key={row.author}
@@ -234,12 +233,15 @@ function CommunityRaceGraph({
               <div className="flex-1 min-w-0 h-6 rounded-lg bg-default-100/80 dark:bg-default-100/20 overflow-hidden">
                 <div
                   className={`h-full rounded-lg transition-all duration-700 ease-out ${
-                    row.isViewer ? "" : inTop ? "" : ""
+                    row.isViewer ? "bg-linear-to-r from-primary to-primary/60" : ""
                   }`}
                   style={{
                     width: grown ? `${pct}%` : "0%",
+                    // Viewer bar uses theme classes (from-primary/to-primary/60);
+                    // a raw `var(--primary)` here is never defined and rendered
+                    // a transparent bar.
                     background: row.isViewer
-                      ? "linear-gradient(90deg, var(--primary), color-mix(in srgb, var(--primary) 60%, white))"
+                      ? undefined
                       : BAR_COLORS[row.rank - 1] ||
                         "linear-gradient(90deg, #6366f1, #8b5cf6)",
                   }}
