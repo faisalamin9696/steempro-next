@@ -23,7 +23,8 @@ import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 
 import * as heightsDb from "@/libs/supabase/steem-heights";
-import { sdsApi } from "@/libs/sds";
+import { sds } from "@/libs/sds-client";
+import { mapSds } from "@steempro/sds-api";
 import { condenserApi } from "@/libs/consenser";
 import { useAppSelector } from "@/hooks/redux/store";
 import { toast } from "sonner";
@@ -77,11 +78,12 @@ export function SeasonalHallModal({
         try {
           const players = scores.slice(0, 100).map((s) => s.player);
           const [accounts] = await Promise.all([
-            sdsApi.getAccountsExt(players, null, [
-              "name",
-              "reputation",
-              "vests_own",
-            ]),
+            mapSds<AccountExt[]>(
+              await sds.accounts.getAccountsExt({
+                accounts: players.join(","),
+                fields: ["name", "reputation", "vests_own"],
+              }),
+            ),
           ]);
 
           const resultMap: Record<

@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
-import { sdsApi } from "@/libs/sds";
+import { Constants } from "@/constants";
+import { sds } from "@/libs/sds-client";
+import { mapSds } from "@steempro/sds-api";
 import { useSession } from "next-auth/react";
 import { isSteemProShort } from "@/utils";
 import { extractVideoUrl } from "@/utils/shorts";
@@ -42,16 +44,26 @@ export default function ShortsPage({ author }: { author?: string }) {
         const limit = 10;
         const posts =
           (author
-            ? await sdsApi.getSteemShortsByAuthor(
-                author,
-                session?.user?.name || "steem",
-                limit,
-                offsetRef.current,
+            ? mapSds<Feed[]>(
+                await sds.feeds.getCommunityPostsByTagAuthor({
+                  community: Constants.official_community,
+                  tag: Constants.shorts_tag,
+                  author,
+                  observer: session?.user?.name || "steem",
+                  bodyLength: 500,
+                  limit,
+                  offset: offsetRef.current,
+                }),
               )
-            : await sdsApi.getSteemShorts(
-                session?.user?.name || "steem",
-                limit,
-                offsetRef.current,
+            : mapSds<Feed[]>(
+                await sds.feeds.getCommunityPostsByTagCreated({
+                  community: Constants.official_community,
+                  tag: Constants.shorts_tag,
+                  observer: session?.user?.name || "steem",
+                  bodyLength: 500,
+                  limit,
+                  offset: offsetRef.current,
+                }),
               )) ?? [];
 
         if (posts.length < limit) {

@@ -17,7 +17,8 @@ import {
   AtSign,
 } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
-import { sdsApi } from "@/libs/sds";
+import { sds } from "@/libs/sds-client";
+import { mapSds } from "@steempro/sds-api";
 import SAvatar from "../ui/SAvatar";
 import SUsername from "../ui/SUsername";
 import Link from "@/components/ui/CustomLink";
@@ -70,38 +71,81 @@ const SearchModal = ({ isOpen, onOpenChange, onClose }: SearchModalProps) => {
 
         if (tab === "accounts") {
           const accounts =
-            (await sdsApi.getAccountsByPrefix(
-              normalizeUsername(trimmedQuery),
+            (mapSds<
+              Pick<
+                AccountExt,
+                "name" | "reputation" | "posting_json_metadata"
+              >[]
+            >(
+              await sds.accounts.getAccountsByPrefix({
+                prefix: normalizeUsername(trimmedQuery),
+                observer: "steem",
+                fields: "name,reputation,posting_json_metadata",
+                limit: 10,
+                offset: 0,
+              }),
             )) || [];
           setResults((prev) => ({ ...prev, accounts }));
         } else if (tab === "posts") {
           let posts: Post[] = [];
           if (trimmedAuthor) {
             posts =
-              (await sdsApi.getPostsByAuthorText(
-                trimmedAuthor,
-                trimmedQuery,
-                null,
-                250,
+              (mapSds<Post[]>(
+                await sds.contentSearch.getPostsByAuthorText({
+                  author: trimmedAuthor,
+                  searchText: trimmedQuery,
+                  searchIn: "any",
+                  bodyLength: 500,
+                  orderBy: "time",
+                  orderDir: "DESC",
+                  limit: 250,
+                  offset: 0,
+                }),
               )) || [];
           } else {
             posts =
-              (await sdsApi.getPostsByText(trimmedQuery, null, 250)) || [];
+              (mapSds<Post[]>(
+                await sds.contentSearch.getPostsByText({
+                  searchText: trimmedQuery,
+                  searchIn: "any",
+                  bodyLength: 500,
+                  orderBy: "time",
+                  orderDir: "DESC",
+                  limit: 250,
+                  offset: 0,
+                }),
+              )) || [];
           }
           setResults((prev) => ({ ...prev, posts }));
         } else if (tab === "comments") {
           let comments: Post[] = [];
           if (trimmedAuthor) {
             comments =
-              (await sdsApi.getCommentsByAuthorText(
-                trimmedAuthor,
-                trimmedQuery,
-                null,
-                250,
+              (mapSds<Post[]>(
+                await sds.contentSearch.getCommentsByAuthorText({
+                  author: trimmedAuthor,
+                  searchText: trimmedQuery,
+                  searchIn: "any",
+                  bodyLength: 500,
+                  orderBy: "time",
+                  orderDir: "DESC",
+                  limit: 250,
+                  offset: 0,
+                }),
               )) || [];
           } else {
             comments =
-              (await sdsApi.getCommentsByText(trimmedQuery, null, 250)) || [];
+              (mapSds<Post[]>(
+                await sds.contentSearch.getCommentsByText({
+                  searchText: trimmedQuery,
+                  searchIn: "any",
+                  bodyLength: 500,
+                  orderBy: "time",
+                  orderDir: "DESC",
+                  limit: 250,
+                  offset: 0,
+                }),
+              )) || [];
           }
           setResults((prev) => ({ ...prev, comments }));
         }

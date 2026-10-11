@@ -1,4 +1,7 @@
-import { sdsApi } from "@/libs/sds";
+import { mapSds } from "@steempro/sds-api";
+import { sds, getFeedByApiPath } from "@/libs/sds-client";
+import { Constants } from "@/constants";
+import { getProposals } from "@/libs/steem";
 
 /**
  * Sitemap plumbing.
@@ -242,7 +245,7 @@ export function take<T>(items: T[], limit: number): T[] {
 /* ------------------------------------------------------------------------- */
 
 export async function fetchPostPage(page: number): Promise<Feed[]> {
-  const posts = await sdsApi.getFeedByApiPath(
+  const posts = await getFeedByApiPath(
     "getActivePostsByCreated",
     "steem",
     POST_SITEMAP_PAGE_SIZE,
@@ -253,26 +256,33 @@ export async function fetchPostPage(page: number): Promise<Feed[]> {
 }
 
 export async function fetchCommunityPage(page: number): Promise<Community[]> {
-  const communities = await sdsApi.getCommunities(
-    "steem",
-    COMMUNITY_SITEMAP_PAGE_SIZE,
-    (page - 1) * COMMUNITY_SITEMAP_PAGE_SIZE,
+  const communities = mapSds<Community[]>(
+    await sds.communities.getCommunitiesByRank({
+      observer: "steem",
+      limit: COMMUNITY_SITEMAP_PAGE_SIZE,
+      offset: (page - 1) * COMMUNITY_SITEMAP_PAGE_SIZE,
+    }),
   );
   return Array.isArray(communities) ? communities : [];
 }
 
 export async function fetchShortsPage(page: number): Promise<Feed[]> {
-  const shorts = await sdsApi.getSteemShorts(
-    "steem",
-    SHORTS_SITEMAP_PAGE_SIZE,
-    (page - 1) * SHORTS_SITEMAP_PAGE_SIZE,
+  const shorts = mapSds<Feed[]>(
+    await sds.feeds.getCommunityPostsByTagCreated({
+      community: Constants.official_community,
+      tag: Constants.shorts_tag,
+      observer: "steem",
+      bodyLength: 500,
+      limit: SHORTS_SITEMAP_PAGE_SIZE,
+      offset: (page - 1) * SHORTS_SITEMAP_PAGE_SIZE,
+    }),
   );
   return Array.isArray(shorts) ? shorts : [];
 }
 
 export async function fetchProposals(): Promise<Proposal[]> {
   try {
-    const proposals = await sdsApi.getProposals(1000);
+    const proposals = await getProposals(1000);
     return Array.isArray(proposals) ? proposals : [];
   } catch {
     return [];
@@ -377,7 +387,7 @@ export function countPostPages(): Promise<number> {
   return probePageCount(
     "posts",
     async (offset) => {
-      const rows = await sdsApi.getFeedByApiPath(
+      const rows = await getFeedByApiPath(
         "getActivePostsByCreated",
         "steem",
         1,
@@ -394,7 +404,13 @@ export function countCommunityPages(): Promise<number> {
   return probePageCount(
     "communities",
     async (offset) => {
-      const rows = await sdsApi.getCommunities("steem", 1, offset);
+      const rows = mapSds<Community[]>(
+        await sds.communities.getCommunitiesByRank({
+          observer: "steem",
+          limit: 1,
+          offset,
+        }),
+      );
       return Array.isArray(rows) && rows.length > 0;
     },
     COMMUNITY_SITEMAP_PAGE_SIZE,
@@ -405,7 +421,16 @@ export function countShortsPages(): Promise<number> {
   return probePageCount(
     "shorts",
     async (offset) => {
-      const rows = await sdsApi.getSteemShorts("steem", 1, offset);
+      const rows = mapSds<Feed[]>(
+        await sds.feeds.getCommunityPostsByTagCreated({
+          community: Constants.official_community,
+          tag: Constants.shorts_tag,
+          observer: "steem",
+          bodyLength: 500,
+          limit: 1,
+          offset,
+        }),
+      );
       return Array.isArray(rows) && rows.length > 0;
     },
     SHORTS_SITEMAP_PAGE_SIZE,

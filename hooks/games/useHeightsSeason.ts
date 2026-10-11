@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { sdsApi } from "@/libs/sds";
+import { Constants } from "@/constants";
+import { sds } from "@/libs/sds-client";
+import { mapSds } from "@steempro/sds-api";
 
 export interface Feed {
   title: string;
@@ -21,7 +23,16 @@ export const useHeightsSeason = () => {
 
   const fetchCurrentSeason = useCallback(async () => {
     try {
-      const feeds = await sdsApi.getGameSeasons("steem-heights");
+      const feeds = mapSds<Feed[]>(
+        await sds.feeds.getCommunityPostsByTagAuthor({
+          community: Constants.official_community,
+          tag: "steem-heights",
+          author: Constants.funds_account,
+          observer: "steem",
+          bodyLength: 500,
+          limit: 100,
+        }),
+      );
 
       if (feeds && feeds.length > 0) {
         setSeasonalHistory(

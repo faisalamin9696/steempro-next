@@ -1,4 +1,5 @@
-import { sdsApi } from "@/libs/sds";
+import { mapSds } from "@steempro/sds-api";
+import { sds } from "@/libs/sds-client";
 import { useState, useEffect } from "react";
 
 export const useSteemAccount = (
@@ -27,7 +28,12 @@ export const useSteemAccount = (
       setError(null);
       try {
         if (!account) {
-          const account = await sdsApi.getAccountExt(username);
+          const account = mapSds<AccountExt>(
+            await sds.accounts.getAccountExt({
+              account: username,
+              observer: "steem",
+            }),
+          );
           if (account) {
             setAccountData(account);
           } else {
@@ -38,7 +44,39 @@ export const useSteemAccount = (
         }
         // Fetch delegations and history
         try {
-          const delegations = await sdsApi.getDelegations(username, delegationType ?? 'all');
+          const fetchDelegations = async (
+            type: "incoming" | "outgoing" | "expiring" | "all",
+          ): Promise<Delegation[]> => {
+            if (type === "all") {
+              const [incoming, outgoing, expiring] = await Promise.all([
+                fetchDelegations("incoming"),
+                fetchDelegations("outgoing"),
+                fetchDelegations("expiring"),
+              ]);
+              return [...incoming, ...outgoing, ...expiring];
+            }
+            const result = mapSds<Delegation[]>(
+              await (type === "outgoing"
+                ? sds.delegations.getOutgoingDelegations({
+                    account: username,
+                    limit: 1000,
+                    offset: 0,
+                  })
+                : type === "expiring"
+                  ? sds.delegations.getExpiringDelegations({
+                      account: username,
+                      limit: 1000,
+                      offset: 0,
+                    })
+                  : sds.delegations.getIncomingDelegations({
+                      account: username,
+                      limit: 1000,
+                      offset: 0,
+                    })),
+            );
+            return (result ?? []).map((item) => ({ ...item, status: type }));
+          };
+          const delegations = await fetchDelegations(delegationType ?? 'all');
 
           setDelegations({
             incoming: delegations?.filter((d) => d.status === 'incoming') ?? [],

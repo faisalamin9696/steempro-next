@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { sdsApi } from "@/libs/sds";
+import { getFeedByApiPath, sds } from "@/libs/sds-client";
+import { mapSds } from "@steempro/sds-api";
 import { COMMUNITY_FEED_APIS, communityFeedApi } from "@/utils/feedApis";
 import {
   getCommunityStats,
@@ -32,8 +33,20 @@ async function page({
       : Promise.resolve(null);
 
   const [account, community, initialStats] = await Promise.all([
-    sdsApi.getAccountExt(commAccount, session?.user?.name),
-    sdsApi.getCommunity(commAccount, session?.user?.name),
+    (async () =>
+      mapSds<AccountExt>(
+        await sds.accounts.getAccountExt({
+          account: commAccount,
+          observer: session?.user?.name ?? "steem",
+        }),
+      ))(),
+    (async () =>
+      mapSds<Community>(
+        await sds.communities.getCommunity({
+          community: commAccount,
+          observer: session?.user?.name ?? "steem",
+        }),
+      ))(),
     statsPromise,
   ]);
 
@@ -46,7 +59,7 @@ async function page({
   let initialFeed: Feed[] = [];
   if (apiPath) {
     try {
-      const posts = await sdsApi.getFeedByApiPath(apiPath, "steem", 16, 0);
+      const posts = await getFeedByApiPath(apiPath, "steem", 16, 0);
       initialFeed = Array.isArray(posts) ? posts : [];
     } catch (error) {
       console.error("[community] initial feed fetch failed", error);

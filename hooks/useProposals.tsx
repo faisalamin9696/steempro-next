@@ -1,4 +1,6 @@
-import { sdsApi } from "@/libs/sds";
+import { mapSds } from "@steempro/sds-api";
+import { sds } from "@/libs/sds-client";
+import { getProposals, getProposalVotes } from "@/libs/steem";
 import useSWR from "swr";
 import { useSteemUtils } from "./useSteemUtils";
 
@@ -8,7 +10,7 @@ export function useProposals() {
     isLoading: loading,
     error,
     mutate,
-  } = useSWR<Proposal[]>("proposals_list", () => sdsApi.getProposals());
+  } = useSWR<Proposal[]>("proposals_list", () => getProposals());
 
   return { proposals: proposals || [], loading, error, mutate };
 }
@@ -65,7 +67,7 @@ export function useProposalVoters(proposalId?: number) {
 
       // Fetch all proposal voters
       while (true) {
-        let proposalVoters = await sdsApi.getProposalVotes(
+        let proposalVoters = await getProposalVotes(
           proposalId,
           lastVoter,
           1000,
@@ -91,14 +93,19 @@ export function useProposalVoters(proposalId?: number) {
         let batch = allVoters.slice(i, i + 750);
         if (batch.length === 0) continue;
 
-        let accounts = await sdsApi.getAccountsExt(batch, null, [
-          "name",
-          "proxy",
-          "vests_own",
-          "vests_in",
-          "vests_out",
-          "proxied_vsf_votes",
-        ]);
+        let accounts = mapSds<AccountExt[]>(
+          await sds.accounts.getAccountsExt({
+            accounts: batch.join(","),
+            fields: [
+              "name",
+              "proxy",
+              "vests_own",
+              "vests_in",
+              "vests_out",
+              "proxied_vsf_votes",
+            ],
+          }),
+        );
 
         if (accounts) {
           allAccounts = allAccounts.concat(accounts);

@@ -1,5 +1,5 @@
-import { mapSds, sdsFetcher } from "@/constants/functions";
-import { sdsApi } from "@/libs/sds";
+import { mapSds } from "@steempro/sds-api";
+import { sds, getFeedByApiPath } from "@/libs/sds-client";
 import { Role } from "@/utils/community";
 
 /**
@@ -346,10 +346,12 @@ async function fetchCommunityWindow(
   let covered = false;
 
   for (let page = 0; page < maxPages; page++) {
-    const rows = await sdsFetcher<FeedWindowRow[]>(
-      `/feeds_api/${apiPath}/${community}/steem/${FEED_PAGE}/${FEED_PAGE}/${
-        page * FEED_PAGE
-      }`,
+    const rows = await getFeedByApiPath(
+      `${apiPath}/${community}`,
+      "steem",
+      FEED_PAGE,
+      page * FEED_PAGE,
+      FEED_PAGE,
     );
     if (!rows || rows.length === 0) {
       // End of feed — there is nothing older to cover.
@@ -392,10 +394,12 @@ async function fetchAuthorWindow(
   let covered = false;
 
   for (let page = 0; page < maxPages; page++) {
-    const rows = await sdsFetcher<FeedWindowRow[]>(
-      `/feeds_api/${apiPath}/${author}/steem/${FEED_PAGE}/${FEED_PAGE}/${
-        page * FEED_PAGE
-      }`,
+    const rows = await getFeedByApiPath(
+      `${apiPath}/${author}`,
+      "steem",
+      FEED_PAGE,
+      page * FEED_PAGE,
+      FEED_PAGE,
     );
     if (!rows || rows.length === 0) {
       covered = true;
@@ -699,7 +703,12 @@ export function getCommunityStats(
       const observer = viewer || "steem";
 
       const [comm, postWin, commentWin] = await Promise.all([
-        safe(sdsApi.getCommunity(community, observer), null as Community | null),
+        safe(
+          sds.communities
+            .getCommunity({ community, observer })
+            .then((result) => mapSds<Community>(result)),
+          null as Community | null,
+        ),
         fetchCommunityWindow("Posts", community, fetchFrom, MAX_POST_PAGES),
         fetchCommunityWindow(
           "Comments",
@@ -806,11 +815,13 @@ export function getCommunityStats(
       let leaderExt: AccountExt[] = [];
       if (leaderAccounts.length) {
         leaderExt = await safe(
-          sdsApi.getAccountsExt(leaderAccounts, observer, [
-            "name",
-            "reputation",
-            "count_followers",
-          ]),
+          sds.accounts
+            .getAccountsExt({
+              accounts: leaderAccounts.join(","),
+              observer,
+              fields: ["name", "reputation", "count_followers"],
+            })
+            .then((result) => mapSds<AccountExt[]>(result)),
           [],
         );
       }
@@ -985,7 +996,14 @@ export function getMyCommunities(user: string): Promise<MyCommunity[]> {
     `my-communities-${user}-${bucketKey}`,
     10 * 60_000,
     async () => {
-      const rows = await sdsApi.getCommunitiesBySubscriber(user, user, 100, 0);
+      const rows = mapSds<Community[]>(
+        await sds.communities.getCommunitiesBySubscriber({
+          subscriber: user,
+          observer: user,
+          limit: 100,
+          offset: 0,
+        }),
+      );
       const isStaff = (role?: string) => {
         try {
           return Role.atLeast(role || "", "mod");

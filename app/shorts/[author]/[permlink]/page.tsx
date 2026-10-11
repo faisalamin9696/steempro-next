@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { sdsApi } from "@/libs/sds";
+import { sds } from "@/libs/sds-client";
+import { mapSds } from "@steempro/sds-api";
 import { breadcrumbJsonLd, videoObjectJsonLd } from "@/utils/jsonld";
 import { extractVideoUrl } from "@/utils/shorts";
 import { notFound } from "next/navigation";
@@ -27,7 +28,14 @@ export default async function SingleShortPage({
 
   let post: Post | null = null;
   try {
-    post = await sdsApi.getPost(author, permlink, session?.user?.name || "steem");
+    post = mapSds<Post>(
+      await sds.posts.getPost({
+        author,
+        permlink,
+        withVotes: true,
+        observer: session?.user?.name || "steem",
+      }),
+    );
   } catch (error) {
     console.error("[shorts] failed to load short", error);
   }

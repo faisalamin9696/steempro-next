@@ -13,7 +13,7 @@ import { useSession } from "next-auth/react";
 import { AccountRecoveryStatus } from "@/components/wallet/AccountRecoveryStatus";
 import { ConversionStatus } from "@/components/wallet/ConversionStatus";
 import OpenOrdersTable from "@/components/market/OpenOrdersTable";
-import { sdsApi } from "@/libs/sds";
+import { getOpenOrders } from "@/libs/steem";
 import useSWR from "swr";
 import SCard from "@/components/ui/SCard";
 import { Plus } from "lucide-react";
@@ -39,7 +39,7 @@ const WalletTab = ({ account }: { account: AccountExt }) => {
 
   const { data: openOrders, mutate: mutateOrders } = useSWR(
     isMe ? `market-open-orders-${session?.user?.name!}` : null,
-    () => sdsApi.getOpenOrders(session?.user?.name!),
+    () => getOpenOrders(session?.user?.name!),
     { refreshInterval: 15000 },
   );
 

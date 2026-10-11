@@ -17,7 +17,8 @@ import { Tabs, Tab } from "@heroui/tabs";
 import moment from "moment";
 import { useState, useMemo } from "react";
 import useSWR from "swr";
-import { sdsApi } from "@/libs/sds";
+import { sds } from "@/libs/sds-client";
+import { mapSds } from "@steempro/sds-api";
 import { ColumnDef, DataTable } from "../ui/data-table";
 import LoadingStatus from "../LoadingStatus";
 import SUsername from "../ui/SUsername";
@@ -42,7 +43,12 @@ const WitnessDetailsModal = ({
 
   const { data: votesData, isLoading: isVotesLoading } = useSWR(
     witness?.name && isOpen ? `witness-votes-${witness?.name}` : null,
-    () => sdsApi.getWitnessVotes(witness?.name!),
+    async () =>
+      mapSds<WitnessVote[]>(
+        await sds.witnesses.getWitnessVotesSummary({
+          witness: witness?.name!,
+        }),
+      ),
   );
 
   if (!witness) return null;

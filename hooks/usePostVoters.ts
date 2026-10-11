@@ -1,4 +1,5 @@
-import { sdsApi } from "@/libs/sds";
+import { mapSds } from "@steempro/sds-api";
+import { sds } from "@/libs/sds-client";
 import { useState, useEffect } from "react";
 
 export function usePostVoters(
@@ -17,7 +18,9 @@ export function usePostVoters(
         setIsLoading(true);
         setError(null);
 
-        const votersData = await sdsApi.getVoters(author, permlink);
+        const votersData = mapSds<PostVote[]>(
+          await sds.posts.getVotes({ author, permlink }),
+        );
 
         setVoters(votersData);
       } catch (err) {

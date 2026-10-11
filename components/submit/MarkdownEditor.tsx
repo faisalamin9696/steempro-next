@@ -5,7 +5,8 @@ import { Card, CardBody } from "@heroui/card";
 import SAvatar from "../ui/SAvatar";
 import MentionInput, { MentionItem } from "./MentionInput";
 import { twMerge } from "tailwind-merge";
-import { sdsApi } from "@/libs/sds";
+import { sds } from "@/libs/sds-client";
+import { mapSds } from "@steempro/sds-api";
 import ImageUploadButton from "./ImageUploadButton";
 import {
   AlignCenter,
@@ -92,7 +93,17 @@ async function fetchUsers(
 
     debounceTimer = setTimeout(async () => {
       try {
-        const response = await sdsApi.getAccountsByPrefix(query);
+        const response = mapSds<
+          Pick<AccountExt, "name" | "reputation" | "posting_json_metadata">[]
+        >(
+          await sds.accounts.getAccountsByPrefix({
+            prefix: query,
+            observer: "steem",
+            fields: "name,reputation,posting_json_metadata",
+            limit: 10,
+            offset: 0,
+          }),
+        );
         const results: MentionItem[] =
           response?.map((account) => {
             const { name, posting_json_metadata } = account || {};

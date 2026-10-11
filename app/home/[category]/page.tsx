@@ -1,4 +1,4 @@
-import { sdsApi } from "@/libs/sds";
+import { getFeedByApiPath } from "@/libs/sds-client";
 import { FALLBACK_HOME_FEED_API, HOME_FEED_APIS } from "@/utils/feedApis";
 import { HomeTabs } from "./HomeTabs";
 
@@ -18,7 +18,7 @@ export default async function HomePage({
 
   let initialFeed: Feed[] = [];
   try {
-    const posts = await sdsApi.getFeedByApiPath(apiPath, "steem", 16, 0);
+    const posts = await getFeedByApiPath(apiPath, "steem", 16, 0);
     initialFeed = Array.isArray(posts) ? posts : [];
   } catch (error) {
     console.error("[home] initial feed fetch failed", error);

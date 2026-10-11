@@ -1,4 +1,5 @@
-import { sdsApi } from "@/libs/sds";
+import { mapSds } from "@steempro/sds-api";
+import { sds } from "@/libs/sds-client";
 import { useState, useEffect } from "react";
 
 export function useWitnesses(
@@ -15,7 +16,13 @@ export function useWitnesses(
         setIsLoading(true);
         setError(null);
 
-        const witnessesWithRank = await sdsApi.getWitnessesByRank(observer);
+        const witnessesWithRank = mapSds<Witness[]>(
+          await sds.witnesses.getWitnessesByRank({
+            observer: observer ?? "steem",
+            limit: 1000,
+            offset: 0,
+          }),
+        );
 
         setWitnesses(witnessesWithRank);
       } catch (err) {

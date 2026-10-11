@@ -13,7 +13,8 @@ import { Tabs, Tab } from "@heroui/tabs";
 import {  Chip } from "@heroui/chip";
 import { Button } from "@heroui/button";
 import { ScrollShadow } from "@heroui/scroll-shadow";
-import { sdsApi } from "@/libs/sds";
+import { sds } from "@/libs/sds-client";
+import { mapSds } from "@steempro/sds-api";
 import moment from "moment";
 import { diff_match_patch as diffMatchPatch } from "diff-match-patch";
 import { History, ArrowLeftRight, FileText, Tag } from "lucide-react";
@@ -173,7 +174,9 @@ export default function EditHistoryModal({
     (async () => {
       setData((prev) => ({ ...prev, loading: true }));
       try {
-        const res = await sdsApi.getContentHistory(author, permlink);
+        const res = mapSds<
+          { time: number; json_metadata: string; title: string; body: string }[]
+        >(await sds.contentHistory.getContentHistory({ author, permlink }));
         if (active) {
           const processed = processHistory(res || []);
           setData({ history: processed, loading: false });

@@ -23,7 +23,8 @@ import { useTranslations } from "next-intl";
 
 const ICON_SIZE = 20;
 
-import { sdsApi } from "@/libs/sds";
+import { sds } from "@/libs/sds-client";
+import { mapSds } from "@steempro/sds-api";
 
 function CommunityPage({
   community: initCommunity,
@@ -55,8 +56,20 @@ function CommunityPage({
     if (!initCommunity && tag) {
       const commAccount = `hive-${tag}`;
       Promise.all([
-        sdsApi.getAccountExt(commAccount, session?.user?.name),
-        sdsApi.getCommunity(commAccount, session?.user?.name),
+        (async () =>
+          mapSds<AccountExt>(
+            await sds.accounts.getAccountExt({
+              account: commAccount,
+              observer: session?.user?.name ?? "steem",
+            }),
+          ))(),
+        (async () =>
+          mapSds<Community>(
+            await sds.communities.getCommunity({
+              community: commAccount,
+              observer: session?.user?.name ?? "steem",
+            }),
+          ))(),
       ]).then(([acc, comm]) => {
         setAccount(acc);
         setCommunity(comm);

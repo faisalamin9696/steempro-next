@@ -27,7 +27,7 @@ import SPopover from "@/components/ui/SPopover";
 import { Progress } from "@heroui/progress";
 import { motion, AnimatePresence } from "framer-motion";
 import moment from "moment";
-import { sdsApi } from "@/libs/sds";
+import { getFeedByApiPath } from "@/libs/sds-client";
 import { AsyncUtils } from "@/utils/async.utils";
 
 interface CommentTask {
@@ -160,7 +160,7 @@ export default function BatchCommentingPage() {
             tempTasks[u] = { ...tempTasks[u], status: "fetching" };
             setTasks({ ...tempTasks });
 
-            const posts = await sdsApi.getFeedByApiPath(
+            const posts = await getFeedByApiPath(
               `getPostsByAuthor/${u}`,
               "steem",
               1,

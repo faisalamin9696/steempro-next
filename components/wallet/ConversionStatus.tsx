@@ -1,6 +1,6 @@
 "use client";
 
-import { sdsApi } from "@/libs/sds";
+import { getPendingConversions } from "@/libs/steem";
 import { Alert } from "@heroui/alert";
 import { RefreshCw } from "lucide-react";
 import moment from "moment";
@@ -13,7 +13,7 @@ interface ConversionStatusProps {
 export const ConversionStatus = ({ account }: ConversionStatusProps) => {
   const { data: conversions } = useSWR(
     account ? `conversion_requests/${account.name}` : null,
-    () => sdsApi.getPendingConversions(account.name)
+    () => getPendingConversions(account.name)
   );
 
   if (!conversions || conversions.length === 0) {

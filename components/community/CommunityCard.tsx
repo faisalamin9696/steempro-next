@@ -12,7 +12,7 @@ import { getResizedAvatar } from "@/utils/image";
 import { Calendar, DollarSign } from "lucide-react";
 import { Constants } from "@/constants";
 import { twMerge } from "tailwind-merge";
-import { mapSds } from "@/constants/functions";
+import { mapSds } from "@steempro/sds-api";
 import MarkdownViewer from "../post/body/MarkdownViewer";
 import { Role as RoleLevel } from "@/utils/community";
 import UsersModal from "../ui/UsersModal";
@@ -46,7 +46,7 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
   const { isMobile } = useDeviceInfo();
   const displayName = (title || name).replace("@", "");
   const shareUrl = `${Constants.site_url}/trending/${name}`;
-  const roles: Role[] = mapSds(community.roles);
+  const roles: Role[] = mapSds<Role[]>(community.roles);
   const leaderShip = roles.filter((item) =>
     RoleLevel.atLeast(item.role, "mod"),
   );

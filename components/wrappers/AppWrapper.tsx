@@ -7,7 +7,8 @@ import { addGlobalPropsHandler } from "@/hooks/redux/reducers/GlobalPropsReducer
 import { addLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { updateSettingsHandler } from "@/hooks/redux/reducers/SettingsReducer";
 import { useAppDispatch } from "@/hooks/redux/store";
-import { sdsApi } from "@/libs/sds";
+import { sds, sdsCached } from "@/libs/sds-client";
+import { mapSds } from "@steempro/sds-api";
 import { updateClient } from "@/libs/steem";
 import { updateActiveSettings } from "@/utils";
 import { getSettings } from "@/utils/user";
@@ -35,12 +36,19 @@ function AppWrapper({
 
   const { data: globalProps } = useSWR<GlobalProps>(
     () => (session?.user?.name ? `globals` : null),
-    () => sdsApi.getGlobalProps(),
+    async () =>
+      mapSds<GlobalProps>(await sdsCached.steemRequests.getSteemProps()),
   );
 
   const { data: accountData } = useSWR<AccountExt>(
     () => (session?.user?.name ? `account-${session.user.name}` : null),
-    () => sdsApi.getAccountExt(session?.user?.name || ""),
+    async () =>
+      mapSds<AccountExt>(
+        await sds.accounts.getAccountExt({
+          account: session?.user?.name || "",
+          observer: "steem",
+        }),
+      ),
   );
 
   const { data: unreadNotificationsCount } = useSWR<number>(
@@ -48,7 +56,13 @@ function AppWrapper({
       session?.user?.name
         ? `account-unread-notifications-${session.user.name}`
         : null,
-    () => sdsApi.getUnreadNotificationsCount(session?.user?.name || ""),
+    async () =>
+      mapSds<number>(
+        await sds.notifications.getFilteredUnreadCount({
+          account: session?.user?.name || "",
+          filter: Constants.notifications_filter,
+        }),
+      ),
   );
   useEffect(() => {
     if (globalProps) {

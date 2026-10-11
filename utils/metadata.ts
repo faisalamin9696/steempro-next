@@ -1,7 +1,9 @@
 import { extractBodySummary } from "./extractContent";
 import { ResolvingMetadata } from "next";
 import { getResizedAvatar, getThumbnail } from "./image";
-import { sdsApi } from "@/libs/sds";
+import { mapSds } from "@steempro/sds-api";
+import { sds } from "@/libs/sds-client";
+import { getProposal } from "@/libs/steem";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.steempro.com";
 
@@ -90,7 +92,12 @@ export const getMetadata = {
     username = username?.toLowerCase();
     tab = tab?.toLowerCase() || "blog";
 
-    const result = await sdsApi.getAccountExt(username);
+    const result = mapSds<AccountExt>(
+      await sds.accounts.getAccountExt({
+        account: username,
+        observer: "steem",
+      }),
+    );
     if (!result) {
       return getMetadata.profileSync(username, tab, {} as any);
     }
@@ -304,7 +311,14 @@ export const getMetadata = {
   postAsync: async (author: string, permlink: string) => {
     author = author?.toLowerCase();
     permlink = permlink?.toLowerCase();
-    const result = await sdsApi.getPost(author, permlink);
+    const result = mapSds<Post>(
+      await sds.posts.getPost({
+        author,
+        permlink,
+        withVotes: true,
+        observer: "steem",
+      }),
+    );
     if (!result || result.link_id === 0) {
       const pageTitle = author ? `@${author}'s post` : "Post Not Found";
       return {
@@ -387,7 +401,9 @@ export const getMetadata = {
 
     const [parentData, result] = await Promise.all([
       parent,
-      sdsApi.getCommunity(community),
+      sds.communities
+        .getCommunity({ community, observer: "steem" })
+        .then((comm) => mapSds<Community>(comm)),
     ]);
 
     const previousImages = parentData?.openGraph?.images || [];
@@ -608,7 +624,7 @@ export const getMetadata = {
 
   proposalAsync: async (id: string) => {
     try {
-      const proposal = await sdsApi.getProposal(Number(id));
+      const proposal = await getProposal(Number(id));
       if (proposal) {
         // Optimization: Use subject from proposal if possible,
         // fallback to fetching post for full details and thumbnail

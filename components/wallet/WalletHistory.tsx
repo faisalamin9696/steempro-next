@@ -16,7 +16,8 @@ import Link from "@/components/ui/CustomLink";
 import { useCallback, useMemo, useState } from "react";
 import { Select, SelectItem } from "@heroui/select";
 import useSWR from "swr";
-import { sdsApi } from "@/libs/sds";
+import { sds } from "@/libs/sds-client";
+import { mapSds } from "@steempro/sds-api";
 import LoadingStatus from "../LoadingStatus";
 
 interface WalletHistoryProps {
@@ -55,7 +56,23 @@ export const WalletHistory = ({ username }: WalletHistoryProps) => {
 
   const { data, isLoading } = useSWR(
     username ? `account-hostory-${username}-${typeFilter}` : null,
-    () => sdsApi.getAccountHistory(username, typeFilter),
+    async () => {
+      const opTypes =
+        typeFilter === "all"
+          ? "transfer,transfer_to_vesting,withdraw_vesting,fill_vesting_withdraw,claim_reward_balance"
+          : typeFilter;
+
+      return mapSds<AccountHistory[]>(
+        await sds.accountHistory.getHistoryByOpTypesTime({
+          account: username,
+          opTypes,
+          fromTime: moment().subtract(3, "months").unix(),
+          toTime: moment().unix(),
+          limit: 2500,
+          offset: 0,
+        }),
+      );
+    },
   );
 
   const filteredHistory = useMemo(() => {

@@ -8,7 +8,8 @@ import {
   Signature,
   TransactionConfirmation,
 } from "@steempro/dsteem";
-import { sdsApi } from "./sds";
+import { sds } from "./sds-client";
+import { mapSds } from "@steempro/sds-api";
 import { keychainApi } from "./keychain";
 import moment from "moment";
 
@@ -196,12 +197,13 @@ class SteemApi {
     }
 
     // Fetch account authorities
-    const account = await sdsApi.getAccountExt(username, undefined, [
-      "posting_key_auths",
-      "active_key_auths",
-      "owner_key_auths",
-      "memo_key",
-    ]);
+    const account = mapSds<AccountExt>(
+      await sds.accounts.getAccountExt({
+        account: username,
+        observer: "steem",
+        fields: "posting_key_auths,active_key_auths,owner_key_auths,memo_key",
+      }),
+    );
     if (!account) throw new Error("Account not found");
 
     const postingKeys = account.posting_key_auths.map(([key]) => key);
@@ -396,7 +398,7 @@ class SteemApi {
     signature: Signature,
   ): Promise<boolean> {
     try {
-      const account = await sdsApi.getAccountExt(username);
+      const account = mapSds<AccountExt>(await sds.accounts.getAccountExt({ account: username, observer: "steem" }));
       const postingPubKey = account?.posting_key_auths?.[0]?.[0];
       const activePubKey = account?.active_key_auths?.[0]?.[0];
       const isValid =
@@ -937,7 +939,7 @@ class SteemApi {
     privateKey?: string,
     useKeychain: boolean = false,
   ) {
-    const existing = await sdsApi.getAccountExt(account);
+    const existing = mapSds<AccountExt>(await sds.accounts.getAccountExt({ account, observer: "steem" }));
     const existingMetadata = JSON.parse(
       existing?.posting_json_metadata || "{}",
     );
@@ -1415,7 +1417,7 @@ class SteemApi {
     privateKey?: string,
     useKeychain: boolean = false,
   ) => {
-    const accountData = await sdsApi.getAccountExt(account);
+    const accountData = mapSds<AccountExt>(await sds.accounts.getAccountExt({ account, observer: "steem" }));
     if (!accountData) throw new Error("Account not found");
 
     const postingAuths = accountData.posting_account_auths || [];
@@ -1502,3 +1504,225 @@ class SteemApi {
 }
 
 export const steemApi = new SteemApi();
+
+// ---------------------------------------------------------------------------
+// Node RPC helpers (condenser_api / database_api).
+//
+// These talk straight to a Steem node, never to SDS, so they live next to
+// `client` rather than in the SDS client. They were previously methods on the
+// hand-rolled `SdsApi` class, which is why they used to be reached via
+// `sdsApi.*`.
+// ---------------------------------------------------------------------------
+
+const parseAssetAmount = (asset: any): number => {
+  if (typeof asset === "number") return asset;
+  if (typeof asset === "string") return parseFloat(asset.split(" ")[0]);
+  if (asset && typeof asset === "object" && asset.amount)
+    return parseFloat(asset.amount) / Math.pow(10, asset.precision || 3);
+  return 0;
+};
+
+export async function getProposal(id: number): Promise<Proposal> {
+  const result = await client.call("condenser_api", "find_proposals", [[id]]);
+  return result?.[0];
+}
+
+export async function getProposals(limit: number = 1000): Promise<Proposal[]> {
+  return client.call("condenser_api", "list_proposals", [
+    [-1],
+    limit,
+    "by_total_votes",
+    "descending",
+    "all",
+  ]);
+}
+
+export async function getProposalVotes(
+  proposalId: number,
+  voter: string,
+  limit: number = 1000,
+): Promise<ProposalVote[]> {
+  const votes: ProposalVote[] = [];
+  let currentVoter = voter;
+  let isFirst = true;
+
+  while (votes.length < limit) {
+    let fetchLimit = limit - votes.length;
+    if (!isFirst) fetchLimit += 1;
+    if (fetchLimit > 1000) fetchLimit = 1000;
+
+    if (fetchLimit <= 0) break;
+
+    const response: ProposalVote[] = await client.call(
+      "condenser_api",
+      "list_proposal_votes",
+      [[proposalId, currentVoter], fetchLimit, "by_proposal_voter"],
+    );
+
+    if (!response || response.length === 0) break;
+
+    const relevant = response.filter(
+      (x) => x.proposal.proposal_id === proposalId,
+    );
+
+    if (relevant.length === 0) break;
+
+    let chunk = relevant;
+    if (!isFirst) {
+      if (chunk[0].voter === currentVoter) {
+        chunk = chunk.slice(1);
+      }
+    }
+
+    if (chunk.length === 0) {
+      if (response.length > relevant.length) break;
+      if (response.length < fetchLimit) break;
+      break;
+    }
+
+    votes.push(...chunk);
+
+    currentVoter = relevant[relevant.length - 1].voter;
+    isFirst = false;
+
+    if (response.length < fetchLimit) break;
+    if (relevant.length < response.length) break;
+  }
+
+  return votes;
+}
+
+export async function getPendingConversions(owner: string) {
+  return client.database.call("get_conversion_requests", [owner]);
+}
+
+export async function getTicker(): Promise<MarketTicker> {
+  const res = await client.database.call("get_ticker");
+  return {
+    latest: parseFloat(res.latest),
+    lowest_ask: parseFloat(res.lowest_ask),
+    highest_bid: parseFloat(res.highest_bid),
+    percent_change: parseFloat(res.percent_change),
+    steem_volume: parseFloat(res.steem_volume),
+    sbd_volume: parseFloat(res.sbd_volume),
+  };
+}
+
+export async function getVolume(): Promise<{
+  steem_volume: number;
+  sbd_volume: number;
+}> {
+  const res = await client.database.call("get_volume");
+  return {
+    steem_volume: parseFloat(res.steem_volume),
+    sbd_volume: parseFloat(res.sbd_volume),
+  };
+}
+
+export async function getOrderBook(limit: number = 100): Promise<OrderBook> {
+  const res = await client.database.call("get_order_book", [limit]);
+  const mapper = (items: any[]) =>
+    (items || []).map((item) => ({
+      order_price: item.order_price,
+      real_price: parseFloat(item.real_price),
+      steem:
+        parseAssetAmount(item.steem) /
+        (typeof item.steem === "number" ? 1000 : 1),
+      sbd:
+        parseAssetAmount(item.sbd) / (typeof item.sbd === "number" ? 1000 : 1),
+    }));
+
+  return {
+    bids: mapper(res.bids),
+    asks: mapper(res.asks),
+  };
+}
+
+export async function getTradeHistory(limit: number = 100): Promise<
+  MarketTrade[]
+> {
+  const end = new Date().toISOString().split(".")[0];
+  const start = new Date(Date.now() - 24 * 60 * 60 * 1000)
+    .toISOString()
+    .split(".")[0];
+  const res = await client.database.call("get_trade_history", [
+    start,
+    end,
+    limit,
+  ]);
+
+  return (res || []).map((t: any) => ({
+    date: moment.utc(t.date).unix(),
+    current_pays: t.current_pays,
+    open_pays: t.open_pays,
+  }));
+}
+
+export async function getMarketHistory(
+  bucketSeconds: number = 3600,
+  hours: number = 24,
+): Promise<MarketHistory[]> {
+  const end = new Date().toISOString().split(".")[0];
+  const start = new Date(Date.now() - hours * 60 * 60 * 1000)
+    .toISOString()
+    .split(".")[0];
+  const res = await client.database.call("get_market_history", [
+    bucketSeconds,
+    start,
+    end,
+  ]);
+
+  return (res || []).map((h: any) => {
+    // Handle nested structure if present (some RPC versions use {steem: {}, non_steem: {}})
+    const s = h.steem || {};
+    const ns = h.non_steem || h.sbd || {};
+
+    // Check if data is already flat or nested
+    const open_steem = h.open_steem ?? s.open;
+    const open_sbd = h.open_sbd ?? ns.open;
+    const high_steem = h.high_steem ?? s.high;
+    const high_sbd = h.high_sbd ?? ns.high;
+    const low_steem = h.low_steem ?? s.low;
+    const low_sbd = h.low_sbd ?? ns.low;
+    const close_steem = h.close_steem ?? s.close;
+    const close_sbd = h.close_sbd ?? ns.close;
+    const steem_volume = h.steem_volume ?? s.volume;
+    const sbd_volume = h.sbd_volume ?? ns.volume;
+
+    const isSatoshis = typeof open_steem === "number";
+    const scale = isSatoshis ? 1000 : 1;
+
+    return {
+      time: moment.utc(h.open).unix(),
+      open_steem: parseAssetAmount(open_steem) / scale,
+      open_sbd: parseAssetAmount(open_sbd) / scale,
+      high_steem: parseAssetAmount(high_steem) / scale,
+      high_sbd: parseAssetAmount(high_sbd) / scale,
+      low_steem: parseAssetAmount(low_steem) / scale,
+      low_sbd: parseAssetAmount(low_sbd) / scale,
+      close_steem: parseAssetAmount(close_steem) / scale,
+      close_sbd: parseAssetAmount(close_sbd) / scale,
+      steem_volume: parseAssetAmount(steem_volume) / scale,
+      sbd_volume: parseAssetAmount(sbd_volume) / scale,
+    };
+  });
+}
+
+export async function getOpenOrders(username: string): Promise<OpenOrder[]> {
+  const res = await client.database.call("get_open_orders", [username]);
+  return (res || []).map((o: any) => {
+    const isSatoshis = typeof o.for_sale === "number";
+    const scale = isSatoshis ? 1000 : 1;
+    return {
+      id: o.id,
+      created: moment.utc(o.created).unix(),
+      expiration: o.expiration,
+      seller: o.seller,
+      orderid: o.orderid,
+      for_sale: parseAssetAmount(o.for_sale) / scale,
+      sell_price: o.sell_price,
+      real_price: parseFloat(o.real_price),
+      reward: o.reward,
+    };
+  });
+}

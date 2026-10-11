@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { sdsApi } from "@/libs/sds";
+import { sds } from "@/libs/sds-client";
+import { mapSds } from "@steempro/sds-api";
 import ShortsPlayer from "@/components/shorts/ShortsPlayer";
 import { useSession } from "next-auth/react";
 import { ShortsPlayerInstance } from "../../page";
@@ -40,10 +41,13 @@ export default function SingleShort({
     const fetchShort = async () => {
       try {
         setLoading(true);
-        const post = await sdsApi.getPost(
-          author,
-          permlink,
-          session?.user?.name || "steem",
+        const post = mapSds<Post>(
+          await sds.posts.getPost({
+            author,
+            permlink,
+            withVotes: true,
+            observer: session?.user?.name || "steem",
+          }),
         );
         if (post && isSteemProShort(post)) {
           const videoUrl = extractVideoUrl(post);

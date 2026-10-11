@@ -16,7 +16,8 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAppSelector } from "@/hooks/redux/store";
-import { sdsApi } from "@/libs/sds";
+import { sds } from "@/libs/sds-client";
+import { mapSds } from "@steempro/sds-api";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Progress, CircularProgress } from "@heroui/progress";
@@ -62,7 +63,12 @@ export default function AccountHealthCheckPage() {
     setIsScanning(true);
     setResults(null);
     try {
-      const data = await sdsApi.getAccountExt(targetUser.toLowerCase());
+      const data = mapSds<AccountExt>(
+        await sds.accounts.getAccountExt({
+          account: targetUser.toLowerCase(),
+          observer: "steem",
+        }),
+      );
       if (!data || !data.name) {
         toast.error("Account not found");
         return;

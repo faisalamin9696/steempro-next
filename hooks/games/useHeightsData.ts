@@ -10,7 +10,8 @@ import {
   PowerUp,
 } from "@/components/games/steem-heights/Config";
 import { useSession } from "next-auth/react";
-import { sdsApi } from "@/libs/sds";
+import { sds } from "@/libs/sds-client";
+import { mapSds } from "@steempro/sds-api";
 import { condenserApi } from "@/libs/consenser";
 import { useAppSelector } from "../redux/store";
 
@@ -66,11 +67,12 @@ export const useHeightsData = ({
       try {
         const players = topScores.slice(0, 100).map((s) => s.player);
         const [accounts] = await Promise.all([
-          sdsApi.getAccountsExt(players, null, [
-            "name",
-            "reputation",
-            "vests_own",
-          ]),
+          mapSds<AccountExt[]>(
+            await sds.accounts.getAccountsExt({
+              accounts: players.join(","),
+              fields: ["name", "reputation", "vests_own"],
+            }),
+          ),
         ]);
 
         const resultMap: {
