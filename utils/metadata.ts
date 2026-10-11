@@ -774,6 +774,12 @@ export const getMetadata = {
       title: pageTitle,
       description: pageDescription,
       keywords,
+      // Posting page — auth required, and robots.ts Disallows /submit.
+      // Belt-and-braces noindex so the meta agrees with robots.txt and with
+      // the sitemap (STATIC_PAGES omits /submit). Without this the three
+      // layers contradicted each other: meta said "index", robots.txt said
+      // "don't crawl", sitemap said "please index".
+      robots: { index: false, follow: true },
       alternates: {
         canonical: url,
       },

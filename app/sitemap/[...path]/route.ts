@@ -1,8 +1,8 @@
 import { connection } from "next/server";
 import {
   BASE_URL,
-  DISCOVERY_TABS,
   MAX_CHILD_PAGES,
+  SITEMAP_TABS,
   STATIC_PAGES,
   collectTagsAndAuthors,
   countPostPages,
@@ -114,9 +114,9 @@ export async function GET(
 
     const entries: SitemapEntry[] = [];
     for (const community of communities) {
+      if (entries.length >= MAX_URLS_PER_FILE) break;
       if (!isCommunityAccount(community.account)) continue;
-      for (const tab of DISCOVERY_TABS) {
-        if (entries.length >= MAX_URLS_PER_FILE) break;
+      for (const tab of SITEMAP_TABS) {
         entries.push({ loc: `${BASE_URL}/${tab}/${community.account}` });
       }
     }
@@ -152,15 +152,14 @@ export async function GET(
 
     const entries: SitemapEntry[] = [];
     for (const tag of tags) {
-      for (const tab of DISCOVERY_TABS) {
-        if (entries.length >= MAX_URLS_PER_FILE) break;
+      if (entries.length >= MAX_URLS_PER_FILE) break;
+      for (const tab of SITEMAP_TABS) {
         entries.push({
           loc: `${BASE_URL}/${tab}/${tag}`,
           changefreq: "hourly",
           priority: "0.7",
         });
       }
-      if (entries.length >= MAX_URLS_PER_FILE) break;
     }
     return xmlResponse(urlSet(entries));
   }

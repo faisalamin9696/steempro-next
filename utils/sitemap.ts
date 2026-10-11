@@ -27,6 +27,24 @@ export const DISCOVERY_TABS = [
   "payout",
 ] as const;
 
+/**
+ * Which of `DISCOVERY_TABS` the sitemap actually advertises — `trending` only.
+ *
+ * Emitting all five put the same tag or community into the file five times:
+ * five sort orders of one page. Tags (24,150) + communities (15,560) came to
+ * 39,710 of the ~53,200 URLs — 75% of the whole sitemap spent on
+ * near-duplicate variants. For a site with only a handful of pages indexed,
+ * that told Google to spread a very small crawl budget over thin variants
+ * instead of over posts and profiles.
+ *
+ * The other four tabs stay reachable: every tag/community page renders its own
+ * tab bar linking to them, so Google can find and canonicalise them without
+ * the sitemap vouching for all five. Widen the predicate to put one back.
+ */
+export const SITEMAP_TABS: readonly string[] = DISCOVERY_TABS.filter(
+  (tab) => tab === "trending",
+);
+
 export const POST_SITEMAP_PAGE_SIZE = 1000;
 export const COMMUNITY_SITEMAP_PAGE_SIZE = 1000;
 export const SHORTS_SITEMAP_PAGE_SIZE = 500;
@@ -76,7 +94,11 @@ export const STATIC_PAGES: StaticPage[] = [
   { path: "/tools/batch-transfer", changefreq: "weekly", priority: "0.6" },
   { path: "/tools/batch-voting", changefreq: "weekly", priority: "0.6" },
   { path: "/tools/community-report", changefreq: "weekly", priority: "0.6" },
-  { path: "/submit", changefreq: "weekly", priority: "0.6" },
+  // { path: "/submit", changefreq: "weekly", priority: "0.6" },
+  // NOTE: `/submit` is intentionally absent. It is `noindex` in
+  // metadata.submit() and Disallowed in robots.txt (posting page, auth
+  // required). Submitting a noindex URL in the sitemap is a contradictory
+  // signal Search Console reports as "submitted URL not indexed".
   { path: "/about", changefreq: "monthly", priority: "0.4" },
   { path: "/privacy-policy", changefreq: "yearly", priority: "0.2" },
 ];
