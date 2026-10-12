@@ -21,6 +21,8 @@ import {
   Landmark,
   LayoutDashboard,
   Layers,
+  PanelLeftClose,
+  PanelLeftOpen,
   Receipt,
   Settings,
   ShieldUser,
@@ -35,7 +37,23 @@ import { useTranslations } from "next-intl";
 
 const iconSize = 20;
 
-function SDrawerContent() {
+// The label collapses to zero width (rather than being unmounted) so it can
+// animate in step with the rail. `max-w-[200px]` is a concrete length on
+// purpose — `max-width: auto` is not interpolatable, so the transition would
+// snap instead of sliding.
+const labelClass = (collapsed: boolean) =>
+  twMerge(
+    "overflow-hidden text-sm whitespace-nowrap transition-all duration-300 ease-in-out",
+    collapsed ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100",
+  );
+
+function SDrawerContent({
+  collapsed = false,
+  onToggleCollapse,
+}: {
+  collapsed?: boolean;
+  onToggleCollapse?: () => void;
+}) {
   const t = useTranslations("Navbar");
   const loginData = useAppSelector((s) => s.loginReducer.value);
   const { data: session, status } = useSession();
@@ -85,12 +103,24 @@ function SDrawerContent() {
   ];
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-4rem)] bg-background/5 p-4 gap-4">
+    <div
+      className={twMerge(
+        "flex flex-col h-[calc(100dvh-4rem)] bg-background/5 gap-4",
+        collapsed ? "px-2.5 py-4" : "p-4",
+      )}
+    >
       {/* Scrollable menu */}
       <div className="flex flex-col flex-1 overflow-y-auto scrollbar-hide space-y-6">
         {sections.map((section, idx) => (
           <div key={idx} className="space-y-2">
-            <p className="px-4 text-[10px] font-bold text-default-500 uppercase tracking-widest opacity-80">
+            {/* Fades out but keeps its height when collapsed, so the icons
+                below don't jump vertically as the rail shrinks. */}
+            <p
+              className={twMerge(
+                "px-4 text-[10px] font-bold text-default-500 uppercase tracking-widest transition-opacity duration-200",
+                collapsed ? "opacity-0" : "opacity-80",
+              )}
+            >
               {section.group}
             </p>
             <div className="flex flex-col gap-1">
@@ -107,6 +137,8 @@ function SDrawerContent() {
                   <Link
                     key={i}
                     href={item.href}
+                    // Icon-only rail: expose the label as a native tooltip.
+                    title={collapsed ? item.title : undefined}
                     className="relative block group outline-none"
                   >
                     {isActive && (
@@ -122,7 +154,8 @@ function SDrawerContent() {
                     )}
                     <div
                       className={twMerge(
-                        "relative flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200",
+                        "relative flex items-center py-2.5 rounded-xl transition-all duration-200",
+                        collapsed ? "justify-center gap-0 px-0" : "gap-3 px-4",
                         !isActive &&
                           "hover:bg-default/50 text-default-600 hover:text-foreground",
                         isActive && "text-primary font-medium",
@@ -136,7 +169,9 @@ function SDrawerContent() {
                         )}
                         strokeWidth={isActive ? 2.5 : 2}
                       />
-                      <span className="text-sm">{item.title}</span>
+                      <span className={labelClass(collapsed)}>
+                        {item.title}
+                      </span>
                     </div>
                   </Link>
                 );
@@ -148,7 +183,43 @@ function SDrawerContent() {
 
       {/* Footer Actions */}
       <div className="flex flex-col gap-3 mt-auto pb-0">
-        {isAuthenticated && (
+        {onToggleCollapse && (
+          <button
+            type="button"
+            onClick={onToggleCollapse}
+            aria-expanded={!collapsed}
+            aria-label={collapsed ? t("expand") : t("collapse")}
+            title={collapsed ? t("expand") : t("collapse")}
+            className={twMerge(
+              "flex items-center rounded-xl py-2.5 text-default-500 transition-colors duration-200 hover:bg-default/50 hover:text-foreground",
+              collapsed ? "justify-center gap-0 px-0" : "gap-3 px-4",
+            )}
+          >
+            {collapsed ? (
+              <PanelLeftOpen size={iconSize} />
+            ) : (
+              <PanelLeftClose size={iconSize} />
+            )}
+            <span className={labelClass(collapsed)}>{t("collapse")}</span>
+          </button>
+        )}
+
+        {isAuthenticated &&
+          (collapsed ? (
+            <div className="flex flex-col items-center gap-2 rounded-2xl border border-default-100 bg-background/50 p-2.5 shadow-sm">
+              <SAvatar
+                username={name}
+                size="sm"
+                className="ring-2 ring-background"
+              />
+              <LogoutButton
+                size="sm"
+                color="danger"
+                variant="light"
+                isIconOnly
+              />
+            </div>
+          ) : (
           <div className="relative group rounded-2xl overflow-hidden border border-default-100 bg-background/50 backdrop-blur-xl shadow-sm transition-all hover:shadow-md hover:border-default-200">
             <div className="absolute inset-0 h-16">
               <BackgroundImage
@@ -236,7 +307,7 @@ function SDrawerContent() {
               </div>
             </div>
           </div>
-        )}
+          ))}
       </div>
     </div>
   );

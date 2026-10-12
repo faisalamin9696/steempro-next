@@ -1576,6 +1576,8 @@
     "privacy": "隐私",
     "about": "关于",
     "manage": "管理",
+    "collapse": "折叠侧边栏",
+    "expand": "展开侧边栏",
     "search": "搜索...",
     "create": "创建",
     "refresh": "刷新",

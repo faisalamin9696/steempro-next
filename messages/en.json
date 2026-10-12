@@ -1622,6 +1622,8 @@
     "privacy": "Privacy",
     "about": "About",
     "manage": "Manage",
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar",
     "search": "Search...",
     "create": "Create",
     "refresh": "Refresh",

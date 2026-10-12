@@ -18,6 +18,7 @@ import { Toaster } from "sonner";
 import { twMerge } from "tailwind-merge";
 import SNavbar from "@/components/navbar/SNavbar";
 import SDrawerContent from "@/components/navbar/SDrawerContent";
+import { useSidebarCollapsed } from "@/hooks/useSidebarCollapsed";
 
 function Providers({
   children,
@@ -30,6 +31,7 @@ function Providers({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const { collapsed, toggle } = useSidebarCollapsed();
 
   // NOTE: The app must render on the server. An `isMounted` gate here used to
   // swap the whole tree for a loading spinner during SSR, which meant every
@@ -68,13 +70,24 @@ function Providers({
                   <div className="flex flex-row justify-start">
                     <aside
                       className={twMerge(
-                        "w-72 hidden sticky top-16 shrink-0 xl:block border-e border-black/5 dark:border-white/5",
+                        "hidden sticky top-16 shrink-0 xl:block border-e border-black/5 dark:border-white/5",
+                        // Animate only `width`, and clip the contents in the
+                        // wrapper below: the labels fade/collapse on their own
+                        // while the rail shrinks over them, so nothing reflows
+                        // mid-animation.
+                        "transition-[width] duration-300 ease-in-out",
+                        collapsed ? "w-[76px]" : "w-72",
                         pathname === "/shorts"
                           ? "h-[calc(100vh-4rem)] md:h-[calc(100vh-4rem)] md:top-16"
                           : "h-[calc(100vh-4rem)]",
                       )}
                     >
-                      <SDrawerContent />
+                      <div className="h-full overflow-hidden">
+                        <SDrawerContent
+                          collapsed={collapsed}
+                          onToggleCollapse={toggle}
+                        />
+                      </div>
                     </aside>
 
                     <main

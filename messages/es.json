@@ -1576,6 +1576,8 @@
     "privacy": "Privacidad",
     "about": "Acerca de",
     "manage": "Gestionar",
+    "collapse": "Contraer barra lateral",
+    "expand": "Expandir barra lateral",
     "search": "Buscar...",
     "create": "Crear",
     "refresh": "Actualizar",
