@@ -92,17 +92,46 @@ export const getMetadata = {
     username = username?.toLowerCase();
     tab = tab?.toLowerCase() || "blog";
 
-    const result = mapSds<AccountExt>(
-      await sds.accounts.getAccountExt({
-        account: username,
-        observer: "steem",
-      }),
-    );
-    if (!result) {
-      return getMetadata.profileSync(username, tab, {} as any);
+    // Metadata must never be the thing that takes a profile down. A freshly
+    // created account is not in the SDS index yet, and any mirror can be
+    // mid-sync or down — both of which raise (SDSApiError / SDSHttpError)
+    // rather than returning null, so the guard below never gets a chance.
+    // `getMetadata.profile` holds the shared fallback body; failing soft keeps
+    // generateMetadata resolved and lets the page itself decide how to render
+    // a missing account.
+    try {
+      const result = mapSds<AccountExt>(
+        await sds.accounts.getAccountExt({
+          account: username,
+          observer: "steem",
+        }),
+      );
+      if (!result) {
+        return getMetadata.profile(username, tab);
+      }
+      return getMetadata.profile(username, tab, result);
+    } catch {
+      return getMetadata.profile(username, tab);
     }
-    const { name, about } =
-      JSON.parse(result.posting_json_metadata || "{}")?.profile ?? {};
+  },
+  /**
+   * Metadata body for a profile, shared by the async and sync entry points.
+   * `account` is optional: an account that is missing from the SDS index (a
+   * brand-new one, or one on a mid-sync mirror) still needs a valid title and
+   * description rather than a thrown error.
+   */
+  profile: (username: string, tab: string, account?: AccountExt | null) => {
+    username = username?.toLowerCase();
+    tab = tab?.toLowerCase() || "blog";
+    // `posting_json_metadata` is user-editable on-chain data — it can be
+    // truncated or malformed, so never let JSON.parse take the route down.
+    let profile: { name?: string; about?: string } = {};
+    try {
+      profile = JSON.parse(account?.posting_json_metadata || "{}")?.profile ?? {};
+    } catch {
+      profile = {};
+    }
+    const { name, about } = profile;
     const capTab = tab.charAt(0).toUpperCase() + tab.slice(1);
     const pageTitle = !!name
       ? `${name} (@${username}) - ${capTab} on the Decentralized Web`
@@ -144,55 +173,11 @@ export const getMetadata = {
       },
     };
   },
-  profileSync: (username: string, tab: string, account: AccountExt) => {
-    username = username?.toLowerCase();
-    tab = tab?.toLowerCase();
-    if (!tab) {
-      tab = "blog";
-    }
-    const { name, about, website } =
-      JSON.parse(account?.posting_json_metadata || "{}")?.profile ?? {};
-    const capCat = tab.charAt(0).toUpperCase() + tab.slice(1);
-    const pageTitle = !!name
-      ? `${name} (@${username}) - ${capCat} on the Decentralized Web`
-      : `@${username} - ${capCat} on the Decentralized Web`;
-    const pageDescription = about || DEFAULT_DESCRIPTION;
-    const url = `https://www.steempro.com/@${username}`;
-    const image = getResizedAvatar(username, "large");
-
-    const keywords = [
-      `SteemPro @${username}`,
-      `${tab} by @${username}`,
-      `${username}'s SteemPro profile`,
-      `SteemPro user ${username}`,
-      `decentralized ${tab} content`,
-      `Steem ${tab} by ${username}`,
-      `blockchain blogging profile`,
-      `crypto social posts by ${username}`,
-      `${username} ${tab} on SteemPro`,
-      `Web3 creator ${username}`,
-    ];
-    return {
-      title: pageTitle,
-      description: pageDescription,
-      keywords: keywords,
-      alternates: {
-        canonical: url,
-      },
-      openGraph: {
-        title: pageTitle,
-        description: pageDescription,
-        url: url,
-        images: [image],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: pageTitle,
-        description: pageDescription,
-        images: [image],
-      },
-    };
-  },
+  profileSync: (
+    username: string,
+    tab: string,
+    account: AccountExt | null,
+  ) => getMetadata.profile(username, tab, account),
   category: (category: string, tag: string) => {
     category = category?.toLowerCase();
     tag = tag?.toLowerCase();
@@ -311,14 +296,23 @@ export const getMetadata = {
   postAsync: async (author: string, permlink: string) => {
     author = author?.toLowerCase();
     permlink = permlink?.toLowerCase();
-    const result = mapSds<Post>(
-      await sds.posts.getPost({
-        author,
-        permlink,
-        withVotes: true,
-        observer: "steem",
-      }),
-    );
+
+    // Same reasoning as profileAsync: generateMetadata must not throw. A post
+    // that is not indexed yet, or a mirror that is down, is answered with an
+    // SDSApiError/SDSHttpError rather than a null result.
+    let result: Post | undefined;
+    try {
+      result = mapSds<Post>(
+        await sds.posts.getPost({
+          author,
+          permlink,
+          withVotes: true,
+          observer: "steem",
+        }),
+      );
+    } catch {
+      result = undefined;
+    }
     if (!result || result.link_id === 0) {
       const pageTitle = author ? `@${author}'s post` : "Post Not Found";
       return {
@@ -399,11 +393,15 @@ export const getMetadata = {
     tag = tag?.toLowerCase();
     const community = `hive-${tag}`;
 
+    // generateMetadata must never throw — see profileAsync. `parent` is the
+    // one rejection that should still propagate is not needed here either, so
+    // a failed community lookup degrades to the generic description.
     const [parentData, result] = await Promise.all([
-      parent,
+      parent.catch(() => null),
       sds.communities
         .getCommunity({ community, observer: "steem" })
-        .then((comm) => mapSds<Community>(comm)),
+        .then((comm) => mapSds<Community>(comm))
+        .catch(() => null),
     ]);
 
     const previousImages = parentData?.openGraph?.images || [];
