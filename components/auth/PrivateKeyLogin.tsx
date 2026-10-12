@@ -207,7 +207,7 @@ function PrivateKeyLogin({ onSuccess }: { onSuccess: () => void }) {
           <Alert
             variant="faded"
             color={isHighAuth ? "warning" : "success"}
-            title={`${verifiedType?.toUpperCase()} Key Detected`}
+            title={`${verifiedType?.toUpperCase()} Key Verified Successfully`}
             description={
               isHighAuth
                 ? "Setting a PIN code is mandatory for Active authority keys to ensure security."
