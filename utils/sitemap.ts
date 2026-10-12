@@ -1,5 +1,6 @@
+import { cacheLife, cacheTag } from "next/cache";
 import { mapSds } from "@steempro/sds-api";
-import { sds, getFeedByApiPath } from "@/libs/sds-client";
+import { sdsSitemap, getFeedByApiPath } from "@/libs/sds-client";
 import { Constants } from "@/constants";
 import { getProposals } from "@/libs/steem";
 
@@ -57,6 +58,19 @@ const PROBE_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 
 export const SITEMAP_CACHE_CONTROL =
   "public, max-age=1800, s-maxage=86400, stale-while-revalidate=604800";
+
+/**
+ * Lifetime for the cached sitemap helpers below.
+ *
+ * `SITEMAP_CACHE_CONTROL` only helps once a response has already been rendered
+ * — it is a CDN header, so it cannot rescue a *first* fetch. These values cache
+ * the inputs instead, which means a cold invocation no longer re-runs up to
+ * twenty SDS round-trips while Googlebot is waiting on the response.
+ *
+ * Refreshed hourly. A sitemap lagging an hour behind the chain costs nothing,
+ * whereas a five-second render costs the entire crawl.
+ */
+const SITEMAP_CACHE_LIFE = { stale: 600, revalidate: 3600, expire: 86_400 };
 
 /* ------------------------------------------------------------------------- */
 /* Static pages                                                              */
@@ -273,13 +287,14 @@ export async function fetchPostPage(page: number): Promise<Feed[]> {
     POST_SITEMAP_PAGE_SIZE,
     (page - 1) * POST_SITEMAP_PAGE_SIZE,
     POST_SITEMAP_PAGE_SIZE,
+    sdsSitemap,
   );
   return Array.isArray(posts) ? posts : [];
 }
 
 export async function fetchCommunityPage(page: number): Promise<Community[]> {
   const communities = mapSds<Community[]>(
-    await sds.communities.getCommunitiesByRank({
+    await sdsSitemap.communities.getCommunitiesByRank({
       observer: "steem",
       limit: COMMUNITY_SITEMAP_PAGE_SIZE,
       offset: (page - 1) * COMMUNITY_SITEMAP_PAGE_SIZE,
@@ -290,7 +305,7 @@ export async function fetchCommunityPage(page: number): Promise<Community[]> {
 
 export async function fetchShortsPage(page: number): Promise<Feed[]> {
   const shorts = mapSds<Feed[]>(
-    await sds.feeds.getCommunityPostsByTagCreated({
+    await sdsSitemap.feeds.getCommunityPostsByTagCreated({
       community: Constants.official_community,
       tag: Constants.shorts_tag,
       observer: "steem",
@@ -314,22 +329,39 @@ export async function fetchProposals(): Promise<Proposal[]> {
 /**
  * Walks the first `pages` post pages and returns the tags + authors they
  * mention. One pass, reused by both `/sitemap/tags.xml` and `/sitemap/profiles.xml`.
+ *
+ * This is the most expensive operation on the site, and it is why those two
+ * files were the slowest to render: Googlebot timed out on them and GSC
+ * reported "Sitemap could not be read" for every SDS-backed child, while
+ * `static.xml` — which needs no data at all — was read without trouble.
+ *
+ * Cached durably rather than in a module-level Map. On serverless every
+ * invocation is cold, so an in-memory entry never survives to the next request
+ * and could never help the request that mattered.
  */
 export async function collectTagsAndAuthors(
   pages: number,
 ): Promise<{ tags: string[]; authors: string[] }> {
+  "use cache";
+  cacheTag("sitemap:tags-authors");
+  cacheLife(SITEMAP_CACHE_LIFE);
+
   const tags = new Set<string>();
   const authors = new Set<string>();
 
-  for (let page = 1; page <= pages; page++) {
-    let posts: Feed[];
-    try {
-      posts = await fetchPostPage(page);
-    } catch {
-      break;
-    }
-    if (posts.length === 0) break;
+  // Fetched concurrently. The previous loop awaited each page in turn, so the
+  // round-trips were paid end to end and made the cost linear in `pages`.
+  //
+  // A page that fails now simply contributes nothing. The old `break` abandoned
+  // every page after the first failure, so one flaky mirror could silently drop
+  // thousands of tags from the sitemap.
+  const results = await Promise.all(
+    Array.from({ length: Math.max(0, Math.floor(pages)) }, (_, index) =>
+      fetchPostPage(index + 1).catch(() => [] as Feed[]),
+    ),
+  );
 
+  for (const posts of results) {
     for (const post of posts) {
       if (post.author) authors.add(post.author);
       for (const tag of tagsOf(post)) {
@@ -405,7 +437,11 @@ async function probePageCount(
   return value;
 }
 
-export function countPostPages(): Promise<number> {
+export async function countPostPages(): Promise<number> {
+  "use cache";
+  cacheTag("sitemap:post-pages");
+  cacheLife(SITEMAP_CACHE_LIFE);
+
   return probePageCount(
     "posts",
     async (offset) => {
@@ -415,6 +451,7 @@ export function countPostPages(): Promise<number> {
         1,
         offset,
         POST_SITEMAP_PAGE_SIZE,
+        sdsSitemap,
       );
       return Array.isArray(rows) && rows.length > 0;
     },
@@ -422,12 +459,16 @@ export function countPostPages(): Promise<number> {
   );
 }
 
-export function countCommunityPages(): Promise<number> {
+export async function countCommunityPages(): Promise<number> {
+  "use cache";
+  cacheTag("sitemap:community-pages");
+  cacheLife(SITEMAP_CACHE_LIFE);
+
   return probePageCount(
     "communities",
     async (offset) => {
       const rows = mapSds<Community[]>(
-        await sds.communities.getCommunitiesByRank({
+        await sdsSitemap.communities.getCommunitiesByRank({
           observer: "steem",
           limit: 1,
           offset,
@@ -439,12 +480,16 @@ export function countCommunityPages(): Promise<number> {
   );
 }
 
-export function countShortsPages(): Promise<number> {
+export async function countShortsPages(): Promise<number> {
+  "use cache";
+  cacheTag("sitemap:shorts-pages");
+  cacheLife(SITEMAP_CACHE_LIFE);
+
   return probePageCount(
     "shorts",
     async (offset) => {
       const rows = mapSds<Feed[]>(
-        await sds.feeds.getCommunityPostsByTagCreated({
+        await sdsSitemap.feeds.getCommunityPostsByTagCreated({
           community: Constants.official_community,
           tag: Constants.shorts_tag,
           observer: "steem",
