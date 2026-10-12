@@ -23,6 +23,21 @@ class KeychainApi {
   }
 
   /**
+   * Non-throwing availability check, so the UI can decide whether to offer a
+   * Keychain path at all instead of surfacing an error after the fact.
+   */
+  isAvailable(): boolean {
+    if (typeof window === "undefined") return false;
+
+    const keychain = window.steem_keychain;
+    return (
+      !!keychain &&
+      typeof keychain === "object" &&
+      typeof keychain.requestBroadcast === "function"
+    );
+  }
+
+  /**
    * Login using Steem Keychain via signBuffer.
    * The user signs a short challenge text proving ownership.
    */

@@ -3,16 +3,30 @@ import { Button } from "@heroui/button";
 import { Checkbox } from "@heroui/checkbox";
 import { Input } from "@heroui/input";
 import SModal from "../ui/SModal";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { toast } from "sonner";
 import { decryptPrivateKey } from "@/utils/encryption";
 import { Lock } from "lucide-react";
 import { capitalize } from "@/utils";
+import { keychainApi } from "@/libs/keychain";
+import { KeychainIcon } from "@/components/icons/KeychainIcon";
+
+// Keychain presence never changes while the page is loaded (only an extension
+// install/removal + reload does), so there is nothing to subscribe to and the
+// server snapshot can stay a constant `false`.
+const subscribeNoop = () => () => {};
+const getKeychainAvailable = () => keychainApi.isAvailable();
+const falseSnapshot = () => false;
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (pin: string, remember: boolean) => void;
+  /**
+   * Resolve the operation via Keychain instead of a pasted key. Only offered
+   * when the caller is in key mode and the extension is actually installed.
+   */
+  onKeychain?: () => void;
   encryptedKey: string;
   mode?: "pin" | "key";
   username?: string;
@@ -23,6 +37,7 @@ export default function PinModal({
   isOpen,
   onClose,
   onSubmit,
+  onKeychain,
   encryptedKey,
   mode,
   username,
@@ -33,6 +48,26 @@ export default function PinModal({
   const [remember, setRemember] = useState(false);
 
   const isKeyMode = mode === "key";
+  const authorityLabel = capitalize(requiredType || "active") || "Private";
+
+  // Keychain injects `window.steem_keychain` from the extension, which does
+  // not exist during SSR. useSyncExternalStore keeps hydration safe: React uses
+  // the `false` server snapshot while hydrating, then reads the real client
+  // value — the same pattern as hooks/redux/useDeviceInfo.tsx. Keychain's
+  // presence cannot change without a full page reload, so there is nothing to
+  // subscribe to.
+  const hasKeychain = useSyncExternalStore(
+    subscribeNoop,
+    getKeychainAvailable,
+    falseSnapshot,
+  );
+
+  const showKeychain = isKeyMode && hasKeychain && !!onKeychain;
+
+  const handleKeychain = () => {
+    setPin("");
+    onKeychain?.();
+  };
 
   const handleSubmit = () => {
     if (!pin) {
@@ -95,7 +130,11 @@ export default function PinModal({
                 {isKeyMode
                   ? `This transaction requires your ${
                       requiredType || "Active"
-                    } Authority. Please enter your private key.`
+                    } Authority. ${
+                      showKeychain
+                        ? "Sign with Keychain, or enter your private key to sign locally."
+                        : "Please enter your private key."
+                    }`
                   : "This transaction requires your Active Authority. Please enter your PIN code to verify your identity."}
               </p>
             </div>
@@ -116,9 +155,7 @@ export default function PinModal({
                 onValueChange={setPin}
                 type="password"
                 label={
-                  isKeyMode
-                    ? `Enter ${capitalize(requiredType!) || "Private"} Key`
-                    : "Enter PIN Code"
+                  isKeyMode ? `Enter ${authorityLabel} Key` : "Enter PIN Code"
                 }
                 placeholder={isKeyMode ? "5J..." : "****"}
                 onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
@@ -133,12 +170,21 @@ export default function PinModal({
               )}
             </div>
           </div>
-          <div className="flex flex-row gap-2 self-end">
+          <div className="flex flex-row flex-wrap justify-end gap-2 self-end">
             <Button variant="flat" onPress={onClose}>
               Cancel
             </Button>
+            {showKeychain && (
+              <Button
+                variant="bordered"
+                onPress={handleKeychain}
+                startContent={<KeychainIcon size={18} className="text-primary" />}
+              >
+                Sign with Keychain
+              </Button>
+            )}
             <Button color="primary" onPress={handleSubmit} isLoading={loading}>
-              Confirm
+              {isKeyMode ? `Sign with ${authorityLabel} Key` : "Confirm"}
             </Button>
           </div>
         </>

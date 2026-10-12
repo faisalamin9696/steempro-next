@@ -53,6 +53,8 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
     mode?: "pin" | "key";
     requiredType?: AccountKeyType;
     resolve?: (result: string, remember: boolean) => void;
+    /** Resolve the operation through Keychain instead of a pasted key. */
+    useKeychain?: () => void;
     reject?: (reason?: any) => void;
   }>({ isOpen: false });
 
@@ -161,6 +163,10 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
             // In key mode, the result is the private key itself
             resolve({ key, useKeychain: false });
           },
+          // A posting-key session can still delegate the broadcast to Keychain
+          // if the extension is installed — `broadcast()` already routes
+          // `useKeychain: true` to the correct authority.
+          useKeychain: () => resolve({ useKeychain: true }),
           reject: (err) => {
             reject(err || new Error("Cancelled"));
           },
@@ -241,6 +247,14 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
         mode={pinModal.mode}
         username={current?.username}
         requiredType={pinModal.requiredType}
+        onKeychain={
+          pinModal.useKeychain
+            ? () => {
+                pinModal.useKeychain!();
+                setPinModal({ ...pinModal, isOpen: false });
+              }
+            : undefined
+        }
         onSubmit={(result, remember) => {
           pinModal.resolve?.(result, remember);
           setPinModal({ ...pinModal, isOpen: false });
