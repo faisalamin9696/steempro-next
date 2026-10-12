@@ -1,5 +1,6 @@
 import { Alert } from "@heroui/alert";
 import { Button } from "@heroui/button";
+import { Checkbox } from "@heroui/checkbox";
 import { Input } from "@heroui/input";
 import { useState } from "react";
 import { useAccountsContext } from "./AccountsContext";
@@ -21,9 +22,13 @@ function PrivateKeyLogin({ onSuccess }: { onSuccess: () => void }) {
   >(null);
   const [loading, setLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  // Posting keys are allowed to log in without a PIN. The user has to opt in
+  // explicitly; Active/Owner keys are always PIN-protected regardless.
+  const [usePin, setUsePin] = useState(false);
 
   const isVerified = !!verifiedType;
   const isHighAuth = verifiedType === "active" || verifiedType === "owner";
+  const showPinFields = isHighAuth || usePin;
 
   async function handleVerify() {
     username = normalizeUsername(username);
@@ -98,7 +103,11 @@ function PrivateKeyLogin({ onSuccess }: { onSuccess: () => void }) {
   async function handleLogin() {
     username = normalizeUsername(username);
 
-    if (isHighAuth && (!pin || pin.length < 4)) {
+    // Posting keys can skip the PIN — the key is then encrypted with the app
+    // secret instead of a user PIN. Active/Owner keys must always have one.
+    const pinToSave = showPinFields ? pin : "";
+
+    if (isHighAuth && (!pinToSave || pinToSave.length < 4)) {
       toast.error("PIN Required", {
         description:
           "A PIN of at least 4 digits is required for Active/Owner keys.",
@@ -106,7 +115,14 @@ function PrivateKeyLogin({ onSuccess }: { onSuccess: () => void }) {
       return;
     }
 
-    if (pin && pin !== confirmPin) {
+    if (pinToSave && pinToSave.length < 4) {
+      toast.error("PIN Too Short", {
+        description: "Please use a PIN of at least 4 characters.",
+      });
+      return;
+    }
+
+    if (pinToSave && pinToSave !== confirmPin) {
       toast.error("PIN Mismatch", { description: "PINs do not match." });
       return;
     }
@@ -115,7 +131,7 @@ function PrivateKeyLogin({ onSuccess }: { onSuccess: () => void }) {
       await loginWithKey(
         username,
         key,
-        pin,
+        pinToSave || undefined,
         (verifiedType as "posting" | "active" | "memo") || "posting",
       );
       onSuccess();
@@ -123,6 +139,12 @@ function PrivateKeyLogin({ onSuccess }: { onSuccess: () => void }) {
       toast.error("Login Failed", { description: e.message });
     }
   }
+
+  const resetPin = () => {
+    setPin("");
+    setConfirmPin("");
+    setUsePin(false);
+  };
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -144,6 +166,7 @@ function PrivateKeyLogin({ onSuccess }: { onSuccess: () => void }) {
         onValueChange={(val) => {
           setKey(val);
           setVerifiedType(null);
+          resetPin();
         }}
         placeholder="Private Key (Posting or Active)"
         label="Private Key"
@@ -193,40 +216,51 @@ function PrivateKeyLogin({ onSuccess }: { onSuccess: () => void }) {
             icon={<div>{isHighAuth ? <ShieldAlert /> : <ShieldCheck />}</div>}
           />
 
-          <div className="flex flex-col gap-2">
-            <Input
-              value={pin}
-              onValueChange={setPin}
-              placeholder="Set PIN Code"
-              label="Secure PIN"
-              type="password"
-              classNames={{ inputWrapper: "bg-default-100" }}
-              isRequired={isHighAuth}
-            />
-            {pin && (
+          {!isHighAuth && (
+            <Checkbox isSelected={usePin} onValueChange={setUsePin}>
+              <span className="text-sm">Set a PIN code (optional)</span>
+            </Checkbox>
+          )}
+
+          {showPinFields && (
+            <div className="flex flex-col gap-2 animate-appearance-in">
               <Input
-                value={confirmPin}
-                onValueChange={setConfirmPin}
-                placeholder="Confirm PIN Code"
-                label="Confirm PIN"
+                value={pin}
+                onValueChange={setPin}
+                placeholder="Set PIN Code"
+                label="Secure PIN"
                 type="password"
                 classNames={{ inputWrapper: "bg-default-100" }}
-                errorMessage={
-                  pin !== confirmPin && confirmPin ? "PINs do not match" : ""
-                }
-                isInvalid={!!confirmPin && pin !== confirmPin}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") handleLogin();
-                }}
+                isRequired={isHighAuth}
               />
-            )}
-          </div>
+              {pin && (
+                <Input
+                  value={confirmPin}
+                  onValueChange={setConfirmPin}
+                  placeholder="Confirm PIN Code"
+                  label="Confirm PIN"
+                  type="password"
+                  classNames={{ inputWrapper: "bg-default-100" }}
+                  errorMessage={
+                    pin !== confirmPin && confirmPin ? "PINs do not match" : ""
+                  }
+                  isInvalid={!!confirmPin && pin !== confirmPin}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleLogin();
+                  }}
+                />
+              )}
+            </div>
+          )}
 
           <div className="flex gap-2">
             <Button
               color="danger"
               variant="light"
-              onPress={() => setVerifiedType(null)}
+              onPress={() => {
+                setVerifiedType(null);
+                resetPin();
+              }}
               className="flex-1"
             >
               Back
