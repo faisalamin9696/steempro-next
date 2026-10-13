@@ -341,7 +341,13 @@ export const getMetadata = {
 
     const thumbnail = isReply
       ? getResizedAvatar(result?.author, "small")
-      : getThumbnail(result.json_images, "640x480");
+      // Width-only: steemitimages' mode=fit STRETCHES the pixels to fill
+      // the box whenever both width and height are forced, so the previous
+      // "640x480" squashed every wide banner (e.g. a 1648x631 source) into
+      // a distorted 4:3 card. Omitting the height preserves the source
+      // aspect ratio — the same "640x0" jsonld.ts already uses. 1200 wide
+      // rather than 640 because this feeds summary_large_image cards.
+      : getThumbnail(result.json_images, "1200x0");
     const pageTitle = isReply ? `RE: ${result?.root_title}` : result?.title;
     const pageDescription =
       (extractBodySummary(result?.body, 250, isReply) || "Untitled post") +
