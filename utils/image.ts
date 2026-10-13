@@ -84,7 +84,10 @@ export const getThumbnail = (
 ): string | null => {
   try {
     let image = JSON.parse(json_images ?? "[]")?.[0] ?? [];
-    if (image) return proxifyImageUrl(image, size ?? "640x480");
+    // Default to a width-only size: proxifyImageUrl's mode=fit stretches the
+    // image to fill the box when both dimensions are forced, so a default of
+    // "640x480" silently distorts anything whose real aspect ratio isn't 4:3.
+    if (image) return proxifyImageUrl(image, size ?? "640x0");
     else return null;
   } catch (error) {
     return "";
