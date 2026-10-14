@@ -19,7 +19,7 @@ export default layout;
 export async function generateMetadata({ params }: any): Promise<Metadata> {
   let { author, permlink } = await params;
 
-  const { title, description, thumbnail, keywords, alternates, robots } =
+  const { title, description, thumbnail, keywords, alternates } =
     await getMetadata.postAsync(author, permlink);
 
   const url = alternates?.canonical || `${BASE_URL}/@${author}/${permlink}`;
@@ -28,11 +28,6 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
     title,
     description,
     keywords: keywords.join(", "),
-    // `postAsync` sets this only when the post is not on the chain. A real 404
-    // status is unreachable on this route -- it is Partial Prerendered, so the
-    // shell's 200 is committed before any dynamic notFound() could run -- which
-    // makes noindex the thing that actually keeps it out of the index.
-    ...(robots ? { robots } : {}),
     alternates: {
       canonical: url,
     },

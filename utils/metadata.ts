@@ -320,12 +320,6 @@ export const getMetadata = {
         description: DEFAULT_DESCRIPTION,
         keywords: [],
         thumbnail: DEFAULT_IMAGE,
-        // A real 404 status is not reachable here: the post route is Partial
-        // Prerendered, so the static shell is served and its 200 is committed
-        // before any dynamic notFound() could run — calling it from the page
-        // or the layout both yield 200. noindex is what actually keeps this
-        // out of the index, and does so more reliably than the status would.
-        robots: { index: false, follow: true },
         alternates: {
           canonical: `https://www.steempro.com/@${author}/${permlink}`,
         },
