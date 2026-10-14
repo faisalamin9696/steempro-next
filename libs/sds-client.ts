@@ -69,6 +69,20 @@ const cachedFetch: FetchLike = (input, init) =>
 export const sdsCached = sds.withOptions({ fetch: cachedFetch });
 
 /**
+ * Only `ERR_SDS_API` means SDS *answered* and the target is genuinely absent —
+ * an unknown permlink, or an author that does not exist. Every other code
+ * (network, timeout, abort, 5xx, unparseable body) means we could not find out,
+ * and must never be reported as a missing record.
+ *
+ * Verified against the live endpoint:
+ *   valid name, no such account -> SDSApiError    ERR_SDS_API
+ *   malformed name              -> SDSApiError    ERR_SDS_API
+ *   network outage              -> SDSNetworkError ERR_SDS_NETWORK
+ */
+export const isChainMiss = (error: unknown): boolean =>
+  (error as { code?: string } | null | undefined)?.code === "ERR_SDS_API";
+
+/**
  * Feed tabs are stored as *data-driven* SDS path fragments in `constants`
  * (`HOME_FEED_APIS`, `COMMUNITY_FEED_APIS`, `tagFeedApi(…)`, `tab.api`) and
  * are passed around as props, so they cannot be routed through a generated

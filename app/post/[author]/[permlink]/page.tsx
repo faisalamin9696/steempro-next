@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { JsonLd } from "@/components/seo/JsonLd";
 import ProfileCard from "@/components/profile/ProfileCard";
 import MainWrapper from "@/components/wrappers/MainWrapper";
-import { sds } from "@/libs/sds-client";
+import { sds, isChainMiss } from "@/libs/sds-client";
 import { mapSds } from "@steempro/sds-api";
 import { blogPostingJsonLd, breadcrumbJsonLd } from "@/utils/jsonld";
 import PostPage from "../../(site)/PostPage";
@@ -17,25 +17,40 @@ async function page({
 }) {
   const { author, permlink } = await params;
   const session = await auth();
-  const [account, post] = await Promise.all([
-    mapSds<AccountExt>(
-      await sds.accounts.getAccountExt({
-        account: author,
-        observer: session?.user?.name ?? "steem",
-      }),
-    ),
-    mapSds<Post>(
-      await sds.posts.getPost({
-        author,
-        permlink,
-        withVotes: true,
-        observer: session?.user?.name ?? "steem",
-      }),
-    ),
-  ]);
 
-  // A missing post must be a real 404. Rendering the not-found UI inside a 200
-  // response makes Google index an error page and waste crawl budget on it.
+  // getPost/getAccountExt raise an SDSApiError for an unknown post or author
+  // rather than resolving null, so the sentinel check below never got the
+  // chance to run and the error escaped as a 500. A chain-level miss is
+  // rendered through the not-found boundary instead. (The HTTP status stays
+  // 200 -- this route is Partial Prerendered, so the shell's status is
+  // already committed -- which is why generateMetadata also marks the page
+  // noindex; see utils/metadata.ts.)
+  let lookups: [AccountExt, Post];
+  try {
+    lookups = await Promise.all([
+      mapSds<AccountExt>(
+        await sds.accounts.getAccountExt({
+          account: author,
+          observer: session?.user?.name ?? "steem",
+        }),
+      ),
+      mapSds<Post>(
+        await sds.posts.getPost({
+          author,
+          permlink,
+          withVotes: true,
+          observer: session?.user?.name ?? "steem",
+        }),
+      ),
+    ]);
+  } catch (error) {
+    if (isChainMiss(error)) notFound();
+    throw error;
+  }
+  const [account, post] = lookups;
+
+  // Unreachable for a missing post (SDS raises instead of returning a
+  // sentinel), but kept as a belt-and-braces guard for a null or empty result.
   if (!post || post.link_id === -1) notFound();
 
   const canonical = `${BASE_URL}/@${author}/${permlink}`;
