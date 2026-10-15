@@ -80,7 +80,7 @@
     "@types/sanitize-html": "^2.16.0",
     "@types/speakingurl": "^13.0.6",
     "eslint": "^9",
-    "eslint-config-next": "^14.2.35",
+    "eslint-config-next": "^16.4.1",
     "postcss": "^8.5.25",
     "postcss-preset-mantine": "^1.18.0",
     "postcss-simple-vars": "^7.0.1",
