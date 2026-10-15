@@ -1,6 +1,7 @@
 import { sdsApi } from "@/libs/sds";
 import { FALLBACK_HOME_FEED_API, HOME_FEED_APIS } from "@/utils/feedApis";
 import { HomeTabs } from "./HomeTabs";
+import { auth } from "@/auth";
 
 /**
  * Server component: fetches the first page of the requested feed so the HTML
@@ -15,10 +16,15 @@ export default async function HomePage({
   const { category } = await params;
   const activeCategory = (category || "trending").toLowerCase();
   const apiPath = HOME_FEED_APIS[activeCategory] ?? FALLBACK_HOME_FEED_API;
-
+  const session = await auth();
   let initialFeed: Feed[] = [];
   try {
-    const posts = await sdsApi.getFeedByApiPath(apiPath, "steem", 16, 0);
+    const posts = await sdsApi.getFeedByApiPath(
+      apiPath,
+      session?.user?.name ?? "steem",
+      16,
+      0,
+    );
     initialFeed = Array.isArray(posts) ? posts : [];
   } catch (error) {
     console.error("[home] initial feed fetch failed", error);

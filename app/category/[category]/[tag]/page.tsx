@@ -1,6 +1,7 @@
 import { sdsApi } from "@/libs/sds";
 import { tagFeedApi } from "@/utils/feedApis";
 import { CategoryTabs } from "./CategoryTabs";
+import { auth } from "@/auth";
 
 /**
  * Server component: preloads the requested tab's feed so crawlers receive an
@@ -14,13 +15,19 @@ export default async function CategoryPage({
   const { category, tag } = await params;
   const activeCategory = (category || "trending").toLowerCase();
   const activeTag = (tag || "").toLowerCase();
+  const session = await auth();
 
   const apiPath = activeTag ? tagFeedApi(activeCategory, activeTag) : "";
 
   let initialFeed: Feed[] = [];
   if (apiPath) {
     try {
-      const posts = await sdsApi.getFeedByApiPath(apiPath, "steem", 16, 0);
+      const posts = await sdsApi.getFeedByApiPath(
+        apiPath,
+        session?.user?.name ?? "steem",
+        16,
+        0,
+      );
       initialFeed = Array.isArray(posts) ? posts : [];
     } catch (error) {
       console.error("[category] initial feed fetch failed", error);

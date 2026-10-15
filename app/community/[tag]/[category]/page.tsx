@@ -2,10 +2,7 @@ import { auth } from "@/auth";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { sdsApi } from "@/libs/sds";
 import { COMMUNITY_FEED_APIS, communityFeedApi } from "@/utils/feedApis";
-import {
-  getCommunityStats,
-  type CommunityStats,
-} from "@/utils/communityStats";
+import { getCommunityStats, type CommunityStats } from "@/utils/communityStats";
 import { communityJsonLd } from "@/utils/jsonld";
 import CommunityPage from "../../(site)/CommunityPage";
 
@@ -23,12 +20,14 @@ async function page({
   // HTML contains real numbers/charts (SEO) instead of skeletons.
   const statsPromise: Promise<CommunityStats | null> =
     tab === "stats"
-      ? getCommunityStats(commAccount, "7d", session?.user?.name || undefined).catch(
-          (error) => {
-            console.error("[community] stats preload failed", error);
-            return null;
-          },
-        )
+      ? getCommunityStats(
+          commAccount,
+          "7d",
+          session?.user?.name || undefined,
+        ).catch((error) => {
+          console.error("[community] stats preload failed", error);
+          return null;
+        })
       : Promise.resolve(null);
 
   const [account, community, initialStats] = await Promise.all([
@@ -46,7 +45,12 @@ async function page({
   let initialFeed: Feed[] = [];
   if (apiPath) {
     try {
-      const posts = await sdsApi.getFeedByApiPath(apiPath, "steem", 16, 0);
+      const posts = await sdsApi.getFeedByApiPath(
+        apiPath,
+        session?.user?.name ?? "steem",
+        16,
+        0,
+      );
       initialFeed = Array.isArray(posts) ? posts : [];
     } catch (error) {
       console.error("[community] initial feed fetch failed", error);

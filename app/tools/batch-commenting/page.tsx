@@ -21,7 +21,11 @@ import { useSession } from "next-auth/react";
 import { useAccountsContext } from "@/components/auth/AccountsContext";
 import { steemApi } from "@/libs/steem";
 import { toast } from "sonner";
-import { generateReplyPermlink, makeJsonMetadataReply, normalizeUsername } from "@/utils/editor";
+import {
+  generateReplyPermlink,
+  makeJsonMetadataReply,
+  normalizeUsername,
+} from "@/utils/editor";
 import { useTranslations } from "next-intl";
 import SPopover from "@/components/ui/SPopover";
 import { Progress } from "@heroui/progress";
@@ -162,7 +166,7 @@ export default function BatchCommentingPage() {
 
             const posts = await sdsApi.getFeedByApiPath(
               `getPostsByAuthor/${u}`,
-              "steem",
+              session?.user?.name ?? "steem",
               1,
               0,
               1,
@@ -571,7 +575,10 @@ export default function BatchCommentingPage() {
                               </span>
                             )}
                           </div>
-                          <span suppressHydrationWarning className="text-[9px] text-default-800 hidden md:block">
+                          <span
+                            suppressHydrationWarning
+                            className="text-[9px] text-default-800 hidden md:block"
+                          >
                             {moment().format("HH:mm:ss")}
                           </span>
                         </div>
