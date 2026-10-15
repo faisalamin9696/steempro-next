@@ -2,14 +2,28 @@ import { Alert } from "@heroui/alert";
 import { Button } from "@heroui/button";
 import { Checkbox } from "@heroui/checkbox";
 import { Input } from "@heroui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAccountsContext } from "./AccountsContext";
 import { steemApi } from "@/libs/steem";
 import { toast } from "sonner";
-import { Eye, EyeOff, ShieldAlert, ShieldCheck } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Fingerprint,
+  ShieldAlert,
+  ShieldCheck,
+} from "lucide-react";
 import { PrivateKey } from "@steempro/dsteem";
 import SInput from "../ui/SInput";
 import { normalizeUsername } from "@/utils/editor";
+import {
+  describeBiometricError,
+  describeBiometricStatus,
+  enrollBiometric,
+  getBiometricStatus,
+  type BiometricEnrollment,
+  type BiometricStatus,
+} from "@/utils/biometrics";
 
 function PrivateKeyLogin({ onSuccess }: { onSuccess: () => void }) {
   const { loginWithKey, isPending } = useAccountsContext();
@@ -25,6 +39,41 @@ function PrivateKeyLogin({ onSuccess }: { onSuccess: () => void }) {
   // Posting keys are allowed to log in without a PIN. The user has to opt in
   // explicitly; Active/Owner keys are always PIN-protected regardless.
   const [usePin, setUsePin] = useState(false);
+  // Device unlock (fingerprint / Face ID) is only offered where the browser
+  // has a platform authenticator that verifies the user — and only alongside
+  // a PIN, which stays the fallback for contexts without WebAuthn.
+  const [useBiometric, setUseBiometric] = useState(false);
+  // null = not probed yet. The three non-"ready" values each carry their own
+  // explanation so the form can say *why* device unlock is missing.
+  const [bioStatus, setBioStatus] = useState<BiometricStatus | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    const check = () => {
+      getBiometricStatus().then((status) => {
+        if (alive) setBioStatus(status);
+      });
+    };
+
+    check();
+
+    // Re-probe when the tab is focused or becomes visible. Some browsers
+    // only settle the availability promise once the page is actually in
+    // front, so a single mount-time "no" would otherwise stick forever.
+    const onVisible = () => {
+      if (document.visibilityState === "visible") check();
+    };
+    window.addEventListener("focus", check);
+    document.addEventListener("visibilitychange", onVisible);
+
+    return () => {
+      alive = false;
+      window.removeEventListener("focus", check);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, []);
+
+  const bioAvailable = bioStatus === "ready";
 
   const isVerified = !!verifiedType;
   const isHighAuth = verifiedType === "active" || verifiedType === "owner";
@@ -127,12 +176,31 @@ function PrivateKeyLogin({ onSuccess }: { onSuccess: () => void }) {
       return;
     }
 
+    // Everything above is synchronous, so the browser still holds the user
+    // activation from the Login press — which is what `credentials.create()`
+    // needs. Do this before `loginWithKey` (which awaits) or the prompt is
+    // silently refused.
+    let biometric: BiometricEnrollment | undefined;
+    if (useBiometric && showPinFields && bioAvailable && pinToSave) {
+      try {
+        biometric = await enrollBiometric(
+          username,
+          (verifiedType as AccountKeyType) || "posting",
+        );
+      } catch (e) {
+        toast.warning("Device unlock skipped", {
+          description: `${describeBiometricError(e)} You can still log in with your PIN.`,
+        });
+      }
+    }
+
     try {
       await loginWithKey(
         username,
         key,
         pinToSave || undefined,
         (verifiedType as "posting" | "active" | "memo") || "posting",
+        biometric,
       );
       onSuccess();
     } catch (e: any) {
@@ -144,9 +212,12 @@ function PrivateKeyLogin({ onSuccess }: { onSuccess: () => void }) {
     setPin("");
     setConfirmPin("");
     setUsePin(false);
+    setUseBiometric(false);
   };
 
-  const toggleVisibility = () => setIsVisible(!isVisible);
+  const toggleVisibility = () => {
+    setIsVisible(!isVisible);
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -249,6 +320,33 @@ function PrivateKeyLogin({ onSuccess }: { onSuccess: () => void }) {
                     if (e.key === "Enter") handleLogin();
                   }}
                 />
+              )}
+
+              {/* Only rendered when the platform authenticator reports it
+                  can verify the user. Android may still answer with the
+                  device PIN rather than a fingerprint, hence the wording. */}
+              {bioAvailable && (
+                <Checkbox
+                  isSelected={useBiometric}
+                  onValueChange={setUseBiometric}
+                >
+                  <span className="flex items-center gap-1.5 text-sm">
+                    <Fingerprint
+                      size={14}
+                      className="text-primary shrink-0"
+                      aria-hidden="true"
+                    />
+                    Use Face ID / fingerprint (or device PIN)
+                  </span>
+                </Checkbox>
+              )}
+
+              {/* Say *why* it's missing instead of only hiding it — a silent
+                  "not available" is untestable on a real phone. */}
+              {bioStatus && !bioAvailable && (
+                <p className="text-xs leading-relaxed text-default-500">
+                  {describeBiometricStatus(bioStatus)}
+                </p>
               )}
             </div>
           )}

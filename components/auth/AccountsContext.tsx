@@ -1,5 +1,9 @@
 import PinModal from "./PinModal";
 import { decryptPrivateKey, encryptPrivateKey } from "@/utils/encryption";
+import {
+  unlockWithBiometric,
+  type BiometricEnrollment,
+} from "@/utils/biometrics";
 import { useSteemAuth } from "@/hooks/useSteemAuth";
 import { useSession } from "next-auth/react";
 import {
@@ -22,6 +26,7 @@ interface AccountsContextState {
     key: string,
     pin?: string,
     type?: AccountKeyType,
+    biometric?: BiometricEnrollment,
   ) => Promise<void>;
   authenticateOperation: (
     opsType: AccountKeyType,
@@ -55,6 +60,8 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
     resolve?: (result: string, remember: boolean) => void;
     /** Resolve the operation through Keychain instead of a pasted key. */
     useKeychain?: () => void;
+    /** Offer device unlock inside the modal; only when the account is enrolled. */
+    onBiometric?: () => Promise<boolean>;
     reject?: (reason?: any) => void;
   }>({ isOpen: false });
 
@@ -103,9 +110,10 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
     key: string,
     pin?: string,
     type: AccountKeyType = "posting",
+    biometric?: BiometricEnrollment,
   ) => {
     SESSION_PIN = null;
-    return _loginWithKey(username, key, pin, type);
+    return _loginWithKey(username, key, pin, type, biometric);
   };
 
   const removeAccount = (username?: string | null, type?: AccountKeyType) => {
@@ -184,37 +192,72 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
         else return reject(new Error("Failed to decrypt key"));
       }
 
-      // Encrypted, ask for PIN
-      // Check if we have a session PIN
-
-      if (SESSION_PIN) {
+      // Encrypted. A remembered session wins outright: ticking "Remember for
+      // this session" is an explicit opt-in to skip verification until the
+      // tab goes away, so device unlock must not re-prompt behind it.
+      const unlockWithSessionPin = (): boolean => {
+        if (!SESSION_PIN) return false;
         const decryptedPin = decryptPrivateKey(
           SESSION_PIN,
           process.env.NEXT_PUBLIC_AUTH_SECRET!,
         );
-        if (decryptedPin) {
-          const key = decryptPrivateKey(current.key!, decryptedPin);
-          if (key) return resolve({ key, useKeychain: false });
-        }
+        if (!decryptedPin) return false;
+        const key = decryptPrivateKey(current.key!, decryptedPin);
+        if (!key) return false;
+        resolve({ key, useKeychain: false });
+        return true;
+      };
+
+      if (unlockWithSessionPin()) return;
+
+      const askForPin = () => {
+        setPinModal({
+          isOpen: true,
+          // An enrolled account needs an explicit way back into device
+          // unlock. Without it, declining the automatic prompt strands the
+          // user on the PIN screen with no way to retry until the next
+          // transaction.
+          onBiometric: current.biometric
+            ? async () => {
+                const unlocked = await unlockWithBiometric(current);
+                if (!unlocked) return false;
+                setPinModal((m) => ({ ...m, isOpen: false }));
+                resolve({ key: unlocked, useKeychain: false });
+                return true;
+              }
+            : undefined,
+          resolve: (pin, remember) => {
+            if (remember) {
+              SESSION_PIN = encryptPrivateKey(
+                pin,
+                process.env.NEXT_PUBLIC_AUTH_SECRET!,
+              );
+            }
+            const key = decryptPrivateKey(current.key!, pin);
+            if (key) resolve({ key, useKeychain: false });
+            else reject(new Error("Invalid PIN"));
+          },
+          reject: (err) => {
+            reject(err || new Error("Cancelled"));
+          },
+        });
+      };
+
+      // No remembered session — offer device unlock before falling back to
+      // typing the PIN. Every failure mode falls through deliberately:
+      // dismissed prompt, an in-app browser with no WebAuthn, or a
+      // credential minted in another context.
+      if (current.biometric) {
+        void unlockWithBiometric(current)
+          .then((unlocked) => {
+            if (unlocked) resolve({ key: unlocked, useKeychain: false });
+            else askForPin();
+          })
+          .catch(() => askForPin());
+        return;
       }
 
-      setPinModal({
-        isOpen: true,
-        resolve: (pin, remember) => {
-          if (remember) {
-            SESSION_PIN = encryptPrivateKey(
-              pin,
-              process.env.NEXT_PUBLIC_AUTH_SECRET!,
-            );
-          }
-          const key = decryptPrivateKey(current.key!, pin);
-          if (key) resolve({ key, useKeychain: false });
-          else reject(new Error("Invalid PIN"));
-        },
-        reject: (err) => {
-          reject(err || new Error("Cancelled"));
-        },
-      });
+      askForPin();
     });
   };
 
@@ -255,6 +298,7 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
               }
             : undefined
         }
+        onBiometric={pinModal.onBiometric}
         onSubmit={(result, remember) => {
           pinModal.resolve?.(result, remember);
           setPinModal({ ...pinModal, isOpen: false });

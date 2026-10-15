@@ -6,7 +6,7 @@ import SModal from "../ui/SModal";
 import { useState, useSyncExternalStore } from "react";
 import { toast } from "sonner";
 import { decryptPrivateKey } from "@/utils/encryption";
-import { Lock } from "lucide-react";
+import { Fingerprint, Lock } from "lucide-react";
 import { capitalize } from "@/utils";
 import { keychainApi } from "@/libs/keychain";
 
@@ -26,6 +26,12 @@ interface Props {
    * when the caller is in key mode and the extension is actually installed.
    */
   onKeychain?: () => void;
+  /**
+   * Offer device unlock (fingerprint / Face ID). Only set when the account
+   * was enrolled at login. Resolves `true` when verification succeeded —
+   * the caller is responsible for closing the modal in that case.
+   */
+  onBiometric?: () => Promise<boolean>;
   encryptedKey: string;
   mode?: "pin" | "key";
   username?: string;
@@ -37,6 +43,7 @@ export default function PinModal({
   onClose,
   onSubmit,
   onKeychain,
+  onBiometric,
   encryptedKey,
   mode,
   username,
@@ -45,9 +52,14 @@ export default function PinModal({
   const [pin, setPin] = useState("");
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(false);
+  const [biometricLoading, setBiometricLoading] = useState(false);
 
   const isKeyMode = mode === "key";
   const authorityLabel = capitalize(requiredType || "active") || "Private";
+
+  const pinHelp = onBiometric
+    ? "This transaction requires your Active Authority. Verify with your fingerprint or Face ID, or enter your PIN code."
+    : "This transaction requires your Active Authority. Please enter your PIN code to verify your identity.";
 
   // Keychain injects `window.steem_keychain` from the extension, which does
   // not exist during SSR. useSyncExternalStore keeps hydration safe: React uses
@@ -66,6 +78,23 @@ export default function PinModal({
   const handleKeychain = () => {
     setPin("");
     onKeychain?.();
+  };
+
+  const handleBiometric = async () => {
+    if (!onBiometric) return;
+    setBiometricLoading(true);
+    try {
+      const unlocked = await onBiometric().catch(() => false);
+      // Deliberately keeps the modal open on failure so the PIN stays
+      // available — a declined prompt must never be a dead end.
+      if (!unlocked) {
+        toast.error("Device unlock didn't go through", {
+          description: "Enter your PIN instead.",
+        });
+      }
+    } finally {
+      setBiometricLoading(false);
+    }
   };
 
   const handleSubmit = () => {
@@ -134,7 +163,7 @@ export default function PinModal({
                         ? "Sign with Keychain, or enter your private key to sign locally."
                         : "Please enter your private key."
                     }`
-                  : "This transaction requires your Active Authority. Please enter your PIN code to verify your identity."}
+                  : pinHelp}
               </p>
             </div>
 
@@ -173,6 +202,22 @@ export default function PinModal({
             <Button variant="flat" onPress={onClose}>
               Cancel
             </Button>
+            {onBiometric && !isKeyMode && (
+              <Button
+                variant="bordered"
+                onPress={handleBiometric}
+                isLoading={biometricLoading}
+                startContent={
+                  <Fingerprint
+                    size={16}
+                    className="text-primary"
+                    aria-hidden="true"
+                  />
+                }
+              >
+                Use Face ID / fingerprint
+              </Button>
+            )}
             {showKeychain && (
               <Button
                 variant="bordered"

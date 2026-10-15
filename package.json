@@ -12,6 +12,7 @@
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
+    "@github/webauthn-json": "^2.1.1",
     "@heroui/react": "^2.8.10",
     "@quochuync/remarkable-spoiler": "^1.4.0",
     "@reduxjs/toolkit": "^2.12.0",

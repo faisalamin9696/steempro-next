@@ -685,6 +685,13 @@ type LocalAccount = {
   memo?: string;
   loginMethod: LoginMethod;
   createdAt: number;
+  /**
+   * Set when the user enrolled this account for device unlock
+   * (fingerprint / Face ID). The PIN path stays available regardless.
+   */
+  biometric?: boolean;
+  /** `key` re-encrypted with the device secret that WebAuthn gates. */
+  bioKey?: string;
 };
 
 type DraftData = {

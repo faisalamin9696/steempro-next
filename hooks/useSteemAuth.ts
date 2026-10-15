@@ -2,6 +2,11 @@ import { keychainApi } from "@/libs/keychain";
 import { authenticateWithEmail } from "@/libs/supabase/database";
 import { supabase } from "@/libs/supabase/supabase";
 import { encryptPrivateKey } from "@/utils/encryption";
+import {
+  clearBiometric,
+  saveBiometric,
+  type BiometricEnrollment,
+} from "@/utils/biometrics";
 import { secureLocalStorageFresh } from "@/utils/user";
 import { PrivateKey } from "@steempro/dsteem";
 import { Session, User } from "@supabase/supabase-js";
@@ -140,6 +145,7 @@ export function useSteemAuth() {
     key: string,
     pin?: string,
     type: AccountKeyType = "posting",
+    biometric?: BiometricEnrollment,
   ): Promise<void> => {
     let privateKey: PrivateKey;
 
@@ -162,7 +168,17 @@ export function useSteemAuth() {
       loginMethod: "private-key",
       createdAt: moment.now(),
       encrypted: !!pin,
+      // A second copy under the device secret. `encKey` above is untouched,
+      // so the PIN keeps working even if WebAuthn is unavailable later.
+      ...(biometric
+        ? {
+            biometric: true as const,
+            bioKey: encryptPrivateKey(key, biometric.secret),
+          }
+        : {}),
     };
+
+    if (biometric) saveBiometric(username, type, biometric);
 
     const updated = [
       ...accounts.filter((a) => !(a.username === username && a.type === type)),
@@ -205,6 +221,9 @@ export function useSteemAuth() {
     skipNextCurrent?: boolean,
   ) => {
     if (!username) return;
+    // Drop the device secret too — otherwise a stale credential survives an
+    // account that's no longer in the list.
+    clearBiometric(username, type);
     const updated = accounts.filter(
       (a) => !(a.username === username && a.type === type),
     );
