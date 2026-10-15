@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
   // and inflates every JS payload — keep them out of production bundles.
   productionBrowserSourceMaps: false,
   transpilePackages: ["lottie-react", "lottie-web", "lucide-react", "next"],
+  allowedDevOrigins:['192.168.1.100'],
   images: {
     qualities: [25, 50, 75],
     unoptimized: true,
