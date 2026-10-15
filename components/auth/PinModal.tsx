@@ -9,7 +9,6 @@ import { decryptPrivateKey } from "@/utils/encryption";
 import { Lock } from "lucide-react";
 import { capitalize } from "@/utils";
 import { keychainApi } from "@/libs/keychain";
-import { KeychainIcon } from "@/components/icons/KeychainIcon";
 
 // Keychain presence never changes while the page is loaded (only an extension
 // install/removal + reload does), so there is nothing to subscribe to and the
@@ -178,7 +177,7 @@ export default function PinModal({
               <Button
                 variant="bordered"
                 onPress={handleKeychain}
-                startContent={<KeychainIcon size={18} className="text-primary" />}
+                startContent={<img src={"/keychain.svg"} className="h-4 w-4" />}
               >
                 Sign with Keychain
               </Button>
