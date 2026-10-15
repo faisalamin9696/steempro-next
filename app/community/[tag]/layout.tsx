@@ -2,8 +2,7 @@ import { auth } from "@/auth";
 import CommunityCard from "@/components/community/CommunityCard";
 import CommunityHeader from "@/components/community/CommunityHeader";
 import MainWrapper from "@/components/wrappers/MainWrapper";
-import { sds } from "@/libs/sds-client";
-import { mapSds } from "@steempro/sds-api";
+import { sdsApi } from "@/libs/sds";
 import HomeCarousel from "@/components/carousal/HomeCarousal";
 import moment from "moment";
 import { getThumbnail } from "@/utils/image";
@@ -24,28 +23,9 @@ async function layout({
   const commAccount = `hive-${tag}`;
 
   const [account, community, pinnedPostsRaw] = await Promise.all([
-    (async () =>
-      mapSds<AccountExt>(
-        await sds.accounts.getAccountExt({
-          account: commAccount,
-          observer: session?.user?.name ?? "steem",
-        }),
-      ))(),
-    (async () =>
-      mapSds<Community>(
-        await sds.communities.getCommunity({
-          community: commAccount,
-          observer: session?.user?.name ?? "steem",
-        }),
-      ))(),
-    (async () =>
-      mapSds<Feed[]>(
-        await sds.communities.getCommunityPinnedPosts({
-          community: commAccount,
-          observer: session?.user?.name ?? "steem",
-          bodyLength: 250,
-        }),
-      ))(),
+    sdsApi.getAccountExt(commAccount, session?.user?.name),
+    sdsApi.getCommunity(commAccount, session?.user?.name),
+    sdsApi.getCommunityPinnedPosts(commAccount, session?.user?.name),
   ]);
 
   if (!account || !community) return null;

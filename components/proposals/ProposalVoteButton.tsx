@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import useSWR from "swr";
-import { getProposalVotes } from "@/libs/steem";
+import { sdsApi } from "@/libs/sds";
 import SPopover from "../ui/SPopover";
 import { Button } from "@heroui/button";
 import { Vote } from "lucide-react";
@@ -24,7 +24,7 @@ export default function ProposalVoteButton({
     session?.user?.name
       ? `proposals-vote-check-${proposal.id}-${session.user.name}`
       : null,
-    () => getProposalVotes(proposal.id, session?.user?.name!, 1)
+    () => sdsApi.getProposalVotes(proposal.id, session?.user?.name!, 1)
   );
 
   useMemo(() => {

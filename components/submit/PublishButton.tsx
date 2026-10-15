@@ -3,8 +3,7 @@ import { empty_comment } from "@/constants/templates";
 import { addCommentHandler } from "@/hooks/redux/reducers/CommentReducer";
 import { addRepliesHandler } from "@/hooks/redux/reducers/RepliesReducer";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
-import { sds } from "@/libs/sds-client";
-import { mapSds } from "@steempro/sds-api";
+import { sdsApi } from "@/libs/sds";
 import { steemApi } from "@/libs/steem";
 import {
   createPatch,
@@ -166,14 +165,7 @@ function PublishButton(props: Props) {
 
     if (!isEdit && !isReply) {
       try {
-        mapSds<Post>(
-          await sds.posts.getPost({
-            author,
-            permlink,
-            withVotes: true,
-            observer: "steem",
-          }),
-        );
+        await sdsApi.getPost(author, permlink);
         permlink = generatePermlink(title, true);
       } catch {
         /* permlink free */
@@ -345,12 +337,7 @@ function PublishButton(props: Props) {
     await handleSteemError(async () => {
       if (!force) {
         // 1. Check Authority
-        const accountData = mapSds<AccountExt>(
-          await sds.accounts.getAccountExt({
-            account: author,
-            observer: "steem",
-          }),
-        );
+        const accountData = await sdsApi.getAccountExt(author);
         const postingAuths = accountData.posting_account_auths || [];
         const isAuthorized = postingAuths.some(
           ([acc]) => acc === Constants.official_account,

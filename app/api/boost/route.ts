@@ -1,7 +1,6 @@
 import { auth } from "@/auth";
 import { Constants } from "@/constants";
-import { sds } from "@/libs/sds-client";
-import { mapSds } from "@steempro/sds-api";
+import { sdsApi } from "@/libs/sds";
 import { getAppDetails } from "@/utils/app";
 import { validateHost } from "@/utils/helper";
 import { parsePostMeta } from "@/utils/user";
@@ -15,40 +14,13 @@ async function getBoostStatus(
 ) {
   // Fetch everything in parallel
   const [officialAccount, post, history, authorExt] = await Promise.all([
-    (async () =>
-      mapSds<AccountExt>(
-        await sds.accounts.getAccountExt({
-          account: Constants.official_account,
-          observer: "steem",
-        }),
-      ))(),
-    (async () =>
-      mapSds<Post>(
-        await sds.posts.getPost({
-          author,
-          permlink,
-          withVotes: true,
-          observer: Constants.official_account,
-        }),
-      ))(),
-    (async () =>
-      mapSds<AccountHistory[]>(
-        await sds.accountHistory.getHistoryByOpTypesTime({
-          account: Constants.official_account,
-          opTypes: "vote",
-          fromTime: moment().subtract(24, "hours").unix(),
-          toTime: moment().unix(),
-          limit: 500,
-          offset: 0,
-        }),
-      ))(),
-    (async () =>
-      mapSds<AccountExt>(
-        await sds.accounts.getAccountExt({
-          account: author,
-          observer: Constants.official_account,
-        }),
-      ))(),
+    sdsApi.getAccountExt(Constants.official_account),
+    sdsApi.getPost(author, permlink, Constants.official_account),
+    sdsApi.getAccountHistory(Constants.official_account, "vote", 500, 0, {
+      amount: 24,
+      unit: "hours",
+    }),
+    sdsApi.getAccountExt(author, Constants.official_account),
   ]);
 
   if (!post) return { error: "POST_NOT_FOUND", message: "Post not found" };

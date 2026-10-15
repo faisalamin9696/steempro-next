@@ -25,8 +25,7 @@ import { addLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { addProfileHandler } from "@/hooks/redux/reducers/ProfileReducer";
 import LoadingStatus from "../LoadingStatus";
 import useSWR from "swr";
-import { sds } from "@/libs/sds-client";
-import { mapSds } from "@steempro/sds-api";
+import { sdsApi } from "@/libs/sds";
 import SAvatar from "../ui/SAvatar";
 
 interface DelegationsProps {
@@ -67,43 +66,7 @@ export const Delegations = ({ account }: DelegationsProps) => {
 
   const { data, isLoading, error } = useSWR(
     account.name ? `delegations-${account.name}-${typeFilter}` : null,
-    async () => {
-      const delegationType = typeFilter;
-      const fetchDelegations = async (
-        kind: "incoming" | "outgoing" | "expiring" | "all",
-      ): Promise<Delegation[]> => {
-        if (kind === "all") {
-          const [incoming, outgoing, expiring] = await Promise.all([
-            fetchDelegations("incoming"),
-            fetchDelegations("outgoing"),
-            fetchDelegations("expiring"),
-          ]);
-          return [...incoming, ...outgoing, ...expiring];
-        }
-        const rows = mapSds<Delegation[]>(
-          await (kind === "outgoing"
-            ? sds.delegations.getOutgoingDelegations({
-                account: account.name,
-                limit: 1000,
-                offset: 0,
-              })
-            : kind === "expiring"
-              ? sds.delegations.getExpiringDelegations({
-                  account: account.name,
-                  limit: 1000,
-                  offset: 0,
-                })
-              : sds.delegations.getIncomingDelegations({
-                  account: account.name,
-                  limit: 1000,
-                  offset: 0,
-                })),
-        );
-        return (rows ?? []).map((item) => ({ ...item, status: kind as any }));
-      };
-
-      return fetchDelegations(delegationType);
-    },
+    () => sdsApi.getDelegations(account.name, typeFilter),
   );
 
   useEffect(() => {

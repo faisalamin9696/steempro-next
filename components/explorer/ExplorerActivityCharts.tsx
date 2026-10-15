@@ -5,7 +5,7 @@ import useSWR from "swr";
 import Link from "@/components/ui/CustomLink";
 import { ArrowUpRight } from "lucide-react";
 import LineChart, { type LineSeries } from "./charts/LineChart";
-import { getMarketHistory } from "@/libs/steem";
+import { sdsApi } from "@/libs/sds";
 import { summarizeMarket, type MarketBucket } from "@/utils/marketSummary";
 import ExplorerMarketSummary from "./ExplorerMarketSummary";
 import { useExplorerSection } from "./useExplorerSection";
@@ -47,7 +47,7 @@ export default function ExplorerActivityCharts() {
   const market = useSWR<MarketBucket[]>(
     ["explorer-market", range],
     ([, r]) =>
-      getMarketHistory(MARKET_BUCKET[r as Range], MARKET_HOURS[r as Range]),
+      sdsApi.getMarketHistory(MARKET_BUCKET[r as Range], MARKET_HOURS[r as Range]),
     { revalidateOnFocus: false, shouldRetryOnError: false },
   );
 

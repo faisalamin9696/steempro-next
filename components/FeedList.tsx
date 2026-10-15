@@ -1,6 +1,6 @@
 "use client";
 
-import { getFeedByApiPath } from "@/libs/sds-client";
+import { sdsApi } from "@/libs/sds";
 import { useEffect, useState, useCallback, useRef } from "react";
 import PostCard from "./post/PostCard";
 import useFeedLayout from "@/hooks/useFeedLayout";
@@ -72,7 +72,7 @@ export function FeedList({
       }
 
       try {
-        const result = await getFeedByApiPath(
+        const result = await sdsApi.getFeedByApiPath(
           apiPath,
           observer,
           LIMIT,

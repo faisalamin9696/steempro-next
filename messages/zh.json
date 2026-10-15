@@ -1558,6 +1558,8 @@
     "manageAccounts": "管理账户"
   },
   "Navbar": {
+    "collapse": "折叠侧边栏",
+    "expand": "展开侧边栏",
     "discover": "发现",
     "home": "首页",
     "explore": "探索",
@@ -1576,8 +1578,6 @@
     "privacy": "隐私",
     "about": "关于",
     "manage": "管理",
-    "collapse": "折叠侧边栏",
-    "expand": "展开侧边栏",
     "search": "搜索...",
     "create": "创建",
     "refresh": "刷新",

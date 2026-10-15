@@ -2,8 +2,7 @@ import { auth } from "@/auth";
 import { JsonLd } from "@/components/seo/JsonLd";
 import ProfileCard from "@/components/profile/ProfileCard";
 import MainWrapper from "@/components/wrappers/MainWrapper";
-import { sds } from "@/libs/sds-client";
-import { mapSds } from "@steempro/sds-api";
+import { sdsApi } from "@/libs/sds";
 import { blogPostingJsonLd, breadcrumbJsonLd } from "@/utils/jsonld";
 import PostPage from "../../(site)/PostPage";
 import { notFound } from "next/navigation";
@@ -18,20 +17,8 @@ async function page({
   const { author, permlink } = await params;
   const session = await auth();
   const [account, post] = await Promise.all([
-    mapSds<AccountExt>(
-      await sds.accounts.getAccountExt({
-        account: author,
-        observer: session?.user?.name ?? "steem",
-      }),
-    ),
-    mapSds<Post>(
-      await sds.posts.getPost({
-        author,
-        permlink,
-        withVotes: true,
-        observer: session?.user?.name ?? "steem",
-      }),
-    ),
+    sdsApi.getAccountExt(author, session?.user?.name),
+    sdsApi.getPost(author, permlink, session?.user?.name),
   ]);
 
   // A missing post must be a real 404. Rendering the not-found UI inside a 200

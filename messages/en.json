@@ -1604,6 +1604,8 @@
     "manageAccounts": "Manage Accounts"
   },
   "Navbar": {
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar",
     "discover": "Discover",
     "home": "Home",
     "explore": "Explore",
@@ -1622,8 +1624,6 @@
     "privacy": "Privacy",
     "about": "About",
     "manage": "Manage",
-    "collapse": "Collapse sidebar",
-    "expand": "Expand sidebar",
     "search": "Search...",
     "create": "Create",
     "refresh": "Refresh",

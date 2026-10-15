@@ -1,12 +1,11 @@
-import { mapSds } from "@steempro/sds-api";
-import { sds, getFeedByApiPath } from "@/libs/sds-client";
+import { sdsFetcher } from "@/constants/functions";
 import {
   condenserApi,
   type DynamicGlobalProperties,
   type MedianPrice,
   type RewardFund,
 } from "@/libs/consenser";
-import { getMarketHistory } from "@/libs/steem";
+import { sdsApi } from "@/libs/sds";
 import { summarizeMarket, type MarketSummary } from "@/utils/marketSummary";
 
 export type { MarketSummary };
@@ -253,91 +252,61 @@ export const DEFAULT_CHAIN_PARAMS: ChainParameters = {
 // ---------------------------------------------------------------------------
 
 export function getChainStats(): Promise<ChainStats> {
-  return memo("chain-stats", 10 * 60_000, async () =>
-    mapSds<ChainStats>(await sds.chain.getChainStats()),
+  return memo("chain-stats", 10 * 60_000, () =>
+    sdsFetcher<ChainStats>("/chain_api/getChainStats"),
   );
 }
 
 export function getOperationStats(): Promise<OperationStat[]> {
-  return memo("op-stats", 6 * 60 * 60_000, async () =>
-    mapSds<OperationStat[]>(await sds.chain.getOperationStats()),
+  return memo("op-stats", 6 * 60 * 60_000, () =>
+    sdsFetcher<OperationStat[]>("/chain_api/getOperationStats"),
   );
 }
 
 export function getTopTags(limit = 12): Promise<TagStat[]> {
-  return memo(`top-tags-${limit}`, 60 * 60_000, async () =>
-    mapSds<TagStat[]>(
-      await sds.postTags.getTopPostTags({ limit, offset: 0 }),
-    ),
+  return memo(`top-tags-${limit}`, 60 * 60_000, () =>
+    sdsFetcher<TagStat[]>(`/post_tags_api/getTopPostTags/${limit}`),
   );
 }
 
 export function getTopActiveTags(limit = 12): Promise<TagStat[]> {
-  return memo(`top-active-tags-${limit}`, 15 * 60_000, async () =>
-    mapSds<TagStat[]>(
-      await sds.postTags.getTopActivePostTags({ limit, offset: 0 }),
-    ),
+  return memo(`top-active-tags-${limit}`, 15 * 60_000, () =>
+    sdsFetcher<TagStat[]>(`/post_tags_api/getTopActivePostTags/${limit}`),
   );
 }
 
 export function getNewestAccounts(limit = 10): Promise<AccountRow[]> {
-  return memo(`newest-accounts-${limit}`, 10 * 60_000, async () =>
-    mapSds<AccountRow[]>(
-      await sds.accounts.getAccountsSortedBy({
-        sortField: "created",
-        sortDir: "DESC",
-        observer: "steem",
-        fields: "name,created,creator",
-        limit,
-        offset: 0,
-      }),
+  return memo(`newest-accounts-${limit}`, 10 * 60_000, () =>
+    sdsFetcher<AccountRow[]>(
+      `/accounts_api/getAccountsSortedBy/created/DESC/steem/name,created,creator/${limit}/0`,
     ),
   );
 }
 
 export function getTopBalances(limit = 10): Promise<AccountRow[]> {
-  return memo(`top-balances-${limit}`, 10 * 60_000, async () =>
-    mapSds<AccountRow[]>(
-      await sds.accounts.getAccountsSortedBy({
-        sortField: "balance_steem",
-        sortDir: "DESC",
-        observer: "steem",
-        fields: "name,balance_steem,balance_sbd,vests_own",
-        limit,
-        offset: 0,
-      }),
+  return memo(`top-balances-${limit}`, 10 * 60_000, () =>
+    sdsFetcher<AccountRow[]>(
+      `/accounts_api/getAccountsSortedBy/balance_steem/DESC/steem/name,balance_steem,balance_sbd,vests_own/${limit}/0`,
     ),
   );
 }
 
 export function getTopWitnesses(limit = 15): Promise<WitnessRow[]> {
-  return memo(`top-witnesses-${limit}`, 10 * 60_000, async () =>
-    mapSds<WitnessRow[]>(
-      await sds.witnesses.getWitnessesByRank({
-        observer: "steem",
-        limit,
-        offset: 0,
-      }),
-    ),
+  return memo(`top-witnesses-${limit}`, 10 * 60_000, () =>
+    sdsFetcher<WitnessRow[]>(`/witnesses_api/getWitnessesByRank/steem/${limit}/0`),
   );
 }
 
 export function getRecentlyMissedBlocks(limit = 8): Promise<MissedBlockRow[]> {
-  return memo(`missed-${limit}`, 2 * 60_000, async () =>
-    mapSds<MissedBlockRow[]>(
-      await sds.witnesses.getRecentlyMissedBlocks({ limit, offset: 0 }),
-    ),
+  return memo(`missed-${limit}`, 2 * 60_000, () =>
+    sdsFetcher<MissedBlockRow[]>(`/witnesses_api/getRecentlyMissedBlocks/${limit}/0`),
   );
 }
 
 export function getTopCommunities(limit = 10): Promise<CommunityRow[]> {
-  return memo(`top-communities-${limit}`, 30 * 60_000, async () =>
-    mapSds<CommunityRow[]>(
-      await sds.communities.getCommunitiesByCountActivePosts({
-        observer: "steem",
-        limit,
-        offset: 0,
-      }),
+  return memo(`top-communities-${limit}`, 30 * 60_000, () =>
+    sdsFetcher<CommunityRow[]>(
+      `/communities_api/getCommunitiesByCountActivePosts/steem/${limit}/0`,
     ),
   );
 }
@@ -345,8 +314,8 @@ export function getTopCommunities(limit = 10): Promise<CommunityRow[]> {
 /** Last `days` daily average share-rate points (the feed is a full daily series). */
 export function getShareRates(days = 90): Promise<ShareRatePoint[]> {
   return memo(`share-rates-${days}`, 6 * 60 * 60_000, async () => {
-    const rows = mapSds<{ time: number; avg_rate: number }[]>(
-      await sds.chain.getDailyAverageShareRates(),
+    const rows = await sdsFetcher<{ time: number; avg_rate: number }[]>(
+      "/chain_api/getDailyAverageShareRates",
     );
     const cutoff = Math.floor(Date.now() / 1000) - days * 86400;
     return rows
@@ -371,9 +340,9 @@ export function getActivitySeries(range: ExplorerRange): Promise<ActivitySample[
     const from = now - RANGE_SECONDS[range];
     const stamps: number[] = [];
     for (let t = from; t <= now; t += step) stamps.push(t);
-    const samples = await pooled(stamps, 10, async (t) =>
-      mapSds<{ time: number; block_num: number; trans_count: number; op_count: number; witness: string }>(
-        await sds.chain.getBlockInfoByTime({ blockTime: t }),
+    const samples = await pooled(stamps, 10, (t) =>
+      sdsFetcher<{ time: number; block_num: number; trans_count: number; op_count: number; witness: string }>(
+        `/chain_api/getBlockInfoByTime/${t}`,
       ),
     );
     return samples.map((s) => ({
@@ -415,12 +384,8 @@ async function fetchFeedWindow(
   const collected: FeedRow[] = [];
   let oldest = Math.floor(Date.now() / 1000);
   for (let page = 0; page < maxPages; page++) {
-    const rows = await getFeedByApiPath(
-      apiPath,
-      "steem",
-      FEED_PAGE,
-      page * FEED_PAGE,
-      FEED_PAGE,
+    const rows = await sdsFetcher<FeedRow[]>(
+      `/feeds_api/${apiPath}/steem/${FEED_PAGE}/${FEED_PAGE}/${page * FEED_PAGE}`,
     );
     if (!rows || rows.length === 0) break;
     collected.push(...rows);
@@ -551,7 +516,7 @@ export function getMarketSummary(
   bucketSeconds = 3600,
 ): Promise<MarketSummary> {
   return memo(`market-summary-${hours}-${bucketSeconds}`, 10 * 60_000, async () => {
-    const history = await getMarketHistory(bucketSeconds, hours);
+    const history = await sdsApi.getMarketHistory(bucketSeconds, hours);
     return summarizeMarket(history, hours);
   });
 }
@@ -589,15 +554,8 @@ export function getAccountGrowth(days = 14): Promise<GrowthStats> {
     let oldest = now;
 
     for (let page = 0; page < CREATED_MAX_PAGES; page++) {
-      const rows = mapSds<{ name: string; created: number }[]>(
-        await sds.accounts.getAccountsSortedBy({
-          sortField: "created",
-          sortDir: "DESC",
-          observer: "steem",
-          fields: "name,created",
-          limit: CREATED_PAGE,
-          offset: page * CREATED_PAGE,
-        }),
+      const rows = await sdsFetcher<{ name: string; created: number }[]>(
+        `/accounts_api/getAccountsSortedBy/created/DESC/steem/name,created/${CREATED_PAGE}/${page * CREATED_PAGE}`,
       );
       if (!rows || rows.length === 0) break;
       created.push(...rows.map((r) => num(r.created)));
@@ -644,31 +602,17 @@ export function getAccountGrowth(days = 14): Promise<GrowthStats> {
 // ---------------------------------------------------------------------------
 
 export function getTopStakeholders(limit = 10): Promise<AccountRow[]> {
-  return memo(`top-stakeholders-${limit}`, 10 * 60_000, async () =>
-    mapSds<AccountRow[]>(
-      await sds.accounts.getAccountsSortedBy({
-        sortField: "vests_own",
-        sortDir: "DESC",
-        observer: "steem",
-        fields: "name,vests_own,balance_steem,balance_sbd",
-        limit,
-        offset: 0,
-      }),
+  return memo(`top-stakeholders-${limit}`, 10 * 60_000, () =>
+    sdsFetcher<AccountRow[]>(
+      `/accounts_api/getAccountsSortedBy/vests_own/DESC/steem/name,vests_own,balance_steem,balance_sbd/${limit}/0`,
     ),
   );
 }
 
 export function getMostFollowed(limit = 10): Promise<AccountRow[]> {
-  return memo(`most-followed-${limit}`, 10 * 60_000, async () =>
-    mapSds<AccountRow[]>(
-      await sds.accounts.getAccountsSortedBy({
-        sortField: "count_followers",
-        sortDir: "DESC",
-        observer: "steem",
-        fields: "name,count_followers,count_following",
-        limit,
-        offset: 0,
-      }),
+  return memo(`most-followed-${limit}`, 10 * 60_000, () =>
+    sdsFetcher<AccountRow[]>(
+      `/accounts_api/getAccountsSortedBy/count_followers/DESC/steem/name,count_followers,count_following/${limit}/0`,
     ),
   );
 }

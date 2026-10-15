@@ -1,9 +1,4 @@
-import {
-  mapSds,
-  type NotificationsGetFilteredNotificationsByStatusTypeArgs,
-} from "@steempro/sds-api";
-import { sds } from "@/libs/sds-client";
-import { Constants } from "@/constants";
+import { sdsApi } from "@/libs/sds";
 import { useState, useCallback } from "react";
 import { handleSteemError } from "@/utils/steemApiError";
 import { steemApi } from "@/libs/steem";
@@ -172,21 +167,10 @@ export const useNotifications = (username: string | undefined) => {
       setLoading(true);
       setError(null);
       try {
-        const history = mapSds<SDSNotification[]>(
-          await (typeFilter === "all"
-            ? sds.notifications.getFilteredNotificationsByStatus({
-                account: username,
-                status: "all",
-                filter: Constants.notifications_filter,
-                limit: LIMIT,
-              })
-            : sds.notifications.getFilteredNotificationsByStatusType({
-                account: username,
-                status: "all",
-                type: typeFilter as NotificationsGetFilteredNotificationsByStatusTypeArgs["type"],
-                filter: Constants.notifications_filter,
-                limit: LIMIT,
-              })),
+        const history = await sdsApi.getNotifications(
+          username,
+          typeFilter,
+          LIMIT
         );
         const parsed = parseNotifications(history, username);
         const more = parsed.length === LIMIT;
@@ -276,23 +260,11 @@ export const useNotifications = (username: string | undefined) => {
   ) => Promise<CustomNotification[]> = useCallback(
     async (offset?: number, typeFilter?: NotificationType | "all") => {
       if (!username || !offset) return [];
-      const history = mapSds<SDSNotification[]>(
-        await (typeFilter === undefined || typeFilter === "all"
-          ? sds.notifications.getFilteredNotificationsByStatus({
-              account: username,
-              status: "all",
-              filter: Constants.notifications_filter,
-              limit: LIMIT,
-              offset,
-            })
-          : sds.notifications.getFilteredNotificationsByStatusType({
-              account: username,
-              status: "all",
-              type: typeFilter as NotificationsGetFilteredNotificationsByStatusTypeArgs["type"],
-              filter: Constants.notifications_filter,
-              limit: LIMIT,
-              offset,
-            })),
+      const history = await sdsApi.getNotifications(
+        username,
+        typeFilter,
+        LIMIT,
+        offset
       );
       const parsed = parseNotifications(history, username);
       const more = parsed.length === LIMIT;

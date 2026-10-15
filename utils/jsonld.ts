@@ -12,23 +12,6 @@ import { extractVideoUrl } from "./shorts";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.steempro.com";
 
-/**
- * Upper bound for a plausible content date — 2100-01-01 UTC, in ms since epoch.
- *
- * This used to be `Date.now() + 365 days`, i.e. "reject dates more than a year
- * in the future". That reads the wall clock while `generateMetadata` renders,
- * and with `cacheComponents` enabled Next.js aborts the prerender the instant
- * it does — `blocking-prerender-current-time` (E1432) — because this value
- * feeds *output* (JSON-LD written into the HTML) and a prerender must be
- * reproducible.
- *
- * A fixed cutoff keeps the protection that actually matters — nonsense years
- * such as 2999, or a seconds/millis unit mix-up — while returning the same
- * answer on every render. Nothing real sits within decades of the boundary, so
- * the looser bound costs nothing.
- */
-const MAX_PLAUSIBLE_DATE_MS = Date.UTC(2100, 0, 1);
-
 export const SITE_NAME = "SteemPro";
 
 export type JsonLdNode = Record<string, unknown>;
@@ -48,7 +31,7 @@ function iso(value?: number | string | null): string | undefined {
   if (!Number.isFinite(ms) || ms <= 0) return undefined;
   const date = new Date(ms);
   if (Number.isNaN(date.getTime())) return undefined;
-  if (date.getTime() > MAX_PLAUSIBLE_DATE_MS) return undefined;
+  if (date.getTime() > Date.now() + 1000 * 60 * 60 * 24 * 365) return undefined;
   return date.toISOString();
 }
 

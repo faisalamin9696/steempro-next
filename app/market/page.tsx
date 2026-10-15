@@ -7,13 +7,7 @@ import { Divider } from "@heroui/divider";
 import { Tabs, Tab } from "@heroui/tabs";
 
 import { TrendingUp, History, ClipboardList, Plus } from "lucide-react";
-import {
-  getTicker,
-  getOrderBook,
-  getOpenOrders,
-  getTradeHistory,
-  getMarketHistory,
-} from "@/libs/steem";
+import { sdsApi } from "@/libs/sds";
 import { useSession } from "next-auth/react";
 import useSWR from "swr";
 import MarketStats from "@/components/market/MarketStats";
@@ -40,7 +34,7 @@ export default function MarketPage() {
 
   const { data: ticker, mutate: mutateTicker } = useSWR(
     "market-ticker",
-    () => getTicker(),
+    () => sdsApi.getTicker(),
     {
       refreshInterval: 5000,
     },
@@ -48,7 +42,7 @@ export default function MarketPage() {
 
   const { data: book, mutate: mutateBook } = useSWR(
     "market-orderbook",
-    () => getOrderBook(30),
+    () => sdsApi.getOrderBook(30),
     {
       refreshInterval: 10000,
     },
@@ -56,7 +50,7 @@ export default function MarketPage() {
 
   const { data: openOrders, mutate: mutateOrders } = useSWR(
     session?.user?.name ? `market-open-orders-${session.user.name}` : null,
-    () => getOpenOrders(session?.user?.name || ""),
+    () => sdsApi.getOpenOrders(session?.user?.name || ""),
     { refreshInterval: 15000 },
   );
 
@@ -64,7 +58,7 @@ export default function MarketPage() {
 
   const { data: history } = useSWR(
     "market-trade-history",
-    () => getTradeHistory(40),
+    () => sdsApi.getTradeHistory(40),
     {
       refreshInterval: 10000,
     },
@@ -72,7 +66,7 @@ export default function MarketPage() {
 
   const { data: marketHistory, mutate: mutateHistory } = useSWR(
     "market-history",
-    () => getMarketHistory(3600, 24),
+    () => sdsApi.getMarketHistory(3600, 24),
     {
       refreshInterval: 60000,
     },

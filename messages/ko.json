@@ -1559,6 +1559,8 @@
     "manageAccounts": "계정 관리"
   },
   "Navbar": {
+    "collapse": "사이드바 접기",
+    "expand": "사이드바 펼치기",
     "discover": "검색",
     "home": "홈",
     "explore": "탐색",
@@ -1577,8 +1579,6 @@
     "privacy": "개인정보",
     "about": "정보",
     "manage": "관리",
-    "collapse": "사이드바 접기",
-    "expand": "사이드바 펼치기",
     "search": "검색...",
     "create": "만들기",
     "refresh": "새로고침",

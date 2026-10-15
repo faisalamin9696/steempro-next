@@ -15,7 +15,7 @@ import InfiniteList from "@/components/InfiniteList";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
 import { addProposalsHandler } from "@/hooks/redux/reducers/ProposalsReducer";
 import useSWR from "swr";
-import { getProposals } from "@/libs/steem";
+import { sdsApi } from "@/libs/sds";
 import ErrorCard from "@/components/ui/ErrorCard";
 import LoadingStatus from "@/components/LoadingStatus";
 import PageHeader from "@/components/ui/PageHeader";
@@ -24,7 +24,7 @@ import { useTranslations } from "next-intl";
 const ProposalsPage = () => {
   const t = useTranslations("Proposals");
   const { data, isLoading, error } = useSWR(`proposals-list`, () =>
-    getProposals()
+    sdsApi.getProposals()
   );
   const [selected, setSelected] = useState<Proposal | null>(null);
   const [isProposalDetails, setIsProposalDetails] = useState(false);

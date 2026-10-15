@@ -6,8 +6,7 @@ import moment from "moment";
 import SUsername from "../ui/SUsername";
 import { Constants } from "@/constants";
 import useSWR from "swr";
-import { sds } from "@/libs/sds-client";
-import { mapSds } from "@steempro/sds-api";
+import { sdsApi } from "@/libs/sds";
 import { Spinner } from "@heroui/spinner";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
@@ -36,15 +35,7 @@ function PayoutButton(props: Props) {
       : comment.max_accepted_payout !== 0
       ? `/posts_api/getPost/${comment.author}/${comment.permlink}`
       : null,
-    async () =>
-      mapSds<Post>(
-        await sds.posts.getPost({
-          author: comment.author,
-          permlink: comment.permlink,
-          withVotes: true,
-          observer: "steem",
-        }),
-      )
+    () => sdsApi.getPost(comment.author, comment.permlink)
   );
 
   const isDeclined = comment.max_accepted_payout === 0;

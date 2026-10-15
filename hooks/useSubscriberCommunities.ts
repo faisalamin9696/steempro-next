@@ -1,5 +1,4 @@
-import { mapSds } from "@steempro/sds-api";
-import { sds } from "@/libs/sds-client";
+import { sdsApi } from "@/libs/sds";
 import { AsyncUtils } from "@/utils/async.utils";
 import { useState, useEffect } from "react";
 
@@ -27,12 +26,7 @@ export function useSubscriberCommunities(
           setIsLoading(false);
           return;
         }
-        const communitiesData = mapSds<Community[]>(
-          await sds.communities.getCommunitiesBySubscriber({
-            subscriber: username,
-            observer: "steem",
-          }),
-        );
+        const communitiesData = await sdsApi.getSubscriberCommunities(username);
         setCommunities(communitiesData);
       } catch (err) {
         console.error("Error fetching communities:", err);

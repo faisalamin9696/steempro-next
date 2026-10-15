@@ -58,7 +58,7 @@ function PrivateKeyLogin({ onSuccess }: { onSuccess: () => void }) {
             "active",
           ).toString();
           keyToVerify = derivedKey;
-          toast.info("Master Password detected", {
+          toast.info("Master Password verified", {
             description: "Derived Active Key for security.",
           });
         } catch (e) {

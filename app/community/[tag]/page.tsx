@@ -2,8 +2,7 @@ import { auth } from "@/auth";
 import CommunityCard from "@/components/community/CommunityCard";
 import CommunityHeader from "@/components/community/CommunityHeader";
 import MainWrapper from "@/components/wrappers/MainWrapper";
-import { sds } from "@/libs/sds-client";
-import { mapSds } from "@steempro/sds-api";
+import { sdsApi } from "@/libs/sds";
 import React from "react";
 import CommunityPage from "../(site)/CommunityPage";
 
@@ -15,20 +14,8 @@ async function page({
   const { tag } = await params;
   const session = await auth();
   const [account, community] = await Promise.all([
-    (async () =>
-      mapSds<AccountExt>(
-        await sds.accounts.getAccountExt({
-          account: `hive-${tag}`,
-          observer: session?.user?.name ?? "steem",
-        }),
-      ))(),
-    (async () =>
-      mapSds<Community>(
-        await sds.communities.getCommunity({
-          community: `hive-${tag}`,
-          observer: session?.user?.name ?? "steem",
-        }),
-      ))(),
+    sdsApi.getAccountExt(`hive-${tag}`, session?.user?.name),
+    sdsApi.getCommunity(`hive-${tag}`, session?.user?.name),
   ]);
   return (
     <MainWrapper

@@ -1,4 +1,4 @@
-import { getFeedByApiPath } from "@/libs/sds-client";
+import { sdsApi } from "@/libs/sds";
 import { tagFeedApi } from "@/utils/feedApis";
 import { CategoryTabs } from "./CategoryTabs";
 
@@ -20,7 +20,7 @@ export default async function CategoryPage({
   let initialFeed: Feed[] = [];
   if (apiPath) {
     try {
-      const posts = await getFeedByApiPath(apiPath, "steem", 16, 0);
+      const posts = await sdsApi.getFeedByApiPath(apiPath, "steem", 16, 0);
       initialFeed = Array.isArray(posts) ? posts : [];
     } catch (error) {
       console.error("[category] initial feed fetch failed", error);

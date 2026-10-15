@@ -1,7 +1,6 @@
 // app/AppLayout.tsx  (alternative version)
 import { auth } from "@/auth";
-import { sdsCached } from "@/libs/sds-client";
-import { mapSds } from "@steempro/sds-api";
+import { sdsApi } from "@/libs/sds";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import Providers from "./providers";
@@ -22,9 +21,7 @@ export default async function AppLayout({
 }
 
 async function DynamicProviders({ children }: { children: React.ReactNode }) {
-  const globals = mapSds<GlobalProps>(
-    await sdsCached.steemRequests.getSteemProps(),
-  );
+  const globals = await sdsApi.getGlobalProps();
   const session = await auth();
 
   return (
