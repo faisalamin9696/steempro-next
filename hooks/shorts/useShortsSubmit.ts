@@ -4,8 +4,6 @@ import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
-import { FFmpeg } from "@ffmpeg/ffmpeg";
-import { fetchFile } from "@ffmpeg/util";
 import { steemApi } from "@/libs/steem";
 import { toBase64 } from "@/utils/helper";
 import { useAccountsContext } from "@/components/auth/AccountsContext";
@@ -15,6 +13,8 @@ import type {
   StageEntry,
   StageStatus,
 } from "../../components/shorts/submit/types";
+import { FFmpeg } from "@project516/ffmpeg-wasm";
+import { fetchFile } from "@project516/ffmpeg-wasm-util";
 
 export function useShortsSubmit() {
   const router = useRouter();

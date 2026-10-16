@@ -1,4 +1,4 @@
-import CryptoJS, { AES } from "crypto-js";
+import { AES, Hex, PBKDF2, WordArray, Utf8, HmacSHA256 } from "crypto-es";
 import murmurhash3_32_gc from "murmurhash-js/murmurhash3_gc";
 
 function getFingerprint() {
@@ -17,16 +17,16 @@ export function encryptPrivateKey(
     return "";
   }
 
-  var salt = CryptoJS.lib.WordArray.random(128 / 8);
-  var iv = CryptoJS.lib.WordArray.random(128 / 8);
+  var salt = WordArray.random(128 / 8);
+  var iv = WordArray.random(128 / 8);
 
-  var key128Bits = CryptoJS.PBKDF2(password, salt, {
+  var key128Bits = PBKDF2(password, salt, {
     keySize: 128 / 32,
     iterations: 1000,
   });
 
-  const encryptedKey = CryptoJS.AES.encrypt(privateKey, key128Bits, { iv });
-  return `${salt.toString(CryptoJS.enc.Hex)}:${iv.toString(CryptoJS.enc.Hex)}:${encryptedKey}`;
+  const encryptedKey = AES.encrypt(privateKey, key128Bits, { iv });
+  return `${salt.toString(Hex)}:${iv.toString(Hex)}:${encryptedKey}`;
 }
 
 export function decryptPrivateKey(
@@ -41,21 +41,21 @@ export function decryptPrivateKey(
   const [saltHex, ivHex, encryptedKey] = encryptedPrivateKey.split(":");
 
   // Parse the hex strings into WordArray
-  const salt = CryptoJS.enc.Hex.parse(saltHex);
-  const iv = CryptoJS.enc.Hex.parse(ivHex);
+  const salt = Hex.parse(saltHex);
+  const iv = Hex.parse(ivHex);
 
   // Derive the key using PBKDF2
-  const key128Bits = CryptoJS.PBKDF2(password, salt, {
+  const key128Bits = PBKDF2(password, salt, {
     keySize: 128 / 32,
     iterations: 1000,
   });
 
   try {
     // Decrypt the key
-    const decryptedKey = CryptoJS.AES.decrypt(encryptedKey, key128Bits, { iv });
+    const decryptedKey = AES.decrypt(encryptedKey, key128Bits, { iv });
 
     // Convert the decrypted key to a string
-    const privateKey = decryptedKey.toString(CryptoJS.enc.Utf8);
+    const privateKey = decryptedKey.toString(Utf8);
 
     // Check if the decrypted key is empty
     if (!privateKey) {
@@ -74,14 +74,14 @@ export function secureDecrypt(value: string, secureKey?: string) {
   try {
     if (!secureKey) return undefined;
     var bytes = AES.decrypt(value, getFingerprint() + secureKey);
-    return bytes.toString(CryptoJS.enc.Utf8) || null;
+    return bytes.toString(Utf8) || null;
   } catch (ex) {
     return null;
   }
 }
 
 export const generateHMAC = (message: string, key: string) => {
-  return CryptoJS.HmacSHA256(message, key).toString();
+  return HmacSHA256(message, key).toString();
 };
 
 // // Usage example:

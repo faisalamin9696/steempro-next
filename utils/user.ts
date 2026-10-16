@@ -1,6 +1,6 @@
 import { encryptPrivateKey, secureDecrypt } from "./encryption";
 import secureLocalStorage from "react-secure-storage";
-import CryptoJS from "crypto-js";
+import { WordArray } from "crypto-es";
 import { Constants } from "@/constants";
 import { empty_settings } from "@/constants/templates";
 import { updateActiveSettings } from ".";
@@ -36,7 +36,7 @@ export function validatePassword(input: string): boolean {
 export function getSettings(): Setting {
   const settingsString = secureDecrypt(
     localStorage.getItem(SETTINGS_STORAGE_KEY) ?? "",
-    process.env.NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY
+    process.env.NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY,
   );
 
   const lsSettings = JSON.parse(settingsString || `{}`) as Setting;
@@ -94,7 +94,7 @@ export const calculatePowerUsage = (Wp: number): number => {
   return Pu;
 };
 
-export let sessionAppPass = CryptoJS.lib.WordArray.random(36).toString();
+export let sessionAppPass = WordArray.random(36).toString();
 
 export let sessionKey = "";
 
@@ -106,12 +106,12 @@ export const saveSessionKey = (userPassword: string) => {
 
 export function secureLocalStorageFresh(
   key: string,
-  prefix: "@secure.j" | "@secure.s"
+  prefix: "@secure.j" | "@secure.s",
 ) {
   const STORAGE_KEY = `${prefix}.${key}`;
   const freshData = secureDecrypt(
     localStorage.getItem(STORAGE_KEY) ?? "",
-    process.env.NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY
+    process.env.NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY,
   );
   return freshData;
 }
@@ -119,6 +119,6 @@ export function secureLocalStorageFresh(
 export const getChatMemoKey = (username: string) => {
   return secureLocalStorageFresh(
     `chat_memo_key_${username}`,
-    "@secure.s"
+    "@secure.s",
   ) as string;
 };
