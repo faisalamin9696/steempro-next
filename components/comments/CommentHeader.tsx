@@ -49,6 +49,9 @@ function CommentHeader({
           <p
             title={moment.unix(comment.last_update).toLocaleString()}
             className="text-muted"
+            // Absolute time is formatted in the visitor's timezone while
+            // the server renders UTC — don't let it fail hydration.
+            suppressHydrationWarning
           >
             (edited)
           </p>

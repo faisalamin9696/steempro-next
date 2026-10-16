@@ -77,6 +77,8 @@ const VotersModal = ({ isOpen, onOpenChange, comment }: VotersModalProps) => {
         <span
           className="text-sm text-muted"
           title={moment.unix(v).toLocaleString()}
+          // Timezone-dependent title plus clock-relative text.
+          suppressHydrationWarning
         >
           {moment.unix(v).fromNow(true)}
         </span>

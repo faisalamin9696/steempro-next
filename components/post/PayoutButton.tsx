@@ -143,7 +143,12 @@ function PayoutDetailContent({ data }: { data: Post }) {
         {isPending && data.cashout_time && (
           <div className="flex justify-between items-center text-[11px] text-muted italic">
             <span>{t("payoutBreakdown.nextCashout")}</span>
-            <span title={moment.unix(data.cashout_time).toLocaleString()}>
+            <span
+              title={moment.unix(data.cashout_time).toLocaleString()}
+              // Timezone-dependent title plus clock-relative text: both
+              // legitimately differ from the server render.
+              suppressHydrationWarning
+            >
               {moment.unix(data.cashout_time).fromNow()}
             </span>
           </div>

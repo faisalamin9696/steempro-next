@@ -140,6 +140,9 @@ function PostHeader({
             <p
               title={moment.unix(last_update).toLocaleString()}
               className="text-muted"
+              // Absolute time is formatted in the visitor's timezone while
+              // the server renders UTC — don't let it fail hydration.
+              suppressHydrationWarning
             >
               {t("edited")}
             </p>
