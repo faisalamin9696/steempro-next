@@ -23,6 +23,12 @@ interface CommentCardProps {
 
 const MAX_DEPTH = 5;
 const AUTO_EXPAND_DEPTH = 3;
+/**
+ * Returned when the post has no cached replies yet. It has to be a stable
+ * reference — an inline `?? []` hands every selector call a fresh array,
+ * which never compares equal and re-renders every card on each dispatch.
+ */
+const NO_REPLIES: Post[] = [];
 const THREAD_COLORS = [
   "bg-primary/60",
   "bg-emerald-500/60",
@@ -82,10 +88,10 @@ export default function CommentCard({
 
   const isDeep = comment.depth - root.depth > MAX_DEPTH;
 
-  const postReplies = useAppSelector(
-    (state) =>
-      state.repliesReducer.values[`${root.author}/${root.permlink}`] ?? [],
-  );
+  const postReplies =
+    useAppSelector(
+      (state) => state.repliesReducer.values[`${root.author}/${root.permlink}`],
+    ) ?? NO_REPLIES;
 
   useEffect(() => {
     if (!edit) {
