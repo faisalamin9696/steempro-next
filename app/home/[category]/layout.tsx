@@ -6,7 +6,6 @@ import { Metadata } from "next";
 import { proxifyImageUrl } from "@/utils/proxifyUrl";
 
 async function getData() {
-  "use cache";
   const data = await supabase.rpc("get_promoted_posts");
   return data;
 }
