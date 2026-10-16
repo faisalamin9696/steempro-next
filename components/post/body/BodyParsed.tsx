@@ -2,7 +2,29 @@ import React from "react";
 // import "./style.scss";
 import parse, { domToReact, Element, DOMNode } from "html-react-parser";
 import BodyImage from "./BodyImage";
-import ProcessedLink from "./ProcessedLink";
+import ProcessedLink, { isEmbedUrl } from "./ProcessedLink";
+
+/** Tag names a `<p>` is not allowed to contain in valid HTML. */
+const BLOCK_ELEMENTS = [
+  "div",
+  "p",
+  "table",
+  "center",
+  "blockquote",
+  "pre",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "ul",
+  "ol",
+  "iframe",
+  "hr",
+  "details",
+  "summary",
+];
 
 export function BodyParsed({
   body,
@@ -61,26 +83,12 @@ export function BodyParsed({
           const hasBlockChild = children.some(
             (child) =>
               child instanceof Element &&
-              [
-                "div",
-                "p",
-                "table",
-                "center",
-                "blockquote",
-                "pre",
-                "h1",
-                "h2",
-                "h3",
-                "h4",
-                "h5",
-                "h6",
-                "ul",
-                "ol",
-                "iframe",
-                "hr",
-                "details",
-                "summary",
-              ].includes(child.name),
+              (BLOCK_ELEMENTS.includes(child.name) ||
+                // An anchor is inline by spec, but an embed URL behind it is
+                // rendered as an iframe / blockquote / wrapper div, which a
+                // <p> may not contain.
+                (child.name === "a" &&
+                  isEmbedUrl(child.attribs?.href))),
           );
 
           if (hasBlockChild) {
