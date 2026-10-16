@@ -1,9 +1,3 @@
-import {
-  bufferToBase64url,
-  create,
-  get,
-  supported,
-} from "@github/webauthn-json/extended";
 import { decryptPrivateKey } from "@/utils/encryption";
 
 /**
@@ -20,10 +14,10 @@ import { decryptPrivateKey } from "@/utils/encryption";
  * forces the OS to ask for a fingerprint / face / device PIN before the
  * secret is ever read out of storage.
  *
- * The WebAuthn protocol itself is `@github/webauthn-json`'s job — the JSON
- * <-> ArrayBuffer conversion, the browser-support probe, `create()`/`get()`.
- * What lives here is only SteemPro's storage shape, the four reasons device
- * unlock can be unavailable, and a PIN fallback that always still works.
+ * No library is involved. `PublicKeyCredential.create()/get()` take
+ * ArrayBuffers directly and `credential.id` already comes back as base64url,
+ * so the only encoding this file owes the protocol is one base64url -> bytes
+ * decoder for the stored credential id.
  *
  * Scope, honestly stated: this guards against someone else using an unlocked
  * device and keeps the PIN off screen. It is not a defence against XSS — the
@@ -59,10 +53,40 @@ export type BiometricStatus =
   /** WebAuthn exists but this device has no authenticator to verify against */
   | "no-authenticator";
 
-function randomBase64Url(length: number): string {
-  const bytes = new Uint8Array(length);
-  crypto.getRandomValues(bytes);
-  return bufferToBase64url(bytes.buffer);
+function randomBytes(length: number): Uint8Array<ArrayBuffer> {
+  return crypto.getRandomValues(new Uint8Array(length));
+}
+
+/**
+ * `allowCredentials[].id` is the only field the native API insists on as a
+ * BufferSource, so the stored base64url credential id has to be decoded
+ * here. `challenge` and `user.id` are passed as byte arrays instead, and
+ * `credential.id` already comes back base64url — no encoding the other way.
+ */
+function base64urlToBuffer(value: string): ArrayBuffer {
+  const padded = value.replace(/-/g, "+").replace(/_/g, "/");
+  const binary = atob(padded + "=".repeat((4 - (padded.length % 4)) % 4));
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes.buffer;
+}
+
+/**
+ * True when WebAuthn is present at all. `isSecureContext` is checked
+ * separately, and first — off https the browser removes `PublicKeyCredential`
+ * entirely, which would otherwise report the far less useful "unsupported".
+ */
+function webAuthnSupported(): boolean {
+  if (typeof window === "undefined") return false;
+  // Typed as always present, but older browsers and some in-app webviews
+  // genuinely don't have it — hence the runtime typeof probe.
+  const credentials: CredentialsContainer | undefined = navigator.credentials;
+  return !!(
+    window.PublicKeyCredential &&
+    credentials &&
+    typeof credentials.create === "function" &&
+    typeof credentials.get === "function"
+  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -80,7 +104,7 @@ function randomBase64Url(length: number): string {
 export async function getBiometricStatus(): Promise<BiometricStatus> {
   if (typeof window === "undefined") return "unsupported";
   if (!window.isSecureContext) return "insecure-context";
-  if (!supported()) return "unsupported";
+  if (!webAuthnSupported()) return "unsupported";
 
   try {
     const probe = (
@@ -163,15 +187,16 @@ export async function createBiometricCredential(
   username: string,
   type: AccountKeyType,
 ): Promise<string> {
-  const credential = await create({
+  const credential = (await navigator.credentials.create({
     publicKey: {
       rp: { name: "SteemPro", id: window.location.hostname },
       user: {
-        id: randomBase64Url(USER_ID_BYTES),
+        // Byte arrays, not base64url — the native API takes BufferSource.
+        id: randomBytes(USER_ID_BYTES),
         name: `${username}:${type}`,
         displayName: `${username} (${type})`,
       },
-      challenge: randomBase64Url(CHALLENGE_BYTES),
+      challenge: randomBytes(CHALLENGE_BYTES),
       // ES256 (Android / iOS / Apple Silicon) and RS256 (older Windows Hello).
       pubKeyCredParams: [
         { type: "public-key", alg: -7 },
@@ -184,15 +209,20 @@ export async function createBiometricCredential(
       attestation: "none",
       timeout: TIMEOUT,
     },
-  });
+  })) as PublicKeyCredential | null;
 
   if (!credential?.id) throw new Error("No credential created");
+  // `id` is base64url by spec, which is what `allowCredentials` wants back.
   return credential.id;
 }
 
 /**
  * One-call enrolment: prompt once for the authenticator, mint the device
  * secret the key will be re-encrypted with, and hand back both.
+ *
+ * The secret is a UUID — 122 random bits, comfortably more than the 128-bit
+ * key `encryptPrivateKey` derives from it. `crypto.randomUUID` is available
+ * exactly where WebAuthn is, i.e. secure contexts only.
  *
  * The caller persists the result via `saveBiometric` (done inside
  * `loginWithKey`), so an aborted login leaves nothing behind.
@@ -202,7 +232,7 @@ export async function enrollBiometric(
   type: AccountKeyType,
 ): Promise<BiometricEnrollment> {
   const credentialId = await createBiometricCredential(username, type);
-  return { credentialId, secret: randomBase64Url(32) };
+  return { credentialId, secret: crypto.randomUUID() };
 }
 
 /**
@@ -219,10 +249,12 @@ export async function verifyBiometric(
   if (typeof window === "undefined" || !window.isSecureContext) return false;
 
   try {
-    const assertion = await get({
+    const assertion = await navigator.credentials.get({
       publicKey: {
-        challenge: randomBase64Url(CHALLENGE_BYTES),
-        allowCredentials: [{ type: "public-key", id: credentialId }],
+        challenge: randomBytes(CHALLENGE_BYTES),
+        allowCredentials: [
+          { type: "public-key", id: base64urlToBuffer(credentialId) },
+        ],
         rpId: window.location.hostname,
         userVerification: "required",
         timeout: TIMEOUT,
