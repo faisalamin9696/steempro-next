@@ -3,6 +3,7 @@ import React from "react";
 import parse, { domToReact, Element, DOMNode } from "html-react-parser";
 import BodyImage from "./BodyImage";
 import ProcessedLink, { isEmbedUrl } from "./ProcessedLink";
+import type { GalleryImage } from "@/components/post/ImageModal";
 
 /** Tag names a `<p>` is not allowed to contain in valid HTML. */
 const BLOCK_ELEMENTS = [
@@ -37,6 +38,11 @@ export function BodyParsed({
   isShort?: boolean;
   shortsUrl?: string;
 }): React.ReactNode {
+  // Filled in by the synchronous parse below, so the array is already complete
+  // by the time React renders the elements holding a reference to it. Sharing
+  // one array instance is what lets us hand the whole gallery to every image
+  // without parsing the body a second time to learn the total.
+  const gallery: GalleryImage[] = [];
   let imageCount = 0;
   const options = {
     replace(domNode: DOMNode): any {
@@ -48,6 +54,7 @@ export function BodyParsed({
         case "img":
           if (attribs?.src) {
             imageCount++;
+            gallery.push({ src: attribs.src, alt: attribs.alt });
             return (
               <BodyImage
                 src={attribs.src}
@@ -55,6 +62,8 @@ export function BodyParsed({
                 isShort={isShort}
                 shortsUrl={shortsUrl}
                 priority={imageCount === 1}
+                gallery={gallery}
+                galleryIndex={imageCount - 1}
               />
             );
           }

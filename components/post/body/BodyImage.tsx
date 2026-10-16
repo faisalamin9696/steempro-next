@@ -22,6 +22,10 @@ interface CustomImageProps {
   priority?: boolean;
   isShort?: boolean;
   shortsUrl?: string;
+  /** Every image of the post, in render order, so the modal can page. */
+  gallery?: GalleryImage[];
+  /** Position of this image within `gallery`. */
+  galleryIndex?: number;
 }
 
 function BodyImage({
@@ -38,6 +42,8 @@ function BodyImage({
   priority = false,
   isShort = false,
   shortsUrl,
+  gallery,
+  galleryIndex,
 }: CustomImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -175,13 +181,15 @@ function BodyImage({
           onOpenChange={setIsModalOpen}
           src={src}
           alt={alt}
+          gallery={gallery}
+          index={galleryIndex}
         />
       )}
     </>
   );
 }
 
-import ImageModal from "@/components/post/ImageModal";
+import ImageModal, { type GalleryImage } from "@/components/post/ImageModal";
 import { getCdnImage } from "@/utils/proxifyUrl";
 
 export default BodyImage;
