@@ -34,8 +34,9 @@ export const PendingRewards = ({ account }: PendingRewardsProps) => {
     setIsPending(true);
     await handleSteemError(async () => {
       const { key, useKeychain } = await authenticateOperation("posting");
+      const username = session?.user?.name;
       await steemApi.claimReward(
-        session?.user?.name!,
+        username!,
         account.rewards_steem,
         account.rewards_sbd,
         account.rewards_vests,

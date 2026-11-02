@@ -22,8 +22,16 @@ import { sdsApi } from "@/libs/sds";
  * this from a component.
  */
 
-export const BASE_URL =
-  process.env.NEXT_PUBLIC_BASE_URL || "https://www.steempro.com";
+/**
+ * Trailing slashes are stripped on purpose: every URL below is assembled as
+ * `${BASE_URL}/path`, so a configured `https://www.steempro.com/` would emit
+ * `https://www.steempro.com//static.xml`. A doubled slash is malformed
+ * enough for some crawlers to reject the entry — and a bad `<loc>` in a
+ * sitemap is read as a broken file, not as one skipped URL.
+ */
+export const BASE_URL = (
+  process.env.NEXT_PUBLIC_BASE_URL || "https://www.steempro.com"
+).replace(/\/+$/, "");
 
 /* ------------------------------------------------------------------------- */
 /* Static pages                                                              */
@@ -75,6 +83,11 @@ export const STATIC_PAGES: StaticPage[] = [
   // reports as "submitted URL not indexed".
   { path: "/about", changeFrequency: "monthly", priority: 0.4 },
   { path: "/privacy-policy", changeFrequency: "yearly", priority: 0.2 },
+  {
+    path: "/privacy-policy-steemauth",
+    changeFrequency: "yearly",
+    priority: 0.2,
+  },
 ];
 
 /** `/trending` is intentionally absent: its canonical is `/` (see getMetadata.home). */
@@ -169,12 +182,35 @@ export function escapeXml(value: string): string {
     .replace(/'/g, "&apos;");
 }
 
+/**
+ * Absolute http(s), with no whitespace or XML-significant characters.
+ *
+ * `escapeXml` makes a bad value *well-formed* XML but not *valid* sitemap
+ * content: `<loc></loc>` or a relative path is rejected by the crawler as a
+ * whole, not skipped as one entry. Dropping a malformed `<loc>` therefore
+ * costs one URL instead of the entire file — which matters most for the index,
+ * where a single broken child reference would take down all four children.
+ */
+const SAFE_LOC = /^https?:\/\/[^\s<>"']+$/;
+
+function safeEntries<T extends { loc: string }>(entries: T[]): T[] {
+  const kept = entries.filter((entry) => SAFE_LOC.test(entry.loc));
+  if (kept.length !== entries.length) {
+    const dropped = entries.find((entry) => !SAFE_LOC.test(entry.loc));
+    console.warn(
+      `[sitemap] dropped ${entries.length - kept.length} malformed URL(s), e.g. ${JSON.stringify(dropped?.loc)}`,
+    );
+  }
+  return kept;
+}
+
 export function urlSet(entries: SitemapEntry[]): string {
-  const body = entries
+  const body = safeEntries(entries)
     .map((entry) => {
       let row = `  <url><loc>${escapeXml(entry.loc)}</loc>`;
       if (entry.lastmod) row += `<lastmod>${entry.lastmod}</lastmod>`;
-      if (entry.changefreq) row += `<changefreq>${entry.changefreq}</changefreq>`;
+      if (entry.changefreq)
+        row += `<changefreq>${entry.changefreq}</changefreq>`;
       if (entry.priority) row += `<priority>${entry.priority}</priority>`;
       return `${row}</url>`;
     })
@@ -191,9 +227,11 @@ export function urlSet(entries: SitemapEntry[]): string {
 export function sitemapIndex(
   entries: { loc: string; lastmod?: string }[],
 ): string {
-  const body = entries
+  const body = safeEntries(entries)
     .map((entry) => {
-      const lastmod = entry.lastmod ? `<lastmod>${entry.lastmod}</lastmod>` : "";
+      const lastmod = entry.lastmod
+        ? `<lastmod>${entry.lastmod}</lastmod>`
+        : "";
       return `  <sitemap><loc>${escapeXml(entry.loc)}</loc>${lastmod}</sitemap>`;
     })
     .join("\n");
@@ -246,7 +284,10 @@ export function toIso(value?: number | string | null): string | undefined {
 }
 
 /** The three fields a sitemap needs from a post — kept light because ~12k of them are cached. */
-export type PostRef = Pick<Feed, "author" | "permlink" | "created" | "last_update">;
+export type PostRef = Pick<
+  Feed,
+  "author" | "permlink" | "created" | "last_update"
+>;
 
 export function postUrl(post: PostRef): string {
   return `${BASE_URL}/@${post.author}/${post.permlink}`;

@@ -16,7 +16,7 @@ import {
 import { useSession } from "next-auth/react";
 import { ColumnDef, DataTable } from "../ui/data-table";
 import { useSteemUtils } from "@/hooks/useSteemUtils";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import SUsername from "../ui/SUsername";
 import SCard from "../ui/SCard";
 import { useAppDispatch } from "@/hooks/redux/store";
@@ -176,7 +176,7 @@ export const Delegations = ({ account }: DelegationsProps) => {
       sortable: true,
       className: "text-muted",
       render: (value, row) => {
-        const date = moment.unix(
+        const date = dayjs.unix(
           row.status === "expiring" ? (row?.expiration ?? 0) : row.time,
         );
         return date.fromNow(true);

@@ -79,6 +79,7 @@
     "subscribeSuccess": "Subscribed successfully"
   },
   "Community": {
+    "newPost": "New Post",
     "created": "Created",
     "pendingReward": "Pending Reward",
     "rank": "Rank",
@@ -1141,6 +1142,7 @@
     }
   },
   "Submit": {
+    "communityNotFound": "Community not found",
     "communityPlaceholder": "Select Community",
     "noCommunity": "No Communities available",
     "titlePlaceholder": "Enter your post title...",

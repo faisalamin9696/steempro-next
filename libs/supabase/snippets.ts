@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs, { toFullDateTime } from "@/libs/dayjs";
 import { supabase } from "./supabase";
 
 export async function getSnippets(username: string) {
@@ -33,7 +33,7 @@ export async function addSnippet(
         {
           ...props,
           uid: session.data.user?.id,
-          created: moment().toLocaleString(),
+          created: toFullDateTime(dayjs()),
         },
       ],
       { count: "exact" }
@@ -59,7 +59,7 @@ export async function updateSnippet(id: number, props: Partial<Snippet>) {
     const { error, count } = await supabase
       .from("steempro_snippets")
       .update(
-        { ...props, updated: moment().toLocaleString() },
+        { ...props, updated: toFullDateTime(dayjs()) },
         { count: "estimated" }
       )
       .eq("id", id);

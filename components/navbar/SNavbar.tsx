@@ -9,6 +9,7 @@ import { twMerge } from "tailwind-merge";
 import { mutate } from "swr";
 import { useAppSelector } from "@/hooks/redux/store";
 import SAvatar from "../ui/SAvatar";
+import { loginAccent } from "@/utils/loginAccent";
 import SDrawer from "./SDrawer";
 import SPopover from "../ui/SPopover";
 import { Chip } from "@heroui/chip";
@@ -22,6 +23,8 @@ import {
   Plus,
   RotateCw,
   Search,
+  Smartphone,
+  X,
   User,
   Wallet,
   Zap,
@@ -60,7 +63,8 @@ function SNavbar() {
 
   const unreadCount = unread_notifications_count + unread_count_chat;
   const loginData = useAppSelector((state) => state.loginReducer.value);
-  const { manageAccounts, current } = useAccountsContext();
+  const { manageAccounts, current, phoneConnected, endPhoneSession } =
+    useAccountsContext();
 
   return (
     <>
@@ -99,6 +103,39 @@ function SNavbar() {
               loading="eager"
             />
           </Link>
+
+          {/* Live-session status, both breakpoints — replaces the floating
+              bottom-right pill (it covered the scroll-to-top button) and the
+              logo badge. While a phone is attached no QR ever pops up (actions
+              pass straight through), so this is the standing cue that the
+              session is live, and its × is the explicit way to close it: the
+              phone drops its watch card and the next action waits for a fresh
+              scan. */}
+          {phoneConnected && (
+            <span
+              role="status"
+              aria-live="polite"
+              aria-label="Phone connected"
+              className="flex items-center gap-1.5 rounded-full border border-divider bg-background py-1 pl-2.5 pr-1 shadow-sm"
+            >
+              {/* The icon keeps the old dot's green so "live" still reads as a
+                  state, not decoration; screen readers get the full phrase via
+                  the wrapper's aria-label. */}
+              <Smartphone size={14} className="shrink-0 text-success" />
+              <span className="text-xs font-semibold whitespace-nowrap">
+                Connected
+              </span>
+              <Button
+                isIconOnly
+                size="sm"
+                variant="light"
+                aria-label="End phone connection"
+                onPress={endPhoneSession}
+              >
+                <X size={14} />
+              </Button>
+            </span>
+          )}
         </div>
 
         {/* RIGHT */}
@@ -250,15 +287,7 @@ function SNavbar() {
                     className="cursor-pointer transition-transform hover:scale-105"
                     showLink={false}
                     isBordered
-                    color={
-                      current?.loginMethod === "keychain"
-                        ? "primary"
-                        : current?.type === "active"
-                          ? "success"
-                          : current?.type === "posting"
-                            ? "warning"
-                            : "default"
-                    }
+                    color={loginAccent(current)}
                   />
                 }
               >

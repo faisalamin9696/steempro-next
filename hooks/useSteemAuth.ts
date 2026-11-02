@@ -10,8 +10,8 @@ import {
 import { secureLocalStorageFresh } from "@/utils/user";
 import { PrivateKey } from "@steempro/dsteem";
 import { Session, User } from "@supabase/supabase-js";
-import moment from "moment";
-import { getProviders, signIn, signOut } from "next-auth/react";
+import dayjs from "@/libs/dayjs";
+import { getProviders, signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import secureLocalStorage from "react-secure-storage";
@@ -24,6 +24,9 @@ export function useSteemAuth() {
   const [current, setCurrent] = useState<LocalAccount | null>(null);
   const [isPending, setIsPending] = useState(false);
   const router = useRouter();
+  // NextAuth does NOT notify this observer when signIn() is called with
+  // `redirect: false` — see autheticateUser below.
+  const { update } = useSession();
 
   // -------------------------------
   // Load from secure storage
@@ -88,6 +91,20 @@ export function useSteemAuth() {
       if (error) {
         throw new Error(error);
       }
+
+      // Two refreshes, doing two different jobs:
+      //
+      // 1. `update()` — the client-side observer. It re-reads cookies and
+      //    calls setSession(), so every useSession() subscriber re-renders and
+      //    re-derives its SWR keys. Without it AppWrapper keeps fetching
+      //    `account-<previous user>` and the navbar renders the old session:
+      //    NextAuth never fires this for signIn(..., { redirect: false }).
+      // 2. `router.refresh()` — the server side. Re-runs RSCs against the new
+      //    cookie so the SSR payload matches.
+      //
+      // Observer first, so the new keys start fetching while the server
+      // re-renders rather than after it.
+      await update();
       router.refresh();
 
       return normalizedData;
@@ -113,7 +130,7 @@ export function useSteemAuth() {
           const acc: LocalAccount = {
             username: res.username,
             loginMethod: "keychain",
-            createdAt: moment.now(),
+            createdAt: Date.now(),
             encrypted: false,
           };
 
@@ -135,6 +152,43 @@ export function useSteemAuth() {
           reject(error);
         });
     });
+  };
+
+  // -------------------------------
+  // Login With SteemAuthenticator (QR)
+  // -------------------------------
+  /**
+   * Record a QR login.
+   *
+   * The signature has already been verified by the caller against the
+   * account's on-chain key, so — exactly like Keychain — nothing secret is
+   * stored here. That also means every later action must be approved on the
+   * phone, because the browser never holds a key for this account.
+   */
+  const loginWithSteemAuth = async (
+    username: string,
+    sid?: string,
+  ): Promise<void> => {
+    const acc: LocalAccount = {
+      username,
+      loginMethod: "steemauth",
+      // Remembered so the account can be watched for revocation later — the
+      // row is keyed by sid, and the login modal unmounts on success.
+      sid,
+      createdAt: Date.now(),
+      encrypted: false,
+    };
+
+    const updated = [
+      ...accounts.filter(
+        (a) => !(a.username === username && a.loginMethod === "steemauth"),
+      ),
+      acc,
+    ];
+    await autheticateUser(username);
+    setAccounts(updated);
+    setCurrent(acc);
+    persist(updated, acc);
   };
 
   // -------------------------------
@@ -166,7 +220,7 @@ export function useSteemAuth() {
       type: type,
       key: encKey,
       loginMethod: "private-key",
-      createdAt: moment.now(),
+      createdAt: Date.now(),
       encrypted: !!pin,
       // A second copy under the device secret. `encKey` above is untouched,
       // so the PIN keeps working even if WebAuthn is unavailable later.
@@ -259,6 +313,7 @@ export function useSteemAuth() {
     current,
     loginWithKeychain,
     loginWithKey,
+    loginWithSteemAuth,
     switchAccount,
     removeAccount,
     logout,

@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs, { toFullDateTime } from "@/libs/dayjs";
 import LoadingStatus from "../LoadingStatus";
 import { ColumnDef, DataTable } from "../ui/data-table";
 import SModal from "../ui/SModal";
@@ -76,11 +76,11 @@ const VotersModal = ({ isOpen, onOpenChange, comment }: VotersModalProps) => {
       render: (v) => (
         <span
           className="text-sm text-muted"
-          title={moment.unix(v).toLocaleString()}
+          title={toFullDateTime(dayjs.unix(v))}
           // Timezone-dependent title plus clock-relative text.
           suppressHydrationWarning
         >
-          {moment.unix(v).fromNow(true)}
+          {dayjs.unix(v).fromNow(true)}
         </span>
       ),
     },

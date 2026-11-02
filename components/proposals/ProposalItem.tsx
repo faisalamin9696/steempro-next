@@ -3,7 +3,7 @@ import { Chip } from "@heroui/chip";
 import Link from "@/components/ui/CustomLink";
 import { formatProposalVotes } from "@/hooks/useProposals";
 import ProposalActions from "./ProposalActions";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import { CheckCircle, ClockFading, DollarSign, Vote } from "lucide-react";
 import SAvatar from "../ui/SAvatar";
 import { useAppSelector } from "@/hooks/redux/store";
@@ -27,8 +27,8 @@ export default function ProposalItem({ proposal, onView }: Props) {
   const returnProposal = proposalsData.find((p) => p.proposal_id === 0);
 
   const daily_pay = parseFloat(proposal.daily_pay.split(" SBD")[0]);
-  const durationInDays = moment(proposal.end_date).diff(
-    moment(proposal.start_date),
+  const durationInDays = dayjs(proposal.end_date).diff(
+    dayjs(proposal.start_date),
     "days",
   );
   const totalPayout = durationInDays * daily_pay;
@@ -97,8 +97,8 @@ export default function ProposalItem({ proposal, onView }: Props) {
 
               <div className="flex flex-wrap items-center gap-2 text-xs text-muted mt-1">
                 <p className="text-xs">
-                  {moment(proposal.start_date).format("MMM DD, YYYY")} -{" "}
-                  {moment(proposal.end_date).format("MMM DD, YYYY")}{" "}
+                  {dayjs(proposal.start_date).format("MMM DD, YYYY")} -{" "}
+                  {dayjs(proposal.end_date).format("MMM DD, YYYY")}{" "}
                 </p>
                 <p className="text-xs ">
                   ({durationInDays} {t("item.days")}){" "}

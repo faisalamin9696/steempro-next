@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { encryptPrivateKey } from "@/utils/encryption";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import { validateHost } from "@/utils/helper";
 
 export async function POST(req: NextRequest) {
@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     }
 
     const secret = encryptPrivateKey(
-      moment().unix()?.toString(),
+      dayjs().unix()?.toString(),
       process.env.MESSAGE_SECRET!,
     );
 

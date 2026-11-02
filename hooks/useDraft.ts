@@ -1,5 +1,5 @@
 import { empty_draft } from "@/constants/templates";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import { useState, useEffect, useCallback, useRef } from "react";
 
 interface UseDraftOptions {
@@ -43,7 +43,7 @@ export const useDraft = (
         const storageKey = getStorageKey();
         const draftToSave = {
           ...data,
-          updatedAt: moment().unix(),
+          updatedAt: dayjs().unix(),
         };
 
         localStorage.setItem(storageKey, JSON.stringify(draftToSave));
@@ -70,7 +70,7 @@ export const useDraft = (
         const parsedData = JSON.parse(saved) as DraftData;
 
         // Check if draft is older than 7 days
-        const sevenDaysAgo = moment().subtract(7, "days").unix();
+        const sevenDaysAgo = dayjs().subtract(7, "days").unix();
         if (parsedData.updatedAt && parsedData.updatedAt < sevenDaysAgo) {
           console.warn(`Draft ${draftKey} is older than 7 days, clearing...`);
           clearDraft();
@@ -255,7 +255,7 @@ export const saveDraftToStorage = (
     const storageKey = `draft_${draftKey}`;
     const draftToSave = {
       ...data,
-      updatedAt: moment().unix(),
+      updatedAt: dayjs().unix(),
     };
 
     localStorage.setItem(storageKey, JSON.stringify(draftToSave));

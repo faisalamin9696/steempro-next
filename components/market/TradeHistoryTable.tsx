@@ -1,5 +1,5 @@
 import { Chip } from "@heroui/chip";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import { ColumnDef, DataTable } from "../ui/data-table";
 import { useTranslations } from "next-intl";
 
@@ -30,7 +30,7 @@ const TradeHistoryTable = ({
               {isBuying ? tTrade("buy") : tTrade("sell")}
             </Chip>
             <p className="text-xs text-muted">
-              {moment.unix(order.date).format("DD MMM HH:mm")}
+              {dayjs.unix(order.date).format("DD MMM HH:mm")}
             </p>
           </div>
         );

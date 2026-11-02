@@ -79,6 +79,7 @@
     "subscribeSuccess": "کامیابی سے سبسکرائب ہو گئے"
   },
   "Community": {
+    "newPost": "نیا پوسٹ",
     "created": "بنایا گیا",
     "pendingReward": "زیر التوا انعام",
     "rank": "درجہ",
@@ -1138,6 +1139,7 @@
     }
   },
   "Submit": {
+    "communityNotFound": "کمیونٹی نہیں ملی",
     "communityPlaceholder": "کمیونٹی منتخب کریں",
     "noCommunity": "کوئی کمیونٹی دستیاب نہیں",
     "titlePlaceholder": "اپنی پوسٹ کا عنوان درج کریں...",

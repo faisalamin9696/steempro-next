@@ -2,7 +2,7 @@ import { useCommentFooterData } from "@/hooks/useCommentFooterData";
 import { Button, ButtonProps } from "@heroui/button";
 import SPopover from "../ui/SPopover";
 import { twMerge } from "tailwind-merge";
-import moment from "moment";
+import dayjs, { toFullDateTime } from "@/libs/dayjs";
 import SUsername from "../ui/SUsername";
 import { Constants } from "@/constants";
 import useSWR from "swr";
@@ -144,12 +144,12 @@ function PayoutDetailContent({ data }: { data: Post }) {
           <div className="flex justify-between items-center text-[11px] text-muted italic">
             <span>{t("payoutBreakdown.nextCashout")}</span>
             <span
-              title={moment.unix(data.cashout_time).toLocaleString()}
+              title={toFullDateTime(dayjs.unix(data.cashout_time))}
               // Timezone-dependent title plus clock-relative text: both
               // legitimately differ from the server render.
               suppressHydrationWarning
             >
-              {moment.unix(data.cashout_time).fromNow()}
+              {dayjs.unix(data.cashout_time).fromNow()}
             </span>
           </div>
         )}

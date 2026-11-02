@@ -12,7 +12,11 @@ import PostVoteButton from "@/components/post/PostVoteButton";
 import ShareButton from "../ui/ShareButton";
 import { Constants } from "@/constants";
 import SPopover from "../ui/SPopover";
-import BoostModal from "../post/BoostModal";
+import dynamic from "next/dynamic";
+
+// Same reason as PostOptionButton: the shorts player imports this on every
+// short, and Lottie is only needed once Boost is actually opened.
+const BoostModal = dynamic(() => import("../post/BoostModal"), { ssr: false });
 import { useState, useRef } from "react";
 import MarkdownViewer from "@/components/post/body/MarkdownViewer";
 import SModal from "../ui/SModal";

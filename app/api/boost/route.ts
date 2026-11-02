@@ -5,7 +5,7 @@ import { getAppDetails } from "@/utils/app";
 import { validateHost } from "@/utils/helper";
 import { parsePostMeta } from "@/utils/user";
 import { NextRequest, NextResponse } from "next/server";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 
 async function getBoostStatus(
   author: string,
@@ -96,7 +96,7 @@ async function getBoostStatus(
     age: {
       label: "Post Age",
       met: isAgeMet,
-      value: moment.unix(post.created).fromNow(true),
+      value: dayjs.unix(post.created).fromNow(true),
     },
   };
 

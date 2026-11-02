@@ -24,13 +24,31 @@ export default function GamingZoneAnnouncementModal() {
 
   useEffect(() => {
     setHasMounted(true);
-    const hasSeen = localStorage.getItem(STORAGE_KEY);
-    if (!hasSeen) {
-      const timer = setTimeout(() => {
-        onOpen();
-      }, 1500);
-      return () => clearTimeout(timer);
-    }
+    if (localStorage.getItem(STORAGE_KEY)) return;
+
+    // Not a fixed timer: this modal carries a 100 KB banner behind a
+    // full-screen blur, and firing at 1.5s lands it in the middle of the
+    // user's first interaction — right when INP is measured. Defer until the
+    // browser is idle (requestIdleCallback, with a timeout so it still shows
+    // on a busy main thread; setTimeout where the API is missing).
+    let cancelled = false;
+    const open = () => {
+      if (!cancelled) onOpen();
+    };
+
+    // `in` rather than a truthiness check on the function itself — the DOM
+    // typings declare `requestIdleCallback` as always present, so TS rejects
+    // `if (requestIdleCallback)` even though Safari genuinely lacks it.
+    const hasIdle = "requestIdleCallback" in window;
+    const handle = hasIdle
+      ? window.requestIdleCallback(open, { timeout: 4000 })
+      : window.setTimeout(open, 4000);
+
+    return () => {
+      cancelled = true;
+      if (hasIdle) window.cancelIdleCallback(handle);
+      else window.clearTimeout(handle);
+    };
   }, [onOpen]);
 
   const handleEnter = () => {

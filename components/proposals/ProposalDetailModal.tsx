@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import SAvatar from "@/components/ui/SAvatar";
 import SUsername from "@/components/ui/SUsername";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import PostLink from "@/components/post/PostLink";
 import { Constants } from "@/constants";
 import {
@@ -251,13 +251,13 @@ const ProposalDetailModal = ({
                     <div>
                       <span className="text-muted">{t("details.start")} </span>
                       <span className="font-medium">
-                        {moment(proposal.start_date).format("MMM d, yyyy")}
+                        {dayjs(proposal.start_date).format("MMM d, yyyy")}
                       </span>
                     </div>
                     <div>
                       <span className="text-muted">{t("details.end")} </span>
                       <span className="font-medium">
-                        {moment(proposal.end_date).format("MMM d, yyyy")}
+                        {dayjs(proposal.end_date).format("MMM d, yyyy")}
                       </span>
                     </div>
                   </div>

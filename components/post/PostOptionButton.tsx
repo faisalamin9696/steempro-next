@@ -38,7 +38,13 @@ import { useAccountsContext } from "../auth/AccountsContext";
 import MuteModal from "../community/modals/MuteModal";
 import RoleTitleModal from "../community/modals/RoleTitleModal";
 import EditHistoryModal from "./EditHistoryModal";
-import BoostModal from "./BoostModal";
+import dynamic from "next/dynamic";
+
+// Lottie is a 660 KB chunk and BoostModal only ever renders after the user
+// presses Boost — importing it statically was putting the whole animation
+// runtime in the First Load JS of every post page (PostOptionButton renders
+// on all of them). `ssr: false` because lottie-web touches `window` on import.
+const BoostModal = dynamic(() => import("./BoostModal"), { ssr: false });
 import { Rocket } from "lucide-react";
 
 const ICON_SIZE = 18;

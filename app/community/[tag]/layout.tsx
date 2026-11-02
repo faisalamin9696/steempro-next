@@ -4,7 +4,7 @@ import CommunityHeader from "@/components/community/CommunityHeader";
 import MainWrapper from "@/components/wrappers/MainWrapper";
 import { sdsApi } from "@/libs/sds";
 import HomeCarousel from "@/components/carousal/HomeCarousal";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import { getThumbnail } from "@/utils/image";
 import CommunityAboutSection from "../(site)/CommunityAboutSection";
 import { Metadata } from "next";
@@ -36,7 +36,7 @@ async function layout({
     title: item.title,
     thumbnail: getThumbnail(item.json_images, "640x0")!,
     id: item.link_id.toString(),
-    created_at: moment.unix(item.created).toISOString(),
+    created_at: dayjs.unix(item.created).toISOString(),
   }));
 
   return (

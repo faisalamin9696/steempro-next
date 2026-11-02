@@ -1,6 +1,6 @@
 import { client, steemApi } from "./steem";
 import { Constants } from "@/constants";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 
 export interface HealthCheckResult {
   id: string;
@@ -48,7 +48,7 @@ export class AccountHealthService {
         title: t("checks.recoveryAccount.title"),
         description: t("checks.recoveryAccount.pending", {
           name: pendingRequest.recovery_account,
-          date: moment(pendingRequest.effective_on).format("LLL"),
+          date: dayjs(pendingRequest.effective_on).format("LLL"),
         }),
         value: `@${pendingRequest.recovery_account}`,
       };
@@ -174,7 +174,7 @@ export class AccountHealthService {
         title: t("checks.savings.title"),
         description: t("checks.savings.withdrawal", {
           amount: first.amount,
-          date: moment(first.complete).format("LLL"),
+          date: dayjs(first.complete).format("LLL"),
         }),
         value: first.amount,
       };
@@ -210,7 +210,7 @@ export class AccountHealthService {
         title: t("checks.powerDown.title"),
         description: t("checks.powerDown.info", {
           amount: `${steemAmount.toFixed(3)} STEEM`,
-          date: moment(data.next_powerdown * 1000).format("LLL"),
+          date: dayjs(data.next_powerdown * 1000).format("LLL"),
         }),
         value: `${steemAmount.toFixed(0)} STEEM`,
         link: `/@${data.name}/wallet`,
@@ -328,8 +328,8 @@ export class AccountHealthService {
   }
 
   static checkAccountAge(data: AccountExt, t: any): HealthCheckResult {
-    const created = moment(data.created * 1000);
-    const daysOld = moment().diff(created, "days");
+    const created = dayjs(data.created * 1000);
+    const daysOld = dayjs().diff(created, "days");
     const isNew = daysOld < 30;
 
     return {

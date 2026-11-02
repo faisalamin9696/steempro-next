@@ -19,7 +19,7 @@ import {
 import { handleSteemError } from "@/utils/steemApiError";
 import { Button, ButtonProps } from "@heroui/button";
 import { ZonedDateTime } from "@internationalized/date";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -276,8 +276,8 @@ function PublishButton(props: Props) {
             root.observer_role,
             root.observer_title,
           ),
-          created: moment().unix(),
-          last_update: moment().unix(),
+          created: dayjs().unix(),
+          last_update: dayjs().unix(),
           parent_author: comment.author,
           parent_permlink: comment.permlink,
           depth: comment.depth + 1,
@@ -315,7 +315,7 @@ function PublishButton(props: Props) {
             ...postData,
             body,
             json_metadata: JSON.stringify(postData.json_metadata),
-            last_update: moment().unix(),
+            last_update: dayjs().unix(),
           }),
         );
       }
@@ -360,7 +360,7 @@ function PublishButton(props: Props) {
         tags: normalizedTags.join(","),
         parent_permlink: postData.parent_permlink,
         options: JSON.stringify(options || {}),
-        time: moment(scheduleTime!.toAbsoluteString()).format(),
+        time: dayjs(scheduleTime!.toAbsoluteString()).format(),
         status: 0,
         permlink: postData.permlink,
       };

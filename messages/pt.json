@@ -79,6 +79,7 @@
     "subscribeSuccess": "Assinatura realizada com sucesso"
   },
   "Community": {
+    "newPost": "Nova publicação",
     "created": "Criado em",
     "pendingReward": "Recompensa pendente",
     "rank": "Posição",
@@ -1138,6 +1139,7 @@
     }
   },
   "Submit": {
+    "communityNotFound": "Comunidade não encontrada",
     "communityPlaceholder": "Selecionar comunidade",
     "noCommunity": "Nenhuma comunidade disponível",
     "titlePlaceholder": "Digite o título da sua publicação...",

@@ -15,12 +15,21 @@ import {
   useRef,
 } from "react";
 import AuthModal from "./AuthModal";
+import { toast } from "sonner";
+import useSteemAuthRevocation from "@/hooks/useSteemAuthRevocation";
 import LogoutModal from "../ui/LogoutModal";
+import QrApprovalPanel from "../ui/QrApprovalPanel";
+import { clearQrResult } from "@/hooks/useSteemAuthKeepAlive";
+import { endSharedSession } from "@/hooks/useSteemAuthKeepAlive";
+import { Button } from "@heroui/button";
+import { X } from "lucide-react";
 
 interface AccountsContextState {
   accounts: LocalAccount[];
   current: LocalAccount | null;
   loginWithKeychain: (username: string) => Promise<void>;
+  /** QR login via the SteemAuthenticator app (no key is stored). */
+  loginWithSteemAuth: (username: string, sid?: string) => Promise<void>;
   loginWithKey: (
     username: string,
     key: string,
@@ -38,6 +47,17 @@ interface AccountsContextState {
     silent?: boolean,
   ) => void;
   isPending: boolean;
+  /**
+   * True while the shared SteemAuthenticator session has a live phone
+   * attached. Rendered by the navbar as its "Phone connected" status, on both
+   * breakpoints.
+   */
+  phoneConnected: boolean;
+  /**
+   * Closes the live phone session: the phone drops its watch card and the
+   * next action waits for a fresh scan. Backs the × on the navbar status.
+   */
+  endPhoneSession: () => void;
   manageAccounts: () => void;
   logout: () => Promise<void>;
   manageLogout: () => void;
@@ -70,6 +90,7 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
     current,
     loginWithKey: _loginWithKey,
     loginWithKeychain: _loginWithKeychain,
+    loginWithSteemAuth: _loginWithSteemAuth,
     removeAccount: _removeAccount,
     switchAccount: _switchAccount,
     isPending,
@@ -83,6 +104,15 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
   // authenticate/signIn/router.refresh requests (and could bounce the user to
   // NextAuth's /api/auth/error page). Key the attempt so it runs at most once
   // per stored account while logged out.
+  // SteemAuth: the current account may only act through the phone, so one
+  // session lives here for as long as the account is current. `awaitingScan`
+  // gates the overlay; the refs hold the action that is waiting on a scan.
+  const [awaitingScan, setAwaitingScan] = useState(false);
+  /** The shared session is connected right now (drives the live pill). */
+  const [phoneConnected, setPhoneConnected] = useState(false);
+  const phoneReadyRef = useRef(false);
+  const phoneWaiterRef = useRef<((ok: boolean) => void) | null>(null);
+
   const autoLoginAttemptRef = useRef<string | null>(null);
   const switchAccountRef = useRef(_switchAccount);
   switchAccountRef.current = _switchAccount;
@@ -103,6 +133,12 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
   const loginWithKeychain = async (username: string) => {
     SESSION_PIN = null;
     return _loginWithKeychain(username);
+  };
+
+  /** QR login via the SteemAuthenticator app — signature already verified. */
+  const loginWithSteemAuth = async (username: string, sid?: string) => {
+    SESSION_PIN = null;
+    return _loginWithSteemAuth(username, sid);
   };
 
   const loginWithKey = async (
@@ -143,6 +179,82 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
     setShowLogoutModal(!showLogoutModal);
   }
 
+  /**
+   * A QR account's session is only as live as the phone says it is. The login
+   * modal unmounts on success, so without this the app would stay signed in
+   * on a session the user had already revoked from the Sessions tab.
+   */
+  useSteemAuthRevocation(current, (reason) => {
+    toast.error("Signed out — session revoked", {
+      description: reason,
+    });
+    void logout();
+  });
+
+  /**
+   * Hold an action until the phone has scanned — the SteemAuth equivalent of
+   * waiting for a PIN or a Keychain prompt.
+   *
+   * Resolves immediately when the always-on session is already live, so the
+   * phone is only consulted once per scan rather than once per action. The
+   * panel behind the overlay owns the session and installs the broadcast
+   * bridge, so callers afterwards need no special handling at all.
+   */
+  const awaitPhoneApproval = (): Promise<void> => {
+    if (phoneReadyRef.current) {
+      // Diagnostic: this line only exists in the shared-session build — seeing
+      // it means the action passes through WITHOUT a scan (the intended flow).
+      console.info("[steemauth] action passes through - shared session ready");
+      return Promise.resolve();
+    }
+    console.info(
+      "[steemauth] action WAITING FOR SCAN - shared session not ready",
+    );
+    // A NEW cycle starts from its own state: the panel renders a landed tx id
+    // ahead of every other branch, so without this the previous action's
+    // success hides the QR this one needs — Done cancels the action, the
+    // retry reopens the same stale alert, and there is no way out.
+    clearQrResult();
+    setAwaitingScan(true);
+    return new Promise<void>((resolve, reject) => {
+      phoneWaiterRef.current = (ok) =>
+        ok ? resolve() : reject(new Error("Approval cancelled."));
+    });
+  };
+
+  /** The panel reports this as the phone gains or loses a live scan. */
+  const handlePhoneReadyChange = (ready: boolean) => {
+    console.info("[steemauth] shared session ready ->", ready);
+    phoneReadyRef.current = ready;
+    setPhoneConnected(ready);
+    if (ready && phoneWaiterRef.current) {
+      const release = phoneWaiterRef.current;
+      phoneWaiterRef.current = null;
+      setAwaitingScan(false);
+      release(true);
+    }
+  };
+
+  /**
+   * End the live subscription on demand: the phone drops its watch card
+   * (cancel frame), and the frontend falls back to a fresh QR — the next
+   * action shows the scan window again instead of passing straight through.
+   */
+  const endPhoneSession = () => {
+    endSharedSession();
+    setPhoneConnected(false);
+    toast("Phone connection ended — the next action will show a new QR.");
+  };
+
+  const cancelPhoneApproval = () => {
+    setAwaitingScan(false);
+    if (phoneWaiterRef.current) {
+      const release = phoneWaiterRef.current;
+      phoneWaiterRef.current = null;
+      release(false);
+    }
+  };
+
   const authenticateOperation = async (
     opsType: AccountKeyType = "posting",
   ): Promise<{ key?: string; useKeychain?: boolean }> => {
@@ -153,6 +265,20 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 
       if (current.loginMethod === "keychain" && opsType !== "owner") {
         return resolve({ useKeychain: true });
+      }
+
+      // A SteemAuth account stores no key in this browser — every action is
+      // signed on the phone instead. Rather than refusing (which would break
+      // all 31 callers), wait for the scan: the panel installs a bridge that
+      // intercepts the broadcast inside steemApi.broadcast(), so the action
+      // proceeds unchanged once the phone has agreed.
+      if (current.loginMethod === "steemauth") {
+        awaitPhoneApproval().then(
+          () => resolve({}),
+          (e) =>
+            reject(e instanceof Error ? e : new Error("Approval cancelled.")),
+        );
+        return;
       }
 
       // Check if current key satisfies the requiremnts
@@ -268,9 +394,12 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
         current,
         loginWithKey,
         loginWithKeychain,
+        loginWithSteemAuth,
         removeAccount,
         switchAccount,
         isPending,
+        phoneConnected,
+        endPhoneSession,
         manageAccounts,
         logout,
         manageLogout,
@@ -279,6 +408,55 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
     >
       {children}
       <AuthModal isOpen={showAuthModal} onOpenChange={setShowAuthModal} />
+
+      {/* SteemAuth standby: mounted whenever a phone account is current so the
+          session exists before an action needs it, but visually hidden until
+          one does. Hiding rather than unmounting is the point — unmounting
+          would tear down the session and the broadcast bridge with it. */}
+      {current?.loginMethod === "steemauth" && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Approve on your phone"
+          className={
+            awaitingScan
+              ? "fixed inset-0 z-[300] flex items-center justify-center bg-black/70 p-4"
+              : "hidden"
+          }
+        >
+          <div className="w-full max-w-sm rounded-2xl border border-divider bg-background p-5 shadow-2xl">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <p className="text-sm font-semibold">Approve on your phone</p>
+              <Button
+                isIconOnly
+                size="sm"
+                variant="light"
+                aria-label="Cancel"
+                onPress={cancelPhoneApproval}
+              >
+                <X size={16} />
+              </Button>
+            </div>
+            {/* A new approval cycle remounts the panel so its local state
+                (broadcast error, declined flag, one-shot sent guard) can never
+                leak from the previous action; the module-scoped session is
+                untouched by a remount, and the displayed result is cleared
+                explicitly in awaitPhoneApproval. */}
+            <QrApprovalPanel
+              key={awaitingScan ? "scan" : "idle"}
+              account={current?.username}
+              description="Scan to unlock this action"
+              onCancel={cancelPhoneApproval}
+              onReadyChange={handlePhoneReadyChange}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* The live-session control ("Phone connected" + ×) lives in the
+          navbar, right after the logo — see SNavbar. Same `phoneConnected`
+          state, same `endPhoneSession` action, one surface for both
+          breakpoints. */}
       <LogoutModal isOpen={showLogoutModal} onOpenChange={setShowLogoutModal} />
       <PinModal
         isOpen={pinModal.isOpen}

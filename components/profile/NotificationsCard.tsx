@@ -15,7 +15,7 @@ import { useNotifications, CustomNotification } from "@/hooks/useNotifications";
 import { Select, SelectItem } from "@heroui/select";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import Link from "@/components/ui/CustomLink";
 import SAvatar from "../ui/SAvatar";
 import SCard from "../ui/SCard";
@@ -160,7 +160,7 @@ const NotificationsCard = ({ username }: { username: string }) => {
                     {row.url.substring(0, 24).replace("/", "")}...
                   </Chip>
                   <p className="text-xs text-muted">
-                    {moment.unix(row.timestamp).fromNow()}
+                    {dayjs.unix(row.timestamp).fromNow()}
                   </p>
                 </div>
               </div>
@@ -273,9 +273,9 @@ const NotificationsCard = ({ username }: { username: string }) => {
           loadMoreCount={50}
           onLoadedMore={() => {}}
           groupBy={(note) => {
-            const date = moment.unix(note.timestamp);
-            const today = moment();
-            const yesterday = moment().subtract(1, "day");
+            const date = dayjs.unix(note.timestamp);
+            const today = dayjs();
+            const yesterday = dayjs().subtract(1, "day");
 
             if (date.isSame(today, "day")) return t("notifications.today");
             if (date.isSame(yesterday, "day"))

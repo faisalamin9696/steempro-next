@@ -79,6 +79,7 @@
     "subscribeSuccess": "Suscripción exitosa"
   },
   "Community": {
+    "newPost": "Nueva publicación",
     "created": "Creado",
     "pendingReward": "Recompensa pendiente",
     "rank": "Rango",
@@ -1138,6 +1139,7 @@
     }
   },
   "Submit": {
+    "communityNotFound": "Comunidad no encontrada",
     "communityPlaceholder": "Seleccionar comunidad",
     "noCommunity": "No hay comunidades disponibles",
     "titlePlaceholder": "Escribe el título de tu publicación...",

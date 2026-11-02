@@ -14,7 +14,7 @@ import { Input } from "@heroui/input";
 import { ScrollShadow } from "@heroui/scroll-shadow";
 import { Badge } from "@heroui/badge";
 import { Spinner } from "@heroui/spinner";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import { Send, MessageSquare, ChevronLeft, Bell } from "lucide-react";
 import SAvatar from "../ui/SAvatar";
 import { Memo } from "@steempro/dsteem";
@@ -291,7 +291,7 @@ function ChatModal({ isOpen, onOpenChange, recipient, community }: Props) {
                       {head.sender_usr}
                     </span>
                     <span className="text-xs text-muted">
-                      {moment(head.latest_timestamp).fromNow()}
+                      {dayjs(head.latest_timestamp).fromNow()}
                     </span>
                   </div>
                   <p className="text-sm text-muted truncate">
@@ -415,7 +415,7 @@ function ChatModal({ isOpen, onOpenChange, recipient, community }: Props) {
                   </p>
                 </div>
                 <span className="text-[10px] text-muted mt-1 px-1">
-                  {moment(msg.timestamp).format("HH:mm")}
+                  {dayjs(msg.timestamp).format("HH:mm")}
                 </span>
               </div>
             );

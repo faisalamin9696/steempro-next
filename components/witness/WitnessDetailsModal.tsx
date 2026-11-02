@@ -14,7 +14,7 @@ import SAvatar from "../ui/SAvatar";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
 import { Tabs, Tab } from "@heroui/tabs";
-import moment from "moment";
+import dayjs, { toFullDateTime } from "@/libs/dayjs";
 import { useState, useMemo } from "react";
 import useSWR from "swr";
 import { sdsApi } from "@/libs/sds";
@@ -318,11 +318,11 @@ const WitnessDetailsModal = ({
                   />
                   <DetailRow
                     label={t("details.lastUpdate")}
-                    value={moment.unix(witness.last_price_report).fromNow()}
+                    value={dayjs.unix(witness.last_price_report).fromNow()}
                     className={
-                      moment
+                      dayjs
                         .unix(witness.last_price_report)
-                        .isBefore(moment().subtract(2, "hours"))
+                        .isBefore(dayjs().subtract(2, "hours"))
                         ? "text-warning"
                         : ""
                     }
@@ -332,17 +332,17 @@ const WitnessDetailsModal = ({
                 <Section title={t("details.additionalDetails")}>
                   <DetailRow
                     label={t("details.created")}
-                    value={moment.unix(witness.created).toLocaleString()}
+                    value={toFullDateTime(dayjs.unix(witness.created))}
                   />
                   <DetailRow
                     label={t("details.lastWork")}
-                    value={moment.unix(witness.last_sync).toLocaleString()}
+                    value={toFullDateTime(dayjs.unix(witness.last_sync))}
                   />
 
                   {witness.hardfork_time_vote && (
                     <DetailRow
                       label={t("details.hardforkTimeVote")}
-                      value={moment
+                      value={dayjs
                         .unix(witness.hardfork_time_vote)
                         .toLocaleString()}
                     />

@@ -79,6 +79,7 @@
     "subscribeSuccess": "सफलतापूर्वक सदस्यता ली गई"
   },
   "Community": {
+    "newPost": "नई पोस्ट",
     "created": "बनाया गया",
     "pendingReward": "लंबित पुरस्कार",
     "rank": "रैंक",
@@ -1259,6 +1260,7 @@
     }
   },
   "Submit": {
+    "communityNotFound": "समुदाय नहीं मिला",
     "communityPlaceholder": "समुदाय चुनें",
     "noCommunity": "कोई समुदाय उपलब्ध नहीं",
     "titlePlaceholder": "अपनी पोस्ट का शीर्षक लिखें...",

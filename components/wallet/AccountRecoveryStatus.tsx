@@ -5,7 +5,7 @@ import { Button } from "@heroui/button";
 import { ArrowRight } from "lucide-react";
 import { useAccountRecoveryData } from "@/hooks/useAccountRecoveryData";
 import { useEffect, useState } from "react";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import RecoveryUpdateModal from "./RecoveryUpdateModal";
 import { useSession } from "next-auth/react";
 import SUsername from "../ui/SUsername";
@@ -25,8 +25,8 @@ export const AccountRecoveryStatus = ({ account }: { account: AccountExt }) => {
       return;
     }
 
-    const fiveDaysAgo = moment().subtract(5, "days");
-    if (moment(parseInt(dismissedAt)).isBefore(fiveDaysAgo)) {
+    const fiveDaysAgo = dayjs().subtract(5, "days");
+    if (dayjs(parseInt(dismissedAt)).isBefore(fiveDaysAgo)) {
       setIsDismissed(false);
     } else {
       setIsDismissed(true);
@@ -66,7 +66,7 @@ export const AccountRecoveryStatus = ({ account }: { account: AccountExt }) => {
                 </div>
                 <p className="text-xs text-muted">
                   Becomes effective on{" "}
-                  {moment(recoveryData?.effective_on).format("LL")} (30-day
+                  {dayjs(recoveryData?.effective_on).format("LL")} (30-day
                   delay)
                 </p>
               </div>

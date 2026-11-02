@@ -2,12 +2,13 @@ import { Button } from "@heroui/button";
 import { Card } from "@heroui/card";
 import { Chip } from "@heroui/chip";
 import SAvatar from "../ui/SAvatar";
+import { loginAccent } from "@/utils/loginAccent";
 import { useAccountsContext } from "./AccountsContext";
 import SModal from "../ui/SModal";
 import { useState } from "react";
 import { Check, Lock, LockOpen, Trash2 } from "lucide-react";
 import Image from "next/image";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 
 const AccountCard = ({
   account,
@@ -37,7 +38,12 @@ const AccountCard = ({
       <div className="flex flex-wrap items-start gap-4 justify-between w-full">
         <div className="flex items-start gap-4">
           <div className="relative">
-            <SAvatar size={60} username={account.username} />
+            <SAvatar
+              size={60}
+              username={account.username}
+              isBordered
+              color={loginAccent(account)}
+            />
             {account.loginMethod === "keychain" && (
               <Chip
                 color="primary"
@@ -90,7 +96,7 @@ const AccountCard = ({
               </p>
 
               <p className="text-xs text-muted">
-                Added: {moment(account.createdAt).fromNow()}
+                Added: {dayjs(account.createdAt).fromNow()}
               </p>
             </div>
           </div>

@@ -10,7 +10,8 @@ import {
 } from "@steempro/dsteem";
 import { sdsApi } from "./sds";
 import { keychainApi } from "./keychain";
-import moment from "moment";
+import { getQrBroadcastHandler } from "./steemauthQr";
+import dayjs from "@/libs/dayjs";
 
 export let client = new Client(Constants.rpc_servers, {
   timeout: Constants.chain_timeout,
@@ -275,6 +276,13 @@ class SteemApi {
     useKeychain: boolean = false,
   ): Promise<TransactionConfirmation> {
     try {
+      // A live SteemAuthenticator QR session takes priority. The user chose to
+      // approve on the phone, which holds the key and broadcasts itself, so
+      // this returns immediately rather than falling through to Keychain or a
+      // locally stored key.
+      const qr = getQrBroadcastHandler();
+      if (qr) return await qr(username, operations);
+
       if (useKeychain && (window as any).steem_keychain) {
         return await this.broadcastWithKeychain(username, operations);
       }
@@ -410,8 +418,23 @@ class SteemApi {
     }
   }
 
-  parseSignature(signatureString: string): Signature | null {
-    try {
+  /**
+   * Verify an off-chain signature over a plaintext challenge — the QR login
+   * path. The phone signs `data`; here we check it against the account's
+   * on-chain posting (or active) key.
+   */
+  async verifyMessageSignature(
+    username: string,
+    data: string,
+    signatureString: string,
+  ): Promise<boolean> {
+    const signature = this.parseSignature(signatureString);
+    if (!signature) return false;
+    const hash = cryptoUtils.sha256(data);
+    return this.verifySignature(username, hash, signature);
+  }
+
+  parseSignature(signatureString: string): Signature | null {    try {
       return Signature.fromString(signatureString);
     } catch (error) {
       console.error("Failed to parse signature:", error);
@@ -1381,7 +1404,7 @@ class SteemApi {
   }
 
   generateRequestId() {
-    return Number(`${moment().unix() + Math.floor(Math.random())}`);
+    return Number(`${dayjs().unix() + Math.floor(Math.random())}`);
   }
   convertSBDToSteem(
     owner: string,

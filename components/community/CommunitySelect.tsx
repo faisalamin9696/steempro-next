@@ -1,12 +1,8 @@
-import {
-  Select,
-  SelectItem,
-  SelectProps,
-} from "@heroui/select";
+import { Select, SelectItem, SelectProps } from "@heroui/select";
 import { SharedSelection } from "@heroui/system";
 import { useSubscriberCommunities } from "@/hooks/useSubscriberCommunities";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import SAvatar from "../ui/SAvatar";
 import { useTranslations } from "next-intl";
 
@@ -26,11 +22,21 @@ function CommunitySelect({ community, onSelectCommunity, ...props }: Props) {
     session?.user?.name!,
     initialCommunity,
   );
+  // A community preselected via /submit?category= may not be among the user's
+  // subscriptions. Without adding it here the Select has no item for it, and
+  // renderValue (which reads item.data) would render an empty label.
+  const items = useMemo(() => {
+    const list = communitites ?? [];
+    if (community && !list.some((item) => item.account === community.account)) {
+      return [community, ...list];
+    }
+    return list;
+  }, [communitites, community]);
   const handleSelectionChange = (e: SharedSelection) => {
     const selectedValue = e.currentKey?.toString();
     if (selectedValue) {
       onSelectCommunity(
-        communitites?.filter((item) => item.account === selectedValue)[0],
+        items.filter((item) => item.account === selectedValue)[0],
       );
     }
   };
@@ -46,7 +52,7 @@ function CommunitySelect({ community, onSelectCommunity, ...props }: Props) {
       selectedKeys={community?.account ? [community?.account] : []}
       isMultiline={true}
       {...props}
-      items={communitites}
+      items={items}
       placeholder={t("communityPlaceholder")}
       isLoading={isLoading}
       onClear={() => {

@@ -131,16 +131,6 @@ export default function PrivacyPolicyPage() {
               You have full control over your privacy settings. We always
               request your consent for non-essential data processing.
             </p>
-            <div id="ppms_cm_privacy_settings">
-              <Button
-                color="primary"
-                variant="flat"
-                id="ppms_cm_privacy_settings_button"
-                className="font-bold"
-              >
-                Manage Privacy Settings
-              </Button>
-            </div>
           </CardBody>
         </Card>
 

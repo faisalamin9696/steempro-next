@@ -79,6 +79,7 @@
     "subscribeSuccess": "تم الاشتراك بنجاح"
   },
   "Community": {
+    "newPost": "منشور جديد",
     "created": "تاريخ الإنشاء",
     "pendingReward": "المكافأة المعلقة",
     "rank": "الترتيب",
@@ -1138,6 +1139,7 @@
     }
   },
   "Submit": {
+    "communityNotFound": "لم يتم العثور على المجتمع",
     "communityPlaceholder": "اختر المجتمع",
     "noCommunity": "لا يوجد مجتمع متاح",
     "titlePlaceholder": "أدخل عنوان منشورك...",

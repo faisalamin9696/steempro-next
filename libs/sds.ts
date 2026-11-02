@@ -1,6 +1,7 @@
 import { Constants } from "@/constants";
 import { sdsFetcher } from "@/constants/functions";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
+import type { ManipulateType } from "dayjs";
 import { client } from "./steem";
 
 class SdsApi {
@@ -361,9 +362,14 @@ class SdsApi {
       | "all" = "all",
     limit: number = 2500,
     offset: number = 0,
+    // Was `moment.DurationInputArg1/Arg2`. dayjs's `subtract(value: number,
+    // unit?)` takes a plain number (moment accepted an undefined/Duration
+    // amount, which dayjs would turn into an Invalid Date), so both parts are
+    // required here — every caller passes them, and omitting one now fails to
+    // compile instead of rendering "Invalid Date".
     duration: {
-      amount?: moment.DurationInputArg1;
-      unit?: moment.DurationInputArg2;
+      amount: number;
+      unit: ManipulateType;
     } = { amount: 3, unit: "months" },
   ): Promise<AccountHistory[]> {
     const essentialFields = [
@@ -387,9 +393,9 @@ class SdsApi {
     return sdsFetcher(
       `/account_history_api/getHistoryByOpTypesTime/${account}/${
         typeFilter === "all" ? essentialFields.join(",") : typeFilter
-      }/${moment()
+      }/${dayjs()
         .subtract(duration.amount, duration.unit)
-        .unix()}-${moment().unix()}/${limit}/${offset}`,
+        .unix()}-${dayjs().unix()}/${limit}/${offset}`,
     );
   }
 
@@ -576,7 +582,7 @@ class SdsApi {
     ]);
 
     return (res || []).map((t: any) => ({
-      date: moment.utc(t.date).unix(),
+      date: dayjs.utc(t.date).unix(),
       current_pays: t.current_pays,
       open_pays: t.open_pays,
     }));
@@ -617,7 +623,7 @@ class SdsApi {
       const scale = isSatoshis ? 1000 : 1;
 
       return {
-        time: moment.utc(h.open).unix(),
+        time: dayjs.utc(h.open).unix(),
         open_steem: this.parseAssetAmount(open_steem) / scale,
         open_sbd: this.parseAssetAmount(open_sbd) / scale,
         high_steem: this.parseAssetAmount(high_steem) / scale,
@@ -639,7 +645,7 @@ class SdsApi {
       const scale = isSatoshis ? 1000 : 1;
       return {
         id: o.id,
-        created: moment.utc(o.created).unix(),
+        created: dayjs.utc(o.created).unix(),
         expiration: o.expiration,
         seller: o.seller,
         orderid: o.orderid,

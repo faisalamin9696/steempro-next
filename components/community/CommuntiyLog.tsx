@@ -4,7 +4,7 @@ import { Card, CardBody } from "@heroui/card";
 import { Chip } from "@heroui/chip";
 import Link from "@/components/ui/CustomLink";
 import SUsername from "../ui/SUsername";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import LoadingStatus from "../LoadingStatus";
 import { Link2 } from "lucide-react";
 
@@ -57,7 +57,7 @@ function CommuntiyLog({ account }: { account: string }) {
               title
             )}
             <p className="text-xs text-muted">
-              {moment.unix(row.created).fromNow()}
+              {dayjs.unix(row.created).fromNow()}
             </p>
           </div>
         );

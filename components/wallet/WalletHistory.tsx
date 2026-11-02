@@ -11,7 +11,7 @@ import {
 import { ColumnDef, DataTable } from "../ui/data-table";
 import SCard from "../ui/SCard";
 import OperationItem from "./OperationItem";
-import moment from "moment";
+import dayjs, { toFullDateTime } from "@/libs/dayjs";
 import Link from "@/components/ui/CustomLink";
 import { useCallback, useMemo, useState } from "react";
 import { Select, SelectItem } from "@heroui/select";
@@ -130,8 +130,8 @@ export const WalletHistory = ({ username }: WalletHistoryProps) => {
       sortable: true,
       render(value) {
         return (
-          <p title={moment.unix(value).toLocaleString()}>
-            {moment.unix(value).fromNow(true)}
+          <p title={toFullDateTime(dayjs.unix(value))}>
+            {dayjs.unix(value).fromNow(true)}
           </p>
         );
       },

@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import { Constants } from ".";
 
 export const empty_comment = (
@@ -8,7 +8,7 @@ export const empty_comment = (
   author_role?: RoleTypes,
   author_title?: string
 ): Post => {
-  const timenow = moment().unix();
+  const timenow = dayjs().unix();
   return {
     link_id: timenow,
     link_status: 1,
@@ -28,7 +28,7 @@ export const empty_comment = (
     downvote_weight: 0,
     last_update: timenow - 150000,
     last_sync: 0,
-    cashout_time: moment().add(7, "days").unix(),
+    cashout_time: dayjs().add(7, "days").unix(),
     payout: 0,
     total_payout_value: 0,
     curator_payout_value: 0,
@@ -75,7 +75,7 @@ export const empty_comment = (
 };
 
 export const empty_profile = (name: string): AccountExt => {
-  const timenow = moment().unix();
+  const timenow = dayjs().unix();
   return {
     name: name,
     creator: "",
@@ -227,5 +227,5 @@ export const empty_draft: DraftData = {
   body: "",
   tags: [],
   beneficiaries: [],
-  updatedAt: moment().unix(),
+  updatedAt: dayjs().unix(),
 };

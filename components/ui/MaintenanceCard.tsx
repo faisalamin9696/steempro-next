@@ -3,7 +3,7 @@
 import { motion, Variants } from "framer-motion";
 import { Hammer, Clock, ShieldAlert, Activity } from "lucide-react";
 import { Card, CardBody } from "@heroui/card";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import { twMerge } from "tailwind-merge";
 
 interface MaintenanceCardProps {
@@ -18,13 +18,15 @@ const MaintenanceCard = ({
   className,
 }: MaintenanceCardProps) => {
   const formattedTime = estimatedBackTime
-    ? moment(estimatedBackTime).calendar(null, {
+    ? dayjs(estimatedBackTime).calendar(null, {
         sameDay: "[Today at] h:mm A",
         nextDay: "[Tomorrow at] h:mm A",
         nextWeek: "dddd [at] h:mm A",
         lastDay: "[Yesterday at] h:mm A",
         lastWeek: "[Last] dddd [at] h:mm A",
-        sameElse: "MMM Do, YYYY [at] h:mm A",
+        // dayjs has no `Do` ordinal token (moment did): "MMM Do, YYYY" rendered
+        // as "Dec 6o, 2026". `D` keeps the date correct; only the "th" is lost.
+        sameElse: "MMM D, YYYY [at] h:mm A",
       })
     : null;
 

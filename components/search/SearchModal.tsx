@@ -21,7 +21,7 @@ import { sdsApi } from "@/libs/sds";
 import SAvatar from "../ui/SAvatar";
 import SUsername from "../ui/SUsername";
 import Link from "@/components/ui/CustomLink";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import SInput from "../ui/SInput";
 import { extractBodySummary } from "@/utils/extractContent";
 import InfiniteList from "../InfiniteList";
@@ -167,7 +167,7 @@ const SearchModal = ({ isOpen, onOpenChange, onClose }: SearchModalProps) => {
           <span className="text-sm font-bold">@{post.author}</span>
           <span className="text-[10px] text-muted flex items-center gap-1 font-medium">
             <Clock size={10} />
-            {moment.unix(post.created).fromNow()}
+            {dayjs.unix(post.created).fromNow()}
           </span>
         </div>
         <div className="ml-auto">
@@ -200,7 +200,7 @@ const SearchModal = ({ isOpen, onOpenChange, onClose }: SearchModalProps) => {
           <span className="text-sm font-bold">@{comment.author}</span>
           <span className="text-[10px] text-muted flex items-center gap-1 font-medium">
             <Clock size={10} />
-            {moment.unix(comment.created).fromNow()}
+            {dayjs.unix(comment.created).fromNow()}
           </span>
         </div>
         <div className="ml-auto">

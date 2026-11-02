@@ -79,6 +79,7 @@
     "subscribeSuccess": "সফলভাবে সাবস্ক্রাইব করা হয়েছে"
   },
   "Community": {
+    "newPost": "নতুন পোস্ট",
     "created": "তৈরি হয়েছে",
     "pendingReward": "মুলতুবি পুরস্কার",
     "rank": "র‍্যাংক",
@@ -1138,6 +1139,7 @@
     }
   },
   "Submit": {
+    "communityNotFound": "কমিউনিটি পাওয়া যায়নি",
     "communityPlaceholder": "কমিউনিটি নির্বাচন করুন",
     "noCommunity": "কোনো কমিউনিটি পাওয়া যায়নি",
     "titlePlaceholder": "আপনার পোস্টের শিরোনাম লিখুন...",

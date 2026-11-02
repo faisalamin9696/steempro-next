@@ -5,7 +5,7 @@ import { Button } from "@heroui/button";
 import { useEffect, useState, useMemo, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import {
   CheckCircle2,
   XCircle,
@@ -53,7 +53,7 @@ export default function BoostModal({ isOpen, onOpenChange, post }: Props) {
     let timer: NodeJS.Timeout;
     if (status?.lastBoost) {
       timer = setInterval(() => {
-        const now = moment().unix();
+        const now = dayjs().unix();
         const diff = status.lastBoost + 24 * 60 * 60 - now;
         if (diff <= 0) {
           setCountdown("");

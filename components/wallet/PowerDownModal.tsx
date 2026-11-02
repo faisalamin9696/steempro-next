@@ -12,7 +12,7 @@ import { handleSteemError } from "@/utils/steemApiError";
 import { steemApi } from "@/libs/steem";
 import { useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux/store";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import { addLoginHandler } from "@/hooks/redux/reducers/LoginReducer";
 import { useSteemUtils } from "@/hooks/useSteemUtils";
 import { useAccountsContext } from "../auth/AccountsContext";
@@ -117,7 +117,7 @@ export const PowerDownModal = ({
         addLoginHandler({
           ...loginData,
           powerdown: steemToVests(amount),
-          next_powerdown: moment().add(7, "days").unix(),
+          next_powerdown: dayjs().add(7, "days").unix(),
           powerdown_rate: steemToVests(amount) / 4,
           powerdown_done: 0,
         }),

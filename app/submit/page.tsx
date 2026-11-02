@@ -8,7 +8,7 @@ import { Button } from "@heroui/button";
 import TagsInput from "@/components/submit/TagsInput";
 import { Constants } from "@/constants";
 import { ZonedDateTime } from "@internationalized/date";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import { X } from "lucide-react";
 import PublishButton from "@/components/submit/PublishButton";
 import ClearButton from "@/components/ui/ClearButton";
@@ -21,8 +21,10 @@ import BeneficiariesButton from "@/components/submit/BeneficiariesButton";
 import { readingTime } from "@/utils/reading-time-estimator";
 import CommunitySelect from "@/components/community/CommunitySelect";
 import ScheduleButton from "@/components/submit/ScheduleButton";
+import { sdsApi } from "@/libs/sds";
 
 import { useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
 
 const ICON_SIZE = 22;
 function SubmitPage({
@@ -78,6 +80,9 @@ function SubmitPage({
     draftData.clearDraft();
   }
 
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
+
   useEffect(() => {
     if (!isEdit) {
       const latestDraft = draftData.loadDraft();
@@ -85,6 +90,33 @@ function SubmitPage({
       loadDraft(latestDraft);
     }
   }, []);
+
+  // Deep link from a community card: /submit?category=144064 — the same
+  // convention as /community/160125, where the URL carries the bare tag and
+  // `hive-` is re-added here. Declared after the draft-load effect above (and
+  // resolving asynchronously) so an explicit link wins over whatever community
+  // the saved draft had. `draftData` is deliberately not a dependency: it is a
+  // fresh object every render, so listing it would refetch on every render.
+  useEffect(() => {
+    if (isEdit || !categoryParam) return;
+    const account = /^\d+$/.test(categoryParam)
+      ? `hive-${categoryParam}`
+      : categoryParam;
+    let cancelled = false;
+    sdsApi
+      .getCommunity(account)
+      .then((found) => {
+        if (cancelled || !found) return;
+        setCommunity(found);
+        draftData.setCommunity(found);
+      })
+      .catch(() => {
+        if (!cancelled) toast.error(t("communityNotFound"));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [categoryParam]);
 
   function loadDraft(data: DraftData) {
     setTitle(data.title);
@@ -231,7 +263,9 @@ function SubmitPage({
                           root &&
                           empty_community(root?.category, root?.community),
                       });
-                      toast.success(t("saved"), { description: t("draftUpdated") });
+                      toast.success(t("saved"), {
+                        description: t("draftUpdated"),
+                      });
                     }}
                   >
                     {t("saveDraft")}
@@ -278,7 +312,7 @@ function SubmitPage({
               >
                 <X size={20} />
                 <p>
-                  {moment(scheduleTime.toAbsoluteString()).format(
+                  {dayjs(scheduleTime.toAbsoluteString()).format(
                     "YYYY-MM-DD HH:mm:ss",
                   )}
                 </p>

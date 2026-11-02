@@ -61,10 +61,7 @@ export const getMetadata = {
     const capCat = category.charAt(0).toUpperCase() + category.slice(1);
     const pageTitle = `${capCat} topics`;
     const pageDescription = `Explore ${category} discussions on a user-owned social network. ${capCat} topics cover a wide range of interests and perspectives, providing valuable insights and lively conversations.`;
-    const url =
-      category === "trending"
-        ? BASE_URL
-        : `${BASE_URL}/${category}`;
+    const url = category === "trending" ? BASE_URL : `${BASE_URL}/${category}`;
 
     return {
       title: pageTitle,
@@ -333,13 +330,13 @@ export const getMetadata = {
 
     const thumbnail = isReply
       ? getResizedAvatar(result?.author, "small")
-      // Width-only: steemitimages' mode=fit STRETCHES the pixels to fill
-      // the box whenever both width and height are forced, so the previous
-      // "640x480" squashed every wide banner (e.g. a 1648x631 source) into
-      // a distorted 4:3 card. Omitting the height preserves the source
-      // aspect ratio — the same "640x0" jsonld.ts already uses. 1200 wide
-      // rather than 640 because this feeds summary_large_image cards.
-      : getThumbnail(result.json_images, "1200x0");
+      : // Width-only: steemitimages' mode=fit STRETCHES the pixels to fill
+        // the box whenever both width and height are forced, so the previous
+        // "640x480" squashed every wide banner (e.g. a 1648x631 source) into
+        // a distorted 4:3 card. Omitting the height preserves the source
+        // aspect ratio — the same "640x0" jsonld.ts already uses. 1200 wide
+        // rather than 640 because this feeds summary_large_image cards.
+        getThumbnail(result.json_images, "1200x0");
     const pageTitle = isReply ? `RE: ${result?.root_title}` : result?.title;
     const pageDescription =
       (extractBodySummary(result?.body, 250, isReply) || "Untitled post") +
@@ -501,7 +498,8 @@ export const getMetadata = {
     };
   },
   explorer: () => {
-    const pageTitle = "Blockchain Explorer - Real-time Steem Data, Stats & Charts";
+    const pageTitle =
+      "Blockchain Explorer - Real-time Steem Data, Stats & Charts";
     const pageDescription =
       "Explore the Steem blockchain in real-time: live blocks and transactions, network activity charts, active authors, top witnesses, largest accounts, communities and complete chain statistics.";
     const url = `${BASE_URL}/explorer`;
@@ -1012,6 +1010,34 @@ export const getMetadata = {
       description: pageDescription,
       keywords:
         "privacy policy SteemPro, privacy and policy, key management, security",
+      alternates: {
+        canonical: url,
+      },
+      openGraph: {
+        title: pageTitle,
+        description: pageDescription,
+        url: url,
+        images: [DEFAULT_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: pageTitle,
+        description: pageDescription,
+        images: [DEFAULT_IMAGE],
+      },
+    };
+  },
+  privacyPolicySteemAuth: () => {
+    const pageTitle = "SteemAuth Privacy Policy - SteemPro";
+    const pageDescription =
+      "SteemAuth collects nothing about you: no personal data, no ads, no analytics and no tracking. Your key stays on your phone, and you can delete your account data from Settings at any time.";
+    const url = "https://www.steempro.com/privacy-policy-steemauth";
+
+    return {
+      title: "SteemAuth Privacy Policy",
+      description: pageDescription,
+      keywords:
+        "SteemAuth privacy policy, passwordless login privacy, no tracking, no analytics, no ads, delete account data, SteemPro",
       alternates: {
         canonical: url,
       },

@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs, { toFullDateTime } from "@/libs/dayjs";
 import SAvatar from "../ui/SAvatar";
 import SUsername from "../ui/SUsername";
 import { CornerDownRight, Link2, TriangleAlert } from "lucide-react";
@@ -43,11 +43,11 @@ function CommentHeader({
         )}
 
         <span className="text-xs text-muted">
-          • {moment.unix(comment.created).fromNow()}
+          • {dayjs.unix(comment.created).fromNow()}
         </span>
         {comment.created !== comment.last_update && (
           <p
-            title={moment.unix(comment.last_update).toLocaleString()}
+            title={toFullDateTime(dayjs.unix(comment.last_update))}
             className="text-muted"
             // Absolute time is formatted in the visitor's timezone while
             // the server renders UTC — don't let it fail hydration.
@@ -85,7 +85,7 @@ function CommentHeader({
           <Reputation value={comment.author_reputation} />
 
           <span className="text-xs text-muted">
-            • {moment.unix(comment.created).fromNow()}
+            • {dayjs.unix(comment.created).fromNow()}
           </span>
 
           {(comment.depth ?? 0) > 1 && comment.parent_author && (

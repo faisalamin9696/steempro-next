@@ -79,6 +79,7 @@
     "subscribeSuccess": "订阅成功"
   },
   "Community": {
+    "newPost": "新帖子",
     "created": "创建时间",
     "pendingReward": "待发放奖励",
     "rank": "排名",
@@ -1138,6 +1139,7 @@
     }
   },
   "Submit": {
+    "communityNotFound": "未找到社区",
     "communityPlaceholder": "选择社区",
     "noCommunity": "暂无可用社区",
     "titlePlaceholder": "输入帖子标题...",

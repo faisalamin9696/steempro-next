@@ -673,7 +673,7 @@ type PromotedPost = {
   created_at?: string;
 };
 
-type LoginMethod = "keychain" | "private-key";
+type LoginMethod = "keychain" | "private-key" | "steemauth";
 
 type AccountKeyType = "posting" | "active" | "memo" | "owner";
 
@@ -692,6 +692,12 @@ type LocalAccount = {
   biometric?: boolean;
   /** `key` re-encrypted with the device secret that WebAuthn gates. */
   bioKey?: string;
+  /**
+   * Session id this account authenticated with (`steemauth` only). It is the
+   * key into the phone's `steemauth_sessions` row, which is how revocation is
+   * detected after the login modal has unmounted.
+   */
+  sid?: string;
 };
 
 type DraftData = {

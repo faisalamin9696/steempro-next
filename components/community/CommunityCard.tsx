@@ -2,15 +2,15 @@
 
 import BackgroundImage from "../BackgroundImage";
 import { proxifyImageUrl } from "@/utils/proxifyUrl";
+import { Button } from "@heroui/button";
 import { Card, CardBody, CardProps } from "@heroui/card";
 import { Avatar, AvatarGroup } from "@heroui/avatar";
 import { Divider } from "@heroui/divider";
 import { useSession } from "next-auth/react";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import Link from "@/components/ui/CustomLink";
 import { getResizedAvatar } from "@/utils/image";
-import { Calendar, DollarSign } from "lucide-react";
-import { Constants } from "@/constants";
+import { Calendar, DollarSign, SquarePen } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import { mapSds } from "@/constants/functions";
 import MarkdownViewer from "../post/body/MarkdownViewer";
@@ -23,7 +23,6 @@ import { Chip } from "@heroui/chip";
 import { useTranslations } from "next-intl";
 import ChatButton from "../chat/ChatButton";
 import EditButton from "../ui/EditButton";
-import ShareButton from "../ui/ShareButton";
 import SubscribeButton from "./SubscribeButton";
 import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
 import { getUnreadChatCount } from "@/libs/supabase/chat";
@@ -41,11 +40,13 @@ interface Props extends CardProps {
 function CommunityCard({ community, account, headerClass, ...props }: Props) {
   const t = useTranslations("Community");
   const { data: session } = useSession();
-  const { account: name, title, about, rank, created } = community || {};
+  const { account: name, about, rank, created } = community || {};
   const isMe = session?.user?.name === name;
   const { isMobile } = useDeviceInfo();
-  const displayName = (title || name).replace("@", "");
-  const shareUrl = `${Constants.site_url}/trending/${name}`;
+  // `/submit?category=` follows the same convention as /community/[tag]: URLs
+  // carry the bare tag (`/community/160125`) and `hive-` is re-added on lookup,
+  // so a community called hive-144064 links as `?category=144064`.
+  const submitCategory = name && /^hive-\d+$/.test(name) ? name.slice(5) : name;
   const roles: Role[] = mapSds(community.roles);
   const leaderShip = roles.filter((item) =>
     RoleLevel.atLeast(item.role, "mod"),
@@ -117,12 +118,15 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
             />
           )}
 
-          <ShareButton
-            url={shareUrl}
+          <Button
+            as={Link}
+            href={`/submit?category=${submitCategory}`}
             size={isMobile ? "sm" : "md"}
             variant="flat"
-            title={displayName}
-          />
+            startContent={<SquarePen size={ICON_SIZE} />}
+          >
+            {t("newPost")}
+          </Button>
         </div>
 
         {/* About */}
@@ -133,7 +137,7 @@ function CommunityCard({ community, account, headerClass, ...props }: Props) {
         <ItemRow icon={<Calendar size={ICON_SIZE} />}>
           <p className="text-sm">
             <span className="text-muted">{t("created")}</span>{" "}
-            {moment.unix(created).format("MMM DD, YYYY")}
+            {dayjs.unix(created).format("MMM DD, YYYY")}
           </p>
         </ItemRow>
 

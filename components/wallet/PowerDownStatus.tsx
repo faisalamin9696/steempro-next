@@ -7,7 +7,7 @@ import { Progress } from "@heroui/progress";
 import { Alert } from "@heroui/alert";
 import { Button } from "@heroui/button";
 import { ArrowDownCircle } from "lucide-react";
-import moment from "moment";
+import dayjs, { toFullDateTime } from "@/libs/dayjs";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -107,15 +107,15 @@ export const PowerDownStatus = ({ account }: PowerDownStatusProps) => {
             <div className="flex flex-row gap-1">
               <span
                 className="text-muted"
-                title={moment.unix(account.next_powerdown).toLocaleString()}
+                title={toFullDateTime(dayjs.unix(account.next_powerdown))}
               >
                 ~ {vestsToSteem(account.powerdown_rate).toLocaleString()}
               </span>
               <span
                 className="font-semibold"
-                title={moment.unix(account.next_powerdown).toLocaleString()}
+                title={toFullDateTime(dayjs.unix(account.next_powerdown))}
               >
-                {moment.unix(account.next_powerdown).fromNow()}
+                {dayjs.unix(account.next_powerdown).fromNow()}
               </span>
             </div>
           </div>

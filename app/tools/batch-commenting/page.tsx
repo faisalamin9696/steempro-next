@@ -30,7 +30,7 @@ import { useTranslations } from "next-intl";
 import SPopover from "@/components/ui/SPopover";
 import { Progress } from "@heroui/progress";
 import { motion, AnimatePresence } from "framer-motion";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import { sdsApi } from "@/libs/sds";
 import { AsyncUtils } from "@/utils/async.utils";
 
@@ -579,7 +579,7 @@ export default function BatchCommentingPage() {
                             suppressHydrationWarning
                             className="text-[9px] text-default-800 hidden md:block"
                           >
-                            {moment().format("HH:mm:ss")}
+                            {dayjs().format("HH:mm:ss")}
                           </span>
                         </div>
                       ))}

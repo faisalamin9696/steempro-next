@@ -3,7 +3,7 @@ import { Chip } from "@heroui/chip";
 import { Spinner } from "@heroui/spinner";
 import { Button } from "@heroui/button";
 import { Trash2 } from "lucide-react";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -91,7 +91,7 @@ const OpenOrdersTable = ({
               {isBuying ? tTrade("buy") : tTrade("sell")}
             </Chip>
             <p className="text-xs text-muted">
-              {moment.unix(order.created).format("DD MMM HH:mm")}
+              {dayjs.unix(order.created).format("DD MMM HH:mm")}
             </p>
           </div>
         );

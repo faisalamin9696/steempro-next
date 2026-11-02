@@ -5,7 +5,7 @@ import "swiper/css/navigation";
 import "./style.css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { proxifyImageUrl } from "@/utils/proxifyUrl";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import BodyImage from "../post/body/BodyImage";
 import PostLink from "../post/PostLink";
@@ -86,7 +86,7 @@ function HomeCarousel({
                     <span className="h-1 w-1 rounded-full bg-white/40" />
                     <div className="flex items-center gap-1.5">
                       <Clock3 size={12} />
-                      <span>{moment(item.created_at).fromNow()}</span>
+                      <span>{dayjs(item.created_at).fromNow()}</span>
                     </div>
                   </div>
                 </div>

@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs, { toFullDateTime } from "@/libs/dayjs";
 import Link from "@/components/ui/CustomLink";
 import Reputation from "./Reputation";
 import { Chip } from "@heroui/chip";
@@ -125,20 +125,20 @@ function PostHeader({
             </Link>
           </span>
           <span
-            title={moment.unix(created).toLocaleString()}
+            title={toFullDateTime(dayjs.unix(created))}
             className="flex flex-row gap-2 items-center text-default-400"
             // Relative time is computed from the clock, so server and client
             // renders can legitimately differ — don't let it fail hydration.
             suppressHydrationWarning
           >
-            • {moment.unix(created).fromNow()}
+            • {dayjs.unix(created).fromNow()}
             {!!comment.is_pinned && (
               <Pin size={16} className="text-muted rotate-45" />
             )}
           </span>
           {isDetail && created !== last_update && (
             <p
-              title={moment.unix(last_update).toLocaleString()}
+              title={toFullDateTime(dayjs.unix(last_update))}
               className="text-muted"
               // Absolute time is formatted in the visitor's timezone while
               // the server renders UTC — don't let it fail hydration.

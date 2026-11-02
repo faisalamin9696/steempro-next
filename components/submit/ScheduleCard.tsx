@@ -14,7 +14,7 @@ import {
   FileWarning,
   Link2,
 } from "lucide-react";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import { toast } from "sonner";
 import { useState } from "react";
 import { saveDraftToStorage } from "@/hooks/useDraft";
@@ -76,7 +76,7 @@ export default function ScheduleCard({ schedule, onRefresh }: Props) {
         community: validateCommunityAccount(schedule.parent_permlink)
           ? empty_community(schedule.parent_permlink, schedule.parent_permlink)
           : undefined,
-        updatedAt: moment().unix(),
+        updatedAt: dayjs().unix(),
       };
 
       saveDraftToStorage("post-editor", draftData);
@@ -98,8 +98,8 @@ export default function ScheduleCard({ schedule, onRefresh }: Props) {
 
   const handleReschedule = async (newTime: ZonedDateTime | null) => {
     if (!newTime) return;
-    const newMoment = moment(newTime.toAbsoluteString());
-    const oldMoment = moment(schedule.time);
+    const newMoment = dayjs(newTime.toAbsoluteString());
+    const oldMoment = dayjs(schedule.time);
 
     if (Math.abs(newMoment.diff(oldMoment, "minutes")) < 5) {
       toast.error(t("messages.timeDiffError"));
@@ -143,11 +143,11 @@ export default function ScheduleCard({ schedule, onRefresh }: Props) {
           <div className="flex flex-wrap gap-2 items-center text-xs text-muted-foreground">
             <div className="flex items-center gap-1">
               <Calendar size={14} />
-              <span>{moment(schedule.time).format("MMM D, YYYY")}</span>
+              <span>{dayjs(schedule.time).format("MMM D, YYYY")}</span>
             </div>
             <div className="flex items-center gap-1">
               <Clock size={14} />
-              <span>{moment(schedule.time).format("hh:mm A")}</span>
+              <span>{dayjs(schedule.time).format("hh:mm A")}</span>
             </div>
             <Chip
               size="sm"

@@ -79,6 +79,7 @@
     "subscribeSuccess": "구독이 완료되었습니다"
   },
   "Community": {
+    "newPost": "새 글",
     "created": "생성일",
     "pendingReward": "미지급 보상",
     "rank": "순위",
@@ -1138,6 +1139,7 @@
     }
   },
   "Submit": {
+    "communityNotFound": "커뮤니티를 찾을 수 없습니다",
     "communityPlaceholder": "커뮤니티 선택",
     "noCommunity": "이용 가능한 커뮤니티가 없습니다",
     "titlePlaceholder": "게시물 제목을 입력하세요...",

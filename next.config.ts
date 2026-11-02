@@ -15,7 +15,18 @@ const nextConfig: NextConfig = {
   transpilePackages: ["lottie-react", "lottie-web", "lucide-react", "next"],
   allowedDevOrigins:['192.168.1.100'],
   images: {
-    qualities: [25, 50, 75],
+    // `unoptimized` is deliberate, not an oversight:
+    //  - every post image and avatar is proxied through steemitimages, which
+    //    already resizes (`?width=…&format=match`); letting Next re-proxy
+    //    would fetch and re-encode the same bytes a second time for no
+    //    visible gain,
+    //  - with `remotePatterns.hostname: "*"`, enabling the optimizer would
+    //    expose `/_next/image?url=…` as an open proxy for any https host.
+    // The local assets are small enough not to need it: the navbar logo is
+    // 5 KB, and `opengraph-image.jpg` is only ever fetched by crawlers.
+    //
+    // `qualities` was removed alongside this: it only applies to the
+    // optimizer, so with `unoptimized: true` it was dead configuration.
     unoptimized: true,
     remotePatterns: [
       {

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Zap, Trophy, Clock, Info } from "lucide-react";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import Link from "@/components/ui/CustomLink";
 import { useDisclosure } from "@heroui/modal";
 import { Button } from "@heroui/button";
@@ -89,9 +89,9 @@ export const HeightsInfo = ({ season, seasonPost }: Props) => {
     if (!seasonPost?.created) return;
 
     const calculateTimeLeft = () => {
-      const createdAt = moment.unix(seasonPost.created);
+      const createdAt = dayjs.unix(seasonPost.created);
       const endAt = createdAt.add(7, "days");
-      const now = moment();
+      const now = dayjs();
       const diff = endAt.diff(now);
 
       if (diff <= 0) {
@@ -99,7 +99,7 @@ export const HeightsInfo = ({ season, seasonPost }: Props) => {
         return;
       }
 
-      const duration = moment.duration(diff);
+      const duration = dayjs.duration(diff);
       const days = Math.floor(duration.asDays());
       const hours = duration.hours();
       const minutes = duration.minutes();

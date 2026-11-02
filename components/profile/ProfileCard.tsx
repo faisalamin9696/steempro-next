@@ -6,7 +6,7 @@ import { Card, CardBody, CardProps } from "@heroui/card";
 import { Avatar, AvatarGroup } from "@heroui/avatar";
 import { Divider } from "@heroui/divider";
 import { useSession } from "next-auth/react";
-import moment from "moment";
+import dayjs, { toFullDateTime } from "@/libs/dayjs";
 import Link from "@/components/ui/CustomLink";
 import SAvatar from "../ui/SAvatar";
 import SUsername from "../ui/SUsername";
@@ -133,9 +133,9 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
         )}
 
         <ItemRow icon={<Calendar className="text-muted" size={ICON_SIZE} />}>
-          <p className="text-sm" title={moment.unix(created).toLocaleString()}>
+          <p className="text-sm" title={toFullDateTime(dayjs.unix(created))}>
             <span className="text-muted">{t("joined")}</span>{" "}
-            {moment.unix(created).format("MMM DD, YYYY")}
+            {dayjs.unix(created).format("MMM DD, YYYY")}
           </p>
         </ItemRow>
 
@@ -187,8 +187,8 @@ function ProfileCard({ account, headerClass, ...props }: Props) {
             { label: t("comments"), value: profileData.count_comments },
             {
               label: t("active"),
-              value: moment.unix(profileData.last_action).fromNow(true),
-              title: moment.unix(profileData.last_action).toLocaleString(),
+              value: dayjs.unix(profileData.last_action).fromNow(true),
+              title: toFullDateTime(dayjs.unix(profileData.last_action)),
             },
           ]}
         />

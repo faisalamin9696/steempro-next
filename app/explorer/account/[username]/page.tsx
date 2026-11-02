@@ -39,7 +39,7 @@ import SAvatar from "@/components/ui/SAvatar";
 import Link from "@/components/ui/CustomLink";
 import CopyButton from "@/components/ui/CopyButton";
 import PageHeader from "@/components/ui/PageHeader";
-import moment from "moment";
+import dayjs, { toFullDateTime } from "@/libs/dayjs";
 import Reputation from "@/components/post/Reputation";
 import SUsername from "@/components/ui/SUsername";
 const STEEM_VOTING_MANA_REGENERATION_SECONDS = 432000;
@@ -300,11 +300,11 @@ export default function AccountDetailPage() {
 
                       <div className="flex gap-3 mt-2 flex-wrap">
                         <span
-                          title={moment(account.created).toLocaleString()}
+                          title={toFullDateTime(dayjs(account.created))}
                           className="text-xs text-default-500 dark:text-default-400 flex items-center gap-1"
                         >
                           <Calendar size={12} />
-                          {moment(account.created).fromNow()}
+                          {dayjs(account.created).fromNow()}
                         </span>
                         <span className="text-xs text-default-500 dark:text-default-400 flex items-center gap-1">
                           <Award size={12} />

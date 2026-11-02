@@ -3,7 +3,7 @@
 import { sdsApi } from "@/libs/sds";
 import { Alert } from "@heroui/alert";
 import { RefreshCw } from "lucide-react";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import useSWR from "swr";
 
 interface ConversionStatusProps {
@@ -58,12 +58,12 @@ export const ConversionStatus = ({ account }: ConversionStatusProps) => {
                   {req.amount}
                 </span>
                 <span
-                  title={moment(req.conversion_date).format(
+                  title={dayjs(req.conversion_date).format(
                     "MMM DD, YYYY hh:mm A"
                   )}
                   className="text-muted"
                 >
-                  {moment(req.conversion_date).fromNow()}
+                  {dayjs(req.conversion_date).fromNow()}
                 </span>
               </div>
             ))}

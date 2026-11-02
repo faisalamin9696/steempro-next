@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import SAvatar from "../ui/SAvatar";
 import SUsername from "../ui/SUsername";
 import { twMerge } from "tailwind-merge";
@@ -72,7 +72,7 @@ export default function ShortsOverlayInfo({ short, isSidebar }: Props) {
               !isSidebar && "drop-shadow-sm text-white",
             )}
           >
-            {moment.unix(short.created).fromNow()}
+            {dayjs.unix(short.created).fromNow()}
           </span>
         </div>
       </div>

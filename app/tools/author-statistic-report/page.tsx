@@ -17,7 +17,7 @@ import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { client } from "@/libs/steem";
 import { toast } from "sonner";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import { DataTable, ColumnDef } from "@/components/ui/data-table";
 import { useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
@@ -26,9 +26,9 @@ export default function AuthorStatisticReportPage() {
   const t = useTranslations("AuthorStatistic");
   const [username, setUsername] = useState("");
   const [startDate, setStartDate] = useState(
-    moment().subtract(7, "days").format("YYYY-MM-DD"),
+    dayjs().subtract(7, "days").format("YYYY-MM-DD"),
   );
-  const [endDate, setEndDate] = useState(moment().format("YYYY-MM-DD"));
+  const [endDate, setEndDate] = useState(dayjs().format("YYYY-MM-DD"));
 
   const [isLoading, setIsLoading] = useState(false);
   const [posts, setPosts] = useState<any[]>([]);
@@ -50,8 +50,8 @@ export default function AuthorStatisticReportPage() {
     let lastPermlink = "";
 
     // Parse dates to start and end of day in UTC (Steem blockchain time is UTC)
-    const startTimestamp = moment.utc(startDate).startOf("day").unix();
-    const endTimestamp = moment.utc(endDate).endOf("day").unix();
+    const startTimestamp = dayjs.utc(startDate).startOf("day").unix();
+    const endTimestamp = dayjs.utc(endDate).endOf("day").unix();
 
     try {
       while (true) {
@@ -74,7 +74,7 @@ export default function AuthorStatisticReportPage() {
           // Ignore reblogs by checking if author matches
           if (post.author !== author) continue;
 
-          const postTime = moment.utc(post.created).unix();
+          const postTime = dayjs.utc(post.created).unix();
 
           if (postTime > endTimestamp) {
             continue; // Skip posts newer than end date
@@ -156,7 +156,7 @@ export default function AuthorStatisticReportPage() {
       })
       .sort(
         (a: any, b: any) =>
-          moment.utc(b.created).unix() - moment.utc(a.created).unix(),
+          dayjs.utc(b.created).unix() - dayjs.utc(a.created).unix(),
       );
   }, [stats]);
 
@@ -167,7 +167,7 @@ export default function AuthorStatisticReportPage() {
         header: t("table.date"),
         sortable: true,
         render: (val) => (
-          <span className="text-muted">{moment.utc(val).format("MMM DD")}</span>
+          <span className="text-muted">{dayjs.utc(val).format("MMM DD")}</span>
         ),
       },
       {
@@ -232,7 +232,7 @@ export default function AuthorStatisticReportPage() {
 
     return `
 # ${t("markdown.reportTitle", { author: username.replace("@", "").trim() })}
-**${t("markdown.dateRange")}:** ${moment(startDate).format("MMM DD, YYYY")} - ${moment(endDate).format("MMM DD, YYYY")}
+**${t("markdown.dateRange")}:** ${dayjs(startDate).format("MMM DD, YYYY")} - ${dayjs(endDate).format("MMM DD, YYYY")}
 
 ## 📊 ${t("markdown.summary")}
 | ${t("markdown.metric")} | ${t("markdown.value")} |
@@ -246,7 +246,7 @@ export default function AuthorStatisticReportPage() {
 ## 📰 ${t("markdown.performanceLog")}
 | ${t("markdown.date")} | ${t("markdown.postTitle")} | ${t("markdown.community")} | ${t("markdown.votes")} | ${t("markdown.replies")} | ${t("markdown.payout")} |
 |------|-------|-----------|-------|---------|--------|
-${tableData.map((post: any) => `| ${moment.utc(post.created).format("MMM DD")} | [${post.title.substring(0, 50).replace(/\|/g, "-")}](https://steemit.com/@${post.author}/${post.permlink}) | ${post.category} | ${post.upvotes} | ${post.children} | $${post.payout.toFixed(2)} |`).join("\n")}
+${tableData.map((post: any) => `| ${dayjs.utc(post.created).format("MMM DD")} | [${post.title.substring(0, 50).replace(/\|/g, "-")}](https://steemit.com/@${post.author}/${post.permlink}) | ${post.category} | ${post.upvotes} | ${post.children} | $${post.payout.toFixed(2)} |`).join("\n")}
 
 ---
 *${t("markdown.footer", { url: "https://www.steempro.com/tools" })}*

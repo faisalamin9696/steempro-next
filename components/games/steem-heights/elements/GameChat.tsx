@@ -6,7 +6,7 @@ import SModal from "@/components/ui/SModal";
 import { useDraggable } from "@heroui/react";
 import React from "react";
 import { Button } from "@heroui/button";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 
 interface ChatMessage {
   id: number | string;
@@ -158,7 +158,7 @@ export const GameChat = memo(
                         </span>
                         {(m.created_at || m.created) && (
                           <span className="text-[8px] text-zinc-500 font-medium">
-                            {moment(m.created_at || m.created).fromNow()}
+                            {dayjs(m.created_at || m.created).fromNow()}
                           </span>
                         )}
                       </div>

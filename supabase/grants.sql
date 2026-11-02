@@ -29,6 +29,12 @@
 --                                   app/api/game/steem-heights/shop/route.ts
 --   steempro_boost_requests         app/api/boost/request-permission/route.ts
 --
+-- RPC-only (2) — these project tables get NO table-level grants at all;
+-- the app reaches them exclusively through their functions, so REST is
+-- never a door to them (audited 2026-10-26):
+--   steempro_promoted               get_promoted_posts
+--   steempro_notifs                 notifs_last_read, get_unread_count
+--
 -- RPCs (14) — `.rpc(...)` calls
 --   get_schedules, get_snippets, get_promoted_posts,
 --   notifs_last_read, get_unread_count, get_chat_heads,
@@ -121,7 +127,10 @@ alter default privileges in schema public
 -- 1) Schema usage (required by PostgREST)
 grant usage on schema public to anon, authenticated, service_role;
 
--- 2) Project tables only (everything prefixed steempro_).
+-- 2) Project tables only (everything prefixed steempro_) EXCEPT the two
+--    RPC-only tables below — the inventory above is the contract, and a
+--    table no code ever `.from(...)`s must not become a REST surface just
+--    because it shares the prefix.
 --    anon/authenticated get exactly the four PostgREST verbs — that is
 --    everything the REST layer can do, minus TRUNCATE / REFERENCES /
 --    TRIGGER, which the app never uses and the public key must not have.
@@ -131,6 +140,7 @@ begin
   for t in
     select tablename from pg_tables
     where schemaname = 'public' and tablename like 'steempro\_%'
+      and tablename not in ('steempro_promoted', 'steempro_notifs')
   loop
     execute format(
       'grant select, insert, update, delete on table public.%I to anon, authenticated',
@@ -140,6 +150,22 @@ begin
       'grant all privileges on table public.%I to service_role',
       t
     );
+  end loop;
+end $$;
+
+-- 2b) RPC-only tables: enforced CLOSED at the table level (idempotent).
+--     Their data still flows through get_promoted_posts /
+--     notifs_last_read / get_unread_count, which carry their own execute
+--     grants — REST never needs direct access.
+do $$
+declare t text;
+begin
+  foreach t in array array['steempro_promoted', 'steempro_notifs'] loop
+    if exists (
+      select 1 from pg_tables where schemaname = 'public' and tablename = t
+    ) then
+      execute format('revoke all on public.%I from anon, authenticated', t);
+    end if;
   end loop;
 end $$;
 
@@ -259,7 +285,10 @@ declare
     'steempro_game_heights_shop',
     'steempro_game_chat',
     'steempro_game_heights_sessions',
-    'steempro_boost_requests'
+    'steempro_boost_requests',
+    -- RPC-only (no table-level grants; see inventory + section 2b)
+    'steempro_promoted',
+    'steempro_notifs'
   ];
   expected_fns text[] := array[
     'get_schedules', 'get_snippets', 'get_promoted_posts',
@@ -270,11 +299,13 @@ declare
     'get_heights_daily_stats', 'get_heights_player_stats'
   ];
 begin
-  -- 6a) every steempro_* table usable by anon
+  -- 6a) every DIRECT-ACCESS steempro_* table usable by anon (all four verbs),
+  --     and the two RPC-only tables closed to REST entirely.
   missing := '';
   for r in
     select tablename from pg_tables
     where schemaname = 'public' and tablename like 'steempro\_%'
+      and tablename not in ('steempro_promoted', 'steempro_notifs')
       and not (
         has_table_privilege('anon', format('public.%I', tablename), 'SELECT')
         and has_table_privilege('anon', format('public.%I', tablename), 'INSERT')
@@ -287,7 +318,25 @@ begin
   if missing <> '' then
     raise notice 'TABLES STILL LOCKED OUT: %', missing;
   else
-    raise notice 'tables OK: all steempro_* tables grant select/insert/update/delete to anon';
+    raise notice 'tables OK: all direct-access steempro_* tables grant select/insert/update/delete to anon';
+  end if;
+
+  missing := '';
+  foreach t in array array['steempro_promoted', 'steempro_notifs'] loop
+    -- Nested IFs (not `and`): has_table_privilege() errors on a missing
+    -- relation, and SQL does not guarantee AND-operand evaluation order.
+    if exists (
+      select 1 from pg_tables where schemaname = 'public' and tablename = t
+    ) then
+      if has_table_privilege('anon', format('public.%I', t), 'SELECT') then
+        missing := missing || t || ' [RPC-only but OPEN to REST] ';
+      end if;
+    end if;
+  end loop;
+  if missing <> '' then
+    raise notice 'RPC-ONLY TABLES LEAKED: % (re-run section 2b)', missing;
+  else
+    raise notice 'rpc-only OK: steempro_promoted and steempro_notifs are closed to REST';
   end if;
 
   -- 6b) every RPC the app calls exists and is executable
@@ -341,7 +390,7 @@ begin
   if missing <> '' then
     raise notice 'INVENTORY DRIFT: %', missing;
   else
-    raise notice 'inventory OK: 8 tables match the code';
+    raise notice 'inventory OK: 8 direct-access + 2 RPC-only tables match the code';
   end if;
 
   -- 6d) no stray function is still callable by the public key.
@@ -372,7 +421,13 @@ begin
     raise notice 'functions OK: only the 14 RPCs + extension functions are callable';
   end if;
 
-  -- 6e) no non-project table was re-opened
+  --     6e) no non-project table was re-opened.
+  --     steemauth_sessions and steemauth_messages are exempt BY DESIGN:
+  --     the SteemAuthenticator control plane + message plane (protocol v2),
+  --     created and granted by their own idempotent migrations
+  --     (SteemAuthenticator/docs/sessions-schema.sql, message-plane.sql)
+  --     with deliberately narrow shapes: select/insert, revocation-column
+  --     update on sessions only, append-only messages, no deletes.
   missing := '';
   for r in
     select distinct table_name
@@ -380,13 +435,15 @@ begin
     where table_schema = 'public'
       and grantee in ('anon', 'authenticated', 'service_role')
       and table_name not like 'steempro\_%'
+      and table_name <> 'steemauth_sessions'
+      and table_name <> 'steemauth_messages'
   loop
     missing := missing || r.table_name || ' ';
   end loop;
   if missing <> '' then
     raise notice 'LEAK: granted to non-project tables: %', missing;
   else
-    raise notice 'scope OK: no non-project table is granted';
+    raise notice 'scope OK: no non-project table is granted (beyond the documented steemauth_sessions control plane)';
   end if;
 end $$;
 
@@ -395,3 +452,49 @@ end $$;
 --    PGRST202 "Could not find the function ... in the schema cache".
 --    Harmless if nothing is listening.
 notify pgrst, 'reload schema';
+
+-- ============================================================
+-- AUDIT 2026-10-26 — anonymous-key review of public.*
+--
+-- Method: read-only REST probes (status codes and row PRESENCE only,
+-- never contents) plus write probes using real columns with impossible
+-- filters (zero rows can match ⇒ nothing can change). Grant checks were
+-- proven to run before constraint evaluation, so verdicts are sound.
+--
+-- Findings (12 tables + 14 RPCs exposed to anon at the time):
+--   1. steempro_promoted and steempro_notifs had full anon table grants
+--      but are never `.from(...)`-ed by the code — RPC-only tables open
+--      as a REST surface (drift vs this file's own inventory). FIXED in
+--      sections 2 / 2b above: wildcard grant now excludes them, and they
+--      are actively revoked; 6a asserts they stay closed.
+--   2. steemauth_sessions (the SteemAuthenticator control plane) is
+--      correct by design: select (realtime needs it), insert, update
+--      limited to the two revocation columns, no delete. Now exempted in
+--      6e so the scope check stops reporting it as a leak.
+--   3. The remaining 8 tables: grants match this file's documented
+--      model (every client in steempro-next runs on the anon key; there
+--      is no service-role client). Whether their UPDATE/DELETE grants
+--      are EXECUTABLE depends on RLS, which anon cannot inspect. Check
+--      in the SQL editor after applying:
+--
+--        select relname, relrowsecurity from pg_class
+--        where relnamespace = 'public'::regnamespace
+--          and (relname like 'steempro_%' or relname = 'steemauth_sessions');
+--        select tablename, polname, polcmd
+--        from pg_policies where schemaname = 'public';
+--
+--      Any relrowsecurity = false on a direct-access table means anon can
+--      rewrite/delete it unfiltered (RLS cannot distinguish anon users
+--      anyway — one shared JWT — so keep per-row policies tight).
+--   4. RPC surface: 14 intended functions; two are callable with no args
+--      and returned 200 (get_promoted_posts,
+--      get_heights_seasonal_winners). notifs_last_read was deliberately
+--      NOT invoked by the audit (side effects). 6d still guards the rest.
+--
+-- Verification after running this file:
+--   * NOTICEs: tables OK / rpc-only OK (2b closed) / inventory OK (11) /
+--     functions OK / scope OK
+--   * REST: GET /rest/v1/steempro_promoted   → 401
+--           GET /rest/v1/steempro_notifs     → 401
+--           POST /rest/v1/rpc/get_promoted_posts → 200
+-- ============================================================

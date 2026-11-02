@@ -32,7 +32,7 @@ import { normalizeUsername } from "@/utils/editor";
 import SInput from "@/components/ui/SInput";
 import { useAccountsContext } from "@/components/auth/AccountsContext";
 import LoginAlertCard from "@/components/ui/LoginAlertCard";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import { twMerge } from "tailwind-merge";
 import STabs from "@/components/ui/STabs";
 import { useDeviceInfo } from "@/hooks/redux/useDeviceInfo";
@@ -241,9 +241,9 @@ const WitnessesPage = ({ data }: { data: Witness[] }) => {
       header: t("columns.feed"),
       sortable: true,
       render: (value, row) => {
-        const isOld = moment
+        const isOld = dayjs
           .unix(value)
-          .isBefore(moment().subtract(2, "hours"));
+          .isBefore(dayjs().subtract(2, "hours"));
         return (
           <div className="flex flex-row items-center gap-2">
             {isOld && (

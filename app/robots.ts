@@ -1,7 +1,13 @@
 import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.steempro.com";
+  // Same trailing-slash normalisation as `BASE_URL` in utils/sitemap.ts:
+  // this line is what points the crawler at the sitemap, so a configured
+  // trailing slash would send it to `…//sitemap.xml` — a URL that 404s and
+  // silently costs every child with it.
+  const baseUrl = (
+    process.env.NEXT_PUBLIC_BASE_URL || "https://www.steempro.com"
+  ).replace(/\/+$/, "");
 
   return {
     rules: [

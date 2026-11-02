@@ -14,7 +14,7 @@ import {  Chip } from "@heroui/chip";
 import { Button } from "@heroui/button";
 import { ScrollShadow } from "@heroui/scroll-shadow";
 import { sdsApi } from "@/libs/sds";
-import moment from "moment";
+import dayjs from "@/libs/dayjs";
 import { diff_match_patch as diffMatchPatch } from "diff-match-patch";
 import { History, ArrowLeftRight, FileText, Tag } from "lucide-react";
 import LoadingStatus from "@/components/LoadingStatus";
@@ -264,7 +264,7 @@ export default function EditHistoryModal({
                               />
                             }
                           >
-                            {moment.unix(h.time).format("MMM DD, HH:mm")}
+                            {dayjs.unix(h.time).format("MMM DD, HH:mm")}
                           </ListboxItem>
                         ))}
                       </Listbox>
@@ -277,7 +277,7 @@ export default function EditHistoryModal({
                           {current?.title || "Untitled"}
                         </span>
                         <span className="text-tiny text-muted">
-                          {moment.unix(current?.time).format("LLLL")}
+                          {dayjs.unix(current?.time).format("LLLL")}
                         </span>
                       </div>
                       <Tabs
