@@ -12,20 +12,12 @@ import {
 /**
  * The QR session, owned by the app rather than by any component.
  *
- * `useSteemAuth()` disposes its session on unmount. That is right for a
- * component-scoped use and wrong for this one: the phone keeps a single
- * pending request in memory and may answer it long after the user walked away from the approval screen — dismissing the
- * panel, re-rendering a parent or navigating must not close the session
- * underneath them, because there is no queue behind it. A closed session
- * means the approval is simply lost and the user has to scan again.
- *
- * So the controller lives here, module-scoped and shared: mounted once, never
- * disposed by a component going away. It is replaced only by an explicit
- * `refresh()` (a new code) or by the code's own expiry — never by React.
- *
- * `dispose()` and `start()` are deliberately no-ops on the returned object so
- * call sites that used `useSteemAuth` keep compiling without acquiring a way
- * to tear the shared session down by accident.
+ * `useSteemAuth()` disposes on unmount — right for component scope, wrong for
+ * this one: the phone may answer long after the panel closes, and there is no
+ * queue behind a closed session (the approval would simply be lost). So the
+ * controller is module-scoped: mounted once, never disposed by unmount,
+ * replaced only by `refresh()` or the code's own expiry. `dispose()`/`start()`
+ * are no-ops on the returned object so old call sites can't tear it down.
  */
 
 let shared: SteemAuthController | null = null;
@@ -51,12 +43,44 @@ function clearLastTxId() {
   txListeners.forEach((listener) => listener());
 }
 
+/**
+ * Revocation watchers registered by `onSharedRevoked` — bound to the shared
+ * controller the moment it exists, whenever that is.
+ *
+ * The controller is created lazily by the approval/login panels, so a hook
+ * that subscribes at app boot (before any panel mounted) must NOT be handed a
+ * no-op: `shared === null` there used to mean "never subscribe", and the room
+ * path died silently on every page reload. Registration and controller
+ * creation are now independent — whichever happens first waits for the other.
+ */
+const revokedWatchers = new Set<(reason: string) => void>();
+let revokedBound = false;
+
+/** Current controller state if it is revoked, else null. */
+function revokedState(): { error: string | null } | null {
+  const state = shared?.getState();
+  return state && (state.status === "revoked" || state.errorCode === "revoked")
+    ? state
+    : null;
+}
+
+/** Attach the single controller subscription that fans out to all watchers. */
+function bindRevokedWatcher() {
+  if (revokedBound || !shared) return;
+  revokedBound = true;
+  // subscribe() fires immediately (current state) and on every transition;
+  // per-watcher fired-once guards live in the callers, so fanning out on
+  // each transition is safe and idempotent.
+  shared.subscribe(() => {
+    const state = revokedState();
+    if (!state) return;
+    const reason = state.error || "Revoked in the authenticator.";
+    for (const cb of revokedWatchers) cb(reason);
+  });
+}
+
 function getShared(options: KeepAliveOptions): SteemAuthController {
-  if (shared) {
-    console.debug("[steemauth] keep-alive: reusing shared controller");
-    return shared;
-  }
-  console.info("[steemauth] keep-alive: creating shared controller");
+  if (shared) return shared;
 
   // `persistSession` is opt-in and defaults to sessionStorage, so a page
   // reload resumes the same session instead of minting a new one — and an
@@ -68,16 +92,14 @@ function getShared(options: KeepAliveOptions): SteemAuthController {
     ttlMs: SESSION_TTL_MS,
     persistSession: true,
   });
+  // Any watcher registered before the controller existed (app boot with a
+  // persisted account) attaches here — the moment the room path becomes real.
+  bindRevokedWatcher();
 
-  // The bridge is installed WITH the session it serves, not by any panel.
-  //
-  // It used to live in QrApprovalPanel's effect, whose cleanup called
-  // `setQrBroadcastHandler(null)` — but there are two panels (the always-on
-  // standby and the modal's own) sharing ONE module-level slot. Whichever
-  // panel unmounted last left nothing installed, so every later action found
-  // no bridge, no key and no way to reach the phone: the Approvals tab simply
-  // stayed empty. Owning it here makes the handler's lifetime match the
-  // session's, which is what it was always supposed to track.
+  // The bridge lives WITH the session, not in a panel: two panels share one
+  // module-level slot, so a panel-owned handler let whichever unmounted last
+  // clear the other's — leaving no bridge, and no route to the phone, for
+  // every later action. Its lifetime has to match the session's.
   setQrBroadcastHandler(async (_username, operations) => {
     // `keyType` is omitted deliberately: the package derives the required
     // authority from the operations themselves, so the phone is never asked
@@ -164,14 +186,9 @@ export function useSteemAuthKeepAlive(options: KeepAliveOptions): ReturnType<
 }
 
 /**
- * Explicitly END the live shared session — the "Phone connected ✕" control.
- *
- * While a session is live no QR ever pops up (actions pass straight through),
- * so without this the only way back to a scan was waiting out the QR's TTL.
- * The cancel frame is what the phone needs to hear: it treats ANY cancel as
- * "the session is over" (drops its watch card and persisted copy), and
- * refresh() then mints a fresh session so the next action waits for a new
- * scan again.
+ * Explicitly END the live session ("Phone connected ✕"): the cancel frame is
+ * what the phone reacts to (any cancel drops its watch card), then refresh()
+ * mints a fresh session so the next action waits for a new scan.
  */
 export function endSharedSession(): void {
   if (!shared) return;
@@ -192,14 +209,27 @@ export function endSharedSession(): void {
 }
 
 /**
- * Forget the last displayed result WITHOUT touching the session — unlike
- * `refresh()`, which also mints a new code (and would drop a live phone).
- *
- * The panel renders a landed tx id ahead of every other state, so a stale
- * one has to be cleared whenever a NEW approval cycle starts ("Request
- * again", or a fresh scan request) — otherwise the previous success hides
- * the QR the user needs, and its only button cancels the action they came
- * for.
+ * Fires when the shared session is revoked in the authenticator — in v3 a
+ * revoke is a sealed row in the relay room, delivered live to the shared
+ * controller. Registering is order-independent: called before the controller
+ * exists (the normal case at app boot) it waits for it; called after a
+ * revoke already landed it fires immediately. Returns an unsubscribe.
+ */
+export function onSharedRevoked(cb: (reason: string) => void): () => void {
+  revokedWatchers.add(cb);
+  bindRevokedWatcher();
+  const state = revokedState();
+  if (state) cb(state.error || "Revoked in the authenticator.");
+  return () => {
+    revokedWatchers.delete(cb);
+  };
+}
+
+/**
+ * Forget the displayed result WITHOUT touching the session (unlike
+ * `refresh()`, which mints a new code and would drop a live phone). The panel
+ * renders a landed tx id ahead of everything else, so a new cycle — a fresh
+ * scan or "Request again" — must clear it first.
  */
 export function clearQrResult(): void {
   clearLastTxId();

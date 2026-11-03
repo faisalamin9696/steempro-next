@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 type RoleTypes = "muted" | "guest" | "member" | "mod" | "admin" | "owner";
-type Games = "steem-heights"
+type Games = "steem-heights";
 interface Window {
   steem_keychain: any;
 }
@@ -48,10 +50,10 @@ type Feed = {
   replies: Post[];
   // undefined for Feed API
   depth?: number;
-  status: "upvoting" | "downvoting" | "resteeming" | "idle" = "idle";
+  status: "upvoting" | "downvoting" | "resteeming" | "idle";
   max_accepted_payout: number;
   percent_steem_dollars: number;
-  is_new: number = 0;
+  is_new: number;
   isEdit?: boolean;
   root_title: string;
   parent_author: string;
@@ -108,7 +110,7 @@ type UnReadChat = {
 };
 
 type AccountExt = {
-  name: string = "";
+  name: string;
   creator: string;
   recovery_account: string;
   reset_account: string;
@@ -200,7 +202,7 @@ type AccountExt = {
   incoming_delegations: Delegation[];
   outgoing_delegations: Delegation[];
   expiring_delegations: Delegation[];
-  status: "following" | "unfollowing" | "idle" = "idle";
+  status: "following" | "unfollowing" | "idle";
 };
 
 type PostingJsonMetadata = {
@@ -232,7 +234,7 @@ type Community = {
   observer_subscribed: number;
   observer_role: RoleTypes;
   observer_title: string;
-  status: "joining" | "leaving" | "idle" = "idle";
+  status: "joining" | "leaving" | "idle";
   roles: any;
 };
 
@@ -368,10 +370,10 @@ type Setting = {
   theme: ThemeMode;
   feed_style: FeedStyle;
   lang: Language;
-  nsfw: NSFW = "Always warn";
+  nsfw: NSFW;
   vote: {
-    remember: boolean = true;
-    value: number = 100;
+    remember: boolean;
+    value: number;
   };
   long_press_vote: {
     enabled: boolean;
@@ -686,18 +688,20 @@ type LocalAccount = {
   loginMethod: LoginMethod;
   createdAt: number;
   /**
+   * The session id this account authenticated with — the relay uses it
+   * for Supabase revocation watch (the login modal unmounts on success,
+   * so this must be remembered on the account).
+   */
+  sid?: string;
+  /** The relay the login session used (`payload.rt`) — where the revocation watch connects. */
+  relayUrl?: string;
+  /**
    * Set when the user enrolled this account for device unlock
    * (fingerprint / Face ID). The PIN path stays available regardless.
    */
   biometric?: boolean;
   /** `key` re-encrypted with the device secret that WebAuthn gates. */
   bioKey?: string;
-  /**
-   * Session id this account authenticated with (`steemauth` only). It is the
-   * key into the phone's `steemauth_sessions` row, which is how revocation is
-   * detected after the login modal has unmounted.
-   */
-  sid?: string;
 };
 
 type DraftData = {

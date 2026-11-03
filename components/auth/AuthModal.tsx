@@ -66,11 +66,15 @@ function AuthModal(props: Props) {
       <LoginModal
         isOpen={showLoginModal}
         onOpenChange={setShowLoginModal}
-        onLoginSuccess={() => {
+        onLoginSuccess={(announced) => {
           setShowLoginModal(false);
-          toast.success(t("success"), {
-            description: t("loginSuccess"),
-          });
+          // Skip when the panel toasted itself (SteemAuth) — a second generic
+          // toast only covered the one that carried real information.
+          if (!announced) {
+            toast.success(t("success"), {
+              description: t("loginSuccess"),
+            });
+          }
         }}
       />
     </>

@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-  "check-seo": "node scripts/check-seo.mjs"
+    "check-seo": "node scripts/check-seo.mjs"
   },
   "dependencies": {
     "@heroui/react": "^2.8.10",
@@ -17,7 +17,7 @@
     "@quochuync/remarkable-spoiler": "^1.4.0",
     "@reduxjs/toolkit": "^2.12.0",
     "@steempro/dsteem": "^1.0.6",
-    "@steempro/steemauth-qr": "^3.0.0",
+    "@steempro/steemauth-qr": "^3.2.0",
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.111.0",
     "@videojs/react": "10.0.0-beta.13",

@@ -9,7 +9,13 @@ import { KeySquare, Smartphone } from "lucide-react";
 import Image from "next/image";
 
 interface Props extends Pick<ModalProps, "isOpen" | "onOpenChange"> {
-  onLoginSuccess: () => void;
+  /**
+   * Login finished. `announced` = the panel already showed its own success
+   * toast (SteemAuth: "Signed in as @… / Your phone keeps this session"), so
+   * the caller must NOT add a generic "Login success" on top of it — the two
+   * stacked toasts buried the meaningful one.
+   */
+  onLoginSuccess: (announced: boolean) => void;
 }
 
 /**
@@ -29,6 +35,8 @@ interface LoginMethod {
   label: string;
   icon: React.ReactNode;
   Panel: ComponentType<{ onSuccess: () => void }>;
+  /** The panel toasted its own success — suppress the generic one. */
+  selfAnnounced?: boolean;
 }
 
 const LOGIN_METHODS: LoginMethod[] = [
@@ -49,16 +57,20 @@ const LOGIN_METHODS: LoginMethod[] = [
     label: "SteemAuth",
     icon: <Smartphone size={20} />,
     Panel: SteemAuthLogin,
+    // Shows "Signed in as @… / Your phone keeps this session" itself.
+    selfAnnounced: true,
   },
 ];
 
-function LoginModal(props: Props) {
-  const { onLoginSuccess } = props;
+function LoginModal({ onLoginSuccess, ...modalProps }: Props) {
+  // `onLoginSuccess` is destructured out on purpose: spreading it into SModal
+  // would forward it through Modal down to a DOM element, where React warns
+  // "Unknown event handler property" (and ignores it). Only modal props spread.
   return (
-    <SModal title={"Login"} {...props} placement="center">
+    <SModal title={"Login"} {...modalProps} placement="center">
       {() => (
         <Tabs color="primary">
-          {LOGIN_METHODS.map(({ key, label, icon, Panel }) => (
+          {LOGIN_METHODS.map(({ key, label, icon, Panel, selfAnnounced }) => (
             <Tab
               key={key}
               title={
@@ -68,7 +80,7 @@ function LoginModal(props: Props) {
                 </div>
               }
             >
-              <Panel onSuccess={onLoginSuccess} />
+              <Panel onSuccess={() => onLoginSuccess(!!selfAnnounced)} />
             </Tab>
           ))}
         </Tabs>

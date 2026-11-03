@@ -10,7 +10,6 @@ import {
 import { secureLocalStorageFresh } from "@/utils/user";
 import { PrivateKey } from "@steempro/dsteem";
 import { Session, User } from "@supabase/supabase-js";
-import dayjs from "@/libs/dayjs";
 import { getProviders, signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -158,23 +157,22 @@ export function useSteemAuth() {
   // Login With SteemAuthenticator (QR)
   // -------------------------------
   /**
-   * Record a QR login.
-   *
-   * The signature has already been verified by the caller against the
-   * account's on-chain key, so — exactly like Keychain — nothing secret is
-   * stored here. That also means every later action must be approved on the
-   * phone, because the browser never holds a key for this account.
+   * Record a QR login: the caller already verified the signature against the
+   * on-chain key, so nothing secret is stored — and every later action must
+   * be approved on the phone, because this browser never holds a key for it.
    */
   const loginWithSteemAuth = async (
     username: string,
     sid?: string,
+    relayUrl?: string,
   ): Promise<void> => {
     const acc: LocalAccount = {
       username,
       loginMethod: "steemauth",
       // Remembered so the account can be watched for revocation later — the
-      // row is keyed by sid, and the login modal unmounts on success.
+      // registry row is keyed by sid, and the login modal unmounts on success.
       sid,
+      relayUrl,
       createdAt: Date.now(),
       encrypted: false,
     };
@@ -298,13 +296,25 @@ export function useSteemAuth() {
   const logout = async (): Promise<void> => {
     if (!current) return;
     try {
-      await supabase.auth.signOut({ scope: "global" });
+      // Best-effort FIRST, and non-blocking: this app's own auth session must
+      // never be able to abort the real sign-out below. It used to run first
+      // unguarded, so one throw (offline, unconfigured) skipped signOut() +
+      // account removal + reload — and callers that swallow (`void logout()`,
+      // the revocation hook) left the user signed in while a toast claimed
+      // "Signed out".
+      try {
+        await supabase.auth.signOut({ scope: "global" });
+      } catch (e) {
+        console.warn("Supabase signOut failed — continuing logout:", e);
+      }
       await signOut();
       removeAccount(current.username, current.type, true);
       window.location.reload();
-    } catch (error: any) {
+    } catch (error) {
       console.error("Logout error:", error);
-      throw new Error(error.message || "Failed to logout");
+      throw new Error(
+        error instanceof Error ? error.message : "Failed to logout",
+      );
     }
   };
 

@@ -29,7 +29,11 @@ interface AccountsContextState {
   current: LocalAccount | null;
   loginWithKeychain: (username: string) => Promise<void>;
   /** QR login via the SteemAuthenticator app (no key is stored). */
-  loginWithSteemAuth: (username: string, sid?: string) => Promise<void>;
+  loginWithSteemAuth: (
+    username: string,
+    sid?: string,
+    relayUrl?: string,
+  ) => Promise<void>;
   loginWithKey: (
     username: string,
     key: string,
@@ -135,10 +139,14 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
     return _loginWithKeychain(username);
   };
 
-  /** QR login via the SteemAuthenticator app — signature already verified. */
-  const loginWithSteemAuth = async (username: string, sid?: string) => {
+  /** QR login via the SteemAuthenticator app - signature already verified. */
+  const loginWithSteemAuth = async (
+    username: string,
+    sid?: string,
+    relayUrl?: string,
+  ) => {
     SESSION_PIN = null;
-    return _loginWithSteemAuth(username, sid);
+    return _loginWithSteemAuth(username, sid, relayUrl);
   };
 
   const loginWithKey = async (
@@ -201,19 +209,10 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
    * bridge, so callers afterwards need no special handling at all.
    */
   const awaitPhoneApproval = (): Promise<void> => {
-    if (phoneReadyRef.current) {
-      // Diagnostic: this line only exists in the shared-session build — seeing
-      // it means the action passes through WITHOUT a scan (the intended flow).
-      console.info("[steemauth] action passes through - shared session ready");
-      return Promise.resolve();
-    }
-    console.info(
-      "[steemauth] action WAITING FOR SCAN - shared session not ready",
-    );
-    // A NEW cycle starts from its own state: the panel renders a landed tx id
-    // ahead of every other branch, so without this the previous action's
-    // success hides the QR this one needs — Done cancels the action, the
-    // retry reopens the same stale alert, and there is no way out.
+    if (phoneReadyRef.current) return Promise.resolve();
+
+    // The panel renders a landed tx id first, so without this a stale success
+    // hides the QR the new cycle needs.
     clearQrResult();
     setAwaitingScan(true);
     return new Promise<void>((resolve, reject) => {
@@ -224,7 +223,6 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 
   /** The panel reports this as the phone gains or loses a live scan. */
   const handlePhoneReadyChange = (ready: boolean) => {
-    console.info("[steemauth] shared session ready ->", ready);
     phoneReadyRef.current = ready;
     setPhoneConnected(ready);
     if (ready && phoneWaiterRef.current) {
@@ -437,11 +435,9 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
                 <X size={16} />
               </Button>
             </div>
-            {/* A new approval cycle remounts the panel so its local state
-                (broadcast error, declined flag, one-shot sent guard) can never
-                leak from the previous action; the module-scoped session is
-                untouched by a remount, and the displayed result is cleared
-                explicitly in awaitPhoneApproval. */}
+            {/* Remount per cycle so panel-local state can't leak between
+                actions; the module session survives it, the result is
+                cleared in awaitPhoneApproval. */}
             <QrApprovalPanel
               key={awaitingScan ? "scan" : "idle"}
               account={current?.username}
@@ -453,10 +449,8 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
         </div>
       )}
 
-      {/* The live-session control ("Phone connected" + ×) lives in the
-          navbar, right after the logo — see SNavbar. Same `phoneConnected`
-          state, same `endPhoneSession` action, one surface for both
-          breakpoints. */}
+      {/* The live-session control (status + ×) lives in the navbar after the
+          logo — see SNavbar. */}
       <LogoutModal isOpen={showLogoutModal} onOpenChange={setShowLogoutModal} />
       <PinModal
         isOpen={pinModal.isOpen}
