@@ -2,6 +2,21 @@ import { Game } from "./types";
 
 export const OFFICIAL_GAMES: Game[] = [
   {
+    id: "steem-archers",
+    title: "Steem Archers",
+    description:
+      "Draw, aim, release. Outshoot rivals in fast-paced archery duels, climb the leaderboards and cash every bullseye for STEEM.",
+    image: "/assets/games/steem-archers-cover.png",
+    category: "Precision",
+    difficulty: "Medium",
+    href: "https://archers.steempro.com",
+    stats: {
+      rewards: "New",
+    },
+    featured: true,
+    usesBlockchain: true,
+  },
+  {
     id: "steem-heights",
     title: "Steem Heights",
     description:

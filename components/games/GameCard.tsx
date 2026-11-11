@@ -86,6 +86,10 @@ export const OfficialGameCard = ({ game }: GameCardProps) => {
         <Button
           as={Link}
           href={game.href}
+          // Official games can live on their own domain (e.g. Steem Archers) —
+          // send those to a new tab like the third-party cards do, so leaving
+          // never costs the user their place on the games page.
+          target={game.href.startsWith("http") ? "_blank" : "_self"}
           className="w-full bg-white text-black hover:bg-amber-500 hover:text-black font-black uppercase text-[10px] tracking-widest transition-all h-10 rounded-lg"
           endContent={<Play size={14} fill="currentColor" />}
         >
