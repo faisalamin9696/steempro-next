@@ -8,12 +8,13 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
+     * Crawler-facing files are excluded on purpose: a sitemap, robots file or
+     * llms.txt must never wait on a Supabase cookie check, and must never be
+     * able to pick up a Set-Cookie or a redirect on the way out. Static assets
+     * are excluded for the same "no session needed" reason.
+     *
+     * Everything else still runs `updateSession` so auth cookies stay fresh.
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon\\.ico$|(?:sitemap\\.xml|robots\\.txt|llms\\.txt|ads\\.txt)$|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };

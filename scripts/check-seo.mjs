@@ -16,7 +16,9 @@ const BASE = process.argv[2] || "http://localhost:3100";
 let failures = 0;
 function check(label, ok, detail = "") {
   if (!ok) failures++;
-  console.log(`${ok ? "PASS" : "FAIL"}  ${label}${detail ? `  — ${detail}` : ""}`);
+  console.log(
+    `${ok ? "PASS" : "FAIL"}  ${label}${detail ? `  — ${detail}` : ""}`,
+  );
 }
 
 async function get(path, accept = "*/*") {
@@ -57,20 +59,32 @@ for (const { path, label } of PAGES) {
     continue;
   }
 
-  const canonical = attr(body, /<link[^>]*rel="canonical"[^>]*href="([^"]+)"/)
-    ?? attr(body, /<link[^>]*href="([^"]+)"[^>]*rel="canonical"/);
+  const canonical =
+    attr(body, /<link[^>]*rel="canonical"[^>]*href="([^"]+)"/) ??
+    attr(body, /<link[^>]*href="([^"]+)"[^>]*rel="canonical"/);
   const title = attr(body, /<title[^>]*>([^<]*)<\/title>/);
-  const description = attr(body, /<meta[^>]*name="description"[^>]*content="([^"]*)"/)
-    ?? attr(body, /<meta[^>]*content="([^"]*)"[^>]*name="description"/);
-  const ogTitle = attr(body, /<meta[^>]*property="og:title"[^>]*content="([^"]*)"/);
-  const ogImage = attr(body, /<meta[^>]*property="og:image"[^>]*content="([^"]*)"/);
+  const description =
+    attr(body, /<meta[^>]*name="description"[^>]*content="([^"]*)"/) ??
+    attr(body, /<meta[^>]*content="([^"]*)"[^>]*name="description"/);
+  const ogTitle = attr(
+    body,
+    /<meta[^>]*property="og:title"[^>]*content="([^"]*)"/,
+  );
+  const ogImage = attr(
+    body,
+    /<meta[^>]*property="og:image"[^>]*content="([^"]*)"/,
+  );
 
   check(`${label} HTTP 200`, status === 200, `got ${status}`);
   check(`${label} has <title>`, !!title, title?.slice(0, 60));
   check(`${label} has meta description`, !!description);
   check(`${label} has og:title`, !!ogTitle);
   check(`${label} has og:image`, !!ogImage);
-  check(`${label} has absolute canonical`, !!canonical && /^https?:\/\//.test(canonical), canonical);
+  check(
+    `${label} has absolute canonical`,
+    !!canonical && /^https?:\/\//.test(canonical),
+    canonical,
+  );
 
   // A canonical should carry the same *path* as the URL being requested.
   // The origin may legitimately differ when auditing localhost, because the
@@ -83,12 +97,21 @@ for (const { path, label } of PAGES) {
       canonicalPath = "";
     }
     const herePath = path === "/" ? "/" : path.replace(/\/$/, "");
-    const there = canonicalPath === "/" ? "/" : canonicalPath.replace(/\/$/, "");
-    check(`${label} canonical path matches the route`, there === herePath, `${there} vs ${herePath}`);
+    const there =
+      canonicalPath === "/" ? "/" : canonicalPath.replace(/\/$/, "");
+    check(
+      `${label} canonical path matches the route`,
+      there === herePath,
+      `${there} vs ${herePath}`,
+    );
   }
 
   const h1s = body.match(/<h1[\s>]/g) || [];
-  check(`${label} has exactly one <h1>`, h1s.length === 1, `found ${h1s.length}`);
+  check(
+    `${label} has exactly one <h1>`,
+    h1s.length === 1,
+    `found ${h1s.length}`,
+  );
 
   check(`${label} emits JSON-LD`, body.includes('type="application/ld+json"'));
 }
@@ -104,27 +127,24 @@ check("robots.txt disallows /api/", /disallow:\s*\/api\//i.test(robots.body));
 const sitemap = await get("/sitemap.xml", "application/xml");
 check("sitemap.xml responds", sitemap.status === 200, `HTTP ${sitemap.status}`);
 check(
-  "sitemap.xml is a sitemap index",
-  sitemap.body.includes("<sitemapindex"),
-  sitemap.body.includes("<urlset") ? "is a urlset (no index)" : undefined,
+  "sitemap.xml is a flat urlset",
+  sitemap.body.includes("<urlset") && !sitemap.body.includes("<sitemapindex"),
+  sitemap.body.includes("<sitemapindex") ? "still an index" : undefined,
 );
-
-// Every child the index advertises must itself respond — a dead child is what
-// Search Console reports as "Sitemap could not be read".
-const children = [...sitemap.body.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
-check("sitemap index lists children", children.length > 0, `${children.length} listed`);
-for (const child of children) {
-  const url = new URL(child);
-  const res = await get(url.pathname, "application/xml");
-  const ok = res.status === 200 && res.body.includes("<urlset");
-  check(`  child ${url.pathname}`, ok, `HTTP ${res.status}`);
-}
+check(
+  "sitemap.xml lists URLs",
+  (sitemap.body.match(/<loc>/g) || []).length > 20,
+  `${(sitemap.body.match(/<loc>/g) || []).length} URLs`,
+);
 
 const llms = await get("/llms.txt", "text/plain");
 check("llms.txt responds", llms.status === 200, `HTTP ${llms.status}`);
 check("llms.txt starts with an H1 heading", llms.body.startsWith("#"));
 check("llms.txt has a summary line", llms.body.includes("\n> "));
-check("llms.txt links the canonical post form", llms.body.includes("/@author/permlink"));
+check(
+  "llms.txt links the canonical post form",
+  llms.body.includes("/@author/permlink"),
+);
 
 /* ---- 3. Robots must not fight the sitemap ---------------------------- */
 console.log("");
@@ -134,5 +154,9 @@ check(
   "profiles/posts are sitemap-listed",
 );
 
-console.log(failures === 0 ? "\nAll SEO checks passed ✔" : `\n${failures} check(s) FAILED ✘`);
+console.log(
+  failures === 0
+    ? "\nAll SEO checks passed ✔"
+    : `\n${failures} check(s) FAILED ✘`,
+);
 process.exit(failures === 0 ? 0 : 1);

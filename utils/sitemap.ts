@@ -2,21 +2,16 @@ import type { MetadataRoute } from "next";
 import { sdsApi } from "@/libs/sds";
 
 /**
- * Sitemap plumbing shared by the standalone `*.xml` routes.
+ * Sitemap plumbing for the single `/sitemap.xml` route.
  *
- * `/sitemap.xml` is a sitemap **index** (see `app/sitemap.xml/route.ts`) that
- * only lists four child files and does no I/O at all. That is deliberate: the
- * previous index ran three page-count probes inside the crawler's own request
- * and Search Console reported it — and every child — as "Sitemap could not be
- * read", while `static.xml`, the one file needing no data, read fine. The fix
- * is structural: the index is a constant, and the work that remains is pushed
- * into children that render once and are then reused.
+ * One file, one `<urlset>`: page routes, communities, recent posts and the
+ * profile roots derived from them, assembled in that order. No index, no child
+ * files — there is nothing else for a crawler to discover or fetch.
  *
- * Each data-backed child renders through `serveSitemap`, which memoises the
- * finished XML for six hours, so a cold render happens at most twice a day and
- * every later hit is a string lookup. Failures never surface as a 5xx: a stale
- * render is served if one exists, otherwise a valid but empty `<urlset>` under
- * a short cache header.
+ * The route renders through `serveSitemap`, which memoises the finished XML for
+ * six hours, so a cold render happens at most twice a day and every later hit
+ * is a string lookup. Failures never surface as a 5xx: a stale render is served
+ * if one exists, otherwise a valid but empty `<urlset>`.
  *
  * Server-only — `libs/sds` pulls in the blockchain client, so never import
  * this from a component.
@@ -25,7 +20,7 @@ import { sdsApi } from "@/libs/sds";
 /**
  * Trailing slashes are stripped on purpose: every URL below is assembled as
  * `${BASE_URL}/path`, so a configured `https://www.steempro.com/` would emit
- * `https://www.steempro.com//static.xml`. A doubled slash is malformed
+ * `https://www.steempro.com//sitemap.xml`. A doubled slash is malformed
  * enough for some crawlers to reject the entry — and a bad `<loc>` in a
  * sitemap is read as a broken file, not as one skipped URL.
  */
@@ -221,26 +216,6 @@ export function urlSet(entries: SitemapEntry[]): string {
     `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
     `${body}\n` +
     `</urlset>\n`
-  );
-}
-
-export function sitemapIndex(
-  entries: { loc: string; lastmod?: string }[],
-): string {
-  const body = safeEntries(entries)
-    .map((entry) => {
-      const lastmod = entry.lastmod
-        ? `<lastmod>${entry.lastmod}</lastmod>`
-        : "";
-      return `  <sitemap><loc>${escapeXml(entry.loc)}</loc>${lastmod}</sitemap>`;
-    })
-    .join("\n");
-
-  return (
-    `<?xml version="1.0" encoding="UTF-8"?>\n` +
-    `<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-    `${body}\n` +
-    `</sitemapindex>\n`
   );
 }
 
@@ -471,8 +446,8 @@ type Sources = { posts?: PostRef[]; communities?: Community[] };
 const sources: Sources = {};
 
 /**
- * Recent posts as light refs, shared by `posts.xml` and `profiles.xml` so the
- * second file to render costs nothing extra. Duplicated by `author/permlink`
+ * Recent posts as light refs, shared by the post and profile entries so the
+ * profile half of the file costs nothing extra. Duplicated by `author/permlink`
  * because new posts arriving mid-render shift every offset by a row.
  */
 export async function recentPostRefs(): Promise<PostRef[]> {
@@ -516,35 +491,39 @@ export async function recentCommunities(): Promise<Community[]> {
 }
 
 /* ------------------------------------------------------------------------- */
-/* Renderers                                                                 */
+/* Entries                                                                   */
 /* ------------------------------------------------------------------------- */
 
-export async function renderStaticXml(): Promise<string> {
-  return urlSet(staticEntries());
+export function communityEntries(communities: Community[]): SitemapEntry[] {
+  const entries: SitemapEntry[] = [];
+  for (const community of communities) {
+    if (!isCommunityAccount(community.account)) continue;
+    // One URL per community — see SITEMAP_TABS.
+    for (const tab of SITEMAP_TABS) {
+      entries.push({ loc: `${BASE_URL}/${tab}/${community.account}` });
+    }
+  }
+  return entries;
 }
 
-export async function renderPostsXml(): Promise<string> {
-  const posts = await recentPostRefs();
-  return urlSet(
-    take(posts, MAX_URLS_PER_FILE).map((post) => ({
-      loc: postUrl(post),
-      lastmod: postLastmod(post),
-      changefreq: "weekly",
-      priority: "0.6",
-    })),
-  );
+export function postEntries(posts: PostRef[]): SitemapEntry[] {
+  return posts.map((post) => ({
+    loc: postUrl(post),
+    lastmod: postLastmod(post),
+    changefreq: "weekly",
+    priority: "0.6",
+  }));
 }
 
-export async function renderProfilesXml(): Promise<string> {
-  const posts = await recentPostRefs();
-
+/** Profile root per author, first occurrence wins (posts arrive newest first). */
+export function profileEntries(posts: PostRef[]): SitemapEntry[] {
   const seen = new Set<string>();
   const entries: SitemapEntry[] = [];
+
   for (const post of posts) {
     const username = post.author.toLowerCase();
     if (seen.has(username)) continue;
     seen.add(username);
-    if (entries.length >= MAX_URLS_PER_FILE) break;
     entries.push({
       loc: profileUrl(username),
       changefreq: "daily",
@@ -552,21 +531,30 @@ export async function renderProfilesXml(): Promise<string> {
     });
   }
 
-  return urlSet(entries);
+  return entries;
 }
 
-export async function renderCommunitiesXml(): Promise<string> {
-  const communities = await recentCommunities();
+/* ------------------------------------------------------------------------- */
+/* The one renderer                                                          */
+/* ------------------------------------------------------------------------- */
 
-  const entries: SitemapEntry[] = [];
-  for (const community of communities) {
-    if (entries.length >= MAX_URLS_PER_FILE) break;
-    if (!isCommunityAccount(community.account)) continue;
-    // One URL per community — see SITEMAP_TABS.
-    for (const tab of SITEMAP_TABS) {
-      entries.push({ loc: `${BASE_URL}/${tab}/${community.account}` });
-    }
-  }
+/**
+ * Every advertised URL in a single `<urlset>`, most valuable first: pages,
+ * communities, posts, then the profiles those posts imply.
+ *
+ * `slice` is the only size guard. Normal renders sit far below the protocol's
+ * 50k limit, and a pathological one stays *valid* instead of being rejected
+ * whole — truncation drops the oldest, least-linked tail.
+ */
+export async function renderSitemapXml(): Promise<string> {
+  const posts = take(await recentPostRefs(), MAX_URLS_PER_FILE);
+
+  const entries = [
+    ...staticEntries(),
+    ...communityEntries(await recentCommunities()),
+    ...postEntries(posts),
+    ...profileEntries(posts),
+  ].slice(0, MAX_URLS_PER_FILE);
 
   return urlSet(entries);
 }
