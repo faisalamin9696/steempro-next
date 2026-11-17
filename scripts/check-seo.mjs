@@ -146,12 +146,12 @@ check(
   llms.body.includes("/@author/permlink"),
 );
 
-/* ---- 3. Robots must not fight the sitemap ---------------------------- */
+/* ---- 3. Robots must not lock out the content graph -------------------- */
 console.log("");
 check(
-  "robots.txt does not disallow what the sitemap lists",
+  "robots.txt does not disallow profile pages",
   !/disallow:\s*\/@\//i.test(robots.body),
-  "profiles/posts are sitemap-listed",
+  "posts/profiles are crawlable even though the sitemap no longer lists them",
 );
 
 console.log(

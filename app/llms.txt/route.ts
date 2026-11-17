@@ -1,5 +1,3 @@
-import { BASE_URL } from "@/utils/sitemap";
-
 /**
  * `llms.txt` — a plain-text orientation file for LLM crawlers, following the
  * llmstxt.org convention (`#` title, `>` summary, `##` sections of links).
@@ -7,15 +5,22 @@ import { BASE_URL } from "@/utils/sitemap";
  * Deliberately *not* generated from the filesystem: this site's indexable
  * surface is mostly rewritten (`/@author/permlink`, `/:category/@author/…`,
  * community tabs), so a route walker would list rewrites that aren't URLs and
- * miss the canonical ones. The list below is the same curated surface
- * `utils/sitemap.ts` advertises, which is also the one Search Console sees —
- * one source of truth for "what this site considers important".
+ * miss the canonical ones. The list below is the curated surface, mirroring the
+ * pages `app/sitemap.xml` advertises — one source of truth for "what this site
+ * considers important".
  *
  * Plain text, no HTML: the reader is a model, not a browser.
  */
 export const dynamic = "force-static";
 
-const LINKS: { heading: string; items: { label: string; path: string; note?: string }[] }[] = [
+const BASE_URL = (
+  process.env.NEXT_PUBLIC_BASE_URL || "https://www.steempro.com"
+).replace(/\/+$/, "");
+
+const LINKS: {
+  heading: string;
+  items: { label: string; path: string; note?: string }[];
+}[] = [
   {
     heading: "Discover",
     items: [
@@ -30,8 +35,16 @@ const LINKS: { heading: string; items: { label: string; path: string; note?: str
   {
     heading: "Blockchain",
     items: [
-      { label: "Explorer", path: "/explorer", note: "accounts, transactions, blocks" },
-      { label: "Market", path: "/market", note: "order book, ticker, trade history" },
+      {
+        label: "Explorer",
+        path: "/explorer",
+        note: "accounts, transactions, blocks",
+      },
+      {
+        label: "Market",
+        path: "/market",
+        note: "order book, ticker, trade history",
+      },
       { label: "Witnesses", path: "/witnesses" },
       { label: "Proposals", path: "/proposals", note: "DHF funding proposals" },
       { label: "Schedules", path: "/schedules" },
@@ -52,7 +65,10 @@ const LINKS: { heading: string; items: { label: string; path: string; note?: str
       { label: "Tools index", path: "/tools" },
       { label: "Account health check", path: "/tools/account-health-check" },
       { label: "Account creation", path: "/tools/account-creation" },
-      { label: "Author statistic report", path: "/tools/author-statistic-report" },
+      {
+        label: "Author statistic report",
+        path: "/tools/author-statistic-report",
+      },
       { label: "Batch commenting", path: "/tools/batch-commenting" },
       { label: "Batch transfers", path: "/tools/batch-transfer" },
       { label: "Batch voting", path: "/tools/batch-voting" },
@@ -62,9 +78,21 @@ const LINKS: { heading: string; items: { label: string; path: string; note?: str
   {
     heading: "Profiles",
     items: [
-      { label: "Author profile", path: "/@author", note: "replace 'author' with a Steem username, e.g. /@steemit" },
-      { label: "Author's posts", path: "/@author/blog", note: "the blog tab of a profile" },
-      { label: "Post", path: "/@author/permlink", note: "a single post; the canonical URL" },
+      {
+        label: "Author profile",
+        path: "/@author",
+        note: "replace 'author' with a Steem username, e.g. /@steemit",
+      },
+      {
+        label: "Author's posts",
+        path: "/@author/blog",
+        note: "the blog tab of a profile",
+      },
+      {
+        label: "Post",
+        path: "/@author/permlink",
+        note: "a single post; the canonical URL",
+      },
     ],
   },
   {

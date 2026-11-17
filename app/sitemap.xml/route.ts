@@ -1,20 +1,168 @@
-import { connection } from "next/server";
-import { renderSitemapXml, serveSitemap } from "@/utils/sitemap";
-
 /**
- * `/sitemap.xml` — every advertised URL in one `<urlset>`.
+ * `/sitemap.xml` — the site's page routes, written out by hand.
  *
- * Flat on purpose: no index, no `static.xml`/`posts.xml`/`profiles.xml`/
- * `communities.xml` children. One URL to submit, one file to read, one place
- * for a broken fetch to do damage — and `serveSitemap` already makes that
- * damage survivable (six-hour render cache, stale-before-empty, never a 5xx).
+ * Static only: posts, profiles and communities are not listed, so nothing here
+ * is fetched, cached or counted at request time. A crawler reaches that content
+ * through the site's own links.
  *
- * `connection()` runs before any I/O: with `cacheComponents` enabled it tells
- * Next the SDS reads below can only happen per request, so none of them execute
- * during `next build`.
+ * Whenever a page is added or removed, add or remove its `<url>` block below.
  */
-export async function GET(): Promise<Response> {
-  await connection();
 
-  return serveSitemap("sitemap", renderSitemapXml);
+const SITEMAP = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://www.steempro.com/</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>always</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/hot</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>always</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/created</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>always</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/popular</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>always</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/payout</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>always</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/shorts</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>always</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/explorer</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/market</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/witnesses</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/communities</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/proposals</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/games</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/games/steem-heights</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/tools</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/tools/account-creation</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/tools/account-health-check</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/tools/author-statistic-report</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/tools/batch-commenting</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/tools/batch-transfer</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/tools/batch-voting</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/tools/community-report</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/about</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/privacy-policy</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://www.steempro.com/privacy-policy-steemauth</loc>
+    <lastmod>2026-11-18T00:00:00.000Z</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+</urlset>
+`;
+
+export function GET(): Response {
+  return new Response(SITEMAP, {
+    headers: {
+      "Content-Type": "application/xml; charset=utf-8",
+      // The body only changes when this file changes.
+      "Cache-Control": "public, max-age=3600, s-maxage=86400",
+    },
+  });
 }
