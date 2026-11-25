@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { getMetadata } from "@/utils/metadata";
 import { Metadata } from "next";
 import PostLoading from "@/components/skeleton/PostLoader";
+import { auth } from "@/auth";
+import { postOr404 } from "@/libs/sds-server";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.steempro.com";
 
@@ -10,7 +12,15 @@ interface LayoutProps {
   params: Promise<{ author: string; permlink: string }>;
 }
 
-async function layout({ children }: LayoutProps) {
+async function layout({ children, params }: LayoutProps) {
+  const { author, permlink } = await params;
+  const session = await auth();
+
+  // Resolved before the Suspense boundary: the moment the fallback flushes, the
+  // response status is already 200 and a later `notFound()` cannot change it.
+  // The page's own call is request-cached, so this costs nothing extra.
+  await postOr404(author, permlink, session?.user?.name);
+
   return <Suspense fallback={<PostLoading />}>{children}</Suspense>;
 }
 

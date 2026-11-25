@@ -4,8 +4,9 @@ import { Geist, Geist_Mono, Noto_Nastaliq_Urdu } from "next/font/google";
 import "./globals.css";
 import AppLayout from "./AppLayout";
 import { ThemeProvider } from "next-themes";
-import { Suspense } from "react";
-import LoadingCard from "@/components/ui/LoadingCard";
+import { auth } from "@/auth";
+import { sdsApi } from "@/libs/sds";
+import { getLocale, getMessages } from "next-intl/server";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -101,11 +102,22 @@ export const metadata: Metadata = {
 };
 
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Awaited here, not inside a Suspense boundary: the status line is written
+  // when the first byte flushes, so anything that can decide "this page does
+  // not exist" has to resolve before that. `getGlobalProps` is cached for 60s
+  // (see libs/sds.ts), and the rest is cookie/JWT work, so this is cheap.
+  const [locale, messages, globals, session] = await Promise.all([
+    getLocale(),
+    getMessages(),
+    sdsApi.getGlobalProps(),
+    auth(),
+  ]);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <script
@@ -155,9 +167,14 @@ export default function RootLayout({
           defaultTheme="dark"
           enableSystem={false}
         >
-          <Suspense fallback={<LoadingCard />}>
-            <AppLayout>{children}</AppLayout>
-          </Suspense>
+          <AppLayout
+            locale={locale}
+            messages={messages}
+            globals={globals}
+            session={session}
+          >
+            {children}
+          </AppLayout>
         </ThemeProvider>
       </body>
     </html>

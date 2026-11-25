@@ -1,5 +1,6 @@
 import { Constants } from "@/constants";
-import { sdsFetcher } from "@/constants/functions";
+import { invalidParam, sdsFetcher } from "@/constants/functions";
+import { isAccountName, isPermlink } from "@/utils/steemParams";
 import dayjs from "@/libs/dayjs";
 import type { ManipulateType } from "dayjs";
 import { client } from "./steem";
@@ -21,6 +22,7 @@ class SdsApi {
     community: string,
     observer: string | null = "steem",
   ): Promise<Feed[]> {
+    if (!isAccountName(community)) throw invalidParam("community", community);
     const length = 250;
     return sdsFetcher(
       `/communities_api/getCommunityPinnedPosts/${community}/${observer}/${length}`,
@@ -68,6 +70,8 @@ class SdsApi {
     observer: string | null = "steem",
     fields?: string[],
   ): Promise<AccountExt> {
+    if (!isAccountName(username)) throw invalidParam("account", username);
+
     const essentialFields = [
       "name",
       "proxy",
@@ -126,6 +130,12 @@ class SdsApi {
     observer: string | null = "steem",
     fields?: string[],
   ): Promise<AccountExt[]> {
+    // Drop anything that could never resolve: SDS rejects the whole batch for
+    // one malformed name, so filtering here keeps a single bad row from
+    // failing a page that otherwise had good data.
+    const valid = usernames.filter(isAccountName);
+    if (valid.length === 0) return [];
+
     const essentialFields = [
       "name",
       "proxy",
@@ -168,7 +178,7 @@ class SdsApi {
       "memo_key",
     ];
     return sdsFetcher<AccountExt[]>(
-      `/accounts_api/getAccountsExt/${usernames.join(",")}/${observer}/${(
+      `/accounts_api/getAccountsExt/${valid.join(",")}/${observer}/${(
         fields ?? essentialFields
       ).join(",")}`,
     );
@@ -188,10 +198,12 @@ class SdsApi {
     );
   }
   getFollowers(username: string): Promise<string[]> {
+    if (!isAccountName(username)) throw invalidParam("account", username);
     return sdsFetcher(`/followers_api/getFollowers/${username}`);
   }
 
   getFollowing(username: string): Promise<string[]> {
+    if (!isAccountName(username)) throw invalidParam("account", username);
     return sdsFetcher(`/followers_api/getFollowing/${username}`);
   }
 
@@ -206,6 +218,9 @@ class SdsApi {
       body: string;
     }[]
   > {
+    if (!isAccountName(author) || !isPermlink(permlink)) {
+      throw invalidParam("post", `${author}/${permlink}`);
+    }
     return sdsFetcher(
       `/content_history_api/getContentHistory/${author}/${permlink}`,
     );
@@ -216,6 +231,9 @@ class SdsApi {
     permlink: string,
     observer: string | null = "steem",
   ): Promise<Post[]> {
+    if (!isAccountName(author) || !isPermlink(permlink)) {
+      throw invalidParam("post", `${author}/${permlink}`);
+    }
     return sdsFetcher(
       `/posts_api/getPostWithReplies/${author}/${permlink}/true/${observer}`,
     );
@@ -226,6 +244,9 @@ class SdsApi {
     permlink: string,
     observer: string | null = "steem",
   ): Promise<Post> {
+    if (!isAccountName(author) || !isPermlink(permlink)) {
+      throw invalidParam("post", `${author}/${permlink}`);
+    }
     return sdsFetcher(
       `/posts_api/getPost/${author}/${permlink}/true/${observer}`,
     );
@@ -235,6 +256,7 @@ class SdsApi {
     name: string,
     observer: string | null = "steem",
   ): Promise<Community> {
+    if (!isAccountName(name)) throw invalidParam("community", name);
     return sdsFetcher(`/communities_api/getCommunity/${name}/${observer}`);
   }
 
@@ -289,6 +311,9 @@ class SdsApi {
   }
 
   async getVoters(author: string, permlink: string): Promise<PostVote[]> {
+    if (!isAccountName(author) || !isPermlink(permlink)) {
+      throw invalidParam("post", `${author}/${permlink}`);
+    }
     return sdsFetcher(`/posts_api/getVotes/${author}/${permlink}`);
   }
 
@@ -300,6 +325,7 @@ class SdsApi {
   }
 
   async getSubscriberCommunities(username: string): Promise<Community[]> {
+    if (!isAccountName(username)) throw invalidParam("account", username);
     return sdsFetcher(
       `/communities_api/getCommunitiesBySubscriber/${username}`,
     );
@@ -372,6 +398,8 @@ class SdsApi {
       unit: ManipulateType;
     } = { amount: 3, unit: "months" },
   ): Promise<AccountHistory[]> {
+    if (!isAccountName(account)) throw invalidParam("account", account);
+
     const essentialFields = [
       "transfer",
       // "transfer_from_savings",

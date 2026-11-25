@@ -87,7 +87,10 @@ export const getMetadata = {
     username = username?.toLowerCase();
     tab = tab?.toLowerCase() || "blog";
 
-    const result = await sdsApi.getAccountExt(username);
+    // Malformed and unknown handles both reject here; a rejected
+    // `generateMetadata` fails the whole route with a 500, so the failure is
+    // folded into the "no profile data" branch below.
+    const result = await sdsApi.getAccountExt(username).catch(() => undefined);
     if (!result) {
       return getMetadata.profileSync(username, tab, {} as any);
     }
@@ -301,7 +304,9 @@ export const getMetadata = {
   postAsync: async (author: string, permlink: string) => {
     author = author?.toLowerCase();
     permlink = permlink?.toLowerCase();
-    const result = await sdsApi.getPost(author, permlink);
+    // Same rule as `profileAsync`: an invalid or missing post falls back to
+    // generic metadata instead of rejecting the metadata promise.
+    const result = await sdsApi.getPost(author, permlink).catch(() => undefined);
     if (!result || result.link_id === 0) {
       const pageTitle = author ? `@${author}'s post` : "Post Not Found";
       return {
@@ -390,7 +395,7 @@ export const getMetadata = {
 
     const [parentData, result] = await Promise.all([
       parent,
-      sdsApi.getCommunity(community),
+      sdsApi.getCommunity(community).catch(() => undefined),
     ]);
 
     const previousImages = parentData?.openGraph?.images || [];
@@ -611,8 +616,18 @@ export const getMetadata = {
   },
 
   proposalAsync: async (id: string) => {
+    // `Number("abc")` is NaN, and `JSON.stringify(NaN)` is `null` — the RPC would
+    // send `[[null]]` to the node. Answer with generic metadata instead.
+    const numericId = Number(id);
+    if (!Number.isInteger(numericId) || numericId <= 0) {
+      return {
+        title: `Proposal #${id}`,
+        description: DEFAULT_DESCRIPTION,
+        thumbnail: "",
+      };
+    }
     try {
-      const proposal = await sdsApi.getProposal(Number(id));
+      const proposal = await sdsApi.getProposal(numericId);
       if (proposal) {
         // Optimization: Use subject from proposal if possible,
         // fallback to fetching post for full details and thumbnail

@@ -1,9 +1,12 @@
 import { auth } from "@/auth";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { sdsApi } from "@/libs/sds";
+import { communityOr404 } from "@/libs/sds-server";
+import { isHiveTag } from "@/utils/steemParams";
 import { COMMUNITY_FEED_APIS, communityFeedApi } from "@/utils/feedApis";
 import { getCommunityStats, type CommunityStats } from "@/utils/communityStats";
 import { communityJsonLd } from "@/utils/jsonld";
+import { notFound } from "next/navigation";
 import CommunityPage from "../../(site)/CommunityPage";
 
 async function page({
@@ -12,6 +15,10 @@ async function page({
   params: Promise<{ tag: string; category?: string }>;
 }) {
   const { tag, category } = await params;
+  // Checked before anything is started: a junk tag must not even begin a
+  // stats preload or a feed read.
+  if (!isHiveTag(tag)) notFound();
+
   const session = await auth();
   const commAccount = `hive-${tag}`;
   const tab = (category || "trending").toLowerCase();
@@ -30,9 +37,8 @@ async function page({
         })
       : Promise.resolve(null);
 
-  const [account, community, initialStats] = await Promise.all([
-    sdsApi.getAccountExt(commAccount, session?.user?.name),
-    sdsApi.getCommunity(commAccount, session?.user?.name),
+  const [{ account, community }, initialStats] = await Promise.all([
+    communityOr404(commAccount, session?.user?.name),
     statsPromise,
   ]);
 

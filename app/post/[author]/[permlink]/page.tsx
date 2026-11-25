@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { JsonLd } from "@/components/seo/JsonLd";
 import ProfileCard from "@/components/profile/ProfileCard";
 import MainWrapper from "@/components/wrappers/MainWrapper";
-import { sdsApi } from "@/libs/sds";
+import { accountOr404, postOr404 } from "@/libs/sds-server";
 import { blogPostingJsonLd, breadcrumbJsonLd } from "@/utils/jsonld";
 import PostPage from "../../(site)/PostPage";
 import { notFound } from "next/navigation";
@@ -17,8 +17,8 @@ async function page({
   const { author, permlink } = await params;
   const session = await auth();
   const [account, post] = await Promise.all([
-    sdsApi.getAccountExt(author, session?.user?.name),
-    sdsApi.getPost(author, permlink, session?.user?.name),
+    accountOr404(author, session?.user?.name),
+    postOr404(author, permlink, session?.user?.name),
   ]);
 
   // A missing post must be a real 404. Rendering the not-found UI inside a 200

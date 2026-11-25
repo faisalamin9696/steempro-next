@@ -3,11 +3,14 @@ import CommunityCard from "@/components/community/CommunityCard";
 import CommunityHeader from "@/components/community/CommunityHeader";
 import MainWrapper from "@/components/wrappers/MainWrapper";
 import { sdsApi } from "@/libs/sds";
+import { communityOr404 } from "@/libs/sds-server";
+import { isHiveTag } from "@/utils/steemParams";
 import HomeCarousel from "@/components/carousal/HomeCarousal";
 import dayjs from "@/libs/dayjs";
 import { getThumbnail } from "@/utils/image";
 import CommunityAboutSection from "../(site)/CommunityAboutSection";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.steempro.com";
 
@@ -19,13 +22,21 @@ async function layout({
   params: Promise<{ tag: string }>;
 }) {
   const { tag } = await params;
+  // `/community/<anything>` reaches the dynamic segment, so the shape check
+  // happens before any read: `hive-${tag}` with a junk tag is a guaranteed
+  // upstream error, not a community.
+  if (!isHiveTag(tag)) notFound();
+
   const session = await auth();
   const commAccount = `hive-${tag}`;
 
-  const [account, community, pinnedPostsRaw] = await Promise.all([
-    sdsApi.getAccountExt(commAccount, session?.user?.name),
-    sdsApi.getCommunity(commAccount, session?.user?.name),
-    sdsApi.getCommunityPinnedPosts(commAccount, session?.user?.name),
+  const [{ account, community }, pinnedPostsRaw] = await Promise.all([
+    communityOr404(commAccount, session?.user?.name),
+    // Pinned posts are decorative: a community that has none, or an upstream
+    // hiccup on that one call, must not turn the page into a 500.
+    sdsApi
+      .getCommunityPinnedPosts(commAccount, session?.user?.name)
+      .catch(() => []),
   ]);
 
   if (!account || !community) return null;

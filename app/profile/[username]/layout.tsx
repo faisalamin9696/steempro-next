@@ -3,7 +3,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import ProfileCard from "@/components/profile/ProfileCard";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import MainWrapper from "@/components/wrappers/MainWrapper";
-import { sdsApi } from "@/libs/sds";
+import { accountOr404 } from "@/libs/sds-server";
 import { profileJsonLd } from "@/utils/jsonld";
 import { Suspense } from "react";
 import ProfileHeaderSkeleton from "@/components/skeleton/ProfileHeaderSkeleton";
@@ -16,7 +16,7 @@ interface ProfileLayoutProps {
 async function layout({ children, params }: ProfileLayoutProps) {
   const { username } = await params;
   const session = await auth();
-  const account = await sdsApi.getAccountExt(username, session?.user?.name);
+  const account = await accountOr404(username, session?.user?.name);
 
   return (
     <Suspense
