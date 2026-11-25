@@ -33,6 +33,7 @@ interface AccountsContextState {
     username: string,
     sid?: string,
     relayUrl?: string,
+    proof?: LocalAccount["proof"],
   ) => Promise<void>;
   loginWithKey: (
     username: string,
@@ -144,9 +145,10 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
     username: string,
     sid?: string,
     relayUrl?: string,
+    proof?: LocalAccount["proof"],
   ) => {
     SESSION_PIN = null;
-    return _loginWithSteemAuth(username, sid, relayUrl);
+    return _loginWithSteemAuth(username, sid, relayUrl, proof);
   };
 
   const loginWithKey = async (

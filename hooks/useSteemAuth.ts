@@ -1,4 +1,9 @@
 import { keychainApi } from "@/libs/keychain";
+import { steemApi } from "@/libs/steem";
+import {
+  fetchLoginChallenge,
+  type LoginProof,
+} from "@/libs/authProofClient";
 import { authenticateWithEmail } from "@/libs/supabase/database";
 import { supabase } from "@/libs/supabase/supabase";
 import { encryptPrivateKey } from "@/utils/encryption";
@@ -53,9 +58,16 @@ export function useSteemAuth() {
 
   const autheticateUser = async (
     username: string,
+    proof: LoginProof,
   ): Promise<{ user: User | null; session: Session | null }> => {
     setIsPending(true);
     try {
+      // The session is signed and verified server-side; without the proof the
+      // request is refused, so this is the first thing that must be present.
+      if (!proof?.message || !proof?.signature) {
+        throw new Error("Sign-in proof missing. Please log in again.");
+      }
+
       // 1. Authenticate with email (auto signup if needed)
       const result = await authenticateWithEmail(
         username + "@steempro.com",
@@ -84,6 +96,8 @@ export function useSteemAuth() {
 
       const { error } = await signIn("credentials", {
         username,
+        message: proof.message,
+        signature: proof.signature,
         redirect: false,
       });
 
@@ -120,17 +134,26 @@ export function useSteemAuth() {
   // -------------------------------
   const loginWithKeychain = async (username: string): Promise<void> => {
     keychainApi.validateKeychain();
+    // Keychain signs a challenge we choose, so ask the server for one first.
+    const { statement } = await fetchLoginChallenge();
     return new Promise((resolve, reject) => {
       keychainApi
-        .loginWithKeychain(username)
+        .loginWithKeychain(username, statement)
         .then(async (res) => {
           if (!res.username) return reject(new Error("Keychain login failed"));
 
+          const proof: LoginProof = {
+            message: res.challenge,
+            signature: res.signedMessage,
+          };
           const acc: LocalAccount = {
             username: res.username,
             loginMethod: "keychain",
             createdAt: Date.now(),
             encrypted: false,
+            // Kept so switching back to this account does not need a second
+            // Keychain prompt for the rest of the proof's lifetime.
+            proof,
           };
 
           const updated = [
@@ -140,7 +163,7 @@ export function useSteemAuth() {
             ),
             acc,
           ];
-          await autheticateUser(username);
+          await autheticateUser(username, proof);
           setAccounts(updated);
           setCurrent(acc);
           persist(updated, acc);
@@ -165,7 +188,12 @@ export function useSteemAuth() {
     username: string,
     sid?: string,
     relayUrl?: string,
+    proof?: LoginProof,
   ): Promise<void> => {
+    if (!proof?.message || !proof?.signature) {
+      throw new Error("That sign-in was not signed — please scan again.");
+    }
+
     const acc: LocalAccount = {
       username,
       loginMethod: "steemauth",
@@ -175,6 +203,7 @@ export function useSteemAuth() {
       relayUrl,
       createdAt: Date.now(),
       encrypted: false,
+      proof,
     };
 
     const updated = [
@@ -183,7 +212,7 @@ export function useSteemAuth() {
       ),
       acc,
     ];
-    await autheticateUser(username);
+    await autheticateUser(username, proof);
     setAccounts(updated);
     setCurrent(acc);
     persist(updated, acc);
@@ -213,6 +242,16 @@ export function useSteemAuth() {
     let encKey = encryptPrivateKey(key, process.env.NEXT_PUBLIC_AUTH_SECRET!);
     if (pin) encKey = encryptPrivateKey(key, pin);
 
+    // Prove control of the key over a fresh server challenge before any
+    // session is requested. The signature is what `authorize()` checks;
+    // without it the login is refused no matter what the client claims.
+    const { statement } = await fetchLoginChallenge();
+    const signed = await steemApi.signMessage(username, statement, key);
+    const proof: LoginProof = {
+      message: statement,
+      signature: signed.signature.toString(),
+    };
+
     const acc: LocalAccount = {
       username: username,
       type: type,
@@ -220,6 +259,7 @@ export function useSteemAuth() {
       loginMethod: "private-key",
       createdAt: Date.now(),
       encrypted: !!pin,
+      proof,
       // A second copy under the device secret. `encKey` above is untouched,
       // so the PIN keeps working even if WebAuthn is unavailable later.
       ...(biometric
@@ -236,7 +276,7 @@ export function useSteemAuth() {
       ...accounts.filter((a) => !(a.username === username && a.type === type)),
       acc,
     ];
-    await autheticateUser(username);
+    await autheticateUser(username, proof);
     setAccounts(updated);
     setCurrent(acc);
     persist(updated, acc);
@@ -254,7 +294,17 @@ export function useSteemAuth() {
       const acc =
         accounts.find((a) => a.username === username && a.type === type) ||
         null;
-      await autheticateUser(username);
+
+      // Switching re-issues the server session, so it needs the same proof as
+      // logging in. It was captured at login and kept on the account; an
+      // account stored before proofs existed has to sign in once more.
+      if (!acc?.proof) {
+        throw new Error(
+          "Please sign in to this account again — it has no verified login yet.",
+        );
+      }
+
+      await autheticateUser(username, acc.proof);
       setCurrent(acc);
       persist(accounts, acc);
       if (!silent)

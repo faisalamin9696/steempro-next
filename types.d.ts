@@ -702,6 +702,13 @@ type LocalAccount = {
   biometric?: boolean;
   /** `key` re-encrypted with the device secret that WebAuthn gates. */
   bioKey?: string;
+  /**
+   * Signature over a server-issued login challenge, captured when this account
+   * logged in. The credentials provider refuses a session without one, so this
+   * is what lets switching back re-issue a session without another prompt
+   * (Keychain / phone) for the life of the proof.
+   */
+  proof?: { message: string; signature: string };
 };
 
 type DraftData = {

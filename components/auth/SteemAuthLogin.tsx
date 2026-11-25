@@ -7,6 +7,7 @@ import { Smartphone, RefreshCw } from "lucide-react";
 import { useSteemAuthKeepAlive } from "@/hooks/useSteemAuthKeepAlive";
 import { toast } from "sonner";
 import { steemApi } from "@/libs/steem";
+import { fetchLoginChallenge } from "@/libs/authProofClient";
 import {
   STEEMAUTH_APP_NAME,
   SESSION_TTL_MS,
@@ -66,8 +67,12 @@ function SteemAuthLogin({ onSuccess }: SteemAuthLoginProps) {
       try {
         // `expiresInMs` is exclusive to this call: the signed proof may outlive
         // the QR (7 days), while the QR only gates issuing it.
+        // The nonce comes from our server and is embedded in the signed text,
+        // so `authorize()` can tell a fresh proof from a replayed one.
+        const { nonce } = await fetchLoginChallenge();
         const result = await auth.authenticate({
           statement: "Sign in to SteemPro",
+          nonce,
           expiresInMs: AUTH_EXPIRES_IN_MS,
         });
 
@@ -93,7 +98,10 @@ function SteemAuthLogin({ onSuccess }: SteemAuthLoginProps) {
         // The login sid + relay are what the revocation watch keys on — the
         // session's own sid changes on refresh(), the account's never does.
         const login = auth.controller?.session?.payload;
-        await loginWithSteemAuth(account, login?.sid, login?.rt);
+        await loginWithSteemAuth(account, login?.sid, login?.rt, {
+          message: result.message,
+          signature: result.signature,
+        });
         toast.success(`Signed in as @${account}`, {
           description:
             "Your phone keeps this session — revoke it any time from the SteemAuthenticator Sessions tab.",
