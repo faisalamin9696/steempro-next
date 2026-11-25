@@ -83,6 +83,7 @@ type IpSqlRow = {
   last_seen: number;
 };
 type ScalarRow = { route?: string; ua?: string };
+type DeflectionRow = { path: string; reason: string; last_at: number };
 export type Overview = {
   total: number;
   uniqueIps: number;
@@ -201,6 +202,18 @@ function open(): Database | null {
           created_by TEXT,
           expires_at INTEGER
         );
+
+        -- Junk paths used to live in a module-level array. The proxy and the
+        -- dashboard run in different bundles, so that array was only ever
+        -- visible to the one that filled it: "Recently deflected" stayed empty
+        -- no matter how much junk arrived. Same table, two readers.
+        CREATE TABLE IF NOT EXISTS deflections (
+          path    TEXT PRIMARY KEY,
+          reason  TEXT NOT NULL,
+          last_at INTEGER NOT NULL
+        ) WITHOUT ROWID;
+
+        CREATE INDEX IF NOT EXISTS deflections_last_at ON deflections (last_at);
       `);
       db = conn;
       return db;
@@ -224,9 +237,12 @@ const pending = new Map<string, Hit & { hits: number }>();
 let lastFlush = 0;
 let lastPrune = 0;
 
-/** Ring buffer of recent junk paths, so the dashboard can show what was probed. */
-const deflections: Deflection[] = [];
-const DEFLECTION_LIMIT = 200;
+/**
+ * Junk paths, buffered like the hits so a probe burst is one write rather than
+ * one per request, then persisted so the dashboard can read what this instance
+ * deflected. Bounded by the same retention window as the counters.
+ */
+const pendingDeflections = new Map<string, { reason: string; lastAt: number }>();
 
 export function recordHit(hit: Hit): void {
   if (!ENABLED) return;
@@ -236,26 +252,31 @@ export function recordHit(hit: Hit): void {
   if (existing) existing.hits += 1;
   else pending.set(key, { ...hit, hits: 1 });
 
-  if (Date.now() - lastFlush >= FLUSH_MS) flushHits();
+  maybeFlush();
 }
 
 export function recordDeflection(pathname: string, reason: string): void {
   if (!ENABLED) return;
-  const existing = deflections.find((d) => d.path === pathname);
-  if (existing) {
-    existing.at = Date.now();
-    return;
-  }
-  deflections.unshift({ path: pathname, reason, at: Date.now() });
-  if (deflections.length > DEFLECTION_LIMIT) deflections.length = DEFLECTION_LIMIT;
+  pendingDeflections.set(pathname, { reason, lastAt: Date.now() });
+  maybeFlush();
+}
+
+/**
+ * The proxy calls this on every request, so the write path stays on a timer:
+ * a burst of hits is one transaction every `FLUSH_MS`, not one per hit.
+ */
+function maybeFlush(): void {
+  if (Date.now() - lastFlush >= FLUSH_MS) flushHits();
 }
 
 export function flushHits(): void {
   lastFlush = Date.now();
-  if (pending.size === 0) return;
+  if (pending.size === 0 && pendingDeflections.size === 0) return;
 
   const rows = [...pending.values()];
+  const junk = [...pendingDeflections.entries()];
   pending.clear();
+  pendingDeflections.clear();
 
   const conn = open();
   if (!conn) return;
@@ -266,6 +287,12 @@ export function flushHits(): void {
       VALUES (?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT (minute, ip, method, route, status, ua)
       DO UPDATE SET hits = hits + excluded.hits
+    `);
+    const deflectionStmt = conn.prepare(`
+      INSERT INTO deflections (path, reason, last_at)
+      VALUES (?, ?, ?)
+      ON CONFLICT (path)
+      DO UPDATE SET reason = excluded.reason, last_at = excluded.last_at
     `);
 
     conn.exec("BEGIN");
@@ -280,6 +307,9 @@ export function flushHits(): void {
           row.ua,
           row.hits,
         );
+      }
+      for (const [pathname, entry] of junk) {
+        deflectionStmt.run(pathname, entry.reason, entry.lastAt);
       }
       conn.exec("COMMIT");
     } catch (error) {
@@ -299,11 +329,48 @@ function prune(conn: Database): void {
   lastPrune = now;
   const cutoff = Math.floor(now / 1000) - RETENTION_DAYS * 86_400;
   conn.prepare("DELETE FROM request_hits WHERE minute < ?").run(cutoff);
+  conn.prepare("DELETE FROM deflections WHERE last_at < ?").run(cutoff * 1000);
+  // Keep the probe list readable even on a busy day: the dashboard shows the
+  // newest 40, so anything beyond a few hundred rows is dead weight.
+  conn
+    .prepare(
+      `DELETE FROM deflections
+       WHERE path NOT IN (
+         SELECT path FROM deflections ORDER BY last_at DESC LIMIT 500
+       )`,
+    )
+    .run();
   conn
     .prepare(
       "DELETE FROM blocked_ips WHERE expires_at IS NOT NULL AND expires_at < ?",
     )
     .run(now);
+}
+
+/** Newest deflections, read from the shared table rather than module memory. */
+function recentDeflections(limit: number): Deflection[] {
+  const conn = open();
+  if (!conn) return [];
+
+  try {
+    const rows = conn
+      .prepare(
+        `SELECT path, reason, last_at
+         FROM deflections
+         ORDER BY last_at DESC
+         LIMIT ?`,
+      )
+      .all(limit) as DeflectionRow[];
+
+    return rows.map((r) => ({
+      path: r.path,
+      reason: r.reason,
+      at: Number(r.last_at),
+    }));
+  } catch (error) {
+    console.error("[analytics] recentDeflections failed", error);
+    return [];
+  }
 }
 
 /* --------------------------------------------------------------- blocklist */
@@ -555,7 +622,7 @@ export function snapshotFor(windowHours: number): Snapshot {
     routes: topRoutes(windowHours),
     ips: topIps(windowHours),
     blocked: listBlocked(),
-    deflections: deflections.slice(0, 40),
+    deflections: recentDeflections(40),
     windowHours,
     generatedAt: Date.now(),
     available: ENABLED && !loadFailed,
