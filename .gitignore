@@ -25,6 +25,9 @@
 .DS_Store
 *.pem
 
+# local analytics / IP blocklist (see libs/analytics/store.ts)
+/.data/
+
 # debug
 npm-debug.log*
 yarn-debug.log*

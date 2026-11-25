@@ -78,10 +78,12 @@ export default function DashboardHome({
   user,
   initialStats,
   previewAs,
+  isOperator = false,
 }: {
   user: string;
   initialStats?: AuthorStats;
   previewAs?: string;
+  isOperator?: boolean;
 }) {
   const t = useTranslations("Dashboard");
 
@@ -100,6 +102,25 @@ export default function DashboardHome({
         </h1>
         <p className="text-sm text-default-400 mt-0.5">{t("homeSub")}</p>
       </div>
+
+      {isOperator && (
+        <Link
+          href="/dashboard/traffic"
+          className="flex items-center gap-3 p-3 rounded-xl border border-default-200/60 dark:border-default-100/40 bg-white/70 dark:bg-content1/40 hover:border-primary/30 transition-colors"
+        >
+          <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
+            <Shield size={16} />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-bold">Traffic &amp; IP blocking</p>
+            <p className="text-[11px] text-default-400">
+              Incoming requests by address, deflected junk URLs, and the
+              blocklist.
+            </p>
+          </div>
+          <span className="text-[11px] font-bold text-primary shrink-0">Open</span>
+        </Link>
+      )}
 
       {/* my communities (mod+ entry points) */}
       <section className={CARD}>

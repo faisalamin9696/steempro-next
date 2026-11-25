@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import DashboardHome from "@/components/dashboard/DashboardHome";
 import SignInCard from "@/components/dashboard/SignInCard";
+import { isAnalyticsAdmin } from "@/libs/analytics/auth";
 import { getAuthorStats } from "@/utils/communityStats";
 
 /**
@@ -40,6 +41,7 @@ export default async function DashboardPage({
       user={target}
       initialStats={initialStats}
       previewAs={previewAs}
+      isOperator={isAnalyticsAdmin(sessionUser)}
     />
   );
 }
