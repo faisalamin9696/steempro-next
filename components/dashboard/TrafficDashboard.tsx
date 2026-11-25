@@ -184,6 +184,16 @@ export default function TrafficDashboard({
             Requests seen by the proxy, aggregated by minute. Blocked and
             deflected requests never reach the app.
           </p>
+          <p className="text-[10px] text-default-400/80 mt-1 font-mono break-all">
+            store: {snapshot.dbPath}
+          </p>
+          {snapshot.dbInReleaseDir && (
+            <p className="text-[10px] text-amber-500 mt-0.5">
+              This file is inside the release directory, so a fresh deploy starts
+              empty. Set <code>ANALYTICS_DB_PATH</code> to a path outside it to
+              keep counters and blocks.
+            </p>
+          )}
         </div>
         <div className="flex items-center gap-1.5">
           <Filter size={13} className="text-default-400" />

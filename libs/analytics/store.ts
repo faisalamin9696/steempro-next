@@ -101,6 +101,10 @@ export type Snapshot = {
   windowHours: number;
   generatedAt: number;
   available: boolean;
+  /** Where this instance keeps its counters, so the console can show it. */
+  dbPath: string;
+  /** True when that file sits inside the release directory. */
+  dbInReleaseDir: boolean;
 };
 
 /* ---------------------------------------------------------- sqlite loading */
@@ -155,6 +159,22 @@ function sqlite(): DatabaseCtor | null {
   return loadCtor;
 }
 
+/**
+ * Where the store lives.
+ *
+ * Absolute is strongly recommended for a deployment: the default sits inside
+ * the release directory, so a fresh clone, a `git clean -fdx`, or a new
+ * container arrives with an empty database. Point `ANALYTICS_DB_PATH` at a
+ * path that outlives the release (e.g. `/var/lib/steempro/analytics.db`) and
+ * the counters and blocklist survive every deploy. Relative values resolve
+ * against the working directory.
+ */
+export function analyticsDbPath(): string {
+  const configured = process.env.ANALYTICS_DB_PATH?.trim();
+  if (configured) return path.resolve(configured);
+  return path.join(process.cwd(), ".data", "analytics.db");
+}
+
 function open(): Database | null {
   if (db) return db;
   if (!ENABLED || loadFailed) return null;
@@ -165,18 +185,24 @@ function open(): Database | null {
     return null;
   }
 
-  const preferred =
-    process.env.ANALYTICS_DB_PATH ??
-    path.join(process.cwd(), ".data", "analytics.db");
+  const preferred = analyticsDbPath();
+  const fallback = path.join(os.tmpdir(), "steempro-analytics.db");
 
   // A container or a read-only checkout cannot write next to the app; the OS
   // temp directory always works and still survives for the process lifetime.
-  const candidates = [preferred, path.join(os.tmpdir(), "steempro-analytics.db")];
+  const candidates = preferred === fallback ? [preferred] : [preferred, fallback];
 
-  for (const file of candidates) {
+  for (const [index, file] of candidates.entries()) {
     try {
       fs.mkdirSync(path.dirname(file), { recursive: true });
       const conn = new Ctor(file);
+      // The file holds client addresses, so keep it owner-only. Best effort:
+      // a filesystem without POSIX modes simply ignores this.
+      try {
+        fs.chmodSync(file, 0o600);
+      } catch {
+        /* not advisory-critical */
+      }
       conn.exec(`
         PRAGMA journal_mode = WAL;
         PRAGMA synchronous = NORMAL;
@@ -216,6 +242,15 @@ function open(): Database | null {
         CREATE INDEX IF NOT EXISTS deflections_last_at ON deflections (last_at);
       `);
       db = conn;
+      // One line at startup so the operator can confirm the data is going
+      // somewhere that outlives the next deploy.
+      if (index > 0) {
+        console.error(
+          `[analytics] store opened at ${file} because ${preferred} is not writable — counters and the blocklist will be lost on restart`,
+        );
+      } else {
+        console.log(`[analytics] store: ${file}`);
+      }
       return db;
     } catch (error) {
       console.error(`[analytics] cannot open ${file}`, error);
@@ -626,6 +661,10 @@ export function snapshotFor(windowHours: number): Snapshot {
     windowHours,
     generatedAt: Date.now(),
     available: ENABLED && !loadFailed,
+    dbPath: analyticsDbPath(),
+    dbInReleaseDir: analyticsDbPath().startsWith(
+      `${process.cwd()}${path.sep}`,
+    ),
   };
 }
 
