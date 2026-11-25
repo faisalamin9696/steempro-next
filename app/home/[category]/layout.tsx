@@ -6,18 +6,6 @@ import { Metadata } from "next";
 import { proxifyImageUrl } from "@/utils/proxifyUrl";
 
 /**
- * Host of the configured Supabase URL, for log lines that must be actionable.
- * The URL itself is public (`NEXT_PUBLIC_*`), so naming the host is safe.
- */
-function supabaseHost(): string {
-  try {
-    return new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").host || "(empty)";
-  } catch {
-    return "(invalid URL)";
-  }
-}
-
-/**
  * Promoted posts, read on the server for every request.
  *
  * The previous version read `data` and threw the error half away. A blocked
@@ -36,20 +24,8 @@ async function getPromotedPosts(): Promise<PromotedPost[]> {
 
   const { data, error } = await supabase.rpc("get_promoted_posts");
   if (error) {
-    const host = supabaseHost();
-    const message = String(error.message ?? "").trim();
-
-    if (message.startsWith("<")) {
-      // The web app, a catch-all proxy or an interstitial answering instead of
-      // PostgREST. Logging "<!DOCTYPE html>" alone left the operator guessing.
-      console.error(
-        `[home] get_promoted_posts: ${host} answered with HTML, not JSON. NEXT_PUBLIC_SUPABASE_URL is not the Supabase API endpoint (or the request was intercepted) — it is baked in at build time, so fix it in the build environment and rebuild.`,
-      );
-      return [];
-    }
-
     console.error(
-      `[home] get_promoted_posts failed (${error.code ?? "no-code"}) at ${host}: ${message.slice(0, 200)}`,
+      `[home] get_promoted_posts failed (${error.code ?? "no-code"}): ${error.message}`,
     );
     return [];
   }
